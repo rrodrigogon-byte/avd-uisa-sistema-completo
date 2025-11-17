@@ -14,6 +14,7 @@ import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
 import Configuracoes from "./pages/Configuracoes";
 import Perfil from "./pages/Perfil";
+import History from "./pages/History";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/calibracao" component={Calibracao} />
       <Route path="/configuracoes" component={Configuracoes} />
       <Route path="/perfil" component={Perfil} />
+      <Route path="/historico" component={History} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

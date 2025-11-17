@@ -638,3 +638,22 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Criar planos de sucessão para cargos críticos (15 planos)
 - [x] Identificar sucessores potenciais (3 candidatos)
 - [x] Popular Matriz 9-Box com exemplos (13 posicionamentos)
+
+
+---
+
+## 📊 Histórico de Avaliações e PDIs (Sessão Atual)
+
+### Backend
+- [x] Criar endpoint para histórico de avaliações 360°
+- [x] Criar endpoint para histórico de PDIs
+- [x] Criar endpoint para evolução de competências
+- [x] Criar endpoint para histórico de Matriz 9-Box
+
+### Frontend
+- [x] Criar página de Histórico
+- [x] Implementar timeline de avaliações
+- [x] Implementar visualização de evolução de desempenho
+- [x] Implementar visualização de PDIs anteriores
+- [x] Implementar visualização de evolução de competências
+- [x] Adicionar rota no menu lateral

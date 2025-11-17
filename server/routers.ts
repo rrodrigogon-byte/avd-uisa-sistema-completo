@@ -488,6 +488,66 @@ export const appRouter = router({
         return await db.getEmployeeCompetencies(input.employeeId);
       }),
   }),
+
+  // ============================================================================
+  // HISTÓRICO
+  // ============================================================================
+  history: router({
+    // Histórico de avaliações 360°
+    evaluations: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const evaluations = await database
+          .select()
+          .from(performanceEvaluations)
+          .where(eq(performanceEvaluations.employeeId, input.employeeId))
+          .orderBy(desc(performanceEvaluations.createdAt));
+
+        return evaluations;
+      }),
+
+    // Histórico de PDIs
+    pdis: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const pdis = await database
+          .select()
+          .from(pdiPlans)
+          .where(eq(pdiPlans.employeeId, input.employeeId))
+          .orderBy(desc(pdiPlans.createdAt));
+
+        return pdis;
+      }),
+
+    // Histórico de Matriz 9-Box
+    nineBox: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const positions = await database
+          .select()
+          .from(nineBoxPositions)
+          .where(eq(nineBoxPositions.employeeId, input.employeeId))
+          .orderBy(desc(nineBoxPositions.createdAt));
+
+        return positions;
+      }),
+
+    // Evolução de competências ao longo do tempo
+    competenciesEvolution: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getEmployeeCompetencies(input.employeeId);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
