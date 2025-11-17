@@ -5,14 +5,17 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Metas from "./pages/Metas";
+import Avaliacoes from "./pages/Avaliacoes";
+import PDI from "./pages/PDI";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/metas"} component={() => <div>Metas (em desenvolvimento)</div>} />
-      <Route path={"/avaliacoes"} component={() => <div>Avaliações 360° (em desenvolvimento)</div>} />
-      <Route path={"/pdi"} component={() => <div>PDI (em desenvolvimento)</div>} />
+      <Route path={"/metas"} component={Metas} />
+      <Route path={"/avaliacoes"} component={Avaliacoes} />
+      <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={() => <div>Matriz 9-Box (em desenvolvimento)</div>} />
       <Route path={"/relatorios"} component={() => <div>Relatórios (em desenvolvimento)</div>} />
       <Route path={"/404"} component={NotFound} />

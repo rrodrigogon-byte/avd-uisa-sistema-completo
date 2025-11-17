@@ -283,3 +283,35 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 **Status:** 🟢 Core Funcional - Testável  
 **Última atualização:** 17/11/2025  
 **Progresso:** ~50% (módulos core implementados e testáveis)
+
+
+---
+
+## 🎯 Próximas Implementações (Em Andamento)
+
+### Página de Metas
+- [x] Lista de metas com filtros
+- [x] Formulário de criação de meta
+- [ ] Formulário de edição de meta
+- [ ] Aprovação de meta pelo gestor
+- [x] Visualização de progresso com gráficos
+- [x] Atualização de progresso
+- [x] Vinculação a PLR/bônus
+
+### Página de Avaliações 360°
+- [x] Lista de avaliações
+- [ ] Formulário de autoavaliação
+- [ ] Formulário de avaliação de pares
+- [ ] Formulário de avaliação de gestor
+- [ ] Relatório consolidado de feedback
+- [x] Visualização de histórico
+
+### Página de PDI
+- [x] Lista de PDIs
+- [ ] Criação de PDI
+- [ ] Análise de gaps de competências
+- [ ] Gráfico spider de competências
+- [ ] Recomendações automáticas (IA Gemini)
+- [ ] Adição de ações de desenvolvimento
+- [x] Acompanhamento de progresso
+- [ ] Aprovação pelo gestor
