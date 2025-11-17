@@ -374,3 +374,38 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Notificação de PDI aprovado
 - [x] Notificação de nova meta atribuída
 - [x] Templates HTML de e-mail
+
+
+---
+
+## 🚀 Módulos Avançados (Fase 4)
+
+### Reconhecimento Facial
+- [x] Instalação de bibliotecas (face-api.js, @tensorflow/tfjs)
+- [x] Componente de cadastro facial (captura múltiplas fotos)
+- [ ] Armazenamento de descritores faciais no banco
+- [x] Página de login com opção facial
+- [x] Componente de verificação facial
+- [x] Threshold de confiança configurável
+- [x] Fallback para login tradicional
+- [ ] Testes de precisão
+
+### Integração TOTVS RM
+- [x] Configuração de API TOTVS RM
+- [x] Endpoint de sincronização de colaboradores
+- [x] Endpoint de sincronização de departamentos
+- [x] Endpoint de sincronização de cargos
+- [x] Mapeamento de campos TOTVS → AVD
+- [ ] Agendamento automático (cron job)
+- [x] Log de sincronizações
+- [x] Tratamento de erros e retry
+
+### Sistema de Calibração
+- [x] Página de calibração de avaliações
+- [x] Listagem de avaliações por departamento
+- [x] Interface de ajuste de notas
+- [x] Histórico de calibrações
+- [x] Comentários de calibração
+- [ ] Notificação aos avaliados
+- [ ] Relatório de calibração
+- [x] Auditoria de mudanças
