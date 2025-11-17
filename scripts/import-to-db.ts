@@ -2,8 +2,17 @@ import { drizzle } from 'drizzle-orm/mysql2';
 import { departments, positions, employees } from '../drizzle/schema';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
-const DATABASE_URL = process.env.DATABASE_URL!;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+  console.error('❌ DATABASE_URL environment variable is not set');
+  process.exit(1);
+}
 
 async function importData() {
   console.log('🚀 Starting data import...\n');
@@ -56,10 +65,22 @@ async function importData() {
   const positionMap = new Map<string, number>();
   for (const positionName of uniquePositions) {
     try {
+      // Determinar nível baseado no título do cargo
+      let level: 'junior' | 'pleno' | 'senior' | 'especialista' | 'coordenador' | 'gerente' | 'diretor' | null = null;
+      const titleLower = positionName.toLowerCase();
+      
+      if (titleLower.includes('diretor')) level = 'diretor';
+      else if (titleLower.includes('gerente')) level = 'gerente';
+      else if (titleLower.includes('coordenador')) level = 'coordenador';
+      else if (titleLower.includes('especialista')) level = 'especialista';
+      else if (titleLower.includes('senior') || titleLower.includes('sênior') || titleLower.includes('líder') || titleLower.includes('lider')) level = 'senior';
+      else if (titleLower.includes('pleno') || titleLower.includes('ii') || titleLower.includes('supervisor')) level = 'pleno';
+      else if (titleLower.includes('junior') || titleLower.includes('júnior') || titleLower.includes('i') || titleLower.includes('auxiliar') || titleLower.includes('assistente')) level = 'junior';
+      
       const [result] = await db.insert(positions).values({
         title: positionName,
         code: `POS${positionMap.size + 1}`,
-        level: 'operacional',
+        level: level,
         description: null,
         active: true,
       });

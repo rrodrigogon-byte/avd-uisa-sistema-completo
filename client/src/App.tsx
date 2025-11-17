@@ -11,6 +11,7 @@ import PDI from "./pages/PDI";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
+import Configuracoes from "./pages/Configuracoes";
 
 function Router() {
   return (
@@ -21,7 +22,8 @@ function Router() {
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />
-      <Route path={'/calibracao'} component={Calibracao} />
+      <Route path="/calibracao" component={Calibracao} />
+      <Route path="/configuracoes" component={Configuracoes} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
