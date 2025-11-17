@@ -21,19 +21,86 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 import NotificationBell from "./NotificationBell";
 
+// Componente de seção com submenu
+function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
+  const [isOpen, setIsOpen] = useState(true);
+  
+  return (
+    <div className="space-y-1">
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          onClick={() => setIsOpen(!isOpen)}
+          className="h-10 transition-all font-medium"
+        >
+          <item.icon className="h-4 w-4" />
+          <span>{item.label}</span>
+          {isOpen ? <ChevronDown className="h-4 w-4 ml-auto" /> : <ChevronRight className="h-4 w-4 ml-auto" />}
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      {isOpen && (
+        <div className="ml-4 space-y-0.5">
+          {item.children.map((child: any) => {
+            const isActive = location === child.path;
+            return (
+              <SidebarMenuItem key={child.path}>
+                <SidebarMenuButton
+                  isActive={isActive}
+                  onClick={() => setLocation(child.path)}
+                  tooltip={child.label}
+                  className="h-9 transition-all font-normal text-sm"
+                >
+                  <child.icon className={`h-3.5 w-3.5 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+                  <span>{child.label}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Target, label: "Metas", path: "/metas" },
-  { icon: Users, label: "Avaliações 360°", path: "/avaliacoes" },
-  { icon: TrendingUp, label: "PDI", path: "/pdi" },
-  { icon: BarChart3, label: "Matriz 9-Box", path: "/nine-box" },
+  {
+    icon: TrendingUp,
+    label: "Performance",
+    isSection: true,
+    children: [
+      { icon: Activity, label: "Performance Integrada", path: "/performance" },
+      { icon: RefreshCw, label: "Avaliação 360°", path: "/avaliacoes" },
+      { icon: Star, label: "360° Enhanced", path: "/avaliacoes-enhanced" },
+      { icon: Scale, label: "Calibração", path: "/calibracao" },
+      { icon: Grid3x3, label: "Nine Box", path: "/nine-box" },
+    ],
+  },
+  {
+    icon: GraduationCap,
+    label: "Desenvolvimento",
+    isSection: true,
+    children: [
+      { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
+      { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
+    ],
+  },
+  {
+    icon: CheckSquare,
+    label: "Aprovações",
+    isSection: true,
+    children: [
+      { icon: CheckSquare, label: "PDIs Pendentes", path: "/aprovacoes/pdi" },
+      { icon: Users, label: "Avaliações Pendentes", path: "/aprovacoes/avaliacoes" },
+    ],
+  },
   { icon: HistoryIcon, label: "Histórico", path: "/historico" },
   { icon: FileText, label: "Relatórios", path: "/relatorios" },
   { icon: Settings, label: "Configurações", path: "/configuracoes" },
@@ -216,13 +283,16 @@ function DashboardLayoutContent({
 
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
-              {menuItems.map(item => {
+              {menuItems.map((item, idx) => {
+                if (item.isSection && item.children) {
+                  return <MenuSection key={idx} item={item} location={location} setLocation={setLocation} />;
+                }
                 const isActive = location === item.path;
                 return (
-                  <SidebarMenuItem key={item.path}>
+                  <SidebarMenuItem key={item.path || idx}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      onClick={() => setLocation(item.path)}
+                      onClick={() => item.path && setLocation(item.path)}
                       tooltip={item.label}
                       className={`h-10 transition-all font-normal`}
                     >

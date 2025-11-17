@@ -15,6 +15,13 @@
       "when": 1763412725812,
       "tag": "0001_silly_leech",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1763422153809,
+      "tag": "0002_massive_mad_thinker",
+      "breakpoints": true
     }
   ]
 }

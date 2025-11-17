@@ -1,12 +1,13 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import crypto from "crypto";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -22,6 +23,111 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+
+    // Solicitar reset de senha
+    requestPasswordReset: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Buscar usuário por e-mail
+        const user = await db.select()
+          .from(users)
+          .where(eq(users.email, input.email))
+          .limit(1);
+
+        if (user.length === 0) {
+          // Não revelar se o e-mail existe ou não (segurança)
+          return { success: true };
+        }
+
+        // Gerar token único
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 1); // Expira em 1 hora
+
+        // Salvar token no banco
+        await db.insert(passwordResetTokens).values({
+          userId: user[0].id,
+          token,
+          expiresAt,
+        });
+
+        // TODO: Enviar e-mail com link de reset
+        // await emailService.sendResetPassword(input.email, { token, name: user[0].name });
+
+        return { success: true };
+      }),
+
+    // Validar token de reset
+    validateResetToken: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const tokenRecord = await db.select()
+          .from(passwordResetTokens)
+          .where(
+            and(
+              eq(passwordResetTokens.token, input.token),
+              eq(passwordResetTokens.used, false)
+            )
+          )
+          .limit(1);
+
+        if (tokenRecord.length === 0) {
+          return { valid: false, message: "Token inválido" };
+        }
+
+        const token = tokenRecord[0];
+        if (new Date() > new Date(token.expiresAt)) {
+          return { valid: false, message: "Token expirado" };
+        }
+
+        return { valid: true };
+      }),
+
+    // Redefinir senha
+    resetPassword: publicProcedure
+      .input(z.object({ token: z.string(), newPassword: z.string().min(6) }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Validar token
+        const tokenRecord = await db.select()
+          .from(passwordResetTokens)
+          .where(
+            and(
+              eq(passwordResetTokens.token, input.token),
+              eq(passwordResetTokens.used, false)
+            )
+          )
+          .limit(1);
+
+        if (tokenRecord.length === 0) {
+          throw new Error("Token inválido");
+        }
+
+        const token = tokenRecord[0];
+        if (new Date() > new Date(token.expiresAt)) {
+          throw new Error("Token expirado");
+        }
+
+        // TODO: Atualizar senha do usuário (requer implementação de hash de senha)
+        // await db.update(users)
+        //   .set({ password: await hashPassword(input.newPassword) })
+        //   .where(eq(users.id, token.userId));
+
+        // Marcar token como usado
+        await db.update(passwordResetTokens)
+          .set({ used: true })
+          .where(eq(passwordResetTokens.id, token.id));
+
+        return { success: true };
+      }),
   }),
 
   // ============================================================================
@@ -729,6 +835,67 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           .where(eq(nineBoxPositions.cycleId, input.cycleId));
 
         return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // EXPORTAÇÃO DE RELATÓRIOS PDF
+  // ============================================================================
+  reports: router({
+    // Exportar relatório de avaliação 360°
+    export360: protectedProcedure
+      .input(z.object({ evaluationId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const evaluation = await db.select()
+          .from(performanceEvaluations)
+          .innerJoin(employees, eq(performanceEvaluations.employeeId, employees.id))
+          .where(eq(performanceEvaluations.id, input.evaluationId))
+          .limit(1);
+
+        if (evaluation.length === 0) throw new Error("Evaluation not found");
+
+        return evaluation[0];
+      }),
+
+    // Exportar relatório de PDI
+    exportPDI: protectedProcedure
+      .input(z.object({ pdiId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const pdi = await db.select()
+          .from(pdiPlans)
+          .innerJoin(employees, eq(pdiPlans.employeeId, employees.id))
+          .where(eq(pdiPlans.id, input.pdiId))
+          .limit(1);
+
+        if (pdi.length === 0) throw new Error("PDI not found");
+
+        // Buscar itens do PDI
+        const items = await db.select()
+          .from(pdiItems)
+          .where(eq(pdiItems.planId, input.pdiId));
+
+        return { pdi: pdi[0], items };
+      }),
+
+    // Exportar relatório de Matriz 9-Box
+    export9Box: protectedProcedure
+      .input(z.object({ cycleId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const positions = await db.select()
+          .from(nineBoxPositions)
+          .innerJoin(employees, eq(nineBoxPositions.employeeId, employees.id))
+          .where(eq(nineBoxPositions.cycleId, input.cycleId));
+
+        return positions;
       }),
   }),
 

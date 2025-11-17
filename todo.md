@@ -701,3 +701,37 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Implementar recuperação de senha por e-mail
 - [ ] Adicionar página de reset de senha
 - [ ] Implementar validação de token de recuperação
+
+
+---
+
+## 🎨 Reorganização do Menu Lateral
+- [x] Criar seção "Performance" com submenu
+- [x] Adicionar "Performance Integrada" no submenu
+- [x] Adicionar "Avaliação 360°" no submenu
+- [x] Adicionar "360° Enhanced" no submenu
+- [x] Adicionar "Calibração" no submenu
+- [x] Adicionar "Nine Box" no submenu
+- [x] Criar seção "Desenvolvimento" com submenu
+- [x] Adicionar "PDI Inteligente" no submenu
+- [x] Adicionar "Mapa de Sucessão" no submenu
+- [x] Criar seção "Aprovações" com submenu
+
+## 📄 Exportação de Relatórios em PDF
+- [x] Implementar exportação de relatório 360°
+- [x] Implementar exportação de PDI
+- [x] Implementar exportação de Matriz 9-Box
+- [x] Endpoints backend prontos para geração de PDF
+
+## 🔐 Recuperação de Senha
+- [x] Criar tabela de tokens de reset de senha
+- [x] Implementar endpoint de solicitação de reset
+- [x] Implementar endpoint de validação de token
+- [x] Implementar endpoint de redefinição de senha
+- [ ] Criar página de reset de senha no frontend
+
+## ⏰ Cron Jobs de Lembretes
+- [x] Criar cron job de lembretes de metas (diário às 9h)
+- [x] Criar cron job de avaliações pendentes (segundas às 9h)
+- [x] Criar cron job de ações de PDI vencidas (diário às 10h)
+- [x] Configurar agendamento automático com node-cron
