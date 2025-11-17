@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
 import PDI from "./pages/PDI";
+import NineBox from "./pages/NineBox";
 
 function Router() {
   return (
@@ -16,7 +17,7 @@ function Router() {
       <Route path={"/metas"} component={Metas} />
       <Route path={"/avaliacoes"} component={Avaliacoes} />
       <Route path={"/pdi"} component={PDI} />
-      <Route path={"/nine-box"} component={() => <div>Matriz 9-Box (em desenvolvimento)</div>} />
+      <Route path={"/nine-box"} component={NineBox} />
       <Route path={"/relatorios"} component={() => <div>Relatórios (em desenvolvimento)</div>} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />

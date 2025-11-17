@@ -315,3 +315,32 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Adição de ações de desenvolvimento
 - [x] Acompanhamento de progresso
 - [ ] Aprovação pelo gestor
+
+
+---
+
+## 🚀 Implementações em Andamento (Fase 2)
+
+### Formulários de Avaliação 360°
+- [x] Formulário de autoavaliação com competências
+- [x] Formulário de avaliação de pares
+- [x] Formulário de avaliação de gestor
+- [x] Sistema de escalas de avaliação (1-5)
+- [x] Validação de formulários
+- [x] Submissão e confirmação
+
+### Wizard de Criação de PDI
+- [ ] Passo 1: Seleção de cargo-alvo
+- [ ] Passo 2: Análise de gaps de competências
+- [ ] Passo 3: Gráfico spider de competências
+- [ ] Passo 4: Recomendações automáticas (IA Gemini)
+- [ ] Passo 5: Seleção de ações 70-20-10
+- [ ] Passo 6: Revisão e submissão
+
+### Página Matriz 9-Box
+- [x] Grid 3x3 interativo
+- [x] Posicionamento de colaboradores
+- [x] Filtros por departamento
+- [x] Detalhes do colaborador
+- [ ] Plano de sucessão
+- [ ] Exportação de relatório
