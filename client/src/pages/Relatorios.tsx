@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
+import { exportDashboardPDF } from "@/utils/pdfExport";
 import { BarChart3, Download, FileText, TrendingUp, Users } from "lucide-react";
 import { useState } from "react";
 
@@ -86,7 +87,16 @@ export default function Relatorios() {
                 <SelectItem value="rh">RH</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={() => exportDashboardPDF({
+                userName: "Sistema AVD",
+                activeGoals: totalGoals,
+                evaluations: totalEvaluations,
+                activePDIs: activePDIs,
+                currentCycle: selectedPeriod
+              })}
+            >
               <Download className="h-4 w-4 mr-2" />
               Exportar PDF
             </Button>

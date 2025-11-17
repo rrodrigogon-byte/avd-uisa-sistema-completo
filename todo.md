@@ -409,3 +409,32 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Notificação aos avaliados
 - [ ] Relatório de calibração
 - [x] Auditoria de mudanças
+
+
+---
+
+## 🎯 Melhorias Finais (Fase 5)
+
+### Modelos Face-API.js
+- [x] Script de download automático dos modelos
+- [x] Adicionar modelos à pasta public/models
+- [x] Validação de modelos carregados
+
+### Configuração TOTVS
+- [x] Adicionar variáveis ao .env.example
+- [x] Documentação de configuração TOTVS
+- [ ] Testes de conexão TOTVS
+
+### Exportação de Relatórios PDF
+- [x] Instalação de biblioteca jsPDF
+- [x] Exportar dashboard em PDF
+- [x] Exportar matriz 9-Box em PDF
+- [x] Exportar relatório de metas em PDF
+- [x] Exportar relatório de avaliações em PDF
+
+### Funcionalidades Adicionais
+- [ ] Página de configurações do sistema
+- [ ] Página de perfil do usuário
+- [ ] Notificações em tempo real
+- [ ] Busca global no sistema
+- [ ] Modo escuro/claro
