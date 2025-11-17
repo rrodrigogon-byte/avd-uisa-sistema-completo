@@ -602,3 +602,15 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Criar meta de teste
 - [x] Criar PDI de teste
 - [x] Validar sistema completo funcionando
+
+
+---
+
+## 🎯 Cadastro de Competências Organizacionais (Sessão Atual)
+
+- [x] Criar competências comportamentais da UISA
+- [x] Criar competências técnicas por área
+- [x] Definir níveis de proficiência (1-5) para cada competência
+- [x] Vincular competências aos cargos
+- [x] Testar avaliação 360° com competências
+- [x] Sistema pronto para PDI Inteligente com análise de gaps
