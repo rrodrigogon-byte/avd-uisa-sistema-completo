@@ -1,101 +1,127 @@
-import DashboardLayout from "@/components/DashboardLayout";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { trpc } from "@/lib/trpc";
-import { Grid3x3, TrendingUp, Users } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayout";
+import { trpc } from "@/lib/trpc";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { Loader2, Users, TrendingUp, Star, AlertCircle, Target, Zap, Clock, Award, Grid3x3 } from "lucide-react";
+
+/**
+ * Página de Matriz 9-Box
+ * Visualização gráfica com calibração e ajustes manuais
+ */
+
+type Employee9Box = {
+  id: number;
+  name: string;
+  position: string;
+  department: string;
+  performance: number;
+  potential: number;
+  category: string;
+  lastCalibration?: string;
+};
+
+const QUADRANT_LABELS = {
+  "3-3": { label: "Estrelas", icon: Star, color: "bg-green-500", desc: "Alto desempenho e alto potencial" },
+  "3-2": { label: "Talentos", icon: TrendingUp, color: "bg-green-400", desc: "Alto desempenho, potencial médio" },
+  "3-1": { label: "Especialistas", icon: Target, color: "bg-yellow-400", desc: "Alto desempenho, baixo potencial" },
+  "2-3": { label: "Promessas", icon: Zap, color: "bg-blue-400", desc: "Desempenho médio, alto potencial" },
+  "2-2": { label: "Sólidos", icon: Users, color: "bg-gray-400", desc: "Desempenho e potencial médios" },
+  "2-1": { label: "Eficazes", icon: Clock, color: "bg-gray-300", desc: "Desempenho médio, baixo potencial" },
+  "1-3": { label: "Enigmas", icon: AlertCircle, color: "bg-orange-400", desc: "Baixo desempenho, alto potencial" },
+  "1-2": { label: "Dilemmas", icon: AlertCircle, color: "bg-orange-300", desc: "Baixo desempenho, potencial médio" },
+  "1-1": { label: "Críticos", icon: AlertCircle, color: "bg-red-500", desc: "Baixo desempenho e baixo potencial" },
+};
 
 export default function NineBox() {
-  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
-  const { data: nineBoxData } = trpc.nineBox.getByCycle.useQuery({ cycleId: 1 });
-  const { data: employeesData } = trpc.employees.list.useQuery();
-  
-  // Extract unique departments from employees
-  const departments = employeesData?.reduce((acc: any[], emp) => {
-    if (emp.department && !acc.find(d => d.id === emp.department!.id)) {
-      acc.push(emp.department);
-    }
-    return acc;
-  }, []) || [];
+  const { user } = useAuth();
+  const [selectedCycle, setSelectedCycle] = useState<number | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee9Box | null>(null);
+  const [adjustmentReason, setAdjustmentReason] = useState("");
+  const [newPerformance, setNewPerformance] = useState(2);
+  const [newPotential, setNewPotential] = useState(2);
+  const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
 
-  const getBoxColor = (performance: number, potential: number) => {
-    // Alto desempenho + Alto potencial
-    if (performance >= 7 && potential >= 7) return "bg-green-100 dark:bg-green-950 border-green-500";
-    // Alto desempenho + Médio potencial
-    if (performance >= 7 && potential >= 4) return "bg-blue-100 dark:bg-blue-950 border-blue-500";
-    // Alto desempenho + Baixo potencial
-    if (performance >= 7) return "bg-yellow-100 dark:bg-yellow-950 border-yellow-500";
-    // Médio desempenho + Alto potencial
-    if (performance >= 4 && potential >= 7) return "bg-purple-100 dark:bg-purple-950 border-purple-500";
-    // Médio desempenho + Médio potencial
-    if (performance >= 4 && potential >= 4) return "bg-gray-100 dark:bg-gray-800 border-gray-400";
-    // Baixo desempenho
-    return "bg-red-100 dark:bg-red-950 border-red-500";
+  // Buscar ciclos de avaliação (mock - TODO: criar endpoint)
+  const cycles = [{ id: 1, name: 'Ciclo 2025', year: 2025 }];
+  const loadingCycles = false;
+
+  // Buscar posições da matriz 9-box
+  const { data: positions, isLoading: loadingPositions, refetch } = trpc.nineBox.list.useQuery(
+    { cycleId: selectedCycle! },
+    { enabled: !!selectedCycle }
+  );
+
+  // Mutation para ajustar posição
+  const adjustMutation = trpc.nineBox.adjust.useMutation({
+    onSuccess: () => {
+      toast.success("Posição ajustada com sucesso!");
+      refetch();
+      setIsAdjustDialogOpen(false);
+      setSelectedEmployee(null);
+      setAdjustmentReason("");
+    },
+    onError: (error) => {
+      toast.error(`Erro ao ajustar posição: ${error.message}`);
+    },
+  });
+
+  const handleEmployeeClick = (emp: Employee9Box) => {
+    setSelectedEmployee(emp);
+    setNewPerformance(emp.performance);
+    setNewPotential(emp.potential);
+    setIsAdjustDialogOpen(true);
   };
 
-  const getBoxLabel = (row: number, col: number) => {
-    const labels = [
-      ["Talento Chave", "Alto Potencial", "Estrela"],
-      ["Profissional Sólido", "Talento Emergente", "Alto Desempenho"],
-      ["Risco", "Inconsistente", "Eficaz"],
-    ];
-    return labels[2 - row][col];
-  };
+  const handleAdjust = () => {
+    if (!selectedEmployee || !selectedCycle) return;
 
-  const getBoxDescription = (row: number, col: number) => {
-    const descriptions = [
-      [
-        "Alto desempenho, alto potencial - Sucessores imediatos",
-        "Médio desempenho, alto potencial - Desenvolver urgentemente",
-        "Baixo desempenho, alto potencial - Precisa de suporte",
-      ],
-      [
-        "Alto desempenho, médio potencial - Especialistas valiosos",
-        "Médio desempenho, médio potencial - Maioria da equipe",
-        "Baixo desempenho, médio potencial - Melhorar desempenho",
-      ],
-      [
-        "Alto desempenho, baixo potencial - Manter na função",
-        "Médio desempenho, baixo potencial - Atenção necessária",
-        "Baixo desempenho, baixo potencial - Ação imediata",
-      ],
-    ];
-    return descriptions[2 - row][col];
-  };
-
-  const getEmployeesInBox = (row: number, col: number) => {
-    if (!nineBoxData) return [];
-    
-    const minPerformance = col * 3.33;
-    const maxPerformance = (col + 1) * 3.33;
-    const minPotential = row * 3.33;
-    const maxPotential = (row + 1) * 3.33;
-
-    return nineBoxData.filter((emp: any) => {
-      if (selectedDepartment !== "all" && emp.departmentId !== Number(selectedDepartment)) {
-        return false;
-      }
-      return (
-        emp.performanceScore >= minPerformance &&
-        emp.performanceScore < maxPerformance &&
-        emp.potentialScore >= minPotential &&
-        emp.potentialScore < maxPotential
-      );
+    adjustMutation.mutate({
+      cycleId: selectedCycle,
+      employeeId: selectedEmployee.id,
+      performance: newPerformance,
+      potential: newPotential,
+      reason: adjustmentReason,
     });
   };
 
-  const getTotalEmployees = () => {
-    if (!nineBoxData) return 0;
-    if (selectedDepartment === "all") return nineBoxData.length;
-    return nineBoxData.filter((emp: any) => emp.departmentId === Number(selectedDepartment)).length;
-  };
+  // Agrupar colaboradores por quadrante
+  const groupedEmployees: Record<string, Employee9Box[]> = {};
+  positions?.forEach((pos) => {
+    const key = `${pos.performance}-${pos.potential}`;
+    if (!groupedEmployees[key]) groupedEmployees[key] = [];
+    groupedEmployees[key].push({
+      id: pos.employeeId,
+      name: pos.employeeName || "Sem nome",
+      position: pos.positionName || "Sem cargo",
+      department: pos.departmentName || "Sem departamento",
+      performance: pos.performance,
+      potential: pos.potential,
+      category: QUADRANT_LABELS[key as keyof typeof QUADRANT_LABELS]?.label || "Indefinido",
+      lastCalibration: pos.calibratedAt?.toLocaleDateString("pt-BR"),
+    });
+  });
+
+  if (loadingCycles) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
@@ -103,220 +129,290 @@ export default function NineBox() {
               Matriz 9-Box
             </h1>
             <p className="text-muted-foreground mt-2">
-              Visualize e gerencie talentos por desempenho e potencial
+              Visualização gráfica de desempenho × potencial
             </p>
           </div>
-          <div className="flex gap-2">
-            <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filtrar por departamento" />
+        </div>
+
+        {/* Seleção de Ciclo */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Selecionar Ciclo de Avaliação</CardTitle>
+            <CardDescription>Escolha o ciclo para visualizar a matriz</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select
+              value={selectedCycle?.toString()}
+              onValueChange={(value) => setSelectedCycle(parseInt(value))}
+            >
+              <SelectTrigger className="w-full max-w-md">
+                <SelectValue placeholder="Selecione um ciclo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os departamentos</SelectItem>
-                {departments?.map((dept: any) => (
-                  <SelectItem key={dept.id} value={dept.id.toString()}>
-                    {dept.name}
+                {cycles?.map((cycle: any) => (
+                  <SelectItem key={cycle.id} value={cycle.id.toString()}>
+                    {cycle.name} ({cycle.year})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Button variant="outline">
-              Exportar Relatório
-            </Button>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
+        {/* Matriz 9-Box */}
+        {selectedCycle && (
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total de Colaboradores
-              </CardTitle>
+            <CardHeader>
+              <CardTitle>Matriz 9-Box - Desempenho × Potencial</CardTitle>
+              <CardDescription>
+                Clique em um colaborador para ajustar sua posição (apenas RH e Diretoria)
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{getTotalEmployees()}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Estrelas (Alto/Alto)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {getEmployeesInBox(2, 2).length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Alto Potencial
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">
-                {getEmployeesInBox(2, 0).length + getEmployeesInBox(2, 1).length + getEmployeesInBox(2, 2).length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Necessitam Atenção
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {getEmployeesInBox(0, 0).length + getEmployeesInBox(0, 1).length + getEmployeesInBox(1, 0).length}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* 9-Box Matrix */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Matriz de Talentos</CardTitle>
-            <CardDescription>
-              Clique em cada quadrante para ver os colaboradores posicionados
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {/* Axis Labels */}
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-sm font-medium text-muted-foreground">
-                  ← Desempenho →
+              {loadingPositions ? (
+                <div className="flex items-center justify-center h-96">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
-                <div className="text-sm font-medium text-muted-foreground rotate-[-90deg] absolute left-4">
-                  ← Potencial →
-                </div>
-              </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Legenda */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-semibold">Eixo Y:</span> Potencial (1=Baixo, 2=Médio, 3=Alto)
+                    <span className="mx-4">|</span>
+                    <span className="font-semibold">Eixo X:</span> Desempenho (1=Baixo, 2=Médio, 3=Alto)
+                  </div>
 
-              {/* Grid */}
-              <div className="grid grid-cols-3 gap-3 relative pl-12">
-                {[2, 1, 0].map((row) => (
-                  <div key={row} className="contents">
-                    {[0, 1, 2].map((col) => {
-                      const employees = getEmployeesInBox(row, col);
-                      const boxColor = getBoxColor(
-                        (col + 0.5) * 3.33,
-                        (row + 0.5) * 3.33
-                      );
+                  {/* Grid 3x3 */}
+                  <div className="grid grid-cols-3 gap-2 border rounded-lg p-4 bg-muted/20">
+                    {/* Linha 3 (Alto Potencial) */}
+                    {[3, 2, 1].map((perf) => {
+                      const key = `${perf}-3`;
+                      const quadrant = QUADRANT_LABELS[key as keyof typeof QUADRANT_LABELS];
+                      const employees = groupedEmployees[key] || [];
+                      const Icon = quadrant?.icon || Users;
 
                       return (
-                        <Card
-                          key={`${row}-${col}`}
-                          className={`min-h-[180px] border-2 ${boxColor} hover:shadow-lg transition-shadow cursor-pointer`}
+                        <div
+                          key={key}
+                          className={`${quadrant?.color} bg-opacity-10 border-2 border-opacity-30 rounded-lg p-4 min-h-[180px] hover:bg-opacity-20 transition-all`}
                         >
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-semibold">
-                              {getBoxLabel(row, col)}
-                            </CardTitle>
-                            <CardDescription className="text-xs">
-                              {getBoxDescription(row, col)}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs text-muted-foreground">
-                                  {employees.length} colaborador(es)
-                                </span>
-                                {employees.length > 0 && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    {Math.round((employees.length / getTotalEmployees()) * 100)}%
-                                  </Badge>
-                                )}
-                              </div>
-                              {employees.length > 0 && (
-                                <div className="space-y-1">
-                                  {employees.slice(0, 3).map((emp: any) => (
-                                    <div
-                                      key={emp.id}
-                                      className="text-xs p-1 bg-background/50 rounded flex items-center gap-1"
-                                    >
-                                      <Users className="h-3 w-3" />
-                                      <span className="truncate">{emp.name}</span>
-                                    </div>
-                                  ))}
-                                  {employees.length > 3 && (
-                                    <div className="text-xs text-muted-foreground text-center">
-                                      +{employees.length - 3} mais
-                                    </div>
-                                  )}
-                                </div>
-                              )}
+                          <div className="flex items-center gap-2 mb-3">
+                            <Icon className="w-5 h-5" />
+                            <div>
+                              <h3 className="font-bold text-sm">{quadrant?.label}</h3>
+                              <p className="text-xs text-muted-foreground">{quadrant?.desc}</p>
                             </div>
-                          </CardContent>
-                        </Card>
+                          </div>
+                          <div className="space-y-2">
+                            {employees.map((emp) => (
+                              <button
+                                key={emp.id}
+                                onClick={() => handleEmployeeClick(emp)}
+                                className="w-full text-left p-2 bg-background rounded border hover:border-primary hover:shadow-sm transition-all text-xs"
+                              >
+                                <div className="font-semibold truncate">{emp.name}</div>
+                                <div className="text-muted-foreground truncate">{emp.position}</div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Linha 2 (Médio Potencial) */}
+                    {[3, 2, 1].map((perf) => {
+                      const key = `${perf}-2`;
+                      const quadrant = QUADRANT_LABELS[key as keyof typeof QUADRANT_LABELS];
+                      const employees = groupedEmployees[key] || [];
+                      const Icon = quadrant?.icon || Users;
+
+                      return (
+                        <div
+                          key={key}
+                          className={`${quadrant?.color} bg-opacity-10 border-2 border-opacity-30 rounded-lg p-4 min-h-[180px] hover:bg-opacity-20 transition-all`}
+                        >
+                          <div className="flex items-center gap-2 mb-3">
+                            <Icon className="w-5 h-5" />
+                            <div>
+                              <h3 className="font-bold text-sm">{quadrant?.label}</h3>
+                              <p className="text-xs text-muted-foreground">{quadrant?.desc}</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            {employees.map((emp) => (
+                              <button
+                                key={emp.id}
+                                onClick={() => handleEmployeeClick(emp)}
+                                className="w-full text-left p-2 bg-background rounded border hover:border-primary hover:shadow-sm transition-all text-xs"
+                              >
+                                <div className="font-semibold truncate">{emp.name}</div>
+                                <div className="text-muted-foreground truncate">{emp.position}</div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Linha 1 (Baixo Potencial) */}
+                    {[3, 2, 1].map((perf) => {
+                      const key = `${perf}-1`;
+                      const quadrant = QUADRANT_LABELS[key as keyof typeof QUADRANT_LABELS];
+                      const employees = groupedEmployees[key] || [];
+                      const Icon = quadrant?.icon || Users;
+
+                      return (
+                        <div
+                          key={key}
+                          className={`${quadrant?.color} bg-opacity-10 border-2 border-opacity-30 rounded-lg p-4 min-h-[180px] hover:bg-opacity-20 transition-all`}
+                        >
+                          <div className="flex items-center gap-2 mb-3">
+                            <Icon className="w-5 h-5" />
+                            <div>
+                              <h3 className="font-bold text-sm">{quadrant?.label}</h3>
+                              <p className="text-xs text-muted-foreground">{quadrant?.desc}</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            {employees.map((emp) => (
+                              <button
+                                key={emp.id}
+                                onClick={() => handleEmployeeClick(emp)}
+                                className="w-full text-left p-2 bg-background rounded border hover:border-primary hover:shadow-sm transition-all text-xs"
+                              >
+                                <div className="font-semibold truncate">{emp.name}</div>
+                                <div className="text-muted-foreground truncate">{emp.position}</div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
-                ))}
+
+                  {/* Estatísticas */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center gap-2">
+                          <Star className="w-5 h-5 text-green-500" />
+                          <div>
+                            <p className="text-2xl font-bold">{groupedEmployees["3-3"]?.length || 0}</p>
+                            <p className="text-xs text-muted-foreground">Estrelas</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-5 h-5 text-blue-500" />
+                          <div>
+                            <p className="text-2xl font-bold">{groupedEmployees["2-3"]?.length || 0}</p>
+                            <p className="text-xs text-muted-foreground">Promessas</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center gap-2">
+                          <AlertCircle className="w-5 h-5 text-orange-500" />
+                          <div>
+                            <p className="text-2xl font-bold">{groupedEmployees["1-3"]?.length || 0}</p>
+                            <p className="text-xs text-muted-foreground">Enigmas</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="text-2xl font-bold">{positions?.length || 0}</p>
+                            <p className="text-xs text-muted-foreground">Total</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Dialog de Ajuste */}
+        <Dialog open={isAdjustDialogOpen} onOpenChange={setIsAdjustDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Ajustar Posição na Matriz 9-Box</DialogTitle>
+              <DialogDescription>
+                Colaborador: {selectedEmployee?.name}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div>
+                <Label>Desempenho</Label>
+                <Select
+                  value={newPerformance.toString()}
+                  onValueChange={(value) => setNewPerformance(parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 - Baixo</SelectItem>
+                    <SelectItem value="2">2 - Médio</SelectItem>
+                    <SelectItem value="3">3 - Alto</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              {/* Legend */}
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t">
-                <div className="text-center">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    Baixo (0-3.3)
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Desempenho / Potencial
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    Médio (3.3-6.6)
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Desempenho / Potencial
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    Alto (6.6-10)
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Desempenho / Potencial
-                  </div>
-                </div>
+              <div>
+                <Label>Potencial</Label>
+                <Select
+                  value={newPotential.toString()}
+                  onValueChange={(value) => setNewPotential(parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 - Baixo</SelectItem>
+                    <SelectItem value="2">2 - Médio</SelectItem>
+                    <SelectItem value="3">3 - Alto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label>Justificativa do Ajuste</Label>
+                <Textarea
+                  value={adjustmentReason}
+                  onChange={(e) => setAdjustmentReason(e.target.value)}
+                  placeholder="Explique o motivo do ajuste..."
+                  rows={4}
+                />
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Info Card */}
-        <Card className="bg-muted/50">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Como usar a Matriz 9-Box
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground space-y-2">
-            <p>
-              A Matriz 9-Box é uma ferramenta estratégica de gestão de talentos que avalia colaboradores em duas dimensões:
-            </p>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong>Desempenho (eixo horizontal):</strong> Resultados atuais e entregas do colaborador</li>
-              <li><strong>Potencial (eixo vertical):</strong> Capacidade de crescimento e assumir responsabilidades maiores</li>
-            </ul>
-            <p className="pt-2">
-              <strong>Ações recomendadas por quadrante:</strong>
-            </p>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong>Estrelas (alto/alto):</strong> Preparar para sucessão, desafios estratégicos</li>
-              <li><strong>Alto Potencial:</strong> Investir em desenvolvimento acelerado</li>
-              <li><strong>Profissionais Sólidos:</strong> Reconhecer expertise, manter engajamento</li>
-              <li><strong>Risco (baixo/baixo):</strong> Plano de melhoria ou desligamento</li>
-            </ul>
-          </CardContent>
-        </Card>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAdjustDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleAdjust}
+                disabled={!adjustmentReason.trim() || adjustMutation.isPending}
+              >
+                {adjustMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                Salvar Ajuste
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

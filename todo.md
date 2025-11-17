@@ -735,3 +735,16 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Criar cron job de avaliações pendentes (segundas às 9h)
 - [x] Criar cron job de ações de PDI vencidas (diário às 10h)
 - [x] Configurar agendamento automático com node-cron
+
+
+---
+
+## 📊 Visualização Gráfica da Matriz 9-Box
+- [x] Criar página NineBox.tsx com grid 3x3 interativo
+- [x] Implementar posicionamento de colaboradores no grid
+- [x] Adicionar cores diferenciadas por quadrante (9 categorias)
+- [x] Implementar tooltips com informações detalhadas
+- [x] Criar interface de ajustes manuais para RH/Diretoria
+- [x] Adicionar registro de motivos de ajuste
+- [x] Implementar endpoints backend (list, adjust)
+- [x] Adicionar estatísticas por quadrante

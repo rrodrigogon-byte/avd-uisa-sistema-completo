@@ -490,6 +490,66 @@ export const appRouter = router({
         return await db.getNineBoxByCycle(input.cycleId);
       }),
 
+    // Listar posições da matriz 9-box
+    list: protectedProcedure
+      .input(z.object({ cycleId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const positions = await database.select()
+          .from(nineBoxPositions)
+          .innerJoin(employees, eq(nineBoxPositions.employeeId, employees.id))
+          .where(eq(nineBoxPositions.cycleId, input.cycleId));
+
+        return positions.map(p => ({
+          employeeId: p.nineBoxPositions.employeeId,
+          employeeName: p.employees.name,
+          positionName: 'Cargo', // TODO: Join com positions table
+          departmentName: 'Departamento', // TODO: Join com departments table
+          performance: p.nineBoxPositions.performance,
+          potential: p.nineBoxPositions.potential,
+          calibratedAt: p.nineBoxPositions.calibratedAt,
+        }));
+      }),
+
+    // Ajustar posição (calibração/RH)
+    adjust: protectedProcedure
+      .input(z.object({
+        cycleId: z.number(),
+        employeeId: z.number(),
+        performance: z.number().min(1).max(3),
+        potential: z.number().min(1).max(3),
+        reason: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const employee = await getUserByOpenId(ctx.user.openId);
+        if (!employee) throw new Error("Employee not found");
+
+        const box = `${input.performance}_${input.potential}`;
+
+        await database.update(nineBoxPositions)
+          .set({
+            performance: input.performance,
+            potential: input.potential,
+            box,
+            calibratedBy: employee.id,
+            calibratedAt: new Date(),
+            notes: input.reason,
+          })
+          .where(
+            and(
+              eq(nineBoxPositions.cycleId, input.cycleId),
+              eq(nineBoxPositions.employeeId, input.employeeId)
+            )
+          );
+
+        return { success: true };
+      }),
+
     updatePosition: protectedProcedure
       .input(z.object({
         id: z.number(),
