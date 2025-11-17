@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/mysql2";
+import { eq } from "drizzle-orm";
 import * as schema from "../drizzle/schema";
-import * as XLSX from "xlsx";
+import XLSX from "xlsx";
 import * as path from "path";
 import { fileURLToPath } from "url";
 
@@ -15,7 +16,7 @@ async function importFromExcel() {
 
   try {
     // Ler arquivo de seções
-    const sectionsPath = "/home/ubuntu/upload/relaçãodeseções.XLSX";
+    const sectionsPath = "/home/ubuntu/upload/secoes.xlsx";
     console.log(`📁 Lendo arquivo: ${sectionsPath}`);
     const sectionsWorkbook = XLSX.readFile(sectionsPath);
     const sectionsSheet = sectionsWorkbook.Sheets[sectionsWorkbook.SheetNames[0]];
@@ -24,7 +25,7 @@ async function importFromExcel() {
     console.log(`   ✅ ${sectionsData.length} seções encontradas\n`);
 
     // Ler arquivo de funcionários
-    const employeesPath = "/home/ubuntu/upload/relaçãofuncionários.xlsx";
+    const employeesPath = "/home/ubuntu/upload/funcionarios.xlsx";
     console.log(`📁 Lendo arquivo: ${employeesPath}`);
     const employeesWorkbook = XLSX.readFile(employeesPath);
     const employeesSheet = employeesWorkbook.Sheets[employeesWorkbook.SheetNames[0]];
@@ -53,7 +54,7 @@ async function importFromExcel() {
         
         // Buscar ID do departamento criado
         const [dept] = await db.select().from(schema.departments).where(
-          schema.eq(schema.departments.code, String(code).trim())
+          eq(schema.departments.code, String(code).trim())
         ).limit(1);
         
         if (dept) {
@@ -74,9 +75,11 @@ async function importFromExcel() {
     for (const row of employeesData as any[]) {
       const position = row['Cargo'] || row['CARGO'] || row['cargo'];
       if (position && !uniquePositions.has(String(position).trim())) {
-        uniquePositions.set(String(position).trim(), {
-          title: String(position).trim(),
-          level: "operacional",
+        const posTitle = String(position).trim();
+        uniquePositions.set(posTitle, {
+          code: posTitle.substring(0, 50).replace(/[^a-zA-Z0-9]/g, '_').toUpperCase(),
+          title: posTitle,
+          level: "junior",
           description: null,
         });
       }
@@ -88,12 +91,12 @@ async function importFromExcel() {
     for (const [title, posData] of uniquePositions) {
       try {
         await db.insert(schema.positions).values(posData).onDuplicateKeyUpdate({
-          set: { title: posData.title },
+          set: { title: posData.title, code: posData.code },
         });
         
         // Buscar ID do cargo criado
         const [pos] = await db.select().from(schema.positions).where(
-          schema.eq(schema.positions.title, title)
+          eq(schema.positions.title, title)
         ).limit(1);
         
         if (pos) {
@@ -130,19 +133,18 @@ async function importFromExcel() {
         const positionId = position ? positionMap.get(String(position).trim()) : null;
 
         await db.insert(schema.employees).values({
-          chapa: String(chapa).trim(),
+          employeeCode: String(chapa).trim(),
           name: String(name).trim(),
-          email: emailCorp ? String(emailCorp).trim() : null,
-          personalEmail: emailPers ? String(emailPers).trim() : null,
+          email: emailCorp ? String(emailCorp).trim() : "sem-email@uisa.com.br",
+          hireDate: new Date(),
+          departmentId: departmentId || 1,
+          positionId: positionId || 1,
           phone: phone ? String(phone).trim() : null,
-          departmentId: departmentId || null,
-          positionId: positionId || null,
-          admissionDate: null,
           status: "ativo",
         }).onDuplicateKeyUpdate({
           set: {
             name: String(name).trim(),
-            email: emailCorp ? String(emailCorp).trim() : null,
+            email: emailCorp ? String(emailCorp).trim() : "sem-email@uisa.com.br",
           },
         });
 
