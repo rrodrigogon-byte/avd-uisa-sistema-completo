@@ -438,3 +438,40 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Notificações em tempo real
 - [ ] Busca global no sistema
 - [ ] Modo escuro/claro
+
+
+---
+
+## 🎯 Fase 6 - Funcionalidades Finais e Importação de Dados
+
+### Página de Configurações
+- [ ] Painel administrativo
+- [ ] Gerenciamento de ciclos de avaliação
+- [ ] Gerenciamento de competências
+- [ ] Gerenciamento de cargos
+- [ ] Gerenciamento de departamentos
+- [ ] Configurações de e-mail
+- [ ] Configurações de integração TOTVS
+
+### Página de Perfil do Usuário
+- [ ] Edição de dados pessoais
+- [ ] Upload de foto de perfil
+- [ ] Preferências de notificação
+- [ ] Gerenciamento de reconhecimento facial
+- [ ] Histórico de atividades
+- [ ] Alteração de senha
+
+### Notificações em Tempo Real
+- [ ] Implementação de WebSockets
+- [ ] Sistema de notificações no header
+- [ ] Badge de contagem de notificações
+- [ ] Marcação de lidas/não lidas
+- [ ] Histórico de notificações
+
+### Importação de Dados
+- [x] Processar arquivo de seções (Excel) - 206 seções
+- [x] Processar arquivo de funcionários (Excel) - 2.889 funcionários
+- [ ] Processar mapa sucessório (PowerPoint)
+- [x] Script de importação automática (import-to-db.ts)
+- [x] Validação de dados importados
+- [x] Relatório de importação
