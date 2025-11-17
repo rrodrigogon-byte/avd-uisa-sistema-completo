@@ -443,10 +443,18 @@ export const appRouter = router({
       .query(async ({ input, ctx }) => {
         const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Colaborador não encontrado",
-          });
+          // Retornar dados vazios se colaborador não existir
+          return {
+            activeGoals: 0,
+            completedGoals: 0,
+            pendingEvaluations: 0,
+            activePDIs: 0,
+            recentActivities: [],
+            cycle: null,
+            goalsCount: 0,
+            pdisCount: 0,
+            evaluationsCount: 0,
+          };
         }
         return await db.getDashboardStats(employeeId, input.cycleId);
       }),

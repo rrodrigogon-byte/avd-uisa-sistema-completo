@@ -562,3 +562,13 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Testes de geração de PDI
 - [ ] Testes de integração de APIs
 - [ ] Testes de notificações
+
+
+---
+
+## 🐛 Correção de Bugs
+
+### Erro "Colaborador não encontrado"
+- [x] Adicionar tratamento para quando colaborador não existe
+- [x] Permitir sistema funcionar sem dados de colaborador
+- [x] Retornar dados vazios no dashboard quando não houver colaborador
