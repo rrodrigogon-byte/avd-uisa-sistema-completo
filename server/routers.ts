@@ -75,10 +75,7 @@ export const appRouter = router({
       .query(async ({ input, ctx }) => {
         const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Colaborador não encontrado",
-          });
+          return [];
         }
         return await db.getGoalsByEmployee(employeeId, input.cycleId);
       }),
@@ -201,10 +198,7 @@ export const appRouter = router({
       .query(async ({ input, ctx }) => {
         const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Colaborador não encontrado",
-          });
+          return [];
         }
         return await db.getEvaluationsByEmployee(employeeId, input.cycleId);
       }),
@@ -270,10 +264,7 @@ export const appRouter = router({
       .query(async ({ input, ctx }) => {
         const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Colaborador não encontrado",
-          });
+          return [];
         }
         return await db.getPDIsByEmployee(employeeId, input.cycleId);
       }),
