@@ -32,7 +32,7 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Aprovação de metas pelo gestor
 - [x] Acompanhamento de progresso
 - [ ] Alertas de prazo
-- [ ] Dashboard de metas
+- [x] Dashboard de metas
 
 ### 4. Avaliação 360°
 - [x] Criação de ciclos de avaliação
@@ -85,7 +85,7 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Integração TOTVS RM (folha de pagamento)
 - [ ] Integração Azure AD (autenticação)
 - [ ] Integração Gemini AI (PDI inteligente)
-- [x] API REST completa
+- [x] API REST completa (tRPC)
 - [ ] Webhooks para eventos
 
 ### 10. Relatórios e Dashboards
@@ -160,7 +160,7 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Gráfico spider (competências)
 - [ ] Matriz 9-Box interativa
 - [ ] Formulário de avaliação
-- [ ] Card de meta
+- [x] Card de meta
 - [ ] Timeline de PDI
 - [ ] Captura de foto facial
 - [ ] Upload de arquivos
@@ -170,56 +170,58 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 ## 🔧 Backend (APIs)
 
 ### Rotas de Autenticação
-- [x] POST /api/auth/login
+- [x] GET /api/auth/me
+- [x] POST /api/auth/logout
 - [ ] POST /api/auth/login-facial
 - [ ] POST /api/auth/register
-- [x] POST /api/auth/logout
 - [ ] POST /api/auth/reset-password
-- [x] GET /api/auth/me
 
 ### Rotas de Colaboradores
-- [x] GET /api/employees
-- [x] GET /api/employees/:id
+- [x] GET /api/trpc/employees.list
+- [x] GET /api/trpc/employees.getById
+- [x] GET /api/trpc/employees.getCurrent
 - [ ] POST /api/employees
 - [ ] PUT /api/employees/:id
 - [ ] DELETE /api/employees/:id
 - [ ] POST /api/employees/:id/photo
 
 ### Rotas de Metas
-- [x] GET /api/goals
-- [x] GET /api/goals/:id
-- [ ] POST /api/goals
-- [ ] PUT /api/goals/:id
+- [x] GET /api/trpc/goals.list
+- [x] GET /api/trpc/goals.getById
+- [x] POST /api/trpc/goals.create
+- [x] PUT /api/trpc/goals.updateProgress
 - [ ] DELETE /api/goals/:id
 - [ ] PUT /api/goals/:id/approve
 
 ### Rotas de Avaliações 360°
-- [x] GET /api/evaluations
-- [x] GET /api/evaluations/:id
-- [ ] POST /api/evaluations
+- [x] GET /api/trpc/evaluations.list
+- [x] GET /api/trpc/evaluations.getById
+- [x] POST /api/trpc/evaluations.create
 - [ ] POST /api/evaluations/:id/responses
 - [ ] GET /api/evaluations/:id/report
 
 ### Rotas de PDI
-- [x] GET /api/pdi
-- [x] GET /api/pdi/:id
-- [ ] POST /api/pdi
+- [x] GET /api/trpc/pdi.list
+- [x] GET /api/trpc/pdi.getById
+- [x] GET /api/trpc/pdi.getItems
+- [x] POST /api/trpc/pdi.create
+- [x] POST /api/trpc/pdi.addItem
+- [x] GET /api/trpc/pdi.getDevelopmentActions
 - [ ] PUT /api/pdi/:id
-- [ ] POST /api/pdi/:id/items
 - [ ] PUT /api/pdi/items/:id/progress
 - [ ] GET /api/pdi/:id/recommendations (IA)
 
 ### Rotas de 9-Box
-- [x] GET /api/nine-box
-- [ ] PUT /api/nine-box/:id/position
+- [x] GET /api/trpc/nineBox.getByCycle
+- [x] PUT /api/trpc/nineBox.updatePosition
 - [ ] POST /api/nine-box/calibrate
 
 ### Rotas de Relatórios
+- [x] GET /api/trpc/dashboard.getStats
 - [ ] GET /api/reports/goals
 - [ ] GET /api/reports/evaluations
 - [ ] GET /api/reports/pdi
 - [ ] GET /api/reports/nine-box
-- [x] GET /api/reports/dashboard
 
 ---
 
@@ -238,7 +240,7 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] README.md
 - [x] Guia de instalação
 - [ ] Guia de uso
-- [x] Documentação de APIs
+- [x] Documentação de APIs (tRPC)
 - [x] Diagramas de arquitetura
 - [ ] Manual do usuário
 
@@ -255,6 +257,29 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 
 ---
 
-**Status:** 🟡 Core Funcional - Pronto para Validação  
+## ✅ Concluído Nesta Sessão
+
+### Backend
+- [x] Schema completo do banco de dados (24 tabelas)
+- [x] Helpers de banco de dados (db.ts)
+- [x] Routers tRPC completos (employees, goals, evaluations, PDI, 9-box, dashboard)
+- [x] Sistema de auditoria
+- [x] Script de seeds com dados de exemplo
+
+### Frontend
+- [x] Dashboard funcional com estatísticas
+- [x] Layout com sidebar responsivo
+- [x] Navegação completa
+- [x] Cards de metas e PDI
+- [x] Ações rápidas
+
+### Infraestrutura
+- [x] Banco de dados populado
+- [x] APIs funcionando
+- [x] Sistema rodando localmente
+
+---
+
+**Status:** 🟢 Core Funcional - Testável  
 **Última atualização:** 17/11/2025  
-**Progresso:** ~40% (módulos core implementados)
+**Progresso:** ~50% (módulos core implementados e testáveis)
