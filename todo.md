@@ -657,3 +657,47 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Implementar visualização de PDIs anteriores
 - [x] Implementar visualização de evolução de competências
 - [x] Adicionar rota no menu lateral
+
+
+---
+
+## 🚀 Funcionalidades Pendentes do Escopo Original
+
+### Visualizações Gráficas
+- [x] Implementar visualização gráfica da Matriz 9-Box (grid 3x3 interativo)
+- [x] Implementar gráfico spider de competências no PDI
+- [x] Implementar visualização gráfica do pipeline de sucessão (organograma)
+- [ ] Adicionar gráficos de evolução temporal no Histórico
+
+### IA Gemini - PDI Inteligente
+- [x] Integrar Gemini AI para análise de gaps de competências
+- [x] Implementar recomendações automáticas de ações de desenvolvimento
+- [x] Criar prompt engineering para sugestões personalizadas 70-20-10
+- [ ] Adicionar botão "Gerar PDI com IA" na interface
+
+### Sistema de Notificações por E-mail
+- [x] Implementar e-mail de boas-vindas
+- [x] Implementar e-mail de reset de senha
+- [x] Implementar notificação de meta criada/aprovada
+- [x] Implementar notificação de avaliação pendente
+- [x] Implementar notificação de PDI criado/aprovado
+- [x] Implementar notificação de ação de PDI vencida
+- [ ] Criar cron jobs para lembretes automáticos
+- [x] Criar templates HTML responsivos para e-mails
+
+### Aprovações e Calibração
+- [x] Implementar fluxo de aprovação de PDI pelo gestor
+- [x] Implementar calibração da Matriz 9-Box por diretoria
+- [x] Implementar ajustes manuais de 9-Box pelo RH
+- [x] Sistema de alertas de ações de PDI vencidas (via e-mail)
+
+### Relatórios
+- [ ] Implementar relatório consolidado de feedback 360°
+- [ ] Implementar exportação de relatórios em PDF
+- [ ] Implementar exportação da Matriz 9-Box
+- [ ] Implementar exportação de PDIs
+
+### Autenticação
+- [ ] Implementar recuperação de senha por e-mail
+- [ ] Adicionar página de reset de senha
+- [ ] Implementar validação de token de recuperação

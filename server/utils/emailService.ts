@@ -147,6 +147,147 @@ const templates = {
     `,
   }),
 
+  welcome: (data: { employeeName: string; loginUrl: string }) => ({
+    subject: "Bem-vindo ao Sistema AVD UISA!",
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .feature { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #667eea; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎉 Bem-vindo ao AVD UISA!</h1>
+            </div>
+            <div class="content">
+              <p>Olá, <strong>${data.employeeName}</strong>!</p>
+              <p>Seja bem-vindo ao <strong>Sistema AVD UISA</strong> - sua plataforma de Avaliação de Desempenho e Desenvolvimento Profissional.</p>
+              <h3>O que você pode fazer:</h3>
+              <div class="feature">
+                <strong>🎯 Metas:</strong> Acompanhe suas metas e objetivos
+              </div>
+              <div class="feature">
+                <strong>👥 Avaliação 360°:</strong> Participe de avaliações completas
+              </div>
+              <div class="feature">
+                <strong>📈 PDI:</strong> Desenvolva suas competências com IA
+              </div>
+              <div class="feature">
+                <strong>📊 Matriz 9-Box:</strong> Visualize seu posicionamento
+              </div>
+              <p style="margin-top: 20px;">Acesse o sistema agora e comece sua jornada de desenvolvimento!</p>
+              <div style="text-align: center;">
+                <a href="${data.loginUrl}" class="button">Acessar Sistema</a>
+              </div>
+            </div>
+            <div class="footer">
+              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
+              <p>Este é um e-mail automático, por favor não responda.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `,
+  }),
+
+  resetPassword: (data: { employeeName: string; resetLink: string; expiresIn: string }) => ({
+    subject: "Redefinição de senha - Sistema AVD UISA",
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .button { display: inline-block; padding: 12px 30px; background: #f5576c; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🔐 Redefinição de Senha</h1>
+            </div>
+            <div class="content">
+              <p>Olá, <strong>${data.employeeName}</strong>!</p>
+              <p>Recebemos uma solicitação para redefinir a senha da sua conta no Sistema AVD UISA.</p>
+              <div class="warning">
+                <strong>⚠️ Atenção:</strong> Este link expira em <strong>${data.expiresIn}</strong>.
+              </div>
+              <p>Clique no botão abaixo para criar uma nova senha:</p>
+              <div style="text-align: center;">
+                <a href="${data.resetLink}" class="button">Redefinir Senha</a>
+              </div>
+              <p style="margin-top: 20px; font-size: 14px; color: #666;">
+                Se você não solicitou esta redefinição, ignore este e-mail. Sua senha permanecerá inalterada.
+              </p>
+            </div>
+            <div class="footer">
+              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
+              <p>Este é um e-mail automático, por favor não responda.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `,
+  }),
+
+  actionOverdue: (data: { employeeName: string; actionTitle: string; dueDate: string; pdiTitle: string }) => ({
+    subject: `⚠️ Ação de PDI vencida: ${data.actionTitle}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .button { display: inline-block; padding: 12px 30px; background: #ff6b6b; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .alert { background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>⚠️ Ação Vencida</h1>
+            </div>
+            <div class="content">
+              <p>Olá, <strong>${data.employeeName}</strong>!</p>
+              <div class="alert">
+                <strong>⚠️ Atenção:</strong> Uma ação do seu PDI está vencida.
+              </div>
+              <p><strong>PDI:</strong> ${data.pdiTitle}</p>
+              <p><strong>Ação:</strong> ${data.actionTitle}</p>
+              <p><strong>Data de vencimento:</strong> ${data.dueDate}</p>
+              <p>Por favor, atualize o status desta ação ou entre em contato com seu gestor para redefinir o prazo.</p>
+              <div style="text-align: center;">
+                <a href="https://avd.uisa.com.br/pdi" class="button">Ver Meu PDI</a>
+              </div>
+            </div>
+            <div class="footer">
+              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
+              <p>Este é um e-mail automático, por favor não responda.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `,
+  }),
+
   newGoalAssigned: (data: { employeeName: string; goalTitle: string; dueDate: string; managerName: string }) => ({
     subject: `Nova meta atribuída: ${data.goalTitle}`,
     html: `
@@ -210,6 +351,21 @@ export class EmailService {
 
   async sendNewGoalAssigned(to: string, data: Parameters<typeof templates.newGoalAssigned>[0]) {
     const template = templates.newGoalAssigned(data);
+    return this.sendEmail(to, template.subject, template.html);
+  }
+
+  async sendWelcome(to: string, data: Parameters<typeof templates.welcome>[0]) {
+    const template = templates.welcome(data);
+    return this.sendEmail(to, template.subject, template.html);
+  }
+
+  async sendResetPassword(to: string, data: Parameters<typeof templates.resetPassword>[0]) {
+    const template = templates.resetPassword(data);
+    return this.sendEmail(to, template.subject, template.html);
+  }
+
+  async sendActionOverdue(to: string, data: Parameters<typeof templates.actionOverdue>[0]) {
+    const template = templates.actionOverdue(data);
     return this.sendEmail(to, template.subject, template.html);
   }
 
