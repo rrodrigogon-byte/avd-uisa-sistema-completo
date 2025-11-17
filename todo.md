@@ -500,3 +500,33 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Configurações de e-mail
 - [x] Configurações TOTVS RM
 - [x] Gerenciamento de departamentos
+
+
+---
+
+## 🎯 Fase 8 - Finalização
+
+### Correção e Execução de Importação
+- [ ] Corrigir script import-to-db.ts
+- [ ] Executar importação de departamentos
+- [ ] Executar importação de cargos
+- [ ] Executar importação de funcionários
+- [ ] Validar dados importados
+
+### Página de Perfil do Usuário
+- [x] Layout da página
+- [x] Edição de dados pessoais
+- [x] Upload de foto de perfil
+- [x] Gerenciamento de reconhecimento facial
+- [x] Preferências de notificação
+- [x] Histórico de atividades
+
+### Notificações em Tempo Real
+- [x] Configuração de WebSocket
+- [x] Sistema de eventos
+- [x] Notificações de novas metas
+- [x] Notificações de avaliações pendentes
+- [x] Notificações de aprovações
+- [x] Badge de contagem
+- [x] Componente NotificationBell
+- [x] Contexto de notificações

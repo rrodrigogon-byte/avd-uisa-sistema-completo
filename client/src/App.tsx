@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import Home from "./pages/Home";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
@@ -12,6 +13,7 @@ import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
 import Configuracoes from "./pages/Configuracoes";
+import Perfil from "./pages/Perfil";
 
 function Router() {
   return (
@@ -24,6 +26,7 @@ function Router() {
       <Route path={'/relatorios'} component={Relatorios} />
       <Route path="/calibracao" component={Calibracao} />
       <Route path="/configuracoes" component={Configuracoes} />
+      <Route path="/perfil" component={Perfil} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -33,11 +36,16 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+      <ThemeProvider
+        defaultTheme="light"
+        // switchable
+      >
+        <NotificationProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </NotificationProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
