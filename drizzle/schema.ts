@@ -542,3 +542,47 @@ export const pdiItemsRelations = relations(pdiItems, ({ one, many }) => ({
   }),
   progress: many(pdiProgress),
 }));
+
+
+// ============================================================================
+// TESTES PSICOMÉTRICOS
+// ============================================================================
+
+export const psychometricTests = mysqlTable("psychometricTests", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  testType: mysqlEnum("testType", ["disc", "bigfive"]).notNull(),
+  completedAt: datetime("completedAt").notNull(),
+  // Resultados DISC (0-100 para cada dimensão)
+  discDominance: int("discDominance"), // Dominância
+  discInfluence: int("discInfluence"), // Influência
+  discSteadiness: int("discSteadiness"), // Estabilidade
+  discCompliance: int("discCompliance"), // Conformidade
+  discProfile: varchar("discProfile", { length: 10 }), // Ex: "D", "I", "S", "C", "DI", "SC"
+  // Resultados Big Five (0-100 para cada dimensão)
+  bigFiveOpenness: int("bigFiveOpenness"), // Abertura
+  bigFiveConscientiousness: int("bigFiveConscientiousness"), // Conscienciosidade
+  bigFiveExtraversion: int("bigFiveExtraversion"), // Extroversão
+  bigFiveAgreeableness: int("bigFiveAgreeableness"), // Amabilidade
+  bigFiveNeuroticism: int("bigFiveNeuroticism"), // Neuroticismo
+  // Metadados
+  responses: text("responses"), // JSON com todas as respostas
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PsychometricTest = typeof psychometricTests.$inferSelect;
+export type InsertPsychometricTest = typeof psychometricTests.$inferInsert;
+
+export const testQuestions = mysqlTable("testQuestions", {
+  id: int("id").autoincrement().primaryKey(),
+  testType: mysqlEnum("testType", ["disc", "bigfive"]).notNull(),
+  questionNumber: int("questionNumber").notNull(),
+  questionText: text("questionText").notNull(),
+  dimension: varchar("dimension", { length: 50 }).notNull(), // Ex: "dominance", "openness"
+  reverse: boolean("reverse").default(false).notNull(), // Se a pontuação é invertida
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TestQuestion = typeof testQuestions.$inferSelect;
+export type InsertTestQuestion = typeof testQuestions.$inferInsert;

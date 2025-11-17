@@ -768,19 +768,22 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Expandir seção Aprovações no menu
 
 ## 🧠 Testes Psicométricos
-- [ ] Implementar teste DISC completo
-- [ ] Implementar teste Big Five/Ocean
-- [ ] Criar relatórios de perfil comportamental
-- [ ] Integrar resultados com PDI e sucessão
-- [ ] Criar dashboard de análise de perfis
+- [x] Criar schema de tabelas de testes psicométricos
+- [x] Popular 40 perguntas DISC no banco
+- [ ] Criar página de questionário DISC
+- [ ] Implementar cálculo de perfil DISC
+- [ ] Popular 50 perguntas Big Five no banco
+- [ ] Criar página de questionário Big Five
+- [ ] Implementar cálculo de perfil Big Five
+- [ ] Criar relatórios visuais de perfil comportamental
 
 ## 📊 Páginas Faltantes
-- [ ] Criar página Performance Integrada
-- [ ] Criar página 360° Enhanced
-- [ ] Criar página Calibração
-- [ ] Criar página Mapa de Sucessão visual
+- [ ] Criar página Performance Integrada (dashboard consolidado)
+- [ ] Criar página 360° Enhanced (avaliação aprimorada)
+- [ ] Criar página Mapa de Sucessão visual (organograma interativo)
 
 ## 🔧 Correções e Melhorias
-- [ ] Popular Matriz 9-Box automaticamente
-- [ ] Corrigir todos os erros 404
+- [ ] Criar script para calcular performance e potencial
+- [ ] Popular Matriz 9-Box com 2.889 colaboradores
+- [x] Corrigir todos os erros 404
 - [ ] Implementar integração TOTVS RM
