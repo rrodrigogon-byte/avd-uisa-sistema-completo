@@ -47,7 +47,8 @@ export const appRouter = router({
     getByUserId: protectedProcedure
       .input(z.object({ userId: z.number() }))
       .query(async ({ input }) => {
-        return await db.getEmployeeByUserId(input.userId);
+        const employee = await db.getEmployeeByUserId(input.userId);
+        return employee || null;
       }),
 
     getCurrent: protectedProcedure.query(async ({ ctx }) => {
@@ -57,7 +58,8 @@ export const appRouter = router({
           message: "Usuário não autenticado",
         });
       }
-      return await db.getEmployeeByUserId(ctx.user.id);
+      const employee = await db.getEmployeeByUserId(ctx.user.id);
+      return employee || null;
     }),
   }),
 

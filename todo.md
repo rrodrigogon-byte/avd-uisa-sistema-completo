@@ -572,3 +572,6 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Adicionar tratamento para quando colaborador não existe
 - [x] Permitir sistema funcionar sem dados de colaborador
 - [x] Retornar dados vazios no dashboard quando não houver colaborador
+
+- [x] Corrigir endpoint employees.getCurrent para retornar null em vez de undefined
+- [x] Corrigir endpoint employees.getByUserId para retornar null em vez de undefined
