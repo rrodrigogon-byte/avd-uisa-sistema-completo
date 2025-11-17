@@ -15,6 +15,13 @@ import Calibracao from "./pages/Calibracao";
 import Configuracoes from "./pages/Configuracoes";
 import Perfil from "./pages/Perfil";
 import History from "./pages/History";
+import Funcionarios from "./pages/Funcionarios";
+import Departamentos from "./pages/Departamentos";
+import CentrosCusto from "./pages/CentrosCusto";
+import AprovacoesD from "./pages/aprovacoes/Dashboard";
+import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
+import Bonus from "./pages/aprovacoes/Bonus";
+import Workflows from "./pages/aprovacoes/Workflows";
 
 function Router() {
   return (
@@ -29,6 +36,13 @@ function Router() {
       <Route path="/configuracoes" component={Configuracoes} />
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
+      <Route path="/funcionarios" component={Funcionarios} />
+      <Route path="/departamentos" component={Departamentos} />
+      <Route path="/centros-custo" component={CentrosCusto} />
+      <Route path="/aprovacoes/dashboard" component={AprovacoesD} />
+      <Route path="/aprovacoes/solicitacoes" component={MinhasSolicitacoes} />
+      <Route path="/aprovacoes/bonus" component={Bonus} />
+      <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

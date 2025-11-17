@@ -748,3 +748,39 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Adicionar registro de motivos de ajuste
 - [x] Implementar endpoints backend (list, adjust)
 - [x] Adicionar estatísticas por quadrante
+
+
+---
+
+## 👥 Gestão de Pessoas
+- [x] Criar página de Funcionários com CRUD completo
+- [x] Implementar filtros e busca de funcionários
+- [x] Adicionar importação/exportação de funcionários
+- [x] Criar página de Departamentos (stub)
+- [x] Criar página de Centros de Custo (stub)
+- [x] Adicionar seção Gestão de Pessoas ao menu
+
+## ✅ Aprovações (Expandido)
+- [x] Criar Dashboard de Aprovações (stub)
+- [x] Criar página Minhas Solicitações (stub)
+- [x] Criar página de Bônus (stub)
+- [x] Criar página de Workflows (stub)
+- [x] Expandir seção Aprovações no menu
+
+## 🧠 Testes Psicométricos
+- [ ] Implementar teste DISC completo
+- [ ] Implementar teste Big Five/Ocean
+- [ ] Criar relatórios de perfil comportamental
+- [ ] Integrar resultados com PDI e sucessão
+- [ ] Criar dashboard de análise de perfis
+
+## 📊 Páginas Faltantes
+- [ ] Criar página Performance Integrada
+- [ ] Criar página 360° Enhanced
+- [ ] Criar página Calibração
+- [ ] Criar página Mapa de Sucessão visual
+
+## 🔧 Correções e Melhorias
+- [ ] Popular Matriz 9-Box automaticamente
+- [ ] Corrigir todos os erros 404
+- [ ] Implementar integração TOTVS RM

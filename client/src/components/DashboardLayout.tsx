@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -93,12 +93,26 @@ const menuItems = [
     ],
   },
   {
+    icon: UsersRound,
+    label: "Gestão de Pessoas",
+    isSection: true,
+    children: [
+      { icon: Users, label: "Funcionários", path: "/funcionarios" },
+      { icon: Building2, label: "Departamentos", path: "/departamentos" },
+      { icon: DollarSign, label: "Centros de Custo", path: "/centros-custo" },
+    ],
+  },
+  {
     icon: CheckSquare,
     label: "Aprovações",
     isSection: true,
     children: [
+      { icon: BarChart, label: "Dashboard", path: "/aprovacoes/dashboard" },
+      { icon: Inbox, label: "Minhas Solicitações", path: "/aprovacoes/solicitacoes" },
       { icon: CheckSquare, label: "PDIs Pendentes", path: "/aprovacoes/pdi" },
       { icon: Users, label: "Avaliações Pendentes", path: "/aprovacoes/avaliacoes" },
+      { icon: Gift, label: "Bônus", path: "/aprovacoes/bonus" },
+      { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
     ],
   },
   { icon: HistoryIcon, label: "Histórico", path: "/historico" },
