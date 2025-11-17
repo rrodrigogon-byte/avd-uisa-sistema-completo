@@ -530,3 +530,35 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Badge de contagem
 - [x] Componente NotificationBell
 - [x] Contexto de notificações
+
+
+---
+
+## 🎯 Fase 9 - Finalização e Testes
+
+### Correção e Execução de Importação (Revisão)
+- [x] Mapear níveis de cargo corretamente
+- [x] Criar script import-from-excel.ts que lê arquivos diretamente
+- [x] Instalar biblioteca xlsx
+- [ ] Executar importação de departamentos
+- [ ] Executar importação de cargos  
+- [ ] Executar importação de funcionários (2.889)
+- [ ] Validar dados importados no banco
+
+### Backend WebSocket
+- [x] Configurar Socket.IO no servidor Express
+- [x] Criar sistema de eventos de notificação
+- [x] Implementar notificação de nova meta
+- [x] Implementar notificação de avaliação pendente
+- [x] Implementar notificação de aprovação de PDI
+- [x] Implementar notificação de prazo próximo
+- [x] NotificationService completo com 12 tipos de notificações
+- [ ] Testar envio de notificações em tempo real
+
+### Testes Automatizados
+- [ ] Configurar Vitest
+- [ ] Testes de criação de metas
+- [ ] Testes de submissão de avaliações
+- [ ] Testes de geração de PDI
+- [ ] Testes de integração de APIs
+- [ ] Testes de notificações
