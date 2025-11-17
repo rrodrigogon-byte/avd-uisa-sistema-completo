@@ -1,4 +1,6 @@
 import DashboardLayout from "@/components/DashboardLayout";
+import PDIWizard from "@/components/PDIWizard";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { AlertCircle, BookOpen, Calendar, CheckCircle2, Clock, Plus, TrendingUp, Users2 } from "lucide-react";
 
 export default function PDI() {
+  const [showWizard, setShowWizard] = useState(false);
   const { data: pdis } = trpc.pdi.list.useQuery({});
   const { data: employee } = trpc.employees.getCurrent.useQuery();
 
@@ -75,14 +78,19 @@ export default function PDI() {
             </p>
           </div>
           {!activePDI && (
-            <Button size="lg">
+            <Button size="lg" onClick={() => setShowWizard(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Criar PDI
             </Button>
           )}
         </div>
 
-        {!activePDI ? (
+        {showWizard ? (
+          <PDIWizard 
+            onComplete={() => setShowWizard(false)} 
+            onCancel={() => setShowWizard(false)} 
+          />
+        ) : !activePDI ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
