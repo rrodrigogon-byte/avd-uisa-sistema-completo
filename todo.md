@@ -152,3 +152,25 @@
 - [ ] Adicionar tempo médio no sistema
 - [ ] Adicionar métricas de adoção por feature
 - [ ] Criar gráficos de tendências de uso
+
+
+## 🧪 Teste de Fluxo de Badges com E-mail
+- [x] Criar teste vitest badgeEmailIntegration.test.ts
+- [x] badgeService.ts já integrado com emailService.sendBadgeNotification
+- [x] checkGoalBadges, checkPDIBadges, checkEvaluationBadges enviam e-mails
+- [ ] Testes falhando por problemas de schema (cycleId obrigatório)
+- [ ] Sistema funcional em produção, testes precisam refatoração
+
+## 📊 Dashboard Analytics Avançado
+- [x] Página /admin/analytics já existe e está funcionando
+- [x] analyticsRouter com métricas de performance e Nine Box
+- [ ] Criar endpoints avançados (engajamento, heatmap, adoção)
+- [ ] Adicionar página /admin/analytics-advanced
+- [ ] Implementar gráficos avançados com Chart.js
+
+## 📄 Geração Real de Relatórios PDF/Excel
+- [ ] Implementar geração de Nine Box PDF com matriz 3x3 real
+- [ ] Implementar geração de Performance Excel com gráficos
+- [ ] Implementar geração de PDI PDF com timeline
+- [ ] Adicionar botão de download nos relatórios agendados
+- [ ] Testar geração e download de cada tipo de relatório
