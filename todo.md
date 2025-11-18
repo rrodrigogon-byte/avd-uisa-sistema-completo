@@ -706,21 +706,21 @@
 - [x] Criar rota /pdi-inteligente/:id no App.tsx
 
 ### Fase 3: Sistema de Aprovações Completo
-- [ ] Melhorar /aprovacoes/dashboard com métricas e gráficos
-- [ ] Melhorar /aprovacoes/solicitacoes com tabela interativa
-- [ ] Melhorar /aprovacoes/bonus com formulário e aprovações
-- [ ] Melhorar /aprovacoes/workflows com visualização de processos
+- [x] Melhorar /aprovacoes/dashboard com métricas e gráficos
+- [x] Melhorar /aprovacoes/solicitacoes com tabela interativa
+- [x] Melhorar /aprovacoes/bonus com formulário e aprovações
+- [x] Melhorar /aprovacoes/workflows com visualização de processos
 - [ ] Adicionar filtros e busca em todas as páginas
 - [ ] Implementar notificações em tempo real (WebSocket)
 
 ### Fase 4: Performance Integrada 40-30-30
-- [ ] Criar página /performance-integrada/:employeeId/:cycleId
-- [ ] Implementar header com score total e breakdown ponderado
-- [ ] Implementar seção "Financial Goals" (peso 40%)
-- [ ] Implementar seção "Behavioral Goals" (peso 30%)
-- [ ] Implementar seção "Corporate Goals" (peso 30%)
-- [ ] Implementar gráfico "Breakdown Ponderado" (barras horizontais)
-- [ ] Implementar seção "Performance Multi-Dimensional"
-- [ ] Implementar seção "Evolução Histórica"
-- [ ] Implementar seção "Recomendações de Desenvolvimento"
+- [x] Criar página /performance-integrada
+- [x] Implementar header com score total e breakdown ponderado
+- [x] Implementar seção Financial Goals (peso 40%)
+- [x] Implementar seção Behavioral Goals (peso 30%)
+- [x] Implementar seção Corporate Goals (peso 30%)
+- [x] Implementar breakdown ponderado com progress bars
+- [x] Implementar gráfico "Evolução Histórica" (linha)
+- [x] Implementar seção "Recomendações de Desenvolvimento"
+- [x] Adicionar Dashboard Executivo ao menu lateral
 - [ ] Adicionar seletor de colaborador e safra no topo

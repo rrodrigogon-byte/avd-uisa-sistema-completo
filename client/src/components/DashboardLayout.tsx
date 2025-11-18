@@ -70,6 +70,7 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: BarChart, label: "Dashboard Executivo", path: "/dashboard-executivo" },
   { icon: Target, label: "Metas", path: "/metas" },
   {
     icon: TrendingUp,
