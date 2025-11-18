@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  date,
   datetime,
   decimal,
   int,
@@ -1000,3 +1001,160 @@ export const pdiReviewsRelations = relations(pdiReviews, ({ one }) => ({
     references: [employees.id],
   }),
 }));
+
+
+/**
+ * ========================================
+ * METAS SMART (SMART Goals)
+ * ========================================
+ * Sistema completo de metas com validação SMART,
+ * aprovações e elegibilidade para bônus financeiro
+ */
+
+export const smartGoals = mysqlTable("smartGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  cycleId: int("cycleId").notNull(),
+  pdiPlanId: int("pdiPlanId"), // Opcional: vincular com PDI
+  
+  // Informações básicas
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  type: mysqlEnum("type", ["individual", "team", "organizational"]).notNull(),
+  category: mysqlEnum("category", ["financial", "behavioral", "corporate", "development"]).notNull(),
+  
+  // Critérios SMART
+  isSpecific: boolean("isSpecific").default(false).notNull(), // S - Específica
+  isMeasurable: boolean("isMeasurable").default(false).notNull(), // M - Mensurável
+  isAchievable: boolean("isAchievable").default(false).notNull(), // A - Atingível
+  isRelevant: boolean("isRelevant").default(false).notNull(), // R - Relevante
+  isTimeBound: boolean("isTimeBound").default(false).notNull(), // T - Temporal
+  
+  // Métricas
+  measurementUnit: varchar("measurementUnit", { length: 50 }), // Ex: "R$", "%", "unidades"
+  targetValue: decimal("targetValue", { precision: 10, scale: 2 }), // Valor alvo
+  currentValue: decimal("currentValue", { precision: 10, scale: 2 }).default("0"), // Valor atual
+  weight: int("weight").default(10).notNull(), // Peso da meta (para cálculo de bônus)
+  
+  // Datas
+  startDate: date("startDate").notNull(),
+  endDate: date("endDate").notNull(),
+  
+  // Bônus financeiro
+  bonusEligible: boolean("bonusEligible").default(false).notNull(), // Elegível para bônus?
+  bonusPercentage: decimal("bonusPercentage", { precision: 5, scale: 2 }), // % de bônus se atingir
+  bonusAmount: decimal("bonusAmount", { precision: 10, scale: 2 }), // Valor fixo de bônus
+  
+  // Status e aprovação
+  status: mysqlEnum("status", ["draft", "pending_approval", "approved", "rejected", "in_progress", "completed", "cancelled"]).default("draft").notNull(),
+  approvalStatus: mysqlEnum("approvalStatus", ["not_submitted", "pending_manager", "pending_hr", "approved", "rejected"]).default("not_submitted").notNull(),
+  progress: int("progress").default(0).notNull(), // 0-100%
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export const goalMilestones = mysqlTable("goalMilestones", {
+  id: int("id").autoincrement().primaryKey(),
+  goalId: int("goalId").notNull(),
+  
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  dueDate: date("dueDate").notNull(),
+  
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "delayed"]).default("pending").notNull(),
+  progress: int("progress").default(0).notNull(), // 0-100%
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export const goalApprovals = mysqlTable("goalApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  goalId: int("goalId").notNull(),
+  
+  approverId: int("approverId").notNull(), // ID do aprovador (gestor ou RH)
+  approverRole: mysqlEnum("approverRole", ["manager", "hr", "director"]).notNull(),
+  
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  comments: text("comments"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  decidedAt: timestamp("decidedAt"),
+});
+
+export const goalComments = mysqlTable("goalComments", {
+  id: int("id").autoincrement().primaryKey(),
+  goalId: int("goalId").notNull(),
+  
+  authorId: int("authorId").notNull(),
+  comment: text("comment").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+// Relations
+export const smartGoalsRelations = relations(smartGoals, ({ one, many }) => ({
+  employee: one(employees, {
+    fields: [smartGoals.employeeId],
+    references: [employees.id],
+  }),
+  cycle: one(evaluationCycles, {
+    fields: [smartGoals.cycleId],
+    references: [evaluationCycles.id],
+  }),
+  pdiPlan: one(pdiPlans, {
+    fields: [smartGoals.pdiPlanId],
+    references: [pdiPlans.id],
+  }),
+  creator: one(employees, {
+    fields: [smartGoals.createdBy],
+    references: [employees.id],
+  }),
+  milestones: many(goalMilestones),
+  approvals: many(goalApprovals),
+  comments: many(goalComments),
+}));
+
+export const goalMilestonesRelations = relations(goalMilestones, ({ one }) => ({
+  goal: one(smartGoals, {
+    fields: [goalMilestones.goalId],
+    references: [smartGoals.id],
+  }),
+}));
+
+export const goalApprovalsRelations = relations(goalApprovals, ({ one }) => ({
+  goal: one(smartGoals, {
+    fields: [goalApprovals.goalId],
+    references: [smartGoals.id],
+  }),
+  approver: one(employees, {
+    fields: [goalApprovals.approverId],
+    references: [employees.id],
+  }),
+}));
+
+export const goalCommentsRelations = relations(goalComments, ({ one }) => ({
+  goal: one(smartGoals, {
+    fields: [goalComments.goalId],
+    references: [smartGoals.id],
+  }),
+  author: one(employees, {
+    fields: [goalComments.authorId],
+    references: [employees.id],
+  }),
+}));
+
+export type SmartGoal = typeof smartGoals.$inferSelect;
+export type InsertSmartGoal = typeof smartGoals.$inferInsert;
+export type GoalMilestone = typeof goalMilestones.$inferSelect;
+export type InsertGoalMilestone = typeof goalMilestones.$inferInsert;
+export type GoalApproval = typeof goalApprovals.$inferSelect;
+export type InsertGoalApproval = typeof goalApprovals.$inferInsert;
+export type GoalComment = typeof goalComments.$inferSelect;
+export type InsertGoalComment = typeof goalComments.$inferInsert;

@@ -864,23 +864,34 @@
 - [ ] Implementar gráfico de comparação DISC (atual vs. alvo)
 - [ ] Implementar gráfico de comparação Big Five (atual vs. alvo)
 
-### Fase 2: Sistema de Metas SMART Completo
-- [ ] Criar schema smartGoals no banco de dados
-- [ ] Criar schema goalMilestones (marcos intermediários)
-- [ ] Criar schema goalComments (comentários e atualizações)
+### Fase 2: Sistema de Metas SMART Completo + Aprovações para Bônus
+- [x] Criar schema smartGoals no banco de dados (com campo bonusEligible)
+- [x] Criar schema goalMilestones (marcos intermediários)
+- [x] Criar schema goalApprovals (aprovações de metas)
+- [x] Criar schema goalComments (comentários e atualizações)
+- [x] Adicionar relations completas (smartGoalsRelations, goalMilestonesRelations, etc)
+- [x] Adicionar tipos TypeScript (SmartGoal, GoalMilestone, GoalApproval, GoalComment)
 - [ ] Criar endpoint goals.createSMART (com validação SMART)
 - [ ] Criar endpoint goals.validateSMART (validar critérios)
 - [ ] Criar endpoint goals.updateProgress (atualizar progresso)
 - [ ] Criar endpoint goals.addMilestone (adicionar marco)
 - [ ] Criar endpoint goals.linkToPDI (vincular meta com PDI)
+- [ ] Criar endpoint goals.submitForApproval (enviar meta para aprovação)
+- [ ] Criar endpoint goals.approve (aprovar meta)
+- [ ] Criar endpoint goals.reject (rejeitar meta)
+- [ ] Criar endpoint goals.calculateBonus (calcular bônus baseado em metas)
 - [ ] Criar página /metas/criar com wizard SMART
 - [ ] Implementar validação de cada critério SMART (S-M-A-R-T)
+- [ ] Adicionar checkbox "Elegível para Bônus Financeiro"
 - [ ] Adicionar seletor de tipo de meta (Individual, Equipe, Organizacional)
 - [ ] Implementar timeline visual de marcos
 - [ ] Adicionar sistema de notificações de marcos
 - [ ] Criar dashboard de acompanhamento de metas
 - [ ] Implementar gráfico de progresso de metas
 - [ ] Adicionar vinculação automática com Performance 40-30-30
+- [ ] Criar página /aprovacoes/metas para aprovar metas
+- [ ] Adicionar workflow de aprovação (Colaborador → Gestor → RH)
+- [ ] Implementar cálculo automático de bônus baseado em % de conclusão
 
 ### Fase 3: Dashboard Mobile-First
 - [ ] Criar componente MobileDashboard.tsx
