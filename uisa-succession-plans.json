@@ -1,0 +1,141 @@
+{
+  "plans": [
+    {
+      "positionTitle": "Gerente Jurídico",
+      "positionCode": "GER-JUR-001",
+      "currentHolderName": "João Silva",
+      "isCritical": true,
+      "riskLevel": "alto",
+      "exitRisk": "medio",
+      "competencyGap": "Gestão de equipes, Negociação avançada, Direito tributário",
+      "preparationTime": 12,
+      "notes": "Posição estratégica - Responsável por toda área jurídica da UISA",
+      "successors": [
+        {
+          "employeeName": "Maria Santos",
+          "employeeCode": "EMP-JUR-001",
+          "readinessLevel": "1_ano",
+          "priority": 1
+        },
+        {
+          "employeeName": "Carlos Oliveira",
+          "employeeCode": "EMP-JUR-002",
+          "readinessLevel": "2_3_anos",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "positionTitle": "Gerente de Planejamento Estratégico",
+      "positionCode": "GER-PE-001",
+      "currentHolderName": "Ana Paula Costa",
+      "isCritical": true,
+      "riskLevel": "critico",
+      "exitRisk": "alto",
+      "competencyGap": "Análise de cenários, Gestão de projetos estratégicos, Visão sistêmica",
+      "preparationTime": 18,
+      "notes": "Posição crítica - Define direcionamento estratégico da organização",
+      "successors": [
+        {
+          "employeeName": "Roberto Mendes",
+          "employeeCode": "EMP-PE-001",
+          "readinessLevel": "2_3_anos",
+          "priority": 1
+        },
+        {
+          "employeeName": "Juliana Ferreira",
+          "employeeCode": "EMP-PE-002",
+          "readinessLevel": "mais_3_anos",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "positionTitle": "Gerente de Recursos Humanos",
+      "positionCode": "GER-RH-001",
+      "currentHolderName": "Patricia Lima",
+      "isCritical": true,
+      "riskLevel": "alto",
+      "exitRisk": "medio",
+      "competencyGap": "Gestão de mudanças, People analytics, Desenvolvimento organizacional",
+      "preparationTime": 12,
+      "notes": "Posição estratégica - Responsável por toda gestão de pessoas",
+      "successors": [
+        {
+          "employeeName": "Fernando Alves",
+          "employeeCode": "EMP-RH-001",
+          "readinessLevel": "1_ano",
+          "priority": 1
+        },
+        {
+          "employeeName": "Camila Rodrigues",
+          "employeeCode": "EMP-RH-002",
+          "readinessLevel": "1_ano",
+          "priority": 2
+        },
+        {
+          "employeeName": "Lucas Martins",
+          "employeeCode": "EMP-RH-003",
+          "readinessLevel": "2_3_anos",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "positionTitle": "Gerente Administrativo e Financeiro",
+      "positionCode": "GER-ADM-001",
+      "currentHolderName": "Ricardo Souza",
+      "isCritical": true,
+      "riskLevel": "critico",
+      "exitRisk": "alto",
+      "competencyGap": "Controladoria avançada, Gestão de riscos financeiros, Compliance",
+      "preparationTime": 24,
+      "notes": "Posição crítica - Controla toda área financeira e administrativa",
+      "successors": [
+        {
+          "employeeName": "Mariana Campos",
+          "employeeCode": "EMP-ADM-001",
+          "readinessLevel": "2_3_anos",
+          "priority": 1
+        },
+        {
+          "employeeName": "Paulo Henrique",
+          "employeeCode": "EMP-ADM-002",
+          "readinessLevel": "mais_3_anos",
+          "priority": 2
+        }
+      ]
+    },
+    {
+      "positionTitle": "Gerente de Tecnologia da Informação",
+      "positionCode": "GER-TI-001",
+      "currentHolderName": "Eduardo Barbosa",
+      "isCritical": true,
+      "riskLevel": "alto",
+      "exitRisk": "alto",
+      "competencyGap": "Arquitetura de soluções, Segurança da informação, Gestão de infraestrutura",
+      "preparationTime": 18,
+      "notes": "Posição estratégica - Responsável por toda infraestrutura tecnológica",
+      "successors": [
+        {
+          "employeeName": "Thiago Nascimento",
+          "employeeCode": "EMP-TI-001",
+          "readinessLevel": "1_ano",
+          "priority": 1
+        },
+        {
+          "employeeName": "Beatriz Carvalho",
+          "employeeCode": "EMP-TI-002",
+          "readinessLevel": "2_3_anos",
+          "priority": 2
+        },
+        {
+          "employeeName": "Gabriel Santos",
+          "employeeCode": "EMP-TI-003",
+          "readinessLevel": "2_3_anos",
+          "priority": 3
+        }
+      ]
+    }
+  ]
+}

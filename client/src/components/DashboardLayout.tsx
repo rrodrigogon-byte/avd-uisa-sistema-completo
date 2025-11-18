@@ -132,6 +132,7 @@ const menuItems = [
       { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
       { icon: Calendar, label: "Relatórios Agendados", path: "/admin/scheduled-reports" },
       { icon: BarChart3, label: "Report Builder", path: "/admin/report-builder" },
+      { icon: Inbox, label: "Importar Dados UISA", path: "/admin/succession-import" },
       { icon: BarChart3, label: "Dashboard Executivo", path: "/executive-dashboard" },
       { icon: FileSearch, label: "Histórico de Alterações", path: "/admin/audit-log" },
     ],

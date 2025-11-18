@@ -326,3 +326,29 @@
 - [ ] Adicionar filtros dinâmicos (departamento, período, cargo)
 - [ ] Implementar salvamento de relatórios customizados
 - [ ] Adicionar listagem de relatórios salvos com edição
+
+## 📄 Exportação Real PDF/Excel no Report Builder
+- [x] Implementar geração de PDF com jsPDF e Chart.js
+- [ ] Adicionar gráficos aos PDFs (barras, linhas, pizza)
+- [x] Implementar geração de Excel com ExcelJS
+- [x] Adicionar formatação e estilos ao Excel
+- [x] Integrar exportação com botões da interface
+- [x] Testar download de PDF e Excel
+
+## 📥 Interface de Importação de Dados UISA
+- [x] Criar página /admin/succession-import
+- [x] Implementar upload de arquivo JSON
+- [x] Criar endpoint importSuccessionData no backend
+- [x] Importar 5 planos de sucessão do PowerPoint
+- [x] Popular tabela successionPlans com dados reais
+- [x] Popular tabela successionPlanSuccessors
+- [x] Adicionar validação de dados importados
+- [x] Adicionar menu "Importar Dados UISA" na seção Configurações
+
+## 🔍 Filtros Dinâmicos no Report Builder
+- [x] Adicionar campo de seleção de departamento
+- [x] Adicionar campos de data início/fim
+- [x] Adicionar campo de seleção de cargo/posição
+- [x] Integrar filtros com endpoint execute
+- [x] Atualizar queries do backend para suportar filtros
+- [x] Testar filtragem em todas as métricas

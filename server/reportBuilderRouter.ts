@@ -225,4 +225,36 @@ export const reportBuilderRouter = router({
       { id: "trainingHours", name: "Horas de Treinamento", category: "desenvolvimento" },
     ];
   }),
+
+  // Listar departamentos para filtros
+  getDepartments: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    return await db
+      .select({
+        id: departments.id,
+        name: departments.name,
+        code: departments.code,
+      })
+      .from(departments)
+      .where(eq(departments.active, true))
+      .orderBy(departments.name);
+  }),
+
+  // Listar posições para filtros
+  getPositions: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    return await db
+      .select({
+        id: positions.id,
+        title: positions.title,
+        code: positions.code,
+      })
+      .from(positions)
+      .where(eq(positions.active, true))
+      .orderBy(positions.title);
+  }),
 });

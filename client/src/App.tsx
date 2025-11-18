@@ -25,6 +25,7 @@ import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
 import NineBoxComparativo from "./pages/NineBoxComparativo";
 import ReportBuilder from "./pages/ReportBuilder";
+import SuccessionImport from "./pages/SuccessionImport";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
 import AuditTrail from "./pages/AuditTrail";
@@ -64,9 +65,8 @@ function Router() {
       <Route path="/aprovacoes/bonus" component={Bonus} />
       <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />
-      <Route path="/nine-box-comparativo" component={NineBoxComparativo} />
-      <Route path="/admin/report-builder" component={ReportBuilder} />
-      <Route path="/performance-integrada" component={PerformanceIntegrada} />
+      <Route path="/nine-box-comparativo" component={NineBoxComparativo} />      <Route path={"/admin/report-builder"} component={ReportBuilder} />
+      <Route path={"/admin/succession-import"} component={SuccessionImport} />      <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
       <Route path="/testes-psicometricos" component={PsychometricTests} />
       <Route path="/teste-disc" component={TestDISC} />

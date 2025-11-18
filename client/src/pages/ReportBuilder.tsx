@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { BarChart3, Download, Save, Play } from "lucide-react";
+import { generatePDF, generateExcel } from "@/lib/reportGenerators";
 
 export default function ReportBuilder() {
   const [reportName, setReportName] = useState("");
@@ -16,10 +17,16 @@ export default function ReportBuilder() {
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
   const [chartType, setChartType] = useState("bar");
   const [filters, setFilters] = useState<any>({});
+  const [filterDepartment, setFilterDepartment] = useState<string>("");
+  const [filterPosition, setFilterPosition] = useState<string>("");
+  const [filterStartDate, setFilterStartDate] = useState<string>("");
+  const [filterEndDate, setFilterEndDate] = useState<string>("");
   const [previewData, setPreviewData] = useState<any>(null);
 
   const { data: availableMetrics, isLoading: metricsLoading, error: metricsError } = trpc.reportBuilder.getAvailableMetrics.useQuery();
   const { data: savedReports } = trpc.reportBuilder.list.useQuery();
+  const { data: departments } = trpc.reportBuilder.getDepartments.useQuery();
+  const { data: positions } = trpc.reportBuilder.getPositions.useQuery();
   
   const executeReport = trpc.reportBuilder.execute.useQuery(
     { metrics: selectedMetrics, filters },
@@ -80,9 +87,40 @@ export default function ReportBuilder() {
     });
   };
 
-  const handleExport = (format: "pdf" | "excel") => {
-    toast.info(`Exportando relatório em ${format.toUpperCase()}...`);
-    // TODO: Implementar exportação real
+  const handleExport = async (format: "pdf" | "excel") => {
+    if (!previewData) {
+      toast.error("Gere um preview antes de exportar");
+      return;
+    }
+
+    // Construir objeto de filtros
+    const appliedFilters: any = {};
+    if (filterDepartment && filterDepartment !== "all") appliedFilters.departmentId = parseInt(filterDepartment);
+    if (filterPosition && filterPosition !== "all") appliedFilters.positionId = parseInt(filterPosition);
+    if (filterStartDate) appliedFilters.startDate = filterStartDate;
+    if (filterEndDate) appliedFilters.endDate = filterEndDate;
+    setFilters(appliedFilters);
+
+    try {
+      const reportData = {
+        name: reportName || "Relatório Customizado",
+        description: reportDescription,
+        metrics: selectedMetrics,
+        data: previewData.data,
+        generatedAt: previewData.summary.generatedAt,
+      };
+
+      if (format === "pdf") {
+        await generatePDF(reportData, availableMetrics || []);
+        toast.success("PDF gerado com sucesso!");
+      } else {
+        await generateExcel(reportData, availableMetrics || []);
+        toast.success("Excel gerado com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao exportar:", error);
+      toast.error(`Erro ao gerar ${format.toUpperCase()}`);
+    }
   };
 
   // Agrupar métricas por categoria
@@ -160,6 +198,66 @@ export default function ReportBuilder() {
                       <SelectItem value="table">Tabela</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Filtros Dinâmicos */}
+                <div className="border-t pt-4 space-y-3">
+                  <h3 className="font-semibold text-sm">Filtros</h3>
+                  
+                  <div>
+                    <Label htmlFor="filterDepartment">Departamento</Label>
+                    <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+                      <SelectTrigger id="filterDepartment">
+                        <SelectValue placeholder="Todos os departamentos" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        {departments?.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id.toString()}>
+                            {dept.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="filterPosition">Cargo</Label>
+                    <Select value={filterPosition} onValueChange={setFilterPosition}>
+                      <SelectTrigger id="filterPosition">
+                        <SelectValue placeholder="Todos os cargos" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        {positions?.map((pos) => (
+                          <SelectItem key={pos.id} value={pos.id.toString()}>
+                            {pos.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="filterStartDate">Data Início</Label>
+                      <Input
+                        id="filterStartDate"
+                        type="date"
+                        value={filterStartDate}
+                        onChange={(e) => setFilterStartDate(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="filterEndDate">Data Fim</Label>
+                      <Input
+                        id="filterEndDate"
+                        type="date"
+                        value={filterEndDate}
+                        onChange={(e) => setFilterEndDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="pt-4 space-y-2">

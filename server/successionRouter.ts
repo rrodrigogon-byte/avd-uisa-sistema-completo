@@ -312,4 +312,142 @@ export const successionRouter = router({
 
       return { success: true };
     }),
+
+  // Importar dados de sucessão UISA
+  importSuccessionData: protectedProcedure
+    .input(
+      z.object({
+        plans: z.array(
+          z.object({
+            positionTitle: z.string(),
+            positionCode: z.string(),
+            currentHolderName: z.string().optional(),
+            isCritical: z.boolean(),
+            riskLevel: z.enum(["baixo", "medio", "alto", "critico"]),
+            exitRisk: z.enum(["baixo", "medio", "alto"]).optional(),
+            competencyGap: z.string().optional(),
+            preparationTime: z.number().optional(),
+            notes: z.string().optional(),
+            successors: z.array(
+              z.object({
+                employeeName: z.string(),
+                employeeCode: z.string(),
+                readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]),
+                priority: z.number(),
+              })
+            ),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const database = await getDb();
+      if (!database) throw new Error("Database not available");
+
+      const results = {
+        success: 0,
+        errors: [] as string[],
+      };
+
+      for (const planData of input.plans) {
+        try {
+          // 1. Buscar ou criar posição
+          let position = await database
+            .select()
+            .from(positions)
+            .where(eq(positions.code, planData.positionCode))
+            .limit(1);
+
+          if (position.length === 0) {
+            // Criar posição se não existir
+            const [newPosition] = await database.insert(positions).values({
+              code: planData.positionCode,
+              title: planData.positionTitle,
+              active: true,
+            });
+            position = await database
+              .select()
+              .from(positions)
+              .where(eq(positions.id, newPosition.insertId))
+              .limit(1);
+          }
+
+          const positionId = position[0].id;
+
+          // 2. Buscar ocupante atual (se fornecido)
+          let currentHolderId: number | null = null;
+          if (planData.currentHolderName) {
+            const holder = await database
+              .select()
+              .from(employees)
+              .where(eq(employees.name, planData.currentHolderName))
+              .limit(1);
+            if (holder.length > 0) {
+              currentHolderId = holder[0].id;
+            }
+          }
+
+          // 3. Criar plano de sucessão
+          const [newPlan] = await database.insert(successionPlans).values({
+            positionId,
+            currentHolderId,
+            isCritical: planData.isCritical,
+            riskLevel: planData.riskLevel,
+            exitRisk: planData.exitRisk || "medio",
+            competencyGap: planData.competencyGap,
+            preparationTime: planData.preparationTime,
+            notes: planData.notes,
+            status: "ativo",
+          });
+
+          const planId = newPlan.insertId;
+
+          // 4. Adicionar sucessores
+          for (const successorData of planData.successors) {
+            // Buscar ou criar colaborador
+            let employee = await database
+              .select()
+              .from(employees)
+              .where(eq(employees.employeeCode, successorData.employeeCode))
+              .limit(1);
+
+            if (employee.length === 0) {
+              // Criar colaborador se não existir (com dados mínimos)
+              const [newEmployee] = await database.insert(employees).values({
+                employeeCode: successorData.employeeCode,
+                name: successorData.employeeName,
+                email: `${successorData.employeeCode}@uisa.com.br`,
+                hireDate: new Date(),
+                departmentId: 1, // Departamento padrão
+                positionId: positionId,
+                status: "ativo",
+              });
+              employee = await database
+                .select()
+                .from(employees)
+                .where(eq(employees.id, newEmployee.insertId))
+                .limit(1);
+            }
+
+            const employeeId = employee[0].id;
+
+            // Adicionar sucessor ao plano
+            await database.insert(successionCandidates).values({
+              planId,
+              employeeId,
+              readinessLevel: successorData.readinessLevel,
+              priority: successorData.priority,
+            });
+          }
+
+          results.success++;
+        } catch (error: any) {
+          results.errors.push(
+            `Erro ao importar plano "${planData.positionTitle}": ${error.message}`
+          );
+        }
+      }
+
+      return results;
+    }),
 });
