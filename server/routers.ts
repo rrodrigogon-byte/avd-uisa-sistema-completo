@@ -15,6 +15,7 @@ import { badgesRouter } from "./badgesRouter";
 import { scheduledReportsRouter } from "./scheduledReportsRouter";
 import { executiveRouter } from "./executiveRouter";
 import { successionRouter } from "./successionRouter";
+import { nineBoxRouter } from "./nineBoxRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1745,6 +1746,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Mapa de Sucessão
   succession: successionRouter,
+
+  // Router de Nine Box Comparativo
+  nineBoxComparative: nineBoxRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico

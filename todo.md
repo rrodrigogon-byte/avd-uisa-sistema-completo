@@ -181,13 +181,13 @@
 - [x] Schema atualizado com campos de riscos e acompanhamento
 - [x] successionRouter criado com 10 endpoints (list, getById, create, update, delete, addSuccessor, removeSuccessor, updateSuccessor, suggestSuccessors)
 - [x] Endpoint suggestSuccessors implementado (identificação automática via Nine Box)
-- [ ] Implementar formulário "Criar Novo Mapa de Sucessão"
-- [ ] Implementar modal "Incluir Sucessores" em mapa existente
-- [ ] Criar aba "Planos de Acompanhamento" com marcos e progress tracking
-- [ ] Criar aba "Riscos" (risco de saída, gap de competências, tempo de preparo)
-- [ ] Criar aba "Timeline" (curto prazo: 0-1 ano, médio: 1-3 anos, longo: 3+ anos)
-- [ ] Criar aba "Desenvolvimento" com ações específicas para cada sucessor
-- [ ] Adicionar badge de metodologia: "9-Box Succession Planning"
+- [x] Implementar formulário "Criar Novo Mapa de Sucessão"
+- [x] Implementar modal "Incluir Sucessores" em mapa existente
+- [x] Criar aba "Sucessores" com lista e sugestões automáticas
+- [x] Criar aba "Riscos" (risco de saída, gap de competências, tempo de preparo)
+- [x] Criar aba "Timeline" (curto prazo: 0-1 ano, médio: 1-3 anos, longo: 3+ anos)
+- [x] Criar aba "Desenvolvimento" com plano de acompanhamento
+- [x] Adicionar badge de metodologia: "9-Box Succession Planning"
 
 ## 🎯 Completar PDI Inteligente
 - [ ] Verificar funcionalidades atuais do PDI Inteligente
@@ -235,3 +235,14 @@
 - [ ] Criar geração de dashboard personalizado
 - [ ] Implementar exportação em PDF/Excel
 - [ ] Criar página /admin/custom-reports
+
+
+## 📊 Nine Box Comparativo por Função/Cargo
+- [x] Criar endpoint backend nineBoxRouter.getComparative
+- [x] Criar endpoint nineBoxRouter.getAvailablePositions
+- [x] Criar página /nine-box-comparativo
+- [x] Implementar seletor de funções/cargos para comparação
+- [x] Criar gráfico de barras (Performance e Potencial médios)
+- [x] Criar gráfico radar (% Alto Desempenho, Alto Potencial, Stars)
+- [x] Tabela detalhada com métricas por cargo
+- [x] Adicionar rota e menu no sistema (submenu Performance)

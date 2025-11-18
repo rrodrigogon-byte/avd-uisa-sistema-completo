@@ -81,6 +81,7 @@ const menuItems = [
       { icon: Star, label: "360° Enhanced", path: "/360-enhanced" },
       { icon: Scale, label: "Calibração", path: "/calibracao" },
       { icon: Grid3x3, label: "Nine Box", path: "/nine-box" },
+      { icon: BarChart3, label: "Nine Box Comparativo", path: "/nine-box-comparativo" },
     ],
   },
   {
