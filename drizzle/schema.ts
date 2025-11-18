@@ -284,6 +284,36 @@ export const evaluationResponses = mysqlTable("evaluationResponses", {
 export type EvaluationResponse = typeof evaluationResponses.$inferSelect;
 export type InsertEvaluationResponse = typeof evaluationResponses.$inferInsert;
 
+export const calibrationSessions = mysqlTable("calibrationSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  departmentId: int("departmentId"),
+  facilitatorId: int("facilitatorId").notNull(), // Quem conduziu a sessão
+  status: mysqlEnum("status", ["agendada", "em_andamento", "concluida"]).default("agendada").notNull(),
+  scheduledDate: datetime("scheduledDate"),
+  startedAt: datetime("startedAt"),
+  completedAt: datetime("completedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CalibrationSession = typeof calibrationSessions.$inferSelect;
+export type InsertCalibrationSession = typeof calibrationSessions.$inferInsert;
+
+export const calibrationReviews = mysqlTable("calibrationReviews", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull(),
+  evaluationId: int("evaluationId").notNull(),
+  originalScore: int("originalScore").notNull(),
+  calibratedScore: int("calibratedScore").notNull(),
+  reason: text("reason").notNull(),
+  reviewedBy: int("reviewedBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CalibrationReview = typeof calibrationReviews.$inferSelect;
+export type InsertCalibrationReview = typeof calibrationReviews.$inferInsert;
+
 // ============================================================================
 // TABELAS DE MATRIZ 9-BOX
 // ============================================================================

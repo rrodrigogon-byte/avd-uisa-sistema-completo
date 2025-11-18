@@ -867,3 +867,16 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Cards com estatísticas resumidas (total enviado, taxa de sucesso, etc)
 - [x] Adicionar menu "Métricas de E-mail" na seção Configurações
 - [x] Instalar react-chartjs-2 e chart.js
+
+## 🔧 Correção e Desenvolvimento: Calibração e 360° Enhanced
+
+- [x] Analisar e corrigir erros nas páginas atuais
+- [x] Implementar schema de calibração no banco (calibrationSessions, calibrationReviews)
+- [x] Criar endpoints backend para Calibração (getEvaluations, saveCalibration, getHistory, createSession)
+- [x] Desenvolver página de Calibração completa com diálogos de ajuste
+- [x] Implementar funcionalidades de ajuste de ratings com histórico
+- [x] Criar endpoints backend para 360° Enhanced (list, getDetails, submitFeedback)
+- [x] Desenvolver página 360° Enhanced com múltiplos avaliadores
+- [x] Implementar gráficos radar comparativos (autoavaliação vs pares vs gestor vs subordinados)
+- [x] Adicionar estatísticas detalhadas de respostas por tipo de avaliador
+- [x] Renomear router antigo calibration para nineBoxCalibration (evitar conflito)

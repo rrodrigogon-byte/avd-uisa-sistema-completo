@@ -2,70 +2,366 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Clock, Users } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { CheckCircle2, Clock, Users, Loader2, TrendingUp, AlertCircle, BarChart3 } from "lucide-react";
+import { useState } from "react";
+import { Radar } from "react-chartjs-2";
+
+/**
+ * Página de Avaliação 360° Enhanced
+ * Sistema completo de avaliação 360° com múltiplos avaliadores e gráficos comparativos
+ */
 
 export default function Avaliacao360Enhanced() {
+  const [selectedEvaluation, setSelectedEvaluation] = useState<number | null>(null);
+
+  // Buscar lista de avaliações 360°
+  const { data: evaluations, isLoading } = trpc.evaluation360.list.useQuery({});
+
+  // Buscar detalhes da avaliação selecionada
+  const { data: details } = trpc.evaluation360.getDetails.useQuery(
+    { evaluationId: selectedEvaluation || 0 },
+    { enabled: !!selectedEvaluation }
+  );
+
   const stages = [
-    { name: "Autoavaliação", status: "concluida", count: "100%" },
-    { name: "Avaliação do Gestor", status: "concluida", count: "95%" },
-    { name: "Avaliação de Pares", status: "em_andamento", count: "78%" },
-    { name: "Avaliação de Subordinados", status: "em_andamento", count: "65%" },
-    { name: "Consenso", status: "pendente", count: "0%" },
-    { name: "Calibração", status: "pendente", count: "0%" },
+    { 
+      name: "Autoavaliação", 
+      key: "selfEvaluationCompleted",
+      icon: Users,
+      color: "text-blue-600"
+    },
+    { 
+      name: "Avaliação do Gestor", 
+      key: "managerEvaluationCompleted",
+      icon: TrendingUp,
+      color: "text-purple-600"
+    },
+    { 
+      name: "Avaliação de Pares", 
+      key: "peersEvaluationCompleted",
+      icon: Users,
+      color: "text-green-600"
+    },
+    { 
+      name: "Avaliação de Subordinados", 
+      key: "subordinatesEvaluationCompleted",
+      icon: Users,
+      color: "text-orange-600"
+    },
   ];
+
+  // Calcular progresso geral
+  const calculateProgress = (evaluation: any) => {
+    const completed = stages.filter(stage => evaluation[stage.key]).length;
+    return (completed / stages.length) * 100;
+  };
+
+  // Preparar dados para gráfico radar
+  const radarData = details ? {
+    labels: ['Autoavaliação', 'Gestor', 'Pares', 'Subordinados'],
+    datasets: [
+      {
+        label: 'Média de Notas',
+        data: [
+          details.averages.self,
+          details.averages.manager,
+          details.averages.peers,
+          details.averages.subordinates,
+        ],
+        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+        borderColor: 'rgb(99, 102, 241)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgb(99, 102, 241)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgb(99, 102, 241)',
+      },
+    ],
+  } : null;
+
+  const radarOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        beginAtZero: true,
+        max: 5,
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: 'Comparativo de Avaliações 360°',
+      },
+    },
+  };
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold">360° Enhanced</h1>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <BarChart3 className="h-8 w-8" />
+            360° Enhanced
+          </h1>
           <p className="text-muted-foreground mt-2">
-            Avaliação 360° aprimorada com consenso e calibração
+            Avaliação 360° aprimorada com múltiplos avaliadores e análise comparativa
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Etapas da Avaliação 360°</CardTitle>
-            <CardDescription>Acompanhe o progresso de cada etapa do ciclo de avaliação</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {stages.map((stage, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    {stage.status === "concluida" ? (
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    ) : stage.status === "em_andamento" ? (
-                      <Clock className="h-5 w-5 text-yellow-600" />
-                    ) : (
-                      <Users className="h-5 w-5 text-muted-foreground" />
-                    )}
-                    <div>
-                      <p className="font-medium">{stage.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {stage.count} de conclusão
-                      </p>
+        {/* Estatísticas Gerais */}
+        <div className="grid md:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total de Avaliações
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{evaluations?.length || 0}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Concluídas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">
+                {evaluations?.filter(e => e.status === "concluida").length || 0}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Em Andamento
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-yellow-600">
+                {evaluations?.filter(e => e.status === "em_andamento").length || 0}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Taxa de Conclusão
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {evaluations && evaluations.length > 0
+                  ? Math.round((evaluations.filter(e => e.status === "concluida").length / evaluations.length) * 100)
+                  : 0}%
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Lista de Avaliações */}
+        <div className="space-y-4">
+          {!evaluations || evaluations.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">Nenhuma avaliação 360° encontrada</p>
+              </CardContent>
+            </Card>
+          ) : (
+            evaluations.map((evaluation) => {
+              const progress = calculateProgress(evaluation);
+              const isSelected = selectedEvaluation === evaluation.id;
+
+              return (
+                <Card key={evaluation.id} className={isSelected ? "border-primary" : ""}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          Colaborador #{evaluation.employeeId}
+                          <Badge variant="outline">Ciclo #{evaluation.cycleId}</Badge>
+                          <Badge variant={
+                            evaluation.status === "concluida" ? "default" :
+                            evaluation.status === "em_andamento" ? "secondary" : "outline"
+                          }>
+                            {evaluation.status === "concluida" ? "Concluída" :
+                             evaluation.status === "em_andamento" ? "Em Andamento" : "Pendente"}
+                          </Badge>
+                        </CardTitle>
+                        <CardDescription className="mt-2">
+                          Avaliação 360° - {progress.toFixed(0)}% completa
+                        </CardDescription>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold">
+                          {evaluation.finalScore !== null ? evaluation.finalScore.toFixed(1) : "N/A"}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Nota Final</p>
+                      </div>
                     </div>
-                  </div>
-                  <Badge
-                    variant={
-                      stage.status === "concluida" ? "default" :
-                      stage.status === "em_andamento" ? "secondary" : "outline"
-                    }
-                  >
-                    {stage.status === "concluida" ? "Concluída" :
-                     stage.status === "em_andamento" ? "Em Andamento" : "Pendente"}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex gap-2">
-              <Button>Iniciar Consenso</Button>
-              <Button variant="outline">Iniciar Calibração</Button>
-            </div>
-          </CardContent>
-        </Card>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Barra de Progresso */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Progresso Geral</span>
+                        <span className="font-medium">{progress.toFixed(0)}%</span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div
+                          className="bg-primary h-2 rounded-full transition-all"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Etapas */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {stages.map((stage) => {
+                        const Icon = stage.icon;
+                        const completed = (evaluation as any)[stage.key];
+                        
+                        return (
+                          <div key={stage.name} className="flex items-center gap-2">
+                            <Icon className={`h-4 w-4 ${completed ? 'text-green-600' : 'text-muted-foreground'}`} />
+                            <div>
+                              <p className="text-xs text-muted-foreground">{stage.name}</p>
+                              <p className="text-sm font-medium">
+                                {completed ? (
+                                  <span className="text-green-600">Completa</span>
+                                ) : (
+                                  <span className="text-muted-foreground">Pendente</span>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Botão de Detalhes */}
+                    <div className="pt-2">
+                      <Button
+                        variant={isSelected ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedEvaluation(isSelected ? null : evaluation.id)}
+                      >
+                        {isSelected ? "Ocultar Detalhes" : "Ver Detalhes"}
+                      </Button>
+                    </div>
+
+                    {/* Detalhes Expandidos */}
+                    {isSelected && details && (
+                      <div className="mt-4 pt-4 border-t space-y-4">
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {/* Gráfico Radar */}
+                          <div>
+                            <h4 className="font-medium mb-4">Análise Comparativa</h4>
+                            {radarData && (
+                              <div style={{ height: '300px' }}>
+                                <Radar data={radarData} options={radarOptions} />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Médias por Tipo */}
+                          <div>
+                            <h4 className="font-medium mb-4">Médias por Avaliador</h4>
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950 rounded">
+                                <span className="text-sm font-medium">Autoavaliação</span>
+                                <span className="text-lg font-bold text-blue-600">
+                                  {details.averages.self.toFixed(1)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-950 rounded">
+                                <span className="text-sm font-medium">Gestor</span>
+                                <span className="text-lg font-bold text-purple-600">
+                                  {details.averages.manager.toFixed(1)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950 rounded">
+                                <span className="text-sm font-medium">Pares</span>
+                                <span className="text-lg font-bold text-green-600">
+                                  {details.averages.peers.toFixed(1)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-950 rounded">
+                                <span className="text-sm font-medium">Subordinados</span>
+                                <span className="text-lg font-bold text-orange-600">
+                                  {details.averages.subordinates.toFixed(1)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Estatísticas de Respostas */}
+                        <div>
+                          <h4 className="font-medium mb-4">Estatísticas de Respostas</h4>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <Card>
+                              <CardContent className="pt-4">
+                                <p className="text-sm text-muted-foreground">Autoavaliação</p>
+                                <p className="text-2xl font-bold">{details.responses.self.length}</p>
+                                <p className="text-xs text-muted-foreground">respostas</p>
+                              </CardContent>
+                            </Card>
+                            <Card>
+                              <CardContent className="pt-4">
+                                <p className="text-sm text-muted-foreground">Gestor</p>
+                                <p className="text-2xl font-bold">{details.responses.manager.length}</p>
+                                <p className="text-xs text-muted-foreground">respostas</p>
+                              </CardContent>
+                            </Card>
+                            <Card>
+                              <CardContent className="pt-4">
+                                <p className="text-sm text-muted-foreground">Pares</p>
+                                <p className="text-2xl font-bold">{details.responses.peers.length}</p>
+                                <p className="text-xs text-muted-foreground">respostas</p>
+                              </CardContent>
+                            </Card>
+                            <Card>
+                              <CardContent className="pt-4">
+                                <p className="text-sm text-muted-foreground">Subordinados</p>
+                                <p className="text-2xl font-bold">{details.responses.subordinates.length}</p>
+                                <p className="text-xs text-muted-foreground">respostas</p>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </div>
       </div>
     </DashboardLayout>
   );

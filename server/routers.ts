@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -828,7 +828,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // ============================================================================
   // CALIBRAÇÃO DA MATRIZ 9-BOX
   // ============================================================================
-  calibration: router({
+  nineBoxCalibration: router({
     // Listar colaboradores para calibração
     list: protectedProcedure
       .input(z.object({ cycleId: z.number(), departmentId: z.number().optional() }))
@@ -1368,6 +1368,183 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         monthlyData: monthlyArray,
       };
     }),
+  }),
+
+  // Router de Calibração
+  calibration: router({
+    // Listar avaliações para calibração
+    getEvaluations: protectedProcedure
+      .input(z.object({
+        cycleId: z.number().optional(),
+        departmentId: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const evals = await database.select()
+          .from(performanceEvaluations)
+          .orderBy(desc(performanceEvaluations.createdAt))
+          .limit(100);
+
+        return evals;
+      }),
+
+    // Criar sessão de calibração
+    createSession: protectedProcedure
+      .input(z.object({
+        cycleId: z.number(),
+        departmentId: z.number().optional(),
+        scheduledDate: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const [session] = await database.insert(calibrationSessions).values({
+          cycleId: input.cycleId,
+          departmentId: input.departmentId,
+          facilitatorId: ctx.user.id,
+          scheduledDate: input.scheduledDate ? new Date(input.scheduledDate) : undefined,
+        });
+
+        return { success: true, sessionId: session.insertId };
+      }),
+
+    // Salvar calibração
+    saveCalibration: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        evaluationId: z.number(),
+        originalScore: z.number(),
+        calibratedScore: z.number(),
+        reason: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        // Salvar review de calibração
+        await database.insert(calibrationReviews).values({
+          sessionId: input.sessionId,
+          evaluationId: input.evaluationId,
+          originalScore: input.originalScore,
+          calibratedScore: input.calibratedScore,
+          reason: input.reason,
+          reviewedBy: ctx.user.id,
+        });
+
+        // Atualizar nota final da avaliação
+        await database.update(performanceEvaluations)
+          .set({ finalScore: input.calibratedScore })
+          .where(eq(performanceEvaluations.id, input.evaluationId));
+
+        return { success: true };
+      }),
+
+    // Buscar histórico de calibrações
+    getHistory: protectedProcedure
+      .input(z.object({ evaluationId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const history = await database.select()
+          .from(calibrationReviews)
+          .where(eq(calibrationReviews.evaluationId, input.evaluationId))
+          .orderBy(desc(calibrationReviews.createdAt));
+
+        return history;
+      }),
+  }),
+
+  // Router de Avaliação 360°
+  evaluation360: router({
+    // Listar avaliações 360°
+    list: protectedProcedure
+      .input(z.object({
+        cycleId: z.number().optional(),
+        employeeId: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const evals = await database.select()
+          .from(performanceEvaluations)
+          .where(eq(performanceEvaluations.type, "360"))
+          .orderBy(desc(performanceEvaluations.createdAt))
+          .limit(100);
+
+        return evals;
+      }),
+
+    // Buscar detalhes de uma avaliação 360°
+    getDetails: protectedProcedure
+      .input(z.object({ evaluationId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return null;
+
+        const [evaluation] = await database.select()
+          .from(performanceEvaluations)
+          .where(eq(performanceEvaluations.id, input.evaluationId))
+          .limit(1);
+
+        if (!evaluation) return null;
+
+        // Buscar respostas agrupadas por tipo de avaliador
+        const responses = await database.select()
+          .from(evaluationResponses)
+          .where(eq(evaluationResponses.evaluationId, input.evaluationId));
+
+        // Agrupar por tipo de avaliador
+        const grouped = {
+          self: responses.filter(r => r.evaluatorType === "self"),
+          manager: responses.filter(r => r.evaluatorType === "manager"),
+          peers: responses.filter(r => r.evaluatorType === "peer"),
+          subordinates: responses.filter(r => r.evaluatorType === "subordinate"),
+        };
+
+        // Calcular médias por tipo
+        const averages = {
+          self: grouped.self.length > 0 ? grouped.self.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.self.length : 0,
+          manager: grouped.manager.length > 0 ? grouped.manager.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.manager.length : 0,
+          peers: grouped.peers.length > 0 ? grouped.peers.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.peers.length : 0,
+          subordinates: grouped.subordinates.length > 0 ? grouped.subordinates.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.subordinates.length : 0,
+        };
+
+        return {
+          evaluation,
+          responses: grouped,
+          averages,
+        };
+      }),
+
+    // Submeter feedback 360°
+    submitFeedback: protectedProcedure
+      .input(z.object({
+        evaluationId: z.number(),
+        questionId: z.number(),
+        evaluatorType: z.enum(["self", "manager", "peer", "subordinate"]),
+        score: z.number().optional(),
+        textResponse: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.insert(evaluationResponses).values({
+          evaluationId: input.evaluationId,
+          questionId: input.questionId,
+          evaluatorId: ctx.user.id,
+          evaluatorType: input.evaluatorType,
+          score: input.score,
+          textResponse: input.textResponse,
+        });
+
+        return { success: true };
+      }),
   }),
 });
 
