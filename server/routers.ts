@@ -9,6 +9,8 @@ import * as db from "./db";
 import { getUserByOpenId } from "./db";
 import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles, notifications, auditLogs } from "../drizzle/schema";
 import { getDb } from "./db";
+import { analyticsRouter } from "./analyticsRouter";
+import { feedbackRouter } from "./feedbackRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1691,6 +1693,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       return { success: true };
     }),
   }),
+
+  // Router de Analytics (apenas admin)
+  analytics: analyticsRouter,
+
+  // Router de Feedback Contínuo
+  feedback: feedbackRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico

@@ -64,6 +64,13 @@
       "when": 1763428094972,
       "tag": "0008_glorious_brother_voodoo",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1763431557401,
+      "tag": "0009_curly_scrambler",
+      "breakpoints": true
     }
   ]
 }

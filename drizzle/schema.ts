@@ -514,6 +514,29 @@ export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = typeof auditLogs.$inferInsert;
 
 // ============================================================================
+// SISTEMA DE FEEDBACK CONTÍNUO
+// ============================================================================
+
+export const feedbacks = mysqlTable("feedbacks", {
+  id: int("id").autoincrement().primaryKey(),
+  managerId: int("managerId").notNull(), // Gestor que deu o feedback
+  employeeId: int("employeeId").notNull(), // Colaborador que recebeu
+  type: mysqlEnum("type", ["positivo", "construtivo", "desenvolvimento"]).notNull(),
+  category: varchar("category", { length: 100 }), // Ex: Comunicação, Liderança, etc
+  content: text("content").notNull(), // Conteúdo do feedback
+  context: text("context"), // Contexto/situação
+  actionItems: text("actionItems"), // Ações recomendadas (JSON)
+  linkedPDIId: int("linkedPDIId"), // PDI vinculado (opcional)
+  isPrivate: boolean("isPrivate").default(false).notNull(), // Visível apenas para gestor e colaborador
+  acknowledgedAt: datetime("acknowledgedAt"), // Quando o colaborador visualizou
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Feedback = typeof feedbacks.$inferSelect;
+export type InsertFeedback = typeof feedbacks.$inferInsert;
+
+// ============================================================================
 // RELAÇÕES (Relations)
 // ============================================================================
 
