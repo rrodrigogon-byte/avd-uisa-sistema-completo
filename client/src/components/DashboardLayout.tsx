@@ -131,6 +131,7 @@ const menuItems = [
       { icon: Mail, label: "SMTP (Admin)", path: "/admin/smtp" },
       { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
       { icon: Calendar, label: "Relatórios Agendados", path: "/admin/scheduled-reports" },
+      { icon: BarChart3, label: "Report Builder", path: "/admin/report-builder" },
       { icon: BarChart3, label: "Dashboard Executivo", path: "/executive-dashboard" },
       { icon: FileSearch, label: "Histórico de Alterações", path: "/admin/audit-log" },
     ],

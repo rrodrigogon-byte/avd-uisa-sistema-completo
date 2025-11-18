@@ -286,3 +286,43 @@
 - [ ] Preview de relatório em tempo real
 - [ ] Exportação em PDF/Excel
 - [ ] Salvar templates de relatórios
+
+
+## 📊 Relatórios Customizáveis
+- [ ] Criar schema de customReports
+- [ ] Criar reportBuilderRouter com endpoints
+- [ ] Criar página /admin/report-builder com interface drag-and-drop
+- [ ] Implementar seletor de métricas (performance, turnover, headcount, etc)
+- [ ] Implementar filtros (departamento, período, cargo)
+- [ ] Implementar preview de relatório em tempo real
+- [ ] Adicionar exportação para PDF e Excel
+- [ ] Salvar templates de relatórios customizados
+- [ ] Adicionar rota e menu no sistema
+
+## 📥 Integração Dados UISA
+- [ ] Criar endpoint de importação de sucessão
+- [ ] Criar página /admin/import-succession
+- [ ] Ler dados do arquivo succession-data-uisa.json
+- [ ] Mapear posições críticas para positions existentes
+- [ ] Mapear sucessores para employees existentes
+- [ ] Criar successionPlans baseados nos dados UISA
+- [ ] Validar e exibir preview antes de importar
+- [ ] Executar importação e exibir resultado
+
+## 📊 Report Builder - Relatórios Customizáveis
+- [x] Criar schema de customReports no banco
+- [x] Criar reportBuilderRouter com endpoints (list, getById, create, update, delete, execute, getAvailableMetrics)
+- [x] Implementar endpoint getAvailableMetrics (8 métricas: headcount, avgPerformance, goalsCompleted, highPotential, departmentBreakdown, turnoverRate, avgSalary, trainingHours)
+- [x] Implementar endpoint execute para gerar dados em tempo real
+- [x] Criar página /admin/report-builder com interface visual
+- [x] Implementar seleção de métricas com checkboxes nativos
+- [x] Adicionar painel de configuração (nome, descrição, tipo de gráfico)
+- [x] Implementar preview em tempo real com cards de estatísticas
+- [x] Adicionar botões de exportação PDF/Excel (placeholder)
+- [x] Adicionar rota e menu "Report Builder" na seção Configurações
+- [x] Testar funcionalidade completa com dados reais do banco
+- [ ] Implementar exportação real em PDF
+- [ ] Implementar exportação real em Excel
+- [ ] Adicionar filtros dinâmicos (departamento, período, cargo)
+- [ ] Implementar salvamento de relatórios customizados
+- [ ] Adicionar listagem de relatórios salvos com edição

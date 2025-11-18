@@ -4,6 +4,7 @@ import {
   datetime,
   decimal,
   int,
+  json,
   mysqlEnum,
   mysqlTable,
   text,
@@ -764,3 +765,25 @@ export const reportExecutionLogs = mysqlTable("reportExecutionLogs", {
 
 export type ReportExecutionLog = typeof reportExecutionLogs.$inferSelect;
 export type InsertReportExecutionLog = typeof reportExecutionLogs.$inferInsert;
+
+
+// ============================================================================
+// TABELAS DE RELATÓRIOS CUSTOMIZÁVEIS
+// ============================================================================
+
+export const customReports = mysqlTable("customReports", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  createdBy: int("createdBy").notNull(),
+  metrics: json("metrics").notNull(), // Array de métricas selecionadas
+  filters: json("filters"), // Filtros aplicados (departamento, período, cargo)
+  chartType: varchar("chartType", { length: 50 }), // bar, line, pie, table
+  isTemplate: boolean("isTemplate").default(false).notNull(),
+  isPublic: boolean("isPublic").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CustomReport = typeof customReports.$inferSelect;
+export type InsertCustomReport = typeof customReports.$inferInsert;

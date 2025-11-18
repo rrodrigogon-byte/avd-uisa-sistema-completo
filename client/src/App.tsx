@@ -24,6 +24,7 @@ import Bonus from "./pages/aprovacoes/Bonus";
 import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
 import NineBoxComparativo from "./pages/NineBoxComparativo";
+import ReportBuilder from "./pages/ReportBuilder";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
 import AuditTrail from "./pages/AuditTrail";
@@ -64,6 +65,7 @@ function Router() {
       <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />
       <Route path="/nine-box-comparativo" component={NineBoxComparativo} />
+      <Route path="/admin/report-builder" component={ReportBuilder} />
       <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
       <Route path="/testes-psicometricos" component={PsychometricTests} />
