@@ -42,6 +42,31 @@ export default function ExecutiveDashboard() {
   const { user, loading } = useAuth();
   const [selectedDepartment, setSelectedDepartment] = useState<number | undefined>(undefined);
 
+  // Queries - DEVEM estar antes dos returns condicionais (regra dos React Hooks)
+  const { data: kpis, isLoading: loadingKPIs } = trpc.executive.getKPIs.useQuery({
+    departmentId: selectedDepartment,
+  }, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: headcountByDept, isLoading: loadingHeadcount } =
+    trpc.executive.getHeadcountByDepartment.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: headcountTrend, isLoading: loadingTrend } = trpc.executive.getHeadcountTrend.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: salaryDistribution, isLoading: loadingSalary } =
+    trpc.executive.getSalaryDistribution.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: turnoverRate, isLoading: loadingTurnover } = trpc.executive.getTurnoverRate.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: successionPipeline, isLoading: loadingSuccession } =
+    trpc.executive.getSuccessionPipeline.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: trainingROI, isLoading: loadingROI } = trpc.executive.getTrainingROI.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: performanceDistribution, isLoading: loadingPerformance } =
+    trpc.executive.getPerformanceDistribution.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
+  const { data: engagement, isLoading: loadingEngagement } = trpc.executive.getEngagementMetrics.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+
   // Verificar se usuário é admin
   if (!loading && (!user || user.role !== "admin")) {
     return (
@@ -69,31 +94,6 @@ export default function ExecutiveDashboard() {
       </DashboardLayout>
     );
   }
-
-  // Queries
-  const { data: kpis, isLoading: loadingKPIs } = trpc.executive.getKPIs.useQuery({
-    departmentId: selectedDepartment,
-  });
-
-  const { data: headcountByDept, isLoading: loadingHeadcount } =
-    trpc.executive.getHeadcountByDepartment.useQuery();
-
-  const { data: headcountTrend, isLoading: loadingTrend } = trpc.executive.getHeadcountTrend.useQuery();
-
-  const { data: salaryDistribution, isLoading: loadingSalary } =
-    trpc.executive.getSalaryDistribution.useQuery();
-
-  const { data: turnoverRate, isLoading: loadingTurnover } = trpc.executive.getTurnoverRate.useQuery();
-
-  const { data: successionPipeline, isLoading: loadingSuccession } =
-    trpc.executive.getSuccessionPipeline.useQuery();
-
-  const { data: trainingROI, isLoading: loadingROI } = trpc.executive.getTrainingROI.useQuery();
-
-  const { data: performanceDistribution, isLoading: loadingPerformance } =
-    trpc.executive.getPerformanceDistribution.useQuery();
-
-  const { data: engagement, isLoading: loadingEngagement } = trpc.executive.getEngagementMetrics.useQuery();
 
   // Configurações dos gráficos
   const headcountTrendData = {
@@ -211,7 +211,7 @@ export default function ExecutiveDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {kpis?.avgPerformanceScore ? kpis.avgPerformanceScore.toFixed(2) : "0.00"}
+              {kpis?.avgPerformanceScore && typeof kpis.avgPerformanceScore === 'number' ? kpis.avgPerformanceScore.toFixed(2) : "0.00"}
             </div>
             <p className="text-xs text-muted-foreground">Escala de 1 a 5</p>
           </CardContent>
@@ -239,7 +239,7 @@ export default function ExecutiveDashboard() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{kpis?.turnoverRate.toFixed(2) || "0.00"}%</div>
+            <div className="text-2xl font-bold">{kpis?.turnoverRate && typeof kpis.turnoverRate === 'number' ? kpis.turnoverRate.toFixed(2) : "0.00"}%</div>
             <p className="text-xs text-muted-foreground">Últimos 12 meses</p>
           </CardContent>
         </Card>
@@ -437,15 +437,15 @@ export default function ExecutiveDashboard() {
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="text-muted-foreground">Performance Antes</p>
-                        <p className="font-bold">{trainingROI.avgPerformanceBefore.toFixed(2)}</p>
+                        <p className="font-bold">{typeof trainingROI.avgPerformanceBefore === 'number' ? trainingROI.avgPerformanceBefore.toFixed(2) : '0.00'}</p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Performance Depois</p>
-                        <p className="font-bold">{trainingROI.avgPerformanceAfter.toFixed(2)}</p>
+                        <p className="font-bold">{typeof trainingROI.avgPerformanceAfter === 'number' ? trainingROI.avgPerformanceAfter.toFixed(2) : '0.00'}</p>
                       </div>
                     </div>
                     <p className="text-xs text-green-600 mt-2">
-                      +{trainingROI.improvementPercent.toFixed(1)}% de melhoria
+                      +{typeof trainingROI.improvementPercent === 'number' ? trainingROI.improvementPercent.toFixed(1) : '0.0'}% de melhoria
                     </p>
                   </div>
                 )}

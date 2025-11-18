@@ -112,3 +112,14 @@
 - [ ] Integrar badgeHelper nos endpoints de metas, PDI e avaliações
 - [ ] Testar envio de e-mails com configuração SMTPvaliação 360° por e-mail
 - [ ] Testar envio de e-mails
+
+
+## 🔧 Correções Urgentes
+- [x] Verificar rotas de Performance Integrada (funcionando)
+- [x] Verificar rotas de 360° Enhanced (funcionando)
+- [x] Corrigir erro de React Hooks em Dashboard Executivo (hooks após returns)
+- [x] Corrigir erro de React Hooks em Relatórios Agendados (hooks após returns)
+- [x] Corrigir erro toFixed em valores não-numéricos
+- [ ] Testar todas as páginas do menu lateral
+- [ ] Verificar se todos os endpoints tRPC estão funcionando
+- [ ] Validar que não há erros no console do navegador

@@ -24,36 +24,8 @@ export default function ScheduledReports() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<any>(null);
 
-  // Verificar se usuário é admin
-  if (!loading && (!user || user.role !== "admin")) {
-    return (
-      <DashboardLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-          <AlertCircle className="h-16 w-16 text-destructive" />
-          <h2 className="text-2xl font-bold">Acesso Negado</h2>
-          <p className="text-muted-foreground text-center max-w-md">
-            Apenas administradores podem gerenciar relatórios agendados.
-          </p>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  if (loading) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Carregando...</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  // Queries
-  const { data: reports, isLoading, refetch } = trpc.scheduledReports.list.useQuery();
+  // Queries - DEVEM estar antes dos returns condicionais
+  const { data: reports, isLoading, refetch } = trpc.scheduledReports.list.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
 
   // Mutations
   const createMutation = trpc.scheduledReports.create.useMutation({
@@ -87,7 +59,7 @@ export default function ScheduledReports() {
     },
   });
 
-  // Form state
+  // Form state - DEVE estar antes dos returns
   const [formData, setFormData] = useState({
     reportType: "nine_box",
     reportName: "",
@@ -100,6 +72,34 @@ export default function ScheduledReports() {
     includeCharts: true,
     active: true,
   });
+
+  // Verificar se usuário é admin
+  if (!loading && (!user || user.role !== "admin")) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <AlertCircle className="h-16 w-16 text-destructive" />
+          <h2 className="text-2xl font-bold">Acesso Negado</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            Apenas administradores podem gerenciar relatórios agendados.
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
