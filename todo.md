@@ -39,3 +39,34 @@
 - [ ] Adicionar distribuição salarial e turnover rate
 - [ ] Incluir ROI de treinamentos e pipeline de sucessão
 - [ ] Restringir acesso apenas para role=admin
+
+
+## 🎯 Sistema de Pontuação Automática
+- [x] Criar serviço de verificação de badges (badgeService.ts)
+- [x] Implementar funções checkGoalBadges, checkPDIBadges, checkEvaluationBadges
+- [x] Implementar funções checkFeedbackBadges, checkNineBoxBadges, checkPsychometricBadges
+- [x] Integrar com sistema de notificações in-app (cria notificação ao conceder badge)
+- [ ] Integrar triggers nos endpoints de metas (ao atualizar progresso)
+- [ ] Integrar triggers nos endpoints de PDI (ao criar/finalizar)
+- [ ] Integrar triggers nos endpoints de avaliações (ao completar 360°)
+- [ ] Integrar triggers nos endpoints de feedbacks (ao criar feedback)
+- [ ] Testar concessão automática de badges
+
+## 📊 Relatórios Automáticos Agendados
+- [ ] Criar schema de scheduledReports
+- [ ] Criar endpoints backend (create, list, update, delete, execute)
+- [ ] Criar página /admin/scheduled-reports
+- [ ] Implementar geração de PDF para Nine Box
+- [ ] Implementar geração de Excel para Performance
+- [ ] Integrar com cron jobs para envio automático
+- [ ] Testar envio de relatórios por e-mail
+
+## 📈 Dashboard Executivo
+- [ ] Criar endpoints backend para métricas estratégicas
+- [ ] Criar página /executive-dashboard
+- [ ] Implementar gráfico de headcount por departamento
+- [ ] Adicionar distribuição salarial
+- [ ] Incluir turnover rate
+- [ ] Adicionar ROI de treinamentos
+- [ ] Incluir pipeline de sucessão crítica
+- [ ] Restringir acesso apenas para role=admin
