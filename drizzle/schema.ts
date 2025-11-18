@@ -542,6 +542,7 @@ export type InsertFeedback = typeof feedbacks.$inferInsert;
 
 export const badges = mysqlTable("badges", {
   id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 50 }), // Código único do badge
   name: varchar("name", { length: 100 }).notNull(),
   description: text("description").notNull(),
   icon: varchar("icon", { length: 50 }), // Nome do ícone lucide-react
@@ -698,3 +699,58 @@ export const systemSettings = mysqlTable("systemSettings", {
 
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type InsertSystemSetting = typeof systemSettings.$inferInsert;
+
+
+// ============================================================================
+// RELATÓRIOS AGENDADOS
+// ============================================================================
+
+export const scheduledReports = mysqlTable("scheduledReports", {
+  id: int("id").autoincrement().primaryKey(),
+  reportType: mysqlEnum("reportType", [
+    "nine_box",
+    "performance",
+    "pdi",
+    "evaluations",
+    "goals",
+    "competencies",
+    "succession",
+    "turnover",
+    "headcount"
+  ]).notNull(),
+  reportName: varchar("reportName", { length: 255 }).notNull(),
+  frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly", "quarterly"]).notNull(),
+  dayOfWeek: int("dayOfWeek"), // 0-6 para semanal (0=domingo)
+  dayOfMonth: int("dayOfMonth"), // 1-31 para mensal
+  hour: int("hour").default(9).notNull(), // Hora do dia (0-23)
+  recipients: text("recipients").notNull(), // JSON array de e-mails
+  departments: text("departments"), // JSON array de IDs de departamentos (filtro opcional)
+  format: mysqlEnum("format", ["pdf", "excel", "csv"]).default("pdf").notNull(),
+  includeCharts: boolean("includeCharts").default(true).notNull(),
+  active: boolean("active").default(true).notNull(),
+  lastExecutedAt: datetime("lastExecutedAt"),
+  nextExecutionAt: datetime("nextExecutionAt"),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ScheduledReport = typeof scheduledReports.$inferSelect;
+export type InsertScheduledReport = typeof scheduledReports.$inferInsert;
+
+export const reportExecutionLogs = mysqlTable("reportExecutionLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  scheduledReportId: int("scheduledReportId").notNull(),
+  executedAt: datetime("executedAt").notNull(),
+  status: mysqlEnum("status", ["success", "failed", "partial"]).notNull(),
+  recipientCount: int("recipientCount").default(0).notNull(),
+  successCount: int("successCount").default(0).notNull(),
+  failedCount: int("failedCount").default(0).notNull(),
+  errorMessage: text("errorMessage"),
+  executionTimeMs: int("executionTimeMs"), // Tempo de execução em milissegundos
+  fileSize: int("fileSize"), // Tamanho do arquivo gerado em bytes
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ReportExecutionLog = typeof reportExecutionLogs.$inferSelect;
+export type InsertReportExecutionLog = typeof reportExecutionLogs.$inferInsert;

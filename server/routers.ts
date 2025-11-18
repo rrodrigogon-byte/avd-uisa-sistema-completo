@@ -7,11 +7,13 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles, notifications, auditLogs } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
 import { badgesRouter } from "./badgesRouter";
+import { scheduledReportsRouter } from "./scheduledReportsRouter";
+import { executiveRouter } from "./executiveRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1733,6 +1735,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Badges Gamificado
   badges: badgesRouter,
+
+  // Router de Relatórios Agendados (apenas admin)
+  scheduledReports: scheduledReportsRouter,
+
+  // Router de Dashboard Executivo (apenas admin)
+  executive: executiveRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico

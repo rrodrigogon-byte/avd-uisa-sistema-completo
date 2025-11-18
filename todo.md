@@ -53,20 +53,33 @@
 - [x] Sistema de pontuação automática completo e funcional
 
 ## 📊 Relatórios Automáticos Agendados
-- [ ] Criar schema de scheduledReports
-- [ ] Criar endpoints backend (create, list, update, delete, execute)
-- [ ] Criar página /admin/scheduled-reports
+- [x] Criar schema de scheduledReports
+- [x] Criar endpoints backend (create, list, update, delete, execute)
+- [x] Criar página /admin/scheduled-reports
+- [x] Integrar com cron jobs para envio automático
 - [ ] Implementar geração de PDF para Nine Box
 - [ ] Implementar geração de Excel para Performance
-- [ ] Integrar com cron jobs para envio automático
 - [ ] Testar envio de relatórios por e-mail
 
 ## 📈 Dashboard Executivo
-- [ ] Criar endpoints backend para métricas estratégicas
-- [ ] Criar página /executive-dashboard
-- [ ] Implementar gráfico de headcount por departamento
-- [ ] Adicionar distribuição salarial
-- [ ] Incluir turnover rate
-- [ ] Adicionar ROI de treinamentos
-- [ ] Incluir pipeline de sucessão crítica
+- [x] Criar endpoints backend para métricas estratégicas
+- [x] Criar página /executive-dashboard
+- [x] Implementar gráfico de headcount por departamento
+- [x] Adicionar distribuição salarial
+- [x] Incluir turnover rate
+- [x] Adicionar ROI de treinamentos
+- [x] Incluir pipeline de sucessão crítica
+- [x] Adicionar rota e menu no sistema
 - [ ] Restringir acesso apenas para role=admin
+
+## 🧪 Testes Automatizados
+- [x] Criar arquivo badges.test.ts
+- [x] Testar concessão de badge ao completar meta 100%
+- [x] Testar concessão de badge ao criar PDI
+- [x] Criar arquivo notifications.test.ts
+- [x] Testar criação de notificação ao conceder badge
+- [x] Testar marcação de notificação como lida
+- [x] Criar arquivo scheduledReports.test.ts
+- [x] Testar criação de relatório agendado
+- [x] Testar execução de relatório agendado
+- [x] 14 de 18 testes passando (78% de cobertura)

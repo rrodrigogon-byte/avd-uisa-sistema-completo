@@ -37,6 +37,8 @@ import TestIE from "./pages/TestIE";
 import TestVARK from "./pages/TestVARK";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
+import ScheduledReports from "./pages/ScheduledReports";
+import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import Avaliar360 from "./pages/Avaliar360";
 
 function Router() {
@@ -70,6 +72,8 @@ function Router() {
       <Route path="/teste-vark" component={TestVARK} />
       <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
+      <Route path="/admin/scheduled-reports" component={ScheduledReports} />
+      <Route path="/executive-dashboard" component={ExecutiveDashboard} />
                 <Route path="/avaliar-360/:id" component={Avaliar360} />
           <Route path="/admin/audit-log" component={AuditTrail} />
           <Route path="/admin/analytics" component={Analytics} />
