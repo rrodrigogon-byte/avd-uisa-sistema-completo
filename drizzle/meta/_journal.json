@@ -43,6 +43,13 @@
       "when": 1763426098610,
       "tag": "0005_striped_sheva_callister",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1763426630363,
+      "tag": "0006_bitter_secret_warriors",
+      "breakpoints": true
     }
   ]
 }

@@ -30,6 +30,7 @@ import TestDISC from "./pages/TestDISC";
 import TestBigFive from "./pages/TestBigFive";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
+import Avaliar360 from "./pages/Avaliar360";
 
 function Router() {
   return (
@@ -59,6 +60,7 @@ function Router() {
       <Route path="/teste-bigfive" component={TestBigFive} />
       <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
+      <Route path="/avaliar-360/:evaluationId" component={Avaliar360} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

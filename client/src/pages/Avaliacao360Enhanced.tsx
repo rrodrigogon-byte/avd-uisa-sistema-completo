@@ -3,7 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { CheckCircle2, Clock, Users, Loader2, TrendingUp, AlertCircle, BarChart3 } from "lucide-react";
+import { CheckCircle2, Clock, Users, Loader2, TrendingUp, AlertCircle, BarChart3, Download } from "lucide-react";
+import { generate360PDF } from "@/lib/generate360PDF";
+import { toast } from "sonner";
 import { useState } from "react";
 import { Radar } from "react-chartjs-2";
 
@@ -216,11 +218,34 @@ export default function Avaliacao360Enhanced() {
                           Avaliação 360° - {progress.toFixed(0)}% completa
                         </CardDescription>
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold">
-                          {evaluation.finalScore !== null ? evaluation.finalScore.toFixed(1) : "N/A"}
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="text-right">
+                          <div className="text-2xl font-bold">
+                            {evaluation.finalScore !== null ? evaluation.finalScore.toFixed(1) : "N/A"}
+                          </div>
+                          <p className="text-xs text-muted-foreground">Nota Final</p>
                         </div>
-                        <p className="text-xs text-muted-foreground">Nota Final</p>
+                        {isSelected && details && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              try {
+                                generate360PDF({
+                                  evaluation,
+                                  averages: details.averages,
+                                  responses: details.responses,
+                                }, `Colaborador #${evaluation.employeeId}`);
+                                toast.success("Relatório PDF gerado com sucesso!");
+                              } catch (error) {
+                                toast.error("Erro ao gerar PDF");
+                              }
+                            }}
+                          >
+                            <Download className="h-4 w-4 mr-2" />
+                            Exportar PDF
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </CardHeader>

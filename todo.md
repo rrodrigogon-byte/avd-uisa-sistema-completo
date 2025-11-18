@@ -880,3 +880,21 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Implementar gráficos radar comparativos (autoavaliação vs pares vs gestor vs subordinados)
 - [x] Adicionar estatísticas detalhadas de respostas por tipo de avaliador
 - [x] Renomear router antigo calibration para nineBoxCalibration (evitar conflito)
+
+## 🚀 Próximos Passos: Avaliação 360° Avançada
+
+- [x] Criar endpoint para buscar perguntas de avaliação 360° (evaluation360.getQuestions)
+- [x] Criar página /avaliar-360/:evaluationId com formulário interativo
+- [x] Implementar seleção de tipo de avaliador (self, manager, peer, subordinate)
+- [x] Organizar perguntas por categoria com navegação (6 categorias)
+- [x] Adicionar validação e salvamento de respostas
+- [x] Popular 23 perguntas de avaliação 360° (Liderança, Comunicação, Trabalho em Equipe, Resultados, Desenvolvimento, Feedback Aberto)
+- [ ] Criar schema de mensagens de chat para calibração (calibrationMessages criado)
+- [ ] Implementar WebSocket para sessões de calibração em grupo (adiado - complexidade alta)
+- [ ] Criar página /calibracao/sessao/:sessionId com lista de participantes (adiado)
+- [ ] Adicionar chat em tempo real para discussão (adiado)
+- [ ] Implementar votação colaborativa de ajustes (adiado)
+- [x] Instalar jsPDF e html2canvas para geração de PDF
+- [x] Criar função de geração de PDF com análise completa (generate360PDF.ts)
+- [x] Adicionar seções de médias, estatísticas e recomendações ao PDF
+- [x] Implementar botão "Exportar Relatório" na página 360° Enhanced

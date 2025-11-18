@@ -1460,6 +1460,19 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Avaliação 360°
   evaluation360: router({
+    // Buscar perguntas de avaliação
+    getQuestions: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const questions = await database.select()
+        .from(evaluationQuestions)
+        .where(eq(evaluationQuestions.active, true))
+        .orderBy(evaluationQuestions.category, evaluationQuestions.id);
+
+      return questions;
+    }),
+
     // Listar avaliações 360°
     list: protectedProcedure
       .input(z.object({

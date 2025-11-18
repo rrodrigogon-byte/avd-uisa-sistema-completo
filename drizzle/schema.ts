@@ -314,6 +314,17 @@ export const calibrationReviews = mysqlTable("calibrationReviews", {
 export type CalibrationReview = typeof calibrationReviews.$inferSelect;
 export type InsertCalibrationReview = typeof calibrationReviews.$inferInsert;
 
+export const calibrationMessages = mysqlTable("calibrationMessages", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull(),
+  userId: int("userId").notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CalibrationMessage = typeof calibrationMessages.$inferSelect;
+export type InsertCalibrationMessage = typeof calibrationMessages.$inferInsert;
+
 // ============================================================================
 // TABELAS DE MATRIZ 9-BOX
 // ============================================================================
