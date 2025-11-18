@@ -450,4 +450,157 @@ export const successionRouter = router({
 
       return results;
     }),
+
+  // Importar planos UISA no formato simplificado
+  importUIPlans: protectedProcedure
+    .input(
+      z.array(
+        z.object({
+          positionName: z.string(),
+          department: z.string(),
+          currentOccupant: z.string().optional(),
+          riskLevel: z.enum(["baixo", "médio", "alto", "crítico"]),
+          priority: z.enum(["baixa", "média", "alta", "crítica"]),
+          notes: z.string().optional(),
+          successors: z.array(
+            z.object({
+              name: z.string(),
+              readinessLevel: z.enum(["ready_now", "1-2_years", "2-3_years", "3+_years"]),
+              developmentPlan: z.string().optional(),
+            })
+          ),
+        })
+      )
+    )
+    .mutation(async ({ input }) => {
+      const database = await getDb();
+      if (!database) throw new Error("Database not available");
+
+      const results = {
+        success: 0,
+        errors: [] as string[],
+      };
+
+      // Mapear readinessLevel
+      const mapReadiness = (level: string) => {
+        const map: Record<string, string> = {
+          ready_now: "imediato",
+          "1-2_years": "1_ano",
+          "2-3_years": "2_3_anos",
+          "3+_years": "mais_3_anos",
+        };
+        return map[level] || "1_ano";
+      };
+
+      // Mapear riskLevel (remover acentos)
+      const mapRiskLevel = (level: string) => {
+        const map: Record<string, string> = {
+          "baixo": "baixo",
+          "médio": "medio",
+          "alto": "alto",
+          "crítico": "critico",
+        };
+        return map[level] || "medio";
+      };
+
+      for (const planData of input) {
+        try {
+          // 1. Buscar ou criar posição
+          let position = await database
+            .select()
+            .from(positions)
+            .where(eq(positions.title, planData.positionName))
+            .limit(1);
+
+          if (position.length === 0) {
+            const code = planData.positionName.toUpperCase().replace(/\s+/g, "-");
+            const [newPosition] = await database.insert(positions).values({
+              code,
+              title: planData.positionName,
+              departmentId: null,
+              active: true,
+            });
+            position = await database
+              .select()
+              .from(positions)
+              .where(eq(positions.id, newPosition.insertId))
+              .limit(1);
+          }
+
+          const positionId = position[0].id;
+
+          // 2. Buscar ocupante atual
+          let currentHolderId: number | null = null;
+          if (planData.currentOccupant) {
+            const holder = await database
+              .select()
+              .from(employees)
+              .where(eq(employees.name, planData.currentOccupant))
+              .limit(1);
+            if (holder.length > 0) {
+              currentHolderId = holder[0].id;
+            }
+          }
+
+          // 3. Criar plano de sucessão
+          const [newPlan] = await database.insert(successionPlans).values({
+            positionId,
+            currentHolderId,
+            isCritical: planData.priority === "crítica",
+            riskLevel: mapRiskLevel(planData.riskLevel) as any,
+            exitRisk: "medio",
+            notes: planData.notes,
+            status: "ativo",
+          });
+
+          const planId = newPlan.insertId;
+
+          // 4. Adicionar sucessores
+          for (let i = 0; i < planData.successors.length; i++) {
+            const successorData = planData.successors[i];
+            
+            // Buscar ou criar colaborador
+            let employee = await database
+              .select()
+              .from(employees)
+              .where(eq(employees.name, successorData.name))
+              .limit(1);
+
+            if (employee.length === 0) {
+              const empCode = `EMP-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+              const [newEmployee] = await database.insert(employees).values({
+                employeeCode: empCode,
+                name: successorData.name,
+                email: `${empCode.toLowerCase()}@uisa.com.br`,
+                hireDate: new Date(),
+                departmentId: 1, // Departamento padrão
+                positionId: 1, // Posição padrão
+                status: "ativo",
+              });
+              employee = await database
+                .select()
+                .from(employees)
+                .where(eq(employees.id, newEmployee.insertId))
+                .limit(1);
+            }
+
+            const employeeId = employee[0].id;
+
+            // Adicionar candidato
+            await database.insert(successionCandidates).values({
+              planId,
+              employeeId,
+              readinessLevel: mapReadiness(successorData.readinessLevel) as any,
+              priority: i + 1,
+            });
+          }
+
+          results.success++;
+        } catch (error: any) {
+          results.errors.push(`${planData.positionName}: ${error.message}`);
+        }
+      }
+
+      return results;
+    }),
 });

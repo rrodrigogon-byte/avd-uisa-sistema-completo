@@ -11,6 +11,7 @@ export default function SuccessionImport() {
   const [importResult, setImportResult] = useState<any>(null);
 
   const importMutation = trpc.succession.importSuccessionData.useMutation();
+  const importUIPlans = trpc.succession.importUIPlans.useMutation();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -46,7 +47,13 @@ export default function SuccessionImport() {
     }
 
     try {
-      const result = await importMutation.mutateAsync(jsonData);
+      // Detectar formato do JSON
+      const isSimplifiedFormat = Array.isArray(jsonData);
+      
+      const result = isSimplifiedFormat
+        ? await importUIPlans.mutateAsync(jsonData)
+        : await importMutation.mutateAsync(jsonData);
+        
       setImportResult(result);
 
       if (result.errors.length === 0) {
@@ -143,6 +150,24 @@ export default function SuccessionImport() {
                 Carregar Exemplo
               </Button>
 
+              <Button
+                variant="default"
+                onClick={async () => {
+                  try {
+                    const response = await fetch("/uisa-all-succession-plans.json");
+                    if (!response.ok) throw new Error("Erro ao carregar arquivo");
+                    const data = await response.json();
+                    setJsonData(data);
+                    setSelectedFile(new File([JSON.stringify(data)], "uisa-5-planos.json"));
+                    toast.success("🎯 5 Planos UISA carregados!");
+                  } catch (error) {
+                    toast.error("Erro ao carregar planos UISA");
+                  }
+                }}
+              >
+                🎯 Importar 5 Planos UISA
+              </Button>
+
               {selectedFile && (
                 <div className="flex items-center gap-2 text-sm">
                   <CheckCircle2 className="w-4 h-4 text-green-600" />
@@ -160,17 +185,17 @@ export default function SuccessionImport() {
                 <h3 className="font-semibold text-sm">Preview dos Dados:</h3>
                 <div className="bg-muted p-4 rounded-lg">
                   <p className="text-sm">
-                    <strong>Total de Planos:</strong> {jsonData.plans?.length || 0}
+                    <strong>Total de Planos:</strong> {Array.isArray(jsonData) ? jsonData.length : (jsonData.plans?.length || 0)}
                   </p>
-                  {jsonData.plans && jsonData.plans.length > 0 && (
+                  {((Array.isArray(jsonData) && jsonData.length > 0) || (jsonData.plans && jsonData.plans.length > 0)) && (
                     <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                      {jsonData.plans.slice(0, 5).map((plan: any, idx: number) => (
+                      {(Array.isArray(jsonData) ? jsonData : jsonData.plans).slice(0, 5).map((plan: any, idx: number) => (
                         <li key={idx}>
-                          • {plan.positionTitle} ({plan.successors?.length || 0} sucessores)
+                          • {plan.positionName || plan.positionTitle} ({plan.successors?.length || 0} sucessores)
                         </li>
                       ))}
-                      {jsonData.plans.length > 5 && (
-                        <li>... e mais {jsonData.plans.length - 5} planos</li>
+                      {(Array.isArray(jsonData) ? jsonData.length : jsonData.plans.length) > 5 && (
+                        <li>... e mais {(Array.isArray(jsonData) ? jsonData.length : jsonData.plans.length) - 5} planos</li>
                       )}
                     </ul>
                   )}
