@@ -969,3 +969,26 @@
 - [x] Criar relatório consolidado de performance (Metas + 360° + PDI + Nine Box)
 - [x] Integrar geração de insights com IA
 - [x] Exportação PDF executivo mensal
+
+
+## 📊 Dashboard Executivo e Calibração de Diretoria
+- [x] Criar tabelas: calibrationMovements, calibrationApprovals, calibrationWorkflows
+- [x] Criar endpoints backend para movimentação de colaboradores no Nine Box
+- [x] Criar endpoints backend para workflow de aprovação de calibração
+- [x] Criar página /executivo/dashboard - Dashboard one-page com filtros hierárquicos
+- [x] Implementar filtros por Diretoria, Gerência, Coordenação
+- [x] Implementar interface de movimentação de colaboradores (drag-and-drop)
+- [x] Adicionar campo obrigatório de justificativa na movimentação
+- [x] Criar workflow "Aprovação Calibração Diretoria" (RH → Diretor de Gente → Diretor de Área)
+- [x] Adicionar campo obrigatório de evidências para Diretor de Área
+- [x] Implementar notificações automáticas no workflow de calibração
+
+## 🎮 Gamificação Completa
+- [ ] Expandir sistema de badges com pontos e níveis
+- [ ] Criar ranking mensal visível no dashboard
+- [ ] Implementar recompensas automáticas por marcos
+
+## 🔗 Integrações Externas
+- [ ] Criar integração com Microsoft Teams para notificações
+- [ ] Criar integração com Slack para notificações
+- [ ] Adicionar botões de ação rápida nos chats

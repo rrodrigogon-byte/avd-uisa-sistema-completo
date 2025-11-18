@@ -1364,3 +1364,58 @@ export type BonusApproval = typeof bonusApprovals.$inferSelect;
 export type InsertBonusApproval = typeof bonusApprovals.$inferInsert;
 export type GoalEvidence = typeof goalEvidences.$inferSelect;
 export type InsertGoalEvidence = typeof goalEvidences.$inferInsert;
+
+/**
+ * Tabela de movimentações de calibração no Nine Box
+ */
+export const calibrationMovements = mysqlTable("calibrationMovements", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  movedBy: int("movedBy").notNull(), // ID do usuário que moveu (RH)
+  fromPerformance: mysqlEnum("fromPerformance", ["baixo", "médio", "alto"]),
+  fromPotential: mysqlEnum("fromPotential", ["baixo", "médio", "alto"]),
+  toPerformance: mysqlEnum("toPerformance", ["baixo", "médio", "alto"]).notNull(),
+  toPotential: mysqlEnum("toPotential", ["baixo", "médio", "alto"]).notNull(),
+  justification: text("justification").notNull(), // Justificativa obrigatória
+  status: mysqlEnum("status", ["pending", "approved_hr", "approved_people_director", "approved_area_director", "rejected"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CalibrationMovement = typeof calibrationMovements.$inferSelect;
+export type InsertCalibrationMovement = typeof calibrationMovements.$inferInsert;
+
+/**
+ * Tabela de aprovações de calibração (workflow)
+ */
+export const calibrationApprovals = mysqlTable("calibrationApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  movementId: int("movementId").notNull(),
+  approverId: int("approverId").notNull(), // ID do aprovador
+  approverRole: mysqlEnum("approverRole", ["hr", "people_director", "area_director"]).notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  evidence: text("evidence"), // Evidências (obrigatório para Diretor de Área)
+  comments: text("comments"),
+  approvedAt: timestamp("approvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CalibrationApproval = typeof calibrationApprovals.$inferSelect;
+export type InsertCalibrationApproval = typeof calibrationApprovals.$inferInsert;
+
+/**
+ * Tabela de configuração de workflows de calibração
+ */
+export const calibrationWorkflows = mysqlTable("calibrationWorkflows", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  steps: text("steps").notNull(), // JSON com os passos do workflow
+  isActive: boolean("isActive").default(true).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CalibrationWorkflow = typeof calibrationWorkflows.$inferSelect;
+export type InsertCalibrationWorkflow = typeof calibrationWorkflows.$inferInsert;

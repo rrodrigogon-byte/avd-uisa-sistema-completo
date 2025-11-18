@@ -58,6 +58,8 @@ import AprovarMetas from "./pages/AprovarMetas";
 import ConfiguracaoBonus from "@/pages/ConfiguracaoBonus";
 import ConfiguracaoWorkflowsBonus from "@/pages/ConfiguracaoWorkflowsBonus";
 import DashboardBonusRH from "./pages/DashboardBonusRH";
+import MovimentacaoNineBox from "./pages/MovimentacaoNineBox";
+import AprovacaoCalibracoes from "./pages/AprovacaoCalibracoes";
 
 function Router() {
   return (
@@ -69,6 +71,8 @@ function Router() {
       <Route path={"/metas/:id/editar"} component={EditarMeta} />
       <Route path="/metas/:id/progresso" component={AtualizarProgressoMeta} />
       <Route path="/analytics/metas" component={AnalyticsMetas} />
+      <Route path="/executivo/calibracao" component={MovimentacaoNineBox} />
+      <Route path="/executivo/aprovacoes" component={AprovacaoCalibracoes} />
       <Route path={"/avaliacoes"} component={Avaliacoes} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />

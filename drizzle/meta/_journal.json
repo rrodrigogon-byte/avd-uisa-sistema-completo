@@ -134,6 +134,13 @@
       "when": 1763501775293,
       "tag": "0018_ambitious_gabe_jones",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1763505288255,
+      "tag": "0019_freezing_prowler",
+      "breakpoints": true
     }
   ]
 }
