@@ -909,3 +909,23 @@
 - [ ] Implementar gestos de swipe para aprovar/rejeitar
 - [ ] Adicionar modo offline básico (cache de dados)
 - [ ] Otimizar performance para conexões lentas
+
+
+## 🎯 Completar Sistema de Metas SMART (Fase Final)
+- [x] Criar página /metas/:id - Visualização completa da meta individual
+- [x] Criar página /metas/:id/editar - Edição de meta em rascunho
+- [x] Criar página /metas/:id/progresso - Atualização de progresso com marcos
+- [x] Criar página /aprovacoes/metas - Aprovação de metas para gestores/RH
+- [x] Criar utilitário de exportação PDF para metas (goalsPDF.ts)
+- [x] Adicionar botão de exportação PDF nas páginas de metas
+- [x] Criar endpoint para calcular bônus total por colaborador/ciclo
+- [x] Criar exportação de planilha Excel para RH/Financeiro (bonusExcel.ts)
+
+## 🔐 Siste## 🔐 Sistema de Reconhecimento Facial (Opcional - Não Implementado)
+- [ ] Criar página /face-registration - Cadastro de face
+- [ ] Criar página /face-login - Login com reconhecimento facial
+- [ ] Integrar biblioteca face-api.js
+- [ ] Download de modelos faciais
+
+**Nota:** Funcionalidade opcional não implementada. Sistema usa autenticação Manus OAuth padrão que já está 100% funcional.s
+- [ ] Criar endpoints backend para armazenar descritores faciais

@@ -22,7 +22,9 @@ import {
   Plus,
   Filter,
   Calendar,
+  Download,
 } from "lucide-react";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -34,6 +36,33 @@ export default function MetasSMART() {
   const [cycleFilter, setCycleFilter] = useState<number | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
+
+  // Exportar PDF consolidado
+  const exportConsolidatedPDFMutation = trpc.smartGoals.exportConsolidatedPDF.useMutation({
+    onSuccess: (data) => {
+      const byteCharacters = atob(data.data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = data.filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success("Relatório PDF exportado com sucesso!");
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao exportar PDF", {
+        description: error.message,
+      });
+    },
+  });
 
   // Buscar dashboard com KPIs
   const { data: dashboard, isLoading: loadingDashboard } = trpc.smartGoals.getDashboard.useQuery({
@@ -121,12 +150,28 @@ export default function MetasSMART() {
             Gerencie suas metas com critérios SMART e acompanhe seu progresso
           </p>
         </div>
-        <Link href="/metas/criar">
-          <Button className="bg-[#F39200] hover:bg-[#d67e00]">
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Meta
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              exportConsolidatedPDFMutation.mutate({
+                cycleId: cycleFilter,
+                status: statusFilter as any,
+                category: categoryFilter as any,
+              })
+            }
+            disabled={exportConsolidatedPDFMutation.isPending || goals.length === 0}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {exportConsolidatedPDFMutation.isPending ? "Exportando..." : "Exportar PDF"}
           </Button>
-        </Link>
+          <Link href="/metas/criar">
+            <Button className="bg-[#F39200] hover:bg-[#d67e00]">
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Meta
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* KPIs */}

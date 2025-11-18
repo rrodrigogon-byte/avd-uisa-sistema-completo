@@ -724,4 +724,366 @@ export const goalsRouter = router({
         },
       };
     }),
+
+  /**
+   * Atualizar meta (apenas em rascunho)
+   */
+  update: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        type: z.enum(["individual", "team", "organizational"]).optional(),
+        category: z.enum(["financial", "behavioral", "corporate", "development"]).optional(),
+        measurementUnit: z.string().optional(),
+        targetValue: z.number().optional(),
+        weight: z.number().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        bonusEligible: z.boolean().optional(),
+        bonusPercentage: z.number().optional(),
+        bonusAmount: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Verificar se meta existe e está em rascunho
+      const [existingGoal] = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.id, input.goalId),
+            eq(smartGoals.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!existingGoal) {
+        throw new Error("Meta não encontrada");
+      }
+
+      if (existingGoal.status !== "draft") {
+        throw new Error("Apenas metas em rascunho podem ser editadas");
+      }
+
+      // Atualizar meta
+      const updateData: any = {};
+      if (input.title !== undefined) updateData.title = input.title;
+      if (input.description !== undefined) updateData.description = input.description;
+      if (input.type !== undefined) updateData.type = input.type;
+      if (input.category !== undefined) updateData.category = input.category;
+      if (input.measurementUnit !== undefined) updateData.measurementUnit = input.measurementUnit;
+      if (input.targetValue !== undefined) updateData.targetValue = input.targetValue.toString();
+      if (input.weight !== undefined) updateData.weight = input.weight;
+      if (input.startDate !== undefined) updateData.startDate = new Date(input.startDate);
+      if (input.endDate !== undefined) updateData.endDate = new Date(input.endDate);
+      if (input.bonusEligible !== undefined) updateData.bonusEligible = input.bonusEligible;
+      if (input.bonusPercentage !== undefined) updateData.bonusPercentage = input.bonusPercentage.toString();
+      if (input.bonusAmount !== undefined) updateData.bonusAmount = input.bonusAmount.toString();
+
+      await db
+        .update(smartGoals)
+        .set(updateData)
+        .where(eq(smartGoals.id, input.goalId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Exportar meta individual em PDF
+   */
+  exportPDF: protectedProcedure
+    .input(z.object({ goalId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar meta completa
+      const [goal] = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.id, input.goalId),
+            eq(smartGoals.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!goal) {
+        throw new Error("Meta não encontrada");
+      }
+
+      // Buscar marcos
+      const milestones = await db
+        .select()
+        .from(goalMilestones)
+        .where(eq(goalMilestones.goalId, input.goalId))
+        .orderBy(goalMilestones.dueDate);
+
+      // Buscar comentários
+      const comments = await db
+        .select()
+        .from(goalComments)
+        .where(eq(goalComments.goalId, input.goalId))
+        .orderBy(desc(goalComments.createdAt));
+
+      // Buscar informações do colaborador
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, goal.employeeId))
+        .limit(1);
+
+      // Buscar ciclo
+      const [cycle] = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, goal.cycleId))
+        .limit(1);
+
+      const goalData = {
+        ...goal,
+        employeeName: employee?.name || "N/A",
+        cycleName: cycle?.name || "N/A",
+        milestones,
+        comments,
+      };
+
+      // Gerar PDF
+      const { generateGoalPDF } = await import("./utils/goalsPDF.js");
+      const pdfBuffer = generateGoalPDF(goalData as any);
+
+      // Retornar base64 para download no frontend
+      return {
+        filename: `meta-${goal.id}-${Date.now()}.pdf`,
+        data: pdfBuffer.toString("base64"),
+      };
+    }),
+
+  /**
+   * Exportar relatório consolidado de metas em PDF
+   */
+  exportConsolidatedPDF: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number().optional(),
+        status: z
+          .enum([
+            "draft",
+            "pending_approval",
+            "approved",
+            "rejected",
+            "in_progress",
+            "completed",
+            "cancelled",
+          ])
+          .optional(),
+        category: z
+          .enum(["financial", "behavioral", "corporate", "development"])
+          .optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar metas com filtros
+      const conditions = [eq(smartGoals.employeeId, ctx.user.id)];
+
+      if (input.cycleId) {
+        conditions.push(eq(smartGoals.cycleId, input.cycleId));
+      }
+      if (input.status) {
+        conditions.push(eq(smartGoals.status, input.status));
+      }
+      if (input.category) {
+        conditions.push(eq(smartGoals.category, input.category));
+      }
+
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(and(...conditions))
+        .orderBy(desc(smartGoals.createdAt));
+
+      if (goals.length === 0) {
+        throw new Error("Nenhuma meta encontrada com os filtros selecionados");
+      }
+
+      // Buscar informações do colaborador
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, ctx.user.id))
+        .limit(1);
+
+      // Adicionar nome do colaborador em cada meta
+      const goalsData = goals.map((g) => ({
+        ...g,
+        employeeName: employee?.name || "N/A",
+      }));
+
+      // Gerar PDF
+      const { generateGoalsConsolidatedPDF } = await import("./utils/goalsPDF.js");
+      const pdfBuffer = generateGoalsConsolidatedPDF(
+        goalsData as any,
+        `Relatório de Metas - ${employee?.name || "Colaborador"}`
+      );
+
+      // Retornar base64 para download no frontend
+      return {
+        filename: `relatorio-metas-${ctx.user.id}-${Date.now()}.pdf`,
+        data: pdfBuffer.toString("base64"),
+      };
+    }),
+
+  /**
+   * Calcular bônus total por colaborador/ciclo
+   */
+  calculateBonusTotal: protectedProcedure
+    .input(
+      z.object({
+        employeeId: z.number().optional(),
+        cycleId: z.number(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const targetEmployeeId = input.employeeId || ctx.user.id;
+
+      // Buscar metas concluídas e elegíveis para bônus
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.employeeId, targetEmployeeId),
+            eq(smartGoals.cycleId, input.cycleId),
+            eq(smartGoals.bonusEligible, true),
+            eq(smartGoals.status, "completed")
+          )
+        );
+
+      let totalBonusAmount = 0;
+      let totalBonusPercentage = 0;
+      const bonusDetails = [];
+
+      for (const goal of goals) {
+        const bonusAmount = goal.bonusAmount ? parseFloat(goal.bonusAmount) : 0;
+        const bonusPercentage = goal.bonusPercentage
+          ? parseFloat(goal.bonusPercentage)
+          : 0;
+
+        totalBonusAmount += bonusAmount;
+        totalBonusPercentage += bonusPercentage;
+
+        bonusDetails.push({
+          goalId: goal.id,
+          goalTitle: goal.title,
+          bonusAmount,
+          bonusPercentage,
+          progress: goal.progress,
+          weight: goal.weight,
+        });
+      }
+
+      return {
+        employeeId: targetEmployeeId,
+        cycleId: input.cycleId,
+        totalBonusAmount,
+        totalBonusPercentage,
+        eligibleGoals: goals.length,
+        bonusDetails,
+      };
+    }),
+
+  /**
+   * Exportar planilha Excel de bônus para RH/Financeiro
+   */
+  exportBonusExcel: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar todas as metas concluídas e elegíveis para bônus no ciclo
+      const goals = await db
+        .select({
+          goalId: smartGoals.id,
+          goalTitle: smartGoals.title,
+          employeeId: smartGoals.employeeId,
+          employeeName: employees.name,
+          departmentId: employees.departmentId,
+          bonusAmount: smartGoals.bonusAmount,
+          bonusPercentage: smartGoals.bonusPercentage,
+          progress: smartGoals.progress,
+          weight: smartGoals.weight,
+        })
+        .from(smartGoals)
+        .leftJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(
+          and(
+            eq(smartGoals.cycleId, input.cycleId),
+            eq(smartGoals.bonusEligible, true),
+            eq(smartGoals.status, "completed")
+          )
+        )
+        .orderBy(employees.name);
+
+      // Agrupar por colaborador
+      const bonusByEmployee = new Map<number, any>();
+
+      for (const goal of goals) {
+        const empId = goal.employeeId;
+        if (!bonusByEmployee.has(empId)) {
+          bonusByEmployee.set(empId, {
+            employeeId: empId,
+            employeeName: goal.employeeName || "N/A",
+            department: goal.departmentId?.toString() || "N/A",
+            totalBonusAmount: 0,
+            totalBonusPercentage: 0,
+            goalsCount: 0,
+            goals: [],
+          });
+        }
+
+        const empData = bonusByEmployee.get(empId);
+        const bonusAmount = goal.bonusAmount ? parseFloat(goal.bonusAmount) : 0;
+        const bonusPercentage = goal.bonusPercentage
+          ? parseFloat(goal.bonusPercentage)
+          : 0;
+
+        empData.totalBonusAmount += bonusAmount;
+        empData.totalBonusPercentage += bonusPercentage;
+        empData.goalsCount += 1;
+        empData.goals.push({
+          title: goal.goalTitle,
+          bonusAmount,
+          bonusPercentage,
+        });
+      }
+
+      // Gerar Excel
+      const { generateBonusExcel } = await import("./utils/bonusExcel.js");
+      const excelBuffer = await generateBonusExcel(
+        Array.from(bonusByEmployee.values()),
+        input.cycleId
+      );
+
+      return {
+        filename: `bonus-ciclo-${input.cycleId}-${Date.now()}.xlsx`,
+        data: excelBuffer.toString("base64"),
+      };
+    }),
 });

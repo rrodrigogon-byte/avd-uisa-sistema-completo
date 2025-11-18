@@ -50,6 +50,10 @@ import DashboardExecutivo from "./pages/DashboardExecutivo";
 import Avaliar360 from "./pages/Avaliar360";
 import MetasSMART from "./pages/MetasSMART";
 import CriarMetaSMART from "./pages/CriarMetaSMART";
+import DetalhesMeta from "./pages/DetalhesMeta";
+import EditarMeta from "./pages/EditarMeta";
+import AtualizarProgressoMeta from "./pages/AtualizarProgressoMeta";
+import AprovarMetas from "./pages/AprovarMetas";
 
 function Router() {
   return (
@@ -57,6 +61,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/metas"} component={MetasSMART} />
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
+      <Route path={"/metas/:id"} component={DetalhesMeta} />
+      <Route path={"/metas/:id/editar"} component={EditarMeta} />
+      <Route path={"/metas/:id/progresso"} component={AtualizarProgressoMeta} />
       <Route path={"/avaliacoes"} component={Avaliacoes} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />
@@ -69,9 +76,8 @@ function Router() {
       <Route path="/departamentos" component={Departamentos} />
       <Route path="/centros-custo" component={CentrosCusto} />
       <Route path="/aprovacoes/dashboard" component={AprovacoesD} />
-      <Route path="/aprovacoes/solicitacoes" component={MinhasSolicitacoes} />
-      <Route path="/aprovacoes/bonus" component={Bonus} />
-      <Route path="/aprovacoes/workflows" component={Workflows} />
+      <Route path="/aprovacoes/solicitacoes" component={MinhasSolicitacoes} />      <Route path={"/aprovacoes/bonus"} component={Bonus} />
+      <Route path={"/aprovacoes/metas"} component={AprovarMetas} />      <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />
       <Route path="/mapa-sucessao" component={SucessaoMelhorado} />
       <Route path="/pdi-inteligente/novo" component={PDIInteligenteNovo} />
