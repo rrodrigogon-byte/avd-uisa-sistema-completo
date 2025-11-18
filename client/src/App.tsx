@@ -43,6 +43,7 @@ import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
 import ScheduledReports from "./pages/ScheduledReports";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
+import DashboardExecutivo from "./pages/DashboardExecutivo";
 import Avaliar360 from "./pages/Avaliar360";
 
 function Router() {
@@ -82,6 +83,7 @@ function Router() {
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
+      <Route path="/dashboard-executivo" component={DashboardExecutivo} />
                 <Route path="/avaliar-360/:id" component={Avaliar360} />
           <Route path="/admin/audit-log" component={AuditTrail} />
           <Route path="/admin/analytics" component={Analytics} />

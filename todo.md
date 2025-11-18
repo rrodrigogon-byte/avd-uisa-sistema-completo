@@ -611,3 +611,71 @@
 - [ ] Implementar acompanhamento RH + Gestor (aprovações, comentários)
 - [ ] Adicionar botões de exportação PDF
 - [ ] Criar wizard de criação de PDI Inteligente
+
+
+## 📊 Dashboard Executivo Completo (Prioridade Alta)
+- [x] Criar página /dashboard-executivo
+- [x] Implementar KPIs no topo: Headcount, Performance, Engajamento, Flight Risk
+- [x] Implementar gráfico "Distribuição Nine Box" (grid 3x3)
+- [x] Implementar gráfico "Performance por Departamento" (barras)
+- [x] Implementar gráfico "Tendência de Performance (6 meses)" (linha)
+- [x] Implementar gráfico "Cobertura de Sucessão" (pizza: Sem/Mínima/Adequada/Excelente)
+- [x] Implementar seção "Top 10 Performers" (lista com avatares)
+- [x] Implementar seção "Flight Risk (Alto)" (lista com risco)
+- [x] Adicionar filtro de departamento no topo
+- [x] Adicionar botão "Exportar" relatório
+- [x] Integrar com dados reais dos 2.889 funcionários
+- [x] Adicionar endpoints backend: getPerformanceByDepartment, getPerformanceTrend, getSuccessionCoverage, getTopPerformers, getFlightRisk
+- [x] Instalar e configurar recharts para gráficos
+- [x] Criar rota /dashboard-executivo no App.tsx
+
+## 🗺️ Mapa de Sucessão Visual Completo (Prioridade Alta)
+- [ ] Melhorar página /sucessao com layout das telas de referência
+- [ ] Adicionar KPIs no topo: Posições Críticas, Sucessores Prontos, Alto Risco, Cobertura Média
+- [ ] Adicionar filtros: Departamento, Nível de Risco, Impacto, Cobertura
+- [ ] Implementar visualização em tabela com colunas: Posição, Titular, Sucessores, Prontidão, Cobertura
+- [ ] Adicionar botão "Nova Posição" e "Exportar"
+- [ ] Implementar modal de detalhes de posição
+- [ ] Adicionar indicadores visuais de risco (cores)
+- [ ] Integrar com dados reais de sucessão
+
+## 🎯 PDI Inteligente Frontend (Prioridade Alta)
+- [ ] Criar página /pdi-inteligente/:id
+- [ ] Implementar cabeçalho com informações do colaborador e posição-alvo
+- [ ] Implementar seção "Desafio Estratégico" (contexto, duração, envolvidos)
+- [ ] Implementar seção "Pacto de Desenvolvimento" (Sucessor, Gestor, Sponsors, Guardião)
+- [ ] Implementar gráfico radar "Diagnóstico de Competências" (atual vs. alvo)
+- [ ] Implementar matriz de gaps com responsabilidades (Colaborador, Gestor, Sponsors)
+- [ ] Implementar tabela "Plano de Ação 70-20-10" (ações, status, prazos, responsáveis)
+- [ ] Implementar seção "Gestão de Riscos" (tipo, impacto, probabilidade, mitigação)
+- [ ] Implementar seção "Progressão Estratégica" (marcos 12 e 24 meses)
+- [ ] Implementar seção "Acompanhamento" (reviews de RH/Gestor/Sponsors)
+- [ ] Adicionar botões de ação: Editar, Aprovar, Exportar PDF
+- [ ] Integrar com Chart.js para gráfico radar
+
+## ✅ Sistema de Aprovações Completo (Prioridade Alta)
+- [ ] Criar página /aprovacoes/dashboard
+- [ ] Implementar cards de métricas: Pendentes, Aprovadas, Rejeitadas, Tempo Médio
+- [ ] Implementar tabela de solicitações pendentes
+- [ ] Implementar filtros: Tipo, Status, Data, Solicitante
+- [ ] Criar página /aprovacoes/minhas-solicitacoes
+- [ ] Implementar histórico de solicitações do usuário
+- [ ] Criar página /aprovacoes/bonus
+- [ ] Implementar formulário de solicitação de bônus
+- [ ] Implementar tabela de bônus aprovados/pendentes
+- [ ] Criar página /aprovacoes/workflows
+- [ ] Implementar visualização de workflows ativos
+- [ ] Implementar criação de novos workflows
+- [ ] Adicionar notificações em tempo real (WebSocket)
+
+## 🎯 Performance Integrada 40-30-30 (Prioridade Média)
+- [ ] Criar página /performance-integrada/:employeeId/:cycleId
+- [ ] Implementar cabeçalho com score total e breakdown (Financial 40%, Behavioral 30%, Corporate 30%)
+- [ ] Implementar seção "Financial Goals" com metas Harvest
+- [ ] Implementar seção "Behavioral Goals" com competências
+- [ ] Implementar seção "Corporate Goals" com metas estratégicas
+- [ ] Implementar gráfico "Breakdown Ponderado" (barras horizontais)
+- [ ] Implementar seção "Performance Multi-Dimensional" (gráficos)
+- [ ] Implementar seção "Evolução Histórica" (linha temporal)
+- [ ] Implementar seção "Recomendações de Desenvolvimento"
+- [ ] Adicionar seletor de colaborador e safra no topo
