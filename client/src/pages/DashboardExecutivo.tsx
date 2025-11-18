@@ -15,6 +15,8 @@ import {
   Target
 } from "lucide-react";
 import { Link } from "wouter";
+import { exportDashboardExecutivo } from "@/lib/exportPDF";
+import { toast } from "sonner";
 import {
   BarChart,
   Bar,
@@ -93,16 +95,26 @@ export default function DashboardExecutivo() {
                   <SelectItem value="operacoes">Operações</SelectItem>
                 </SelectContent>
               </Select>
-              <Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    toast.info("Gerando PDF...");
+                    await exportDashboardExecutivo();
+                    toast.success("PDF exportado com sucesso!");
+                  } catch (error) {
+                    toast.error("Erro ao exportar PDF");
+                  }
+                }}
+              >
                 <Download className="h-4 w-4 mr-2" />
-                Exportar
+                Exportar PDF
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container py-8 space-y-6">
+      <div className="container py-8 space-y-6" id="dashboard-executivo-content">
         {/* KPIs Principais */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Headcount */}

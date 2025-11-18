@@ -25,6 +25,7 @@ import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
 import SucessaoMelhorado from "./pages/SucessaoMelhorado";
 import PDIInteligente from "./pages/PDIInteligente";
+import PDIInteligenteNovo from "./pages/PDIInteligenteNovo";
 import NineBoxComparativo from "./pages/NineBoxComparativo";
 import ReportBuilder from "./pages/ReportBuilder";
 import ReportAnalytics from "./pages/ReportAnalytics";
@@ -70,6 +71,7 @@ function Router() {
       <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />
       <Route path="/mapa-sucessao" component={SucessaoMelhorado} />
+      <Route path="/pdi-inteligente/novo" component={PDIInteligenteNovo} />
       <Route path="/pdi-inteligente/:id" component={PDIInteligente} />
       <Route path="/nine-box-comparativo" component={NineBoxComparativo} />
       <Route path="/admin/report-builder" component={ReportBuilder} />

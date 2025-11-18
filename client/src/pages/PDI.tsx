@@ -9,10 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
 import { downloadICS } from "@/lib/generateICS";
 import { toast } from "sonner";
-import { AlertCircle, BookOpen, Calendar, CalendarPlus, CheckCircle2, Clock, Plus, TrendingUp, Users2 } from "lucide-react";
+import { AlertCircle, BookOpen, Calendar, CalendarPlus, CheckCircle2, Clock, Plus, TrendingUp, Users2, Lightbulb, Brain } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function PDI() {
   const [showWizard, setShowWizard] = useState(false);
+  const [, setLocation] = useLocation();
   const { data: pdis } = trpc.pdi.list.useQuery({});
   const { data: employee } = trpc.employees.getCurrent.useQuery();
 
@@ -79,12 +81,22 @@ export default function PDI() {
               Acompanhe seu desenvolvimento profissional com o modelo 70-20-10
             </p>
           </div>
-          {!activePDI && (
-            <Button size="lg" onClick={() => setShowWizard(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Criar PDI
+          <div className="flex items-center gap-3">
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => setLocation("/pdi-inteligente/novo")}
+            >
+              <Brain className="h-4 w-4 mr-2" />
+              PDI Inteligente
             </Button>
-          )}
+            {!activePDI && (
+              <Button size="lg" onClick={() => setShowWizard(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Criar PDI 70-20-10
+              </Button>
+            )}
+          </div>
         </div>
 
         {showWizard ? (

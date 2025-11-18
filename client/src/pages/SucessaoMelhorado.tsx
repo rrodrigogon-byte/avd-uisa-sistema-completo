@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Users, TrendingUp, AlertCircle, Plus, Download, Search, ArrowLeft } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
+import { exportMapaSucessao } from "@/lib/exportPDF";
+import { toast } from "sonner";
 
 /**
  * Mapa de Sucessão - Versão Melhorada
@@ -60,7 +62,7 @@ export default function SucessaoMelhorado() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6" id="mapa-sucessao-content">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -80,9 +82,20 @@ export default function SucessaoMelhorado() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={async () => {
+                try {
+                  toast.info("Gerando PDF...");
+                  await exportMapaSucessao();
+                  toast.success("PDF exportado com sucesso!");
+                } catch (error) {
+                  toast.error("Erro ao exportar PDF");
+                }
+              }}
+            >
               <Download className="h-4 w-4 mr-2" />
-              Exportar
+              Exportar PDF
             </Button>
             <Link href="/sucessao">
               <Button>
