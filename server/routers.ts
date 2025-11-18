@@ -1038,7 +1038,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   psychometric: router({
     // Buscar perguntas de um teste específico
     getQuestions: protectedProcedure
-      .input(z.object({ testType: z.enum(["disc", "bigfive"]) }))
+      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]) }))
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -1054,7 +1054,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     // Submeter respostas de um teste
     submitTest: protectedProcedure
       .input(z.object({
-        testType: z.enum(["disc", "bigfive"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]),
         responses: z.array(z.object({
           questionId: z.number(),
           score: z.number().min(1).max(5),
@@ -1145,6 +1145,10 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             A: test.bigFiveAgreeableness ? test.bigFiveAgreeableness / 20 : 0,
             N: test.bigFiveNeuroticism ? test.bigFiveNeuroticism / 20 : 0,
           };
+        } else if (test.testType === "mbti" || test.testType === "ie" || test.testType === "vark") {
+          // Para novos testes, retornar profile vazio por enquanto
+          // TODO: Implementar cálculo de perfil para MBTI, IE e VARK
+          profile = {};
         }
         return { ...test, profile };
       });
@@ -1563,7 +1567,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
 // Função auxiliar para calcular perfil psicométrico
 async function calculateProfile(
-  testType: "disc" | "bigfive",
+  testType: "disc" | "bigfive" | "mbti" | "ie" | "vark",
   responses: Array<{ questionId: number; score: number }>,
   database: any
 ) {

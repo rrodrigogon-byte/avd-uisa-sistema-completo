@@ -28,6 +28,9 @@ import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
 import PsychometricTests from "./pages/PsychometricTests";
 import TestDISC from "./pages/TestDISC";
 import TestBigFive from "./pages/TestBigFive";
+import TestMBTI from "./pages/TestMBTI";
+import TestIE from "./pages/TestIE";
+import TestVARK from "./pages/TestVARK";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
 import Avaliar360 from "./pages/Avaliar360";
@@ -58,6 +61,9 @@ function Router() {
       <Route path="/testes-psicometricos" component={PsychometricTests} />
       <Route path="/teste-disc" component={TestDISC} />
       <Route path="/teste-bigfive" component={TestBigFive} />
+      <Route path="/teste-mbti" component={TestMBTI} />
+      <Route path="/teste-ie" component={TestIE} />
+      <Route path="/teste-vark" component={TestVARK} />
       <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/avaliar-360/:evaluationId" component={Avaliar360} />

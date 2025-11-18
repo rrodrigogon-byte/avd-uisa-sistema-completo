@@ -37,6 +37,9 @@ export default function PsychometricTests() {
 
   const discTests = tests?.filter(t => t.testType === "disc") || [];
   const bigFiveTests = tests?.filter(t => t.testType === "bigfive") || [];
+  const mbtiTests = tests?.filter(t => t.testType === "mbti") || [];
+  const ieTests = tests?.filter(t => t.testType === "ie") || [];
+  const varkTests = tests?.filter(t => t.testType === "vark") || [];
 
   if (isLoading) {
     return (
@@ -111,6 +114,84 @@ export default function PsychometricTests() {
                 onClick={() => setLocation("/teste-bigfive")}
               >
                 {bigFiveTests.length > 0 ? "Refazer Teste" : "Iniciar Teste"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Teste MBTI
+              </CardTitle>
+              <CardDescription>
+                Identifica seu tipo de personalidade entre os 16 tipos do Myers-Briggs Type Indicator
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">20 perguntas · 8 minutos</span>
+                {mbtiTests.length > 0 && (
+                  <Badge variant="secondary">Realizado {mbtiTests.length}x</Badge>
+                )}
+              </div>
+              <Button
+                className="w-full"
+                onClick={() => setLocation("/teste-mbti")}
+              >
+                {mbtiTests.length > 0 ? "Refazer Teste" : "Iniciar Teste"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5" />
+                Inteligência Emocional
+              </CardTitle>
+              <CardDescription>
+                Avalia suas competências emocionais baseadas no modelo de Daniel Goleman
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">25 perguntas · 10 minutos</span>
+                {ieTests.length > 0 && (
+                  <Badge variant="secondary">Realizado {ieTests.length}x</Badge>
+                )}
+              </div>
+              <Button
+                className="w-full"
+                onClick={() => setLocation("/teste-ie")}
+              >
+                {ieTests.length > 0 ? "Refazer Teste" : "Iniciar Teste"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Estilos de Aprendizagem (VARK)
+              </CardTitle>
+              <CardDescription>
+                Identifica seu estilo preferido: Visual, Auditivo, Leitura/Escrita ou Cinestésico
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">20 perguntas · 8 minutos</span>
+                {varkTests.length > 0 && (
+                  <Badge variant="secondary">Realizado {varkTests.length}x</Badge>
+                )}
+              </div>
+              <Button
+                className="w-full"
+                onClick={() => setLocation("/teste-vark")}
+              >
+                {varkTests.length > 0 ? "Refazer Teste" : "Iniciar Teste"}
               </Button>
             </CardContent>
           </Card>

@@ -907,8 +907,12 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Popular perguntas de Estilos de Aprendizagem (VARK) - 20 perguntas
 - [x] Atualizar schema de testQuestions para suportar mbti, ie, vark
 - [x] Migração 0007 aplicada
-- [ ] Criar páginas de questionários para MBTI, IE e VARK
-- [ ] Implementar cálculo de resultados para cada teste
+- [x] Criar páginas de questionários para MBTI, IE e VARK (TestMBTI.tsx, TestIE.tsx, TestVARK.tsx)
+- [x] Atualizar router psychometric para suportar novos testes
+- [x] Atualizar schema psychometricTests (migração 0008)
+- [x] Adicionar rotas no App.tsx (/teste-mbti, /teste-ie, /teste-vark)
+- [x] Adicionar cards dos novos testes na página PsychometricTests
+- [ ] Implementar cálculo de resultados para MBTI, IE e VARK
 - [ ] Adicionar gráficos e interpretações de resultados
 
 ### Expansão do Módulo de Performance

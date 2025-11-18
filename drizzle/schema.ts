@@ -592,7 +592,7 @@ export const pdiItemsRelations = relations(pdiItems, ({ one, many }) => ({
 export const psychometricTests = mysqlTable("psychometricTests", {
   id: int("id").autoincrement().primaryKey(),
   employeeId: int("employeeId").notNull(),
-  testType: mysqlEnum("testType", ["disc", "bigfive"]).notNull(),
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark"]).notNull(),
   completedAt: datetime("completedAt").notNull(),
   // Resultados DISC (0-100 para cada dimensão)
   discDominance: int("discDominance"), // Dominância
