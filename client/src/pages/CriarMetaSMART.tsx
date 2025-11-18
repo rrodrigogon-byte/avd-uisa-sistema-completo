@@ -133,7 +133,7 @@ export default function CriarMetaSMART() {
     );
   };
 
-  const smartScore = validation.data
+  const smartScore = validation?.data
     ? [
         validation.data.isSpecific,
         validation.data.isMeasurable,
@@ -482,7 +482,7 @@ export default function CriarMetaSMART() {
           </Card>
 
           {/* Validação SMART */}
-          {validation.data && (
+          {validation?.data && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
