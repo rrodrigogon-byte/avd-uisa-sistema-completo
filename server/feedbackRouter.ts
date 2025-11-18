@@ -26,6 +26,12 @@ export const feedbackRouter = router({
         ...input,
       });
 
+      // Verificar badges de feedback ao criar
+      if (input.employeeId) {
+        const { checkFeedbackBadges } = await import("./services/badgeService");
+        await checkFeedbackBadges(input.employeeId);
+      }
+
       return { success: true };
     }),
 

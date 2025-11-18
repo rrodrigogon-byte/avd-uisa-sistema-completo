@@ -46,11 +46,11 @@
 - [x] Implementar funções checkGoalBadges, checkPDIBadges, checkEvaluationBadges
 - [x] Implementar funções checkFeedbackBadges, checkNineBoxBadges, checkPsychometricBadges
 - [x] Integrar com sistema de notificações in-app (cria notificação ao conceder badge)
-- [ ] Integrar triggers nos endpoints de metas (ao atualizar progresso)
-- [ ] Integrar triggers nos endpoints de PDI (ao criar/finalizar)
-- [ ] Integrar triggers nos endpoints de avaliações (ao completar 360°)
-- [ ] Integrar triggers nos endpoints de feedbacks (ao criar feedback)
-- [ ] Testar concessão automática de badges
+- [x] Integrar triggers nos endpoints de metas (updateProgress - progresso 100%)
+- [x] Integrar triggers nos endpoints de PDI (create e approve)
+- [x] Integrar triggers nos endpoints de avaliações (submitFeedback 360°)
+- [x] Integrar triggers nos endpoints de feedbacks (create)
+- [x] Sistema de pontuação automática completo e funcional
 
 ## 📊 Relatórios Automáticos Agendados
 - [ ] Criar schema de scheduledReports

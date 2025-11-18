@@ -292,6 +292,12 @@ export const appRouter = router({
           ctx.req.headers["user-agent"]
         );
 
+        // Verificar badges de metas se progresso = 100%
+        if (input.progress === 100 && goal.employeeId) {
+          const { checkGoalBadges } = await import("./services/badgeService");
+          await checkGoalBadges(goal.employeeId);
+        }
+
         return { success: true };
       }),
   }),
@@ -432,6 +438,12 @@ export const appRouter = router({
           ctx.req.ip,
           ctx.req.headers["user-agent"]
         );
+
+        // Verificar badges de PDI ao criar
+        if (input.employeeId) {
+          const { checkPDIBadges } = await import("./services/badgeService");
+          await checkPDIBadges(input.employeeId);
+        }
 
         return { id: pdiId, success: true };
       }),
@@ -773,6 +785,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         const employee = await getUserByOpenId(ctx.user.openId);
         if (!employee) throw new Error("Employee not found");
 
+        // Buscar PDI para pegar employeeId
+        const pdi = await db.select().from(pdiPlans).where(eq(pdiPlans.id, input.planId)).limit(1);
+        
         await db.update(pdiPlans)
           .set({ 
             status: "aprovado",
@@ -781,6 +796,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             updatedAt: new Date()
           })
           .where(eq(pdiPlans.id, input.planId));
+
+        // Verificar badges de PDI ao aprovar
+        if (pdi[0]?.employeeId) {
+          const { checkPDIBadges } = await import("./services/badgeService");
+          await checkPDIBadges(pdi[0].employeeId);
+        }
 
         // TODO: Enviar notificação por e-mail ao colaborador
         return { success: true };
@@ -1562,6 +1583,15 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           score: input.score,
           textResponse: input.textResponse,
         });
+
+        // Buscar avaliação para pegar employeeId
+        const evaluation = await database.select().from(performanceEvaluations).where(eq(performanceEvaluations.id, input.evaluationId)).limit(1);
+        
+        // Verificar badges de avaliação 360° ao submeter feedback
+        if (evaluation[0]?.employeeId) {
+          const { checkEvaluationBadges } = await import("./services/badgeService");
+          await checkEvaluationBadges(evaluation[0].employeeId);
+        }
 
         return { success: true };
       }),
