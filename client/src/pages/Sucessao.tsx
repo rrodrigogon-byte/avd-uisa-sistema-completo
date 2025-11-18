@@ -9,7 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Users, TrendingUp, AlertCircle, Plus, UserPlus, Award, Calendar, Target } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Loader2, Users, TrendingUp, AlertCircle, Plus, UserPlus, Award, Calendar, Target, Search, Check, ChevronsUpDown, Pencil, Trash2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -27,6 +30,8 @@ export default function Sucessao() {
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isAddSuccessorDialogOpen, setIsAddSuccessorDialogOpen] = useState(false);
+  const [openEmployeeCombobox, setOpenEmployeeCombobox] = useState(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
 
   // Queries
   const { data: plans, isLoading, refetch } = trpc.succession.list.useQuery();
@@ -87,13 +92,17 @@ export default function Sucessao() {
 
   const handleAddSuccessor = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedPlanId) return;
-
+    
+    if (!selectedEmployeeId) {
+      toast.error("Selecione um colaborador");
+      return;
+    }
+    
     const formData = new FormData(e.currentTarget);
     
     addSuccessor.mutate({
-      planId: selectedPlanId,
-      employeeId: Number(formData.get("employeeId")),
+      planId: selectedPlanId!,
+      employeeId: selectedEmployeeId,
       readinessLevel: formData.get("readinessLevel") as "imediato" | "1_ano" | "2_3_anos" | "mais_3_anos",
       priority: Number(formData.get("priority")),
       notes: formData.get("notes") as string,
@@ -400,22 +409,80 @@ export default function Sucessao() {
                         </DialogHeader>
                         
                         <form onSubmit={handleAddSuccessor} className="space-y-4">
+                          {/* Combobox de Colaborador com Busca */}
                           <div>
-                            <Label htmlFor="employeeId">Colaborador *</Label>
-                            <Select name="employeeId" required>
+                            <Label>Colaborador *</Label>
+                            <Popover open={openEmployeeCombobox} onOpenChange={setOpenEmployeeCombobox}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={openEmployeeCombobox}
+                                  className="w-full justify-between"
+                                >
+                                  {selectedEmployeeId
+                                    ? employees?.find((emp) => emp.employee.id === selectedEmployeeId)?.employee.name
+                                    : "Buscar colaborador..."}
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[400px] p-0">
+                                <Command>
+                                  <CommandInput placeholder="Digite o nome do colaborador..." />
+                                  <CommandList>
+                                    <CommandEmpty>Nenhum colaborador encontrado.</CommandEmpty>
+                                    <CommandGroup>
+                                      {employees?.slice(0, 100).map((emp) => (
+                                        <CommandItem
+                                          key={emp.employee.id}
+                                          value={emp.employee.name}
+                                          onSelect={() => {
+                                            setSelectedEmployeeId(emp.employee.id);
+                                            setOpenEmployeeCombobox(false);
+                                          }}
+                                        >
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              selectedEmployeeId === emp.employee.id ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                          <div className="flex flex-col">
+                                            <span>{emp.employee.name}</span>
+                                            <span className="text-xs text-muted-foreground">
+                                              {emp.position?.title || "Sem cargo"} • {emp.department?.name || "Sem depto"}
+                                            </span>
+                                          </div>
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            {selectedEmployeeId && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                ✓ {employees?.find((emp) => emp.employee.id === selectedEmployeeId)?.employee.name} selecionado
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Nível (Primário, Secundário, Backup) */}
+                          <div>
+                            <Label htmlFor="level">Nível *</Label>
+                            <Select name="level" defaultValue="primario" required>
                               <SelectTrigger>
-                                <SelectValue placeholder="Selecione o colaborador" />
+                                <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                {employees?.map((emp) => (
-                                  <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
-                                    {emp.employee.name}
-                                  </SelectItem>
-                                ))}
+                                <SelectItem value="primario">🥇 Primário (1ª opção)</SelectItem>
+                                <SelectItem value="secundario">🥈 Secundário (2ª opção)</SelectItem>
+                                <SelectItem value="backup">🥉 Backup (reserva)</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
 
+                          {/* Nível de Prontidão com Indicadores Visuais */}
                           <div>
                             <Label htmlFor="readinessLevel">Nível de Prontidão *</Label>
                             <Select name="readinessLevel" required>
@@ -423,23 +490,28 @@ export default function Sucessao() {
                                 <SelectValue placeholder="Selecione" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="imediato">Imediato (pronto agora)</SelectItem>
-                                <SelectItem value="1_ano">1 ano</SelectItem>
-                                <SelectItem value="2_3_anos">2-3 anos</SelectItem>
-                                <SelectItem value="mais_3_anos">Mais de 3 anos</SelectItem>
+                                <SelectItem value="imediato">🟢 Imediato (pronto agora)</SelectItem>
+                                <SelectItem value="1_ano">🟡 1 ano</SelectItem>
+                                <SelectItem value="2_3_anos">🟠 2-3 anos</SelectItem>
+                                <SelectItem value="mais_3_anos">🔴 Mais de 3 anos</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
 
+                          {/* Prioridade */}
                           <div>
-                            <Label htmlFor="priority">Prioridade</Label>
+                            <Label htmlFor="priority">Prioridade (ordem de sucessão)</Label>
                             <Input
                               type="number"
                               name="priority"
                               defaultValue="1"
                               min="1"
+                              max="10"
                               required
                             />
+                            <p className="text-xs text-muted-foreground mt-1">
+                              1 = maior prioridade, 10 = menor prioridade
+                            </p>
                           </div>
 
                           <div>
@@ -524,6 +596,31 @@ export default function Sucessao() {
                                       {successor.notes}
                                     </p>
                                   )}
+                                </div>
+                                
+                                {/* Botões de Ação */}
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      toast.info("Funcionalidade de edição em desenvolvimento");
+                                    }}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-destructive hover:text-destructive"
+                                    onClick={() => {
+                                      if (confirm(`Remover ${successor.employeeName} como sucessor?`)) {
+                                        toast.info("Funcionalidade de remoção em desenvolvimento");
+                                      }
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
                                 </div>
                               </div>
                             </CardContent>

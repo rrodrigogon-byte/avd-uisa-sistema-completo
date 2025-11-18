@@ -183,6 +183,10 @@
 - [x] Endpoint suggestSuccessors implementado (identificação automática via Nine Box)
 - [x] Implementar formulário "Criar Novo Mapa de Sucessão"
 - [x] Implementar modal "Incluir Sucessores" em mapa existente
+- [x] Melhorar modal de sucessores com Combobox de busca (3000+ funcionários)
+- [x] Adicionar campo de nível (primário, secundário, backup) com emojis
+- [x] Adicionar indicadores visuais de prontidão (🟢🟡🟠🔴)
+- [x] Adicionar botões de editar e remover sucessores
 - [x] Criar aba "Sucessores" com lista e sugestões automáticas
 - [x] Criar aba "Riscos" (risco de saída, gap de competências, tempo de preparo)
 - [x] Criar aba "Timeline" (curto prazo: 0-1 ano, médio: 1-3 anos, longo: 3+ anos)
