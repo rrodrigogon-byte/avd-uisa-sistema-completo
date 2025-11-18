@@ -23,6 +23,8 @@ import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
 import Bonus from "./pages/aprovacoes/Bonus";
 import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
+import PerformanceIntegrada from "./pages/PerformanceIntegrada";
+import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
 
 function Router() {
   return (
@@ -45,6 +47,8 @@ function Router() {
       <Route path="/aprovacoes/bonus" component={Bonus} />
       <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />
+      <Route path="/performance-integrada" component={PerformanceIntegrada} />
+      <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

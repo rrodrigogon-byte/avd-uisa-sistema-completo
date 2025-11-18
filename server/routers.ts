@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -1017,6 +1017,21 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       .query(async ({ input }) => {
         return await db.getEmployeeCompetencies(input.employeeId);
       }),
+  }),
+
+  // Router de Planos de Sucessão
+  successionPlans: router({
+    list: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      // Buscar planos de sucessão com informações relacionadas
+      const plans = await database.select()
+        .from(successionPlans)
+        .orderBy(desc(successionPlans.createdAt));
+
+      return plans;
+    }),
   }),
 });
 

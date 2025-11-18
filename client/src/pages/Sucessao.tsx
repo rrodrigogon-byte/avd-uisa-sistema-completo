@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, Users, TrendingUp, AlertCircle } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 export default function Sucessao() {
-  const plans: any[] = [];
-  const isLoading = false;
+  const { data: plans, isLoading } = trpc.successionPlans.list.useQuery();
 
   return (
     <DashboardLayout>
