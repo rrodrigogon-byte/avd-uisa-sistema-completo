@@ -16,6 +16,7 @@ import { scheduledReportsRouter } from "./scheduledReportsRouter";
 import { executiveRouter } from "./executiveRouter";
 import { successionRouter } from "./successionRouter";
 import { nineBoxRouter } from "./nineBoxRouter";
+import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
 import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { eq, and, desc } from "drizzle-orm";
@@ -1748,6 +1749,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Mapa de Sucessão
   succession: successionRouter,
+
+  // Router de PDI Inteligente
+  pdiIntelligent: pdiIntelligentRouter,
 
   // Router de Nine Box Comparativo
   nineBoxComparative: nineBoxRouter,

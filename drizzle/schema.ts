@@ -803,3 +803,200 @@ export const reportAnalytics = mysqlTable("reportAnalytics", {
 
 export type ReportAnalytic = typeof reportAnalytics.$inferSelect;
 export type InsertReportAnalytic = typeof reportAnalytics.$inferInsert;
+
+// ============================================================================
+// TABELAS DE PDI INTELIGENTE (Extensão para Sucessão Estratégica)
+// ============================================================================
+
+/**
+ * Tabela de detalhes estendidos do PDI para sucessão estratégica
+ * Armazena informações de comparação de perfis, gaps, sponsors e riscos
+ */
+export const pdiIntelligentDetails = mysqlTable("pdiIntelligentDetails", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull().unique(), // Relacionamento 1:1 com pdiPlans
+  
+  // Contexto estratégico
+  strategicContext: text("strategicContext"), // Descrição do desafio estratégico
+  durationMonths: int("durationMonths").default(24).notNull(), // Duração do plano em meses
+  
+  // Sponsors e responsáveis
+  mentorId: int("mentorId"), // Gestor/Mentor direto
+  sponsorId1: int("sponsorId1"), // Sponsor 1 (ex: Diretor Agroindustrial)
+  sponsorId2: int("sponsorId2"), // Sponsor 2 (ex: Diretor de Gente e Cultura)
+  guardianId: int("guardianId"), // Guardião do PDI (DGC)
+  
+  // Perfil atual (JSON com dados de testes psicométricos)
+  currentProfile: json("currentProfile").$type<{
+    disc?: { d: number; i: number; s: number; c: number };
+    bigFive?: { o: number; c: number; e: number; a: number; n: number };
+    mbti?: string;
+    ie?: number;
+    competencies?: { competencyId: number; level: number }[];
+  }>(),
+  
+  // Perfil da posição-alvo (JSON)
+  targetProfile: json("targetProfile").$type<{
+    disc?: { d: number; i: number; s: number; c: number };
+    bigFive?: { o: number; c: number; e: number; a: number; n: number };
+    mbti?: string;
+    ie?: number;
+    competencies?: { competencyId: number; level: number }[];
+  }>(),
+  
+  // Análise de gaps (JSON)
+  gapsAnalysis: json("gapsAnalysis").$type<{
+    gaps: Array<{
+      type: "competency" | "behavioral" | "technical" | "leadership";
+      name: string;
+      currentLevel: number;
+      targetLevel: number;
+      priority: "high" | "medium" | "low";
+      actions: string[];
+    }>;
+  }>(),
+  
+  // Marcos de progressão
+  milestone12Months: text("milestone12Months"), // Marco de 12 meses
+  milestone24Months: text("milestone24Months"), // Marco de 24 meses
+  milestone12Status: mysqlEnum("milestone12Status", ["pendente", "concluido", "atrasado"]).default("pendente"),
+  milestone24Status: mysqlEnum("milestone24Status", ["pendente", "concluido", "atrasado"]).default("pendente"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiIntelligentDetail = typeof pdiIntelligentDetails.$inferSelect;
+export type InsertPdiIntelligentDetail = typeof pdiIntelligentDetails.$inferInsert;
+
+/**
+ * Tabela de gaps de competências identificados no PDI
+ */
+export const pdiCompetencyGaps = mysqlTable("pdiCompetencyGaps", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  competencyId: int("competencyId").notNull(),
+  
+  currentLevel: int("currentLevel").notNull(), // Nível atual (1-5)
+  targetLevel: int("targetLevel").notNull(), // Nível desejado (1-5)
+  gap: int("gap").notNull(), // Diferença (targetLevel - currentLevel)
+  priority: mysqlEnum("priority", ["alta", "media", "baixa"]).default("media").notNull(),
+  
+  // Responsabilidades para superar o gap
+  employeeActions: text("employeeActions"), // Ações do colaborador
+  managerActions: text("managerActions"), // Ações do gestor
+  sponsorActions: text("sponsorActions"), // Ações dos sponsors
+  
+  status: mysqlEnum("status", ["identificado", "em_desenvolvimento", "superado"]).default("identificado").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiCompetencyGap = typeof pdiCompetencyGaps.$inferSelect;
+export type InsertPdiCompetencyGap = typeof pdiCompetencyGaps.$inferInsert;
+
+/**
+ * Tabela de riscos do PDI
+ */
+export const pdiRisks = mysqlTable("pdiRisks", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  
+  type: mysqlEnum("type", ["saida", "gap_competencia", "tempo_preparo", "mudanca_estrategica", "outro"]).notNull(),
+  description: text("description").notNull(),
+  impact: mysqlEnum("impact", ["baixo", "medio", "alto", "critico"]).notNull(),
+  probability: mysqlEnum("probability", ["baixa", "media", "alta"]).notNull(),
+  
+  mitigation: text("mitigation"), // Plano de mitigação
+  responsible: int("responsible"), // Responsável pela mitigação
+  
+  status: mysqlEnum("status", ["identificado", "em_mitigacao", "mitigado", "materializado"]).default("identificado").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiRisk = typeof pdiRisks.$inferSelect;
+export type InsertPdiRisk = typeof pdiRisks.$inferInsert;
+
+/**
+ * Tabela de acompanhamento e reviews do PDI
+ */
+export const pdiReviews = mysqlTable("pdiReviews", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  reviewerId: int("reviewerId").notNull(), // Quem fez o review (gestor, sponsor, DGC)
+  reviewerRole: mysqlEnum("reviewerRole", ["mentor", "sponsor", "guardiao"]).notNull(),
+  
+  reviewDate: datetime("reviewDate").notNull(),
+  overallProgress: int("overallProgress").notNull(), // Avaliação geral (0-100)
+  
+  strengths: text("strengths"), // Pontos fortes observados
+  improvements: text("improvements"), // Pontos de melhoria
+  nextSteps: text("nextSteps"), // Próximos passos recomendados
+  
+  recommendation: mysqlEnum("recommendation", ["manter", "acelerar", "ajustar", "pausar"]).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PdiReview = typeof pdiReviews.$inferSelect;
+export type InsertPdiReview = typeof pdiReviews.$inferInsert;
+
+// Relações para PDI Inteligente
+export const pdiIntelligentDetailsRelations = relations(pdiIntelligentDetails, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiIntelligentDetails.planId],
+    references: [pdiPlans.id],
+  }),
+  mentor: one(employees, {
+    fields: [pdiIntelligentDetails.mentorId],
+    references: [employees.id],
+  }),
+  sponsor1: one(employees, {
+    fields: [pdiIntelligentDetails.sponsorId1],
+    references: [employees.id],
+  }),
+  sponsor2: one(employees, {
+    fields: [pdiIntelligentDetails.sponsorId2],
+    references: [employees.id],
+  }),
+  guardian: one(employees, {
+    fields: [pdiIntelligentDetails.guardianId],
+    references: [employees.id],
+  }),
+}));
+
+export const pdiCompetencyGapsRelations = relations(pdiCompetencyGaps, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiCompetencyGaps.planId],
+    references: [pdiPlans.id],
+  }),
+  competency: one(competencies, {
+    fields: [pdiCompetencyGaps.competencyId],
+    references: [competencies.id],
+  }),
+}));
+
+export const pdiRisksRelations = relations(pdiRisks, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiRisks.planId],
+    references: [pdiPlans.id],
+  }),
+  responsibleEmployee: one(employees, {
+    fields: [pdiRisks.responsible],
+    references: [employees.id],
+  }),
+}));
+
+export const pdiReviewsRelations = relations(pdiReviews, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiReviews.planId],
+    references: [pdiPlans.id],
+  }),
+  reviewer: one(employees, {
+    fields: [pdiReviews.reviewerId],
+    references: [employees.id],
+  }),
+}));

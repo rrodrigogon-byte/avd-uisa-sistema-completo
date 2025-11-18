@@ -537,3 +537,77 @@
 - [ ] Implementar exportação para PNG
 - [ ] Implementar exportação para PDF
 - [ ] Testar mapa visual com dados reais UISA
+
+
+## 🎨 Ajuste de Padrão Visual UISA
+- [x] Extrair cores do template PowerPoint UISA
+- [x] Extrair fontes do template PowerPoint UISA
+- [x] Atualizar client/src/index.css com cores UISA
+- [x] Atualizar variáveis CSS (--primary, --secondary, etc)
+- [ ] Testar tema em todas as páginas
+
+## 🗺️ Mapa de Sucessão Completo (Baseado em Telas de Referência)
+- [ ] Adicionar filtros: Departamento, Nível de Risco, Impacto, Cobertura
+- [ ] Implementar cards de KPIs: Posições Críticas, Sucessores Prontos, Alto Risco, Cobertura Média
+- [ ] Adicionar botão "Nova Posição" e "Exportar"
+- [ ] Criar visualização de organograma hierárquico
+- [ ] Implementar estado vazio "Nenhuma posição cadastrada"
+- [ ] Adicionar botão "Adicionar Primeira Posição"
+
+## 📊 Dashboard Executivo Completo (Baseado em Telas de Referência)
+- [ ] Implementar 4 KPIs: Headcount, Performance, Engajamento, Flight Risk
+- [ ] Adicionar gráfico "Distribuição Nine Box" (grid 3x3)
+- [ ] Adicionar gráfico "Performance por Departamento" (barras)
+- [ ] Adicionar gráfico "Tendência de Performance (6 meses)" (linha)
+- [ ] Adicionar gráfico "Cobertura de Sucessão" (pizza)
+- [ ] Implementar seção "Top 10 Performers"
+- [ ] Implementar seção "Flight Risk (Alto)"
+- [ ] Implementar seção "Status de Sucessão - Posições Críticas"
+- [ ] Adicionar seletor de departamento e botão "Exportar"
+
+## 🎯 Performance Integrada 40-30-30 (Baseado em Telas de Referência)
+- [ ] Implementar header com título "Performance Integrada 40-30-30"
+- [ ] Adicionar seletor de colaborador e safra
+- [ ] Criar card principal com score total (círculo grande)
+- [ ] Implementar 3 cards de categorias: Financial Goals, Behavioral Goals, Corporate Goals
+- [ ] Adicionar barra "Breakdown Ponderado" com 3 cores
+- [ ] Implementar seção "Performance Multi-Dimensional" (gráfico)
+- [ ] Implementar seção "Evolução Histórica" (gráfico)
+- [ ] Adicionar seção "Recomendações de Desenvolvimento"
+
+## 💬 Melhorias no Feedback Contínuo
+- [ ] Revisar layout da página de Feedback
+- [ ] Adicionar filtros avançados
+- [ ] Melhorar visualização de histórico
+- [ ] Adicionar estatísticas visuais
+
+## ✅ Seção de Aprovações (Baseado em Menu Lateral)
+- [ ] Verificar se página /aprovacoes/dashboard existe
+- [ ] Verificar se página /aprovacoes/solicitacoes existe
+- [ ] Verificar se página /aprovacoes/bonus existe
+- [ ] Verificar se página /aprovacoes/workflows existe
+- [ ] Criar páginas faltantes se necessário
+
+
+## 🎯 PDI Inteligente Completo (Baseado no Modelo Nadia)
+- [x] Analisar estrutura do PDI da Nadia (HTML)
+- [x] Criar schema pdiIntelligentDetails com campos completos
+- [x] Criar schema pdiCompetencyGaps
+- [x] Criar schema pdiRisks
+- [x] Criar schema pdiReviews
+- [x] Criar endpoint pdi.createIntelligent (com análise automática de gaps)
+- [x] Criar endpoint pdi.compareProfiles (atual vs. alvo)
+- [x] Criar endpoint pdi.getById (com todos os detalhes)
+- [x] Criar endpoint pdi.addGap, updateGap
+- [x] Criar endpoint pdi.addRisk, updateRisk
+- [x] Criar endpoint pdi.addReview
+- [x] Integrar com testes DISC, Big Five (leitura de psychometricTests)
+- [ ] Criar página /pdi-inteligente/:id com layout completo
+- [ ] Implementar seção "Perfil Atual vs. Posição-Alvo"
+- [ ] Implementar gráfico radar de competências (atual vs. alvo)
+- [ ] Implementar gráfico de gaps prioritários
+- [ ] Implementar timeline de ações (70-20-10)
+- [ ] Implementar seção de riscos e mitigações
+- [ ] Implementar acompanhamento RH + Gestor (aprovações, comentários)
+- [ ] Adicionar botões de exportação PDF
+- [ ] Criar wizard de criação de PDI Inteligente
