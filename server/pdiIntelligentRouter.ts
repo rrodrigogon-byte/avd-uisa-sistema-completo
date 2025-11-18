@@ -539,4 +539,125 @@ export const pdiIntelligentRouter = router({
         targetCompetencies,
       };
     }),
+
+  /**
+   * Buscar todos os testes psicométricos de um colaborador
+   */
+  getEmployeeTests: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const tests = await db
+        .select()
+        .from(psychometricTests)
+        .where(eq(psychometricTests.employeeId, input.employeeId))
+        .orderBy(desc(psychometricTests.completedAt));
+
+      return tests;
+    }),
+
+  /**
+   * Comparar testes psicométricos do colaborador com perfil da posição-alvo
+   */
+  compareTestsWithPosition: protectedProcedure
+    .input(
+      z.object({
+        employeeId: z.number(),
+        targetPositionId: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      // Buscar testes do colaborador
+      const employeeTests = await db
+        .select()
+        .from(psychometricTests)
+        .where(eq(psychometricTests.employeeId, input.employeeId))
+        .orderBy(desc(psychometricTests.completedAt));
+
+      // Buscar perfil ideal da posição (simulado - em produção viria de uma tabela position_profiles)
+      const targetProfile = {
+        disc: { D: 70, I: 50, S: 40, C: 60 },
+        bigFive: { openness: 70, conscientiousness: 80, extraversion: 60, agreeableness: 50, neuroticism: 30 },
+      };
+
+      // Pegar o teste mais recente de cada tipo
+      const latestDISC = employeeTests.find((t) => t.testType === "disc");
+      const latestBigFive = employeeTests.find((t) => t.testType === "bigfive");
+
+      // Calcular gaps
+      const gaps = {
+        disc: latestDISC
+          ? {
+              D: targetProfile.disc.D - (latestDISC.discDominance || 0),
+              I: targetProfile.disc.I - (latestDISC.discInfluence || 0),
+              S: targetProfile.disc.S - (latestDISC.discSteadiness || 0),
+              C: targetProfile.disc.C - (latestDISC.discCompliance || 0),
+            }
+          : null,
+        bigFive: latestBigFive
+          ? {
+              openness: targetProfile.bigFive.openness - (latestBigFive.bigFiveOpenness || 0),
+              conscientiousness: targetProfile.bigFive.conscientiousness - (latestBigFive.bigFiveConscientiousness || 0),
+              extraversion: targetProfile.bigFive.extraversion - (latestBigFive.bigFiveExtraversion || 0),
+              agreeableness: targetProfile.bigFive.agreeableness - (latestBigFive.bigFiveAgreeableness || 0),
+              neuroticism: targetProfile.bigFive.neuroticism - (latestBigFive.bigFiveNeuroticism || 0),
+            }
+          : null,
+
+      };
+
+      // Gerar recomendações baseadas nos gaps
+      const recommendations = [];
+      if (gaps.disc) {
+        if (gaps.disc.D > 20) recommendations.push("Desenvolver assertividade e tomada de decisão rápida");
+        if (gaps.disc.I > 20) recommendations.push("Melhorar habilidades de comunicação e relacionamento interpessoal");
+        if (gaps.disc.S > 20) recommendations.push("Fortalecer capacidade de trabalho em equipe e estabilidade");
+        if (gaps.disc.C > 20) recommendations.push("Aprimorar atenção a detalhes e processos");
+      }
+      if (gaps.bigFive) {
+        if (gaps.bigFive.conscientiousness > 20) recommendations.push("Desenvolver organização e disciplina");
+        if (gaps.bigFive.openness > 20) recommendations.push("Estimular criatividade e abertura a novas ideias");
+      }
+
+      return {
+        employeeTests: {
+          disc: latestDISC,
+          bigFive: latestBigFive,
+        },
+        targetProfile,
+        gaps,
+        recommendations,
+        compatibilityScore: calculateCompatibility(gaps),
+      };
+    }),
 });
+
+/**
+ * Calcular score de compatibilidade (0-100)
+ */
+function calculateCompatibility(gaps: any): number {
+  let totalGap = 0;
+  let count = 0;
+
+  if (gaps.disc) {
+    totalGap += Math.abs(gaps.disc.D) + Math.abs(gaps.disc.I) + Math.abs(gaps.disc.S) + Math.abs(gaps.disc.C);
+    count += 4;
+  }
+  if (gaps.bigFive) {
+    totalGap += Math.abs(gaps.bigFive.openness) + Math.abs(gaps.bigFive.conscientiousness) + Math.abs(gaps.bigFive.extraversion) + Math.abs(gaps.bigFive.agreeableness) + Math.abs(gaps.bigFive.neuroticism);
+    count += 5;
+  }
+
+
+  if (count === 0) return 0;
+
+  const averageGap = totalGap / count;
+  const compatibility = Math.max(0, 100 - averageGap);
+
+  return Math.round(compatibility);
+}
