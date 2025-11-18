@@ -33,6 +33,8 @@ export default function ReportBuilder() {
     { enabled: false }
   );
 
+  const trackAction = trpc.reportAnalytics.track.useMutation();
+
   const createReport = trpc.reportBuilder.create.useMutation({
     onSuccess: () => {
       toast.success("Relatório salvo com sucesso!");
@@ -58,10 +60,22 @@ export default function ReportBuilder() {
       return;
     }
 
+    const startTime = Date.now();
     const result = await executeReport.refetch();
+    const executionTime = Date.now() - startTime;
+
     if (result.data) {
       setPreviewData(result.data);
       toast.success("Preview gerado!");
+
+      // Registrar tracking
+      trackAction.mutate({
+        reportName: reportName || "Relatório sem nome",
+        action: "view",
+        metrics: selectedMetrics,
+        filters,
+        executionTimeMs: executionTime,
+      });
     }
   };
 
@@ -111,12 +125,32 @@ export default function ReportBuilder() {
         chartType: chartType,
       };
 
+      const startTime = Date.now();
+      
       if (format === "pdf") {
         await generatePDF(reportData, availableMetrics || []);
         toast.success("PDF gerado com sucesso!");
+        
+        // Registrar tracking
+        trackAction.mutate({
+          reportName: reportName || "Relatório Customizado",
+          action: "export_pdf",
+          metrics: selectedMetrics,
+          filters: appliedFilters,
+          executionTimeMs: Date.now() - startTime,
+        });
       } else {
         await generateExcel(reportData, availableMetrics || []);
         toast.success("Excel gerado com sucesso!");
+        
+        // Registrar tracking
+        trackAction.mutate({
+          reportName: reportName || "Relatório Customizado",
+          action: "export_excel",
+          metrics: selectedMetrics,
+          filters: appliedFilters,
+          executionTimeMs: Date.now() - startTime,
+        });
       }
     } catch (error) {
       console.error("Erro ao exportar:", error);

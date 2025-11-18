@@ -412,3 +412,40 @@
 - [ ] Implementar acompanhamento de progresso
 - [ ] Gerar relatórios de gap por posição
 - [ ] Adicionar recomendações automáticas de desenvolvimento
+
+## 📊 Dashboard Analytics do Report Builder
+- [ ] Criar schema reportAnalytics no banco (reportId, action, userId, timestamp)
+- [ ] Criar endpoints analytics (getUsageStats, getMostUsedMetrics, getExportHistory, getTrends)
+- [ ] Criar página /admin/report-analytics
+- [ ] Implementar cards de estatísticas (total de relatórios, exportações, métricas mais usadas)
+- [ ] Adicionar gráfico de linha (tendência de uso ao longo do tempo)
+- [ ] Adicionar gráfico de barras (métricas mais consultadas)
+- [ ] Adicionar tabela de histórico de exportações
+- [ ] Integrar tracking nos endpoints do Report Builder
+- [ ] Adicionar rota e menu no sistema
+
+## 👥 Sistema Completo de Gestão de Sucessores
+- [ ] Atualizar schema successionCandidates com campo level (primário, secundário, backup)
+- [ ] Criar endpoints addSuccessor, updateSuccessor, removeSuccessor
+- [ ] Criar modal "Adicionar Sucessor" com seleção de colaborador
+- [ ] Implementar seleção de nível (primário/secundário/backup)
+- [ ] Implementar seleção de prontidão (ready_now, 1-2_years, 2-3_years, 3+_years)
+- [ ] Vincular PDI ao sucessor (dropdown de PDIs existentes)
+- [ ] Criar interface de edição de sucessor
+- [ ] Implementar remoção de sucessor com confirmação
+- [ ] Adicionar matriz 9-box para visualização de potencial
+- [ ] Testar fluxo completo de gestão de sucessores
+
+## 🗺️ Mapa de Sucessão Visual Interativo
+- [ ] Instalar biblioteca reactflow
+- [ ] Criar componente SuccessionMapVisual.tsx
+- [ ] Implementar organograma com React Flow
+- [ ] Adicionar drag-and-drop para reorganizar nós
+- [ ] Implementar zoom e navegação (minimap, controls)
+- [ ] Adicionar cores por nível de risco (verde, amarelo, vermelho)
+- [ ] Criar filtros por departamento e nível de risco
+- [ ] Implementar exportação para PNG/SVG
+- [ ] Adicionar tooltip com detalhes ao hover
+- [ ] Criar legenda de cores e símbolos
+- [ ] Integrar com página /sucessao existente
+- [ ] Testar interatividade completa

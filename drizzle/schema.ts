@@ -787,3 +787,19 @@ export const customReports = mysqlTable("customReports", {
 
 export type CustomReport = typeof customReports.$inferSelect;
 export type InsertCustomReport = typeof customReports.$inferInsert;
+
+// Tabela de analytics de relatórios
+export const reportAnalytics = mysqlTable("reportAnalytics", {
+  id: int("id").autoincrement().primaryKey(),
+  reportId: int("reportId"), // ID do relatório customizado (se aplicável)
+  reportName: varchar("reportName", { length: 255 }),
+  action: mysqlEnum("action", ["view", "export_pdf", "export_excel", "create", "update", "delete"]).notNull(),
+  userId: int("userId").notNull(),
+  metrics: json("metrics"), // Métricas utilizadas
+  filters: json("filters"), // Filtros aplicados
+  executionTimeMs: int("executionTimeMs"), // Tempo de execução
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ReportAnalytic = typeof reportAnalytics.$inferSelect;
+export type InsertReportAnalytic = typeof reportAnalytics.$inferInsert;
