@@ -71,6 +71,13 @@
       "when": 1763431557401,
       "tag": "0009_curly_scrambler",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1763464902041,
+      "tag": "0010_fantastic_patriot",
+      "breakpoints": true
     }
   ]
 }

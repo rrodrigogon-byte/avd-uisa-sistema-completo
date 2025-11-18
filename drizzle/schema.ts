@@ -537,6 +537,36 @@ export type Feedback = typeof feedbacks.$inferSelect;
 export type InsertFeedback = typeof feedbacks.$inferInsert;
 
 // ============================================================================
+// SISTEMA DE BADGES E GAMIFICAÇÃO
+// ============================================================================
+
+export const badges = mysqlTable("badges", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description").notNull(),
+  icon: varchar("icon", { length: 50 }), // Nome do ícone lucide-react
+  category: mysqlEnum("category", ["metas", "pdi", "avaliacao", "feedback", "geral"]).notNull(),
+  points: int("points").notNull().default(0), // Pontos ganhos ao conquistar
+  condition: text("condition"), // Condição para desbloquear (JSON)
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Badge = typeof badges.$inferSelect;
+export type InsertBadge = typeof badges.$inferInsert;
+
+export const employeeBadges = mysqlTable("employeeBadges", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  badgeId: int("badgeId").notNull(),
+  earnedAt: timestamp("earnedAt").defaultNow().notNull(),
+  notified: boolean("notified").default(false).notNull(), // Se o colaborador foi notificado
+});
+
+export type EmployeeBadge = typeof employeeBadges.$inferSelect;
+export type InsertEmployeeBadge = typeof employeeBadges.$inferInsert;
+
+// ============================================================================
 // RELAÇÕES (Relations)
 // ============================================================================
 

@@ -11,6 +11,7 @@ import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPo
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
+import { badgesRouter } from "./badgesRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1699,6 +1700,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Feedback Contínuo
   feedback: feedbackRouter,
+
+  // Router de Badges Gamificado
+  badges: badgesRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico
