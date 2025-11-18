@@ -1,6 +1,10 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
+import { Chart, ChartConfiguration, registerables } from "chart.js";
+
+// Registrar todos os componentes do Chart.js
+Chart.register(...registerables);
 
 interface ReportData {
   name: string;
@@ -8,6 +12,7 @@ interface ReportData {
   metrics: string[];
   data: any;
   generatedAt: string;
+  chartType?: string;
 }
 
 interface MetricInfo {
@@ -17,32 +22,118 @@ interface MetricInfo {
 }
 
 /**
+ * Gera um gráfico Chart.js e retorna como imagem base64
+ */
+async function generateChartImage(
+  type: "bar" | "line" | "pie",
+  labels: string[],
+  data: number[],
+  label: string
+): Promise<string> {
+  return new Promise((resolve) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 600;
+    canvas.height = 400;
+    
+    const config: ChartConfiguration = {
+      type,
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data,
+          backgroundColor: type === "pie" 
+            ? [
+                "rgba(59, 130, 246, 0.8)",
+                "rgba(16, 185, 129, 0.8)",
+                "rgba(245, 158, 11, 0.8)",
+                "rgba(239, 68, 68, 0.8)",
+                "rgba(139, 92, 246, 0.8)",
+                "rgba(236, 72, 153, 0.8)",
+                "rgba(20, 184, 166, 0.8)",
+              ]
+            : "rgba(59, 130, 246, 0.8)",
+          borderColor: type === "pie"
+            ? [
+                "rgb(59, 130, 246)",
+                "rgb(16, 185, 129)",
+                "rgb(245, 158, 11)",
+                "rgb(239, 68, 68)",
+                "rgb(139, 92, 246)",
+                "rgb(236, 72, 153)",
+                "rgb(20, 184, 166)",
+              ]
+            : "rgb(59, 130, 246)",
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          legend: {
+            display: type === "pie",
+            position: "right",
+          },
+          title: {
+            display: true,
+            text: label,
+            font: {
+              size: 16,
+              weight: "bold",
+            },
+          },
+        },
+        scales: type !== "pie" ? {
+          y: {
+            beginAtZero: true,
+          },
+        } : undefined,
+      },
+    };
+    
+    const chart = new Chart(canvas, config);
+    
+    // Aguardar renderização e converter para imagem
+    setTimeout(() => {
+      const imageData = canvas.toDataURL("image/png");
+      chart.destroy();
+      resolve(imageData);
+    }, 100);
+  });
+}
+
+/**
  * Gera PDF do relatório com dados e gráficos
  */
 export async function generatePDF(reportData: ReportData, availableMetrics: MetricInfo[]) {
   const doc = new jsPDF();
+  let yPosition = 20;
   
   // Título
   doc.setFontSize(20);
-  doc.text(reportData.name || "Relatório Customizado", 14, 20);
+  doc.text(reportData.name || "Relatório Customizado", 14, yPosition);
+  yPosition += 8;
   
   // Descrição
   if (reportData.description) {
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text(reportData.description, 14, 28);
+    doc.text(reportData.description, 14, yPosition);
+    yPosition += 5;
   }
   
   // Data de geração
   doc.setFontSize(8);
   doc.setTextColor(150);
-  doc.text(`Gerado em: ${new Date(reportData.generatedAt).toLocaleString('pt-BR')}`, 14, 35);
+  doc.text(`Gerado em: ${new Date(reportData.generatedAt).toLocaleString('pt-BR')}`, 14, yPosition);
+  yPosition += 10;
   
   // Reset cor
   doc.setTextColor(0);
   
-  // Preparar dados para tabela
+  // Preparar dados para tabela e gráficos
   const tableData: any[] = [];
+  let departmentData: { labels: string[]; values: number[] } | null = null;
   
   reportData.metrics.forEach((metricId) => {
     const metric = availableMetrics.find((m) => m.id === metricId);
@@ -52,6 +143,10 @@ export async function generatePDF(reportData: ReportData, availableMetrics: Metr
     
     if (metricId === "departmentBreakdown" && Array.isArray(value)) {
       // Distribuição por departamento
+      departmentData = {
+        labels: value.map((dept: any) => dept.departmentName),
+        values: value.map((dept: any) => dept.count),
+      };
       value.forEach((dept: any) => {
         tableData.push([
           `${metric.name} - ${dept.departmentName}`,
@@ -67,11 +162,32 @@ export async function generatePDF(reportData: ReportData, availableMetrics: Metr
     }
   });
   
+  // Adicionar gráfico de distribuição por departamento se existir
+  if (departmentData && reportData.chartType) {
+    const chartType = reportData.chartType === "pie" ? "pie" : reportData.chartType === "line" ? "line" : "bar";
+    const deptData = departmentData as { labels: string[]; values: number[] };
+    const chartImage = await generateChartImage(
+      chartType,
+      deptData.labels,
+      deptData.values,
+      "Distribuição por Departamento"
+    );
+    
+    doc.addImage(chartImage, "PNG", 14, yPosition, 180, 120);
+    yPosition += 130;
+    
+    // Adicionar nova página se necessário
+    if (yPosition > 250) {
+      doc.addPage();
+      yPosition = 20;
+    }
+  }
+  
   // Adicionar tabela
   autoTable(doc, {
     head: [["Métrica", "Valor"]],
     body: tableData,
-    startY: 42,
+    startY: yPosition,
     theme: "grid",
     headStyles: {
       fillColor: [59, 130, 246], // Blue

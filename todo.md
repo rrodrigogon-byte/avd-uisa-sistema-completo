@@ -352,3 +352,63 @@
 - [x] Integrar filtros com endpoint execute
 - [x] Atualizar queries do backend para suportar filtros
 - [x] Testar filtragem em todas as métricas
+
+## 📊 Gráficos Chart.js nos PDFs do Report Builder
+- [x] Instalar biblioteca chart.js e canvas
+- [x] Criar função para gerar gráficos de barras
+- [x] Criar função para gerar gráficos de linhas
+- [x] Criar função para gerar gráficos de pizza
+- [x] Integrar gráficos na geração de PDF
+- [x] Testar exportação de PDF com gráficos
+
+## 📥 Importação em Lote dos 5 Planos UISA
+- [ ] Criar arquivo JSON com todos os 5 planos completos
+- [ ] Adicionar botão "Importar Todos os Planos UISA"
+- [ ] Implementar validação de dados duplicados
+- [ ] Adicionar barra de progresso de importação
+- [ ] Exibir resumo detalhado após importação
+- [ ] Testar importação completa dos 5 planos
+
+## 📈 Dashboard de Analytics do Report Builder
+- [ ] Criar página /admin/report-analytics
+- [ ] Implementar estatísticas de relatórios gerados
+- [ ] Adicionar gráfico de métricas mais consultadas
+- [ ] Criar timeline de exportações
+- [ ] Adicionar filtros por período
+- [ ] Registrar rota e menu no sistema
+
+## 🗺️ Mapa de Sucessão Visual e Interativo
+- [ ] Criar componente SuccessionMap.tsx
+- [ ] Implementar visualização em árvore/organograma
+- [ ] Adicionar cards de posição com ocupante atual
+- [ ] Exibir sucessores com níveis (primário/secundário/backup)
+- [ ] Adicionar indicadores visuais de risco
+- [ ] Implementar zoom e navegação interativa
+- [ ] Adicionar filtros por departamento e nível
+
+## 👥 Sistema de Gestão de Sucessores com Níveis
+- [ ] Atualizar schema para suportar níveis de sucessor
+- [ ] Criar modal de adição de sucessor
+- [ ] Implementar seleção de nível (primário/secundário/backup)
+- [ ] Adicionar avaliação de prontidão (ready now, 1-2 anos, 2-3 anos)
+- [ ] Criar interface de reordenação de sucessores
+- [ ] Implementar remoção e edição de sucessores
+- [ ] Adicionar validação de regras de sucessão
+
+## ⚠️ Matriz de Risco e Avaliação de Prontidão
+- [ ] Criar componente RiskMatrix.tsx
+- [ ] Implementar cálculo automático de risco
+- [ ] Adicionar matriz 3x3 (impacto x probabilidade)
+- [ ] Criar indicadores visuais de risco (baixo/médio/alto/crítico)
+- [ ] Implementar dashboard de riscos críticos
+- [ ] Adicionar alertas para posições sem sucessor
+- [ ] Criar relatório de cobertura de sucessão
+
+## 📋 Planos de Desenvolvimento e Relatórios de Gap
+- [ ] Criar tabela developmentPlans no schema
+- [ ] Implementar interface de criação de PDI para sucessores
+- [ ] Adicionar análise de gap de competências
+- [ ] Criar timeline de desenvolvimento
+- [ ] Implementar acompanhamento de progresso
+- [ ] Gerar relatórios de gap por posição
+- [ ] Adicionar recomendações automáticas de desenvolvimento

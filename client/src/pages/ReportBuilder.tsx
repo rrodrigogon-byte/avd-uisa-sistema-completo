@@ -108,6 +108,7 @@ export default function ReportBuilder() {
         metrics: selectedMetrics,
         data: previewData.data,
         generatedAt: previewData.summary.generatedAt,
+        chartType: chartType,
       };
 
       if (format === "pdf") {
