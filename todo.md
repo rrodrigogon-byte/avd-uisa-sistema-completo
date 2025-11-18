@@ -498,3 +498,38 @@
 - [ ] Adicionar tabela de ações recomendadas
 - [ ] Criar filtros por departamento e criticidade
 - [ ] Adicionar exportação da matriz em PDF
+
+
+## 🚨 PRIORIDADE MÁXIMA - Importação de Dados UISA
+- [x] Criar tabela performanceReviews no banco
+- [x] Criar tabela developmentPlans no banco
+- [x] Corrigir script de seed para criar todos os 387 cargos
+- [x] Corrigir script de seed para importar 2.889 funcionários
+- [x] Validar importação: 2.889 funcionários no banco
+- [x] Validar importação: 387 cargos no banco
+- [x] Validar importação: 206 departamentos no banco
+- [x] Testar queries de funcionários por departamento
+
+## 🚨 PRIORIDADE MÁXIMA - Sistema Completo de Gestão de Sucessores
+- [ ] Criar modal "Adicionar Sucessor" na página de sucessão
+- [ ] Implementar seleção de colaborador (dropdown com busca)
+- [ ] Adicionar campo de nível (primário, secundário, backup)
+- [ ] Adicionar campo de prontidão (ready now, 1-2 anos, 2-3 anos, 3+ anos)
+- [ ] Implementar botão "Editar Sucessor" com modal
+- [ ] Implementar botão "Remover Sucessor" com confirmação
+- [ ] Criar lista de sucessores com badges de nível
+- [ ] Adicionar indicadores visuais de prontidão
+- [ ] Testar fluxo completo de gestão de sucessores
+
+## 🚨 PRIORIDADE MÁXIMA - Mapa de Sucessão Visual Interativo
+- [ ] Instalar biblioteca reactflow
+- [ ] Criar componente SuccessionMap com React Flow
+- [ ] Implementar nodes para posições (caixas com nome e foto)
+- [ ] Implementar edges para sucessores (linhas com cores por prontidão)
+- [ ] Adicionar drag-and-drop para reorganizar posições
+- [ ] Implementar zoom e pan
+- [ ] Adicionar filtros por departamento
+- [ ] Adicionar filtros por nível de risco
+- [ ] Implementar exportação para PNG
+- [ ] Implementar exportação para PDF
+- [ ] Testar mapa visual com dados reais UISA
