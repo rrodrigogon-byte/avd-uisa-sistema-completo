@@ -1013,3 +1013,13 @@
 - [x] Testar fluxo completo de aprovação de metas (colaborador → gestor → RH)
 - [x] Validar notificações automáticas do workflow
 - [ ] Gerar relatório final completo do sistema
+
+
+## 🔧 Configuração Final e Testes
+- [x] Configurar SMTP do Gmail (avd@uisa.com.br)
+- [x] Criar 5 planos de PDI de exemplo
+- [x] Testar exportação PDF de metas individuais
+- [x] Testar exportação PDF consolidada de metas
+- [x] Testar exportação Excel de bônus
+- [x] Testar exportação PDF de calibrações
+- [x] Validar envio de notificações por email
