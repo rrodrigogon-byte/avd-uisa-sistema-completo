@@ -90,6 +90,7 @@ function Router() {
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />
+      <Route path="/analytics" component={Analytics} />
                 <Route path="/avaliar-360/:id" component={Avaliar360} />
           <Route path="/admin/audit-log" component={AuditTrail} />
           <Route path="/admin/analytics" component={Analytics} />

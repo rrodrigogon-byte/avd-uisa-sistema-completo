@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { Loader2, Target, Users, Calendar, TrendingUp, Download, ArrowLeft, Award } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
+import { exportPDIInteligente } from "@/lib/exportPDF";
+import { toast } from "sonner";
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -112,7 +114,7 @@ export default function PDIInteligente() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6" id="pdi-inteligente-content">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -139,7 +141,18 @@ export default function PDIInteligente() {
                 ? "Concluído"
                 : "Rascunho"}
             </Badge>
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={async () => {
+                try {
+                  toast.info("Gerando PDF...");
+                  await exportPDIInteligente(pdiId!);
+                  toast.success("PDF exportado com sucesso!");
+                } catch (error) {
+                  toast.error("Erro ao exportar PDF");
+                }
+              }}
+            >
               <Download className="h-4 w-4 mr-2" />
               Exportar PDF
             </Button>

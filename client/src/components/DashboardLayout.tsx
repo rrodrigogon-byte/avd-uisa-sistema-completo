@@ -26,7 +26,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
-import NotificationBell from "./NotificationBell";
+import NotificationCenter from "./NotificationCenter";
 
 // Componente de seção com submenu
 function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
@@ -71,6 +71,7 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: BarChart, label: "Dashboard Executivo", path: "/dashboard-executivo" },
+  { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
   { icon: Target, label: "Metas", path: "/metas" },
   {
     icon: TrendingUp,
@@ -403,7 +404,7 @@ function DashboardLayoutContent({
                 </div>
               </div>
             </div>
-            <NotificationBell />
+            <NotificationCenter />
           </div>
         )}
         <main className="flex-1 p-4">{children}</main>

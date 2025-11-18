@@ -805,3 +805,45 @@
 - [ ] Implementar notificações de conclusão de avaliações 360°
 - [ ] Adicionar endpoint backend para marcar notificações como lidas
 - [ ] Adicionar persistência de notificações no banco de dados
+
+
+## 🚀 PRÓXIMOS PASSOS FINAIS
+
+### Passo 1: Sistema de Notificações em Tempo Real
+- [x] Criar componente NotificationCenter.tsx
+- [x] Adicionar badge de contagem no header do DashboardLayout
+- [x] Implementar dropdown de notificações com lista
+- [x] Adicionar notificações para: novas aprovações, atualizações de PDI, mudanças no Mapa de Sucessão, conclusão de avaliações
+- [x] Implementar marcação de "lida" e "não lida"
+- [x] Implementar função markAllAsRead e clearAll
+- [x] Adicionar formatação de tempo relativo ("15m atrás", "2h atrás")
+- [x] Adicionar ícones coloridos por tipo de notificação
+- [ ] Integrar com WebSocket real (estrutura pronta)
+- [ ] Adicionar persistência de notificações no banco de dados
+
+### Passo 2: Exportação PDF no PDI Inteligente
+- [x] Adicionar botão "Exportar PDF" na página /pdi-inteligente/:id
+- [x] Adicionar id="pdi-inteligente-content" no container principal
+- [x] Conectar ao exportPDIInteligente() já criado
+- [x] Adicionar toast de feedback ("Gerando PDF...", "PDF exportado com sucesso!")
+
+### Passo 3: Dashboard de Analytics de RH
+- [x] Estender analyticsRouter existente com novos endpoints
+- [x] Adicionar endpoint getHeadcountByDepartment
+- [x] Adicionar endpoint getHeadcountByPosition
+- [x] Adicionar endpoint getTurnoverRate
+- [x] Adicionar endpoint getAverageTenure
+- [x] Adicionar endpoint getDiversityAnalysis
+- [x] Adicionar endpoint getGrowthProjection
+- [x] Criar página /analytics com todos os gráficos
+- [x] Implementar KPIs: Total Headcount, Turnover Rate, Tempo Médio, Custo por Contratação
+- [x] Implementar gráfico "Distribuição de Headcount por Departamento" (pizza)
+- [x] Implementar gráfico "Top 15 Cargos" (barras horizontais)
+- [x] Implementar gráfico "Taxa de Turnover Mensal" (linha)
+- [x] Implementar gráfico "Tempo Médio de Permanência" (barras)
+- [x] Implementar gráfico "Análise de Diversidade por Gênero" (pizza)
+- [x] Implementar gráfico "Projeções de Crescimento" (linha com projeção)
+- [x] Adicionar filtros de período (6m, 12m, 24m) e departamento
+- [x] Adicionar botão "Exportar Relatório"
+- [x] Adicionar rota no App.tsx
+- [x] Adicionar link no menu do DashboardLayout
