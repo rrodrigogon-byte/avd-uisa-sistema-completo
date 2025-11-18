@@ -944,3 +944,30 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Adicionar botão "Adicionar ao Calendário" em ações de PDI
 - [ ] Implementar download automático do arquivo .ics
 - [ ] Suportar Google Calendar e Outlook
+
+
+## 🔔 Sistema de Notificações In-App
+- [x] Criar componente NotificationBell no header do DashboardLayout
+- [x] Implementar endpoints backend (getNotifications, getUnreadCount, markAsRead, markAllAsRead)
+- [x] Adicionar polling a cada 30 segundos para atualizar contador
+- [x] Criar dropdown com lista de notificações recentes (limite 10)
+- [x] Implementar badge de contador de não lidas
+- [x] Adicionar ícones por tipo de notificação (metas, avaliações, PDI, prazos)
+- [x] Integrar com tRPC para persistência no banco de dados
+- [x] Navegação automática ao clicar em notificação com link
+
+## 📋 Página de Audit Trail
+- [ ] Criar página /admin/audit-log usando tabela auditLogs
+- [ ] Implementar filtros por usuário, data e tipo de ação
+- [ ] Criar visualização detalhada de cada alteração (before/after)
+- [ ] Adicionar exportação CSV do histórico
+- [ ] Implementar paginação para grandes volumes de dados
+- [ ] Adicionar rota e menu de acesso (apenas admin)
+
+## 📅 Integração com Calendário
+- [ ] Criar função para gerar arquivos .ics (iCalendar)
+- [ ] Adicionar botão "Adicionar ao Calendário" na página de Metas
+- [ ] Adicionar botão "Adicionar ao Calendário" na página de PDI
+- [ ] Implementar download automático do arquivo .ics
+- [ ] Incluir título, descrição, data de início e fim nos eventos
+- [ ] Testar compatibilidade com Google Calendar e Outlook

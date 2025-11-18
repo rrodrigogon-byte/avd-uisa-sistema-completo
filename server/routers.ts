@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles, notifications } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -1562,6 +1562,70 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
         return { success: true };
       }),
+  }),
+
+  // Router de Notificações
+  notifications: router({
+    // Buscar notificações do usuário
+    getNotifications: protectedProcedure.query(async ({ ctx }) => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const userNotifications = await database.select()
+        .from(notifications)
+        .where(eq(notifications.userId, ctx.user.id))
+        .orderBy(desc(notifications.createdAt))
+        .limit(50);
+
+      return userNotifications;
+    }),
+
+    // Contar notificações não lidas
+    getUnreadCount: protectedProcedure.query(async ({ ctx }) => {
+      const database = await getDb();
+      if (!database) return 0;
+
+      const unread = await database.select()
+        .from(notifications)
+        .where(and(
+          eq(notifications.userId, ctx.user.id),
+          eq(notifications.read, false)
+        ));
+
+      return unread.length;
+    }),
+
+    // Marcar notificação como lida
+    markAsRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(notifications)
+          .set({ read: true, readAt: new Date() })
+          .where(and(
+            eq(notifications.id, input.id),
+            eq(notifications.userId, ctx.user.id)
+          ));
+
+        return { success: true };
+      }),
+
+    // Marcar todas como lidas
+    markAllAsRead: protectedProcedure.mutation(async ({ ctx }) => {
+      const database = await getDb();
+      if (!database) throw new Error("Database not available");
+
+      await database.update(notifications)
+        .set({ read: true, readAt: new Date() })
+        .where(and(
+          eq(notifications.userId, ctx.user.id),
+          eq(notifications.read, false)
+        ));
+
+      return { success: true };
+    }),
   }),
 });
 
