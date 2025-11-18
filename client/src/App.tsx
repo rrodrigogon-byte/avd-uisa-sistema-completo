@@ -23,6 +23,8 @@ import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
 import Bonus from "./pages/aprovacoes/Bonus";
 import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
+import SucessaoMelhorado from "./pages/SucessaoMelhorado";
+import PDIInteligente from "./pages/PDIInteligente";
 import NineBoxComparativo from "./pages/NineBoxComparativo";
 import ReportBuilder from "./pages/ReportBuilder";
 import ReportAnalytics from "./pages/ReportAnalytics";
@@ -67,6 +69,8 @@ function Router() {
       <Route path="/aprovacoes/bonus" component={Bonus} />
       <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />
+      <Route path="/mapa-sucessao" component={SucessaoMelhorado} />
+      <Route path="/pdi-inteligente/:id" component={PDIInteligente} />
       <Route path="/nine-box-comparativo" component={NineBoxComparativo} />
       <Route path="/admin/report-builder" component={ReportBuilder} />
       <Route path="/admin/report-analytics" component={ReportAnalytics} />
