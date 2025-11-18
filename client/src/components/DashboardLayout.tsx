@@ -76,9 +76,9 @@ const menuItems = [
     label: "Performance",
     isSection: true,
     children: [
-      { icon: Activity, label: "Performance Integrada", path: "/performance" },
+      { icon: Activity, label: "Performance Integrada", path: "/performance-integrada" },
       { icon: RefreshCw, label: "Avaliação 360°", path: "/avaliacoes" },
-      { icon: Star, label: "360° Enhanced", path: "/avaliacoes-enhanced" },
+      { icon: Star, label: "360° Enhanced", path: "/360-enhanced" },
       { icon: Scale, label: "Calibração", path: "/calibracao" },
       { icon: Grid3x3, label: "Nine Box", path: "/nine-box" },
     ],

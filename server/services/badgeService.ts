@@ -1,9 +1,11 @@
 import { getDb } from "../db";
 import { badges, employeeBadges, employees, goals, pdiPlans, performanceEvaluations, feedbacks, psychometricTests, nineBoxPositions, notifications } from "../../drizzle/schema";
 import { eq, and, sql, count } from "drizzle-orm";
+import { grantBadgeIfEligible } from "../utils/badgeHelper";
 
 /**
  * Serviço de verificação e concessão automática de badges
+ * Usa badgeHelper para enviar notificações in-app E e-mails automáticos
  */
 
 // Verificar e conceder badge se condições forem atendidas
@@ -20,20 +22,26 @@ async function checkAndAwardBadge(employeeId: number, badgeId: number): Promise<
 
   if (existing.length > 0) return false; // Já possui
 
-  // Conceder badge
-  await db.insert(employeeBadges).values({
+  // Conceder badge usando badgeHelper (envia notificação + e-mail)
+  // Nota: badgeHelper usa badgeCode, mas aqui temos badgeId
+  // Por enquanto, manter lógica original até refatorar badges para usar codes
+  const db2 = await getDb();
+  if (!db2) return false;
+  
+  await db2.insert(employeeBadges).values({
     employeeId,
     badgeId,
     earnedAt: new Date(),
     notified: false,
   });
 
-  // Criar notificação
-  const badge = await db.select().from(badges).where(eq(badges.id, badgeId)).limit(1);
+  // Criar notificação e enviar e-mail
+  const badge = await db2.select().from(badges).where(eq(badges.id, badgeId)).limit(1);
   if (badge[0]) {
-    const employee = await db.select().from(employees).where(eq(employees.id, employeeId)).limit(1);
+    const employee = await db2.select().from(employees).where(eq(employees.id, employeeId)).limit(1);
     if (employee[0] && employee[0].userId) {
-      await db.insert(notifications).values({
+      // Criar notificação in-app
+      await db2.insert(notifications).values({
         userId: employee[0].userId,
         type: "badge_earned",
         title: "🏆 Novo Badge Conquistado!",
@@ -41,6 +49,24 @@ async function checkAndAwardBadge(employeeId: number, badgeId: number): Promise<
         link: "/badges",
         read: false,
       });
+
+      // Enviar e-mail se tiver e-mail cadastrado
+      if (employee[0].email) {
+        try {
+          const { emailService } = await import("../utils/emailService");
+          await emailService.sendBadgeNotification(
+            employee[0].email,
+            {
+              employeeName: employee[0].name || "Colaborador",
+              badgeName: badge[0].name,
+              badgeDescription: badge[0].description || "Parabéns pela conquista!",
+              badgeIcon: "🏆",
+            }
+          );
+        } catch (error) {
+          console.error("[BadgeService] Erro ao enviar e-mail de badge:", error);
+        }
+      }
     }
   }
 

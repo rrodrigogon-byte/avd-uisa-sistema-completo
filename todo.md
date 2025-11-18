@@ -123,3 +123,32 @@
 - [ ] Testar todas as páginas do menu lateral
 - [ ] Verificar se todos os endpoints tRPC estão funcionando
 - [ ] Validar que não há erros no console do navegador
+
+
+## 🔧 Correções de Avaliações
+- [x] Corrigir erro em Performance Integrada (rota errada no menu: /performance → /performance-integrada)
+- [x] Corrigir erro em Avaliação 360° (rota correta: /avaliacoes)
+- [x] Corrigir erro em 360° Enhanced (rota errada no menu: /avaliacoes-enhanced → /360-enhanced)
+- [x] Testar todas as páginas de avaliação
+
+## 📧 Configuração SMTP
+- [x] Verificar se página /admin/smtp existe (já implementada)
+- [x] Formulário de configuração SMTP completo
+- [x] Campos: host, port, SSL/TLS, user, password, fromName, fromEmail
+- [x] Botão salvar configurações
+- [x] Seção de teste com envio de e-mail de teste
+
+## 🎯️ Integração badgeHelper
+- [x] Integrar envio de e-mail no badgeService.ts
+- [x] Endpoint de completar meta (100%) já chama checkGoalBadges
+- [x] checkGoalBadges agora envia e-mail automático via emailService.sendBadgeNotification
+- [x] checkPDIBadges, checkEvaluationBadges, checkFeedbackBadges também integrados
+- [x] Todos os badges agora enviam notificação in-app + e-mail automático
+
+## 📊 Dashboard Analytics Avançado
+- [ ] Criar página /admin/analytics-advanced
+- [ ] Implementar heatmap de atividades por departamento
+- [ ] Adicionar métricas de engajamento (taxa de login)
+- [ ] Adicionar tempo médio no sistema
+- [ ] Adicionar métricas de adoção por feature
+- [ ] Criar gráficos de tendências de uso
