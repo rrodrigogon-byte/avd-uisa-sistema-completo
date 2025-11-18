@@ -204,9 +204,9 @@ export default function NineBox() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            {employees.map((emp) => (
+                            {employees.map((emp, idx) => (
                               <button
-                                key={emp.id}
+                                key={`${key}-emp-${emp.id}-${idx}`}
                                 onClick={() => handleEmployeeClick(emp)}
                                 className="w-full text-left p-2 bg-background rounded border hover:border-primary hover:shadow-sm transition-all text-xs"
                               >
@@ -239,9 +239,9 @@ export default function NineBox() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            {employees.map((emp) => (
+                            {employees.map((emp, idx) => (
                               <button
-                                key={emp.id}
+                                key={`${key}-emp-${emp.id}-${idx}`}
                                 onClick={() => handleEmployeeClick(emp)}
                                 className="w-full text-left p-2 bg-background rounded border hover:border-primary hover:shadow-sm transition-all text-xs"
                               >
@@ -274,9 +274,9 @@ export default function NineBox() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            {employees.map((emp) => (
+                            {employees.map((emp, idx) => (
                               <button
-                                key={emp.id}
+                                key={`${key}-emp-${emp.id}-${idx}`}
                                 onClick={() => handleEmployeeClick(emp)}
                                 className="w-full text-left p-2 bg-background rounded border hover:border-primary hover:shadow-sm transition-all text-xs"
                               >

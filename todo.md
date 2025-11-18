@@ -835,3 +835,15 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [ ] Implementar cálculo de perfil DISC
 - [ ] Implementar cálculo de perfil Big Five
 - [ ] Criar relatórios visuais com gráficos radar
+
+## 🐛 Correções Recentes
+
+- [x] Corrigir erro de chave duplicada na página Nine Box (key={emp.id} → key={`${key}-emp-${emp.id}-${idx}`})
+- [x] Completar Testes Psicométricos (50 perguntas Big Five)
+- [x] Criar questionários interativos DISC e Big Five
+- [x] Implementar cálculo de perfil psicométrico
+- [x] Endpoints backend (getQuestions, submitTest, getTests)
+- [x] Páginas de testes com escala Likert 1-5
+- [x] Gráficos radar de resultados
+- [x] Criar organograma interativo de sucessão com ReactFlow
+- [x] Ativar cron jobs e notificações automáticas

@@ -25,6 +25,9 @@ import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
+import PsychometricTests from "./pages/PsychometricTests";
+import TestDISC from "./pages/TestDISC";
+import TestBigFive from "./pages/TestBigFive";
 
 function Router() {
   return (
@@ -49,6 +52,9 @@ function Router() {
       <Route path="/sucessao" component={Sucessao} />
       <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
+      <Route path="/testes-psicometricos" component={PsychometricTests} />
+      <Route path="/teste-disc" component={TestDISC} />
+      <Route path="/teste-bigfive" component={TestBigFive} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

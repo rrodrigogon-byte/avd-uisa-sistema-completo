@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -1033,6 +1033,159 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       return plans;
     }),
   }),
+
+  // Router de Testes Psicométricos
+  psychometric: router({
+    // Buscar perguntas de um teste específico
+    getQuestions: protectedProcedure
+      .input(z.object({ testType: z.enum(["disc", "bigfive"]) }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const questions = await database.select()
+          .from(testQuestions)
+          .where(eq(testQuestions.testType, input.testType))
+          .orderBy(testQuestions.questionNumber);
+
+        return questions;
+      }),
+
+    // Submeter respostas de um teste
+    submitTest: protectedProcedure
+      .input(z.object({
+        testType: z.enum(["disc", "bigfive"]),
+        responses: z.array(z.object({
+          questionId: z.number(),
+          score: z.number().min(1).max(5),
+        })),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        // Buscar colaborador do usuário
+        const employee = await database.select()
+          .from(employees)
+          .where(eq(employees.userId, ctx.user.id))
+          .limit(1);
+
+        if (employee.length === 0) {
+          throw new Error("Colaborador não encontrado");
+        }
+
+        // Calcular perfil baseado nas respostas
+        const profile = await calculateProfile(input.testType, input.responses, database);
+
+        // Preparar valores para inserção
+        const testValues: any = {
+          employeeId: employee[0].id,
+          testType: input.testType,
+          completedAt: new Date(),
+          responses: JSON.stringify(input.responses),
+        };
+
+        // Adicionar scores específicos baseado no tipo de teste
+        if (input.testType === "disc") {
+          testValues.discDominance = Math.round((profile.D || 0) * 20); // Converter 1-5 para 0-100
+          testValues.discInfluence = Math.round((profile.I || 0) * 20);
+          testValues.discSteadiness = Math.round((profile.S || 0) * 20);
+          testValues.discCompliance = Math.round((profile.C || 0) * 20);
+          // Determinar perfil dominante
+          const maxDimension = Object.entries(profile).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+          testValues.discProfile = maxDimension;
+        } else if (input.testType === "bigfive") {
+          testValues.bigFiveOpenness = Math.round((profile.O || 0) * 20);
+          testValues.bigFiveConscientiousness = Math.round((profile.C || 0) * 20);
+          testValues.bigFiveExtraversion = Math.round((profile.E || 0) * 20);
+          testValues.bigFiveAgreeableness = Math.round((profile.A || 0) * 20);
+          testValues.bigFiveNeuroticism = Math.round((profile.N || 0) * 20);
+        }
+
+        // Salvar teste no banco
+        await database.insert(psychometricTests).values(testValues);
+
+        return { success: true, profile };
+      }),
+
+    // Buscar testes de um colaborador
+    getTests: protectedProcedure.query(async ({ ctx }) => {
+      const database = await getDb();
+      if (!database) return [];
+
+      // Buscar colaborador do usuário
+      const employee = await database.select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      if (employee.length === 0) return [];
+
+      const tests = await database.select()
+        .from(psychometricTests)
+        .where(eq(psychometricTests.employeeId, employee[0].id))
+        .orderBy(desc(psychometricTests.completedAt));
+
+      return tests.map(test => {
+        // Reconstruir perfil a partir dos campos individuais
+        let profile: any = null;
+        if (test.testType === "disc") {
+          profile = {
+            D: test.discDominance ? test.discDominance / 20 : 0,
+            I: test.discInfluence ? test.discInfluence / 20 : 0,
+            S: test.discSteadiness ? test.discSteadiness / 20 : 0,
+            C: test.discCompliance ? test.discCompliance / 20 : 0,
+            dominantProfile: test.discProfile,
+          };
+        } else if (test.testType === "bigfive") {
+          profile = {
+            O: test.bigFiveOpenness ? test.bigFiveOpenness / 20 : 0,
+            C: test.bigFiveConscientiousness ? test.bigFiveConscientiousness / 20 : 0,
+            E: test.bigFiveExtraversion ? test.bigFiveExtraversion / 20 : 0,
+            A: test.bigFiveAgreeableness ? test.bigFiveAgreeableness / 20 : 0,
+            N: test.bigFiveNeuroticism ? test.bigFiveNeuroticism / 20 : 0,
+          };
+        }
+        return { ...test, profile };
+      });
+    }),
+  }),
 });
+
+// Função auxiliar para calcular perfil psicométrico
+async function calculateProfile(
+  testType: "disc" | "bigfive",
+  responses: Array<{ questionId: number; score: number }>,
+  database: any
+) {
+  // Buscar perguntas com dimensões
+  const questions = await database.select()
+    .from(testQuestions)
+    .where(eq(testQuestions.testType, testType));
+
+  const dimensionScores: Record<string, number[]> = {};
+
+  // Agrupar scores por dimensão
+  for (const response of responses) {
+    const question = questions.find((q: any) => q.id === response.questionId);
+    if (!question) continue;
+
+    const dimension = question.dimension;
+    if (!dimensionScores[dimension]) dimensionScores[dimension] = [];
+
+    // Inverter score se a pergunta for reversa
+    const score = question.reverse ? (6 - response.score) : response.score;
+    dimensionScores[dimension].push(score);
+  }
+
+  // Calcular médias por dimensão
+  const profile: Record<string, number> = {};
+  for (const [dimension, scores] of Object.entries(dimensionScores)) {
+    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+    profile[dimension] = Math.round(avg * 10) / 10; // Arredondar para 1 casa decimal
+  }
+
+  return profile;
+}
 
 export type AppRouter = typeof appRouter;
