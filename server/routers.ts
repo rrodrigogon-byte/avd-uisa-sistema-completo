@@ -22,6 +22,8 @@ import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { goalsRouter } from "./goalsRouter";
 import { bonusRouter } from "./bonusRouter";
 import { calibrationRouter } from "./calibrationRouter";
+import { gamificationRouter } from "./gamificationRouter";
+import { integrationsRouter } from "./integrationsRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1765,6 +1767,8 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   smartGoals: goalsRouter,
   bonus: bonusRouter,
   calibrationDiretoria: calibrationRouter,
+  gamification: gamificationRouter,
+  integrations: integrationsRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico

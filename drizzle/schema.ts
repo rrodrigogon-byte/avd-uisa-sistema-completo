@@ -106,6 +106,10 @@ export const employees = mysqlTable("employees", {
   // Integração TOTVS RM
   rmCode: varchar("rmCode", { length: 50 }),
   rmLastSync: datetime("rmLastSync"),
+  // Gamificação
+  gamificationPoints: int("gamificationPoints").default(0).notNull(),
+  gamificationLevel: varchar("gamificationLevel", { length: 20 }).default("Bronze").notNull(),
+  lastPointsUpdate: timestamp("lastPointsUpdate").defaultNow(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

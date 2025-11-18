@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "./_core/trpc";
+import { generateCalibrationPDF, generateConsolidatedCalibrationPDF } from "./utils/calibrationPDF";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -325,4 +326,86 @@ export const calibrationRouter = router({
 
     return stats;
   }),
+
+  /**
+   * Exportar PDF de calibração individual
+   */
+  exportPDF: protectedProcedure
+    .input(z.object({ movementId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { calibrationMovements, calibrationApprovals, employees, departments, positions } =
+        await import("../drizzle/schema");
+
+      // Buscar movimentação
+      const [movement] = await db
+        .select()
+        .from(calibrationMovements)
+        .where(eq(calibrationMovements.id, input.movementId))
+        .limit(1);
+
+      if (!movement) throw new Error("Movimentação não encontrada");
+
+      // Buscar colaborador
+      const [employee] = await db
+        .select({
+          employee: employees,
+          department: departments,
+          position: positions,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(employees.positionId, positions.id))
+        .where(eq(employees.id, movement.employeeId))
+        .limit(1);
+
+      if (!employee) throw new Error("Colaborador não encontrado");
+
+      // Buscar aprovações
+      const approvals = await db
+        .select({
+          approval: calibrationApprovals,
+          approver: employees,
+        })
+        .from(calibrationApprovals)
+        .leftJoin(employees, eq(calibrationApprovals.approverId, employees.id))
+        .where(eq(calibrationApprovals.movementId, input.movementId));
+
+      // Preparar dados
+      const data = {
+        employee: {
+          name: employee.employee.name,
+          employeeCode: employee.employee.employeeCode,
+          department: employee.department?.name || "N/A",
+          position: employee.position?.title || "N/A",
+        },
+        movement: {
+          fromPerformance: movement.fromPerformance || "baixo",
+          fromPotential: movement.fromPotential || "baixo",
+          toPerformance: movement.toPerformance,
+          toPotential: movement.toPotential,
+          justification: movement.justification,
+          createdAt: movement.createdAt,
+        },
+        approvals: approvals.map((a) => ({
+          approverName: a.approver?.name || "N/A",
+          approverRole: a.approval.approverRole,
+          status: a.approval.status,
+          evidence: a.approval.evidence || undefined,
+          comments: a.approval.comments || undefined,
+          approvedAt: a.approval.approvedAt || undefined,
+        })),
+      };
+
+      // Gerar PDF
+      const pdfBuffer = await generateCalibrationPDF(data);
+
+      return {
+        success: true,
+        pdf: pdfBuffer.toString("base64"),
+        filename: `calibracao_${employee.employee.employeeCode}_${Date.now()}.pdf`,
+      };
+    }),
 });

@@ -984,11 +984,24 @@
 - [x] Implementar notificações automáticas no workflow de calibração
 
 ## 🎮 Gamificação Completa
-- [ ] Expandir sistema de badges com pontos e níveis
-- [ ] Criar ranking mensal visível no dashboard
-- [ ] Implementar recompensas automáticas por marcos
+- [x] Adicionar campo de pontos na tabela employees
+- [x] Criar sistema de níveis (Bronze, Prata, Ouro, Platina)
+- [x] Implementar cálculo automático de pontos por ações
+- [x] Criar ranking mensal visível no dashboard
+- [x] Implementar recompensas automáticas por marcos
+- [x] Criar página de ranking de gamificação
 
 ## 🔗 Integrações Externas
-- [ ] Criar integração com Microsoft Teams para notificações
-- [ ] Criar integração com Slack para notificações
-- [ ] Adicionar botões de ação rápida nos chats
+- [x] Criar integração com Microsoft Teams para notificações
+- [x] Criar integração com Slack para notificações
+- [x] Criar integração com Google Meet para reuniões
+- [x] Adicionar botões de ação rápida nos chats
+- [x] Criar página de configuração de integrações
+
+## 📄 Exportação PDF de Calibração
+- [x] Criar utilitário de geração de PDF de calibração
+- [x] Adicionar endpoint de exportação de relatório de calibração
+- [x] Adicionar botão de exportação na página de aprovações
+
+## 🐛 Correções de Bugs
+- [x] Corrigir erro de tipo avgScore.toFixed no dashboard executivo

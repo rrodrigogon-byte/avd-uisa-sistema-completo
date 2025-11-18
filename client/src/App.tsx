@@ -60,6 +60,8 @@ import ConfiguracaoWorkflowsBonus from "@/pages/ConfiguracaoWorkflowsBonus";
 import DashboardBonusRH from "./pages/DashboardBonusRH";
 import MovimentacaoNineBox from "./pages/MovimentacaoNineBox";
 import AprovacaoCalibracoes from "./pages/AprovacaoCalibracoes";
+import RankingGamificacao from "./pages/RankingGamificacao";
+import ConfiguracaoIntegracoes from "./pages/ConfiguracaoIntegracoes";
 
 function Router() {
   return (
@@ -73,6 +75,8 @@ function Router() {
       <Route path="/analytics/metas" component={AnalyticsMetas} />
       <Route path="/executivo/calibracao" component={MovimentacaoNineBox} />
       <Route path="/executivo/aprovacoes" component={AprovacaoCalibracoes} />
+      <Route path="/gamificacao/ranking" component={RankingGamificacao} />
+      <Route path="/configuracoes/integracoes" component={ConfiguracaoIntegracoes} />
       <Route path={"/avaliacoes"} component={Avaliacoes} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />

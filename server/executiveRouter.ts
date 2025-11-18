@@ -345,7 +345,7 @@ export const executiveRouter = router({
 
       return result.map((row) => ({
         department: row.departmentName || "Sem Departamento",
-        avgScore: parseFloat((row.avgScore || 0).toFixed(2)),
+        avgScore: parseFloat((Number(row.avgScore) || 0).toFixed(2)),
         count: row.count,
       }));
     }),
@@ -440,7 +440,7 @@ export const executiveRouter = router({
         name: row.employeeName || "Desconhecido",
         department: row.departmentName || "Sem Departamento",
         position: row.positionTitle || "Sem Cargo",
-        score: parseFloat((row.avgScore || 0).toFixed(2)),
+        score: parseFloat((Number(row.avgScore) || 0).toFixed(2)),
       }));
     }),
 
