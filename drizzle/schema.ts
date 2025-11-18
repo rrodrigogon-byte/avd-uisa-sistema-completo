@@ -586,3 +586,21 @@ export const testQuestions = mysqlTable("testQuestions", {
 
 export type TestQuestion = typeof testQuestions.$inferSelect;
 export type InsertTestQuestion = typeof testQuestions.$inferInsert;
+
+// ============================================================================
+// CONFIGURAÇÕES DO SISTEMA
+// ============================================================================
+
+export const systemSettings = mysqlTable("systemSettings", {
+  id: int("id").autoincrement().primaryKey(),
+  settingKey: varchar("settingKey", { length: 100 }).notNull().unique(),
+  settingValue: text("settingValue"),
+  description: text("description"),
+  isEncrypted: boolean("isEncrypted").default(false).notNull(),
+  updatedBy: int("updatedBy"), // ID do usuário que atualizou
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SystemSetting = typeof systemSettings.$inferSelect;
+export type InsertSystemSetting = typeof systemSettings.$inferInsert;

@@ -28,6 +28,7 @@ import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
 import PsychometricTests from "./pages/PsychometricTests";
 import TestDISC from "./pages/TestDISC";
 import TestBigFive from "./pages/TestBigFive";
+import AdminSmtp from "./pages/AdminSmtp";
 
 function Router() {
   return (
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/testes-psicometricos" component={PsychometricTests} />
       <Route path="/teste-disc" component={TestDISC} />
       <Route path="/teste-bigfive" component={TestBigFive} />
+      <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

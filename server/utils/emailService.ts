@@ -1,18 +1,48 @@
 import nodemailer from "nodemailer";
+import { getDb } from "../db";
+import { systemSettings } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
-// Email configuration
-const EMAIL_CONFIG = {
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: "avd@uisa.com.br",
-    pass: "C8HNBnv@Wfjznqo6CKSzw^", // App password
-  },
-};
+// Função para obter configurações SMTP do banco
+async function getSmtpConfig() {
+  const db = await getDb();
+  if (!db) return null;
 
-// Create reusable transporter
-const transporter = nodemailer.createTransport(EMAIL_CONFIG);
+  try {
+    const settings = await db.select()
+      .from(systemSettings)
+      .where(eq(systemSettings.settingKey, "smtp_config"))
+      .limit(1);
+
+    if (settings.length === 0) return null;
+
+    const config = settings[0].settingValue ? JSON.parse(settings[0].settingValue) : null;
+    return config;
+  } catch (error) {
+    console.error("[EmailService] Erro ao buscar configurações SMTP:", error);
+    return null;
+  }
+}
+
+// Criar transporter dinâmico baseado nas configurações do banco
+async function createTransporter() {
+  const config = await getSmtpConfig();
+  
+  if (!config) {
+    console.warn("[EmailService] Configurações SMTP não encontradas. Configure em /admin/smtp");
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
+}
 
 // Email templates
 const templates = {
@@ -104,8 +134,8 @@ const templates = {
     `,
   }),
 
-  pdiApproved: (data: { employeeName: string; pdiTitle: string; startDate: string }) => ({
-    subject: `PDI aprovado: ${data.pdiTitle}`,
+  actionOverdue: (data: { employeeName: string; actionTitle: string; dueDate: string; pdiTitle: string }) => ({
+    subject: `Ação de PDI vencida: ${data.actionTitle}`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -113,80 +143,27 @@ const templates = {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
             .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .button { display: inline-block; padding: 12px 30px; background: #4facfe; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-            .success { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; }
+            .button { display: inline-block; padding: 12px 30px; background: #f5576c; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .alert { background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; }
             .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1>✅ PDI Aprovado!</h1>
+              <h1>⚠️ Ação de PDI Vencida</h1>
             </div>
             <div class="content">
               <p>Olá, <strong>${data.employeeName}</strong>!</p>
-              <div class="success">
-                <strong>🎉 Parabéns!</strong> Seu Plano de Desenvolvimento Individual foi aprovado.
+              <div class="alert">
+                <strong>Atenção:</strong> A ação <strong>"${data.actionTitle}"</strong> do seu ${data.pdiTitle} está vencida.
               </div>
-              <p><strong>PDI:</strong> ${data.pdiTitle}</p>
-              <p><strong>Data de início:</strong> ${data.startDate}</p>
-              <p>Agora você pode começar a executar as ações planejadas e acompanhar seu progresso no sistema.</p>
+              <p><strong>Data de vencimento:</strong> ${data.dueDate}</p>
+              <p>Acesse o sistema para atualizar o status da ação ou reprogramar o prazo.</p>
               <div style="text-align: center;">
                 <a href="https://avd.uisa.com.br/pdi" class="button">Ver Meu PDI</a>
-              </div>
-            </div>
-            <div class="footer">
-              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
-              <p>Este é um e-mail automático, por favor não responda.</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `,
-  }),
-
-  welcome: (data: { employeeName: string; loginUrl: string }) => ({
-    subject: "Bem-vindo ao Sistema AVD UISA!",
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-            .feature { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #667eea; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>🎉 Bem-vindo ao AVD UISA!</h1>
-            </div>
-            <div class="content">
-              <p>Olá, <strong>${data.employeeName}</strong>!</p>
-              <p>Seja bem-vindo ao <strong>Sistema AVD UISA</strong> - sua plataforma de Avaliação de Desempenho e Desenvolvimento Profissional.</p>
-              <h3>O que você pode fazer:</h3>
-              <div class="feature">
-                <strong>🎯 Metas:</strong> Acompanhe suas metas e objetivos
-              </div>
-              <div class="feature">
-                <strong>👥 Avaliação 360°:</strong> Participe de avaliações completas
-              </div>
-              <div class="feature">
-                <strong>📈 PDI:</strong> Desenvolva suas competências com IA
-              </div>
-              <div class="feature">
-                <strong>📊 Matriz 9-Box:</strong> Visualize seu posicionamento
-              </div>
-              <p style="margin-top: 20px;">Acesse o sistema agora e comece sua jornada de desenvolvimento!</p>
-              <div style="text-align: center;">
-                <a href="${data.loginUrl}" class="button">Acessar Sistema</a>
               </div>
             </div>
             <div class="footer">
@@ -230,96 +207,7 @@ const templates = {
               <div style="text-align: center;">
                 <a href="${data.resetLink}" class="button">Redefinir Senha</a>
               </div>
-              <p style="margin-top: 20px; font-size: 14px; color: #666;">
-                Se você não solicitou esta redefinição, ignore este e-mail. Sua senha permanecerá inalterada.
-              </p>
-            </div>
-            <div class="footer">
-              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
-              <p>Este é um e-mail automático, por favor não responda.</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `,
-  }),
-
-  actionOverdue: (data: { employeeName: string; actionTitle: string; dueDate: string; pdiTitle: string }) => ({
-    subject: `⚠️ Ação de PDI vencida: ${data.actionTitle}`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .button { display: inline-block; padding: 12px 30px; background: #ff6b6b; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-            .alert { background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>⚠️ Ação Vencida</h1>
-            </div>
-            <div class="content">
-              <p>Olá, <strong>${data.employeeName}</strong>!</p>
-              <div class="alert">
-                <strong>⚠️ Atenção:</strong> Uma ação do seu PDI está vencida.
-              </div>
-              <p><strong>PDI:</strong> ${data.pdiTitle}</p>
-              <p><strong>Ação:</strong> ${data.actionTitle}</p>
-              <p><strong>Data de vencimento:</strong> ${data.dueDate}</p>
-              <p>Por favor, atualize o status desta ação ou entre em contato com seu gestor para redefinir o prazo.</p>
-              <div style="text-align: center;">
-                <a href="https://avd.uisa.com.br/pdi" class="button">Ver Meu PDI</a>
-              </div>
-            </div>
-            <div class="footer">
-              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
-              <p>Este é um e-mail automático, por favor não responda.</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `,
-  }),
-
-  newGoalAssigned: (data: { employeeName: string; goalTitle: string; dueDate: string; managerName: string }) => ({
-    subject: `Nova meta atribuída: ${data.goalTitle}`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .button { display: inline-block; padding: 12px 30px; background: #fa709a; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-            .info { background: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>🎯 Nova Meta Atribuída</h1>
-            </div>
-            <div class="content">
-              <p>Olá, <strong>${data.employeeName}</strong>!</p>
-              <p>Uma nova meta foi atribuída a você por <strong>${data.managerName}</strong>.</p>
-              <div class="info">
-                <p><strong>Meta:</strong> ${data.goalTitle}</p>
-                <p><strong>Prazo:</strong> ${data.dueDate}</p>
-              </div>
-              <p>Acesse o sistema para visualizar os detalhes completos e começar a trabalhar nesta meta.</p>
-              <div style="text-align: center;">
-                <a href="https://avd.uisa.com.br/metas" class="button">Ver Meta</a>
-              </div>
+              <p style="margin-top: 20px; font-size: 12px; color: #666;">Se você não solicitou esta redefinição, ignore este e-mail.</p>
             </div>
             <div class="footer">
               <p>Sistema AVD UISA - Avaliação de Desempenho</p>
@@ -332,71 +220,113 @@ const templates = {
   }),
 };
 
-// Email service class
-export class EmailService {
+// Email service methods
+export const emailService = {
   async sendGoalReminder(to: string, data: Parameters<typeof templates.goalReminder>[0]) {
-    const template = templates.goalReminder(data);
-    return this.sendEmail(to, template.subject, template.html);
-  }
-
-  async sendEvaluationPending(to: string, data: Parameters<typeof templates.evaluationPending>[0]) {
-    const template = templates.evaluationPending(data);
-    return this.sendEmail(to, template.subject, template.html);
-  }
-
-  async sendPDIApproved(to: string, data: Parameters<typeof templates.pdiApproved>[0]) {
-    const template = templates.pdiApproved(data);
-    return this.sendEmail(to, template.subject, template.html);
-  }
-
-  async sendNewGoalAssigned(to: string, data: Parameters<typeof templates.newGoalAssigned>[0]) {
-    const template = templates.newGoalAssigned(data);
-    return this.sendEmail(to, template.subject, template.html);
-  }
-
-  async sendWelcome(to: string, data: Parameters<typeof templates.welcome>[0]) {
-    const template = templates.welcome(data);
-    return this.sendEmail(to, template.subject, template.html);
-  }
-
-  async sendResetPassword(to: string, data: Parameters<typeof templates.resetPassword>[0]) {
-    const template = templates.resetPassword(data);
-    return this.sendEmail(to, template.subject, template.html);
-  }
-
-  async sendActionOverdue(to: string, data: Parameters<typeof templates.actionOverdue>[0]) {
-    const template = templates.actionOverdue(data);
-    return this.sendEmail(to, template.subject, template.html);
-  }
-
-  private async sendEmail(to: string, subject: string, html: string) {
-    try {
-      const info = await transporter.sendMail({
-        from: `"Sistema AVD UISA" <${EMAIL_CONFIG.auth.user}>`,
-        to,
-        subject,
-        html,
-      });
-
-      console.log(`[EmailService] Email sent to ${to}: ${info.messageId}`);
-      return { success: true, messageId: info.messageId };
-    } catch (error) {
-      console.error(`[EmailService] Error sending email to ${to}:`, error);
-      return { success: false, error };
-    }
-  }
-
-  async verifyConnection() {
-    try {
-      await transporter.verify();
-      console.log("[EmailService] SMTP connection verified");
-      return true;
-    } catch (error) {
-      console.error("[EmailService] SMTP connection failed:", error);
+    const transporter = await createTransporter();
+    if (!transporter) {
+      console.warn("[EmailService] Transporter não disponível");
       return false;
     }
-  }
-}
 
-// Export singleton instance
-export const emailService = new EmailService();
+    const config = await getSmtpConfig();
+    if (!config) return false;
+
+    const template = templates.goalReminder(data);
+    
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to,
+        subject: template.subject,
+        html: template.html,
+      });
+      console.log(`[EmailService] E-mail de lembrete de meta enviado para ${to}`);
+      return true;
+    } catch (error) {
+      console.error("[EmailService] Erro ao enviar e-mail:", error);
+      return false;
+    }
+  },
+
+  async sendEvaluationReminder(to: string, data: Parameters<typeof templates.evaluationPending>[0]) {
+    const transporter = await createTransporter();
+    if (!transporter) {
+      console.warn("[EmailService] Transporter não disponível");
+      return false;
+    }
+
+    const config = await getSmtpConfig();
+    if (!config) return false;
+
+    const template = templates.evaluationPending(data);
+    
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to,
+        subject: template.subject,
+        html: template.html,
+      });
+      console.log(`[EmailService] E-mail de lembrete de avaliação enviado para ${to}`);
+      return true;
+    } catch (error) {
+      console.error("[EmailService] Erro ao enviar e-mail:", error);
+      return false;
+    }
+  },
+
+  async sendActionOverdue(to: string, data: Parameters<typeof templates.actionOverdue>[0]) {
+    const transporter = await createTransporter();
+    if (!transporter) {
+      console.warn("[EmailService] Transporter não disponível");
+      return false;
+    }
+
+    const config = await getSmtpConfig();
+    if (!config) return false;
+
+    const template = templates.actionOverdue(data);
+    
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to,
+        subject: template.subject,
+        html: template.html,
+      });
+      console.log(`[EmailService] E-mail de ação vencida enviado para ${to}`);
+      return true;
+    } catch (error) {
+      console.error("[EmailService] Erro ao enviar e-mail:", error);
+      return false;
+    }
+  },
+
+  async sendPasswordReset(to: string, data: Parameters<typeof templates.resetPassword>[0]) {
+    const transporter = await createTransporter();
+    if (!transporter) {
+      console.warn("[EmailService] Transporter não disponível");
+      return false;
+    }
+
+    const config = await getSmtpConfig();
+    if (!config) return false;
+
+    const template = templates.resetPassword(data);
+    
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to,
+        subject: template.subject,
+        html: template.html,
+      });
+      console.log(`[EmailService] E-mail de redefinição de senha enviado para ${to}`);
+      return true;
+    } catch (error) {
+      console.error("[EmailService] Erro ao enviar e-mail:", error);
+      return false;
+    }
+  },
+};

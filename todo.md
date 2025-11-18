@@ -847,3 +847,12 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Gráficos radar de resultados
 - [x] Criar organograma interativo de sucessão com ReactFlow
 - [x] Ativar cron jobs e notificações automáticas
+
+## 🎯 Nova Implementação: Painel de Administração SMTP
+
+- [x] Criar schema de configurações SMTP no banco de dados (systemSettings)
+- [x] Implementar endpoints backend (getSmtpConfig, updateSmtpConfig, testSmtpConnection)
+- [x] Criar página de administração com formulário de SMTP (/admin/smtp)
+- [x] Integrar configurações SMTP com EmailService (busca dinâmica do banco)
+- [x] Adicionar botão de teste de envio de e-mail
+- [x] Menu "SMTP (Admin)" na seção Configurações

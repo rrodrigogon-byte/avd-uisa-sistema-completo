@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -1149,6 +1149,139 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         return { ...test, profile };
       });
     }),
+  }),
+
+  // Router de Administração (apenas admin)
+  admin: router({
+    // Buscar configurações SMTP
+    getSmtpConfig: protectedProcedure.query(async ({ ctx }) => {
+      // Verificar se é admin
+      if (ctx.user.role !== "admin") {
+        throw new Error("Acesso negado: apenas administradores");
+      }
+
+      const database = await getDb();
+      if (!database) return null;
+
+      const settings = await database.select()
+        .from(systemSettings)
+        .where(eq(systemSettings.settingKey, "smtp_config"))
+        .limit(1);
+
+      if (settings.length === 0) return null;
+
+      // Parse do JSON armazenado
+      const config = settings[0].settingValue ? JSON.parse(settings[0].settingValue) : null;
+      return config;
+    }),
+
+    // Atualizar configurações SMTP
+    updateSmtpConfig: protectedProcedure
+      .input(z.object({
+        host: z.string().min(1),
+        port: z.number().min(1).max(65535),
+        secure: z.boolean(),
+        user: z.string().min(1),
+        pass: z.string().min(1),
+        fromName: z.string().min(1),
+        fromEmail: z.string().email(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Verificar se é admin
+        if (ctx.user.role !== "admin") {
+          throw new Error("Acesso negado: apenas administradores");
+        }
+
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        // Verificar se já existe configuração
+        const existing = await database.select()
+          .from(systemSettings)
+          .where(eq(systemSettings.settingKey, "smtp_config"))
+          .limit(1);
+
+        const configJson = JSON.stringify(input);
+
+        if (existing.length > 0) {
+          // Atualizar
+          await database.update(systemSettings)
+            .set({
+              settingValue: configJson,
+              updatedBy: ctx.user.id,
+              updatedAt: new Date(),
+            })
+            .where(eq(systemSettings.settingKey, "smtp_config"));
+        } else {
+          // Inserir
+          await database.insert(systemSettings).values({
+            settingKey: "smtp_config",
+            settingValue: configJson,
+            description: "Configurações do servidor SMTP para envio de e-mails",
+            isEncrypted: false,
+            updatedBy: ctx.user.id,
+          });
+        }
+
+        return { success: true };
+      }),
+
+    // Testar conexão SMTP
+    testSmtpConnection: protectedProcedure
+      .input(z.object({
+        host: z.string().min(1),
+        port: z.number().min(1).max(65535),
+        secure: z.boolean(),
+        user: z.string().min(1),
+        pass: z.string().min(1),
+        fromName: z.string().min(1),
+        fromEmail: z.string().email(),
+        testEmail: z.string().email(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Verificar se é admin
+        if (ctx.user.role !== "admin") {
+          throw new Error("Acesso negado: apenas administradores");
+        }
+
+        const nodemailer = require("nodemailer");
+
+        try {
+          // Criar transporter com as configurações fornecidas
+          const transporter = nodemailer.createTransport({
+            host: input.host,
+            port: input.port,
+            secure: input.secure,
+            auth: {
+              user: input.user,
+              pass: input.pass,
+            },
+          });
+
+          // Verificar conexão
+          await transporter.verify();
+
+          // Enviar e-mail de teste
+          await transporter.sendMail({
+            from: `"${input.fromName}" <${input.fromEmail}>`,
+            to: input.testEmail,
+            subject: "Teste de Configuração SMTP - Sistema AVD UISA",
+            html: `
+              <h2>Teste de Configuração SMTP</h2>
+              <p>Este é um e-mail de teste enviado pelo Sistema AVD UISA.</p>
+              <p>Se você recebeu esta mensagem, significa que as configurações SMTP estão corretas!</p>
+              <hr>
+              <p><small>Servidor: ${input.host}:${input.port}</small></p>
+              <p><small>Data/Hora: ${new Date().toLocaleString("pt-BR")}</small></p>
+            `,
+          });
+
+          return { success: true, message: "E-mail de teste enviado com sucesso!" };
+        } catch (error: any) {
+          console.error("[SMTP Test] Erro:", error);
+          return { success: false, message: error.message || "Erro ao testar conexão SMTP" };
+        }
+      }),
   }),
 });
 
