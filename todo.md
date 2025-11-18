@@ -943,3 +943,15 @@
 - [x] Implementar upload de arquivos para evidências
 - [x] Criar geração de PDF para assinatura do Diretor de Gente
 - [x] Adicionar botão de envio ao financeiro após aprovação final
+
+
+## 🔧 Integrações Finais do Sistema
+- [x] Implementar upload real S3 para evidências (substituir simulação)
+- [x] Criar endpoint backend para upload de evidências com S3
+- [x] Atualizar frontend para usar upload real
+- [x] Criar página /configuracoes/workflows-bonus - Gerenciamento de workflows
+- [x] Implementar seleção visual de aprovadores e níveis
+- [x] Criar sistema de notificações por email para workflow de bônus
+- [x] Enviar email quando bônus é submetido
+- [x] Enviar email quando bônus é aprovado em cada nível
+- [x] Enviar email quando bônus é rejeitado

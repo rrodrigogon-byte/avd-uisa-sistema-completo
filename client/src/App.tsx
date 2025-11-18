@@ -54,7 +54,8 @@ import DetalhesMeta from "./pages/DetalhesMeta";
 import EditarMeta from "./pages/EditarMeta";
 import AtualizarProgressoMeta from "./pages/AtualizarProgressoMeta";
 import AprovarMetas from "./pages/AprovarMetas";
-import ConfiguracaoBonus from "./pages/ConfiguracaoBonus";
+import ConfiguracaoBonus from "@/pages/ConfiguracaoBonus";
+import ConfiguracaoWorkflowsBonus from "@/pages/ConfiguracaoWorkflowsBonus";
 import DashboardBonusRH from "./pages/DashboardBonusRH";
 
 function Router() {
@@ -81,6 +82,7 @@ function Router() {
       <Route path="/aprovacoes/solicitacoes" component={MinhasSolicitacoes} />      <Route path={"/aprovacoes/bonus"} component={Bonus} />
       <Route path="/aprovacoes/metas" component={AprovarMetas} />
       <Route path="/configuracoes/bonus" component={ConfiguracaoBonus} />
+      <Route path="/configuracoes/workflows-bonus" component={ConfiguracaoWorkflowsBonus} />
       <Route path="/rh/dashboard-bonus" component={DashboardBonusRH} />
       <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />

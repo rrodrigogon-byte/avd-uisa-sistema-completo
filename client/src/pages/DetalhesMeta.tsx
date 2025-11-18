@@ -131,6 +131,8 @@ export default function DetalhesMeta() {
     },
   });
 
+  const uploadFileMutation = trpc.smartGoals.uploadEvidenceFile.useMutation();
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -146,18 +148,41 @@ export default function DetalhesMeta() {
     const description = prompt("Descreva esta evidência:");
     if (!description) return;
 
-    // TODO: Implementar upload real para S3
-    // Por enquanto, simular upload
-    const fakeUrl = `https://storage.example.com/evidences/${file.name}`;
+    try {
+      // Converter arquivo para base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      
+      reader.onload = async () => {
+        const base64Data = (reader.result as string).split(',')[1];
+        
+        // Upload para S3
+        toast.info("Enviando arquivo...");
+        const uploadResult = await uploadFileMutation.mutateAsync({
+          fileName: file.name,
+          fileData: base64Data,
+          contentType: file.type,
+        });
 
-    await addEvidenceMutation.mutateAsync({
-      goalId,
-      description,
-      attachmentUrl: fakeUrl,
-      attachmentName: file.name,
-      attachmentType: file.type,
-      attachmentSize: file.size,
-    });
+        // Adicionar evidência ao banco
+        await addEvidenceMutation.mutateAsync({
+          goalId,
+          description,
+          attachmentUrl: uploadResult.url,
+          attachmentName: file.name,
+          attachmentType: file.type,
+          attachmentSize: file.size,
+        });
+      };
+
+      reader.onerror = () => {
+        toast.error("Erro ao ler arquivo");
+      };
+    } catch (error: any) {
+      toast.error("Erro ao fazer upload", {
+        description: error.message,
+      });
+    }
   };
 
   const handleDeleteEvidence = async (evidenceId: number) => {

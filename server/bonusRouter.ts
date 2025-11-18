@@ -454,6 +454,48 @@ export const bonusRouter = router({
         .set(updateData)
         .where(eq(bonusApprovals.id, input.approvalId));
 
+      // Enviar notificações por email
+      if (updateData.status === "approved" || updateData.status === "rejected") {
+        const {
+          sendBonusApprovedEmail,
+          sendBonusRejectedEmail,
+        } = await import("./utils/bonusEmailNotifications");
+
+        // Buscar dados completos para notificação
+        const approval = await db
+          .select({
+            employeeName: employees.name,
+            employeeEmail: employees.email,
+            cycleName: evaluationCycles.name,
+            finalAmount: bonusApprovals.finalAmount,
+          })
+          .from(bonusApprovals)
+          .leftJoin(employees, eq(bonusApprovals.employeeId, employees.id))
+          .leftJoin(evaluationCycles, eq(bonusApprovals.cycleId, evaluationCycles.id))
+          .where(eq(bonusApprovals.id, input.approvalId))
+          .limit(1);
+
+        if (approval.length > 0) {
+          const data = approval[0];
+          const notificationData = {
+            employeeName: data.employeeName || "Colaborador",
+            employeeEmail: data.employeeEmail || "",
+            approverName: "Aprovador",
+            approverEmail: "",
+            cycleName: data.cycleName || "N/A",
+            bonusAmount: parseFloat(data.finalAmount),
+            approvalLevel: input.level || 1,
+            comments: input.comments,
+          };
+
+          if (updateData.status === "approved") {
+            await sendBonusApprovedEmail(notificationData);
+          } else if (updateData.status === "rejected") {
+            await sendBonusRejectedEmail(notificationData);
+          }
+        }
+      }
+
       return { success: true, status: updateData.status || "pending" };
     }),
 

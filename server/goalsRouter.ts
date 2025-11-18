@@ -1099,6 +1099,37 @@ export const goalsRouter = router({
   // ==================== EVIDÊNCIAS DE METAS ====================
 
   /**
+   * Upload de arquivo de evidência para S3
+   */
+  uploadEvidenceFile: protectedProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64
+        contentType: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { storagePut } = await import("./storage");
+
+      // Gerar chave única para o arquivo
+      const randomSuffix = Math.random().toString(36).substring(7);
+      const fileKey = `evidences/${ctx.user.id}/${Date.now()}-${randomSuffix}-${input.fileName}`;
+
+      // Converter base64 para Buffer
+      const fileBuffer = Buffer.from(input.fileData, "base64");
+
+      // Upload para S3
+      const { url } = await storagePut(fileKey, fileBuffer, input.contentType);
+
+      return {
+        url,
+        fileKey,
+        success: true,
+      };
+    }),
+
+  /**
    * Adicionar evidência a uma meta
    */
   addEvidence: protectedProcedure
