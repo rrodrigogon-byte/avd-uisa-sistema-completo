@@ -1,4 +1,5 @@
 import { drizzle } from "drizzle-orm/mysql2";
+import { eq } from "drizzle-orm";
 import mysql from "mysql2/promise";
 import * as schema from "./drizzle/schema.ts";
 
@@ -68,7 +69,7 @@ try {
   // 1. Criar ciclo de avaliação
   console.log("📅 Criando ciclo de avaliação 2025...");
   let cycleId;
-  const existingCycle = await db.select().from(schema.evaluationCycles).where(schema.evaluationCycles.name.eq("Ciclo 2025")).limit(1);
+  const existingCycle = await db.select().from(schema.evaluationCycles).where(eq(schema.evaluationCycles.name, "Ciclo 2025")).limit(1);
   if (existingCycle.length > 0) {
     cycleId = existingCycle[0].id;
     console.log("  ✓ Ciclo já existe, usando ID:", cycleId);
@@ -87,7 +88,7 @@ try {
   console.log("🏢 Criando departamentos...");
   const deptIds = [];
   for (const dept of departamentos) {
-    const existing = await db.select().from(schema.departments).where(schema.departments.code.eq(dept.code)).limit(1);
+    const existing = await db.select().from(schema.departments).where(eq(schema.departments.code, dept.code)).limit(1);
     if (existing.length > 0) {
       deptIds.push({ ...dept, id: existing[0].id });
       console.log(`  ✓ ${dept.name} (já existe)`);
@@ -103,50 +104,81 @@ try {
   const posIds = [];
   for (const pos of posicoes) {
     for (const dept of deptIds) {
-      const [result] = await db.insert(schema.positions).values({
-        ...pos,
-        code: `${dept.code}-${pos.code}`,
-        departmentId: dept.id,
-      });
-      posIds.push({ ...pos, id: result.insertId, departmentId: dept.id });
+      const posCode = `${dept.code}-${pos.code}`;
+      const existing = await db.select().from(schema.positions).where(eq(schema.positions.code, posCode)).limit(1);
+      if (existing.length > 0) {
+        posIds.push({ ...pos, id: existing[0].id, departmentId: dept.id });
+      } else {
+        const [result] = await db.insert(schema.positions).values({
+          ...pos,
+          code: posCode,
+          departmentId: dept.id,
+        });
+        posIds.push({ ...pos, id: result.insertId, departmentId: dept.id });
+      }
     }
   }
+  console.log(`  ✓ ${posIds.length} posições verificadas/criadas`);
 
   // 4. Criar usuários e colaboradores
   console.log("👥 Criando 100 colaboradores...");
   const employeeIds = [];
-  for (let i = 0; i < 100; i++) {
-    const nome = nomes[i % nomes.length] + ` ${i + 1}`;
-    const email = gerarEmail(nome);
-    
-    // Criar usuário
-    const [user] = await db.insert(schema.users).values({
-      openId: `seed-user-${i + 1}`,
-      name: nome,
-      email: email,
-      role: i < 5 ? "admin" : i < 15 ? "rh" : i < 30 ? "gestor" : "colaborador",
-    });
+  
+  // Verificar quantos colaboradores já existem
+  const existingEmployees = await db.select().from(schema.employees);
+  if (existingEmployees.length >= 100) {
+    console.log(`  ✓ ${existingEmployees.length} colaboradores já existem, pulando criação`);
+    employeeIds.push(...existingEmployees.map(e => e.id));
+  } else {
+    for (let i = 0; i < 100; i++) {
+      const nome = nomes[i % nomes.length] + ` ${i + 1}`;
+      const email = gerarEmail(nome);
+      const openId = `seed-user-${i + 1}`;
+      
+      // Verificar se usuário já existe
+      const existingUser = await db.select().from(schema.users).where(eq(schema.users.openId, openId)).limit(1);
+      let userId;
+      if (existingUser.length > 0) {
+        userId = existingUser[0].id;
+      } else {
+        const [user] = await db.insert(schema.users).values({
+          openId,
+          name: nome,
+          email: email,
+          role: i < 5 ? "admin" : "user",
+        });
+        userId = user.insertId;
+      }
 
-    // Selecionar departamento e posição aleatórios
-    const dept = deptIds[Math.floor(Math.random() * deptIds.length)];
-    const posicoesDept = posIds.filter(p => p.departmentId === dept.id);
-    const pos = posicoesDept[Math.floor(Math.random() * posicoesDept.length)];
+      // Verificar se colaborador já existe
+      const empCode = `EMP${String(i + 1).padStart(4, "0")}`;
+      const existingEmp = await db.select().from(schema.employees).where(eq(schema.employees.employeeCode, empCode)).limit(1);
+      if (existingEmp.length > 0) {
+        employeeIds.push(existingEmp[0].id);
+      } else {
+        const dept = deptIds[Math.floor(Math.random() * deptIds.length)];
+        const posicoesDept = posIds.filter(p => p.departmentId === dept.id);
+        const pos = posicoesDept[Math.floor(Math.random() * posicoesDept.length)];
 
-    // Criar colaborador
-    const [employee] = await db.insert(schema.employees).values({
-      userId: user.insertId,
-      employeeCode: `EMP${String(i + 1).padStart(4, "0")}`,
-      name: nome,
-      email: email,
-      cpf: gerarCPF(),
-      birthDate: dataAleatoria(new Date("1980-01-01"), new Date("2000-12-31")),
-      hireDate: dataAleatoria(new Date("2015-01-01"), new Date("2024-12-31")),
-      departmentId: dept.id,
-      positionId: pos.id,
-      status: "ativo",
-    });
-
-    employeeIds.push(employee.insertId);
+        const [employee] = await db.insert(schema.employees).values({
+          userId,
+          employeeCode: empCode,
+          name: nome,
+          email: email,
+          cpf: gerarCPF(),
+          birthDate: dataAleatoria(new Date("1980-01-01"), new Date("2000-12-31")),
+          hireDate: dataAleatoria(new Date("2015-01-01"), new Date("2024-12-31")),
+          departmentId: dept.id,
+          positionId: pos.id,
+          status: "ativo",
+        });
+        employeeIds.push(employee.insertId);
+      }
+      
+      if ((i + 1) % 20 === 0) {
+        console.log(`  ✓ ${i + 1} colaboradores verificados/criados...`);
+      }
+    }
   }
 
   // 5. Criar metas (80% dos colaboradores)
@@ -163,14 +195,14 @@ try {
         title: `Meta ${j + 1} - ${["Vendas", "Qualidade", "Produtividade", "Inovação"][j % 4]}`,
         description: "Descrição da meta",
         type: ["individual", "equipe", "organizacional"][Math.floor(Math.random() * 3)],
-        category: ["estrategica", "operacional", "desenvolvimento"][Math.floor(Math.random() * 3)],
+        category: ["quantitativa", "qualitativa"][Math.floor(Math.random() * 2)],
         targetValue: 100,
         currentValue: progress,
         unit: "percentual",
         weight: 33,
         startDate: new Date("2025-01-01"),
         endDate: new Date("2025-12-31"),
-        status: progress === 100 ? "concluida" : progress > 0 ? "em_andamento" : "nao_iniciada",
+        status: progress === 100 ? "concluida" : progress > 0 ? "em_andamento" : "rascunho",
         progress: progress,
         createdBy: empId,
       });
@@ -184,11 +216,9 @@ try {
     await db.insert(schema.pdiPlans).values({
       cycleId: cycleId,
       employeeId: empId,
-      objectives: "Desenvolvimento de liderança e habilidades técnicas",
-      status: ["em_andamento", "aprovado", "pendente"][Math.floor(Math.random() * 3)],
+      status: ["em_andamento", "aprovado", "rascunho"][Math.floor(Math.random() * 3)],
       startDate: new Date("2025-01-01"),
       endDate: new Date("2025-12-31"),
-      createdBy: empId,
     });
   }
 
@@ -215,14 +245,21 @@ try {
     const performance = Math.floor(Math.random() * 3) + 1; // 1-3
     const potential = Math.floor(Math.random() * 3) + 1; // 1-3
     
+    // Calcular box baseado em performance e potential
+    const boxMap = {
+      "1-1": "low_performer", "1-2": "inconsistent", "1-3": "enigma",
+      "2-1": "solid_performer", "2-2": "core_player", "2-3": "high_potential",
+      "3-1": "high_performer", "3-2": "key_player", "3-3": "star"
+    };
+    const box = boxMap[`${performance}-${potential}`];
+    
     await db.insert(schema.nineBoxPositions).values({
       cycleId: cycleId,
       employeeId: empId,
       performance: performance,
       potential: potential,
-      category: `${performance}-${potential}`,
+      box: box,
       notes: "Avaliação baseada em desempenho e potencial",
-      createdBy: 1,
     });
   }
 
