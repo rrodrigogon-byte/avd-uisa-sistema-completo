@@ -1,23 +1,28 @@
 # TODO - Sistema AVD UISA
 
-## 📊 Analytics - Gráficos Chart.js
-- [x] Criar endpoints backend para dados agregados (analyticsRouter.ts)
-- [x] Implementar gráfico de evolução de performance (Line chart)
-- [x] Implementar gráfico de distribuição Nine Box (Bar chart)
-- [x] Implementar gráfico de taxas de conclusão (Doughnut chart)
-- [x] Conectar KPIs com dados reais (4 cards com dados do backend)
-- [x] Adicionar resumo geral com estatísticas consolidadas
-
 ## 💬 Sistema de Feedback Contínuo
-- [ ] Criar schema de feedbacks no banco
-- [ ] Criar endpoints backend
-- [ ] Criar página /feedback
-- [ ] Implementar histórico por colaborador
-- [ ] Vincular com PDIs
+- [x] Criar schema de feedbacks no banco
+- [x] Criar endpoints backend (feedbackRouter.ts)
+- [x] Criar página /feedback com formulário
+- [x] Implementar listagem de histórico por colaborador
+- [x] Adicionar filtros por tipo e colaborador
+- [x] Cards de estatísticas (total, positivo, construtivo, desenvolvimento)
+- [x] Dialog de novo feedback com todos os campos
+- [x] Adicionar rota e menu "Feedback Contínuo" na seção Desenvolvimento
+- [ ] Vincular com PDIs (futuro)
 
-## 🏆 Módulo de Badges
-- [ ] Criar schema de badges
+## 🏆 Módulo de Badges Gamificado
+- [ ] Criar schema de badges e achievements
 - [ ] Criar endpoints backend
-- [ ] Implementar sistema de pontuação
-- [ ] Criar página de badges
-- [ ] Adicionar ranking
+- [ ] Implementar sistema de pontuação automática
+- [ ] Criar página de perfil com badges
+- [ ] Adicionar ranking de colaboradores
+- [ ] Notificações de novas conquistas
+
+## 📧 Relatórios Automáticos Agendados
+- [ ] Criar schema de scheduled_reports
+- [ ] Criar endpoints backend
+- [ ] Criar página /admin/scheduled-reports
+- [ ] Implementar configuração de destinatários
+- [ ] Gerar PDFs/Excel dos relatórios
+- [ ] Integrar com cron jobs para envio automático

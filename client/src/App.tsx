@@ -27,6 +27,7 @@ import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
 import AuditTrail from "./pages/AuditTrail";
 import Analytics from "./pages/Analytics";
+import Feedbacks from "./pages/Feedbacks";
 import PsychometricTests from "./pages/PsychometricTests";
 import TestDISC from "./pages/TestDISC";
 import TestBigFive from "./pages/TestBigFive";
@@ -71,6 +72,7 @@ function Router() {
                 <Route path="/avaliar-360/:id" component={Avaliar360} />
           <Route path="/admin/audit-log" component={AuditTrail} />
           <Route path="/admin/analytics" component={Analytics} />
+          <Route path="/feedback" component={Feedbacks} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
