@@ -66,9 +66,11 @@ function Router() {
       <Route path="/aprovacoes/bonus" component={Bonus} />
       <Route path="/aprovacoes/workflows" component={Workflows} />
       <Route path="/sucessao" component={Sucessao} />
-      <Route path="/nine-box-comparativo" component={NineBoxComparativo} />       <Route path="/admin/report-builder" component={ReportBuilder} />
+      <Route path="/nine-box-comparativo" component={NineBoxComparativo} />
+      <Route path="/admin/report-builder" component={ReportBuilder} />
       <Route path="/admin/report-analytics" component={ReportAnalytics} />
-      <Route path={"/admin/succession-import"} component={SuccessionImport} />      <Route path="/performance-integrada" component={PerformanceIntegrada} />
+      <Route path={"/admin/succession-import"} component={SuccessionImport} />
+      <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
       <Route path="/testes-psicometricos" component={PsychometricTests} />
       <Route path="/teste-disc" component={TestDISC} />

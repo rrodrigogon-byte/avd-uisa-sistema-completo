@@ -449,3 +449,52 @@
 - [ ] Criar legenda de cores e símbolos
 - [ ] Integrar com página /sucessao existente
 - [ ] Testar interatividade completa
+
+## 📄 Processar PowerPoint UISA - Calibração e 9-Box Gerentes
+- [ ] Extrair texto e dados do PowerPoint enviado
+- [ ] Identificar funcionários (gerentes) com posições 9-Box
+- [ ] Mapear performance e potencial de cada gerente
+- [ ] Identificar sucessores e níveis de prontidão
+- [ ] Criar arquivo JSON com dados estruturados
+- [ ] Importar funcionários no banco de dados
+- [ ] Importar posições 9-Box no banco
+- [ ] Importar planos de sucessão com sucessores
+- [ ] Gerar indicadores de performance por departamento
+
+## 👥 Sistema Completo de Gestão de Sucessores
+- [ ] Criar modal "Adicionar Sucessor" em plano de sucessão
+- [ ] Implementar seleção de colaborador (dropdown com busca)
+- [ ] Adicionar campo de nível (primário, secundário, backup)
+- [ ] Adicionar campo de prontidão (ready now, 1-2 anos, 2-3 anos, 3+ anos)
+- [ ] Implementar campo de observações/notas
+- [ ] Criar botão "Editar Sucessor" com modal
+- [ ] Criar botão "Remover Sucessor" com confirmação
+- [ ] Implementar listagem de sucessores com badges de nível
+- [ ] Adicionar vinculação com PDI do sucessor
+- [ ] Criar aba "Sucessores" na página de detalhes do plano
+
+## 🗺️ Mapa de Sucessão Visual Interativo
+- [ ] Instalar biblioteca reactflow
+- [ ] Criar componente SuccessionMap.tsx com React Flow
+- [ ] Implementar nodes personalizados para posições
+- [ ] Adicionar edges conectando posição → sucessores
+- [ ] Implementar drag-and-drop para reorganizar
+- [ ] Adicionar controles de zoom e navegação
+- [ ] Implementar filtros por departamento
+- [ ] Implementar filtros por nível de risco
+- [ ] Adicionar visualização de riscos por cores (verde/amarelo/vermelho)
+- [ ] Criar botão de exportação para PDF
+- [ ] Criar botão de exportação para imagem PNG
+- [ ] Integrar com página /sucessao
+
+## 📊 Matriz de Risco 9-Box para Sucessão
+- [ ] Criar endpoint backend getRiskMatrix
+- [ ] Implementar cálculo de score de risco (impacto × prontidão)
+- [ ] Criar página /admin/succession-risk-matrix
+- [ ] Implementar matriz visual 3×3 (impacto vs prontidão)
+- [ ] Adicionar alertas para posições críticas sem sucessor
+- [ ] Criar dashboard de gaps de sucessão por departamento
+- [ ] Implementar gráfico de distribuição de riscos
+- [ ] Adicionar tabela de ações recomendadas
+- [ ] Criar filtros por departamento e criticidade
+- [ ] Adicionar exportação da matriz em PDF
