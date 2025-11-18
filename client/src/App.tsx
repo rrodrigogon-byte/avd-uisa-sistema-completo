@@ -48,12 +48,15 @@ import ScheduledReports from "./pages/ScheduledReports";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import DashboardExecutivo from "./pages/DashboardExecutivo";
 import Avaliar360 from "./pages/Avaliar360";
+import MetasSMART from "./pages/MetasSMART";
+import CriarMetaSMART from "./pages/CriarMetaSMART";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/metas"} component={Metas} />
+      <Route path={"/metas"} component={MetasSMART} />
+      <Route path={"/metas/criar"} component={CriarMetaSMART} />
       <Route path={"/avaliacoes"} component={Avaliacoes} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />

@@ -19,6 +19,7 @@ import { nineBoxRouter } from "./nineBoxRouter";
 import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
 import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
+import { goalsRouter } from "./goalsRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1757,6 +1758,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   nineBoxComparative: nineBoxRouter,
   reportBuilder: reportBuilderRouter,
   reportAnalytics: reportAnalyticsRouter,
+  
+  // Router de Metas SMART
+  smartGoals: goalsRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico
