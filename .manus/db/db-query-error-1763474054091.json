@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE successionPlans \nADD COLUMN exitRisk ENUM('baixo', 'medio', 'alto') DEFAULT 'medio' AFTER status,\nADD COLUMN competencyGap TEXT AFTER exitRisk,\nADD COLUMN preparationTime INT AFTER competencyGap,\nADD COLUMN trackingPlan TEXT AFTER preparationTime,\nADD COLUMN nextReviewDate TIMESTAMP NULL AFTER trackingPlan;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE successionPlans \nADD COLUMN exitRisk ENUM('baixo', 'medio', 'alto') DEFAULT 'medio' AFTER status,\nADD COLUMN competencyGap TEXT AFTER exitRisk,\nADD COLUMN preparationTime INT AFTER competencyGap,\nADD COLUMN trackingPlan TEXT AFTER preparationTime,\nADD COLUMN nextReviewDate TIMESTAMP NULL AFTER trackingPlan;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'exitrisk' in 'successionPlans'"
+  ]
+}

@@ -14,6 +14,7 @@ import { feedbackRouter } from "./feedbackRouter";
 import { badgesRouter } from "./badgesRouter";
 import { scheduledReportsRouter } from "./scheduledReportsRouter";
 import { executiveRouter } from "./executiveRouter";
+import { successionRouter } from "./successionRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1741,6 +1742,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Dashboard Executivo (apenas admin)
   executive: executiveRouter,
+
+  // Router de Mapa de Sucessão
+  succession: successionRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico

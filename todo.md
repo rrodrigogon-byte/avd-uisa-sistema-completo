@@ -174,3 +174,64 @@
 - [ ] Implementar geração de PDI PDF com timeline
 - [ ] Adicionar botão de download nos relatórios agendados
 - [ ] Testar geração e download de cada tipo de relatório
+
+
+## 🗺️ Completar Mapa de Sucessão (Metodologia 9-Box Succession Planning)
+- [x] Página /sucessao já existe com organograma React Flow
+- [x] Schema atualizado com campos de riscos e acompanhamento
+- [x] successionRouter criado com 10 endpoints (list, getById, create, update, delete, addSuccessor, removeSuccessor, updateSuccessor, suggestSuccessors)
+- [x] Endpoint suggestSuccessors implementado (identificação automática via Nine Box)
+- [ ] Implementar formulário "Criar Novo Mapa de Sucessão"
+- [ ] Implementar modal "Incluir Sucessores" em mapa existente
+- [ ] Criar aba "Planos de Acompanhamento" com marcos e progress tracking
+- [ ] Criar aba "Riscos" (risco de saída, gap de competências, tempo de preparo)
+- [ ] Criar aba "Timeline" (curto prazo: 0-1 ano, médio: 1-3 anos, longo: 3+ anos)
+- [ ] Criar aba "Desenvolvimento" com ações específicas para cada sucessor
+- [ ] Adicionar badge de metodologia: "9-Box Succession Planning"
+
+## 🎯 Completar PDI Inteligente
+- [ ] Verificar funcionalidades atuais do PDI Inteligente
+- [ ] Adicionar sugestões automáticas de ações baseadas em gaps de competências
+- [ ] Integrar recomendações de treinamentos ao PDI
+- [ ] Implementar acompanhamento de progresso com marcos
+- [ ] Adicionar aprovação de gestor para PDI
+- [ ] Criar relatório de efetividade do PDI
+
+## 📊 Nine Box Comparativo
+- [ ] Criar endpoint nineBoxRouter.getComparativeByPosition
+- [ ] Implementar filtro por nível hierárquico (gerente, coordenador, analista)
+- [ ] Criar visualização comparativa de múltiplos Nine Box
+- [ ] Adicionar métricas de distribuição por cargo
+- [ ] Implementar página /nine-box-comparative
+- [ ] Adicionar exportação de comparativo em PDF
+
+## 🌱 Popular Base de Dados
+- [ ] Criar script seed.ts com dados realistas
+- [ ] Gerar 100+ colaboradores com distribuição por departamento
+- [ ] Criar metas para 80% dos colaboradores
+- [ ] Gerar PDIs para 60% dos colaboradores
+- [ ] Criar avaliações 360° para 50% dos colaboradores
+- [ ] Adicionar posições Nine Box distribuídas
+- [ ] Gerar badges conquistados
+- [ ] Criar feedbacks contínuos
+
+## 📚 Módulo de Treinamentos
+- [ ] Criar schema de treinamentos no banco
+- [ ] Criar trainingRouter com endpoints CRUD
+- [ ] Implementar catálogo de cursos
+- [ ] Adicionar sistema de inscrições
+- [ ] Implementar controle de presença
+- [ ] Criar geração de certificados
+- [ ] Integrar com badges de conclusão
+- [ ] Vincular treinamentos ao PDI
+- [ ] Criar página /treinamentos
+
+## 📈 Relatórios Customizáveis
+- [ ] Criar schema de relatórios customizados
+- [ ] Implementar builder visual de relatórios
+- [ ] Adicionar seletor de métricas disponíveis
+- [ ] Implementar filtros dinâmicos
+- [ ] Adicionar configuração de periodicidade
+- [ ] Criar geração de dashboard personalizado
+- [ ] Implementar exportação em PDF/Excel
+- [ ] Criar página /admin/custom-reports

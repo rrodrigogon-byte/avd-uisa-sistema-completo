@@ -436,6 +436,16 @@ export const successionPlans = mysqlTable("successionPlans", {
   isCritical: boolean("isCritical").default(false).notNull(),
   riskLevel: mysqlEnum("riskLevel", ["baixo", "medio", "alto", "critico"]).default("medio").notNull(),
   status: mysqlEnum("status", ["ativo", "inativo"]).default("ativo").notNull(),
+  
+  // Riscos (Metodologia 9-Box Succession Planning)
+  exitRisk: mysqlEnum("exitRisk", ["baixo", "medio", "alto"]).default("medio"),
+  competencyGap: text("competencyGap"), // Gaps de competências identificados
+  preparationTime: int("preparationTime"), // Tempo estimado de preparo em meses
+  
+  // Plano de Acompanhamento
+  trackingPlan: text("trackingPlan"), // JSON com marcos e progress
+  nextReviewDate: timestamp("nextReviewDate"),
+  
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
