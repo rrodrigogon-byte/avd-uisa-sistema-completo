@@ -856,3 +856,14 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Integrar configurações SMTP com EmailService (busca dinâmica do banco)
 - [x] Adicionar botão de teste de envio de e-mail
 - [x] Menu "SMTP (Admin)" na seção Configurações
+
+## 📊 Nova Implementação: Dashboard de Métricas de E-mail
+
+- [x] Implementar endpoints backend para buscar métricas (getEmailMetrics, getEmailStats)
+- [x] Criar página /admin/email-metrics com gráficos
+- [x] Gráfico de linha: histórico mensal de envios (Chart.js)
+- [x] Gráfico de pizza: taxa de sucesso vs falha
+- [x] Gráfico de barras: tipos de e-mails mais enviados
+- [x] Cards com estatísticas resumidas (total enviado, taxa de sucesso, etc)
+- [x] Adicionar menu "Métricas de E-mail" na seção Configurações
+- [x] Instalar react-chartjs-2 e chart.js

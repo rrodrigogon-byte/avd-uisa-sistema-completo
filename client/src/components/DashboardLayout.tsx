@@ -125,6 +125,7 @@ const menuItems = [
     children: [
       { icon: Settings, label: "Gerais", path: "/configuracoes" },
       { icon: Mail, label: "SMTP (Admin)", path: "/admin/smtp" },
+      { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
     ],
   },
 ];

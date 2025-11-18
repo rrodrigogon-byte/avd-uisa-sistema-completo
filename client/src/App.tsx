@@ -29,6 +29,7 @@ import PsychometricTests from "./pages/PsychometricTests";
 import TestDISC from "./pages/TestDISC";
 import TestBigFive from "./pages/TestBigFive";
 import AdminSmtp from "./pages/AdminSmtp";
+import EmailMetrics from "./pages/EmailMetrics";
 
 function Router() {
   return (
@@ -57,6 +58,7 @@ function Router() {
       <Route path="/teste-disc" component={TestDISC} />
       <Route path="/teste-bigfive" component={TestBigFive} />
       <Route path="/admin/smtp" component={AdminSmtp} />
+      <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -1282,6 +1282,92 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           return { success: false, message: error.message || "Erro ao testar conexão SMTP" };
         }
       }),
+
+    // Buscar métricas de e-mail
+    getEmailMetrics: protectedProcedure
+      .input(z.object({
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        limit: z.number().optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        // Verificar se é admin
+        if (ctx.user.role !== "admin") {
+          throw new Error("Acesso negado: apenas administradores");
+        }
+
+        const database = await getDb();
+        if (!database) return [];
+
+        // Buscar métricas com filtros opcionais
+        const metrics = await database.select()
+          .from(emailMetrics)
+          .orderBy(desc(emailMetrics.sentAt))
+          .limit(input.limit || 1000);
+
+        return metrics;
+      }),
+
+    // Buscar estatísticas agregadas de e-mail
+    getEmailStats: protectedProcedure.query(async ({ ctx }) => {
+      // Verificar se é admin
+      if (ctx.user.role !== "admin") {
+        throw new Error("Acesso negado: apenas administradores");
+      }
+
+      const database = await getDb();
+      if (!database) return null;
+
+      // Buscar todas as métricas
+      const allMetrics = await database.select().from(emailMetrics);
+
+      // Calcular estatísticas
+      const total = allMetrics.length;
+      const successful = allMetrics.filter(m => m.success).length;
+      const failed = total - successful;
+      const successRate = total > 0 ? (successful / total) * 100 : 0;
+
+      // Agrupar por tipo
+      const byType: Record<string, number> = {};
+      allMetrics.forEach(m => {
+        byType[m.type] = (byType[m.type] || 0) + 1;
+      });
+
+      // Agrupar por mês (últimos 12 meses)
+      const monthlyData: Record<string, { sent: number; success: number; failed: number }> = {};
+      const now = new Date();
+      const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+
+      allMetrics.forEach(m => {
+        const sentDate = new Date(m.sentAt);
+        if (sentDate >= twelveMonthsAgo) {
+          const monthKey = `${sentDate.getFullYear()}-${String(sentDate.getMonth() + 1).padStart(2, '0')}`;
+          if (!monthlyData[monthKey]) {
+            monthlyData[monthKey] = { sent: 0, success: 0, failed: 0 };
+          }
+          monthlyData[monthKey].sent++;
+          if (m.success) {
+            monthlyData[monthKey].success++;
+          } else {
+            monthlyData[monthKey].failed++;
+          }
+        }
+      });
+
+      // Converter para array ordenado
+      const monthlyArray = Object.entries(monthlyData)
+        .map(([month, data]) => ({ month, ...data }))
+        .sort((a, b) => a.month.localeCompare(b.month));
+
+      return {
+        total,
+        successful,
+        failed,
+        successRate: Math.round(successRate * 10) / 10,
+        byType,
+        monthlyData: monthlyArray,
+      };
+    }),
   }),
 });
 
