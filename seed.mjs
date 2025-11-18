@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
-import * as schema from "./drizzle/schema.js";
+import * as schema from "./drizzle/schema.ts";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -25,9 +25,9 @@ const departamentos = [
 ];
 
 const posicoes = [
-  { code: "DIR", title: "Diretor", level: "executivo", description: "Liderança estratégica" },
-  { code: "GER", title: "Gerente", level: "senior", description: "Gestão tática" },
-  { code: "COORD", title: "Coordenador", level: "pleno", description: "Coordenação de equipes" },
+  { code: "DIR", title: "Diretor", level: "diretor", description: "Liderança estratégica" },
+  { code: "GER", title: "Gerente", level: "gerente", description: "Gestão tática" },
+  { code: "COORD", title: "Coordenador", level: "coordenador", description: "Coordenação de equipes" },
   { code: "ANA-SR", title: "Analista Sênior", level: "senior", description: "Especialista" },
   { code: "ANA-PL", title: "Analista Pleno", level: "pleno", description: "Profissional experiente" },
   { code: "ANA-JR", title: "Analista Júnior", level: "junior", description: "Profissional em desenvolvimento" },
@@ -67,21 +67,35 @@ function dataAleatoria(inicio, fim) {
 try {
   // 1. Criar ciclo de avaliação
   console.log("📅 Criando ciclo de avaliação 2025...");
-  const [ciclo] = await db.insert(schema.evaluationCycles).values({
-    name: "Ciclo 2025",
-    year: 2025,
-    startDate: new Date("2025-01-01"),
-    endDate: new Date("2025-12-31"),
-    status: "active",
-  });
-  const cycleId = ciclo.insertId;
+  let cycleId;
+  const existingCycle = await db.select().from(schema.evaluationCycles).where(schema.evaluationCycles.name.eq("Ciclo 2025")).limit(1);
+  if (existingCycle.length > 0) {
+    cycleId = existingCycle[0].id;
+    console.log("  ✓ Ciclo já existe, usando ID:", cycleId);
+  } else {
+    const [ciclo] = await db.insert(schema.evaluationCycles).values({
+      name: "Ciclo 2025",
+      year: 2025,
+      startDate: new Date("2025-01-01"),
+      endDate: new Date("2025-12-31"),
+      status: "em_andamento",
+    });
+    cycleId = ciclo.insertId;
+  }
 
   // 2. Criar departamentos
   console.log("🏢 Criando departamentos...");
   const deptIds = [];
   for (const dept of departamentos) {
-    const [result] = await db.insert(schema.departments).values(dept);
-    deptIds.push({ ...dept, id: result.insertId });
+    const existing = await db.select().from(schema.departments).where(schema.departments.code.eq(dept.code)).limit(1);
+    if (existing.length > 0) {
+      deptIds.push({ ...dept, id: existing[0].id });
+      console.log(`  ✓ ${dept.name} (já existe)`);
+    } else {
+      const [result] = await db.insert(schema.departments).values(dept);
+      deptIds.push({ ...dept, id: result.insertId });
+      console.log(`  ✓ ${dept.name} (criado)`);
+    }
   }
 
   // 3. Criar posições

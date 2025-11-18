@@ -246,3 +246,43 @@
 - [x] Criar gráfico radar (% Alto Desempenho, Alto Potencial, Stars)
 - [x] Tabela detalhada com métricas por cargo
 - [x] Adicionar rota e menu no sistema (submenu Performance)
+
+
+## 📄 Análise de Arquivo de Mapa Sucessório
+- [x] Extrair texto do PowerPoint enviado pelo usuário
+- [x] Identificar estrutura de cargos e sucessores (5 posições críticas)
+- [x] Mapear informações de riscos e prontidão
+- [x] Salvar dados em succession-data-uisa.json
+- [ ] Integrar dados ao sistema de sucessão via script seed
+
+## 🌱 Popular Base de Dados
+- [ ] Criar script seed.mjs funcional
+- [ ] Inserir 100+ colaboradores com dados realistas
+- [ ] Criar departamentos e cargos variados
+- [ ] Inserir metas ativas e históricas
+- [ ] Criar PDIs em diferentes estágios
+- [ ] Inserir avaliações 360° completas
+- [ ] Popular Nine Box com posições
+- [ ] Criar planos de sucessão baseados no arquivo
+
+## 🎓 Módulo de Treinamentos
+- [ ] Criar schema de trainings no banco
+- [ ] Criar trainingRouter com endpoints CRUD
+- [ ] Criar página /treinamentos
+- [ ] Implementar catálogo de cursos
+- [ ] Sistema de inscrições
+- [ ] Controle de presença
+- [ ] Geração de certificados
+- [ ] Integração com badges (conclusão de treinamento)
+- [ ] Vincular treinamentos ao PDI
+
+## 📊 Relatórios Customizáveis
+- [ ] Criar schema de customReports
+- [ ] Criar customReportsRouter
+- [ ] Criar página /admin/custom-reports
+- [ ] Implementar builder visual de relatórios
+- [ ] Seletor de métricas disponíveis
+- [ ] Filtros dinâmicos (departamento, período, cargo)
+- [ ] Preview de relatório em tempo real
+- [ ] Exportação em PDF/Excel
+- [ ] Salvar templates de relatórios
