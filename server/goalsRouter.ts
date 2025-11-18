@@ -277,11 +277,20 @@ export const goalsRouter = router({
         .where(eq(goalComments.goalId, input.goalId))
         .orderBy(desc(goalComments.createdAt));
 
+      // Buscar evidências
+      const { goalEvidences } = await import("../drizzle/schema");
+      const evidences = await db
+        .select()
+        .from(goalEvidences)
+        .where(eq(goalEvidences.goalId, input.goalId))
+        .orderBy(desc(goalEvidences.uploadedAt));
+
       return {
         ...goal,
         milestones,
         approvals,
         comments,
+        evidences,
       };
     }),
 
@@ -1085,5 +1094,105 @@ export const goalsRouter = router({
         filename: `bonus-ciclo-${input.cycleId}-${Date.now()}.xlsx`,
         data: excelBuffer.toString("base64"),
       };
+    }),
+
+  // ==================== EVIDÊNCIAS DE METAS ====================
+
+  /**
+   * Adicionar evidência a uma meta
+   */
+  addEvidence: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        description: z.string(),
+        attachmentUrl: z.string().optional(),
+        attachmentName: z.string().optional(),
+        attachmentType: z.string().optional(),
+        attachmentSize: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      const result = await db.insert(goalEvidences).values({
+        goalId: input.goalId,
+        description: input.description,
+        attachmentUrl: input.attachmentUrl || null,
+        attachmentName: input.attachmentName || null,
+        attachmentType: input.attachmentType || null,
+        attachmentSize: input.attachmentSize || null,
+        uploadedBy: ctx.user.id,
+        isVerified: false,
+      });
+
+      return { id: Number((result as any).insertId), success: true };
+    }),
+
+  /**
+   * Listar evidências de uma meta
+   */
+  listEvidences: protectedProcedure
+    .input(z.object({ goalId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      const evidences = await db
+        .select()
+        .from(goalEvidences)
+        .where(eq(goalEvidences.goalId, input.goalId))
+        .orderBy(desc(goalEvidences.uploadedAt));
+
+      return evidences;
+    }),
+
+  /**
+   * Verificar evidência (para auditoria)
+   */
+  verifyEvidence: protectedProcedure
+    .input(
+      z.object({
+        evidenceId: z.number(),
+        isVerified: z.boolean(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      await db
+        .update(goalEvidences)
+        .set({
+          isVerified: input.isVerified,
+          verifiedBy: ctx.user.id,
+          verifiedAt: new Date(),
+        })
+        .where(eq(goalEvidences.id, input.evidenceId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Deletar evidência
+   */
+  deleteEvidence: protectedProcedure
+    .input(z.object({ evidenceId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      await db.delete(goalEvidences).where(eq(goalEvidences.id, input.evidenceId));
+
+      return { success: true };
     }),
 });

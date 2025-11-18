@@ -1158,3 +1158,209 @@ export type GoalApproval = typeof goalApprovals.$inferSelect;
 export type InsertGoalApproval = typeof goalApprovals.$inferInsert;
 export type GoalComment = typeof goalComments.$inferSelect;
 export type InsertGoalComment = typeof goalComments.$inferInsert;
+
+/**
+ * Configurações de Bônus por Função
+ * Define quantos salários cada função tem direito + bônus extra
+ */
+export const bonusConfigs = mysqlTable("bonusConfigs", {
+  id: int("id").autoincrement().primaryKey(),
+  positionId: int("positionId").notNull(), // Referência para positions
+  positionName: varchar("positionName", { length: 255 }).notNull(),
+  
+  // Configuração de bônus
+  baseSalaryMultiplier: decimal("baseSalaryMultiplier", { precision: 5, scale: 2 }).default("0").notNull(), // Ex: 1.5 = 1.5 salários
+  extraBonusPercentage: decimal("extraBonusPercentage", { precision: 5, scale: 2 }).default("0").notNull(), // % adicional
+  
+  // Metadados
+  isActive: boolean("isActive").default(true).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * Workflows de Aprovação de Bônus
+ * Define até 5 níveis de aprovadores
+ */
+export const bonusWorkflows = mysqlTable("bonusWorkflows", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Aprovadores (até 5 níveis)
+  approver1Id: int("approver1Id"), // RH
+  approver1Role: varchar("approver1Role", { length: 100 }), // Ex: "Analista RH"
+  approver2Id: int("approver2Id"), // Gerente RH
+  approver2Role: varchar("approver2Role", { length: 100 }),
+  approver3Id: int("approver3Id"), // Diretor de Gente
+  approver3Role: varchar("approver3Role", { length: 100 }),
+  approver4Id: int("approver4Id"), // Opcional
+  approver4Role: varchar("approver4Role", { length: 100 }),
+  approver5Id: int("approver5Id"), // Opcional
+  approver5Role: varchar("approver5Role", { length: 100 }),
+  
+  // Configurações
+  requireAllApprovals: boolean("requireAllApprovals").default(true).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * Aprovações de Bônus
+ * Registra cada etapa de aprovação no workflow
+ */
+export const bonusApprovals = mysqlTable("bonusApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  workflowId: int("workflowId").notNull(),
+  
+  // Valores de bônus
+  eligibleAmount: decimal("eligibleAmount", { precision: 10, scale: 2 }).notNull(), // Valor elegível baseado em metas
+  extraBonusPercentage: decimal("extraBonusPercentage", { precision: 5, scale: 2 }).default("0"), // Bônus extra do RH
+  finalAmount: decimal("finalAmount", { precision: 10, scale: 2 }).notNull(), // Valor final aprovado
+  
+  // Status do workflow
+  currentLevel: int("currentLevel").default(1).notNull(), // Nível atual de aprovação (1-5)
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "cancelled"]).default("pending").notNull(),
+  
+  // Aprovações por nível
+  level1Status: mysqlEnum("level1Status", ["pending", "approved", "rejected"]).default("pending"),
+  level1ApproverId: int("level1ApproverId"),
+  level1ApprovedAt: timestamp("level1ApprovedAt"),
+  level1Comments: text("level1Comments"),
+  
+  level2Status: mysqlEnum("level2Status", ["pending", "approved", "rejected"]).default("pending"),
+  level2ApproverId: int("level2ApproverId"),
+  level2ApprovedAt: timestamp("level2ApprovedAt"),
+  level2Comments: text("level2Comments"),
+  
+  level3Status: mysqlEnum("level3Status", ["pending", "approved", "rejected"]).default("pending"),
+  level3ApproverId: int("level3ApproverId"),
+  level3ApprovedAt: timestamp("level3ApprovedAt"),
+  level3Comments: text("level3Comments"),
+  
+  level4Status: mysqlEnum("level4Status", ["pending", "approved", "rejected"]).default("pending"),
+  level4ApproverId: int("level4ApproverId"),
+  level4ApprovedAt: timestamp("level4ApprovedAt"),
+  level4Comments: text("level4Comments"),
+  
+  level5Status: mysqlEnum("level5Status", ["pending", "approved", "rejected"]).default("pending"),
+  level5ApproverId: int("level5ApproverId"),
+  level5ApprovedAt: timestamp("level5ApprovedAt"),
+  level5Comments: text("level5Comments"),
+  
+  // Documento final
+  signedPdfUrl: varchar("signedPdfUrl", { length: 500 }), // URL do PDF assinado
+  sentToFinanceAt: timestamp("sentToFinanceAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * Evidências de Cumprimento de Metas
+ * Armazena descrições e anexos que comprovam a conclusão da meta
+ */
+export const goalEvidences = mysqlTable("goalEvidences", {
+  id: int("id").autoincrement().primaryKey(),
+  goalId: int("goalId").notNull(),
+  
+  // Evidência
+  description: text("description").notNull(), // Descrição da evidência
+  attachmentUrl: varchar("attachmentUrl", { length: 500 }), // URL do arquivo anexado (S3)
+  attachmentName: varchar("attachmentName", { length: 255 }), // Nome original do arquivo
+  attachmentType: varchar("attachmentType", { length: 100 }), // Tipo MIME
+  attachmentSize: int("attachmentSize"), // Tamanho em bytes
+  
+  // Metadados
+  uploadedBy: int("uploadedBy").notNull(),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  isVerified: boolean("isVerified").default(false).notNull(), // Verificado por auditor/gestor
+  verifiedBy: int("verifiedBy"),
+  verifiedAt: timestamp("verifiedAt"),
+});
+
+// Relations
+export const bonusConfigsRelations = relations(bonusConfigs, ({ one }) => ({
+  position: one(positions, {
+    fields: [bonusConfigs.positionId],
+    references: [positions.id],
+  }),
+  creator: one(employees, {
+    fields: [bonusConfigs.createdBy],
+    references: [employees.id],
+  }),
+}));
+
+export const bonusWorkflowsRelations = relations(bonusWorkflows, ({ one, many }) => ({
+  approver1: one(employees, {
+    fields: [bonusWorkflows.approver1Id],
+    references: [employees.id],
+  }),
+  approver2: one(employees, {
+    fields: [bonusWorkflows.approver2Id],
+    references: [employees.id],
+  }),
+  approver3: one(employees, {
+    fields: [bonusWorkflows.approver3Id],
+    references: [employees.id],
+  }),
+  approver4: one(employees, {
+    fields: [bonusWorkflows.approver4Id],
+    references: [employees.id],
+  }),
+  approver5: one(employees, {
+    fields: [bonusWorkflows.approver5Id],
+    references: [employees.id],
+  }),
+  creator: one(employees, {
+    fields: [bonusWorkflows.createdBy],
+    references: [employees.id],
+  }),
+  approvals: many(bonusApprovals),
+}));
+
+export const bonusApprovalsRelations = relations(bonusApprovals, ({ one }) => ({
+  cycle: one(evaluationCycles, {
+    fields: [bonusApprovals.cycleId],
+    references: [evaluationCycles.id],
+  }),
+  employee: one(employees, {
+    fields: [bonusApprovals.employeeId],
+    references: [employees.id],
+  }),
+  workflow: one(bonusWorkflows, {
+    fields: [bonusApprovals.workflowId],
+    references: [bonusWorkflows.id],
+  }),
+}));
+
+export const goalEvidencesRelations = relations(goalEvidences, ({ one }) => ({
+  goal: one(smartGoals, {
+    fields: [goalEvidences.goalId],
+    references: [smartGoals.id],
+  }),
+  uploader: one(employees, {
+    fields: [goalEvidences.uploadedBy],
+    references: [employees.id],
+  }),
+  verifier: one(employees, {
+    fields: [goalEvidences.verifiedBy],
+    references: [employees.id],
+  }),
+}));
+
+// Types
+export type BonusConfig = typeof bonusConfigs.$inferSelect;
+export type InsertBonusConfig = typeof bonusConfigs.$inferInsert;
+export type BonusWorkflow = typeof bonusWorkflows.$inferSelect;
+export type InsertBonusWorkflow = typeof bonusWorkflows.$inferInsert;
+export type BonusApproval = typeof bonusApprovals.$inferSelect;
+export type InsertBonusApproval = typeof bonusApprovals.$inferInsert;
+export type GoalEvidence = typeof goalEvidences.$inferSelect;
+export type InsertGoalEvidence = typeof goalEvidences.$inferInsert;

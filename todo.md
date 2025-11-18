@@ -929,3 +929,17 @@
 
 **Nota:** Funcionalidade opcional não implementada. Sistema usa autenticação Manus OAuth padrão que já está 100% funcional.s
 - [ ] Criar endpoints backend para armazenar descritores faciais
+
+
+## 💰 Sistema Avançado de Gestão de Bônus (Nova Fase)
+- [x] Criar tabelas: bonusConfigs, bonusApprovals, bonusWorkflows, goalEvidences
+- [x] Criar endpoints backend para cadastro de bônus por função
+- [x] Criar endpoints backend para workflow de aprovação de bônus (até 5 níveis)
+- [x] Criar página /configuracoes/bonus - Cadastro de bônus por função (salários + % extra)
+- [x] Criar página /rh/dashboard-bonus - Dashboard RH com visualização consolidada
+- [ ] Adicionar campo de bônus extra na aprovação de metas
+- [ ] Implementar workflow multinível: RH → Gerente RH → Diretor de Gente
+- [x] Adicionar campos de evidências nas metas (descrição + anexos)
+- [x] Implementar upload de arquivos para evidências
+- [x] Criar geração de PDF para assinatura do Diretor de Gente
+- [x] Adicionar botão de envio ao financeiro após aprovação final

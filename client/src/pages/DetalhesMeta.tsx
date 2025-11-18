@@ -106,6 +106,66 @@ export default function DetalhesMeta() {
     });
   };
 
+  // Mutations de evidências
+  const addEvidenceMutation = trpc.smartGoals.addEvidence.useMutation({
+    onSuccess: () => {
+      toast.success("Evidência adicionada com sucesso!");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error("Erro ao adicionar evidência", {
+        description: error.message,
+      });
+    },
+  });
+
+  const deleteEvidenceMutation = trpc.smartGoals.deleteEvidence.useMutation({
+    onSuccess: () => {
+      toast.success("Evidência excluída com sucesso!");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error("Erro ao excluir evidência", {
+        description: error.message,
+      });
+    },
+  });
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tamanho (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Arquivo muito grande", {
+        description: "O tamanho máximo é 10MB",
+      });
+      return;
+    }
+
+    const description = prompt("Descreva esta evidência:");
+    if (!description) return;
+
+    // TODO: Implementar upload real para S3
+    // Por enquanto, simular upload
+    const fakeUrl = `https://storage.example.com/evidences/${file.name}`;
+
+    await addEvidenceMutation.mutateAsync({
+      goalId,
+      description,
+      attachmentUrl: fakeUrl,
+      attachmentName: file.name,
+      attachmentType: file.type,
+      attachmentSize: file.size,
+    });
+  };
+
+  const handleDeleteEvidence = async (evidenceId: number) => {
+    if (confirm("Tem certeza que deseja excluir esta evidência?")) {
+      await deleteEvidenceMutation.mutateAsync({ evidenceId });
+    }
+  };
+
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       draft: "bg-gray-500",
@@ -542,6 +602,91 @@ export default function DetalhesMeta() {
           </CardContent>
         </Card>
       )}
+
+      {/* Evidências */}
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Evidências de Cumprimento ({goal.evidences?.length || 0})
+            </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => document.getElementById('evidence-file-input')?.click()}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Adicionar Evidência
+            </Button>
+            <input
+              id="evidence-file-input"
+              type="file"
+              className="hidden"
+              onChange={handleFileUpload}
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {goal.evidences && goal.evidences.length > 0 ? (
+            <div className="space-y-3">
+              {goal.evidences.map((evidence: any) => (
+                <div key={evidence.id} className="p-4 border rounded-lg">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="w-4 h-4 text-blue-600" />
+                        <span className="font-semibold">{evidence.attachmentName || "Evidência"}</span>
+                        {evidence.isVerified && (
+                          <Badge className="bg-green-500">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Verificado
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-700 mb-2">{evidence.description}</p>
+                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                        <span>
+                          Enviado em {format(new Date(evidence.uploadedAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                        </span>
+                        {evidence.attachmentSize && (
+                          <span>{(evidence.attachmentSize / 1024).toFixed(2)} KB</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      {evidence.attachmentUrl && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(evidence.attachmentUrl, '_blank')}
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteEvidence(evidence.id)}
+                        disabled={deleteEvidenceMutation.isPending}
+                      >
+                        <XCircle className="w-4 h-4 text-red-600" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <FileText className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+              <p>Nenhuma evidência adicionada ainda</p>
+              <p className="text-xs mt-1">Adicione documentos, relatórios ou imagens que comprovem o cumprimento da meta</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Comentários */}
       <Card>

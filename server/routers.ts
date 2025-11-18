@@ -20,6 +20,7 @@ import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
 import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { goalsRouter } from "./goalsRouter";
+import { bonusRouter } from "./bonusRouter";
 import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
@@ -1761,6 +1762,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Metas SMART
   smartGoals: goalsRouter,
+  bonus: bonusRouter,
 });
 
 // Função auxiliar para calcular perfil psicométrico
