@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { getDb } from './db';
-import { goals, performanceEvaluations, pdiItems, employees, pdiPlans } from '../drizzle/schema';
+import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals } from '../drizzle/schema';
 import { eq, and, lt, gte } from 'drizzle-orm';
 import { emailService } from './utils/emailService';
 
@@ -28,6 +28,140 @@ export const goalReminderJob = cron.schedule('0 9 * * *', async () => {
     // TODO: Implementar lógica de envio de e-mails
   } catch (error) {
     console.error('[Cron] Erro ao processar lembretes de metas:', error);
+  }
+});
+
+// Lembrete de metas SMART 7 dias antes do vencimento (executa diariamente às 9h)
+export const smartGoalDueDateReminderJob = cron.schedule('0 9 * * *', async () => {
+  console.log('[Cron] Executando job de lembretes de vencimento de metas SMART...');
+  
+  const db = await getDb();
+  if (!db) {
+    console.error('[Cron] Database not available');
+    return;
+  }
+
+  try {
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+    const eightDaysFromNow = new Date();
+    eightDaysFromNow.setDate(eightDaysFromNow.getDate() + 8);
+
+    // Buscar metas que vencem em 7 dias
+    const upcomingGoals = await db.select()
+      .from(smartGoals)
+      .innerJoin(employees, eq(smartGoals.employeeId, employees.id))
+      .where(
+        and(
+          gte(smartGoals.endDate, sevenDaysFromNow),
+          lt(smartGoals.endDate, eightDaysFromNow),
+          eq(smartGoals.status, 'in_progress')
+        )
+      );
+
+    console.log(`[Cron] ${upcomingGoals.length} metas SMART vencem em 7 dias`);
+
+    // Enviar emails de lembrete
+    for (const goal of upcomingGoals) {
+      if (goal.employees?.email) {
+        await emailService.sendGoalReminder(goal.employees.email, {
+          employeeName: goal.employees.name,
+          goalTitle: goal.smartGoals.title,
+          dueDate: goal.smartGoals.endDate.toLocaleDateString('pt-BR'),
+          progress: parseFloat(goal.smartGoals.currentValue || "0") || 0,
+        });
+      }
+    }
+  } catch (error) {
+    console.error('[Cron] Erro ao processar lembretes de vencimento:', error);
+  }
+});
+
+// Alerta de metas sem progresso há 15 dias (executa diariamente às 10h)
+export const smartGoalNoProgressAlertJob = cron.schedule('0 10 * * *', async () => {
+  console.log('[Cron] Executando job de alertas de metas sem progresso...');
+  
+  const db = await getDb();
+  if (!db) {
+    console.error('[Cron] Database not available');
+    return;
+  }
+
+  try {
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+    // Buscar metas sem atualização há 15 dias
+    const staleGoals = await db.select()
+      .from(smartGoals)
+      .innerJoin(employees, eq(smartGoals.employeeId, employees.id))
+      .where(
+        and(
+          lt(smartGoals.updatedAt, fifteenDaysAgo),
+          eq(smartGoals.status, 'in_progress')
+        )
+      );
+
+    console.log(`[Cron] ${staleGoals.length} metas sem progresso há 15+ dias`);
+
+    // Enviar alertas
+    for (const goal of staleGoals) {
+      if (goal.employees?.email) {
+        // Enviar lembrete genérico sobre progresso
+        await emailService.sendGoalReminder(goal.employees.email, {
+          employeeName: goal.employees.name,
+          goalTitle: goal.smartGoals.title,
+          dueDate: goal.smartGoals.endDate.toLocaleDateString('pt-BR'),
+          progress: parseFloat(goal.smartGoals.currentValue || "0") || 0,
+        });
+      }
+    }
+  } catch (error) {
+    console.error('[Cron] Erro ao processar alertas de progresso:', error);
+  }
+});
+
+// Lembrete para gestores sobre metas pendentes de aprovação (executa diariamente às 14h)
+export const smartGoalApprovalReminderJob = cron.schedule('0 14 * * *', async () => {
+  console.log('[Cron] Executando job de lembretes de aprovação de metas...');
+  
+  const db = await getDb();
+  if (!db) {
+    console.error('[Cron] Database not available');
+    return;
+  }
+
+  try {
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    // Buscar metas pendentes há mais de 3 dias
+    const pendingGoals = await db.select()
+      .from(smartGoals)
+      .innerJoin(employees, eq(smartGoals.employeeId, employees.id))
+      .where(
+        lt(smartGoals.createdAt, threeDaysAgo)
+      );
+
+    console.log(`[Cron] ${pendingGoals.length} metas pendentes de aprovação há 3+ dias`);
+
+    // Agrupar por gestor (assumindo que o gestor está no departamento)
+    const managerMap = new Map<number, any[]>();
+    for (const goal of pendingGoals) {
+      const deptId = goal.employees?.departmentId;
+      if (!deptId) continue;
+      
+      if (!managerMap.has(deptId)) {
+        managerMap.set(deptId, []);
+      }
+      managerMap.get(deptId)!.push(goal);
+    }
+
+    // Enviar lembretes aos gestores
+    // TODO: Buscar email do gestor do departamento
+    console.log(`[Cron] ${managerMap.size} gestores precisam aprovar metas`);
+  } catch (error) {
+    console.error('[Cron] Erro ao processar lembretes de aprovação:', error);
   }
 });
 

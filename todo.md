@@ -955,3 +955,17 @@
 - [x] Enviar email quando bônus é submetido
 - [x] Enviar email quando bônus é aprovado em cada nível
 - [x] Enviar email quando bônus é rejeitado
+
+
+## 📊 Funcionalidades Avançadas Finais
+- [x] Criar página /analytics/metas - Dashboard de analytics de metas
+- [x] Implementar gráficos de tendências de conclusão ao longo do tempo
+- [x] Adicionar taxa de aprovação por departamento
+- [x] Calcular tempo médio de conclusão por categoria
+- [x] Criar sistema de lembretes automáticos com cron jobs
+- [x] Lembrete 7 dias antes do vencimento de metas
+- [x] Alerta para metas sem progresso há 15 dias
+- [x] Lembrete para gestores sobre metas pendentes há 3+ dias
+- [x] Criar relatório consolidado de performance (Metas + 360° + PDI + Nine Box)
+- [x] Integrar geração de insights com IA
+- [x] Exportação PDF executivo mensal

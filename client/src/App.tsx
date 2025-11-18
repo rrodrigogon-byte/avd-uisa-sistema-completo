@@ -53,6 +53,7 @@ import CriarMetaSMART from "./pages/CriarMetaSMART";
 import DetalhesMeta from "./pages/DetalhesMeta";
 import EditarMeta from "./pages/EditarMeta";
 import AtualizarProgressoMeta from "./pages/AtualizarProgressoMeta";
+import AnalyticsMetas from "./pages/AnalyticsMetas";
 import AprovarMetas from "./pages/AprovarMetas";
 import ConfiguracaoBonus from "@/pages/ConfiguracaoBonus";
 import ConfiguracaoWorkflowsBonus from "@/pages/ConfiguracaoWorkflowsBonus";
@@ -66,7 +67,8 @@ function Router() {
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
       <Route path={"/metas/:id"} component={DetalhesMeta} />
       <Route path={"/metas/:id/editar"} component={EditarMeta} />
-      <Route path={"/metas/:id/progresso"} component={AtualizarProgressoMeta} />
+      <Route path="/metas/:id/progresso" component={AtualizarProgressoMeta} />
+      <Route path="/analytics/metas" component={AnalyticsMetas} />
       <Route path={"/avaliacoes"} component={Avaliacoes} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />

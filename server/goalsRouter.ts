@@ -1226,4 +1226,167 @@ export const goalsRouter = router({
 
       return { success: true };
     }),
+
+  /**
+   * Obter analytics de metas
+   */
+  getAnalytics: protectedProcedure
+    .input(
+      z.object({
+        period: z.number().default(30),
+        departmentId: z.number().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { smartGoals, employees, departments } = await import("../drizzle/schema");
+      const { sql, and, gte, eq } = await import("drizzle-orm");
+
+      const periodStart = new Date();
+      periodStart.setDate(periodStart.getDate() - input.period);
+
+      // Buscar todas as metas do período
+      const allGoals = await db
+        .select()
+        .from(smartGoals)
+        .leftJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(gte(smartGoals.createdAt, periodStart));
+
+      // Filtrar por departamento se especificado
+      const filteredGoals = input.departmentId
+        ? allGoals.filter((g) => g.employees?.departmentId === input.departmentId)
+        : allGoals;
+
+      const totalGoals = filteredGoals.length;
+      const completedGoals = filteredGoals.filter(
+        (g) => g.smartGoals.status === "completed"
+      ).length;
+      const inProgressGoals = filteredGoals.filter(
+        (g) => g.smartGoals.status === "in_progress"
+      ).length;
+      const overdueGoals = filteredGoals.filter(
+        (g) =>
+          g.smartGoals.endDate < new Date() && g.smartGoals.status !== "completed"
+      ).length;
+      const approvedGoals = filteredGoals.filter(
+        (g) => g.smartGoals.approvalStatus === "approved"
+      ).length;
+      const approvalRate = totalGoals > 0 ? (approvedGoals / totalGoals) * 100 : 0;
+
+      // Tempo médio de conclusão
+      const completedWithTime = filteredGoals.filter(
+        (g) => g.smartGoals.status === "completed" && g.smartGoals.completedAt
+      );
+      const avgCompletionTime =
+        completedWithTime.length > 0
+          ? Math.round(
+              completedWithTime.reduce((sum, g) => {
+                const start = new Date(g.smartGoals.startDate).getTime();
+                const end = new Date(g.smartGoals.completedAt!).getTime();
+                return sum + (end - start) / (1000 * 60 * 60 * 24);
+              }, 0) / completedWithTime.length
+            )
+          : 0;
+
+      // Tendências semanais
+      const trends = [];
+      for (let i = 0; i < 4; i++) {
+        const weekStart = new Date();
+        weekStart.setDate(weekStart.getDate() - (i + 1) * 7);
+        const weekEnd = new Date();
+        weekEnd.setDate(weekEnd.getDate() - i * 7);
+
+        const weekGoals = filteredGoals.filter(
+          (g) =>
+            new Date(g.smartGoals.createdAt) >= weekStart &&
+            new Date(g.smartGoals.createdAt) < weekEnd
+        );
+        const weekCompleted = weekGoals.filter(
+          (g) => g.smartGoals.status === "completed"
+        ).length;
+
+        trends.unshift({
+          period: `Semana ${4 - i}`,
+          total: weekGoals.length,
+          completed: weekCompleted,
+        });
+      }
+
+      // Performance por departamento
+      const deptMap = new Map<number, any>();
+      filteredGoals.forEach((g) => {
+        if (!g.employees?.departmentId) return;
+        const deptId = g.employees.departmentId;
+        if (!deptMap.has(deptId)) {
+          deptMap.set(deptId, {
+            departmentId: deptId,
+            departmentName: "",
+            totalGoals: 0,
+            completed: 0,
+            approved: 0,
+          });
+        }
+        const dept = deptMap.get(deptId)!;
+        dept.totalGoals++;
+        if (g.smartGoals.status === "completed") dept.completed++;
+        if (g.smartGoals.approvalStatus === "approved") dept.approved++;
+      });
+
+      // Buscar nomes dos departamentos
+      const deptIds = Array.from(deptMap.keys());
+      if (deptIds.length > 0) {
+        const deptNames = await db
+          .select({ id: departments.id, name: departments.name })
+          .from(departments);
+
+        deptNames.forEach((d) => {
+          const dept = deptMap.get(d.id);
+          if (dept) dept.departmentName = d.name;
+        });
+      }
+
+      const byDepartment = Array.from(deptMap.values()).map((d) => ({
+        ...d,
+        approvalRate: d.totalGoals > 0 ? (d.approved / d.totalGoals) * 100 : 0,
+        completionRate: d.totalGoals > 0 ? (d.completed / d.totalGoals) * 100 : 0,
+      }));
+
+      // Performance por categoria
+      const catMap = new Map<string, any>();
+      filteredGoals.forEach((g) => {
+        const cat = g.smartGoals.category || "Outros";
+        if (!catMap.has(cat)) {
+          catMap.set(cat, { category: cat, totalGoals: 0, totalDays: 0 });
+        }
+        const catData = catMap.get(cat)!;
+        catData.totalGoals++;
+        if (g.smartGoals.status === "completed" && g.smartGoals.completedAt) {
+          const start = new Date(g.smartGoals.startDate).getTime();
+          const end = new Date(g.smartGoals.completedAt).getTime();
+          catData.totalDays += (end - start) / (1000 * 60 * 60 * 24);
+        }
+      });
+
+      const byCategory = Array.from(catMap.values()).map((c) => ({
+        category: c.category,
+        totalGoals: c.totalGoals,
+        avgDays: c.totalGoals > 0 ? Math.round(c.totalDays / c.totalGoals) : 0,
+      }));
+
+      return {
+        stats: {
+          totalGoals,
+          completedGoals,
+          inProgressGoals,
+          overdueGoals,
+          approvalRate,
+          avgCompletionTime,
+        },
+        trends,
+        byDepartment,
+        byCategory,
+      };
+    }),
 });
