@@ -124,6 +124,7 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: Settings, label: "Gerais", path: "/configuracoes" },
+      { icon: BarChart3, label: "Analytics (Admin)", path: "/admin/analytics" },
       { icon: Mail, label: "SMTP (Admin)", path: "/admin/smtp" },
       { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
       { icon: FileSearch, label: "Histórico de Alterações", path: "/admin/audit-log" },

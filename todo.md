@@ -976,3 +976,34 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Incluir título, descrição, data de início e fim nos eventos
 - [x] Formato padrão iCalendar (VCALENDAR 2.0)
 - [x] Compatibilidade com Google Calendar e Outlook
+
+
+## 📊 Dashboard de Analytics de Performance
+- [ ] Criar endpoints backend para buscar dados agregados (tendências, distribuição Nine Box, taxas de conclusão)
+- [ ] Criar página /admin/analytics com layout de dashboard
+- [ ] Implementar gráfico de evolução de performance por departamento (linha)
+- [ ] Implementar gráfico de distribuição Nine Box histórica (área empilhada)
+- [ ] Implementar gráfico de taxa de conclusão de PDIs e Metas (barras)
+- [ ] Adicionar filtros por período, departamento e tipo
+- [ ] Adicionar cards de KPIs principais (média geral, taxa de conclusão, etc)
+- [ ] Adicionar rota e menu de acesso (apenas admin)
+
+## 💬 Sistema de Feedback Contínuo
+- [ ] Criar schema de feedbacks no banco de dados
+- [ ] Criar endpoints backend (createFeedback, listFeedbacks, getFeedbacksByEmployee)
+- [ ] Criar página /feedback com formulário de registro
+- [ ] Implementar seleção de colaborador e tipo de feedback (positivo/construtivo)
+- [ ] Criar histórico de feedbacks por colaborador
+- [ ] Vincular feedbacks automaticamente aos PDIs ativos
+- [ ] Adicionar notificação ao colaborador quando receber feedback
+- [ ] Adicionar rota e menu de acesso
+
+## 📅 Relatórios Automáticos Agendados
+- [ ] Criar schema de agendamentos de relatórios no banco
+- [ ] Criar endpoints backend (createSchedule, listSchedules, updateSchedule, deleteSchedule)
+- [ ] Criar página /admin/scheduled-reports com lista de agendamentos
+- [ ] Implementar formulário de criação de agendamento (tipo, frequência, destinatários)
+- [ ] Criar função de geração de relatórios (Nine Box, Performance, PDI)
+- [ ] Implementar cron job para envio automático de relatórios
+- [ ] Adicionar opção de formato (PDF/Excel)
+- [ ] Adicionar rota e menu de acesso (apenas admin)
