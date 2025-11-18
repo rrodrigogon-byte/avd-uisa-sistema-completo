@@ -724,3 +724,46 @@
 - [x] Implementar seção "Recomendações de Desenvolvimento"
 - [x] Adicionar Dashboard Executivo ao menu lateral
 - [ ] Adicionar seletor de colaborador e safra no topo
+
+
+## 🚀 FASE FINAL - Integração Completa e PDI Inteligente
+
+### Fase 1: Integrar Dados Reais em Dashboards
+- [ ] Conectar Dashboard Executivo com dados reais (2.889 funcionários)
+- [ ] Conectar Mapa de Sucessão com dados reais
+- [ ] Conectar Performance 40-30-30 com dados reais
+- [ ] Conectar Sistema de Aprovações com dados reais
+- [ ] Otimizar queries para performance
+
+### Fase 2: Completar PDI Inteligente (Modelo Nadia)
+- [x] Página de listagem de PDIs já existe (/pdi) com modelo 70-20-10
+- [x] Página PDI Inteligente já existe (/pdi-inteligente/:id)
+- [x] Backend completo com 10 endpoints (create, getById, compareProfiles, addGap, updateGap, addRisk, updateRisk, addReview)
+- [x] Schema completo com 4 tabelas (pdiIntelligentDetails, pdiCompetencyGaps, pdiRisks, pdiReviews)
+- [x] Integração com testes psicométricos (DISC, Big Five, MBTI, IE)
+- [x] Análise automática de gaps de competências no backend
+- [x] Comparação de perfil atual vs. posição-alvo
+- [x] Gestão de sponsors/mentores (sponsorId1, sponsorId2, mentorId)
+- [x] Sistema de reviews/acompanhamento (pdiReviews table)
+- [x] Timeline de 24 meses (durationMonths)
+- [x] Gestão de riscos (pdiRisks table)
+- [x] Gráfico radar interativo Chart.js (atual vs. alvo)
+- [ ] Formulário de criação de PDI Inteligente na página /pdi
+- [ ] Plano de ação 70-20-10 editável na interface
+
+### Fase 3: Sistema de Notificações em Tempo Real
+- [ ] Expandir WebSocket para notificações de aprovações
+- [ ] Adicionar notificações de atualizações de PDI
+- [ ] Adicionar notificações de mudanças no Mapa de Sucessão
+- [ ] Adicionar notificações de conclusão de avaliações
+- [ ] Implementar centro de notificações no header
+- [ ] Adicionar badge de contagem de notificações não lidas
+
+### Fase 4: Exportação de Relatórios
+- [ ] Instalar jsPDF e xlsx
+- [ ] Implementar exportação PDF do Dashboard Executivo
+- [ ] Implementar exportação PDF do Mapa de Sucessão
+- [ ] Implementar exportação PDF do PDI Inteligente
+- [ ] Implementar exportação PDF da Performance 40-30-30
+- [ ] Implementar exportação Excel de dados tabulares
+- [ ] Adicionar botões de exportação em todas as páginas relevantes
