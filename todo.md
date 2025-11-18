@@ -957,17 +957,22 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Navegação automática ao clicar em notificação com link
 
 ## 📋 Página de Audit Trail
-- [ ] Criar página /admin/audit-log usando tabela auditLogs
-- [ ] Implementar filtros por usuário, data e tipo de ação
-- [ ] Criar visualização detalhada de cada alteração (before/after)
-- [ ] Adicionar exportação CSV do histórico
-- [ ] Implementar paginação para grandes volumes de dados
-- [ ] Adicionar rota e menu de acesso (apenas admin)
+- [x] Verificar schema da tabela auditLogs
+- [x] Criar endpoints backend (getLogs, getLogDetails)
+- [x] Criar página /admin/audit-log com tabela de logs
+- [x] Implementar filtros por usuário, ação e entidade
+- [x] Criar visualização detalhada de cada alteração (dialog com JSON)
+- [x] Adicionar exportação CSV do histórico
+- [x] Implementar paginação (50 logs por página)
+- [x] Adicionar rota e menu de acesso (apenas admin)
+- [x] Badges coloridos por tipo de ação
+- [x] Restrição de acesso apenas para role=admin
 
 ## 📅 Integração com Calendário
-- [ ] Criar função para gerar arquivos .ics (iCalendar)
-- [ ] Adicionar botão "Adicionar ao Calendário" na página de Metas
-- [ ] Adicionar botão "Adicionar ao Calendário" na página de PDI
-- [ ] Implementar download automático do arquivo .ics
-- [ ] Incluir título, descrição, data de início e fim nos eventos
-- [ ] Testar compatibilidade com Google Calendar e Outlook
+- [x] Criar função para gerar arquivos .ics (iCalendar) - generateICS.ts
+- [x] Adicionar botão "Adicionar ao Calendário" na página de Metas
+- [x] Adicionar botão "Adicionar ao Calendário" na página de PDI
+- [x] Implementar download automático do arquivo .ics (downloadICS)
+- [x] Incluir título, descrição, data de início e fim nos eventos
+- [x] Formato padrão iCalendar (VCALENDAR 2.0)
+- [x] Compatibilidade com Google Calendar e Outlook

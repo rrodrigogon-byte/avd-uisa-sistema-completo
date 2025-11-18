@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles, notifications } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles, notifications, auditLogs } from "../drizzle/schema";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 
@@ -1561,6 +1561,70 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         });
 
         return { success: true };
+      }),
+  }),
+
+  // Router de Audit Trail (apenas admin)
+  auditTrail: router({
+    // Buscar logs de auditoria com filtros
+    getLogs: protectedProcedure
+      .input(z.object({
+        userId: z.number().optional(),
+        action: z.string().optional(),
+        entity: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        limit: z.number().default(100),
+        offset: z.number().default(0),
+      }))
+      .query(async ({ input, ctx }) => {
+        // Apenas admin pode acessar
+        if (ctx.user.role !== "admin") {
+          throw new Error("Acesso negado");
+        }
+
+        const database = await getDb();
+        if (!database) return { logs: [], total: 0 };
+
+        // Construir condições de filtro
+        const conditions: any[] = [];
+        if (input.userId) conditions.push(eq(auditLogs.userId, input.userId));
+        if (input.action) conditions.push(eq(auditLogs.action, input.action));
+        if (input.entity) conditions.push(eq(auditLogs.entity, input.entity));
+        
+        // Buscar logs
+        const logs = await database.select()
+          .from(auditLogs)
+          .where(conditions.length > 0 ? and(...conditions) : undefined)
+          .orderBy(desc(auditLogs.createdAt))
+          .limit(input.limit)
+          .offset(input.offset);
+
+        // Contar total
+        const totalResult = await database.select()
+          .from(auditLogs)
+          .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+        return { logs, total: totalResult.length };
+      }),
+
+    // Buscar detalhes de um log específico
+    getLogDetails: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input, ctx }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Acesso negado");
+        }
+
+        const database = await getDb();
+        if (!database) return null;
+
+        const log = await database.select()
+          .from(auditLogs)
+          .where(eq(auditLogs.id, input.id))
+          .limit(1);
+
+        return log.length > 0 ? log[0] : null;
       }),
   }),
 

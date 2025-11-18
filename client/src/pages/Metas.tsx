@@ -9,7 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
-import { AlertCircle, Calendar, CheckCircle2, Clock, Plus, Target, TrendingUp } from "lucide-react";
+import { downloadICS } from "@/lib/generateICS";
+import { AlertCircle, Calendar, CalendarPlus, CheckCircle2, Clock, Plus, Target, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -419,6 +420,28 @@ export default function Metas() {
                     <div className="ml-auto">
                       Peso: <span className="font-semibold">{goal.weight}</span>
                     </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-2 border-t mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        downloadICS(
+                          {
+                            title: `Meta: ${goal.title}`,
+                            description: `Tipo: ${goal.type}\nValor Alvo: ${goal.targetValue} ${goal.unit}\nPeso: ${goal.weight}`,
+                            startDate: new Date(goal.startDate),
+                            endDate: new Date(goal.endDate),
+                          },
+                          `meta-${goal.id}-${goal.title.replace(/\s+/g, "-").toLowerCase()}`
+                        );
+                        toast.success("Evento adicionado ao calendário!");
+                      }}
+                    >
+                      <CalendarPlus className="h-4 w-4 mr-2" />
+                      Adicionar ao Calendário
+                    </Button>
                   </div>
 
                   {goal.status === "em_andamento" && (

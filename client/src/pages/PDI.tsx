@@ -7,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
-import { AlertCircle, BookOpen, Calendar, CheckCircle2, Clock, Plus, TrendingUp, Users2 } from "lucide-react";
+import { downloadICS } from "@/lib/generateICS";
+import { toast } from "sonner";
+import { AlertCircle, BookOpen, Calendar, CalendarPlus, CheckCircle2, Clock, Plus, TrendingUp, Users2 } from "lucide-react";
 
 export default function PDI() {
   const [showWizard, setShowWizard] = useState(false);
@@ -120,6 +122,25 @@ export default function PDI() {
                       {new Date(activePDI.endDate).toLocaleDateString("pt-BR")}
                     </CardDescription>
                   </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      downloadICS(
+                        {
+                          title: `PDI ${new Date(activePDI.startDate).getFullYear()}`,
+                          description: `Plano de Desenvolvimento Individual\nProgresso: ${activePDI.overallProgress}%`,
+                          startDate: new Date(activePDI.startDate),
+                          endDate: new Date(activePDI.endDate),
+                        },
+                        `pdi-${activePDI.id}-${new Date(activePDI.startDate).getFullYear()}`
+                      );
+                      toast.success("PDI adicionado ao calendário!");
+                    }}
+                  >
+                    <CalendarPlus className="h-4 w-4 mr-2" />
+                    Adicionar ao Calendário
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">

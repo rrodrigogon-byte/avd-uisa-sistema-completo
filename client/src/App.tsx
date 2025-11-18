@@ -25,6 +25,7 @@ import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
+import AuditTrail from "./pages/AuditTrail";
 import PsychometricTests from "./pages/PsychometricTests";
 import TestDISC from "./pages/TestDISC";
 import TestBigFive from "./pages/TestBigFive";
@@ -66,7 +67,8 @@ function Router() {
       <Route path="/teste-vark" component={TestVARK} />
       <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
-      <Route path="/avaliar-360/:evaluationId" component={Avaliar360} />
+                <Route path="/avaliar-360/:id" component={Avaliar360} />
+          <Route path="/admin/audit-log" component={AuditTrail} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

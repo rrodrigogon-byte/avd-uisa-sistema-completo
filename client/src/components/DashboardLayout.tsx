@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -126,6 +126,7 @@ const menuItems = [
       { icon: Settings, label: "Gerais", path: "/configuracoes" },
       { icon: Mail, label: "SMTP (Admin)", path: "/admin/smtp" },
       { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
+      { icon: FileSearch, label: "Histórico de Alterações", path: "/admin/audit-log" },
     ],
   },
 ];
