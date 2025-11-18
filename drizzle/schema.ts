@@ -617,10 +617,10 @@ export type InsertPsychometricTest = typeof psychometricTests.$inferInsert;
 
 export const testQuestions = mysqlTable("testQuestions", {
   id: int("id").autoincrement().primaryKey(),
-  testType: mysqlEnum("testType", ["disc", "bigfive"]).notNull(),
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark"]).notNull(),
   questionNumber: int("questionNumber").notNull(),
   questionText: text("questionText").notNull(),
-  dimension: varchar("dimension", { length: 50 }).notNull(), // Ex: "dominance", "openness"
+  dimension: varchar("dimension", { length: 50 }).notNull(), // Ex: "dominance", "openness", "E/I", "Autoconsciência", "Visual"
   reverse: boolean("reverse").default(false).notNull(), // Se a pontuação é invertida
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

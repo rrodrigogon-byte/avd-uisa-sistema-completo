@@ -898,3 +898,45 @@ Desenvolver sistema completo de Avaliação de Desempenho e Gestão de Talentos 
 - [x] Criar função de geração de PDF com análise completa (generate360PDF.ts)
 - [x] Adicionar seções de médias, estatísticas e recomendações ao PDF
 - [x] Implementar botão "Exportar Relatório" na página 360° Enhanced
+
+## 🚀 Expansão Completa: Performance + Testes + Recursos Avançados
+
+### Novos Testes Psicométricos
+- [x] Popular perguntas do teste MBTI (16 personalidades) - 20 perguntas
+- [x] Popular perguntas de Inteligência Emocional (Goleman) - 25 perguntas
+- [x] Popular perguntas de Estilos de Aprendizagem (VARK) - 20 perguntas
+- [x] Atualizar schema de testQuestions para suportar mbti, ie, vark
+- [x] Migração 0007 aplicada
+- [ ] Criar páginas de questionários para MBTI, IE e VARK
+- [ ] Implementar cálculo de resultados para cada teste
+- [ ] Adicionar gráficos e interpretações de resultados
+
+### Expansão do Módulo de Performance
+- [ ] Criar avaliações por competências customizáveis
+- [ ] Implementar matriz de competências por cargo
+- [ ] Criar relatórios de performance por departamento
+- [ ] Adicionar comparativo de performance ao longo do tempo
+- [ ] Implementar metas em cascata (corporativas → departamentais → individuais)
+- [ ] Criar dashboard executivo de performance
+
+### Notificações In-App em Tempo Real
+- [ ] Criar componente de sino de notificações no header
+- [ ] Implementar badge com contador de não lidas
+- [ ] Criar dropdown com lista de notificações
+- [ ] Adicionar marcação de lida/não lida
+- [ ] Implementar polling ou WebSocket para atualização automática
+- [ ] Criar tipos de notificação (meta vencida, avaliação pendente, aprovação PDI)
+
+### Histórico de Alterações (Audit Trail)
+- [ ] Criar página /admin/audit-log
+- [ ] Implementar filtros por usuário, data, tipo de ação
+- [ ] Adicionar visualização detalhada de cada alteração
+- [ ] Implementar paginação e busca
+- [ ] Criar exportação de relatório de auditoria em CSV
+
+### Integração com Calendário
+- [ ] Criar função para gerar arquivos .ics
+- [ ] Adicionar botão "Adicionar ao Calendário" em metas
+- [ ] Adicionar botão "Adicionar ao Calendário" em ações de PDI
+- [ ] Implementar download automático do arquivo .ics
+- [ ] Suportar Google Calendar e Outlook
