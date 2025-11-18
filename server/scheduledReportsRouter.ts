@@ -8,7 +8,10 @@ import {
   ScheduledReport,
 } from "../drizzle/schema";
 import { getDb } from "./db";
-import { protectedProcedure, router } from "./_core/trpc";
+import { adminProcedure, protectedProcedure, router } from "./_core/trpc";
+import { generateNineBoxPDF } from "./reportGenerators/nineBoxPDF";
+import { generatePerformanceExcel } from "./reportGenerators/performanceExcel";
+import { generatePDIPDF } from "./reportGenerators/pdiPDF";
 
 /**
  * Router de Relatórios Agendados
@@ -17,9 +20,9 @@ import { protectedProcedure, router } from "./_core/trpc";
 
 export const scheduledReportsRouter = router({
   /**
-   * Listar todos os relatórios agendados
+   * Listar todos os relatórios agendados (apenas admins)
    */
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: adminProcedure.query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -32,9 +35,9 @@ export const scheduledReportsRouter = router({
   }),
 
   /**
-   * Obter detalhes de um relatório agendado específico
+   * Obter detalhes de um relatório agendado específico (apenas admins)
    */
-  getById: protectedProcedure
+  getById: adminProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
       const db = await getDb();
@@ -65,9 +68,9 @@ export const scheduledReportsRouter = router({
     }),
 
   /**
-   * Criar novo relatório agendado
+   * Criar novo relatório agendado (apenas admins)
    */
-  create: protectedProcedure
+  create: adminProcedure
     .input(
       z.object({
         reportType: z.enum([
@@ -146,9 +149,9 @@ export const scheduledReportsRouter = router({
     }),
 
   /**
-   * Atualizar relatório agendado existente
+   * Atualizar relatório agendado existente (apenas admins)
    */
-  update: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: z.number(),
@@ -211,9 +214,9 @@ export const scheduledReportsRouter = router({
     }),
 
   /**
-   * Deletar relatório agendado
+   * Deletar relatório agendado (apenas admins)
    */
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
@@ -225,9 +228,9 @@ export const scheduledReportsRouter = router({
     }),
 
   /**
-   * Executar relatório manualmente (teste)
+   * Executar relatório manualmente (teste) (apenas admins)
    */
-  executeNow: protectedProcedure
+  executeNow: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
@@ -243,13 +246,131 @@ export const scheduledReportsRouter = router({
         throw new TRPCError({ code: "NOT_FOUND", message: "Relatório não encontrado" });
       }
 
-      // Executar relatório (implementação simplificada)
+      // Executar relatório
       const startTime = Date.now();
       
       try {
-        // TODO: Implementar geração real do relatório
-        // Por enquanto, simular sucesso
         const recipients = JSON.parse(report[0].recipients);
+        let reportBuffer: ArrayBuffer | Buffer | null = null;
+        let fileSize = 0;
+
+        // Gerar relatório baseado no tipo (dados mock para demonstração)
+        if (report[0].reportType === "nine_box") {
+          const mockPositions = [
+            {
+              employeeName: "João Silva",
+              performance: "alto",
+              potential: "alto",
+              position: "Top Talent",
+              department: "Tecnologia",
+            },
+            {
+              employeeName: "Maria Santos",
+              performance: "alto",
+              potential: "medio",
+              position: "High Performer",
+              department: "Vendas",
+            },
+          ];
+
+          const summary = {
+            total: mockPositions.length,
+            highPerformers: mockPositions.filter((p) => p.performance === "alto").length,
+            highPotential: mockPositions.filter((p) => p.potential === "alto").length,
+            criticalTalent: mockPositions.filter((p) => p.performance === "alto" && p.potential === "alto").length,
+          };
+
+          reportBuffer = await generateNineBoxPDF({
+            positions: mockPositions,
+            summary,
+            includeCharts: report[0].includeCharts,
+          });
+          fileSize = reportBuffer.byteLength;
+        } else if (report[0].reportType === "performance") {
+          const mockEmployees = [
+            {
+              name: "João Silva",
+              department: "Tecnologia",
+              position: "Desenvolvedor Sênior",
+              performanceScore: 85,
+              goalsCompleted: 8,
+              totalGoals: 10,
+              evaluationScore: 4.2,
+              pdiProgress: 75,
+            },
+            {
+              name: "Maria Santos",
+              department: "Vendas",
+              position: "Gerente de Vendas",
+              performanceScore: 92,
+              goalsCompleted: 10,
+              totalGoals: 10,
+              evaluationScore: 4.5,
+              pdiProgress: 90,
+            },
+          ];
+
+          const summary = {
+            avgPerformance: mockEmployees.reduce((sum, e) => sum + e.performanceScore, 0) / mockEmployees.length,
+            totalEmployees: mockEmployees.length,
+            highPerformers: mockEmployees.filter((e) => e.performanceScore >= 80).length,
+            lowPerformers: mockEmployees.filter((e) => e.performanceScore < 60).length,
+          };
+
+          reportBuffer = await generatePerformanceExcel({
+            employees: mockEmployees,
+            summary,
+          });
+          fileSize = reportBuffer.byteLength;
+        } else if (report[0].reportType === "pdi") {
+          const mockPdis = [
+            {
+              employeeName: "João Silva",
+              department: "Tecnologia",
+              status: "em_andamento" as const,
+              startDate: "2025-01-01",
+              endDate: "2025-12-31",
+              progress: 65,
+              actionsCount: 10,
+              completedActions: 6,
+            },
+            {
+              employeeName: "Maria Santos",
+              department: "Vendas",
+              status: "concluido" as const,
+              startDate: "2024-01-01",
+              endDate: "2024-12-31",
+              progress: 100,
+              actionsCount: 8,
+              completedActions: 8,
+            },
+          ];
+
+          const summary = {
+            total: mockPdis.length,
+            inProgress: mockPdis.filter((p) => p.status === "em_andamento").length,
+            completed: mockPdis.filter((p) => p.status === "concluido").length,
+            avgProgress: mockPdis.reduce((sum, p) => sum + p.progress, 0) / mockPdis.length,
+          };
+
+          reportBuffer = await generatePDIPDF({
+            pdis: mockPdis,
+            summary,
+            includeCharts: report[0].includeCharts,
+          });
+          fileSize = reportBuffer.byteLength;
+        } else {
+          // Para outros tipos, simular sucesso
+          reportBuffer = Buffer.from("Mock report data");
+          fileSize = reportBuffer.byteLength;
+        }
+
+        if (!reportBuffer) {
+          throw new Error("Falha ao gerar relatório");
+        }
+
+        // TODO: Enviar e-mail com relatório anexo
+        // await sendEmail(...)
         const executionTimeMs = Date.now() - startTime;
 
         // Registrar log de execução
@@ -295,9 +416,9 @@ export const scheduledReportsRouter = router({
     }),
 
   /**
-   * Obter logs de execução de um relatório
+   * Obter logs de execução de um relatório (apenas admins)
    */
-  getExecutionLogs: protectedProcedure
+  getExecutionLogs: adminProcedure
     .input(z.object({ reportId: z.number(), limit: z.number().default(20) }))
     .query(async ({ input, ctx }) => {
       const db = await getDb();

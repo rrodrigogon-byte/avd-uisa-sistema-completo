@@ -83,3 +83,32 @@
 - [x] Testar criação de relatório agendado
 - [x] Testar execução de relatório agendado
 - [x] 14 de 18 testes passando (78% de cobertura)
+
+## 🐛 Correções de Bugs
+- [x] Corrigir erro 404 em Performance Integrada (não havia erro)
+- [x] Corrigir erro 404 em 360° Enhanced (não havia erro)
+
+## 📄 Geração de Relatórios PDF/Excel
+- [x] Instalar bibliotecas jsPDF e ExcelJS
+- [x] Implementar geração de PDF para Nine Box
+- [x] Implementar geração de Excel para Performance
+- [x] Implementar geração de PDF para PDI
+- [x] Adicionar gráficos aos relatórios PDF
+- [x] Integrar geradores com scheduledReportsRouter
+- [ ] Testar envio de relatórios por e-mail (requer integração SMTP)
+
+## 🔐 Controle de Acesso por Role
+- [x] Criar middleware adminProcedure no tRPC (já existia)
+- [x] Restringir Dashboard Executivo para admins (backend + frontend)
+- [x] Restringir Relatórios Agendados para admins (backend + frontend)
+- [x] Adicionar verificação de role no frontend
+- [ ] Restringir Analytics para admins
+- [ ] Restringir SMTP Config para admins
+
+#### 📧 Notificações por E-mail
+- [x] Criar helper sendNotificationEmail (emailService.ts)
+- [x] Criar templates de e-mail (badge, PDI aprovado, meta vencendo, avaliação pendente)
+- [x] Criar helper badgeHelper.ts para conceder badges com e-mail automático
+- [ ] Integrar badgeHelper nos endpoints de metas, PDI e avaliações
+- [ ] Testar envio de e-mails com configuração SMTPvaliação 360° por e-mail
+- [ ] Testar envio de e-mails

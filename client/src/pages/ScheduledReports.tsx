@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Calendar, Clock, FileText, Mail, Play, Trash2, Plus, Download } from "lucide-react";
+import { Calendar, Clock, FileText, Mail, Play, Trash2, Plus, Download, AlertCircle } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayout";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -18,8 +20,37 @@ import { ptBR } from "date-fns/locale";
  * Permite configurar envio automático de relatórios por e-mail
  */
 export default function ScheduledReports() {
+  const { user, loading } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<any>(null);
+
+  // Verificar se usuário é admin
+  if (!loading && (!user || user.role !== "admin")) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <AlertCircle className="h-16 w-16 text-destructive" />
+          <h2 className="text-2xl font-bold">Acesso Negado</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            Apenas administradores podem gerenciar relatórios agendados.
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   // Queries
   const { data: reports, isLoading, refetch } = trpc.scheduledReports.list.useQuery();

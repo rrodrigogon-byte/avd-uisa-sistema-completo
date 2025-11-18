@@ -2,7 +2,9 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
-import { Users, TrendingUp, Award, Target, DollarSign, Briefcase } from "lucide-react";
+import { Users, TrendingUp, Award, Target, DollarSign, Briefcase, AlertCircle } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayout";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -37,7 +39,36 @@ ChartJS.register(
  * Métricas estratégicas para tomada de decisão da diretoria
  */
 export default function ExecutiveDashboard() {
+  const { user, loading } = useAuth();
   const [selectedDepartment, setSelectedDepartment] = useState<number | undefined>(undefined);
+
+  // Verificar se usuário é admin
+  if (!loading && (!user || user.role !== "admin")) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <AlertCircle className="h-16 w-16 text-destructive" />
+          <h2 className="text-2xl font-bold">Acesso Negado</h2>
+          <p className="text-muted-foreground text-center max-w-md">
+            Apenas administradores podem acessar o Dashboard Executivo.
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   // Queries
   const { data: kpis, isLoading: loadingKPIs } = trpc.executive.getKPIs.useQuery({

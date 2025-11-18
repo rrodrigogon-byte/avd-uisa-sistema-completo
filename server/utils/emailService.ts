@@ -218,6 +218,96 @@ const templates = {
       </html>
     `,
   }),
+
+  badgeEarned: (data: { employeeName: string; badgeName: string; badgeDescription: string; badgeIcon: string }) => ({
+    subject: `🏆 Parabéns! Você conquistou um novo badge: ${data.badgeName}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .badge-icon { font-size: 80px; margin: 20px 0; }
+            .button { display: inline-block; padding: 12px 30px; background: #ffd700; color: #333; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
+            .celebration { background: #fff3cd; border-left: 4px solid #ffd700; padding: 15px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎉 Nova Conquista Desbloqueada!</h1>
+            </div>
+            <div class="content">
+              <p>Olá, <strong>${data.employeeName}</strong>!</p>
+              <div style="text-align: center;">
+                <div class="badge-icon">${data.badgeIcon}</div>
+                <h2 style="color: #ffd700; margin: 10px 0;">${data.badgeName}</h2>
+              </div>
+              <div class="celebration">
+                <p style="margin: 0;"><strong>${data.badgeDescription}</strong></p>
+              </div>
+              <p>Parabéns por esta conquista! Continue assim e desbloqueie mais badges.</p>
+              <div style="text-align: center;">
+                <a href="https://avd.uisa.com.br/badges" class="button">Ver Minhas Conquistas</a>
+              </div>
+            </div>
+            <div class="footer">
+              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
+              <p>Este é um e-mail automático, por favor não responda.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `,
+  }),
+
+  pdiApproved: (data: { employeeName: string; pdiTitle: string; approverName: string; startDate: string; endDate: string }) => ({
+    subject: `✅ PDI Aprovado: ${data.pdiTitle}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .button { display: inline-block; padding: 12px 30px; background: #10b981; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .success { background: #d1fae5; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>✅ PDI Aprovado!</h1>
+            </div>
+            <div class="content">
+              <p>Olá, <strong>${data.employeeName}</strong>!</p>
+              <div class="success">
+                <p style="margin: 0;"><strong>Seu Plano de Desenvolvimento Individual foi aprovado!</strong></p>
+              </div>
+              <p><strong>PDI:</strong> ${data.pdiTitle}</p>
+              <p><strong>Aprovado por:</strong> ${data.approverName}</p>
+              <p><strong>Período:</strong> ${data.startDate} até ${data.endDate}</p>
+              <p>Agora você pode começar a executar as ações planejadas. Acesse o sistema para acompanhar seu progresso.</p>
+              <div style="text-align: center;">
+                <a href="https://avd.uisa.com.br/pdi" class="button">Ver Meu PDI</a>
+              </div>
+            </div>
+            <div class="footer">
+              <p>Sistema AVD UISA - Avaliação de Desempenho</p>
+              <p>Este é um e-mail automático, por favor não responda.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `,
+  }),
 };
 
 // Email service methods
@@ -323,6 +413,60 @@ export const emailService = {
         html: template.html,
       });
       console.log(`[EmailService] E-mail de redefinição de senha enviado para ${to}`);
+      return true;
+    } catch (error) {
+      console.error("[EmailService] Erro ao enviar e-mail:", error);
+      return false;
+    }
+  },
+
+  async sendBadgeNotification(to: string, data: Parameters<typeof templates.badgeEarned>[0]) {
+    const transporter = await createTransporter();
+    if (!transporter) {
+      console.warn("[EmailService] Transporter não disponível");
+      return false;
+    }
+
+    const config = await getSmtpConfig();
+    if (!config) return false;
+
+    const template = templates.badgeEarned(data);
+    
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to,
+        subject: template.subject,
+        html: template.html,
+      });
+      console.log(`[EmailService] E-mail de badge conquistado enviado para ${to}`);
+      return true;
+    } catch (error) {
+      console.error("[EmailService] Erro ao enviar e-mail:", error);
+      return false;
+    }
+  },
+
+  async sendPDIApproval(to: string, data: Parameters<typeof templates.pdiApproved>[0]) {
+    const transporter = await createTransporter();
+    if (!transporter) {
+      console.warn("[EmailService] Transporter não disponível");
+      return false;
+    }
+
+    const config = await getSmtpConfig();
+    if (!config) return false;
+
+    const template = templates.pdiApproved(data);
+    
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to,
+        subject: template.subject,
+        html: template.html,
+      });
+      console.log(`[EmailService] E-mail de PDI aprovado enviado para ${to}`);
       return true;
     } catch (error) {
       console.error("[EmailService] Erro ao enviar e-mail:", error);
