@@ -1,12 +1,42 @@
+import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
-import { AlertCircle, CheckCircle2, Clock, Users } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock, Users, Plus, Calendar } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Avaliacoes() {
+  const [isCreateCycleDialogOpen, setIsCreateCycleDialogOpen] = useState(false);
+  const [newCycle, setNewCycle] = useState({
+    name: "",
+    year: new Date().getFullYear(),
+    type: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+  });
+
   const { data: evaluations } = trpc.evaluations.list.useQuery({});
   const { data: employee } = trpc.employees.getCurrent.useQuery();
 
@@ -51,14 +81,20 @@ export default function Avaliacoes() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <Users className="h-8 w-8" />
-            Avaliações de Desempenho
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Acompanhe suas avaliações 360° e feedback de desempenho
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+              <Users className="h-8 w-8" />
+              Avaliações de Desempenho
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Acompanhe suas avaliações 360° e feedback de desempenho
+            </p>
+          </div>
+          <Button onClick={() => setIsCreateCycleDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Criar Novo Ciclo
+          </Button>
         </div>
 
         {/* Stats */}
@@ -252,6 +288,157 @@ export default function Avaliacoes() {
             </p>
           </CardContent>
         </Card>
+
+        {/* Dialog de Criação de Ciclo */}
+        <Dialog open={isCreateCycleDialogOpen} onOpenChange={setIsCreateCycleDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Criar Novo Ciclo de Avaliação
+              </DialogTitle>
+              <DialogDescription>
+                Configure um novo ciclo de avaliação de desempenho para sua organização
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              {/* Nome do Ciclo */}
+              <div className="space-y-2">
+                <Label htmlFor="cycle-name">Nome do Ciclo *</Label>
+                <Input
+                  id="cycle-name"
+                  placeholder="Ex: Ciclo de Avaliação 2025"
+                  value={newCycle.name}
+                  onChange={(e) => setNewCycle({ ...newCycle, name: e.target.value })}
+                />
+              </div>
+
+              {/* Ano e Tipo */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cycle-year">Ano *</Label>
+                  <Input
+                    id="cycle-year"
+                    type="number"
+                    min={new Date().getFullYear()}
+                    max={new Date().getFullYear() + 5}
+                    value={newCycle.year}
+                    onChange={(e) => setNewCycle({ ...newCycle, year: parseInt(e.target.value) })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="cycle-type">Tipo *</Label>
+                  <Select
+                    value={newCycle.type}
+                    onValueChange={(value) => setNewCycle({ ...newCycle, type: value })}
+                  >
+                    <SelectTrigger id="cycle-type">
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="anual">Anual</SelectItem>
+                      <SelectItem value="semestral">Semestral</SelectItem>
+                      <SelectItem value="trimestral">Trimestral</SelectItem>
+                      <SelectItem value="mensal">Mensal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Datas */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cycle-start">Data de Início *</Label>
+                  <Input
+                    id="cycle-start"
+                    type="date"
+                    value={newCycle.startDate}
+                    onChange={(e) => setNewCycle({ ...newCycle, startDate: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="cycle-end">Data de Fim *</Label>
+                  <Input
+                    id="cycle-end"
+                    type="date"
+                    value={newCycle.endDate}
+                    onChange={(e) => setNewCycle({ ...newCycle, endDate: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              {/* Descrição */}
+              <div className="space-y-2">
+                <Label htmlFor="cycle-description">Descrição</Label>
+                <Textarea
+                  id="cycle-description"
+                  placeholder="Descreva os objetivos e escopo deste ciclo..."
+                  value={newCycle.description}
+                  onChange={(e) => setNewCycle({ ...newCycle, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+
+              {/* Informação */}
+              <div className="rounded-lg border p-4 bg-muted/50">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Importante:</strong> Após criar o ciclo, você poderá ativá-lo e iniciar as avaliações de desempenho.
+                  Certifique-se de que as datas estão corretas antes de criar.
+                </p>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsCreateCycleDialogOpen(false);
+                  setNewCycle({
+                    name: "",
+                    year: new Date().getFullYear(),
+                    type: "",
+                    startDate: "",
+                    endDate: "",
+                    description: "",
+                  });
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={() => {
+                  if (!newCycle.name || !newCycle.type || !newCycle.startDate || !newCycle.endDate) {
+                    toast.error("Preencha todos os campos obrigatórios");
+                    return;
+                  }
+
+                  if (new Date(newCycle.startDate) >= new Date(newCycle.endDate)) {
+                    toast.error("A data de início deve ser anterior à data de fim");
+                    return;
+                  }
+
+                  // TODO: Integrar com backend
+                  toast.success(`Ciclo "${newCycle.name}" criado com sucesso!`);
+                  setIsCreateCycleDialogOpen(false);
+                  setNewCycle({
+                    name: "",
+                    year: new Date().getFullYear(),
+                    type: "",
+                    startDate: "",
+                    endDate: "",
+                    description: "",
+                  });
+                }}
+                disabled={!newCycle.name || !newCycle.type || !newCycle.startDate || !newCycle.endDate}
+              >
+                Criar Ciclo
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

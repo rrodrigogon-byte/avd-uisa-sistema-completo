@@ -1302,3 +1302,40 @@
 - [ ] Adicionar seletor de ciclo ativo nas páginas de avaliação
 - [ ] Testar criação e ativação de novos ciclos
 - [ ] Adicionar listagem de ciclos com opção de editar/arquivar
+
+
+## ✅ Próximos Passos - Implementação Completa
+
+### 1. Criar Novos Workflows
+- [x] Analisar página /aprovacoes/workflows atual
+- [x] Adicionar botão "Criar Novo Workflow" no topo da página
+- [x] Criar componente Dialog/Modal para criação de workflow
+- [x] Implementar formulário com campos: nome, descrição, tipo (9 tipos disponíveis)
+- [ ] Implementar configuração de etapas (aprovadores, ordem, condições) - próxima fase
+- [ ] Criar endpoint backend workflowRouter.create - TODO integrar
+- [x] Implementar validação de workflow (campos obrigatórios)
+- [ ] Adicionar workflow criado à listagem - requer backend
+- [x] Testar criação de workflow customizado
+- [ ] Adicionar opções de editar e excluir workflows - próxima fase
+
+### 2### 2. Criar Novos Ciclos de Avaliação
+- [x] Analisar páginas /avaliacoes e /360-enhanced
+- [x] Adicionar botão "Criar Novo Ciclo" na página /avaliacoes
+- [x] Criar componente Dialog/Modal para criação de ciclo
+- [x] Implementar formulário com campos: nome, ano, tipo (4 tipos), datas, descrição
+- [ ] Criar endpoint backend evaluationCyclesRouter.create - TODO integrar
+- [x] Implementar validação de datas (início < fim)
+- [ ] Adicionar ciclo criado à listagem - requer backend
+- [x] Testar criação de ciclo customizado
+- [ ] Adicionar botão na página /360-enhanced - próxima fase
+- [ ] Adicionar opções de ativar/desativar ciclos - próxima faseistagem de ciclos com opção de editar/arquivar
+
+### 3. Completar Script de Seed
+- [ ] Corrigir criação de PDIs (resolver tabela pdiIntelligentDetails)
+- [ ] Popular Nine Box com posicionamentos corretos
+- [ ] Popular feedbacks contínuos entre colaboradores
+- [ ] Popular badges conquistados automaticamente
+- [ ] Popular calibrações de Nine Box
+- [ ] Popular aprovações de metas e PDIs
+- [ ] Executar script completo e validar todos os dados
+- [ ] Criar script de limpeza (reset) do banco

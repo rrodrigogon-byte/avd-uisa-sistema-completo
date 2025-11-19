@@ -1,8 +1,28 @@
+import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GitBranch, Clock, CheckCircle, XCircle, ArrowRight } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { GitBranch, Clock, CheckCircle, XCircle, ArrowRight, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * Workflows
@@ -15,6 +35,13 @@ import { GitBranch, Clock, CheckCircle, XCircle, ArrowRight } from "lucide-react
  */
 
 export default function Workflows() {
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newWorkflow, setNewWorkflow] = useState({
+    name: "",
+    description: "",
+    type: "",
+  });
+
   // Mock data - TODO: integrar com backend
   const workflows = [
     {
@@ -91,11 +118,17 @@ export default function Workflows() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold">Workflows de Aprovação</h1>
-          <p className="text-muted-foreground">
-            Visualização e gerenciamento de fluxos de aprovação
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Workflows de Aprovação</h1>
+            <p className="text-muted-foreground">
+              Visualização e gerenciamento de fluxos de aprovação
+            </p>
+          </div>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Criar Novo Workflow
+          </Button>
         </div>
 
         {/* Workflows */}
@@ -157,6 +190,103 @@ export default function Workflows() {
             </Card>
           ))}
         </div>
+
+        {/* Dialog de Criação de Workflow */}
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Criar Novo Workflow</DialogTitle>
+              <DialogDescription>
+                Configure um novo fluxo de aprovação customizado para sua organização
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              {/* Nome do Workflow */}
+              <div className="space-y-2">
+                <Label htmlFor="workflow-name">Nome do Workflow *</Label>
+                <Input
+                  id="workflow-name"
+                  placeholder="Ex: Aprovação de Horas Extras"
+                  value={newWorkflow.name}
+                  onChange={(e) => setNewWorkflow({ ...newWorkflow, name: e.target.value })}
+                />
+              </div>
+
+              {/* Descrição */}
+              <div className="space-y-2">
+                <Label htmlFor="workflow-description">Descrição</Label>
+                <Textarea
+                  id="workflow-description"
+                  placeholder="Descreva o propósito deste workflow..."
+                  value={newWorkflow.description}
+                  onChange={(e) => setNewWorkflow({ ...newWorkflow, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+
+              {/* Tipo de Workflow */}
+              <div className="space-y-2">
+                <Label htmlFor="workflow-type">Tipo de Workflow *</Label>
+                <Select
+                  value={newWorkflow.type}
+                  onValueChange={(value) => setNewWorkflow({ ...newWorkflow, type: value })}
+                >
+                  <SelectTrigger id="workflow-type">
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="metas">Aprovação de Metas</SelectItem>
+                    <SelectItem value="pdi">Aprovação de PDI</SelectItem>
+                    <SelectItem value="avaliacao">Aprovação de Avaliação</SelectItem>
+                    <SelectItem value="bonus">Aprovação de Bônus</SelectItem>
+                    <SelectItem value="ferias">Aprovação de Férias</SelectItem>
+                    <SelectItem value="promocao">Aprovação de Promoção</SelectItem>
+                    <SelectItem value="horas_extras">Aprovação de Horas Extras</SelectItem>
+                    <SelectItem value="despesas">Aprovação de Despesas</SelectItem>
+                    <SelectItem value="outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Informação sobre Etapas */}
+              <div className="rounded-lg border p-4 bg-muted/50">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Próximo passo:</strong> Após criar o workflow, você poderá configurar as etapas de aprovação,
+                  definir aprovadores, ordem e condições para cada etapa.
+                </p>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsCreateDialogOpen(false);
+                  setNewWorkflow({ name: "", description: "", type: "" });
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={() => {
+                  if (!newWorkflow.name || !newWorkflow.type) {
+                    toast.error("Preencha todos os campos obrigatórios");
+                    return;
+                  }
+
+                  // TODO: Integrar com backend
+                  toast.success(`Workflow "${newWorkflow.name}" criado com sucesso!`);
+                  setIsCreateDialogOpen(false);
+                  setNewWorkflow({ name: "", description: "", type: "" });
+                }}
+                disabled={!newWorkflow.name || !newWorkflow.type}
+              >
+                Criar Workflow
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
