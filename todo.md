@@ -469,3 +469,38 @@
 - [x] Adicionar seção de Insights e Recomendações
 - [x] Integrar 21 perfis de mercado segmentados por setor/cargo
 - [x] Adicionar rota no App.tsx
+
+
+## 🐛 Correção Erros TypeScript
+- [x] Corrigir 4 erros de tipo `any` em Avaliar360.tsx
+- [x] Criar interface Question com tipagem adequada
+- [x] Aplicar tipagem explícita nos parâmetros (q: Question, idx: number, error: any)
+
+## 🎯 Metas em Cascata Hierárquico
+- [x] Criar schema de metas organizacionais, departamentais e individuais (campo parentGoalId, departmentId, alignmentPercentage)
+- [x] Criar endpoints para CRUD de metas em cascata (goalsCascadeRouter)
+- [x] Implementar lógica de propagação hierárquica (getTree, getChildGoals, createCascadeGoal)
+- [x] Criar página /metas-cascata com visualização em árvore
+- [x] Implementar componente de árvore recursivo (GoalTreeNode)
+- [x] Adicionar indicadores de % de alinhamento (cores verde/amarelo/vermelho)
+- [x] Adicionar status por nível (organizacional/departamental/individual com ícones e cores)
+- [x] Implementar expandir/colapsar por nó da árvore (ChevronDown/Right)
+- [x] Adicionar estatísticas KPI (Total, Organizacionais, Departamentais, Individuais)
+- [x] Adicionar alinhamento geral da cascata
+- [x] Adicionar legenda de tipos, status e alinhamento
+- [x] Registrar goalsCascadeRouter em routers.ts
+- [x] Adicionar rota no App.tsx
+
+## 📊 Dashboard Executivo Consolidado
+- [x] Criar página /dashboard-executivo
+- [x] Agregar KPIs do Nine Box (distribuição por quadrante com grid 3x3)
+- [x] Agregar KPIs do PDI (em desenvolvimento, concluídos)
+- [x] Agregar KPIs de Sucessão (posições críticas, cobertura)
+- [x] Agregar KPIs de Avaliação 360° (em andamento, concluídas)
+- [x] Agregar KPIs de Metas (total, alinhamento geral)
+- [x] Agregar KPIs de Benchmarking (gaps significativos, posição competitiva)
+- [x] Implementar filtros por departamento e período (Select components)
+- [x] Criar seção de insights estratégicos (card com recomendações)
+- [x] Implementar navegação para cada módulo (onClick nos cards)
+- [x] Adicionar rota no App.tsx
+- [ ] Implementar endpoints getDistribution e getStats nos routers (dados simulados atualmente)

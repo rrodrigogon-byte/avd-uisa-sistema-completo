@@ -227,6 +227,9 @@ export const goals = mysqlTable("goals", {
   progress: int("progress").default(0).notNull(), // Percentual 0-100
   linkedToPLR: boolean("linkedToPLR").default(false).notNull(),
   linkedToBonus: boolean("linkedToBonus").default(false).notNull(),
+  parentGoalId: int("parentGoalId"), // Meta pai (para cascata hierárquico)
+  departmentId: int("departmentId"), // Departamento responsável
+  alignmentPercentage: int("alignmentPercentage").default(0), // % de alinhamento com meta pai
   createdBy: int("createdBy").notNull(),
   approvedBy: int("approvedBy"),
   approvedAt: datetime("approvedAt"),

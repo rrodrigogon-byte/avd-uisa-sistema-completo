@@ -21,6 +21,7 @@ import { evaluation360Router } from "./evaluation360Router";
 import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { goalsRouter } from "./goalsRouter";
+import { goalsCascadeRouter } from "./goalsCascadeRouter";
 import { bonusRouter } from "./bonusRouter";
 import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
@@ -2358,6 +2359,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Mapa de Sucessão
   succession: successionRouter,
+
+  // Router de Metas em Cascata Hierárquico
+  goalsCascade: goalsCascadeRouter,
 
   // Router de PDI Inteligente
   pdiIntelligent: pdiIntelligentRouter,

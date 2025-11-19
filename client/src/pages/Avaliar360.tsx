@@ -16,6 +16,14 @@ import { toast } from "sonner";
  * Permite responder avaliações 360° com perguntas organizadas por categoria
  */
 
+interface Question {
+  id: number;
+  category: string | null;
+  type: string;
+  text: string;
+  [key: string]: any;
+}
+
 export default function Avaliar360() {
   const params = useParams();
   const evaluationId = params.evaluationId ? parseInt(params.evaluationId) : null;
@@ -32,7 +40,7 @@ export default function Avaliar360() {
     onSuccess: () => {
       toast.success("Resposta salva com sucesso!");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(`Erro ao salvar resposta: ${error.message}`);
     },
   });
@@ -42,7 +50,7 @@ export default function Avaliar360() {
     if (!questions) return [];
     
     const categories: Record<string, typeof questions> = {};
-    questions.forEach(q => {
+    questions.forEach((q: Question) => {
       const cat = q.category || "Sem Categoria";
       if (!categories[cat]) categories[cat] = [];
       categories[cat].push(q);
@@ -81,7 +89,7 @@ export default function Avaliar360() {
       return;
     }
 
-    const unanswered = questions?.filter(q => 
+    const unanswered = questions?.filter((q: Question) => 
       q.type === "escala" && !responses[q.id]?.score
     );
 
@@ -223,7 +231,7 @@ export default function Avaliar360() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {currentCategoryData.questions.map((question, idx) => (
+              {currentCategoryData.questions.map((question: Question, idx: number) => (
                 <div key={question.id} className="space-y-3 pb-6 border-b last:border-b-0">
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
