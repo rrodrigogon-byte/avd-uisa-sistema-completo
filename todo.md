@@ -1538,6 +1538,12 @@
 - [x] Criar script seed-disc-questions.mjs com 40 perguntas DISC
 - [x] Popular banco com perguntas corretas (10 por dimensão D, I, S, C)
 - [x] Validar que cálculo agora funciona corretamente
-- [ ] Testar teste DISC novamente e verificar resultados
-- [ ] Aplicar mesma correção para outros testes (Big Five, MBTI, IE, VARK)
+- [x] Testar teste DISC novamente e verificar resultados
+- [x] Aplicar mesma correção para outros testes (Big Five, MBTI, IE, VARK)
+- [x] Criar script seed-all-tests.mjs com 170 perguntas
+- [x] Popular Big Five (50 perguntas - 5 dimensões)
+- [x] Popular MBTI (40 perguntas - 8 dimensões)
+- [x] Popular IE (40 perguntas - 4 dimensões)
+- [x] Popular VARK (40 perguntas - 4 dimensões)
+- [x] Total: 210 perguntas psicométricas completas
 - [ ] Validar resultados na página de visualização RH
