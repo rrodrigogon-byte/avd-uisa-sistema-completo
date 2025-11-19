@@ -1,5 +1,11 @@
 # Sistema AVD UISA - TODO
 
+## 🐛 Correção Erro pdiRisks
+
+- [x] Adicionar coluna type (renomear category)
+- [x] Adicionar coluna responsible
+- [x] Testar página de PDI Inteligente
+
 ## 🐛 Correção Erro pdiIntelligentDetails
 
 - [x] Verificar schema de pdiIntelligentDetails
