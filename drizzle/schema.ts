@@ -1144,7 +1144,6 @@ export const goalComments = mysqlTable("goalComments", {
   comment: text("comment").notNull(),
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 // Relations

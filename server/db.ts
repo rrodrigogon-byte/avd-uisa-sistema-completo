@@ -456,3 +456,19 @@ export async function getDashboardStats(employeeId: number, cycleId?: number) {
     evaluationsCount: evaluationsCount[0]?.count || 0,
   };
 }
+
+/**
+ * Buscar employee vinculado a um usuário
+ */
+export async function getUserEmployee(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.userId, userId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}

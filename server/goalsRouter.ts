@@ -10,7 +10,7 @@ import {
   evaluationCycles,
   pdiPlans,
 } from "../drizzle/schema";
-import { getDb } from "./db";
+import { getDb, getUserEmployee } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 
 /**
@@ -326,7 +326,7 @@ export const goalsRouter = router({
     .input(
       z.object({
         goalId: z.number(),
-        currentValue: z.number(),
+        currentValue: z.number().optional(),
         progress: z.number().min(0).max(100),
         comment: z.string().optional(),
       })
@@ -335,22 +335,37 @@ export const goalsRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
+      // Buscar employee vinculado ao usuário
+      const employee = await getUserEmployee(ctx.user.id);
+      if (!employee) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Employee não encontrado para este usuário",
+        });
+      }
+
       // Atualizar meta
+      const updateData: any = {
+        progress: input.progress,
+        status: input.progress === 100 ? "completed" : "in_progress",
+        completedAt: input.progress === 100 ? new Date() : undefined,
+      };
+      
+      // Adicionar currentValue apenas se fornecido
+      if (input.currentValue !== undefined) {
+        updateData.currentValue = input.currentValue.toString();
+      }
+
       await db
         .update(smartGoals)
-        .set({
-          currentValue: input.currentValue.toString(),
-          progress: input.progress,
-          status: input.progress === 100 ? "completed" : "in_progress",
-          completedAt: input.progress === 100 ? new Date() : undefined,
-        })
+        .set(updateData)
         .where(eq(smartGoals.id, input.goalId));
 
       // Adicionar comentário se fornecido
       if (input.comment) {
         await db.insert(goalComments).values({
           goalId: input.goalId,
-          authorId: ctx.user.id,
+          authorId: employee.id, // Usar employee.id em vez de ctx.user.id
           comment: input.comment,
         });
       }

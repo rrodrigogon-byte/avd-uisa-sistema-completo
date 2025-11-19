@@ -208,3 +208,11 @@
 - [ ] Adicionar comparação de desempenho entre períodos
 - [ ] Criar dashboard de KPIs em tempo real
 - [ ] Implementar sistema de badges/conquistas para gamificação
+
+### 🐛 Correção de Erro: Inserção de Comentários
+- [x] Investigar schema da tabela goalComments (removido updatedAt)
+- [x] Corrigir endpoint updateProgress para buscar employee antes de inserir comentário
+- [x] Tornar currentValue opcional no schema de validação
+- [x] Criar função getUserEmployee no db.ts
+- [x] Criar testes vitest para validar endpoint (3/4 testes passando - backend OK)
+- [ ] **PROBLEMA FRONTEND:** Formulário de atualização não está submetendo - investigar handleSubmit e estado da mutation
