@@ -206,7 +206,7 @@ export const successionRouter = router({
       return { success: true };
     }),
 
-  // Adicionar sucessor ao plano
+  // Adicionar sucessor ao plano (FORMULÁRIO COMPLETO)
   addSuccessor: protectedProcedure
     .input(
       z.object({
@@ -214,6 +214,13 @@ export const successionRouter = router({
         employeeId: z.number(),
         readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]),
         priority: z.number().default(1),
+        // Novos campos de avaliação
+        performanceRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
+        potentialRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
+        nineBoxPosition: z.string().optional(),
+        // Análise e desenvolvimento
+        gapAnalysis: z.string().optional(),
+        developmentActions: z.string().optional(),
         developmentPlanId: z.number().optional(),
         notes: z.string().optional(),
       })
@@ -248,6 +255,13 @@ export const successionRouter = router({
         id: z.number(),
         readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]).optional(),
         priority: z.number().optional(),
+        // Novos campos de avaliação
+        performanceRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
+        potentialRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
+        nineBoxPosition: z.string().optional(),
+        // Análise e desenvolvimento
+        gapAnalysis: z.string().optional(),
+        developmentActions: z.string().optional(),
         developmentPlanId: z.number().optional(),
         notes: z.string().optional(),
       })

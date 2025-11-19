@@ -492,7 +492,17 @@ export const successionCandidates = mysqlTable("successionCandidates", {
   planId: int("planId").notNull(),
   employeeId: int("employeeId").notNull(),
   readinessLevel: mysqlEnum("readinessLevel", ["imediato", "1_ano", "2_3_anos", "mais_3_anos"]).notNull(),
-  priority: int("priority").default(1).notNull(), // Ordem de prioridade
+  priority: int("priority").default(1).notNull(), // Ordem de prioridade (1=Principal, 2=Secundário, 3=Backup)
+  
+  // Avaliações
+  performanceRating: mysqlEnum("performanceRating", ["baixo", "medio", "alto", "excepcional"]),
+  potentialRating: mysqlEnum("potentialRating", ["baixo", "medio", "alto", "excepcional"]),
+  nineBoxPosition: varchar("nineBoxPosition", { length: 100 }), // Posição na matriz 9-box
+  
+  // Análise e Desenvolvimento
+  gapAnalysis: text("gapAnalysis"), // Análise de gaps (lacunas)
+  developmentActions: text("developmentActions"), // Ações de desenvolvimento recomendadas
+  
   developmentPlanId: int("developmentPlanId"), // PDI associado
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

@@ -151,7 +151,17 @@ export const appRouter = router({
   // ============================================================================
   employees: router({
     list: protectedProcedure.query(async () => {
-      return await db.getAllEmployees();
+      try {
+        const result = await db.getAllEmployees();
+        return result || [];
+      } catch (error) {
+        console.error('[employees.list] Error:', error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Erro ao buscar funcionários',
+          cause: error,
+        });
+      }
     }),
 
     getById: protectedProcedure

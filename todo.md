@@ -379,3 +379,64 @@
 - [x] Gerar arquivo TXT com estrutura completa do projeto (347KB, 9570 linhas)
 - [x] Adicionar timestamp e metadados ao backup
 - [x] Arquivo gerado: backup-completo-20251119-134726.txt
+
+
+## 🐛 Correção Erro API Funcionários
+- [x] Investigar erro "Unexpected token '<', "<!doctype "... is not valid JSON" na página /funcionarios
+- [x] Adicionar tratamento de erro robusto ao endpoint employees.list
+- [x] Adicionar logs de erro para debug
+- [x] Garantir que sempre retorna array vazio em caso de falha
+
+
+## 🗺️ Melhorias Mapa de Sucessão (Prioridade Máxima)
+- [x] Melhorar formulário "Adicionar Sucessor" conforme imagem
+- [x] Adicionar campo "Candidato/Sucessor" com seletor de colaboradores (employeeId)
+- [x] Adicionar campo "Nível de Prontidão" (Pronto em 1-2 anos, 2-3 anos, 3+ anos) - readinessLevel
+- [x] Adicionar campo "Prioridade" (1 - Principal, 2 - Secundário, 3 - Backup) - priority
+- [x] Adicionar campo "Avaliação de Desempenho" (Baixo/Médio/Alto/Excepcional) - performanceRating
+- [x] Adicionar campo "Avaliação de Potencial" (Baixo/Médio/Alto/Excepcional) - potentialRating
+- [x] Adicionar campo "Posição Nine Box" (Alto Potencial/Alto Desempenho/etc) - nineBoxPosition
+- [x] Adicionar campo "Análise de Gaps (Lacunas)" - gapAnalysis (TEXT)
+- [x] Adicionar campo "Ações de Desenvolvimento Recomendadas" - developmentActions (TEXT)
+- [x] Atualizar schema successionCandidates com novos campos
+- [x] Atualizar endpoint addSuccessor com novos campos
+- [x] Atualizar endpoint updateSuccessor com novos campos
+- [ ] Melhorar página frontend do Mapa de Sucessão
+- [ ] Implementar formulário completo de adicionar sucessor no frontend
+- [ ] Adicionar estatísticas no topo (Posições Críticas, Sucessores Prontos, Sem Sucessor, % Cobertura)
+
+## 🎯 Páginas Frontend Fluxo 360° (Prioridade Alta)
+- [ ] Criar página /avaliacoes/autoavaliacao/:id
+- [ ] Criar página /avaliacoes/gestor/:id
+- [ ] Criar página /avaliacoes/consenso/:id
+- [ ] Implementar indicador visual de etapa atual (stepper)
+- [ ] Implementar validações de permissão (apenas gestor pode avaliar, apenas líder pode fazer consenso)
+- [ ] Adicionar formulário de perguntas com escala 1-5
+- [ ] Adicionar campo de comentários por pergunta
+- [ ] Implementar botão de submissão que chama endpoint correto
+- [ ] Mostrar mensagem de sucesso e próxima etapa após submissão
+- [ ] Implementar visualização de respostas anteriores (read-only)
+
+## 📊 Página de Benchmarking UISA vs Mercado (Prioridade Alta)
+- [ ] Criar página /benchmarking
+- [ ] Criar endpoint backend para comparação UISA vs mercado
+- [ ] Implementar gráfico radar DISC (Dominância, Influência, Estabilidade, Conformidade)
+- [ ] Implementar gráfico radar Big Five (Abertura, Conscienciosidade, Extroversão, Amabilidade, Neuroticismo)
+- [ ] Adicionar filtros por setor (Energia, Construção, Tecnologia, etc)
+- [ ] Adicionar filtros por cargo (Gerente, Coordenador, Analista, etc)
+- [ ] Criar dataset de 21 perfis de mercado por setor/cargo
+- [ ] Implementar comparação visual com cores (UISA vs Mercado)
+- [ ] Adicionar tabela de gaps/diferenças significativas
+- [ ] Implementar exportação de relatório de benchmarking
+
+## 🎯 Sistema de Metas em Cascata Hierárquico (Prioridade Alta)
+- [ ] Criar página /metas-cascata
+- [ ] Criar schema de metas hierárquicas (organizacional, departamental, individual)
+- [ ] Implementar visualização em árvore interativa
+- [ ] Adicionar indicador de % de alinhamento entre níveis
+- [ ] Implementar propagação automática de metas (top-down)
+- [ ] Adicionar filtro por departamento/área
+- [ ] Implementar expansão/colapso de nós da árvore
+- [ ] Adicionar badges de status (Não iniciado/Em andamento/Concluído)
+- [ ] Implementar cálculo de progresso agregado por nível
+- [ ] Adicionar modal de detalhes de meta ao clicar no nó
