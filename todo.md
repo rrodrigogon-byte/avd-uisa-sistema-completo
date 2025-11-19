@@ -84,7 +84,12 @@
 
 ---
 
-## 🐛 Erros Conhecidos (26 TypeScript)
+## 🐛 Erros Conhecidos
+
+### Bugs de Banco de Dados
+- [x] Corrigir erro: tabela goalMilestones não existe no banco de dados (página /metas/1/progresso) - RESOLVIDO
+
+### Erros TypeScript (26 erros)
 
 1. Avaliacao360Enhanced.tsx:376 - Property 'subordinates' does not exist
 2. CiclosAvaliacao.tsx:70 - Property 'complete' does not exist
