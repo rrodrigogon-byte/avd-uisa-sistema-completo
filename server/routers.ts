@@ -1189,6 +1189,66 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         return { ...test, profile };
       });
     }),
+
+    // Enviar convite para teste psicométrico por email
+    sendTestInvite: protectedProcedure
+      .input(z.object({
+        emails: z.array(z.string().email()),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Verificar se é admin
+        if (ctx.user.role !== "admin") {
+          throw new Error("Acesso negado: apenas administradores");
+        }
+
+        const { createTestInviteEmail, testInfo } = await import("./utils/testInviteTemplate");
+        const { emailService } = await import("./utils/emailService");
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const results = [];
+        const testData = testInfo[input.testType];
+
+        for (const email of input.emails) {
+          // Buscar colaborador pelo email
+          const employee = await database.select()
+            .from(employees)
+            .where(eq(employees.email, email))
+            .limit(1);
+
+          if (employee.length === 0) {
+            results.push({ email, success: false, message: "Colaborador não encontrado" });
+            continue;
+          }
+
+          const testUrl = `https://3000-ipmp0a4ptf6awjhw09efq-4f54ef5c.manusvm.computer/testes/${input.testType}`;
+          
+          const emailTemplate = createTestInviteEmail({
+            employeeName: employee[0].name,
+            testType: testData.type,
+            testName: testData.name,
+            testDescription: testData.description,
+            estimatedTime: testData.estimatedTime,
+            testUrl,
+          });
+
+          // Enviar email usando o emailService
+          const sent = await emailService.sendCustomEmail(
+            email,
+            emailTemplate.subject,
+            emailTemplate.html
+          );
+
+          results.push({
+            email,
+            success: sent,
+            message: sent ? "Convite enviado com sucesso" : "Erro ao enviar email",
+          });
+        }
+
+        return { results };
+      }),
   }),
 
   // Router de Administração (apenas admin)

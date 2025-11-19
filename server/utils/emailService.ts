@@ -473,4 +473,29 @@ export const emailService = {
       return false;
     }
   },
+
+  async sendCustomEmail(to: string, subject: string, html: string) {
+    const transporter = await createTransporter();
+    if (!transporter) {
+      console.warn("[EmailService] Transporter não disponível");
+      return false;
+    }
+
+    const config = await getSmtpConfig();
+    if (!config) return false;
+
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to,
+        subject,
+        html,
+      });
+      console.log(`[EmailService] E-mail customizado enviado para ${to}`);
+      return true;
+    } catch (error) {
+      console.error("[EmailService] Erro ao enviar e-mail:", error);
+      return false;
+    }
+  },
 };

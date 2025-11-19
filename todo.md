@@ -1045,3 +1045,24 @@
 - [x] Integrar permissões no calibrationRouter (canDoConsensus)
 - [x] Integrar permissões no nineBoxRouter (canViewEmployee)
 - [x] Testar acesso restrito com diferentes perfis de usuário
+
+## 📧 Envio de Testes Psicométricos
+- [x] Criar endpoint de envio de convites para testes psicométricos
+- [x] Criar template de email para convite de testes
+- [x] Enviar DISC para rodrigo.dias@uisa.com.br, caroline.silva@uisa.com.br, rodrigo.goncalves@uisa.com.br, andre.sbardellini@uisa.com.br
+- [x] Enviar Big Five para os 4 colaboradores
+- [x] Enviar MBTI para os 4 colaboradores
+- [x] Enviar IE para os 4 colaboradores
+- [x] Enviar VARK para os 4 colaboradores
+
+## 🏢 Hierarquia Organizacional
+- [ ] Criar página /admin/hierarquia com visualização de organograma
+- [ ] Implementar edição de gestores diretos
+- [ ] Implementar reatribuição de centros de custos
+- [ ] Adicionar filtros por departamento/cargo
+
+## 📊 Dashboard de Monitoramento de Emails
+- [ ] Criar página /admin/emails
+- [ ] Implementar visualização de histórico de emails
+- [ ] Adicionar métricas de taxa de entrega e falhas
+- [ ] Implementar reenvio manual de notificações
