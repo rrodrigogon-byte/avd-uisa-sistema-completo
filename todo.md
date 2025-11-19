@@ -1570,3 +1570,29 @@
 - [ ] Adicionar confirmações antes de ações críticas
 - [ ] Otimizar navegação entre páginas relacionadas
 - [ ] Adicionar atalhos rápidos no dashboard
+
+## 🔄 Implementação Passos 1, 2 e 3
+
+### Passo 1: Workflows de Aprovação
+- [ ] Verificar página /aprovacoes/workflows existente
+- [ ] Criar formulário de novo workflow
+- [ ] Implementar seleção de tipo (PDI, Meta, Avaliação)
+- [ ] Adicionar configuração de níveis de aprovação
+- [ ] Implementar notificações automáticas por e-mail
+- [ ] Testar fluxo completo de aprovação
+
+### Passo 2: Importação Dados UISA
+- [ ] Verificar página /admin/import-uisa existente
+- [ ] Criar template Excel para importação
+- [ ] Implementar upload de arquivo Excel
+- [ ] Criar parser de dados TOTVS RM
+- [ ] Validar dados antes de importar
+- [ ] Executar importação e exibir resultado
+
+### Passo 3: Relatórios Agendados
+- [ ] Verificar página /admin/scheduled-reports existente
+- [ ] Testar criação de relatório agendado
+- [ ] Configurar periodicidade (diário, semanal, mensal)
+- [ ] Testar envio por e-mail
+- [ ] Validar geração de PDF/Excel
+- [ ] Verificar logs de execução
