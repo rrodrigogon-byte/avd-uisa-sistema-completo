@@ -1038,7 +1038,7 @@
 
 
 ## 📧 Teste de Email e População de Dados
-- [ ] Testar envio de email SMTP para rodrigo.goncalves@uisa.com.br (pendente senha de aplicativo correta)
+- [x] Testar envio de email SMTP para rodrigo.goncalves@uisa.com.br
 - [x] Popular managerId (gestor direto) de todos os colaboradores
 - [x] Atribuir centros de custos a todos os colaboradores
 - [x] Integrar permissões no evaluationRouter (canViewEmployee, canApproveEvaluation)

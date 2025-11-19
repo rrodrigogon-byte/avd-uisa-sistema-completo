@@ -7,7 +7,7 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: 'avd@uisa.com.br',
-    pass: 'C8HNBnvWfjznqo6CKSzw', // Removendo caracteres especiais
+    pass: 'hcmsjglzurabtaus', // Senha de aplicativo do Gmail (sem espaços)
   },
 });
 
