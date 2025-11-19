@@ -1092,3 +1092,13 @@
 - [x] Adicionar rota /admin/emails no App.tsx
 - [x] Adicionar link no menu de Configurações
 - [ ] Testar funcionalidade completa (métricas, filtros, reenvio)
+
+## 📧 Envio de Testes para Rodrigo Gonçalves
+- [x] Validar que todas as páginas de testes estão acessíveis (sem 404)
+- [x] Testar /teste-disc
+- [x] Testar /teste-bigfive
+- [x] Testar /teste-mbti
+- [x] Testar /teste-ie
+- [x] Testar /teste-vark
+- [x] Criar script de envio para rodrigo.goncalves@uisa.com.br
+- [x] Enviar todos os 5 testes (DISC, Big Five, MBTI, IE, VARK)
