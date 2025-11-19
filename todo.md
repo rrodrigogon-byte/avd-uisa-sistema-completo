@@ -1485,3 +1485,47 @@
 - [ ] Identificar funcionalidades faltantes
 - [ ] Criar lista de pendências para 100%
 - [ ] Documentar sistema completo
+
+
+## 🎯 Finalização 100% - Implementação Completa
+
+### 1. Configurar SMTP e Testar E-mail
+- [x] Criar schema smtpConfig no drizzle/schema.ts
+- [x] Executar pnpm db:push para criar tabela (57 tabelas detectadas)
+- [x] Criar página /configuracoes/smtp
+- [x] Adicionar formulário: host, porta, usuário, senha, remetente, usar TLS
+- [x] Criar endpoint backend smtpConfig.save
+- [x] Criar endpoint backend smtpConfig.get
+- [x] Adicionar rota no App.tsx
+- [x] Corrigir erros TypeScript
+- [ ] Atualizar emailService.ts para usar configuração do banco
+- [ ] Testar envio de e-mail para rodrigo.goncalves@uisa.com.br
+
+### 2. Adicionar Botões de Envio de E-mail
+- [ ] Adicionar botão "Enviar por E-mail" na página de metas
+- [ ] Criar modal de preview de e-mail para metas
+- [ ] Conectar ao endpoint trpc.email.sendGoalEmail
+- [ ] Adicionar botão "Enviar por E-mail" na página de performance
+- [ ] Criar modal de preview de e-mail para performance
+- [ ] Conectar ao endpoint trpc.email.sendPerformanceEmail
+- [ ] Testar envio de e-mails
+
+### 3. Visualizar Workflows e Ciclos Criados
+- [ ] Substituir mock data por trpc.workflows.list na página Workflows
+- [ ] Mostrar workflows criados dinamicamente
+- [ ] Adicionar indicador de workflow ativo/inativo
+- [ ] Mostrar ciclos criados na página Avaliacoes
+- [ ] Adicionar indicador de ciclo ativo
+- [ ] Implementar botão de ativar/desativar ciclo
+
+### 4. Botão em 360° Enhanced
+- [ ] Adicionar botão "Criar Novo Ciclo" na página /360-enhanced
+- [ ] Reutilizar mesmo modal da página /avaliacoes
+- [ ] Testar criação de ciclo
+
+### 5. Completar Processos Faltantes
+- [ ] Revisar todos os endpoints backend
+- [ ] Verificar todas as páginas principais
+- [ ] Testar todos os fluxos end-to-end
+- [ ] Corrigir bugs encontrados
+- [ ] Validar responsividade mobile

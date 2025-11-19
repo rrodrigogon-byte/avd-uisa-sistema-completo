@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import Home from "./pages/Home";
 import DashboardGestor from "./pages/DashboardGestor";
+import ConfiguracoesSMTP from "./pages/ConfiguracoesSMTP";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
 import PDI from "./pages/PDI";
@@ -71,9 +72,8 @@ import DashboardEmails from "./pages/DashboardEmails";
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/gestor"} component={DashboardGestor} />
-      <Route path={"/metas"} component={MetasSMART} />
+      <Route path={"/"} component={Home} />          <Route path="/gestor" component={DashboardGestor} />
+          <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />      <Route path={"/metas"} component={MetasSMART} />
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
       <Route path={"/metas/:id"} component={DetalhesMeta} />
       <Route path={"/metas/:id/editar"} component={EditarMeta} />

@@ -162,6 +162,13 @@
       "when": 1763550092986,
       "tag": "0022_perpetual_demogoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1763552185007,
+      "tag": "0023_free_khan",
+      "breakpoints": true
     }
   ]
 }

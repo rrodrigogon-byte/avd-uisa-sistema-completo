@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -2367,6 +2367,50 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // ============================================================================
   // E-MAIL
   // ============================================================================
+  smtpConfig: router({
+    get: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar configuração mais recente
+      const configs = await db.select().from(smtpConfig).where(eq(smtpConfig.isActive, true)).orderBy(desc(smtpConfig.createdAt)).limit(1);
+      
+      return configs.length > 0 ? configs[0] : null;
+    }),
+
+    save: protectedProcedure
+      .input(z.object({
+        host: z.string(),
+        port: z.number(),
+        secure: z.boolean(),
+        user: z.string(),
+        password: z.string().optional(),
+        fromEmail: z.string().email(),
+        fromName: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        // Desativar configurações antigas
+        await db.update(smtpConfig).set({ isActive: false }).where(eq(smtpConfig.isActive, true));
+
+        // Criar nova configuração
+        const result = await db.insert(smtpConfig).values({
+          host: input.host,
+          port: input.port,
+          secure: input.secure,
+          user: input.user,
+          password: input.password || "***", // TODO: Encrypt password
+          fromEmail: input.fromEmail,
+          fromName: input.fromName,
+          isActive: true,
+        });
+
+        return { success: true, configId: result[0].insertId };
+      }),
+  }),
+
   email: router({
     // Enviar e-mail de teste
     sendTest: protectedProcedure

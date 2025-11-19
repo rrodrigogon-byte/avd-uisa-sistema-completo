@@ -1510,3 +1510,25 @@ export const workflowStepApprovals = mysqlTable("workflowStepApprovals", {
 
 export type WorkflowStepApproval = typeof workflowStepApprovals.$inferSelect;
 export type InsertWorkflowStepApproval = typeof workflowStepApprovals.$inferInsert;
+
+
+/**
+ * SMTP Configuration
+ * Stores email server configuration for sending notifications
+ */
+export const smtpConfig = mysqlTable("smtp_config", {
+  id: int("id").autoincrement().primaryKey(),
+  host: varchar("host", { length: 255 }).notNull(),
+  port: int("port").notNull().default(587),
+  secure: boolean("secure").default(false), // true for 465, false for other ports
+  user: varchar("user", { length: 255 }).notNull(),
+  password: text("password").notNull(), // Encrypted
+  fromEmail: varchar("from_email", { length: 320 }).notNull(),
+  fromName: varchar("from_name", { length: 255 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SmtpConfig = typeof smtpConfig.$inferSelect;
+export type InsertSmtpConfig = typeof smtpConfig.$inferInsert;
