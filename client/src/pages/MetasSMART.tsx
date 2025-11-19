@@ -77,7 +77,7 @@ export default function MetasSMART() {
   });
 
   // Buscar ciclos disponíveis
-  const { data: cycles = [] } = trpc.cycles.list.useQuery();
+  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery();
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {

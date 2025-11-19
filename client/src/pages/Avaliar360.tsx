@@ -18,10 +18,8 @@ import { toast } from "sonner";
 
 interface Question {
   id: number;
-  category: string | null;
-  type: string;
+  category: string;
   text: string;
-  [key: string]: any;
 }
 
 export default function Avaliar360() {
@@ -33,7 +31,7 @@ export default function Avaliar360() {
   const [responses, setResponses] = useState<Record<number, { score?: number; text?: string }>>({});
 
   // Buscar perguntas
-  const { data: questions, isLoading } = trpc.evaluation360.getQuestions.useQuery();
+  const { data: questions, isLoading } = trpc.evaluation360.getQuestions.useQuery({ evaluationId: evaluationId || 0 });
 
   // Mutation para submeter feedback
   const submitFeedbackMutation = trpc.evaluation360.submitFeedback.useMutation({
@@ -90,25 +88,27 @@ export default function Avaliar360() {
     }
 
     const unanswered = questions?.filter((q: Question) => 
-      q.type === "escala" && !responses[q.id]?.score
+      !responses[q.id]?.score
     );
 
     if (unanswered && unanswered.length > 0) {
-      toast.error(`Existem ${unanswered.length} perguntas de escala não respondidas`);
+      toast.error(`Existem ${unanswered.length} perguntas não respondidas`);
       return;
     }
 
     try {
-      for (const [questionIdStr, response] of Object.entries(responses)) {
-        const questionId = parseInt(questionIdStr);
-        await submitFeedbackMutation.mutateAsync({
-          evaluationId,
-          questionId,
-          evaluatorType,
-          score: response.score,
-          textResponse: response.text,
-        });
-      }
+      // Consolidar todas as respostas em um feedback textual
+      const feedbackText = Object.entries(responses)
+        .map(([questionIdStr, response]) => {
+          const question = questions?.find(q => q.id === parseInt(questionIdStr));
+          return `${question?.text}: Nota ${response.score}/5${response.text ? ` - ${response.text}` : ''}`;
+        })
+        .join('\n\n');
+
+      await submitFeedbackMutation.mutateAsync({
+        evaluationId,
+        feedback: feedbackText,
+      });
       toast.success("Avaliação enviada com sucesso!");
       setResponses({});
     } catch (error) {
@@ -238,39 +238,28 @@ export default function Avaliar360() {
                       <span className="text-sm font-medium">{idx + 1}</span>
                     </div>
                     <div className="flex-1 space-y-3">
-                      <p className="font-medium">{question.question}</p>
+                      <p className="font-medium">{question.text}</p>
 
-                      {question.type === "escala" && (
-                        <div className="space-y-2">
-                          <Label className="text-sm text-muted-foreground">
-                            Escala de 1 (Discordo Totalmente) a 5 (Concordo Totalmente)
-                          </Label>
-                          <RadioGroup
-                            value={responses[question.id]?.score?.toString() || ""}
-                            onValueChange={(v) => handleScoreChange(question.id, parseInt(v))}
-                          >
-                            <div className="flex gap-4">
-                              {[1, 2, 3, 4, 5].map(score => (
-                                <div key={score} className="flex items-center space-x-2">
-                                  <RadioGroupItem value={score.toString()} id={`q${question.id}-${score}`} />
-                                  <Label htmlFor={`q${question.id}-${score}`} className="cursor-pointer">
-                                    {score}
-                                  </Label>
-                                </div>
-                              ))}
-                            </div>
-                          </RadioGroup>
-                        </div>
-                      )}
-
-                      {question.type === "texto" && (
-                        <Textarea
-                          placeholder="Digite sua resposta..."
-                          value={responses[question.id]?.text || ""}
-                          onChange={(e) => handleTextChange(question.id, e.target.value)}
-                          rows={4}
-                        />
-                      )}
+                      <div className="space-y-2">
+                        <Label className="text-sm text-muted-foreground">
+                          Escala de 1 (Discordo Totalmente) a 5 (Concordo Totalmente)
+                        </Label>
+                        <RadioGroup
+                          value={responses[question.id]?.score?.toString() || ""}
+                          onValueChange={(v) => handleScoreChange(question.id, parseInt(v))}
+                        >
+                          <div className="flex gap-4">
+                            {[1, 2, 3, 4, 5].map(score => (
+                              <div key={score} className="flex items-center space-x-2">
+                                <RadioGroupItem value={score.toString()} id={`q${question.id}-${score}`} />
+                                <Label htmlFor={`q${question.id}-${score}`} className="cursor-pointer">
+                                  {score}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </RadioGroup>
+                      </div>
 
                       {responses[question.id] && (
                         <div className="flex items-center gap-2 text-sm text-green-600">

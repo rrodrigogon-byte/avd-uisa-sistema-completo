@@ -22,6 +22,7 @@ import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { goalsRouter } from "./goalsRouter";
 import { goalsCascadeRouter } from "./goalsCascadeRouter";
+import { cyclesRouter } from "./cyclesRouter";
 import { bonusRouter } from "./bonusRouter";
 import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
@@ -1070,9 +1071,9 @@ export const appRouter = router({
   }),
 
   // ============================================================================
-  // CICLOS, DEPARTAMENTOS E CARGOS
+  // CICLOS, DEPARTAMENTOS E CARGOS (Legacy)
   // ============================================================================
-  cycles: router({
+  cyclesLegacy: router({
     list: protectedProcedure.query(async () => {
       return await db.getAllCycles();
     }),
@@ -2371,6 +2372,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Avaliação 360° com Fluxo Sequencial
   evaluation360: evaluation360Router,
+  
+  // Router de Gestão de Ciclos de Avaliação (360°)
+  evaluationCycles: cyclesRouter,
   
   reportBuilder: reportBuilderRouter,
   reportAnalytics: reportAnalyticsRouter,

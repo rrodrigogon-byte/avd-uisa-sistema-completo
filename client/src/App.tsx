@@ -44,6 +44,7 @@ import Avaliacao360Consenso from "./pages/Avaliacao360Consenso";
 import BenchmarkingMercado from "./pages/BenchmarkingMercado";
 import MetasCascata from "./pages/MetasCascata";
 import DashboardExecutivoConsolidado from "./pages/DashboardExecutivoConsolidado";
+import CiclosAvaliacao from "./pages/CiclosAvaliacao";
 import AuditTrail from "./pages/AuditTrail";
 import Analytics from "./pages/Analytics";
 import Feedbacks from "./pages/Feedbacks";
@@ -105,6 +106,7 @@ function Router() {
       <Route path="/benchmarking" component={BenchmarkingMercado} />
       <Route path="/metas-cascata" component={MetasCascata} />
       <Route path="/dashboard-executivo" component={DashboardExecutivoConsolidado} />
+      <Route path="/ciclos-avaliacao" component={CiclosAvaliacao} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />

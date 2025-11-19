@@ -198,6 +198,10 @@ export const evaluationCycles = mysqlTable("evaluationCycles", {
   endDate: datetime("endDate").notNull(),
   status: mysqlEnum("status", ["planejamento", "em_andamento", "concluido", "cancelado"]).default("planejamento").notNull(),
   description: text("description"),
+  // Prazos por etapa do fluxo 360°
+  selfEvaluationDeadline: datetime("selfEvaluationDeadline"),
+  managerEvaluationDeadline: datetime("managerEvaluationDeadline"),
+  consensusDeadline: datetime("consensusDeadline"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

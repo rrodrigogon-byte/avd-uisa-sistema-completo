@@ -520,6 +520,14 @@
 - [x] Adicionar endpoint evaluation360.getDetails ao router
 - [x] Adicionar import TRPCError
 
+## 🐛 Correção Erros TypeScript Avaliar360.tsx (Prioridade Máxima)
+- [x] Corrigir linha 106: remover 'questionId' do submitFeedback (endpoint aceita apenas evaluationId e feedback)
+- [x] Corrigir linha 234: ajustar tipo Question para incluir campo 'type' ou remover do map
+- [x] Simplificar interface Question (id, category, text)
+- [x] Consolidar respostas em feedback textual
+- [x] Adicionar parâmetro evaluationId ao getQuestions
+- [x] Remover lógica de tipo de pergunta (todas são escala 1-5)
+
 ## 📅 Gestão de Ciclos de Avaliação
 - [ ] Criar schema evaluationCycles (id, year, startDate, endDate, selfEvaluationDeadline, managerEvaluationDeadline, consensusDeadline, status, createdAt)
 - [ ] Criar router cyclesRouter com endpoints CRUD
@@ -527,6 +535,8 @@
 - [ ] Implementar formulário de criar novo ciclo
 - [ ] Implementar ativar/desativar ciclo
 - [ ] Adicionar visualização de histórico completo
+- [ ] Registrar router em routers.ts
+- [ ] Adicionar rota no App.tsx
 
 ## 📊 Dashboard Acompanhamento 360°
 - [ ] Criar endpoint evaluation360.getProgress com estatísticas por etapa

@@ -56,7 +56,7 @@ export default function CriarMetaSMART() {
   });
 
   // Buscar ciclos
-  const { data: cycles = [] } = trpc.cycles.list.useQuery();
+  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery();
 
   // Buscar PDIs do colaborador
   const { data: pdis = [] } = trpc.pdi.list.useQuery({});
