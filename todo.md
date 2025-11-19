@@ -1035,3 +1035,13 @@
 - [x] Restringir visualização de avaliações apenas para liderados diretos
 - [x] Permitir consenso apenas para líderes dos colaboradores avaliados
 - [x] Testar permissões com diferentes perfis de usuário
+
+
+## 📧 Teste de Email e População de Dados
+- [ ] Testar envio de email SMTP para rodrigo.goncalves@uisa.com.br (pendente senha de aplicativo correta)
+- [x] Popular managerId (gestor direto) de todos os colaboradores
+- [x] Atribuir centros de custos a todos os colaboradores
+- [x] Integrar permissões no evaluationRouter (canViewEmployee, canApproveEvaluation)
+- [x] Integrar permissões no calibrationRouter (canDoConsensus)
+- [x] Integrar permissões no nineBoxRouter (canViewEmployee)
+- [x] Testar acesso restrito com diferentes perfis de usuário

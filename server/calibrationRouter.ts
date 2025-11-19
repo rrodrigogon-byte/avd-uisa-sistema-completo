@@ -3,6 +3,7 @@ import { router, protectedProcedure } from "./_core/trpc";
 import { generateCalibrationPDF, generateConsolidatedCalibrationPDF } from "./utils/calibrationPDF";
 import { getDb } from "./db";
 import { eq, and, desc } from "drizzle-orm";
+import { canDoConsensus, canViewEmployee, isAdmin } from "./utils/permissions";
 
 /**
  * Router de Calibração de Diretoria
@@ -26,6 +27,12 @@ export const calibrationRouter = router({
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+
+      // Verificar permissão: apenas admin ou líder direto pode criar movimentação
+      const hasPermission = await canDoConsensus(ctx.user.id, input.employeeId);
+      if (!hasPermission) {
+        throw new Error("Você não tem permissão para movimentar este colaborador");
+      }
 
       const { calibrationMovements, calibrationApprovals } = await import("../drizzle/schema");
 
