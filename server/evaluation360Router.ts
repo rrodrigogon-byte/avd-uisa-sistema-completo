@@ -486,9 +486,31 @@ export const evaluation360Router = router({
         .from(evaluationResponses)
         .where(eq(evaluationResponses.evaluationId, input.evaluationId));
 
+      // Agrupar respostas por tipo de avaliador
+      const groupedResponses = {
+        self: responses.filter(r => r.evaluatorType === 'self'),
+        manager: responses.filter(r => r.evaluatorType === 'manager'),
+        peers: responses.filter(r => r.evaluatorType === 'peer'),
+        subordinates: responses.filter(r => r.evaluatorType === 'subordinate'),
+      };
+
+      // Calcular médias por tipo de avaliador
+      const calculateAverage = (resps: typeof responses) => {
+        const scores = resps.filter(r => r.score !== null).map(r => r.score!);
+        return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+      };
+
+      const averages = {
+        self: calculateAverage(groupedResponses.self),
+        manager: calculateAverage(groupedResponses.manager),
+        peers: calculateAverage(groupedResponses.peers),
+        subordinates: calculateAverage(groupedResponses.subordinates),
+      };
+
       return {
         ...evaluation[0],
-        responses,
+        responses: groupedResponses,
+        averages,
       };
     }),
 });

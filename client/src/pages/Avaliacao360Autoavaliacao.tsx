@@ -26,8 +26,8 @@ export default function Avaliacao360Autoavaliacao() {
   const [responses, setResponses] = useState<Record<number, number>>({});
 
   // Queries
-  const { data: evaluation, isLoading } = trpc.evaluation360.getEvaluationWithWorkflow.useQuery({ id: evaluationId });
-  const { data: questions } = trpc.performanceEvaluations.getQuestions.useQuery({ evaluationId });
+  const { data: evaluation, isLoading } = trpc.evaluation360.getEvaluationWithWorkflow.useQuery({ evaluationId });
+  const { data: questions } = trpc.evaluation360.getQuestions.useQuery({ evaluationId });
 
   // Mutation
   const submitMutation = trpc.evaluation360.submitSelfAssessment.useMutation({
@@ -53,7 +53,7 @@ export default function Avaliacao360Autoavaliacao() {
 
     submitMutation.mutate({
       evaluationId,
-      answers: answersArray,
+      responses: answersArray,
     });
   };
 
@@ -110,7 +110,7 @@ export default function Avaliacao360Autoavaliacao() {
           <div className="flex-1">
             <h1 className="text-2xl font-bold">Avaliação 360° - Autoavaliação</h1>
             <p className="text-sm text-muted-foreground">
-              Ciclo {evaluation.cycleYear} • {evaluation.employeeName}
+              Ciclo {evaluation.cycleId} • {evaluation.employeeName}
             </p>
           </div>
         </div>

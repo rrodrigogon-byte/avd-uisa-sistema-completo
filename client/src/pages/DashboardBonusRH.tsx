@@ -61,7 +61,7 @@ export default function DashboardBonusRH() {
     cycleId: selectedCycleId,
   });
 
-  const { data: cycles = [] } = trpc.cycles.list.useQuery();
+  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery();
   const { data: workflows = [] } = trpc.bonus.listWorkflows.useQuery();
   const { data: pendingApprovals = [] } = trpc.bonus.myPendingApprovals.useQuery();
 

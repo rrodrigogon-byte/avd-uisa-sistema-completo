@@ -1,553 +1,124 @@
-# Sistema AVD UISA - TODO
-
-## 🐛 Correção Erro pdiRisks
-
-- [x] Adicionar coluna type (renomear category)
-- [x] Adicionar coluna responsible
-- [x] Testar página de PDI Inteligente
-
-## 🐛 Correção Erro pdiIntelligentDetails
-
-- [x] Verificar schema de pdiIntelligentDetails
-- [x] Tornar campos opcionais ou adicionar valores padrão
-- [x] Criar tabela pdiIntelligentDetails
-- [x] Criar tabela pdiCompetencyGaps
-- [x] Criar tabela pdiRisks
-- [x] Criar tabela pdiReviews
-- [x] Testar criação de PDI Inteligente
-
-## 🐛 Correção Erro goalMilestones
-
-- [x] Verificar se tabela goalMilestones existe no schema
-- [x] Criar tabela goalMilestones se não existir
-- [x] Executar migração do banco de dados
-- [x] Testar página de progresso de meta
-
-## 🎨 Melhorias de Performance (Cores e Layout)
-
-- [ ] Acessar página de Avaliação 360° Enhanced
-- [ ] Aplicar paleta de cores moderna (roxo #7C3AED, azul #3B82F6, verde #10B981, amarelo #F59E0B)
-- [ ] Redesenhar cards de KPIs com ícones coloridos
-- [ ] Melhorar layout do dashboard de avaliações
-- [ ] Adicionar gráficos de progresso e métricas
-- [ ] Implementar visualizações de competências
-
-## 🧠 Testes Psicométricos Completos
-
-- [ ] Desenvolver teste DISC (Dominância, Influência, Estabilidade, Conformidade)
-- [ ] Desenvolver teste Big Five (OCEAN)
-- [ ] Desenvolver teste 16 Personalities (MBTI)
-- [ ] Desenvolver teste de Inteligência Emocional (Goleman)
-- [ ] Desenvolver teste de Estilos de Liderança
-- [ ] Desenvolver teste de Âncoras de Carreira (Schein)
-- [ ] Criar schema de banco para testes e respostas
-- [ ] Implementar sistema de envio de testes
-- [ ] Criar interface de envio para funcionários/equipes/departamentos
-- [ ] Desenvolver dashboards de resultados individuais
-- [ ] Desenvolver dashboards de resultados comparativos
-- [ ] Popular dados de demonstração de testes
-- [ ] Testar fluxo completo end-to-end
-- [ ] Aplicar paleta de cores inspirada nas imagens (roxo #7C3AED, azul #3B82F6, verde #10B981, amarelo #F59E0B)
-- [ ] Redesenhar cards de KPIs com ícones coloridos
-- [ ] Melhorar layout do dashboard de avaliações
-- [ ] Adicionar gráficos de progresso e métricas
-- [ ] Implementar visualizações de competências
-- [ ] Popular dados de demonstração (ciclos, avaliações, competências)
-- [ ] Testar fluxo completo de avaliação 360°
-- [ ] Validar responsividade e UX
-
-## 💰 Formatação Monetária R$ e Validar SMART
-
-- [x] Criar helper de formatação monetária R$ (pt-BR)
-- [x] Aplicar formatação R$ em campos de bônus (Metas)
-- [x] Aplicar formatação R$ em campos de valores (PDI, Avaliações)
-- [ ] Corrigir botão "Validar SMART" em CriarMetaSMART.tsx
-- [ ] Testar gravação de meta após validação SMART
-- [ ] Analisar arquivos HTML/PDF de PDIs enviados
-- [ ] Extrair dados dos PDIs (Agenor, Pablo, Paulo, Nadia, Callegari, Eduardo, Fernando)
-- [ ] Importar PDIs para o banco de dados
-- [ ] Validar PDIs importados no sistema
-
-## 🔍 PDI Inteligente - Busca Completa de Funcionários UISA
-
-- [x] Verificar endpoint employees.list para retornar todos os 2.889 funcionários
-- [x] Corrigir Combobox de busca de colaboradores na página /pdi-inteligente/novo
-- [x] Implementar busca com filtro por nome, cargo e departamento
-- [x] Testar criação de PDI com colaborador selecionado
-- [x] Validar que todos os campos do formulário funcionam corretamente
-- [x] Garantir que a busca funciona perfeitamente com grande volume de dados
-
-## 📊 Sistema Completo de Testes Psicométricos (Prioridade Alta)
-
-- [x] Popular perguntas do teste DISC no banco de dados
-- [x] Popular perguntas do teste Big Five no banco de dados
-- [x] Popular perguntas do teste MBTI no banco de dados
-- [x] Popular perguntas do teste Inteligência Emocional no banco de dados
-- [x] Popular perguntas do teste Estilos de Liderança no banco de dados
-- [x] Popular perguntas do teste Âncoras de Carreira no banco de dados
-- [x] Criar páginas de questionários para cada teste
-- [x] Implementar cálculo de resultados para cada teste
-- [x] Criar sistema de envio de testes para funcionários individuais
-- [x] Criar sistema de envio de testes para equipes
-- [x] Criar sistema de envio de testes para departamentos
-- [ ] Criar dashboard de resultados por funcionário
-- [ ] Criar dashboard de resultados comparativos por equipe/departamento
-- [ ] Adicionar gráficos radar para visualização de perfis
-- [ ] Integrar resultados de testes com PDI Inteligente
-
-## 🎨 Melhorias de Performance - Design Moderno (Prioridade Alta)
-
-- [ ] Redesenhar Performance Integrada com paleta moderna
-- [ ] Redesenhar 360° Enhanced com paleta moderna
-- [ ] Aplicar cores: roxo #7C3AED, azul #3B82F6, verde #10B981
-- [ ] Criar cards de KPIs coloridos com ícones (lucide-react)
-- [ ] Adicionar gráficos de competências com Recharts
-- [ ] Melhorar visualizações de resultados 360°
-- [ ] Implementar animações e transições suaves
-- [ ] Adicionar indicadores visuais de progresso
-
-
-## 📊 Dashboards Comparativos de Testes Psicométricos
-
-- [x] Criar endpoint para buscar resultados agregados por equipe
-- [x] Criar endpoint para buscar resultados agregados por departamento
-- [x] Criar endpoint para buscar resultados agregados por cargo
-- [x] Implementar página de dashboard comparativo com gráficos radar
-- [x] Adicionar filtros por tipo de teste, período e grupo
-- [x] Implementar visualização de distribuição de perfis
-- [x] Adicionar comparação lado a lado de equipes/departamentos
-
-## 🔗 Integração Testes + PDI Inteligente
-
-- [x] Criar sistema de recomendações automáticas baseado em perfis
-- [x] Mapear perfis psicométricos para competências e cursos
-- [x] Integrar resultados na página de criação de PDI
-- [x] Adicionar sugestões de desenvolvimento por perfil
-- [x] Implementar análise de gaps de competências
-
-## 📈 Relatórios Executivos de RH
-
-- [x] Criar página de relatórios executivos
-- [x] Implementar análise de distribuição de perfis organizacionais
-- [x] Adicionar insights sobre gaps de competências
-- [x] Criar sugestões de formação de equipes
-- [x] Implementar análise de tendências ao longo do tempo
-- [ ] Adicionar exportação de relatórios em PDF (preparado para implementação futura)
-
-## 🎨 Melhorias de Design nas Páginas de Performance
-
-- [ ] Redesenhar página de Performance Integrada com cores vibrantes
-- [ ] Melhorar visualização de gráficos e métricas
-- [ ] Adicionar animações e transições suaves
-- [ ] Implementar tema moderno e profissional
-
-
-## 📄 Exportação de Relatórios em PDF
-
-- [x] Instalar biblioteca html2pdf ou puppeteer
-- [x] Criar função de exportação de relatórios executivos
-- [x] Criar função de exportação de dashboards comparativos
-- [x] Criar função de exportação de recomendações de PDI
-- [x] Adicionar botões de exportação nas páginas
-- [x] Implementar templates de PDF profissionais
-- [x] Adicionar logo e branding nos PDFs
-
-## 🔔 Sistema de Notificações Push
-
-- [x] Criar schema de notificações no banco de dados
-- [x] Implementar endpoint de criação de notificações
-- [x] Criar componente de centro de notificações no header
-- [ ] Implementar notificações quando colaborador completa teste (trigger automático)
-- [ ] Implementar notificações quando PDI atinge marco (trigger automático)
-- [ ] Implementar notificações de insights críticos (trigger automático)
-- [x] Adicionar badge de contagem de não lidas
-- [x] Implementar marcação de lida/não lida
-
-## 📊 Módulo de Benchmarking Externo
-
-- [ ] Criar schema de dados de benchmarking
-- [ ] Popular dados de médias de mercado por setor/cargo
-- [ ] Criar página de benchmarking comparativo
-- [ ] Implementar gráficos de comparação UISA vs Mercado
-- [ ] Adicionar análise de vantagens competitivas
-- [ ] Implementar identificação de gaps vs mercado
-- [ ] Criar relatório de posicionamento competitivo
-
-
-## 🔄 Triggers Automáticos de Notificações
-
-- [x] Adicionar trigger ao endpoint de conclusão de teste psicométrico
-- [x] Adicionar trigger ao endpoint de atualização de progresso de PDI
-- [ ] Adicionar trigger ao endpoint de conclusão de avaliação 360° (pendente endpoint específico)
-- [x] Adicionar trigger ao endpoint de conclusão de meta
-- [ ] Adicionar trigger para insights críticos identificados (implementar quando necessário)
-- [x] Testar criação automática de notificações
-
-## 📄 Página de Histórico de Notificações
-
-- [x] Criar página /notificacoes com lista completa
-- [x] Implementar filtros por tipo de notificação
-- [x] Implementar filtros por período (hoje, semana, mês, ano)
-- [x] Implementar filtro por status (lidas/não lidas)
-- [x] Adicionar busca textual por título e mensagem
-- [x] Implementar paginação (limite de 100 notificações)
-- [x] Adicionar botão de limpar todas as notificações (marcar todas como lidas)
-
-
-## 🔧 Correções Urgentes
-
-### Analytics de RH
-- [x] Corrigir layout quebrado com legenda sobrepondo conteúdo
-- [x] Reorganizar posicionamento dos gráficos
-- [x] Ajustar z-index e overflow da legenda
-
-### Dashboard Executivo
-- [x] Adicionar seção de distribuição do Nine Box
-- [x] Implementar gráfico de distribuição por quadrante
-- [x] Adicionar métricas de talentos por categoria
-
-### Criar Meta SMART
-- [x] Implementar lógica de seleção exclusiva entre % e Bônus Fixo
-- [x] Corrigir botão "Validar SMART" para funcionar
-- [x] Garantir que meta seja gravada corretamente
-- [x] Adicionar validações de campos obrigatórios
-
-## 📊 Módulo de Benchmarking Externo
-- [ ] Criar schema de dados de mercado
-- [ ] Popular dados de benchmark por setor/cargo
-- [ ] Criar página de comparação com médias de mercado
-- [ ] Implementar gráficos radar comparativos
-- [ ] Adicionar análise de gaps competitivos
-
-
-## 🔧 Correção de Workflows
-- [x] Verificar schema da tabela workflows no drizzle/schema.ts
-- [x] Criar tabela workflows no banco de dados se não existir
-- [x] Testar página /aprovacoes/workflows
-
-
-## 🔄 Fluxo Completo de Avaliação 360°
-- [ ] Atualizar schema com campos de status do fluxo (selfAssessmentStatus, managerAssessmentStatus, consensusStatus)
-- [ ] Adicionar campos de datas (selfAssessmentCompletedAt, managerAssessmentCompletedAt, consensusCompletedAt)
-- [ ] Criar endpoint para funcionário submeter autoavaliação
-- [ ] Criar endpoint para gestor submeter avaliação
-- [ ] Criar endpoint para líder submeter consenso
-- [ ] Implementar notificações por email em cada transição
-- [ ] Criar página de autoavaliação para funcionário
-- [ ] Criar página de avaliação para gestor
-- [ ] Criar página de consenso para líder
-- [ ] Habilitar/desabilitar botões conforme etapa do fluxo
-- [ ] Adicionar validações de permissões por etapa
-- [ ] Testar fluxo completo end-to-end
-
-
-## 🔧 Correção Nine Box
-- [x] Corrigir matriz Nine Box invertida (validar eixos X e Y)
-
-## 📊 Filtros Hierárquicos Nine Box Comparativo
-- [x] Criar endpoint para buscar subordinados diretos por managerId
-- [x] Implementar filtro por nível hierárquico (Diretoria, Gerência, Coordenação, Supervisão)
-- [x] Implementar filtro por cargo de liderança unificado
-- [x] Adicionar dropdown com lista de líderes
-- [x] Filtrar matriz Nine Box pelos subordinados do líder selecionado (lógica de filtro a implementar)
-- [x] Implementar lógica de classificação por nível hierárquico baseado em subordinados
-- [x] Conectar filtros ao endpoint getComparative
-
-## 🔧 Correção 360° Enhanced
-- [x] Corrigir exibição de nome do colaborador (mostrar nome ao invés de código)
-
-## 🔄 Fluxo Completo Avaliação 360°
-- [ ] Atualizar schema com campos de status do fluxo (autoavaliação, avaliação gestor, consenso)
-- [ ] Criar endpoint de autoavaliação
-- [ ] Criar endpoint de avaliação do gestor
-- [ ] Criar endpoint de consenso do líder
-- [ ] Implementar notificações automáticas por email em cada transição
-- [ ] Criar interface de autoavaliação para funcionário
-- [ ] Criar interface de avaliação para gestor
-- [ ] Criar interface de consenso para líder
-- [ ] Habilitar/desabilitar botões conforme etapa
-
-## 📊 Página de Benchmarking
-- [ ] Criar página /benchmarking
-- [ ] Implementar endpoint de comparação UISA vs Mercado
-- [ ] Criar gráficos radar DISC comparativos
-- [ ] Criar gráficos radar Big Five comparativos
-- [ ] Adicionar análise automática de gaps
-- [ ] Implementar filtros por setor e cargo
-
-## 🔄 Fluxo Completo de Avaliação 360°
-- [ ] Atualizar schema com campos de status do fluxo
-- [ ] Criar endpoint para funcionário submeter autoavaliação
-- [ ] Criar endpoint para gestor submeter avaliação
-- [ ] Criar endpoint para líder submeter consenso
-- [ ] Implementar notificações por email em cada transição
-- [ ] Criar interface de autoavaliação
-- [ ] Criar interface de avaliação do gestor
-- [ ] Criar interface de consenso do líder
-- [ ] Habilitar/desabilitar botões conforme etapa
-- [ ] Testar fluxo completo
-
-
-## 📋 PDI Inteligente Completo - Modelo Nadia (Prioridade Máxima)
-- [x] Criar schema de ações do PDI (pdiActions) com campos: título, descrição, eixo (70/20/10), métrica de sucesso, responsáveis, prazo, status (não iniciado/em andamento/concluído)
-- [x] Criar schema de feedbacks/acompanhamento (pdiGovernanceReviews) com campos: data reunião, índice de prontidão (IPS 1-5), feedback textual, pontos-chave
-- [x] Criar endpoint para adicionar ação ao PDI
-- [x] Criar endpoint para atualizar status de ação
-- [x] Criar endpoint para adicionar feedback de acompanhamento
-- [x] Criar endpoint para buscar histórico de feedbacks
-- [x] Criar endpoint para calcular evolução do IPS ao longo do tempo
-- [x] Implementar página de visualização de PDI com tabela de ações editáveis (/pdi-inteligente/:id/detalhes)
-- [x] Implementar formulário de adicionar/editar ações
-- [x] Implementar seletor de status (não iniciado/em andamento/concluído) com cores
-- [x] Implementar seção de acompanhamento DGC com formulário de feedback
-- [x] Implementar gráfico de evolução do IPS (Chart.js)
-- [x] Implementar histórico de reuniões de governança
-- [ ] Implementar botões de salvar progresso e exportar JSON
-- [ ] Testar fluxo completo de criação, edição e acompanhamento
-
-## 🔄 Fluxo Completo de Avaliação 360° com Emails (Prioridade Alta)
-- [x] Atualizar schema performanceEvaluations com campo workflowStatus (pending_self, pending_manager, pending_consensus, completed)
-- [x] Adicionar campos de datas (selfCompletedAt, managerCompletedAt, consensusCompletedAt)
-- [x] Criar endpoint evaluation360.submitSelfAssessment
-- [x] Criar endpoint evaluation360.submitManagerAssessment
-- [x] Criar endpoint evaluation360.submitConsensus
-- [x] Integrar envio de email automático ao gestor quando autoavaliação é concluída
-- [x] Integrar envio de email automático ao líder quando avaliação do gestor é concluída
-- [ ] Criar página de autoavaliação (/avaliacoes/autoavaliacao/:id)
-- [ ] Criar página de avaliação do gestor (/avaliacoes/gestor/:id)
-- [ ] Criar página de consenso do líder (/avaliacoes/consenso/:id)
-- [ ] Implementar lógica de habilitação/desabilitação de botões por etapa
-- [ ] Adicionar validações de permissão (apenas gestor pode avaliar, apenas líder pode fazer consenso)
-- [ ] Testar fluxo completo: autoavaliação → email → avaliação gestor → email → consenso
-
-## 📊 Página de Benchmarking de Mercado (Prioridade Alta)
-- [ ] Criar página /benchmarking com layout moderno
-- [ ] Implementar endpoint benchmarking.getComparison para buscar dados UISA vs 21 perfis de mercado
-- [ ] Criar gráfico radar comparando DISC médio UISA vs setor selecionado
-- [ ] Criar gráfico radar comparando Big Five médio UISA vs setor selecionado
-- [ ] Implementar filtros por setor (Agronegócio, Indústria, Tecnologia, Financeiro, etc)
-- [ ] Implementar filtros por cargo (Gerente, Coordenador, Analista, etc)
-- [ ] Adicionar análise automática de gaps competitivos (dimensões abaixo da média)
-- [ ] Adicionar análise de vantagens organizacionais (dimensões acima da média)
-- [ ] Implementar cards de insights estratégicos
-- [ ] Adicionar botão de exportação de relatório de benchmarking em PDF
-- [ ] Testar comparações com todos os 21 perfis de mercado
-
-## 🌳 Sistema de Metas em Cascata Hierárquico (Prioridade Média)
-- [ ] Criar schema de metas organizacionais (organizationalGoals)
-- [ ] Criar schema de vinculação de metas (goalHierarchy) com parentGoalId
-- [ ] Criar endpoint para criar meta organizacional
-- [ ] Criar endpoint para desdobrar meta em metas departamentais
-- [ ] Criar endpoint para desdobrar meta departamental em metas individuais
-- [ ] Criar endpoint para buscar árvore hierárquica de metas
-- [ ] Implementar página de metas em cascata (/metas/cascata)
-- [ ] Implementar visualização em árvore (ReactFlow ou similar)
-- [ ] Implementar cálculo automático de contribuição percentual de cada nível
-- [ ] Implementar alertas quando meta superior é alterada
-- [ ] Adicionar indicadores visuais de progresso agregado por nível
-- [ ] Implementar propagação de mudanças de cima para baixo
-- [ ] Testar fluxo completo: meta organizacional → departamental → individual
-
-
-## 🐛 Correção Erro SelectItem Nine Box Comparativo
-- [x] Corrigir SelectItem com value vazio na página /nine-box-comparativo
-- [x] Substituir value="" por value="todos" e ajustar lógica do Select
-
-
-## 🐛 Correção Filtros Nine Box Comparativo
-- [x] Corrigir filtro de nível hierárquico que não está funcionando
-- [x] Verificar endpoint getComparative e lógica de filtros
-- [x] Substituir leftJoin problemático por SQL raw query
-- [x] Implementar combinação correta de filtros (líder + hierarquia)
-
-
-## 📝 Melhorias Formulário de Funcionários
-- [x] Adicionar campo "Chapa" (matrícula) ao schema employees (já existia como employeeCode)
-- [x] Adicionar campo "Salário" ao schema employees (salary em centavos)
-- [x] Adicionar campo "Nível" (Diretoria/Gerência/Coordenação/Supervisão/Operacional) ao schema employees (hierarchyLevel)
-- [x] Adicionar campo "Data de Admissão" ao schema employees (já existia como hireDate)
-- [x] Criar página FuncionariosAtivos.tsx com formulário completo
-- [x] Implementar endpoint employees.update no backend
-- [x] Implementar validações de campos obrigatórios
-- [x] Melhorar layout do modal de edição (modal grande com scroll)
-- [x] Adicionar formatação de moeda para exibição de Salário
-
-## 📄 Backup Completo do Projeto
-- [x] Criar script de backup que exporta todo o código-fonte
-- [x] Incluir schema do banco de dados
-- [x] Incluir package.json e todo.md
-- [x] Gerar arquivo TXT com estrutura completa do projeto (347KB, 9570 linhas)
-- [x] Adicionar timestamp e metadados ao backup
-- [x] Arquivo gerado: backup-completo-20251119-134726.txt
-
-
-## 🐛 Correção Erro API Funcionários
-- [x] Investigar erro "Unexpected token '<', "<!doctype "... is not valid JSON" na página /funcionarios
-- [x] Adicionar tratamento de erro robusto ao endpoint employees.list
-- [x] Adicionar logs de erro para debug
-- [x] Garantir que sempre retorna array vazio em caso de falha
-
-
-## 🗺️ Melhorias Mapa de Sucessão (Prioridade Máxima)
-- [x] Melhorar formulário "Adicionar Sucessor" conforme imagem
-- [x] Adicionar campo "Candidato/Sucessor" com seletor de colaboradores (employeeId)
-- [x] Adicionar campo "Nível de Prontidão" (Pronto em 1-2 anos, 2-3 anos, 3+ anos) - readinessLevel
-- [x] Adicionar campo "Prioridade" (1 - Principal, 2 - Secundário, 3 - Backup) - priority
-- [x] Adicionar campo "Avaliação de Desempenho" (Baixo/Médio/Alto/Excepcional) - performanceRating
-- [x] Adicionar campo "Avaliação de Potencial" (Baixo/Médio/Alto/Excepcional) - potentialRating
-- [x] Adicionar campo "Posição Nine Box" (Alto Potencial/Alto Desempenho/etc) - nineBoxPosition
-- [x] Adicionar campo "Análise de Gaps (Lacunas)" - gapAnalysis (TEXT)
-- [x] Adicionar campo "Ações de Desenvolvimento Recomendadas" - developmentActions (TEXT)
-- [x] Atualizar schema successionCandidates com novos campos
-- [x] Atualizar endpoint addSuccessor com novos campos
-- [x] Atualizar endpoint updateSuccessor com novos campos
-- [x] Melhorar página frontend do Mapa de Sucessão (/mapa-sucessao-completo)
-- [x] Implementar formulário completo de adicionar sucessor no frontend (modal com todos os campos)
-- [x] Adicionar estatísticas no topo (Posições Críticas, Sucessores Prontos, Sem Sucessor, % Cobertura)
-- [x] Implementar filtros (Departamento, Nível de Risco, Impacto, Cobertura)
-- [x] Criar cards de posição com badges de risco/impacto
-- [x] Integrar mutation addSuccessor com todos os novos campos
-
-## 🎯 Páginas Frontend Fluxo 360° (Prioridade Alta)
-- [ ] Criar página /avaliacoes/autoavaliacao/:id
-- [ ] Criar página /avaliacoes/gestor/:id
-- [ ] Criar página /avaliacoes/consenso/:id
-- [ ] Implementar indicador visual de etapa atual (stepper)
-- [ ] Implementar validações de permissão (apenas gestor pode avaliar, apenas líder pode fazer consenso)
-- [ ] Adicionar formulário de perguntas com escala 1-5
-- [ ] Adicionar campo de comentários por pergunta
-- [ ] Implementar botão de submissão que chama endpoint correto
-- [ ] Mostrar mensagem de sucesso e próxima etapa após submissão
-- [ ] Implementar visualização de respostas anteriores (read-only)
-
-## 📊 Página de Benchmarking UISA vs Mercado (Prioridade Alta)
-- [ ] Criar página /benchmarking
-- [ ] Criar endpoint backend para comparação UISA vs mercado
-- [ ] Implementar gráfico radar DISC (Dominância, Influência, Estabilidade, Conformidade)
-- [ ] Implementar gráfico radar Big Five (Abertura, Conscienciosidade, Extroversão, Amabilidade, Neuroticismo)
-- [ ] Adicionar filtros por setor (Energia, Construção, Tecnologia, etc)
-- [ ] Adicionar filtros por cargo (Gerente, Coordenador, Analista, etc)
-- [ ] Criar dataset de 21 perfis de mercado por setor/cargo
-- [ ] Implementar comparação visual com cores (UISA vs Mercado)
-- [ ] Adicionar tabela de gaps/diferenças significativas
-- [ ] Implementar exportação de relatório de benchmarking
-
-## 🎯 Sistema de Metas em Cascata Hierárquico (Prioridade Alta)
-- [ ] Criar página /metas-cascata
-- [ ] Criar schema de metas hierárquicas (organizacional, departamental, individual)
-- [ ] Implementar visualização em árvore interativa
-- [ ] Adicionar indicador de % de alinhamento entre níveis
-- [ ] Implementar propagação automática de metas (top-down)
-- [ ] Adicionar filtro por departamento/área
-- [ ] Implementar expansão/colapso de nós da árvore
-- [ ] Adicionar badges de status (Não iniciado/Em andamento/Concluído)
-- [ ] Implementar cálculo de progresso agregado por nível
-- [ ] Adicionar modal de detalhes de meta ao clicar no nó
-
-
-## 🎯 Páginas Frontend Fluxo 360° - IMPLEMENTADO
-- [x] Criar página /avaliacoes/autoavaliacao/:id (Etapa 1)
-- [x] Criar página /avaliacoes/gestor/:id (Etapa 2)
-- [x] Criar página /avaliacoes/consenso/:id (Etapa 3 - Final)
-- [x] Implementar indicador visual de etapa (stepper 3 etapas com Progress)
-- [x] Implementar formulário de perguntas com escala 1-5 (botões interativos)
-- [x] Implementar validações de permissão por workflowStatus
-- [x] Adicionar botão para ver autoavaliação (na página do gestor)
-- [x] Adicionar comparação visual (na página de consenso com gráficos de barra)
-- [x] Integrar com endpoints do evaluation360Router
-- [x] Adicionar toast de feedback e navegação automática
-- [x] Adicionar rotas no App.tsx
-
-
-## 📊 Benchmarking UISA vs Mercado - IMPLEMENTADO
-- [x] Criar página /benchmarking
-- [x] Implementar seletor de tipo de teste (DISC / Big Five)
-- [x] Implementar seletor de perfil de referência do mercado (21 perfis)
-- [x] Criar gráfico radar com Chart.js comparando UISA vs mercado
-- [x] Criar tabela de diferenças detalhadas com badges visuais
-- [x] Adicionar indicadores de status (Acima/Abaixo/Igual)
-- [x] Adicionar seção de Insights e Recomendações
-- [x] Integrar 21 perfis de mercado segmentados por setor/cargo
-- [x] Adicionar rota no App.tsx
-
-
-## 🐛 Correção Erros TypeScript
-- [x] Corrigir 4 erros de tipo `any` em Avaliar360.tsx
-- [x] Criar interface Question com tipagem adequada
-- [x] Aplicar tipagem explícita nos parâmetros (q: Question, idx: number, error: any)
-
-## 🎯 Metas em Cascata Hierárquico
-- [x] Criar schema de metas organizacionais, departamentais e individuais (campo parentGoalId, departmentId, alignmentPercentage)
-- [x] Criar endpoints para CRUD de metas em cascata (goalsCascadeRouter)
-- [x] Implementar lógica de propagação hierárquica (getTree, getChildGoals, createCascadeGoal)
-- [x] Criar página /metas-cascata com visualização em árvore
-- [x] Implementar componente de árvore recursivo (GoalTreeNode)
-- [x] Adicionar indicadores de % de alinhamento (cores verde/amarelo/vermelho)
-- [x] Adicionar status por nível (organizacional/departamental/individual com ícones e cores)
-- [x] Implementar expandir/colapsar por nó da árvore (ChevronDown/Right)
-- [x] Adicionar estatísticas KPI (Total, Organizacionais, Departamentais, Individuais)
-- [x] Adicionar alinhamento geral da cascata
-- [x] Adicionar legenda de tipos, status e alinhamento
-- [x] Registrar goalsCascadeRouter em routers.ts
-- [x] Adicionar rota no App.tsx
-
-## 📊 Dashboard Executivo Consolidado
-- [x] Criar página /dashboard-executivo
-- [x] Agregar KPIs do Nine Box (distribuição por quadrante com grid 3x3)
-- [x] Agregar KPIs do PDI (em desenvolvimento, concluídos)
-- [x] Agregar KPIs de Sucessão (posições críticas, cobertura)
-- [x] Agregar KPIs de Avaliação 360° (em andamento, concluídas)
-- [x] Agregar KPIs de Metas (total, alinhamento geral)
-- [x] Agregar KPIs de Benchmarking (gaps significativos, posição competitiva)
-- [x] Implementar filtros por departamento e período (Select components)
-- [x] Criar seção de insights estratégicos (card com recomendações)
-- [x] Implementar navegação para cada módulo (onClick nos cards)
-- [x] Adicionar rota no App.tsx
-- [ ] Implementar endpoints getDistribution e getStats nos routers (dados simulados atualmente)
-
-## 🐛 Correção Erro evaluation360.list
-- [x] Adicionar endpoint evaluation360.list ao evaluation360Router
-- [x] Endpoint list com filtros opcionais (cycleId, status)
-- [x] Retorna lista completa de avaliações com dados do colaborador
-
-
-## 🐛 Correção Erros TypeScript Restantes (Prioridade Máxima)
-- [x] Corrigir Avaliacao360Gestor.tsx linha 57: trocar 'answers' por 'responses'
-- [x] Corrigir Avaliacao360Gestor.tsx linha 118: substituir 'cycleYear' por 'cycleId'
-- [x] Corrigir Avaliacao360Gestor.tsx linha 30: usar parâmetro correto 'evaluationId'
-- [x] Adicionar endpoint evaluation360.getQuestions ao router (8 perguntas padrão)
-- [x] Adicionar endpoint evaluation360.submitFeedback ao router
-- [x] Adicionar endpoint evaluation360.getDetails ao router
-- [x] Adicionar import TRPCError
-
-## 🐛 Correção Erros TypeScript Avaliar360.tsx (Prioridade Máxima)
-- [x] Corrigir linha 106: remover 'questionId' do submitFeedback (endpoint aceita apenas evaluationId e feedback)
-- [x] Corrigir linha 234: ajustar tipo Question para incluir campo 'type' ou remover do map
-- [x] Simplificar interface Question (id, category, text)
-- [x] Consolidar respostas em feedback textual
-- [x] Adicionar parâmetro evaluationId ao getQuestions
-- [x] Remover lógica de tipo de pergunta (todas são escala 1-5)
-
-## 📅 Gestão de Ciclos de Avaliação
-- [ ] Criar schema evaluationCycles (id, year, startDate, endDate, selfEvaluationDeadline, managerEvaluationDeadline, consensusDeadline, status, createdAt)
-- [ ] Criar router cyclesRouter com endpoints CRUD
-- [ ] Criar página /ciclos-avaliacao com lista de ciclos
-- [ ] Implementar formulário de criar novo ciclo
-- [ ] Implementar ativar/desativar ciclo
-- [ ] Adicionar visualização de histórico completo
-- [ ] Registrar router em routers.ts
-- [ ] Adicionar rota no App.tsx
-
-## 📊 Dashboard Acompanhamento 360°
-- [ ] Criar endpoint evaluation360.getProgress com estatísticas por etapa
-- [ ] Criar página /avaliacoes/dashboard
-- [ ] Implementar cards de % concluídas por etapa
-- [ ] Implementar lista de colaboradores pendentes com alerta
-- [ ] Implementar gráfico de tempo médio de conclusão
-- [ ] Implementar gráfico de evolução semanal
-
-## ✅ Revisão Funcionalidades Faltantes
-- [ ] Verificar se todos os módulos têm endpoints completos
-- [ ] Verificar se todas as páginas estão funcionando
-- [ ] Implementar funcionalidades faltantes identificadas
-- [ ] Testar fluxo completo de cada módulo
+# Sistema AVD UISA - TODO List
+
+## 🚀 PLANO DE COMPLETAR 100% DO SISTEMA (PRIORIDADE MÁXIMA)
+
+### ✅ Fase 1: Corrigir TODOS os 26 Erros TypeScript
+- [ ] Corrigir Avaliacao360Enhanced.tsx linha 376: propriedade 'subordinates' não existe
+- [ ] Corrigir CiclosAvaliacao.tsx linha 70: propriedade 'complete' não existe
+- [ ] Corrigir CiclosAvaliacao.tsx linha 77: propriedade 'delete' não existe
+- [ ] Corrigir server/routers.ts linha 2811: propriedade duplicada no objeto literal
+- [ ] Verificar e corrigir os 22 erros TypeScript restantes
+
+### ✅ Fase 2: Implementar Funcionalidades Faltantes Prioritárias
+- [ ] Criar Dashboard de Acompanhamento 360° (/avaliacoes/dashboard)
+  - [ ] KPIs de progresso por etapa (autoavaliação/gestor/consenso)
+  - [ ] Lista de colaboradores pendentes com alertas
+  - [ ] Gráfico de evolução semanal (Chart.js)
+  - [ ] Filtros por departamento e ciclo
+  - [ ] Botão de enviar lembretes
+
+- [ ] Implementar Sistema de Notificações In-App
+  - [ ] Criar schema notifications
+  - [ ] Criar router notificationsRouter
+  - [ ] Criar componente NotificationBell com contador
+  - [ ] Criar página /notificacoes
+  - [ ] Implementar dropdown de notificações no header
+  - [ ] Lógica de criação automática (prazos vencidos, avaliações pendentes, PDIs atrasados)
+
+### ✅ Fase 3: Configurar Sistema de Emails
+- [ ] Configurar emailService para rodrigo.goncalves@uisa.com.br
+- [ ] Testar envio de emails de notificação
+- [ ] Implementar templates de email para:
+  - [ ] Avaliação 360° pendente
+  - [ ] PDI criado/atualizado
+  - [ ] Meta vencida
+  - [ ] Sucessão sem cobertura
+  - [ ] Ciclo de avaliação iniciado
+
+### ✅ Fase 4: Testar TODAS as Funcionalidades
+- [ ] Testar fluxo completo de Avaliação 360° (autoavaliação → gestor → consenso)
+- [ ] Testar PDI Inteligente (criar, adicionar ações, feedbacks)
+- [ ] Testar Mapa de Sucessão (adicionar sucessor com todos os campos)
+- [ ] Testar Nine Box Comparativo (filtros hierárquicos)
+- [ ] Testar Metas em Cascata (visualização em árvore)
+- [ ] Testar Dashboard Executivo (todos os KPIs)
+- [ ] Testar Benchmarking (gráficos radar)
+- [ ] Testar Gestão de Ciclos (criar, ativar, concluir)
+- [ ] Testar Cadastro de Funcionários (edição completa)
+
+### ✅ Fase 5: Documentação e Checkpoint Final
+- [ ] Gerar documentação completa da solução implementada
+- [ ] Criar guia de uso para cada módulo
+- [ ] Salvar checkpoint final 100% completo
+- [ ] Gerar relatório de funcionalidades implementadas vs. documentação oficial
+
+---
+
+## 📋 Funcionalidades Implementadas (Status Atual)
+
+### ✅ Módulos Completos
+- [x] Nine Box Comparativo com filtros hierárquicos
+- [x] PDI Inteligente com ações editáveis e feedbacks
+- [x] Mapa de Sucessão com formulário completo (9 campos)
+- [x] Fluxo 360° (3 páginas: autoavaliação, gestor, consenso)
+- [x] Benchmarking UISA vs mercado (gráficos radar)
+- [x] Metas em Cascata hierárquico (visualização em árvore)
+- [x] Dashboard Executivo Consolidado (KPIs de todos os módulos)
+- [x] Gestão de Ciclos de Avaliação (CRUD completo)
+- [x] Cadastro de Funcionários melhorado (salário, nível hierárquico)
+
+### ⚠️ Módulos Parcialmente Implementados
+- [ ] Sistema de Notificações (backend pronto, frontend faltando)
+- [ ] Dashboard 360° (não implementado)
+- [ ] Relatórios exportáveis em PDF (não implementado)
+
+### ❌ Funcionalidades Faltantes (Documentação Oficial)
+- [ ] Reconhecimento Facial (login/cadastro biométrico)
+- [ ] Integração TOTVS RM
+- [ ] Integração Azure AD
+- [ ] Integração IA Gemini para PDI
+- [ ] Comitê de Calibração
+- [ ] Avaliação de Pares e Liderados (360° tem apenas autoavaliação/gestor/consenso)
+- [ ] Posicionamento Automático Nine Box
+- [ ] 32 tipos de email automatizados (Gmail SMTP)
+
+---
+
+## 🐛 Erros Conhecidos (26 TypeScript)
+
+1. Avaliacao360Enhanced.tsx:376 - Property 'subordinates' does not exist
+2. CiclosAvaliacao.tsx:70 - Property 'complete' does not exist
+3. CiclosAvaliacao.tsx:77 - Property 'delete' does not exist
+4. server/routers.ts:2811 - Duplicate property in object literal
+5-26. (22 erros adicionais a serem identificados e corrigidos)
+
+---
+
+## 📧 Configuração de Emails
+
+**Email de Destino:** rodrigo.goncalves@uisa.com.br
+
+**Tipos de Email a Implementar:**
+1. Notificação de Avaliação 360° Pendente
+2. PDI Criado/Atualizado
+3. Meta Vencida/Em Risco
+4. Sucessão Sem Cobertura
+5. Ciclo de Avaliação Iniciado
+6. Lembrete de Prazo (3 dias antes do vencimento)
+7. Feedback de Calibração
+8. Relatório Semanal de Progresso
+
+---
+
+## 🎯 Próximas Ações Imediatas
+
+1. **CORRIGIR** todos os 26 erros TypeScript
+2. **IMPLEMENTAR** Dashboard 360° e Sistema de Notificações
+3. **CONFIGURAR** emails para rodrigo.goncalves@uisa.com.br
+4. **TESTAR** todas as funcionalidades end-to-end
+5. **DOCUMENTAR** solução completa e salvar checkpoint final
+
+---
+
+**Última Atualização:** 19/11/2025 15:30
+**Status Geral:** 🟡 85% Completo (faltam correções TypeScript + 2 módulos)

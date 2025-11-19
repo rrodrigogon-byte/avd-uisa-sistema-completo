@@ -27,8 +27,8 @@ export default function Avaliacao360Consenso() {
   const [showComparison, setShowComparison] = useState(true);
 
   // Queries
-  const { data: evaluation, isLoading } = trpc.evaluation360.getEvaluationWithWorkflow.useQuery({ id: evaluationId });
-  const { data: questions } = trpc.performanceEvaluations.getQuestions.useQuery({ evaluationId });
+  const { data: evaluation, isLoading } = trpc.evaluation360.getEvaluationWithWorkflow.useQuery({ evaluationId });
+  const { data: questions } = trpc.evaluation360.getQuestions.useQuery({ evaluationId });
 
   // Mutation
   const submitMutation = trpc.evaluation360.submitConsensus.useMutation({
@@ -52,9 +52,13 @@ export default function Avaliacao360Consenso() {
       score: responses[q.id] || 0,
     }));
 
+    // Calcular nota final (média das respostas)
+    const finalScore = answersArray.reduce((sum, a) => sum + a.score, 0) / answersArray.length;
+
     submitMutation.mutate({
       evaluationId,
-      answers: answersArray,
+      finalScore,
+      consensusNotes: "Consenso final do líder",
     });
   };
 
@@ -115,7 +119,7 @@ export default function Avaliacao360Consenso() {
           <div className="flex-1">
             <h1 className="text-2xl font-bold">Avaliação 360° - Consenso do Líder</h1>
             <p className="text-sm text-muted-foreground">
-              Ciclo {evaluation.cycleYear} • {evaluation.employeeName}
+              Ciclo {evaluation.cycleId} • {evaluation.employeeName}
             </p>
           </div>
         </div>

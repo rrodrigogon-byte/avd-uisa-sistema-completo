@@ -56,7 +56,7 @@ export default function AprovarMetas() {
   });
 
   // Buscar ciclos
-  const { data: cycles = [] } = trpc.cycles.list.useQuery();
+  const { data: cycles = [] } = trpc.evaluationCycles.list.useQuery();
 
   // Aprovar meta
   const approveMutation = trpc.smartGoals.approve.useMutation({
