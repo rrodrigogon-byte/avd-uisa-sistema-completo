@@ -443,3 +443,29 @@
 - [ ] Adicionar badges de status (Não iniciado/Em andamento/Concluído)
 - [ ] Implementar cálculo de progresso agregado por nível
 - [ ] Adicionar modal de detalhes de meta ao clicar no nó
+
+
+## 🎯 Páginas Frontend Fluxo 360° - IMPLEMENTADO
+- [x] Criar página /avaliacoes/autoavaliacao/:id (Etapa 1)
+- [x] Criar página /avaliacoes/gestor/:id (Etapa 2)
+- [x] Criar página /avaliacoes/consenso/:id (Etapa 3 - Final)
+- [x] Implementar indicador visual de etapa (stepper 3 etapas com Progress)
+- [x] Implementar formulário de perguntas com escala 1-5 (botões interativos)
+- [x] Implementar validações de permissão por workflowStatus
+- [x] Adicionar botão para ver autoavaliação (na página do gestor)
+- [x] Adicionar comparação visual (na página de consenso com gráficos de barra)
+- [x] Integrar com endpoints do evaluation360Router
+- [x] Adicionar toast de feedback e navegação automática
+- [x] Adicionar rotas no App.tsx
+
+
+## 📊 Benchmarking UISA vs Mercado - IMPLEMENTADO
+- [x] Criar página /benchmarking
+- [x] Implementar seletor de tipo de teste (DISC / Big Five)
+- [x] Implementar seletor de perfil de referência do mercado (21 perfis)
+- [x] Criar gráfico radar com Chart.js comparando UISA vs mercado
+- [x] Criar tabela de diferenças detalhadas com badges visuais
+- [x] Adicionar indicadores de status (Acima/Abaixo/Igual)
+- [x] Adicionar seção de Insights e Recomendações
+- [x] Integrar 21 perfis de mercado segmentados por setor/cargo
+- [x] Adicionar rota no App.tsx

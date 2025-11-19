@@ -38,6 +38,10 @@ import ReportAnalytics from "./pages/ReportAnalytics";
 import SuccessionImport from "./pages/SuccessionImport";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
+import Avaliacao360Autoavaliacao from "./pages/Avaliacao360Autoavaliacao";
+import Avaliacao360Gestor from "./pages/Avaliacao360Gestor";
+import Avaliacao360Consenso from "./pages/Avaliacao360Consenso";
+import BenchmarkingMercado from "./pages/BenchmarkingMercado";
 import AuditTrail from "./pages/AuditTrail";
 import Analytics from "./pages/Analytics";
 import Feedbacks from "./pages/Feedbacks";
@@ -92,7 +96,11 @@ function Router() {
       <Route path="/executivo/aprovacoes" component={AprovacaoCalibracoes} />
       <Route path="/gamificacao/ranking" component={RankingGamificacao} />
       <Route path="/configuracoes/integracoes" component={ConfiguracaoIntegracoes} />
-      <Route path={"/avaliacoes"} component={Avaliacoes} />
+       <Route path="/avaliacoes" component={Avaliacoes} />
+      <Route path="/avaliacoes/autoavaliacao/:id" component={Avaliacao360Autoavaliacao} />
+      <Route path="/avaliacoes/gestor/:id" component={Avaliacao360Gestor} />
+      <Route path="/avaliacoes/consenso/:id" component={Avaliacao360Consenso} />
+      <Route path="/benchmarking" component={BenchmarkingMercado} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />
