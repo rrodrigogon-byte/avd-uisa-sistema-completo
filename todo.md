@@ -1415,3 +1415,37 @@
 - [ ] Integrar modal de ciclos ao backend
 - [ ] Adicionar botão em 360° Enhanced
 - [ ] Completar configuração de etapas de workflows
+
+
+## 🎯 Finalização 100% - Últimas Tarefas
+
+### Verificar PDI Completo (Catalente)
+- [x] Verificar se PDI Inteligente está completo conforme solicitado
+- [x] Testar criação de PDI end-to-end
+- [x] Verificar se todos os campos estão funcionando
+- [x] Validar salvamento no banco de dados
+
+### Testes Psicométricos - Visualização RH
+- [x] Criar página /testes-psicometricos/resultados (apenas RH)
+- [x] Criar endpoint backend psychometric.getAllTests
+- [x] Implementar dashboard consolidado de resultados
+- [x] Adicionar filtros (por colaborador, departamento, teste)
+- [x] Adicionar KPIs (Total de Testes, Colaboradores Avaliados, Tipos de Teste)
+- [x] Implementar exportação de relatórios (CSV)
+- [x] Adicionar rota no App.tsx
+- [x] Testar página e corrigir erros
+
+### Integração Final
+- [ ] Conectar modal de workflows ao trpc.workflows.create
+- [ ] Conectar modal de ciclos ao trpc.evaluationCycles.create
+- [ ] Atualizar listagens após criação
+- [ ] Adicionar tratamento de erros e toasts
+- [ ] Testar fluxo completo de criação
+
+### Configuração e Teste de E-mail
+- [ ] Criar página /configuracoes/smtp para configurar SMTP
+- [ ] Salvar configuração SMTP no systemSettings
+- [ ] Testar envio para rodrigo.goncalves@uisa.com.br
+- [ ] Adicionar botão "Enviar por E-mail" em metas
+- [ ] Adicionar botão "Enviar por E-mail" em performance
+- [ ] Implementar preview de e-mail antes de enviar

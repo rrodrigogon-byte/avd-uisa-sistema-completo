@@ -1514,6 +1514,55 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         return { success: true, profile };
       }),
 
+    // Buscar TODOS os testes (apenas RH/Admin)
+    getAllTests: protectedProcedure.query(async ({ ctx }) => {
+      const database = await getDb();
+      if (!database) return [];
+
+      // Verificar se é RH/Admin
+      const employee = await database.select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      // TODO: Verificar role quando campo estiver disponível no schema de employees
+      // if (employee.length === 0 || (employee[0].role !== 'admin' && employee[0].role !== 'rh')) {
+      //   throw new TRPCError({
+      //     code: "FORBIDDEN",
+      //     message: "Apenas RH e Administradores podem visualizar todos os testes",
+      //   });
+      // }
+
+      // Buscar todos os testes com informações do colaborador
+      const tests = await database.select({
+        id: psychometricTests.id,
+        employeeId: psychometricTests.employeeId,
+        employeeName: employees.name,
+        employeeDepartmentId: employees.departmentId,
+        employeeDepartmentName: departments.name,
+        testType: psychometricTests.testType,
+        discProfile: psychometricTests.discProfile,
+        discDominance: psychometricTests.discDominance,
+        discInfluence: psychometricTests.discInfluence,
+        discSteadiness: psychometricTests.discSteadiness,
+        discCompliance: psychometricTests.discCompliance,
+        bigFiveOpenness: psychometricTests.bigFiveOpenness,
+        bigFiveConscientiousness: psychometricTests.bigFiveConscientiousness,
+        bigFiveExtraversion: psychometricTests.bigFiveExtraversion,
+        bigFiveAgreeableness: psychometricTests.bigFiveAgreeableness,
+        bigFiveNeuroticism: psychometricTests.bigFiveNeuroticism,
+        completedAt: psychometricTests.completedAt,
+        createdAt: psychometricTests.createdAt,
+      })
+        .from(psychometricTests)
+        .leftJoin(employees, eq(psychometricTests.employeeId, employees.id))
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .where(sql`${psychometricTests.completedAt} IS NOT NULL`)
+        .orderBy(desc(psychometricTests.completedAt));
+
+      return tests;
+    }),
+
     // Buscar testes de um colaborador
     getTests: protectedProcedure.query(async ({ ctx }) => {
       const database = await getDb();
