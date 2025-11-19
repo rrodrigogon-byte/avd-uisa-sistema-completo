@@ -48,6 +48,7 @@ import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
 import EnviarTestes from "./pages/EnviarTestes";
+import Notificacoes from "./pages/Notificacoes";
 import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import AdminSmtp from "./pages/AdminSmtp";
@@ -126,6 +127,7 @@ function Router() {
       <Route path="/teste-lideranca" component={TestLeadership} />
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
       <Route path="/testes/enviar" component={EnviarTestes} />
+      <Route path="/notificacoes" component={Notificacoes} />
       <Route path="/testes/comparativo" component={DashboardComparativoTestes} />
       <Route path="/relatorios-executivos" component={RelatoriosExecutivos} />
       <Route path="/admin/smtp" component={AdminSmtp} />

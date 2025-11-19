@@ -524,6 +524,63 @@ export const appRouter = router({
         if (input.progress === 100 && goal.employeeId) {
           const { checkGoalBadges } = await import("./services/badgeService");
           await checkGoalBadges(goal.employeeId);
+
+          // Criar notificação de meta atingida
+          try {
+            const employee = await database.select()
+              .from(employees)
+              .where(eq(employees.id, goal.employeeId))
+              .limit(1);
+
+            if (employee.length > 0 && employee[0].managerId) {
+              const manager = await database.select()
+                .from(employees)
+                .where(eq(employees.id, employee[0].managerId))
+                .limit(1);
+
+              if (manager.length > 0 && manager[0].userId) {
+                await createNotification({
+                  userId: manager[0].userId,
+                  type: "goal_achieved",
+                  title: "Meta Atingida",
+                  message: `${employee[0].name} atingiu 100% da meta: ${goal.title}`,
+                  link: `/metas`,
+                });
+              }
+            }
+          } catch (error) {
+            console.error("Erro ao criar notificação de meta:", error);
+          }
+        }
+
+        // Notificar marcos de progresso (25%, 50%, 75%)
+        const milestones = [25, 50, 75];
+        if (milestones.includes(input.progress) && goal.employeeId) {
+          try {
+            const employee = await database.select()
+              .from(employees)
+              .where(eq(employees.id, goal.employeeId))
+              .limit(1);
+
+            if (employee.length > 0 && employee[0].managerId) {
+              const manager = await database.select()
+                .from(employees)
+                .where(eq(employees.id, employee[0].managerId))
+                .limit(1);
+
+              if (manager.length > 0 && manager[0].userId) {
+                await createNotification({
+                  userId: manager[0].userId,
+                  type: "pdi_milestone",
+                  title: "Marco de Progresso Atingido",
+                  message: `${employee[0].name} atingiu ${input.progress}% da meta: ${goal.title}`,
+                  link: `/metas`,
+                });
+              }
+            }
+          } catch (error) {
+            console.error("Erro ao criar notificação de marco:", error);
+          }
         }
 
         return { success: true };
@@ -1510,6 +1567,30 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
         // Salvar teste no banco
         await database.insert(psychometricTests).values(testValues);
+
+        // Criar notificação para gestores/RH
+        try {
+          // Buscar gestor do colaborador
+          if (employee[0].managerId) {
+            const manager = await database.select()
+              .from(employees)
+              .where(eq(employees.id, employee[0].managerId))
+              .limit(1);
+
+            if (manager.length > 0 && manager[0].userId) {
+              await createNotification({
+                userId: manager[0].userId,
+                type: "test_completed",
+                title: "Teste Psicométrico Concluído",
+                message: `${employee[0].name} completou o teste ${input.testType.toUpperCase()}`,
+                link: `/testes/resultados-rh`,
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao criar notificação:", error);
+          // Não falhar a operação principal se notificação falhar
+        }
 
         return { success: true, profile };
       }),

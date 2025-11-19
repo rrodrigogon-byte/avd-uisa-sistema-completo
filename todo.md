@@ -172,3 +172,23 @@
 - [ ] Adicionar análise de vantagens competitivas
 - [ ] Implementar identificação de gaps vs mercado
 - [ ] Criar relatório de posicionamento competitivo
+
+
+## 🔄 Triggers Automáticos de Notificações
+
+- [x] Adicionar trigger ao endpoint de conclusão de teste psicométrico
+- [x] Adicionar trigger ao endpoint de atualização de progresso de PDI
+- [ ] Adicionar trigger ao endpoint de conclusão de avaliação 360° (pendente endpoint específico)
+- [x] Adicionar trigger ao endpoint de conclusão de meta
+- [ ] Adicionar trigger para insights críticos identificados (implementar quando necessário)
+- [x] Testar criação automática de notificações
+
+## 📄 Página de Histórico de Notificações
+
+- [x] Criar página /notificacoes com lista completa
+- [x] Implementar filtros por tipo de notificação
+- [x] Implementar filtros por período (hoje, semana, mês, ano)
+- [x] Implementar filtro por status (lidas/não lidas)
+- [x] Adicionar busca textual por título e mensagem
+- [x] Implementar paginação (limite de 100 notificações)
+- [x] Adicionar botão de limpar todas as notificações (marcar todas como lidas)
