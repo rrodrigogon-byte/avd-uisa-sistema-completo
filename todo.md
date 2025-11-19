@@ -218,3 +218,9 @@
 - [ ] Criar página de comparação com médias de mercado
 - [ ] Implementar gráficos radar comparativos
 - [ ] Adicionar análise de gaps competitivos
+
+
+## 🔧 Correção de Workflows
+- [x] Verificar schema da tabela workflows no drizzle/schema.ts
+- [x] Criar tabela workflows no banco de dados se não existir
+- [x] Testar página /aprovacoes/workflows
