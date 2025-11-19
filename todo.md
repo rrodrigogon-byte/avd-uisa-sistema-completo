@@ -67,3 +67,41 @@
 - [ ] Extrair dados dos PDIs (Agenor, Pablo, Paulo, Nadia, Callegari, Eduardo, Fernando)
 - [ ] Importar PDIs para o banco de dados
 - [ ] Validar PDIs importados no sistema
+
+## 🔍 PDI Inteligente - Busca Completa de Funcionários UISA
+
+- [x] Verificar endpoint employees.list para retornar todos os 2.889 funcionários
+- [x] Corrigir Combobox de busca de colaboradores na página /pdi-inteligente/novo
+- [x] Implementar busca com filtro por nome, cargo e departamento
+- [x] Testar criação de PDI com colaborador selecionado
+- [x] Validar que todos os campos do formulário funcionam corretamente
+- [x] Garantir que a busca funciona perfeitamente com grande volume de dados
+
+## 📊 Sistema Completo de Testes Psicométricos (Prioridade Alta)
+
+- [x] Popular perguntas do teste DISC no banco de dados
+- [x] Popular perguntas do teste Big Five no banco de dados
+- [x] Popular perguntas do teste MBTI no banco de dados
+- [x] Popular perguntas do teste Inteligência Emocional no banco de dados
+- [x] Popular perguntas do teste Estilos de Liderança no banco de dados
+- [x] Popular perguntas do teste Âncoras de Carreira no banco de dados
+- [ ] Criar páginas de questionários para cada teste
+- [ ] Implementar cálculo de resultados para cada teste
+- [ ] Criar sistema de envio de testes para funcionários individuais
+- [ ] Criar sistema de envio de testes para equipes
+- [ ] Criar sistema de envio de testes para departamentos
+- [ ] Criar dashboard de resultados por funcionário
+- [ ] Criar dashboard de resultados comparativos por equipe/departamento
+- [ ] Adicionar gráficos radar para visualização de perfis
+- [ ] Integrar resultados de testes com PDI Inteligente
+
+## 🎨 Melhorias de Performance - Design Moderno (Prioridade Alta)
+
+- [ ] Redesenhar Performance Integrada com paleta moderna
+- [ ] Redesenhar 360° Enhanced com paleta moderna
+- [ ] Aplicar cores: roxo #7C3AED, azul #3B82F6, verde #10B981
+- [ ] Criar cards de KPIs coloridos com ícones (lucide-react)
+- [ ] Adicionar gráficos de competências com Recharts
+- [ ] Melhorar visualizações de resultados 360°
+- [ ] Implementar animações e transições suaves
+- [ ] Adicionar indicadores visuais de progresso

@@ -177,7 +177,7 @@ export default function PDIInteligenteNovo() {
                       <CommandInput placeholder="Buscar colaborador..." />
                       <CommandEmpty>Nenhum colaborador encontrado.</CommandEmpty>
                       <CommandGroup className="max-h-64 overflow-auto">
-                        {employees?.slice(0, 200).map((item: any) => {
+                        {employees?.map((item: any) => {
                           const employee = item.employee;
                           return (
                           <CommandItem
