@@ -51,30 +51,40 @@ export default function ExecutiveDashboard() {
   }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: headcountByDept, isLoading: loadingHeadcount } =
-    trpc.executive.getHeadcountByDepartment.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+    trpc.executive.getHeadcountByDepartment.useQuery({
+      costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+    }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: headcountTrend, isLoading: loadingTrend } = trpc.executive.getHeadcountTrend.useQuery({
     costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
   }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: salaryDistribution, isLoading: loadingSalary } =
-    trpc.executive.getSalaryDistribution.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+    trpc.executive.getSalaryDistribution.useQuery({
+      costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+    }, { enabled: !loading && user?.role === 'admin' });
 
-  const { data: turnoverRate, isLoading: loadingTurnover } = trpc.executive.getTurnoverRate.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+  const { data: turnoverRate, isLoading: loadingTurnover } = trpc.executive.getTurnoverRate.useQuery({
+    costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+  }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: successionPipeline, isLoading: loadingSuccession } =
     trpc.executive.getSuccessionPipeline.useQuery({
       costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
     }, { enabled: !loading && user?.role === 'admin' });
 
-  const { data: trainingROI, isLoading: loadingROI } = trpc.executive.getTrainingROI.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+  const { data: trainingROI, isLoading: loadingROI } = trpc.executive.getTrainingROI.useQuery({
+    costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+  }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: performanceDistribution, isLoading: loadingPerformance } =
     trpc.executive.getPerformanceDistribution.useQuery({
       costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
     }, { enabled: !loading && user?.role === 'admin' });
 
-  const { data: engagement, isLoading: loadingEngagement } = trpc.executive.getEngagementMetrics.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+  const { data: engagement, isLoading: loadingEngagement } = trpc.executive.getEngagementMetrics.useQuery({
+    costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+  }, { enabled: !loading && user?.role === 'admin' });
 
   // Verificar se usuário é admin
   if (!loading && (!user || user.role !== "admin")) {

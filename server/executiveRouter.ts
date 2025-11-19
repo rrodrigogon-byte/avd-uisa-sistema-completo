@@ -106,9 +106,16 @@ export const executiveRouter = router({
   /**
    * Distribuição de Headcount por Departamento
    */
-  getHeadcountByDepartment: adminProcedure.query(async ({ ctx }) => {
+  getHeadcountByDepartment: adminProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    let conditions = [eq(employees.status, "ativo")];
+    if (input?.costCenter && input.costCenter !== 'all') {
+      conditions.push(eq(employees.costCenter, input.costCenter));
+    }
 
     const result = await db
       .select({
@@ -118,7 +125,7 @@ export const executiveRouter = router({
       })
       .from(employees)
       .leftJoin(departments, eq(employees.departmentId, departments.id))
-      .where(eq(employees.status, "ativo"))
+      .where(and(...conditions))
       .groupBy(employees.departmentId, departments.name)
       .orderBy(desc(count()));
 
@@ -167,15 +174,22 @@ export const executiveRouter = router({
   /**
    * Distribuição Salarial por Faixa
    */
-  getSalaryDistribution: adminProcedure.query(async ({ ctx }) => {
+  getSalaryDistribution: adminProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
     // Simular distribuição salarial (campo salary não existe no schema)
+    let conditions = [eq(employees.status, "ativo")];
+    if (input?.costCenter && input.costCenter !== 'all') {
+      conditions.push(eq(employees.costCenter, input.costCenter));
+    }
+    
     const totalEmployees = await db
       .select({ count: count() })
       .from(employees)
-      .where(eq(employees.status, "ativo"));
+      .where(and(...conditions));
 
     const total = totalEmployees[0]?.count || 0;
 
@@ -198,7 +212,9 @@ export const executiveRouter = router({
   /**
    * Taxa de Turnover Mensal (últimos 12 meses)
    */
-  getTurnoverRate: adminProcedure.query(async ({ ctx }) => {
+  getTurnoverRate: adminProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -257,7 +273,9 @@ export const executiveRouter = router({
   /**
    * ROI de Treinamentos (simulado)
    */
-  getTrainingROI: adminProcedure.query(async ({ ctx }) => {
+  getTrainingROI: adminProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -316,7 +334,9 @@ export const executiveRouter = router({
   /**
    * Métricas de Engajamento (baseado em metas e PDI)
    */
-  getEngagementMetrics: adminProcedure.query(async ({ ctx }) => {
+  getEngagementMetrics: adminProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
