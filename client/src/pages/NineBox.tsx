@@ -185,7 +185,7 @@ export default function NineBox() {
                   {/* Grid 3x3 */}
                   <div className="grid grid-cols-3 gap-2 border rounded-lg p-4 bg-muted/20">
                     {/* Linha 3 (Alto Potencial) */}
-                    {[3, 2, 1].map((perf) => {
+                    {[1, 2, 3].map((perf) => {
                       const key = `${perf}-3`;
                       const quadrant = QUADRANT_LABELS[key as keyof typeof QUADRANT_LABELS];
                       const employees = groupedEmployees[key] || [];
@@ -220,7 +220,7 @@ export default function NineBox() {
                     })}
 
                     {/* Linha 2 (Médio Potencial) */}
-                    {[3, 2, 1].map((perf) => {
+                    {[1, 2, 3].map((perf) => {
                       const key = `${perf}-2`;
                       const quadrant = QUADRANT_LABELS[key as keyof typeof QUADRANT_LABELS];
                       const employees = groupedEmployees[key] || [];
@@ -255,7 +255,7 @@ export default function NineBox() {
                     })}
 
                     {/* Linha 1 (Baixo Potencial) */}
-                    {[3, 2, 1].map((perf) => {
+                    {[1, 2, 3].map((perf) => {
                       const key = `${perf}-1`;
                       const quadrant = QUADRANT_LABELS[key as keyof typeof QUADRANT_LABELS];
                       const employees = groupedEmployees[key] || [];

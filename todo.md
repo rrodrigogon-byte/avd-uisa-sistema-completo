@@ -224,3 +224,44 @@
 - [x] Verificar schema da tabela workflows no drizzle/schema.ts
 - [x] Criar tabela workflows no banco de dados se não existir
 - [x] Testar página /aprovacoes/workflows
+
+
+## 🔄 Fluxo Completo de Avaliação 360°
+- [ ] Atualizar schema com campos de status do fluxo (selfAssessmentStatus, managerAssessmentStatus, consensusStatus)
+- [ ] Adicionar campos de datas (selfAssessmentCompletedAt, managerAssessmentCompletedAt, consensusCompletedAt)
+- [ ] Criar endpoint para funcionário submeter autoavaliação
+- [ ] Criar endpoint para gestor submeter avaliação
+- [ ] Criar endpoint para líder submeter consenso
+- [ ] Implementar notificações por email em cada transição
+- [ ] Criar página de autoavaliação para funcionário
+- [ ] Criar página de avaliação para gestor
+- [ ] Criar página de consenso para líder
+- [ ] Habilitar/desabilitar botões conforme etapa do fluxo
+- [ ] Adicionar validações de permissões por etapa
+- [ ] Testar fluxo completo end-to-end
+
+
+## 🔧 Correção Nine Box
+- [ ] Corrigir matriz Nine Box invertida (validar eixos X e Y)
+
+## 📊 Filtros Hierárquicos Nine Box Comparativo
+- [ ] Criar endpoint para buscar subordinados diretos por managerId
+- [ ] Implementar filtro por nível hierárquico (Diretoria, Gerência, Coordenação, Supervisão)
+- [ ] Implementar filtro por cargo de liderança unificado
+- [ ] Adicionar dropdown com lista de líderes
+- [ ] Filtrar matriz Nine Box pelos subordinados do líder selecionado
+
+## 🔧 Correção 360° Enhanced
+- [ ] Corrigir exibição de nome do colaborador (mostrar nome ao invés de código)
+
+## 🔄 Fluxo Completo de Avaliação 360°
+- [ ] Atualizar schema com campos de status do fluxo
+- [ ] Criar endpoint para funcionário submeter autoavaliação
+- [ ] Criar endpoint para gestor submeter avaliação
+- [ ] Criar endpoint para líder submeter consenso
+- [ ] Implementar notificações por email em cada transição
+- [ ] Criar interface de autoavaliação
+- [ ] Criar interface de avaliação do gestor
+- [ ] Criar interface de consenso do líder
+- [ ] Habilitar/desabilitar botões conforme etapa
+- [ ] Testar fluxo completo
