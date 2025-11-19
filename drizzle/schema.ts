@@ -283,6 +283,7 @@ export const performanceEvaluations = mysqlTable("performanceEvaluations", {
   consensusCompletedAt: datetime("consensusCompletedAt"),
   
   finalScore: int("finalScore"), // Nota final (0-100)
+  managerComments: text("managerComments"), // Comentários do gestor
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   completedAt: datetime("completedAt"),

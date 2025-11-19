@@ -399,4 +399,96 @@ export const evaluation360Router = router({
       const evaluations = await query;
       return evaluations;
     }),
+
+  /**
+   * Buscar perguntas da avaliação
+   */
+  getQuestions: protectedProcedure
+    .input(z.object({ evaluationId: z.number() }))
+    .query(async ({ input }) => {
+      // Retornar perguntas padrão (podem ser movidas para o banco depois)
+      return [
+        { id: 1, text: "Comunicação e clareza", category: "Comunicação" },
+        { id: 2, text: "Trabalho em equipe", category: "Colaboração" },
+        { id: 3, text: "Iniciativa e proatividade", category: "Atitude" },
+        { id: 4, text: "Qualidade técnica", category: "Competência Técnica" },
+        { id: 5, text: "Cumprimento de prazos", category: "Entrega" },
+        { id: 6, text: "Capacidade de resolução de problemas", category: "Resolução de Problemas" },
+        { id: 7, text: "Liderança e influência", category: "Liderança" },
+        { id: 8, text: "Adaptação a mudanças", category: "Flexibilidade" },
+      ];
+    }),
+
+  /**
+   * Submeter feedback adicional
+   */
+  submitFeedback: protectedProcedure
+    .input(
+      z.object({
+        evaluationId: z.number(),
+        feedback: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Atualizar avaliação com feedback
+      await db
+        .update(performanceEvaluations)
+        .set({
+          managerComments: input.feedback,
+          updatedAt: new Date(),
+        })
+        .where(eq(performanceEvaluations.id, input.evaluationId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Buscar detalhes completos da avaliação
+   */
+  getDetails: protectedProcedure
+    .input(z.object({ evaluationId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      const evaluation = await db
+        .select({
+          id: performanceEvaluations.id,
+          cycleId: performanceEvaluations.cycleId,
+          employeeId: performanceEvaluations.employeeId,
+          employeeName: employees.name,
+          type: performanceEvaluations.type,
+          status: performanceEvaluations.status,
+          workflowStatus: performanceEvaluations.workflowStatus,
+          selfEvaluationCompleted: performanceEvaluations.selfEvaluationCompleted,
+          managerEvaluationCompleted: performanceEvaluations.managerEvaluationCompleted,
+          selfCompletedAt: performanceEvaluations.selfCompletedAt,
+          managerCompletedAt: performanceEvaluations.managerCompletedAt,
+          consensusCompletedAt: performanceEvaluations.consensusCompletedAt,
+          finalScore: performanceEvaluations.finalScore,
+          managerComments: performanceEvaluations.managerComments,
+          createdAt: performanceEvaluations.createdAt,
+          completedAt: performanceEvaluations.completedAt,
+        })
+        .from(performanceEvaluations)
+        .leftJoin(employees, eq(performanceEvaluations.employeeId, employees.id))
+        .where(eq(performanceEvaluations.id, input.evaluationId))
+        .limit(1);
+
+      if (evaluation.length === 0) return null;
+
+      // Buscar respostas
+      const responses = await db
+        .select()
+        .from(evaluationResponses)
+        .where(eq(evaluationResponses.evaluationId, input.evaluationId));
+
+      return {
+        ...evaluation[0],
+        responses,
+      };
+    }),
 });

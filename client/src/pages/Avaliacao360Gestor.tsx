@@ -27,8 +27,8 @@ export default function Avaliacao360Gestor() {
   const [showSelfAssessment, setShowSelfAssessment] = useState(false);
 
   // Queries
-  const { data: evaluation, isLoading } = trpc.evaluation360.getEvaluationWithWorkflow.useQuery({ id: evaluationId });
-  const { data: questions } = trpc.performanceEvaluations.getQuestions.useQuery({ evaluationId });
+  const { data: evaluation, isLoading } = trpc.evaluation360.getEvaluationWithWorkflow.useQuery({ evaluationId });
+  const { data: questions } = trpc.evaluation360.getQuestions.useQuery({ evaluationId });
 
   // Mutation
   const submitMutation = trpc.evaluation360.submitManagerAssessment.useMutation({
@@ -54,7 +54,7 @@ export default function Avaliacao360Gestor() {
 
     submitMutation.mutate({
       evaluationId,
-      answers: answersArray,
+      responses: answersArray,
     });
   };
 
@@ -115,7 +115,7 @@ export default function Avaliacao360Gestor() {
           <div className="flex-1">
             <h1 className="text-2xl font-bold">Avaliação 360° - Avaliação do Gestor</h1>
             <p className="text-sm text-muted-foreground">
-              Ciclo {evaluation.cycleYear} • {evaluation.employeeName}
+              Ciclo {evaluation.cycleId} • {evaluation.employeeName}
             </p>
           </div>
         </div>

@@ -509,3 +509,35 @@
 - [x] Adicionar endpoint evaluation360.list ao evaluation360Router
 - [x] Endpoint list com filtros opcionais (cycleId, status)
 - [x] Retorna lista completa de avaliações com dados do colaborador
+
+
+## 🐛 Correção Erros TypeScript Restantes (Prioridade Máxima)
+- [x] Corrigir Avaliacao360Gestor.tsx linha 57: trocar 'answers' por 'responses'
+- [x] Corrigir Avaliacao360Gestor.tsx linha 118: substituir 'cycleYear' por 'cycleId'
+- [x] Corrigir Avaliacao360Gestor.tsx linha 30: usar parâmetro correto 'evaluationId'
+- [x] Adicionar endpoint evaluation360.getQuestions ao router (8 perguntas padrão)
+- [x] Adicionar endpoint evaluation360.submitFeedback ao router
+- [x] Adicionar endpoint evaluation360.getDetails ao router
+- [x] Adicionar import TRPCError
+
+## 📅 Gestão de Ciclos de Avaliação
+- [ ] Criar schema evaluationCycles (id, year, startDate, endDate, selfEvaluationDeadline, managerEvaluationDeadline, consensusDeadline, status, createdAt)
+- [ ] Criar router cyclesRouter com endpoints CRUD
+- [ ] Criar página /ciclos-avaliacao com lista de ciclos
+- [ ] Implementar formulário de criar novo ciclo
+- [ ] Implementar ativar/desativar ciclo
+- [ ] Adicionar visualização de histórico completo
+
+## 📊 Dashboard Acompanhamento 360°
+- [ ] Criar endpoint evaluation360.getProgress com estatísticas por etapa
+- [ ] Criar página /avaliacoes/dashboard
+- [ ] Implementar cards de % concluídas por etapa
+- [ ] Implementar lista de colaboradores pendentes com alerta
+- [ ] Implementar gráfico de tempo médio de conclusão
+- [ ] Implementar gráfico de evolução semanal
+
+## ✅ Revisão Funcionalidades Faltantes
+- [ ] Verificar se todos os módulos têm endpoints completos
+- [ ] Verificar se todas as páginas estão funcionando
+- [ ] Implementar funcionalidades faltantes identificadas
+- [ ] Testar fluxo completo de cada módulo
