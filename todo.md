@@ -401,9 +401,12 @@
 - [x] Atualizar schema successionCandidates com novos campos
 - [x] Atualizar endpoint addSuccessor com novos campos
 - [x] Atualizar endpoint updateSuccessor com novos campos
-- [ ] Melhorar página frontend do Mapa de Sucessão
-- [ ] Implementar formulário completo de adicionar sucessor no frontend
-- [ ] Adicionar estatísticas no topo (Posições Críticas, Sucessores Prontos, Sem Sucessor, % Cobertura)
+- [x] Melhorar página frontend do Mapa de Sucessão (/mapa-sucessao-completo)
+- [x] Implementar formulário completo de adicionar sucessor no frontend (modal com todos os campos)
+- [x] Adicionar estatísticas no topo (Posições Críticas, Sucessores Prontos, Sem Sucessor, % Cobertura)
+- [x] Implementar filtros (Departamento, Nível de Risco, Impacto, Cobertura)
+- [x] Criar cards de posição com badges de risco/impacto
+- [x] Integrar mutation addSuccessor com todos os novos campos
 
 ## 🎯 Páginas Frontend Fluxo 360° (Prioridade Alta)
 - [ ] Criar página /avaliacoes/autoavaliacao/:id
