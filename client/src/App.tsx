@@ -48,6 +48,8 @@ import CiclosAvaliacao from "./pages/CiclosAvaliacao";
 import AuditTrail from "./pages/AuditTrail";
 import Analytics from "./pages/Analytics";
 import AnalyticsAvancado from "./pages/AnalyticsAvancado";
+import DescricaoCargos from "./pages/DescricaoCargos";
+import PesquisasPulse from "./pages/PesquisasPulse";
 import Feedbacks from "./pages/Feedbacks";
 import Badges from "./pages/Badges";
 import PsychometricTests from "./pages/PsychometricTests";
@@ -148,6 +150,8 @@ function Router() {
       <Route path="/teste-lideranca" component={TestLeadership} />
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
       <Route path="/testes/enviar" component={EnviarTestes} />
+      <Route path="/descricao-cargos" component={DescricaoCargos} />
+      <Route path="/pesquisas-pulse" component={PesquisasPulse} />
       <Route path="/notificacoes" component={Notificacoes} />
       <Route path="/testes/comparativo" component={DashboardComparativoTestes} />
       <Route path="/relatorios-executivos" component={RelatoriosExecutivos} />
