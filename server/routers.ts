@@ -24,7 +24,7 @@ import { bonusRouter } from "./bonusRouter";
 import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
@@ -2095,6 +2095,28 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         // Por enquanto, apenas retornar sucesso
         return { success: true, message: "Email reenviado com sucesso" };
       }),
+  }),
+
+  // Router de Centros de Custos
+  costCenters: router({
+    // Listar todos os centros de custos únicos
+    list: publicProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      // Buscar valores únicos de costCenter da tabela employees
+      const result = await database.selectDistinct({ costCenter: employees.costCenter })
+        .from(employees)
+        .where(sql`${employees.costCenter} IS NOT NULL AND ${employees.costCenter} != ''`)
+        .orderBy(employees.costCenter);
+
+      // Transformar em formato {id, code, name}
+      return result.map((r, index) => ({
+        id: index + 1,
+        code: r.costCenter || '',
+        name: r.costCenter || '',
+      }));
+    }),
   }),
 });
 

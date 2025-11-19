@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Users, TrendingUp, Award, Target, DollarSign, Briefcase, AlertCircle } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
+import { CostCenterFilter } from "@/components/CostCenterFilter";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -41,6 +42,7 @@ ChartJS.register(
 export default function ExecutiveDashboard() {
   const { user, loading } = useAuth();
   const [selectedDepartment, setSelectedDepartment] = useState<number | undefined>(undefined);
+  const [selectedCostCenter, setSelectedCostCenter] = useState<string>("all");
 
   // Queries - DEVEM estar antes dos returns condicionais (regra dos React Hooks)
   const { data: kpis, isLoading: loadingKPIs } = trpc.executive.getKPIs.useQuery({
@@ -169,24 +171,18 @@ export default function ExecutiveDashboard() {
 
   return (
     <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold">Dashboard Executivo</h1>
           <p className="text-muted-foreground">Métricas estratégicas para tomada de decisão</p>
         </div>
 
-        {/* Filtro de Departamento */}
-        {/* <Select
-          value={selectedDepartment?.toString() || "all"}
-          onValueChange={(value) => setSelectedDepartment(value === "all" ? undefined : parseInt(value))}
-        >
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Todos os departamentos" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os departamentos</SelectItem>
-          </SelectContent>
-        </Select> */}
+        {/* Filtro de Centro de Custos */}
+        <CostCenterFilter
+          value={selectedCostCenter}
+          onChange={setSelectedCostCenter}
+          showLabel={false}
+        />
       </div>
 
       {/* KPIs Principais */}

@@ -1103,7 +1103,7 @@
 - [x] Criar script de envio para rodrigo.goncalves@uisa.com.br
 - [x] Enviar todos os 5 testes (DISC, Big Five, MBTI, IE, VARK)
 
-## 🔧 Correção dos Testes Psicométricos
+## ✅ Correção dos Testes Psicométricos - CONCLUÍDO
 - [x] Diagnosticar problemas específicos nos testes
 - [x] Verificar se os endpoints de submissão estão funcionando (OK)
 - [x] Verificar salvamento de respostas no banco de dados (perguntas OK: DISC=40, BigFive=50, MBTI=60, IE=25, VARK=20)
@@ -1115,3 +1115,23 @@
 - [x] Adicionar formulário de email no final do teste
 - [x] Testar DISC e Big Five - funcionando perfeitamente
 - [x] Validar exibição de resultados após conclusão
+
+
+## 🔍 Filtros por Centro de Custos - EM ANDAMENTO
+- [x] Criar componente de seleção de centro de custos (dropdown) - CostCenterFilter.tsx
+- [x] Criar endpoint costCenters.list para buscar centros de custos únicos
+- [x] Adicionar filtro no Dashboard Executivo (UI pronta)
+- [ ] Implementar lógica de filtragem nos endpoints backend (passar costCenter como parâmetro)
+- [ ] Adicionar filtro no Analytics de RH
+- [ ] Adicionar filtro no Performance
+- [ ] Atualizar KPIs e gráficos baseado no filtro selecionado
+
+## 📊 Importação em Massa de Hierarquia
+- [ ] Criar página de importação em /admin/hierarquia/importar
+- [ ] Implementar upload de arquivo Excel/CSV
+- [ ] Validar estrutura do arquivo (colunas obrigatórias)
+- [ ] Criar preview de alterações antes de aplicar
+- [ ] Implementar lógica de atualização em massa no backend
+- [ ] Adicionar log de erros e sucessos
+- [ ] Criar template de exemplo para download
+- [ ] Adicionar link no menu de Hierarquia Organizacional
