@@ -29,6 +29,7 @@ export const executiveRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional(),
         departmentId: z.number().optional(),
+        costCenter: z.string().optional(),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -36,9 +37,17 @@ export const executiveRouter = router({
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
       // Total de colaboradores
-      let employeeQuery = db.select({ count: count() }).from(employees);
+      let employeeConditions = [];
       if (input.departmentId) {
-        employeeQuery = employeeQuery.where(eq(employees.departmentId, input.departmentId)) as any;
+        employeeConditions.push(eq(employees.departmentId, input.departmentId));
+      }
+      if (input.costCenter && input.costCenter !== 'all') {
+        employeeConditions.push(eq(employees.costCenter, input.costCenter));
+      }
+      
+      let employeeQuery = db.select({ count: count() }).from(employees);
+      if (employeeConditions.length > 0) {
+        employeeQuery = employeeQuery.where(and(...employeeConditions)) as any;
       }
       const totalEmployees = await employeeQuery;
 
@@ -46,6 +55,9 @@ export const executiveRouter = router({
       let activeConditions = [eq(employees.status, "ativo")];
       if (input.departmentId) {
         activeConditions.push(eq(employees.departmentId, input.departmentId));
+      }
+      if (input.costCenter && input.costCenter !== 'all') {
+        activeConditions.push(eq(employees.costCenter, input.costCenter));
       }
       const activeEmployees = await db
         .select({ count: count() })

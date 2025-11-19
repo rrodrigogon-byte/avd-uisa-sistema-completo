@@ -63,6 +63,7 @@ import AprovacaoCalibracoes from "./pages/AprovacaoCalibracoes";
 import RankingGamificacao from "./pages/RankingGamificacao";
 import ConfiguracaoIntegracoes from "./pages/ConfiguracaoIntegracoes";
 import HierarquiaOrganizacional from "./pages/HierarquiaOrganizacional";
+import HierarquiaImport from "./pages/HierarquiaImport";
 import DashboardEmails from "./pages/DashboardEmails";
 
 function Router() {
@@ -115,6 +116,7 @@ function Router() {
       <Route path="/teste-vark" component={TestVARK} />
       <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path="/admin/hierarquia" component={HierarquiaOrganizacional} />
+      <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />

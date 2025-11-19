@@ -47,6 +47,7 @@ export default function ExecutiveDashboard() {
   // Queries - DEVEM estar antes dos returns condicionais (regra dos React Hooks)
   const { data: kpis, isLoading: loadingKPIs } = trpc.executive.getKPIs.useQuery({
     departmentId: selectedDepartment,
+    costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
   }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: headcountByDept, isLoading: loadingHeadcount } =

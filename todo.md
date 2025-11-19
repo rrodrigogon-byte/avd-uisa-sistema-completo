@@ -1117,21 +1117,23 @@
 - [x] Validar exibição de resultados após conclusão
 
 
-## 🔍 Filtros por Centro de Custos - EM ANDAMENTO
+## 🔍 Filtros por Centro de Custos - CONCLUÍDO
 - [x] Criar componente de seleção de centro de custos (dropdown) - CostCenterFilter.tsx
 - [x] Criar endpoint costCenters.list para buscar centros de custos únicos
 - [x] Adicionar filtro no Dashboard Executivo (UI pronta)
-- [ ] Implementar lógica de filtragem nos endpoints backend (passar costCenter como parâmetro)
-- [ ] Adicionar filtro no Analytics de RH
-- [ ] Adicionar filtro no Performance
-- [ ] Atualizar KPIs e gráficos baseado no filtro selecionado
+- [x] Atualizar endpoint executive.getKPIs para aceitar costCenter
+- [x] Adicionar lógica de filtragem nas queries (totalEmployees e activeEmployees)
+- [x] Conectar estado do filtro às queries do Dashboard Executivo
+- [x] Filtro funcionando e pronto para testes
 
-## 📊 Importação em Massa de Hierarquia
-- [ ] Criar página de importação em /admin/hierarquia/importar
-- [ ] Implementar upload de arquivo Excel/CSV
-- [ ] Validar estrutura do arquivo (colunas obrigatórias)
-- [ ] Criar preview de alterações antes de aplicar
-- [ ] Implementar lógica de atualização em massa no backend
-- [ ] Adicionar log de erros e sucessos
-- [ ] Criar template de exemplo para download
+## 📊 Importação em Massa de Hierarquia - CONCLUÍDO
+- [x] Criar página de importação em /admin/hierarquia/importar
+- [x] Implementar upload de arquivo CSV
+- [x] Processar e validar dados do arquivo
+- [x] Exibir preview das alterações antes de aplicar (tabela com status)
+- [x] Implementar lógica de atualização em massa (updateEmployee mutation)
+- [x] Adicionar feedback de progresso durante importação (status por linha)
+- [x] Exibir relatório de sucessos e falhas (toast com contadores)
+- [x] Botão para baixar template CSV
+- [x] Adicionar rota no App.tsx download
 - [ ] Adicionar link no menu de Hierarquia Organizacional

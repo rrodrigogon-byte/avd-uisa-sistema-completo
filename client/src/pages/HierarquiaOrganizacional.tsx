@@ -33,7 +33,7 @@ export default function HierarquiaOrganizacional() {
   const { data: managers } = trpc.employees.getManagers.useQuery();
 
   // Mutations
-  const updateEmployeeMutation = trpc.employees.updateHierarchy.useMutation({
+  const updateEmployeeMutation = trpc.employees.updateEmployee.useMutation({
     onSuccess: () => {
       toast.success("Hierarquia atualizada com sucesso!");
       setEditingEmployee(null);
@@ -54,9 +54,9 @@ export default function HierarquiaOrganizacional() {
     if (!editingEmployee) return;
 
     updateEmployeeMutation.mutate({
-      employeeId: editingEmployee.id,
-      managerId: newManagerId ? parseInt(newManagerId) : null,
-      costCenter: newCostCenter || null,
+      id: editingEmployee.id,
+      managerId: newManagerId ? parseInt(newManagerId) : undefined,
+      costCenter: newCostCenter || undefined,
     });
   };
 

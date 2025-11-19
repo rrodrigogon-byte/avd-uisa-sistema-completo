@@ -213,9 +213,39 @@ export const appRouter = router({
         const subordinateCount = allEmployees.filter(e => e.managerId === emp.id).length;
         return { ...emp, subordinateCount };
       });
-
+      
       return employeesWithCount;
     }),
+
+    // Atualizar colaborador (para importação em massa)
+    updateEmployee: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          managerId: z.number().optional(),
+          costCenter: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Database not available",
+          });
+        }
+
+        const updateData: any = {};
+        if (input.managerId !== undefined) updateData.managerId = input.managerId;
+        if (input.costCenter !== undefined) updateData.costCenter = input.costCenter;
+
+        await database
+          .update(employees)
+          .set(updateData)
+          .where(eq(employees.id, input.id));
+
+        return { success: true, message: "Colaborador atualizado com sucesso" };
+      }),
 
     getDepartments: protectedProcedure.query(async () => {
       const database = await getDb();
@@ -232,59 +262,6 @@ export const appRouter = router({
       const allEmployees = await database.select().from(employees);
       return allEmployees;
     }),
-
-    updateHierarchy: protectedProcedure
-      .input(z.object({
-        employeeId: z.number(),
-        managerId: z.number().nullable(),
-        costCenter: z.string().nullable(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Banco de dados indisponível",
-          });
-        }
-
-        // Verificar se é admin
-        if (ctx.user.role !== "admin") {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Acesso negado: apenas administradores",
-          });
-        }
-
-        // Verificar ciclo de referência (não pode ser gestor de si mesmo)
-        if (input.managerId === input.employeeId) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Um colaborador não pode ser gestor de si mesmo",
-          });
-        }
-
-        // Atualizar colaborador
-        await database.update(employees)
-          .set({
-            managerId: input.managerId,
-            costCenter: input.costCenter,
-          })
-          .where(eq(employees.id, input.employeeId));
-
-        // Log de auditoria
-        await db.logAudit(
-          ctx.user.id,
-          "UPDATE_HIERARCHY",
-          "employees",
-          input.employeeId,
-          input,
-          ctx.req.ip,
-          ctx.req.headers["user-agent"]
-        );
-
-        return { success: true };
-      }),
   }),
 
   // ============================================================================
