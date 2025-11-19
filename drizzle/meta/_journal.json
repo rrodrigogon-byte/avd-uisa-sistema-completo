@@ -148,6 +148,13 @@
       "when": 1763505939286,
       "tag": "0020_special_dreadnoughts",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1763510931086,
+      "tag": "0021_broken_gargoyle",
+      "breakpoints": true
     }
   ]
 }

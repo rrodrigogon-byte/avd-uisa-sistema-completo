@@ -99,6 +99,7 @@ export const employees = mysqlTable("employees", {
   departmentId: int("departmentId").notNull(),
   positionId: int("positionId").notNull(),
   managerId: int("managerId"), // Gestor direto
+  costCenter: varchar("costCenter", { length: 100 }), // Centro de custos
   photoUrl: varchar("photoUrl", { length: 512 }),
   phone: varchar("phone", { length: 20 }),
   address: text("address"),

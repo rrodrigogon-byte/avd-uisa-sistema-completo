@@ -1023,3 +1023,15 @@
 - [x] Testar exportação Excel de bônus
 - [x] Testar exportação PDF de calibrações
 - [x] Validar envio de notificações por email
+
+
+## 🔐 Sistema de Permissões e Hierarquia Organizacional
+- [x] Adicionar campo costCenter (centro de custos) na tabela employees
+- [x] Adicionar campo managerId (gestor direto) na tabela employees (já existia)
+- [x] Configurar Rodrigo.goncalves como administrador
+- [x] Configurar Lucas.silva como administrador
+- [x] Criar middleware de permissões baseado em hierarquia
+- [x] Implementar controle de acesso para líderes por centro de custos
+- [x] Restringir visualização de avaliações apenas para liderados diretos
+- [x] Permitir consenso apenas para líderes dos colaboradores avaliados
+- [x] Testar permissões com diferentes perfis de usuário
