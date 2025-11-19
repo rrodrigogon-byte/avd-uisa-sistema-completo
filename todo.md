@@ -161,3 +161,8 @@
 - [x] Adicionar KPIs no topo (Progresso Médio, Metas Ativas, Avaliações 360°, Nota Média)
 - [x] Registrar rota no App.tsx
 - [ ] Criar endpoints tRPC para buscar dados reais de analytics - PENDENTE
+
+
+## 🐛 Bugs Resolvidos
+
+- [x] Corrigir erro: tabela goalApprovals não existe no banco de dados (página /metas/1/progresso) - RESOLVIDO
