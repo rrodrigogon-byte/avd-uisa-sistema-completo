@@ -131,7 +131,13 @@ export const executiveRouter = router({
   /**
    * Evolução de Headcount (últimos 12 meses)
    */
-  getHeadcountTrend: adminProcedure.query(async ({ ctx }) => {
+  getHeadcountTrend: adminProcedure
+    .input(
+      z.object({
+        costCenter: z.string().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -219,7 +225,13 @@ export const executiveRouter = router({
   /**
    * Pipeline de Sucessão Crítica
    */
-  getSuccessionPipeline: adminProcedure.query(async ({ ctx }) => {
+  getSuccessionPipeline: adminProcedure
+    .input(
+      z.object({
+        costCenter: z.string().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -272,7 +284,13 @@ export const executiveRouter = router({
   /**
    * Distribuição de Performance por Nível (9-Box)
    */
-  getPerformanceDistribution: adminProcedure.query(async ({ ctx }) => {
+  getPerformanceDistribution: adminProcedure
+    .input(
+      z.object({
+        costCenter: z.string().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

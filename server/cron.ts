@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import { getDb } from './db';
+import { startNotificationCron } from './jobs/notificationCron';
 import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals } from '../drizzle/schema';
 import { eq, and, lt, gte } from 'drizzle-orm';
 import { emailService } from './utils/emailService';
@@ -241,6 +242,9 @@ export function startCronJobs() {
   evaluationReminderJob.start();
   pdiOverdueJob.start();
   scheduledReportsJob.start();
+  // Iniciar job de notificações automáticas
+  startNotificationCron();
+  
   console.log('[Cron] Cron jobs iniciados com sucesso');
 }
 

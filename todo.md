@@ -1164,3 +1164,22 @@
 - [x] Incluir lista de colaboradores sem gestor
 - [x] Adicionar botão "Baixar Relatório" na página de Hierarquia
 - [x] Download funcionando com arquivo .txt formatado
+
+
+## ✅ Gráficos Filtráveis no Dashboard Executivo - CONCLUÍDO
+- [x] Atualizar endpoint executive.getHeadcountTrend para aceitar costCenter
+- [x] Atualizar endpoint executive.getPerformanceDistribution para aceitar costCenter
+- [x] Atualizar endpoint executive.getSuccessionPipeline para aceitar costCenter
+- [x] Conectar selectedCostCenter às queries de gráficos no ExecutiveDashboard.tsx
+- [x] Corrigir erro TypeScript no DashboardExecutivo.tsx
+- [x] Gráficos conectados ao filtro e prontos para uso
+
+## ✅ Sistema de Notificações Automáticas - CONCLUÍDO
+- [x] Criar endpoint para verificar prazos de metas próximos do vencimento
+- [x] Criar endpoint para verificar avaliações 360° pendentes
+- [x] Criar endpoint para verificar PDIs sem atualização há mais de 30 dias
+- [x] Implementar cron job para executar verificações diariamente (9h)
+- [x] Criar sistema de envio de notificações para gestores (notifyOwner)
+- [x] Instalar pacote cron
+- [x] Integrar startNotificationCron ao sistema de cron jobs
+- [x] Sistema funcionando sem erros TypeScript

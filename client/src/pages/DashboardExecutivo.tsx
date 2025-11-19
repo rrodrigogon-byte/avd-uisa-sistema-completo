@@ -54,7 +54,7 @@ export default function DashboardExecutivo() {
   const { data: flightRisk, isLoading: flightRiskLoading } =
     trpc.executive.getFlightRisk.useQuery({ riskLevel: "alto", limit: 10 });
   const { data: nineBoxData, isLoading: nineBoxLoading } =
-    trpc.executive.getPerformanceDistribution.useQuery();
+    trpc.executive.getPerformanceDistribution.useQuery({});
 
   // Calcular engajamento médio (simulado)
   const engajamento = 8.2;

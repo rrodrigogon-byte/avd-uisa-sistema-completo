@@ -53,7 +53,9 @@ export default function ExecutiveDashboard() {
   const { data: headcountByDept, isLoading: loadingHeadcount } =
     trpc.executive.getHeadcountByDepartment.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
 
-  const { data: headcountTrend, isLoading: loadingTrend } = trpc.executive.getHeadcountTrend.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+  const { data: headcountTrend, isLoading: loadingTrend } = trpc.executive.getHeadcountTrend.useQuery({
+    costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+  }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: salaryDistribution, isLoading: loadingSalary } =
     trpc.executive.getSalaryDistribution.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
@@ -61,12 +63,16 @@ export default function ExecutiveDashboard() {
   const { data: turnoverRate, isLoading: loadingTurnover } = trpc.executive.getTurnoverRate.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
 
   const { data: successionPipeline, isLoading: loadingSuccession } =
-    trpc.executive.getSuccessionPipeline.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+    trpc.executive.getSuccessionPipeline.useQuery({
+      costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+    }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: trainingROI, isLoading: loadingROI } = trpc.executive.getTrainingROI.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
 
   const { data: performanceDistribution, isLoading: loadingPerformance } =
-    trpc.executive.getPerformanceDistribution.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
+    trpc.executive.getPerformanceDistribution.useQuery({
+      costCenter: selectedCostCenter !== 'all' ? selectedCostCenter : undefined,
+    }, { enabled: !loading && user?.role === 'admin' });
 
   const { data: engagement, isLoading: loadingEngagement } = trpc.executive.getEngagementMetrics.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
 
