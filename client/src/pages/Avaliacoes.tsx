@@ -39,6 +39,27 @@ export default function Avaliacoes() {
 
   const { data: evaluations } = trpc.evaluations.list.useQuery({});
   const { data: employee } = trpc.employees.getCurrent.useQuery();
+  const { data: cycles, refetch: refetchCycles } = trpc.evaluationCycles.list.useQuery();
+
+  // Mutation para criar ciclo
+  const createCycleMutation = trpc.evaluationCycles.create.useMutation({
+    onSuccess: () => {
+      toast.success(`Ciclo "${newCycle.name}" criado com sucesso!`);
+      setIsCreateCycleDialogOpen(false);
+      setNewCycle({
+        name: "",
+        year: new Date().getFullYear(),
+        type: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+      });
+      refetchCycles(); // Atualizar listagem
+    },
+    onError: (error) => {
+      toast.error(`Erro ao criar ciclo: ${error.message}`);
+    },
+  });
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: any; label: string; icon: any }> = {
@@ -420,19 +441,17 @@ export default function Avaliacoes() {
                     return;
                   }
 
-                  // TODO: Integrar com backend
-                  toast.success(`Ciclo "${newCycle.name}" criado com sucesso!`);
-                  setIsCreateCycleDialogOpen(false);
-                  setNewCycle({
-                    name: "",
-                    year: new Date().getFullYear(),
-                    type: "",
-                    startDate: "",
-                    endDate: "",
-                    description: "",
+                  // Criar ciclo no backend
+                  createCycleMutation.mutate({
+                    name: newCycle.name,
+                    year: newCycle.year,
+                    type: newCycle.type as any, // Type assertion para aceitar todos os tipos
+                    startDate: new Date(newCycle.startDate).toISOString(),
+                    endDate: new Date(newCycle.endDate).toISOString(),
+                    description: newCycle.description || undefined,
                   });
                 }}
-                disabled={!newCycle.name || !newCycle.type || !newCycle.startDate || !newCycle.endDate}
+                disabled={!newCycle.name || !newCycle.type || !newCycle.startDate || !newCycle.endDate || createCycleMutation.isPending}
               >
                 Criar Ciclo
               </Button>

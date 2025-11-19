@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { GitBranch, Clock, CheckCircle, XCircle, ArrowRight, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 /**
  * Workflows
@@ -40,6 +41,22 @@ export default function Workflows() {
     name: "",
     description: "",
     type: "",
+  });
+
+  // Buscar workflows do backend
+  const { data: backendWorkflows, refetch } = trpc.workflows.list.useQuery();
+
+  // Mutation para criar workflow
+  const createWorkflowMutation = trpc.workflows.create.useMutation({
+    onSuccess: () => {
+      toast.success(`Workflow "${newWorkflow.name}" criado com sucesso!`);
+      setIsCreateDialogOpen(false);
+      setNewWorkflow({ name: "", description: "", type: "" });
+      refetch(); // Atualizar listagem
+    },
+    onError: (error) => {
+      toast.error(`Erro ao criar workflow: ${error.message}`);
+    },
   });
 
   // Mock data - TODO: integrar com backend
@@ -275,12 +292,15 @@ export default function Workflows() {
                     return;
                   }
 
-                  // TODO: Integrar com backend
-                  toast.success(`Workflow "${newWorkflow.name}" criado com sucesso!`);
-                  setIsCreateDialogOpen(false);
-                  setNewWorkflow({ name: "", description: "", type: "" });
+                  // Criar workflow no backend
+                  createWorkflowMutation.mutate({
+                    name: newWorkflow.name,
+                    description: newWorkflow.description || undefined,
+                    type: newWorkflow.type as any, // Type assertion para aceitar valores do select
+                    steps: JSON.stringify([]), // Etapas vazias inicialmente
+                  });
                 }}
-                disabled={!newWorkflow.name || !newWorkflow.type}
+                disabled={!newWorkflow.name || !newWorkflow.type || createWorkflowMutation.isPending}
               >
                 Criar Workflow
               </Button>

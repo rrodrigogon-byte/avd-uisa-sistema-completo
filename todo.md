@@ -1449,3 +1449,39 @@
 - [ ] Adicionar botão "Enviar por E-mail" em metas
 - [ ] Adicionar botão "Enviar por E-mail" em performance
 - [ ] Implementar preview de e-mail antes de enviar
+
+
+## 🎯 Finalização 100% - Tarefas Finais
+
+### Integrar Modais com Backend
+- [x] Conectar modal de workflows ao trpc.workflows.create.useMutation()
+- [x] Atualizar listagem de workflows após criação (refetch)
+- [x] Conectar modal de ciclos ao trpc.evaluationCycles.create.useMutation()
+- [x] Atualizar listagem de ciclos após criação (refetch)
+- [x] Corrigir erros TypeScript (isPending, type assertions, steps)
+- [ ] Testar criação end-to-end de workflows
+- [ ] Testar criação end-to-end de ciclos
+
+### Configurar SMTP e Testar E-mail
+- [ ] Criar página /configuracoes/smtp para configuração SMTP
+- [ ] Adicionar campos: host, porta, usuário, senha, remetente
+- [ ] Criar endpoint backend para salvar configuração SMTP
+- [ ] Criar tabela smtpConfig no banco de dados
+- [ ] Testar envio de e-mail para rodrigo.goncalves@uisa.com.br
+- [ ] Validar templates de e-mail
+
+### Adicionar Botões de E-mail
+- [ ] Adicionar botão "Enviar por E-mail" na página de metas
+- [ ] Adicionar botão "Enviar por E-mail" na página de performance
+- [ ] Implementar modal de preview de e-mail
+- [ ] Conectar ao endpoint trpc.email.sendGoalEmail
+- [ ] Conectar ao endpoint trpc.email.sendPerformanceEmail
+- [ ] Testar envio de e-mails
+
+### Análise Final do Sistema
+- [ ] Revisar todas as páginas principais
+- [ ] Verificar todos os endpoints backend
+- [ ] Testar todos os fluxos principais
+- [ ] Identificar funcionalidades faltantes
+- [ ] Criar lista de pendências para 100%
+- [ ] Documentar sistema completo
