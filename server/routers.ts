@@ -28,6 +28,7 @@ import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./notificationsRouter";
+import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { eq, and, desc, sql } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2382,6 +2383,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Metas SMART
   smartGoals: goalsRouter,
+  goalApprovals: goalApprovalsRouter,
   bonus: bonusRouter,
   calibrationDiretoria: calibrationRouter,
   gamification: gamificationRouter,

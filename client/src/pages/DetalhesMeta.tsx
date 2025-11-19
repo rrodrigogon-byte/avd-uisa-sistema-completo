@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import GoalApprovalSection from "@/components/GoalApprovalSection";
 
 /**
  * Página de Detalhes da Meta Individual
@@ -597,55 +598,11 @@ export default function DetalhesMeta() {
       )}
 
       {/* Aprovações */}
-      {goal.approvals && goal.approvals.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Histórico de Aprovações ({goal.approvals.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {goal.approvals.map((approval: any) => (
-                <div key={approval.id} className="flex items-start gap-4 p-4 border rounded-lg">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold">{approval.approverName || "Aprovador"}</h4>
-                      <Badge
-                        variant={
-                          approval.status === "approved"
-                            ? "default"
-                            : approval.status === "rejected"
-                            ? "destructive"
-                            : "secondary"
-                        }
-                      >
-                        {approval.status === "approved" && "Aprovado"}
-                        {approval.status === "rejected" && "Rejeitado"}
-                        {approval.status === "pending" && "Pendente"}
-                      </Badge>
-                      <span className="text-xs text-gray-500">
-                        {approval.approverRole === "manager" && "Gestor"}
-                        {approval.approverRole === "hr" && "RH"}
-                        {approval.approverRole === "director" && "Diretor"}
-                      </span>
-                    </div>
-                    {approval.comments && (
-                      <p className="text-sm text-gray-600 mb-2">{approval.comments}</p>
-                    )}
-                    <div className="text-xs text-gray-500">
-                      {approval.decidedAt
-                        ? `Decidido em ${format(new Date(approval.decidedAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`
-                        : `Solicitado em ${format(new Date(approval.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <GoalApprovalSection
+        goalId={goalId}
+        currentStatus={goal.status}
+        approvalStatus={goal.approvalStatus}
+      />
 
       {/* Evidências */}
       <Card>

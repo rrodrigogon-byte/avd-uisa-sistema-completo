@@ -166,3 +166,39 @@
 ## 🐛 Bugs Resolvidos
 
 - [x] Corrigir erro: tabela goalApprovals não existe no banco de dados (página /metas/1/progresso) - RESOLVIDO
+
+
+## 🎯 Novas Funcionalidades - Expansão do Sistema
+
+### 1. Popular Banco com Metas de Exemplo
+- [ ] Criar script SQL para inserir 5 metas SMART de exemplo
+- [ ] Inserir metas para diferentes colaboradores e departamentos
+- [ ] Adicionar marcos (milestones) para cada meta
+- [ ] Executar seed e validar dados
+
+### 2. Fluxo de Aprovação de Metas
+- [x] Criar componente de aprovação na página de detalhes da meta (GoalApprovalSection.tsx)
+- [x] Implementar botões "Aprovar" e "Rejeitar" para gestores
+- [x] Criar mutation tRPC para aprovar/rejeitar metas (goalApprovalsRouter.ts)
+- [x] Integrar com sistema de notificações WebSocket (createNotification)
+- [x] Enviar notificação ao colaborador quando meta for aprovada/rejeitada
+- [x] Adicionar histórico de aprovações na página da meta
+- [x] Implementar validação de permissões (apenas gestor/RH/admin pode aprovar)
+
+### 3. Analytics com Dados Reais
+- [ ] Criar analyticsRouter.ts com endpoints para dados reais
+- [ ] Implementar query para progresso de metas por mês
+- [ ] Implementar query para taxa de conclusão de avaliações 360°
+- [ ] Implementar query para distribuição de notas por departamento
+- [ ] Implementar query para distribuição por faixa de nota
+- [ ] Conectar página Analytics Avançado aos endpoints reais
+- [ ] Adicionar cache e otimização de queries
+
+### 4. Funcionalidades Avançadas
+- [ ] Implementar filtro de colaborador individual no Analytics
+- [ ] Adicionar exportação de relatórios em PDF
+- [ ] Criar página de histórico de notificações completo
+- [ ] Implementar busca e filtros avançados de metas
+- [ ] Adicionar comparação de desempenho entre períodos
+- [ ] Criar dashboard de KPIs em tempo real
+- [ ] Implementar sistema de badges/conquistas para gamificação
