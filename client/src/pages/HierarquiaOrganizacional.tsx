@@ -401,7 +401,7 @@ export default function HierarquiaOrganizacional() {
                     <SelectValue placeholder="Selecione o gestor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Nenhum (Nível mais alto)</SelectItem>
+                    <SelectItem value="none">Nenhum (Nível mais alto)</SelectItem>
                     {managers?.filter((m: any) => m.id !== editingEmployee?.id).map((manager: any) => (
                       <SelectItem key={manager.id} value={manager.id.toString()}>
                         {manager.name} - {manager.position || "Sem cargo"}

@@ -450,7 +450,7 @@ export default function CriarMetaSMART() {
                     <SelectValue placeholder="Selecione um PDI" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Nenhum</SelectItem>
+                    <SelectItem value="none">Nenhum</SelectItem>
                     {pdis.map((pdi: any) => (
                       <SelectItem key={pdi.id} value={pdi.id.toString()}>
                         {pdi.title || `PDI #${pdi.id}`}

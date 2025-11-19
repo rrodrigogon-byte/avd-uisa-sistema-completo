@@ -1596,3 +1596,11 @@
 - [ ] Testar envio por e-mail
 - [ ] Validar geração de PDF/Excel
 - [ ] Verificar logs de execução
+
+## 🐛 Correção de Erro Select.Item
+
+- [x] Localizar arquivo da página /metas/criar
+- [x] Identificar Select.Item com value vazio
+- [x] Corrigir value para string não-vazia ou remover item
+- [x] Testar página de criar meta
+- [x] Validar que erro foi resolvido

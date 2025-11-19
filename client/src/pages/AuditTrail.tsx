@@ -33,8 +33,8 @@ import { toast } from "sonner";
 
 export default function AuditTrail() {
   const [filters, setFilters] = useState({
-    action: "",
-    entity: "",
+    action: "all",
+    entity: "all",
     userId: undefined as number | undefined,
   });
   const [page, setPage] = useState(0);
@@ -137,7 +137,7 @@ export default function AuditTrail() {
                   <SelectValue placeholder="Todas as ações" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas</SelectItem>
+                  <SelectItem value="all">Todas</SelectItem>
                   <SelectItem value="create">Criar</SelectItem>
                   <SelectItem value="update">Atualizar</SelectItem>
                   <SelectItem value="delete">Excluir</SelectItem>
@@ -156,7 +156,7 @@ export default function AuditTrail() {
                   <SelectValue placeholder="Todas as entidades" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas</SelectItem>
+                  <SelectItem value="all">Todas</SelectItem>
                   <SelectItem value="goal">Metas</SelectItem>
                   <SelectItem value="evaluation">Avaliações</SelectItem>
                   <SelectItem value="pdi">PDI</SelectItem>
@@ -186,7 +186,7 @@ export default function AuditTrail() {
             <Button
               variant="outline"
               onClick={() => {
-                setFilters({ action: "", entity: "", userId: undefined });
+                setFilters({ action: "all", entity: "all", userId: undefined });
                 setPage(0);
               }}
             >
