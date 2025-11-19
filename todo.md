@@ -306,13 +306,13 @@
 - [ ] Testar fluxo completo de criação, edição e acompanhamento
 
 ## 🔄 Fluxo Completo de Avaliação 360° com Emails (Prioridade Alta)
-- [ ] Atualizar schema performanceEvaluations com campo workflowStatus (pending_self, pending_manager, pending_consensus, completed)
-- [ ] Adicionar campos de datas (selfCompletedAt, managerCompletedAt, consensusCompletedAt)
-- [ ] Criar endpoint evaluation360.submitSelfAssessment
-- [ ] Criar endpoint evaluation360.submitManagerAssessment
-- [ ] Criar endpoint evaluation360.submitConsensus
-- [ ] Integrar envio de email automático ao gestor quando autoavaliação é concluída
-- [ ] Integrar envio de email automático ao líder quando avaliação do gestor é concluída
+- [x] Atualizar schema performanceEvaluations com campo workflowStatus (pending_self, pending_manager, pending_consensus, completed)
+- [x] Adicionar campos de datas (selfCompletedAt, managerCompletedAt, consensusCompletedAt)
+- [x] Criar endpoint evaluation360.submitSelfAssessment
+- [x] Criar endpoint evaluation360.submitManagerAssessment
+- [x] Criar endpoint evaluation360.submitConsensus
+- [x] Integrar envio de email automático ao gestor quando autoavaliação é concluída
+- [x] Integrar envio de email automático ao líder quando avaliação do gestor é concluída
 - [ ] Criar página de autoavaliação (/avaliacoes/autoavaliacao/:id)
 - [ ] Criar página de avaliação do gestor (/avaliacoes/gestor/:id)
 - [ ] Criar página de consenso do líder (/avaliacoes/consenso/:id)
@@ -352,3 +352,10 @@
 ## 🐛 Correção Erro SelectItem Nine Box Comparativo
 - [x] Corrigir SelectItem com value vazio na página /nine-box-comparativo
 - [x] Substituir value="" por value="todos" e ajustar lógica do Select
+
+
+## 🐛 Correção Filtros Nine Box Comparativo
+- [x] Corrigir filtro de nível hierárquico que não está funcionando
+- [x] Verificar endpoint getComparative e lógica de filtros
+- [x] Substituir leftJoin problemático por SQL raw query
+- [x] Implementar combinação correta de filtros (líder + hierarquia)

@@ -41,17 +41,17 @@ export const nineBoxRouter = router({
 
       // Se filtro por nível hierárquico, buscar colaboradores por contagem de subordinados
       if (input.hierarchyLevel && input.hierarchyLevel !== "all") {
-        const allEmployees = await database
-          .select({
-            id: employees.id,
-            subordinatesCount: sql<number>`COUNT(DISTINCT subordinates.id)`,
-          })
-          .from(employees)
-          .leftJoin(sql`${employees} as subordinates`, sql`subordinates.managerId = ${employees.id}`)
-          .groupBy(employees.id);
+        const allEmployees = await database.execute(sql`
+          SELECT 
+            e.id,
+            COUNT(DISTINCT sub.id) as subordinatesCount
+          FROM employees e
+          LEFT JOIN employees sub ON sub.managerId = e.id
+          GROUP BY e.id
+        `);
 
-        const filtered = allEmployees.filter(emp => {
-          const count = emp.subordinatesCount || 0;
+        const filtered = (allEmployees as any[]).filter((emp: any) => {
+          const count = Number(emp.subordinatesCount) || 0;
           switch (input.hierarchyLevel) {
             case "diretoria": return count > 10;
             case "gerencia": return count >= 5 && count <= 10;
@@ -62,7 +62,14 @@ export const nineBoxRouter = router({
           }
         });
 
-        employeeIdsFilter = filtered.map(e => e.id);
+        const filteredIds = filtered.map((e: any) => Number(e.id));
+        
+        // Combinar com filtro existente de líder (se houver)
+        if (employeeIdsFilter && employeeIdsFilter.length > 0) {
+          employeeIdsFilter = employeeIdsFilter.filter(id => filteredIds.includes(id));
+        } else {
+          employeeIdsFilter = filteredIds;
+        }
       }
 
       // Buscar últimas posições Nine Box de cada colaborador

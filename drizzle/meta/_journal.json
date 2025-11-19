@@ -190,6 +190,13 @@
       "when": 1763575483618,
       "tag": "0026_parallel_dragon_lord",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "5",
+      "when": 1763577311680,
+      "tag": "0027_outgoing_the_fallen",
+      "breakpoints": true
     }
   ]
 }

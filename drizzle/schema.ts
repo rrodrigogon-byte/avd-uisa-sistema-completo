@@ -249,10 +249,25 @@ export const performanceEvaluations = mysqlTable("performanceEvaluations", {
   employeeId: int("employeeId").notNull(),
   type: mysqlEnum("type", ["360", "180", "90"]).notNull(),
   status: mysqlEnum("status", ["pendente", "em_andamento", "concluida"]).default("pendente").notNull(),
+  
+  // Workflow de etapas sequenciais
+  workflowStatus: mysqlEnum("workflowStatus", [
+    "pending_self",        // Aguardando autoavaliação
+    "pending_manager",     // Aguardando avaliação do gestor
+    "pending_consensus",   // Aguardando consenso do líder
+    "completed"            // Concluído
+  ]).default("pending_self").notNull(),
+  
   selfEvaluationCompleted: boolean("selfEvaluationCompleted").default(false).notNull(),
   managerEvaluationCompleted: boolean("managerEvaluationCompleted").default(false).notNull(),
   peersEvaluationCompleted: boolean("peersEvaluationCompleted").default(false).notNull(),
   subordinatesEvaluationCompleted: boolean("subordinatesEvaluationCompleted").default(false).notNull(),
+  
+  // Datas de conclusão de cada etapa
+  selfCompletedAt: datetime("selfCompletedAt"),
+  managerCompletedAt: datetime("managerCompletedAt"),
+  consensusCompletedAt: datetime("consensusCompletedAt"),
+  
   finalScore: int("finalScore"), // Nota final (0-100)
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

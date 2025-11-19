@@ -17,6 +17,7 @@ import { executiveRouter } from "./executiveRouter";
 import { successionRouter } from "./successionRouter";
 import { nineBoxRouter } from "./nineBoxRouter";
 import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
+import { evaluation360Router } from "./evaluation360Router";
 import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { goalsRouter } from "./goalsRouter";
@@ -2211,132 +2212,6 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       }),
   }),
 
-  // Router de Avaliação 360°
-  evaluation360: router({
-    // Buscar perguntas de avaliação
-    getQuestions: protectedProcedure.query(async () => {
-      const database = await getDb();
-      if (!database) return [];
-
-      const questions = await database.select()
-        .from(evaluationQuestions)
-        .where(eq(evaluationQuestions.active, true))
-        .orderBy(evaluationQuestions.category, evaluationQuestions.id);
-
-      return questions;
-    }),
-
-    // Listar avaliações 360°
-    list: protectedProcedure
-      .input(z.object({
-        cycleId: z.number().optional(),
-        employeeId: z.number().optional(),
-      }))
-      .query(async ({ input }) => {
-        const database = await getDb();
-        if (!database) return [];
-
-        const evals = await database.select({
-          id: performanceEvaluations.id,
-          employeeId: performanceEvaluations.employeeId,
-          employeeName: employees.name,
-          cycleId: performanceEvaluations.cycleId,
-          type: performanceEvaluations.type,
-          status: performanceEvaluations.status,
-          selfEvaluationCompleted: performanceEvaluations.selfEvaluationCompleted,
-          managerEvaluationCompleted: performanceEvaluations.managerEvaluationCompleted,
-          peersEvaluationCompleted: performanceEvaluations.peersEvaluationCompleted,
-          subordinatesEvaluationCompleted: performanceEvaluations.subordinatesEvaluationCompleted,
-          finalScore: performanceEvaluations.finalScore,
-          createdAt: performanceEvaluations.createdAt,
-          updatedAt: performanceEvaluations.updatedAt,
-        })
-          .from(performanceEvaluations)
-          .innerJoin(employees, eq(performanceEvaluations.employeeId, employees.id))
-          .where(eq(performanceEvaluations.type, "360"))
-          .orderBy(desc(performanceEvaluations.createdAt))
-          .limit(100);
-
-        return evals;
-      }),
-
-    // Buscar detalhes de uma avaliação 360°
-    getDetails: protectedProcedure
-      .input(z.object({ evaluationId: z.number() }))
-      .query(async ({ input }) => {
-        const database = await getDb();
-        if (!database) return null;
-
-        const [evaluation] = await database.select()
-          .from(performanceEvaluations)
-          .where(eq(performanceEvaluations.id, input.evaluationId))
-          .limit(1);
-
-        if (!evaluation) return null;
-
-        // Buscar respostas agrupadas por tipo de avaliador
-        const responses = await database.select()
-          .from(evaluationResponses)
-          .where(eq(evaluationResponses.evaluationId, input.evaluationId));
-
-        // Agrupar por tipo de avaliador
-        const grouped = {
-          self: responses.filter(r => r.evaluatorType === "self"),
-          manager: responses.filter(r => r.evaluatorType === "manager"),
-          peers: responses.filter(r => r.evaluatorType === "peer"),
-          subordinates: responses.filter(r => r.evaluatorType === "subordinate"),
-        };
-
-        // Calcular médias por tipo
-        const averages = {
-          self: grouped.self.length > 0 ? grouped.self.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.self.length : 0,
-          manager: grouped.manager.length > 0 ? grouped.manager.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.manager.length : 0,
-          peers: grouped.peers.length > 0 ? grouped.peers.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.peers.length : 0,
-          subordinates: grouped.subordinates.length > 0 ? grouped.subordinates.reduce((sum, r) => sum + (r.score || 0), 0) / grouped.subordinates.length : 0,
-        };
-
-        return {
-          evaluation,
-          responses: grouped,
-          averages,
-        };
-      }),
-
-    // Submeter feedback 360°
-    submitFeedback: protectedProcedure
-      .input(z.object({
-        evaluationId: z.number(),
-        questionId: z.number(),
-        evaluatorType: z.enum(["self", "manager", "peer", "subordinate"]),
-        score: z.number().optional(),
-        textResponse: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
-
-        await database.insert(evaluationResponses).values({
-          evaluationId: input.evaluationId,
-          questionId: input.questionId,
-          evaluatorId: ctx.user.id,
-          evaluatorType: input.evaluatorType,
-          score: input.score,
-          textResponse: input.textResponse,
-        });
-
-        // Buscar avaliação para pegar employeeId
-        const evaluation = await database.select().from(performanceEvaluations).where(eq(performanceEvaluations.id, input.evaluationId)).limit(1);
-        
-        // Verificar badges de avaliação 360° ao submeter feedback
-        if (evaluation[0]?.employeeId) {
-          const { checkEvaluationBadges } = await import("./services/badgeService");
-          await checkEvaluationBadges(evaluation[0].employeeId);
-        }
-
-        return { success: true };
-      }),
-  }),
-
   // Router de Audit Trail (apenas admin)
   auditTrail: router({
     // Buscar logs de auditoria com filtros
@@ -2424,6 +2299,10 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Nine Box Comparativo
   nineBoxComparative: nineBoxRouter,
+  
+  // Router de Avaliação 360° com Fluxo Sequencial
+  evaluation360: evaluation360Router,
+  
   reportBuilder: reportBuilderRouter,
   reportAnalytics: reportAnalyticsRouter,
   
