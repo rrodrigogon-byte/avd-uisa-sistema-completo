@@ -1424,3 +1424,89 @@ export const calibrationWorkflows = mysqlTable("calibrationWorkflows", {
 
 export type CalibrationWorkflow = typeof calibrationWorkflows.$inferSelect;
 export type InsertCalibrationWorkflow = typeof calibrationWorkflows.$inferInsert;
+
+// ============================================================================
+// TABELAS DE WORKFLOWS GENÉRICOS
+// ============================================================================
+
+/**
+ * Workflows Genéricos
+ * Sistema flexível de aprovação para qualquer tipo de processo
+ */
+export const workflows = mysqlTable("workflows", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", [
+    "aprovacao_metas",
+    "aprovacao_pdi",
+    "aprovacao_avaliacao",
+    "aprovacao_bonus",
+    "aprovacao_ferias",
+    "aprovacao_promocao",
+    "aprovacao_horas_extras",
+    "aprovacao_despesas",
+    "outro"
+  ]).notNull(),
+  
+  // Configuração das etapas (JSON)
+  steps: text("steps").notNull(), // Array de { order, name, approverType, approverIds, condition }
+  
+  // Status e controle
+  isActive: boolean("isActive").default(true).notNull(),
+  isDefault: boolean("isDefault").default(false).notNull(), // Workflow padrão para o tipo
+  
+  // Auditoria
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Workflow = typeof workflows.$inferSelect;
+export type InsertWorkflow = typeof workflows.$inferInsert;
+
+/**
+ * Instâncias de Execução de Workflows
+ * Rastreia cada execução de um workflow
+ */
+export const workflowInstances = mysqlTable("workflowInstances", {
+  id: int("id").autoincrement().primaryKey(),
+  workflowId: int("workflowId").notNull(),
+  entityType: varchar("entityType", { length: 100 }).notNull(), // "goal", "pdi", "evaluation", etc
+  entityId: int("entityId").notNull(), // ID da entidade sendo aprovada
+  
+  // Status atual
+  currentStep: int("currentStep").default(1).notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "cancelled"]).default("pending").notNull(),
+  
+  // Auditoria
+  requestedBy: int("requestedBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type WorkflowInstance = typeof workflowInstances.$inferSelect;
+export type InsertWorkflowInstance = typeof workflowInstances.$inferInsert;
+
+/**
+ * Aprovações de Etapas de Workflow
+ * Registra cada aprovação individual em uma etapa
+ */
+export const workflowStepApprovals = mysqlTable("workflowStepApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  instanceId: int("instanceId").notNull(),
+  stepOrder: int("stepOrder").notNull(),
+  approverId: int("approverId").notNull(),
+  
+  // Decisão
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  comments: text("comments"),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  approvedAt: timestamp("approvedAt"),
+});
+
+export type WorkflowStepApproval = typeof workflowStepApprovals.$inferSelect;
+export type InsertWorkflowStepApproval = typeof workflowStepApprovals.$inferInsert;

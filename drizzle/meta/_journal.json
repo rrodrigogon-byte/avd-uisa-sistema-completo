@@ -155,6 +155,13 @@
       "when": 1763510931086,
       "tag": "0021_broken_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1763550092986,
+      "tag": "0022_perpetual_demogoblin",
+      "breakpoints": true
     }
   ]
 }

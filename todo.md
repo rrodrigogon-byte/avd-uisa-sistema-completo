@@ -1339,3 +1339,79 @@
 - [ ] Popular aprovações de metas e PDIs
 - [ ] Executar script completo e validar todos os dados
 - [ ] Criar script de limpeza (reset) do banco
+
+
+## 🔗 Integração Backend Completa
+
+### 1. Endpoints Backend para Workflows
+- [ ] Criar schema de workflows no drizzle/schema.ts
+- [ ] Criar workflowRouter no server/routers.ts
+- [ ] Implementar endpoint workflows.create
+- [ ] Implementar endpoint workflows.list
+- [ ] Implementar endpoint workflows.update
+- [ ] Implementar endpoint workflows.delete
+- [ ] Executar pnpm db:push para atualizar banco
+
+### 2. Endpoints Backend para Ciclos de Avaliação
+- [ ] Verificar schema de evaluationCycles no drizzle/schema.ts
+- [ ] Criar evaluationCyclesRouter no server/routers.ts
+- [ ] Implementar endpoint evaluationCycles.create
+- [ ] Implementar endpoint evaluationCycles.list
+- [ ] Implementar endpoint evaluationCycles.activate
+- [ ] Implementar endpoint evaluationCycles.deactivate
+- [ ] Executar pnpm db:push para atualizar banco
+
+### 3. Integração Frontend
+- [ ] Conectar modal de workflows ao endpoint workflows.create
+- [ ] Atualizar listagem de workflows após criação
+- [ ] Conectar modal de ciclos ao endpoint evaluationCycles.create
+- [ ] Atualizar listagem de ciclos após criação
+- [ ] Adicionar tratamento de erros e loading states
+
+### 4. Botão em 360° Enhanced
+- [ ] Localizar arquivo da página /360-enhanced
+- [ ] Adicionar botão "Criar Novo Ciclo" no header
+- [ ] Reutilizar mesmo Dialog de criação de ciclo
+- [ ] Testar funcionalidade na página
+
+### 5. Configuração Completa de Workflows
+- [ ] Criar segunda etapa do modal de workflows
+- [ ] Implementar formulário de etapas (nome, aprovadores, ordem)
+- [ ] Adicionar seleção de aprovadores (por cargo/departamento/pessoa)
+- [ ] Implementar drag-and-drop para ordenar etapas
+- [ ] Adicionar condições de aprovação (todos/qualquer um/maioria)
+- [ ] Salvar configuração completa no backend
+- [ ] Testar workflow completo end-to-end
+
+
+## 🎯 Finalização 100% do Sistema
+
+### Testes Psicométricos
+- [ ] Verificar página de preenchimento de testes (/testes-psicometricos)
+- [ ] Verificar página de visualização de resultados pelo RH
+- [ ] Implementar formulário de preenchimento de teste
+- [ ] Implementar visualização de resultados individuais
+- [ ] Implementar dashboard de resultados consolidados para RH
+- [ ] Testar fluxo completo de preenchimento e visualização
+
+### Templates de E-mail
+- [x] Criar template de e-mail para metas (notificação de nova meta)
+- [x] Criar template de e-mail para performance (resultado de avaliação)
+- [x] Criar templates adicionais (lembrete de prazo, PDI criado)
+- [x] Implementar função de envio de e-mail via SMTP
+- [x] Criar endpoints backend (sendTest, sendGoalEmail, sendPerformanceEmail)
+- [x] Instalar nodemailer e @types/nodemailer
+- [ ] Configurar SMTP no banco de dados
+- [ ] Testar envio de e-mail para rodrigo.goncalves@uisa.com.br
+- [ ] Adicionar botão "Enviar por E-mail" nas páginas de metas e performance
+- [ ] Implementar preview do e-mail antes de enviar
+
+### Integração Completa
+- [x] Adicionar schema de workflows ao drizzle/schema.ts
+- [x] Executar pnpm db:push para atualizar schema de workflows
+- [x] Criar workflowRouter com CRUD completo (list, create, update, delete)
+- [x] Criar evaluationCyclesRouter com operações (list, create, activate, deactivate)
+- [ ] Integrar modal de workflows ao backend
+- [ ] Integrar modal de ciclos ao backend
+- [ ] Adicionar botão em 360° Enhanced
+- [ ] Completar configuração de etapas de workflows

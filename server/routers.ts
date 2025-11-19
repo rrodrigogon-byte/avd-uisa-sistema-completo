@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -2313,6 +2313,258 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         name: r.costCenter || '',
       }));
     }),
+  }),
+
+  // ============================================================================
+  // E-MAIL
+  // ============================================================================
+  email: router({
+    // Enviar e-mail de teste
+    sendTest: protectedProcedure
+      .input(z.object({ recipientEmail: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const { sendTestEmail } = await import('./emailService');
+        return await sendTestEmail(input.recipientEmail);
+      }),
+
+    // Enviar e-mail de meta
+    sendGoalEmail: protectedProcedure
+      .input(z.object({
+        recipientEmail: z.string().email(),
+        recipientName: z.string(),
+        goalTitle: z.string(),
+        goalDescription: z.string(),
+        deadline: z.string(),
+        assignedBy: z.string(),
+        dashboardUrl: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { sendTemplateEmail } = await import('./emailService');
+        const { newGoalTemplate } = await import('./emailTemplates');
+        
+        const template = newGoalTemplate(input);
+        const success = await sendTemplateEmail(input.recipientEmail, template);
+        
+        return { success, message: success ? 'E-mail enviado com sucesso' : 'Falha ao enviar e-mail' };
+      }),
+
+    // Enviar e-mail de resultado de performance
+    sendPerformanceEmail: protectedProcedure
+      .input(z.object({
+        recipientEmail: z.string().email(),
+        recipientName: z.string(),
+        evaluationPeriod: z.string(),
+        overallScore: z.number(),
+        performanceLevel: z.string(),
+        strengths: z.array(z.string()),
+        improvements: z.array(z.string()),
+        evaluatorName: z.string(),
+        dashboardUrl: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { sendTemplateEmail } = await import('./emailService');
+        const { performanceResultTemplate } = await import('./emailTemplates');
+        
+        const template = performanceResultTemplate(input);
+        const success = await sendTemplateEmail(input.recipientEmail, template);
+        
+        return { success, message: success ? 'E-mail enviado com sucesso' : 'Falha ao enviar e-mail' };
+      }),
+  }),
+
+  // ============================================================================
+  // WORKFLOWS
+  // ============================================================================
+  workflows: router({
+    // Listar todos os workflows
+    list: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const allWorkflows = await database
+        .select()
+        .from(workflows)
+        .orderBy(desc(workflows.createdAt));
+
+      return allWorkflows;
+    }),
+
+    // Criar novo workflow
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        type: z.enum([
+          "aprovacao_metas",
+          "aprovacao_pdi",
+          "aprovacao_avaliacao",
+          "aprovacao_bonus",
+          "aprovacao_ferias",
+          "aprovacao_promocao",
+          "aprovacao_horas_extras",
+          "aprovacao_despesas",
+          "outro"
+        ]),
+        steps: z.string(), // JSON stringified
+        isActive: z.boolean().optional(),
+        isDefault: z.boolean().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Usuário não autenticado",
+          });
+        }
+
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const employee = await db.getEmployeeByUserId(ctx.user.id);
+        if (!employee) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Colaborador não encontrado",
+          });
+        }
+
+        const [workflow] = await database.insert(workflows).values({
+          name: input.name,
+          description: input.description || null,
+          type: input.type,
+          steps: input.steps,
+          isActive: input.isActive ?? true,
+          isDefault: input.isDefault ?? false,
+          createdBy: employee.id,
+        });
+
+        return { success: true, workflowId: workflow.insertId };
+      }),
+
+    // Atualizar workflow
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        description: z.string().optional(),
+        steps: z.string().optional(),
+        isActive: z.boolean().optional(),
+        isDefault: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const updateData: any = {};
+        if (input.name !== undefined) updateData.name = input.name;
+        if (input.description !== undefined) updateData.description = input.description;
+        if (input.steps !== undefined) updateData.steps = input.steps;
+        if (input.isActive !== undefined) updateData.isActive = input.isActive;
+        if (input.isDefault !== undefined) updateData.isDefault = input.isDefault;
+
+        await database.update(workflows)
+          .set(updateData)
+          .where(eq(workflows.id, input.id));
+
+        return { success: true };
+      }),
+
+    // Deletar workflow
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.delete(workflows)
+          .where(eq(workflows.id, input.id));
+
+        return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // CICLOS DE AVALIAÇÃO
+  // ============================================================================
+  evaluationCycles: router({
+    // Listar todos os ciclos
+    list: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const cycles = await database
+        .select()
+        .from(evaluationCycles)
+        .orderBy(desc(evaluationCycles.year), desc(evaluationCycles.startDate));
+
+      return cycles;
+    }),
+
+    // Criar novo ciclo
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        year: z.number().int().min(2020),
+        type: z.enum(["anual", "semestral", "trimestral"]),
+        startDate: z.string(), // ISO date string
+        endDate: z.string(), // ISO date string
+        description: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        // Validar datas
+        const start = new Date(input.startDate);
+        const end = new Date(input.endDate);
+
+        if (start >= end) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "A data de início deve ser anterior à data de fim",
+          });
+        }
+
+        const [cycle] = await database.insert(evaluationCycles).values({
+          name: input.name,
+          year: input.year,
+          type: input.type,
+          startDate: start,
+          endDate: end,
+          description: input.description || null,
+          status: "planejamento",
+        });
+
+        return { success: true, cycleId: cycle.insertId };
+      }),
+
+    // Ativar ciclo
+    activate: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(evaluationCycles)
+          .set({ status: "em_andamento" })
+          .where(eq(evaluationCycles.id, input.id));
+
+        return { success: true };
+      }),
+
+    // Desativar ciclo
+    deactivate: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(evaluationCycles)
+          .set({ status: "concluido" })
+          .where(eq(evaluationCycles.id, input.id));
+
+        return { success: true };
+      }),
   }),
 });
 
