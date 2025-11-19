@@ -47,6 +47,7 @@ import DashboardExecutivoConsolidado from "./pages/DashboardExecutivoConsolidado
 import CiclosAvaliacao from "./pages/CiclosAvaliacao";
 import AuditTrail from "./pages/AuditTrail";
 import Analytics from "./pages/Analytics";
+import AnalyticsAvancado from "./pages/AnalyticsAvancado";
 import Feedbacks from "./pages/Feedbacks";
 import Badges from "./pages/Badges";
 import PsychometricTests from "./pages/PsychometricTests";
@@ -159,6 +160,7 @@ function Router() {
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />
       <Route path="/analytics" component={Analytics} />
+      <Route path="/analytics/avancado" component={AnalyticsAvancado} />
                 <Route path="/avaliar-360/:id" component={Avaliar360} />
           <Route path="/admin/audit-log" component={AuditTrail} />
           <Route path="/admin/analytics" component={Analytics} />

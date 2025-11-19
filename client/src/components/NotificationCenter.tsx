@@ -71,7 +71,7 @@ export default function NotificationCenter() {
   };
 
   const handleMarkAllAsRead = () => {
-    if ((unreadCount || 0) > 0) {
+    if (((unreadCount?.count ?? 0)) > 0) {
       markAllAsReadMutation.mutate();
     }
   };
@@ -118,12 +118,12 @@ export default function NotificationCenter() {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          {(unreadCount || 0) > 0 && (
+          {((unreadCount?.count ?? 0)) > 0 && (
             <Badge
               variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
             >
-              {(unreadCount || 0) > 9 ? "9+" : unreadCount}
+              {((unreadCount?.count ?? 0)) > 9 ? "9+" : (unreadCount?.count ?? 0)}
             </Badge>
           )}
         </Button>
@@ -133,11 +133,11 @@ export default function NotificationCenter() {
           <div>
             <h3 className="font-semibold">Notificações</h3>
             <p className="text-xs text-muted-foreground">
-              {unreadCount || 0} não {(unreadCount || 0) === 1 ? "lida" : "lidas"}
+              {(unreadCount?.count ?? 0)} não {((unreadCount?.count ?? 0)) === 1 ? "lida" : "lidas"}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {(unreadCount || 0) > 0 && (
+            {((unreadCount?.count ?? 0)) > 0 && (
               <Button
                 variant="ghost"
                 size="sm"

@@ -127,3 +127,37 @@
 
 **Última Atualização:** 19/11/2025 15:30
 **Status Geral:** 🟡 85% Completo (faltam correções TypeScript + 2 módulos)
+
+
+## 🚀 Novas Funcionalidades em Desenvolvimento
+
+### Script de Seed Completo
+- [x] Criar script de seed com 10 colaboradores realistas
+- [ ] Gerar 5 metas SMART por colaborador (50 metas totais) - PENDENTE (schema complexo)
+- [ ] Criar 3 avaliações 360° em andamento com diferentes estágios - PENDENTE
+- [ ] Gerar 2 PDIs ativos com objetivos e ações - PENDENTE
+- [ ] Adicionar marcos (milestones) para as metas - PENDENTE
+- [ ] Executar seed e validar dados no banco - PENDENTE
+
+### Notificações em Tempo Real (WebSocket)
+- [x] Criar sistema de notificações WebSocket para eventos do sistema
+- [x] Criar router tRPC de notificações (list, countUnread, markAsRead, markAllAsRead, delete)
+- [x] Criar helper para criar notificações no banco de dados (notificationHelper.ts)
+- [x] Integrar com WebSocket existente (websocket.ts)
+- [x] Corrigir componente NotificationCenter.tsx (tipo unreadCount)
+- [x] Corrigir página Notificacoes.tsx (parâmetro onlyUnread)
+- [ ] Implementar notificação quando colaborador recebe nova avaliação - PENDENTE
+- [ ] Implementar notificação quando meta é aprovada pelo gestor - PENDENTE
+- [ ] Implementar notificação quando gestor envia feedback - PENDENTE
+
+### Dashboard Analytics Avançado
+- [x] Instalar biblioteca de gráficos (Recharts)
+- [x] Criar página de Analytics Avançado (/analytics/avancado)
+- [x] Implementar gráfico de evolução de progresso de metas por mês (LineChart)
+- [x] Implementar gráfico de taxa de conclusão de avaliações 360° (LineChart multi-linha)
+- [x] Implementar gráfico de distribuição de notas por departamento (BarChart)
+- [x] Implementar gráfico de distribuição por faixa de nota (PieChart)
+- [x] Adicionar filtros por período e departamento
+- [x] Adicionar KPIs no topo (Progresso Médio, Metas Ativas, Avaliações 360°, Nota Média)
+- [x] Registrar rota no App.tsx
+- [ ] Criar endpoints tRPC para buscar dados reais de analytics - PENDENTE

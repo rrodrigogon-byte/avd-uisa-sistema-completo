@@ -46,7 +46,7 @@ export default function Notificacoes() {
   // Buscar todas as notificações
   const { data: notifications, refetch } = trpc.notifications.list.useQuery({
     limit: 100,
-    unreadOnly: statusFilter === "unread",
+    onlyUnread: statusFilter === "unread",
   });
 
   // Mutation para marcar como lida
