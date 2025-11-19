@@ -32,6 +32,7 @@ import {
   Users,
   Award,
   Download,
+  Mail,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -45,6 +46,16 @@ export default function DetalhesMeta() {
   const [, navigate] = useLocation();
   const [commentText, setCommentText] = useState("");
   const [showCommentDialog, setShowCommentDialog] = useState(false);
+
+  // Enviar e-mail
+  const sendEmailMutation = trpc.email.sendGoalEmail.useMutation({
+    onSuccess: () => {
+      toast.success("E-mail enviado com sucesso!");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erro ao enviar e-mail");
+    },
+  });
 
   // Exportar PDF
   const exportPDFMutation = trpc.smartGoals.exportPDF.useMutation({
@@ -303,6 +314,14 @@ export default function DetalhesMeta() {
           <p className="text-gray-600">{getCategoryLabel(goal.category)}</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => toast.info("Funcionalidade de e-mail em desenvolvimento")}
+            disabled={sendEmailMutation.isPending}
+          >
+            <Mail className="w-4 h-4 mr-2" />
+            {sendEmailMutation.isPending ? "Enviando..." : "Enviar por E-mail"}
+          </Button>
           <Button
             variant="outline"
             onClick={() => exportPDFMutation.mutate({ goalId })}

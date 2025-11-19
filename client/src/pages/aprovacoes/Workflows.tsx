@@ -59,8 +59,8 @@ export default function Workflows() {
     },
   });
 
-  // Mock data - TODO: integrar com backend
-  const workflows = [
+  // Mock data para demonstração
+  const mockWorkflows = [
     {
       id: 1,
       name: "Aprovação de Bônus",
@@ -104,6 +104,18 @@ export default function Workflows() {
       avgTotalTime: "12 dias",
     },
   ];
+
+  // Usar workflows do backend se disponíveis, senão usar mock
+  const workflows = backendWorkflows && backendWorkflows.length > 0 
+    ? backendWorkflows.map(w => ({
+        id: w.id,
+        name: w.name,
+        description: w.description || "Workflow customizado",
+        steps: w.steps ? JSON.parse(w.steps as string) : [],
+        activeRequests: 0,
+        avgTotalTime: "-",
+      }))
+    : mockWorkflows;
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -170,7 +182,7 @@ export default function Workflows() {
               <CardContent>
                 {/* Steps */}
                 <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-4">
-                  {workflow.steps.map((step, idx) => (
+                  {workflow.steps.map((step: any, idx: number) => (
                     <div key={idx} className="flex items-center">
                       <div className="flex flex-col items-center min-w-[120px]">
                         <div className="flex items-center justify-center mb-2">
