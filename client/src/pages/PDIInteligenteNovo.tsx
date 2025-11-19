@@ -30,6 +30,7 @@ import { Brain, Check, ChevronsUpDown, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import RecommendationsSection from "@/components/RecommendationsSection";
 
 /**
  * Página de Criação de PDI Inteligente
@@ -210,6 +211,11 @@ export default function PDIInteligenteNovo() {
                   Selecione o colaborador que receberá o PDI Inteligente
                 </p>
               </div>
+
+              {/* Recomendações Inteligentes */}
+              {selectedEmployeeId && (
+                <RecommendationsSection employeeId={selectedEmployeeId} />
+              )}
 
               {/* Posição-Alvo */}
               <div className="space-y-2">

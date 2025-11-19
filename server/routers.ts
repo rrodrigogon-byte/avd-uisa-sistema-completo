@@ -1670,6 +1670,157 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
         return { results };
       }),
+
+    // Buscar resultados agregados por equipe/departamento/cargo
+    getAggregatedResults: protectedProcedure
+      .input(z.object({
+        groupBy: z.enum(["department", "position", "team"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).optional(),
+      }))
+      .query(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Buscar todos os testes
+        const testsQuery = database.select({
+          test: psychometricTests,
+          employee: employees,
+          department: departments,
+          position: positions,
+        })
+          .from(psychometricTests)
+          .leftJoin(employees, eq(psychometricTests.employeeId, employees.id))
+          .leftJoin(departments, eq(employees.departmentId, departments.id))
+          .leftJoin(positions, eq(employees.positionId, positions.id));
+
+        const tests = input.testType 
+          ? await testsQuery.where(eq(psychometricTests.testType, input.testType))
+          : await testsQuery;
+
+        // Agrupar por critério
+        const grouped: Record<string, any[]> = {};
+        for (const item of tests) {
+          let groupKey = "";
+          let groupName = "";
+
+          if (input.groupBy === "department" && item.department) {
+            groupKey = item.department.id.toString();
+            groupName = item.department.name;
+          } else if (input.groupBy === "position" && item.position) {
+            groupKey = item.position.id.toString();
+            groupName = item.position.title;
+          } else if (input.groupBy === "team" && item.employee?.managerId) {
+            groupKey = item.employee.managerId.toString();
+            groupName = `Equipe ${item.employee.managerId}`;
+          } else {
+            continue;
+          }
+
+          if (!grouped[groupKey]) {
+            grouped[groupKey] = [];
+          }
+          grouped[groupKey].push({ ...item.test, groupName });
+        }
+
+        // Calcular médias por grupo
+        const results = [];
+        for (const [groupKey, groupTests] of Object.entries(grouped)) {
+          const groupName = groupTests[0]?.groupName || "Sem nome";
+          const testsByType: Record<string, any[]> = {};
+
+          // Agrupar por tipo de teste
+          for (const test of groupTests) {
+            if (!testsByType[test.testType]) {
+              testsByType[test.testType] = [];
+            }
+            testsByType[test.testType].push(test);
+          }
+
+          // Calcular médias por tipo
+          const averages: Record<string, any> = {};
+          for (const [testType, testList] of Object.entries(testsByType)) {
+            if (testType === "disc") {
+              averages.disc = {
+                D: testList.reduce((sum, t) => sum + (t.discD || 0), 0) / testList.length,
+                I: testList.reduce((sum, t) => sum + (t.discI || 0), 0) / testList.length,
+                S: testList.reduce((sum, t) => sum + (t.discS || 0), 0) / testList.length,
+                C: testList.reduce((sum, t) => sum + (t.discC || 0), 0) / testList.length,
+              };
+            } else if (testType === "bigfive") {
+              averages.bigfive = {
+                O: testList.reduce((sum, t) => sum + (t.bigFiveOpenness || 0), 0) / testList.length / 20,
+                C: testList.reduce((sum, t) => sum + (t.bigFiveConscientiousness || 0), 0) / testList.length / 20,
+                E: testList.reduce((sum, t) => sum + (t.bigFiveExtraversion || 0), 0) / testList.length / 20,
+                A: testList.reduce((sum, t) => sum + (t.bigFiveAgreeableness || 0), 0) / testList.length / 20,
+                N: testList.reduce((sum, t) => sum + (t.bigFiveNeuroticism || 0), 0) / testList.length / 20,
+              };
+            }
+            // TODO: Adicionar cálculos para outros tipos de teste
+          }
+
+          results.push({
+            groupKey,
+            groupName,
+            count: groupTests.length,
+            averages,
+          });
+        }
+
+        return results;
+      }),
+
+    // Gerar recomendações de PDI baseadas em testes psicométricos
+    getPDIRecommendations: protectedProcedure
+      .input(z.object({
+        employeeId: z.number(),
+      }))
+      .query(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Buscar todos os testes do funcionário
+        const tests = await database.select()
+          .from(psychometricTests)
+          .where(eq(psychometricTests.employeeId, input.employeeId))
+          .orderBy(desc(psychometricTests.completedAt));
+
+        if (tests.length === 0) {
+          return [];
+        }
+
+        // Importar funções de recomendação
+        const { generateConsolidatedRecommendations } = await import("./utils/pdiRecommendations");
+
+        // Preparar perfis dos testes mais recentes
+        const latestTests: any = {};
+        
+        for (const test of tests) {
+          if (!latestTests[test.testType]) {
+            if (test.testType === "disc") {
+              latestTests.disc = {
+                D: test.discDominance || 0,
+                I: test.discInfluence || 0,
+                S: test.discSteadiness || 0,
+                C: test.discCompliance || 0,
+              };
+            } else if (test.testType === "bigfive") {
+              latestTests.bigfive = {
+                O: (test.bigFiveOpenness || 0) / 20,
+                C: (test.bigFiveConscientiousness || 0) / 20,
+                E: (test.bigFiveExtraversion || 0) / 20,
+                A: (test.bigFiveAgreeableness || 0) / 20,
+                N: (test.bigFiveNeuroticism || 0) / 20,
+              };
+            }
+            // TODO: Adicionar outros tipos de teste
+          }
+        }
+
+        // Gerar recomendações consolidadas
+        const recommendations = generateConsolidatedRecommendations(latestTests);
+
+        return recommendations;
+      }),
   }),
 
   // Router de Administração (apenas admin)

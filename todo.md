@@ -105,3 +105,38 @@
 - [ ] Melhorar visualizações de resultados 360°
 - [ ] Implementar animações e transições suaves
 - [ ] Adicionar indicadores visuais de progresso
+
+
+## 📊 Dashboards Comparativos de Testes Psicométricos
+
+- [x] Criar endpoint para buscar resultados agregados por equipe
+- [x] Criar endpoint para buscar resultados agregados por departamento
+- [x] Criar endpoint para buscar resultados agregados por cargo
+- [x] Implementar página de dashboard comparativo com gráficos radar
+- [x] Adicionar filtros por tipo de teste, período e grupo
+- [x] Implementar visualização de distribuição de perfis
+- [x] Adicionar comparação lado a lado de equipes/departamentos
+
+## 🔗 Integração Testes + PDI Inteligente
+
+- [x] Criar sistema de recomendações automáticas baseado em perfis
+- [x] Mapear perfis psicométricos para competências e cursos
+- [x] Integrar resultados na página de criação de PDI
+- [x] Adicionar sugestões de desenvolvimento por perfil
+- [x] Implementar análise de gaps de competências
+
+## 📈 Relatórios Executivos de RH
+
+- [x] Criar página de relatórios executivos
+- [x] Implementar análise de distribuição de perfis organizacionais
+- [x] Adicionar insights sobre gaps de competências
+- [x] Criar sugestões de formação de equipes
+- [x] Implementar análise de tendências ao longo do tempo
+- [ ] Adicionar exportação de relatórios em PDF (preparado para implementação futura)
+
+## 🎨 Melhorias de Design nas Páginas de Performance
+
+- [ ] Redesenhar página de Performance Integrada com cores vibrantes
+- [ ] Melhorar visualização de gráficos e métricas
+- [ ] Adicionar animações e transições suaves
+- [ ] Implementar tema moderno e profissional
