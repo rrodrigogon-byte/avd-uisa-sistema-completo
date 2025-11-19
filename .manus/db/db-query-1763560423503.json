@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, title, employeeId, createdBy, status, progress FROM smartGoals ORDER BY id DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, title, employeeId, createdBy, status, progress FROM smartGoals ORDER BY id DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "30005",
+      "title": "Aumentar Receita em R$ 500.000",
+      "employeeId": "120001",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "25"
+    },
+    {
+      "id": "30004",
+      "title": "Completar MBA em Gestão Estratégica",
+      "employeeId": "120001",
+      "createdBy": "1",
+      "status": "draft",
+      "progress": "0"
+    },
+    {
+      "id": "30003",
+      "title": "Aumentar NPS para 80 pontos",
+      "employeeId": "120001",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "50"
+    },
+    {
+      "id": "30002",
+      "title": "Melhorar Comunicação com a Equipe",
+      "employeeId": "120001",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "25"
+    },
+    {
+      "id": "30001",
+      "title": "Reduzir Custos Operacionais em 15%",
+      "employeeId": "120001",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "23"
+    },
+    {
+      "id": "5",
+      "title": "Aumentar NPS para 80",
+      "employeeId": "5",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "0"
+    },
+    {
+      "id": "4",
+      "title": "Implementar Sistema CRM",
+      "employeeId": "4",
+      "createdBy": "1",
+      "status": "pending_approval",
+      "progress": "0"
+    },
+    {
+      "id": "3",
+      "title": "Concluir Certificação PMP",
+      "employeeId": "3",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "0"
+    },
+    {
+      "id": "2",
+      "title": "Reduzir Turnover em 15%",
+      "employeeId": "2",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "0"
+    },
+    {
+      "id": "1",
+      "title": "Aumentar Receita em 20%",
+      "employeeId": "1",
+      "createdBy": "1",
+      "status": "in_progress",
+      "progress": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\temployeeId\tcreatedBy\tstatus\tprogress\n30005\tAumentar Receita em R$ 500.000\t120001\t1\tin_progress\t25\n30004\tCompletar MBA em Gestão Estratégica\t120001\t1\tdraft\t0\n30003\tAumentar NPS para 80 pontos\t120001\t1\tin_progress\t50\n30002\tMelhorar Comunicação com a Equipe\t120001\t1\tin_progress\t25\n30001\tReduzir Custos Operacionais em 15%\t120001\t1\tin_progress\t23\n5\tAumentar NPS para 80\t5\t1\tin_progress\t0\n4\tImplementar Sistema CRM\t4\t1\tpending_approval\t0\n3\tConcluir Certificação PMP\t3\t1\tin_progress\t0\n2\tReduzir Turnover em 15%\t2\t1\tin_progress\t0\n1\tAumentar Receita em 20%\t1\t1\tin_progress\t0\n",
+  "stderr": "",
+  "execution_time_ms": 65
+}

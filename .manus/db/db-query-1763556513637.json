@@ -1,0 +1,16 @@
+{
+  "query": "SELECT u.id AS user_id, u.email, e.id AS employee_id, e.name FROM users u LEFT JOIN employees e ON u.id = e.userId WHERE u.email = 'rrodrigogon@gmail.com' LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT u.id AS user_id, u.email, e.id AS employee_id, e.name FROM users u LEFT JOIN employees e ON u.id = e.userId WHERE u.email = 'rrodrigogon@gmail.com' LIMIT 1",
+  "rows": [
+    {
+      "user_id": "1",
+      "email": "rrodrigogon@gmail.com",
+      "employee_id": "NULL",
+      "name": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "user_id\temail\temployee_id\tname\n1\trrodrigogon@gmail.com\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}
