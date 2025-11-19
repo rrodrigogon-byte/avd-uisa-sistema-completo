@@ -21,11 +21,49 @@ export const nineBoxRouter = router({
       z.object({
         positionIds: z.array(z.number()).optional(),
         departmentId: z.number().optional(),
+        leaderId: z.number().optional(),
+        hierarchyLevel: z.enum(["all", "diretoria", "gerencia", "coordenacao", "supervisao", "outros"]).optional(),
       })
     )
     .query(async ({ input }) => {
       const database = await getDb();
       if (!database) return [];
+
+      // Se filtro por líder, buscar subordinados diretos
+      let employeeIdsFilter: number[] | undefined;
+      if (input.leaderId) {
+        const subordinates = await database
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.managerId, input.leaderId));
+        employeeIdsFilter = subordinates.map(s => s.id);
+      }
+
+      // Se filtro por nível hierárquico, buscar colaboradores por contagem de subordinados
+      if (input.hierarchyLevel && input.hierarchyLevel !== "all") {
+        const allEmployees = await database
+          .select({
+            id: employees.id,
+            subordinatesCount: sql<number>`COUNT(DISTINCT subordinates.id)`,
+          })
+          .from(employees)
+          .leftJoin(sql`${employees} as subordinates`, sql`subordinates.managerId = ${employees.id}`)
+          .groupBy(employees.id);
+
+        const filtered = allEmployees.filter(emp => {
+          const count = emp.subordinatesCount || 0;
+          switch (input.hierarchyLevel) {
+            case "diretoria": return count > 10;
+            case "gerencia": return count >= 5 && count <= 10;
+            case "coordenacao": return count >= 2 && count <= 4;
+            case "supervisao": return count === 1;
+            case "outros": return count === 0;
+            default: return true;
+          }
+        });
+
+        employeeIdsFilter = filtered.map(e => e.id);
+      }
 
       // Buscar últimas posições Nine Box de cada colaborador
       const latestPositions = await database
@@ -43,12 +81,15 @@ export const nineBoxRouter = router({
         .from(nineBoxPositions)
         .innerJoin(employees, eq(nineBoxPositions.employeeId, employees.id))
         .leftJoin(positions, eq(employees.positionId, positions.id))
-        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(departments, eq(employees.departmentId, employees.id))
         .where(
           and(
             input.departmentId ? eq(employees.departmentId, input.departmentId) : undefined,
             input.positionIds && input.positionIds.length > 0
               ? inArray(employees.positionId, input.positionIds)
+              : undefined,
+            employeeIdsFilter && employeeIdsFilter.length > 0
+              ? inArray(employees.id, employeeIdsFilter)
               : undefined
           )
         )

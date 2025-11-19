@@ -204,7 +204,7 @@ export default function Avaliacao360Enhanced() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <CardTitle className="text-base flex items-center gap-2">
-                          Colaborador #{evaluation.employeeId}
+                          {evaluation.employeeName || `Colaborador #${evaluation.employeeId}`}
                           <Badge variant="outline">Ciclo #{evaluation.cycleId}</Badge>
                           <Badge variant={
                             evaluation.status === "concluida" ? "default" :
@@ -235,7 +235,7 @@ export default function Avaliacao360Enhanced() {
                                   evaluation,
                                   averages: details.averages,
                                   responses: details.responses,
-                                }, `Colaborador #${evaluation.employeeId}`);
+                                }, evaluation.employeeName || `Colaborador #${evaluation.employeeId}`);
                                 toast.success("Relatório PDF gerado com sucesso!");
                               } catch (error) {
                                 toast.error("Erro ao gerar PDF");

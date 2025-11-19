@@ -2236,8 +2236,23 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         const database = await getDb();
         if (!database) return [];
 
-        const evals = await database.select()
+        const evals = await database.select({
+          id: performanceEvaluations.id,
+          employeeId: performanceEvaluations.employeeId,
+          employeeName: employees.name,
+          cycleId: performanceEvaluations.cycleId,
+          type: performanceEvaluations.type,
+          status: performanceEvaluations.status,
+          selfEvaluationCompleted: performanceEvaluations.selfEvaluationCompleted,
+          managerEvaluationCompleted: performanceEvaluations.managerEvaluationCompleted,
+          peersEvaluationCompleted: performanceEvaluations.peersEvaluationCompleted,
+          subordinatesEvaluationCompleted: performanceEvaluations.subordinatesEvaluationCompleted,
+          finalScore: performanceEvaluations.finalScore,
+          createdAt: performanceEvaluations.createdAt,
+          updatedAt: performanceEvaluations.updatedAt,
+        })
           .from(performanceEvaluations)
+          .innerJoin(employees, eq(performanceEvaluations.employeeId, employees.id))
           .where(eq(performanceEvaluations.type, "360"))
           .orderBy(desc(performanceEvaluations.createdAt))
           .limit(100);

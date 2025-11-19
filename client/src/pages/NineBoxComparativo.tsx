@@ -49,7 +49,11 @@ export default function NineBoxComparativo() {
   const { data: positions, isLoading: loadingPositions } = trpc.nineBoxComparative.getAvailablePositions.useQuery();
   const { data: leaders } = trpc.nineBoxComparative.getLeaders.useQuery();
   const { data: comparative, isLoading: loadingComparative } = trpc.nineBoxComparative.getComparative.useQuery(
-    { positionIds: selectedPositions.length > 0 ? selectedPositions : undefined },
+    { 
+      positionIds: selectedPositions.length > 0 ? selectedPositions : undefined,
+      leaderId: selectedLeaderId || undefined,
+      hierarchyLevel: hierarchyLevel as "all" | "diretoria" | "gerencia" | "coordenacao" | "supervisao" | "outros",
+    },
     { enabled: true }
   );
 

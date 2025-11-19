@@ -249,10 +249,31 @@
 - [x] Implementar filtro por nível hierárquico (Diretoria, Gerência, Coordenação, Supervisão)
 - [x] Implementar filtro por cargo de liderança unificado
 - [x] Adicionar dropdown com lista de líderes
-- [ ] Filtrar matriz Nine Box pelos subordinados do líder selecionado (lógica de filtro a implementar)
+- [x] Filtrar matriz Nine Box pelos subordinados do líder selecionado (lógica de filtro a implementar)
+- [x] Implementar lógica de classificação por nível hierárquico baseado em subordinados
+- [x] Conectar filtros ao endpoint getComparative
 
 ## 🔧 Correção 360° Enhanced
-- [ ] Corrigir exibição de nome do colaborador (mostrar nome ao invés de código)
+- [x] Corrigir exibição de nome do colaborador (mostrar nome ao invés de código)
+
+## 🔄 Fluxo Completo Avaliação 360°
+- [ ] Atualizar schema com campos de status do fluxo (autoavaliação, avaliação gestor, consenso)
+- [ ] Criar endpoint de autoavaliação
+- [ ] Criar endpoint de avaliação do gestor
+- [ ] Criar endpoint de consenso do líder
+- [ ] Implementar notificações automáticas por email em cada transição
+- [ ] Criar interface de autoavaliação para funcionário
+- [ ] Criar interface de avaliação para gestor
+- [ ] Criar interface de consenso para líder
+- [ ] Habilitar/desabilitar botões conforme etapa
+
+## 📊 Página de Benchmarking
+- [ ] Criar página /benchmarking
+- [ ] Implementar endpoint de comparação UISA vs Mercado
+- [ ] Criar gráficos radar DISC comparativos
+- [ ] Criar gráficos radar Big Five comparativos
+- [ ] Adicionar análise automática de gaps
+- [ ] Implementar filtros por setor e cargo
 
 ## 🔄 Fluxo Completo de Avaliação 360°
 - [ ] Atualizar schema com campos de status do fluxo
