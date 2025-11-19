@@ -184,6 +184,36 @@ export const appRouter = router({
       return employee || null;
     }),
 
+    // Buscar equipe direta do gestor
+    getTeamByManager: protectedProcedure
+      .input(z.object({ managerId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const teamMembers = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+            email: employees.email,
+            managerId: employees.managerId,
+            departmentId: employees.departmentId,
+            positionId: employees.positionId,
+          })
+          .from(employees)
+          .where(eq(employees.managerId, input.managerId));
+
+        // Buscar departamentos e cargos
+        const depts = await database.select().from(departments);
+        const positionsData = await database.select().from(positions);
+
+        return teamMembers.map(emp => ({
+          ...emp,
+          department: depts.find(d => d.id === emp.departmentId),
+          position: positionsData.find((p: any) => p.id === emp.positionId),
+        }));
+      }),
+
     // Hierarquia organizacional
     getHierarchy: protectedProcedure.query(async () => {
       const database = await getDb();
@@ -364,6 +394,43 @@ export const appRouter = router({
         return goal;
       }),
 
+    // Buscar metas da equipe do gestor
+    getTeamGoals: protectedProcedure
+      .input(z.object({ managerId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Buscar subordinados diretos
+        const teamMembers = await database
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.managerId, input.managerId));
+
+        const teamMemberIds = teamMembers.map(e => e.id);
+        if (teamMemberIds.length === 0) return [];
+
+        // Buscar metas dos subordinados
+        const teamGoals = await database
+          .select()
+          .from(goals)
+          .where(sql`${goals.employeeId} IN (${sql.join(teamMemberIds, sql`, `)})`);
+
+        // Buscar dados dos colaboradores
+        const employeesData = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+          })
+          .from(employees)
+          .where(sql`${employees.id} IN (${sql.join(teamMemberIds, sql`, `)})`);
+
+        return teamGoals.map(goal => ({
+          ...goal,
+          employee: employeesData.find(e => e.id === goal.employeeId),
+        }));
+      }),
+
     create: protectedProcedure
       .input(z.object({
         cycleId: z.number(),
@@ -527,6 +594,48 @@ export const appRouter = router({
 
         return { id: evaluationId, success: true };
       }),
+
+    // Buscar avaliações pendentes da equipe do gestor
+    getPendingByManager: protectedProcedure
+      .input(z.object({ managerId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Buscar subordinados diretos
+        const teamMembers = await database
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.managerId, input.managerId));
+
+        const teamMemberIds = teamMembers.map(e => e.id);
+        if (teamMemberIds.length === 0) return [];
+
+        // Buscar avaliações pendentes dos subordinados
+        const pendingEvaluations = await database
+          .select()
+          .from(performanceEvaluations)
+          .where(
+            sql`${performanceEvaluations.employeeId} IN (${sql.join(teamMemberIds, sql`, `)}) AND ${performanceEvaluations.status} IN ('pendente', 'em_andamento')`
+          );
+
+        // Buscar dados dos colaboradores e ciclos
+        const employeesData = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+          })
+          .from(employees)
+          .where(sql`${employees.id} IN (${sql.join(teamMemberIds, sql`, `)})`);
+
+        const cyclesData = await database.select().from(evaluationCycles);
+
+        return pendingEvaluations.map(evaluation => ({
+          ...evaluation,
+          employee: employeesData.find(e => e.id === evaluation.employeeId),
+          cycle: cyclesData.find((c: any) => c.id === evaluation.cycleId),
+        }));
+      }),
   }),
 
   // ============================================================================
@@ -563,6 +672,46 @@ export const appRouter = router({
       .input(z.object({ planId: z.number() }))
       .query(async ({ input }) => {
         return await db.getPDIItemsByPlan(input.planId);
+      }),
+
+    // Buscar PDIs da equipe do gestor
+    getTeamPDIs: protectedProcedure
+      .input(z.object({ managerId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Buscar subordinados diretos
+        const teamMembers = await database
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.managerId, input.managerId));
+
+        const teamMemberIds = teamMembers.map(e => e.id);
+        if (teamMemberIds.length === 0) return [];
+
+        // Buscar PDIs dos subordinados
+        const teamPDIs = await database
+          .select()
+          .from(pdiPlans)
+          .where(sql`${pdiPlans.employeeId} IN (${sql.join(teamMemberIds, sql`, `)})`);
+
+        // Buscar dados dos colaboradores e cargos
+        const employeesData = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+          })
+          .from(employees)
+          .where(sql`${employees.id} IN (${sql.join(teamMemberIds, sql`, `)})`);
+
+        const positionsData = await database.select().from(positions);
+
+        return teamPDIs.map(pdi => ({
+          ...pdi,
+          employee: employeesData.find(e => e.id === pdi.employeeId),
+          targetPosition: positionsData.find((p: any) => p.id === pdi.targetPositionId),
+        }));
       }),
 
     create: protectedProcedure

@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import Home from "./pages/Home";
+import DashboardGestor from "./pages/DashboardGestor";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
 import PDI from "./pages/PDI";
@@ -70,6 +71,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/gestor"} component={DashboardGestor} />
       <Route path={"/metas"} component={MetasSMART} />
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
       <Route path={"/metas/:id"} component={DetalhesMeta} />

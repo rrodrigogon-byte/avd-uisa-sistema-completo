@@ -1206,3 +1206,99 @@
 - [ ] Verificar sistema de notificações automáticas
 - [ ] Testar navegação entre todas as páginas
 - [ ] Verificar responsividade mobile
+
+
+## 📊 Script de Seed com Dados de Exemplo Completo
+- [x] Criar script seed-demo-data.mjs
+- [x] Popular metas SMART de exemplo (40 metas criadas)
+- [x] Popular avaliações 360° de exemplo (5 avaliações criadas)
+- [ ] Popular PDIs de exemplo (tabela pdiIntelligentDetails não existe)
+- [ ] Popular Nine Box com posicionamentos de exemplo (erro de schema)
+- [ ] Popular feedbacks contínuos entre colaboradores
+- [ ] Popular badges conquistados automaticamente
+- [ ] Popular calibrações de Nine Box
+- [ ] Popular aprovações de metas e PDIs
+- [x] Executar script e validar dados no banco (parcialmente)
+
+## 👔 Dashboard Específico para Gestores
+- [ ] Criar página /gestor com layout dedicado
+- [ ] Implementar filtro automático por equipe direta (subordinados do gestor logado)
+- [ ] Adicionar KPIs da equipe (performance média, metas concluídas, PDIs ativos, avaliações pendentes)
+- [ ] Adicionar lista de subordinados diretos com status e performance
+- [ ] Adicionar seção "Metas da Equipe" com progresso visual
+- [ ] Adicionar seção "Avaliações Pendentes" para aprovação
+- [ ] Adicionar seção "PDIs da Equipe" para acompanhamento
+- [ ] Adicionar gráfico de performance da equipe (últimos 6 meses)
+- [ ] Adicionar gráfico de distribuição Nine Box da equipe
+- [ ] Adicionar seção "Ações Urgentes" (metas vencendo, avaliações atrasadas)
+- [ ] Registrar rota /gestor no App.tsx
+- [ ] Adicionar menu "Minha Equipe" no DashboardLayout
+
+## ✅ Validação Completa de Testes e Fluxos
+- [ ] Testar login com usuário admin (rodrigo.goncalves)
+- [ ] Testar login com usuário gestor
+- [ ] Testar login com usuário colaborador
+- [ ] Validar permissões por role em todas as páginas
+- [ ] Testar testes psicométricos públicos (todos os 5 tipos sem login)
+- [ ] Testar filtros por centro de custos no Dashboard Executivo
+- [ ] Testar filtros por centro de custos no Analytics de RH
+- [ ] Testar filtros por centro de custos no Performance Integrada
+- [ ] Testar criação de meta SMART completa
+- [ ] Testar workflow de aprovação de meta (Gestor → RH)
+- [ ] Testar atualização de progresso de meta
+- [ ] Testar criação de PDI Inteligente completo
+- [ ] Testar aprovação de PDI
+- [ ] Testar avaliação 360° completa (self → manager → peers → subordinates)
+- [ ] Testar calibração de Nine Box (movimentação + aprovação)
+- [ ] Testar sistema de notificações in-app
+- [ ] Testar sistema de notificações por email
+- [ ] Testar exportação de relatório PDF (Dashboard Executivo)
+- [ ] Testar exportação de relatório PDF (Mapa de Sucessão)
+- [ ] Testar exportação de relatório Excel (Bônus)
+- [ ] Testar hierarquia organizacional (visualização em árvore)
+- [ ] Testar importação em massa via CSV
+- [ ] Testar exportação de relatório de hierarquia
+- [ ] Testar sistema de badges (concessão automática)
+- [ ] Testar feedback contínuo (criação e listagem)
+- [ ] Testar Report Builder (criação e exportação)
+- [ ] Testar Mapa de Sucessão (criação de plano + sucessores)
+- [ ] Testar Nine Box Comparativo por cargo
+- [ ] Validar emails automáticos (SMTP Gmail configurado)
+- [ ] Validar cron jobs (notificações diárias às 9h)
+- [ ] Testar responsividade mobile em todas as páginas principais
+- [ ] Validar que não há erros no console do navegador
+- [ ] Validar que não há erros TypeScript no build
+
+
+## 🔧 Correção: Criar PDI Completo
+- [ ] Analisar página /pdi-inteligente/novo atual
+- [ ] Identificar problemas no formulário
+- [ ] Corrigir campos obrigatórios e validações
+- [ ] Adicionar todos os campos necessários (contexto estratégico, sponsors, perfis)
+- [ ] Implementar wizard multi-step se necessário
+- [ ] Integrar com análise automática de gaps de competências
+- [ ] Testar criação completa de PDI
+
+
+## 🔄 Criar Novos Workflows
+- [ ] Analisar página /aprovacoes/workflows atual
+- [ ] Adicionar botão "Criar Novo Workflow"
+- [ ] Criar modal/página de criação de workflow
+- [ ] Implementar campos: nome, descrição, tipo (metas, PDI, avaliação, bônus)
+- [ ] Implementar configuração de etapas (aprovadores, ordem, condições)
+- [ ] Criar endpoint backend workflowRouter.create
+- [ ] Testar criação de workflow customizado
+- [ ] Adicionar listagem de workflows criados
+- [ ] Adicionar opções de editar e excluir workflows
+
+
+## 🔄 Criar Novos Ciclos de Avaliação
+- [ ] Analisar páginas /avaliacoes e /360-enhanced
+- [ ] Adicionar botão "Criar Novo Ciclo" nas páginas de avaliação
+- [ ] Criar modal de criação de ciclo
+- [ ] Implementar campos: nome, ano, data início, data fim, status
+- [ ] Criar endpoint backend evaluationCyclesRouter.create
+- [ ] Adicionar validação de datas (início < fim)
+- [ ] Adicionar seletor de ciclo ativo nas páginas de avaliação
+- [ ] Testar criação e ativação de novos ciclos
+- [ ] Adicionar listagem de ciclos com opção de editar/arquivar
