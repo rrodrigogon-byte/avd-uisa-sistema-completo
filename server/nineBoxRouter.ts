@@ -145,4 +145,47 @@ export const nineBoxRouter = router({
 
     return positionsWithCount;
   }),
+
+  // Buscar líderes (colaboradores com subordinados)
+  getLeaders: protectedProcedure.query(async () => {
+    const database = await getDb();
+    if (!database) return [];
+
+    const leaders = await database
+      .select({
+        id: employees.id,
+        name: employees.name,
+        positionTitle: positions.title,
+        subordinatesCount: sql<number>`COUNT(DISTINCT subordinates.id)`,
+      })
+      .from(employees)
+      .leftJoin(positions, eq(employees.positionId, positions.id))
+      .innerJoin(sql`${employees} as subordinates`, sql`subordinates.managerId = ${employees.id}`)
+      .groupBy(employees.id, employees.name, positions.title)
+      .having(sql`COUNT(DISTINCT subordinates.id) > 0`)
+      .orderBy(employees.name);
+
+    return leaders;
+  }),
+
+  // Buscar subordinados diretos de um líder
+  getSubordinates: protectedProcedure
+    .input(z.object({ leaderId: z.number() }))
+    .query(async ({ input }) => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const subordinates = await database
+        .select({
+          id: employees.id,
+          name: employees.name,
+          positionTitle: positions.title,
+        })
+        .from(employees)
+        .leftJoin(positions, eq(employees.positionId, positions.id))
+        .where(eq(employees.managerId, input.leaderId))
+        .orderBy(employees.name);
+
+      return subordinates;
+    }),
 });

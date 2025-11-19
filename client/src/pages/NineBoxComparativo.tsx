@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Loader2, TrendingUp, Users, Award, Download } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, TrendingUp, Users, Award, Download, Filter } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Bar, Radar } from "react-chartjs-2";
 import {
@@ -41,9 +42,12 @@ ChartJS.register(
 
 export default function NineBoxComparativo() {
   const [selectedPositions, setSelectedPositions] = useState<number[]>([]);
+  const [hierarchyLevel, setHierarchyLevel] = useState<string>("all");
+  const [selectedLeaderId, setSelectedLeaderId] = useState<number | null>(null);
 
   // Queries
   const { data: positions, isLoading: loadingPositions } = trpc.nineBoxComparative.getAvailablePositions.useQuery();
+  const { data: leaders } = trpc.nineBoxComparative.getLeaders.useQuery();
   const { data: comparative, isLoading: loadingComparative } = trpc.nineBoxComparative.getComparative.useQuery(
     { positionIds: selectedPositions.length > 0 ? selectedPositions : undefined },
     { enabled: true }
@@ -189,6 +193,61 @@ export default function NineBoxComparativo() {
             Exportar Relatório
           </Button>
         </div>
+
+        {/* Filtros Hierárquicos */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Filtros Hierárquicos
+            </CardTitle>
+            <CardDescription>
+              Filtre a análise por nível hierárquico ou líder específico
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Filtro por Nível Hierárquico */}
+              <div className="space-y-2">
+                <Label>Nível Hierárquico</Label>
+                <Select value={hierarchyLevel} onValueChange={setHierarchyLevel}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o nível" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os níveis</SelectItem>
+                    <SelectItem value="diretoria">Diretoria</SelectItem>
+                    <SelectItem value="gerencia">Gerência</SelectItem>
+                    <SelectItem value="coordenacao">Coordenação</SelectItem>
+                    <SelectItem value="supervisao">Supervisão</SelectItem>
+                    <SelectItem value="outros">Outros (sem subordinados)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Filtro por Líder */}
+              <div className="space-y-2">
+                <Label>Filtrar por Líder</Label>
+                <Select 
+                  value={selectedLeaderId?.toString() || ""} 
+                  onValueChange={(value) => setSelectedLeaderId(value ? parseInt(value) : null)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione um líder" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Todos os colaboradores</SelectItem>
+                    {leaders?.map((leader) => (
+                      <SelectItem key={leader.id} value={leader.id.toString()}>
+                        {leader.name} - {leader.positionTitle} ({leader.subordinatesCount} subordinados)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Seletor de Cargos */}
         <Card>

@@ -242,14 +242,14 @@
 
 
 ## 🔧 Correção Nine Box
-- [ ] Corrigir matriz Nine Box invertida (validar eixos X e Y)
+- [x] Corrigir matriz Nine Box invertida (validar eixos X e Y)
 
 ## 📊 Filtros Hierárquicos Nine Box Comparativo
-- [ ] Criar endpoint para buscar subordinados diretos por managerId
-- [ ] Implementar filtro por nível hierárquico (Diretoria, Gerência, Coordenação, Supervisão)
-- [ ] Implementar filtro por cargo de liderança unificado
-- [ ] Adicionar dropdown com lista de líderes
-- [ ] Filtrar matriz Nine Box pelos subordinados do líder selecionado
+- [x] Criar endpoint para buscar subordinados diretos por managerId
+- [x] Implementar filtro por nível hierárquico (Diretoria, Gerência, Coordenação, Supervisão)
+- [x] Implementar filtro por cargo de liderança unificado
+- [x] Adicionar dropdown com lista de líderes
+- [ ] Filtrar matriz Nine Box pelos subordinados do líder selecionado (lógica de filtro a implementar)
 
 ## 🔧 Correção 360° Enhanced
 - [ ] Corrigir exibição de nome do colaborador (mostrar nome ao invés de código)
