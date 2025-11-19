@@ -352,4 +352,51 @@ export const evaluation360Router = router({
 
       return evaluation.length > 0 ? evaluation[0] : null;
     }),
+
+  /**
+   * Listar todas as avaliações 360°
+   */
+  list: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number().optional(),
+        status: z.enum(["pendente", "em_andamento", "concluida"]).optional(),
+      }).optional()
+    )
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      let query = db
+        .select({
+          id: performanceEvaluations.id,
+          cycleId: performanceEvaluations.cycleId,
+          employeeId: performanceEvaluations.employeeId,
+          employeeName: employees.name,
+          type: performanceEvaluations.type,
+          status: performanceEvaluations.status,
+          workflowStatus: performanceEvaluations.workflowStatus,
+          selfEvaluationCompleted: performanceEvaluations.selfEvaluationCompleted,
+          managerEvaluationCompleted: performanceEvaluations.managerEvaluationCompleted,
+          selfCompletedAt: performanceEvaluations.selfCompletedAt,
+          managerCompletedAt: performanceEvaluations.managerCompletedAt,
+          consensusCompletedAt: performanceEvaluations.consensusCompletedAt,
+          finalScore: performanceEvaluations.finalScore,
+          createdAt: performanceEvaluations.createdAt,
+          completedAt: performanceEvaluations.completedAt,
+        })
+        .from(performanceEvaluations)
+        .leftJoin(employees, eq(performanceEvaluations.employeeId, employees.id));
+
+      // Aplicar filtros se fornecidos
+      if (input?.cycleId) {
+        query = query.where(eq(performanceEvaluations.cycleId, input.cycleId)) as any;
+      }
+      if (input?.status) {
+        query = query.where(eq(performanceEvaluations.status, input.status)) as any;
+      }
+
+      const evaluations = await query;
+      return evaluations;
+    }),
 });

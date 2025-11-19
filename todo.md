@@ -504,3 +504,8 @@
 - [x] Implementar navegação para cada módulo (onClick nos cards)
 - [x] Adicionar rota no App.tsx
 - [ ] Implementar endpoints getDistribution e getStats nos routers (dados simulados atualmente)
+
+## 🐛 Correção Erro evaluation360.list
+- [x] Adicionar endpoint evaluation360.list ao evaluation360Router
+- [x] Endpoint list com filtros opcionais (cycleId, status)
+- [x] Retorna lista completa de avaliações com dados do colaborador
