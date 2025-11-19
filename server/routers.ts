@@ -218,6 +218,76 @@ export const appRouter = router({
     }),
 
     // Atualizar colaborador (para importação em massa)
+    exportHierarchyReport: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar todos os colaboradores com departamentos e cargos
+      const allEmployees = await db
+        .select({
+          id: employees.id,
+          name: employees.name,
+          email: employees.email,
+          managerId: employees.managerId,
+          departmentId: employees.departmentId,
+          positionId: employees.positionId,
+          costCenter: employees.costCenter,
+        })
+        .from(employees);
+
+      // Buscar departamentos e cargos
+      const depts = await db.select().from(departments);
+      const positionsData = await db.select().from(positions);
+
+      // Calcular estatísticas
+      const totalEmployees = allEmployees.length;
+      const employeesWithManager = allEmployees.filter(e => e.managerId).length;
+      const employeesWithoutManager = totalEmployees - employeesWithManager;
+      const uniqueManagers = new Set(allEmployees.map(e => e.managerId).filter(Boolean)).size;
+
+      // Agrupar por departamento
+      const byDepartment = new Map<number, number>();
+      allEmployees.forEach(e => {
+        if (e.departmentId) {
+          byDepartment.set(e.departmentId, (byDepartment.get(e.departmentId) || 0) + 1);
+        }
+      });
+
+      // Calcular span of control (média de subordinados por gestor)
+      const subordinatesCount = new Map<number, number>();
+      allEmployees.forEach(e => {
+        if (e.managerId) {
+          subordinatesCount.set(e.managerId, (subordinatesCount.get(e.managerId) || 0) + 1);
+        }
+      });
+      const avgSpanOfControl = subordinatesCount.size > 0
+        ? Array.from(subordinatesCount.values()).reduce((a, b) => a + b, 0) / subordinatesCount.size
+        : 0;
+
+      return {
+        totalEmployees,
+        employeesWithManager,
+        employeesWithoutManager,
+        uniqueManagers,
+        avgSpanOfControl: Math.round(avgSpanOfControl * 10) / 10,
+        departmentStats: Array.from(byDepartment.entries()).map(([deptId, count]) => ({
+          departmentId: deptId,
+          departmentName: depts.find(d => d.id === deptId)?.name || `Dept ${deptId}`,
+          count,
+        })),
+        employeesWithoutManagerList: allEmployees
+          .filter(e => !e.managerId)
+          .map(e => ({
+            id: e.id,
+            name: e.name,
+            email: e.email,
+            department: depts.find(d => d.id === e.departmentId)?.name || "",
+            position: positionsData.find((p: any) => p.id === e.positionId)?.title || "",
+            costCenter: e.costCenter || "",
+          })),
+      };
+    }),
+
     updateEmployee: protectedProcedure
       .input(
         z.object({

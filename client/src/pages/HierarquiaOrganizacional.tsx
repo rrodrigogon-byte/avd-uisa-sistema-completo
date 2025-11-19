@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Users, Building2, Search, Edit, ChevronRight, ChevronDown, User, Upload } from "lucide-react";
+import { Users, Building2, Search, Edit, ChevronRight, ChevronDown, User, Upload, Download } from "lucide-react";
 
 interface TreeNode {
   employee: any;
@@ -33,6 +33,62 @@ export default function HierarquiaOrganizacional() {
   const { data: hierarchy, isLoading: loadingHierarchy, refetch } = trpc.employees.getHierarchy.useQuery();
   const { data: departments } = trpc.employees.getDepartments.useQuery();
   const { data: managers } = trpc.employees.getManagers.useQuery();
+
+  // Queries para relatório
+  const { data: reportData, refetch: refetchReport } = trpc.employees.exportHierarchyReport.useQuery(undefined, {
+    enabled: false,
+  });
+
+  const handleDownloadReport = async () => {
+    try {
+      const result = await refetchReport();
+      if (!result.data) {
+        toast.error("Erro ao gerar relatório");
+        return;
+      }
+
+      // Gerar relatório em formato texto
+      const report = result.data;
+      let content = `RELATÓRIO DE HIERARQUIA ORGANIZACIONAL\n`;
+      content += `Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+      content += `=== ESTATÍSTICAS GERAIS ===\n`;
+      content += `Total de Colaboradores: ${report.totalEmployees}\n`;
+      content += `Colaboradores com Gestor: ${report.employeesWithManager}\n`;
+      content += `Colaboradores sem Gestor: ${report.employeesWithoutManager}\n`;
+      content += `Total de Gestores: ${report.uniqueManagers}\n`;
+      content += `Span of Control Médio: ${report.avgSpanOfControl}\n\n`;
+      
+      content += `=== DISTRIBUIÇÃO POR DEPARTAMENTO ===\n`;
+      report.departmentStats.forEach((dept: any) => {
+        content += `${dept.departmentName}: ${dept.count} colaboradores\n`;
+      });
+      
+      content += `\n=== COLABORADORES SEM GESTOR DEFINIDO ===\n`;
+      if (report.employeesWithoutManagerList.length === 0) {
+        content += `Nenhum colaborador sem gestor.\n`;
+      } else {
+        report.employeesWithoutManagerList.forEach((emp: any) => {
+          content += `- ${emp.name} (${emp.email})\n`;
+          content += `  Departamento: ${emp.department} | Cargo: ${emp.position} | CC: ${emp.costCenter}\n`;
+        });
+      }
+
+      // Download do arquivo
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `relatorio-hierarquia-${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success("Relatório gerado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao gerar relatório");
+    }
+  };
 
   // Mutations
   const updateEmployeeMutation = trpc.employees.updateEmployee.useMutation({
@@ -218,10 +274,16 @@ export default function HierarquiaOrganizacional() {
               Visualize e gerencie a estrutura hierárquica da organização
             </p>
           </div>
-          <Button onClick={() => setLocation("/admin/hierarquia/importar")} size="lg">
-            <Upload className="mr-2 h-4 w-4" />
-            Importar em Massa
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleDownloadReport} variant="outline" size="lg">
+              <Download className="mr-2 h-4 w-4" />
+              Baixar Relatório
+            </Button>
+            <Button onClick={() => setLocation("/admin/hierarquia/importar")} size="lg">
+              <Upload className="mr-2 h-4 w-4" />
+              Importar em Massa
+            </Button>
+          </div>
         </div>
 
         {/* KPIs */}

@@ -16,9 +16,15 @@ export default function Analytics() {
   const [department, setDepartment] = useState("todos");
   const [selectedCostCenter, setSelectedCostCenter] = useState<string>("all");
 
-  const { data: kpis, isLoading: kpisLoading } = trpc.analytics.getKPIs.useQuery();
-  const { data: headcountByDept } = trpc.analytics.getHeadcountByDepartment.useQuery();
-  const { data: headcountByPosition } = trpc.analytics.getHeadcountByPosition.useQuery();
+  const { data: kpis, isLoading: kpisLoading } = trpc.analytics.getKPIs.useQuery(
+    selectedCostCenter !== "all" ? { costCenter: selectedCostCenter } : undefined
+  );
+  const { data: headcountByDept } = trpc.analytics.getHeadcountByDepartment.useQuery(
+    selectedCostCenter !== "all" ? { costCenter: selectedCostCenter } : undefined
+  );
+  const { data: headcountByPosition } = trpc.analytics.getHeadcountByPosition.useQuery(
+    selectedCostCenter !== "all" ? { costCenter: selectedCostCenter } : undefined
+  );
   const { data: turnoverRate } = trpc.analytics.getTurnoverRate.useQuery();
   const { data: averageTenure } = trpc.analytics.getAverageTenure.useQuery();
   const { data: diversity } = trpc.analytics.getDiversityAnalysis.useQuery();

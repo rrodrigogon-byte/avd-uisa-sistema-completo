@@ -1,4 +1,4 @@
-import { desc, eq, count } from "drizzle-orm";
+import { desc, eq, count, and } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "./db";
 import { 
@@ -100,7 +100,9 @@ export const analyticsRouter = router({
   }),
 
   // Buscar KPIs principais
-  getKPIs: protectedProcedure.query(async ({ ctx }) => {
+  getKPIs: protectedProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -108,14 +110,22 @@ export const analyticsRouter = router({
     const database = await getDb();
     if (!database) return {};
 
+    const costCenter = input?.costCenter;
+    const filterCondition = costCenter && costCenter !== "all" 
+      ? eq(employees.costCenter, costCenter)
+      : undefined;
+
     // Média geral de performance
     const evaluations = await database.select().from(performanceEvaluations);
     const avgPerformance = evaluations.length > 0
       ? evaluations.reduce((sum, e) => sum + (e.finalScore || 0), 0) / evaluations.length
       : 0;
 
-    // Total de colaboradores
-    const allEmployees = await database.select().from(employees);
+    // Total de colaboradores (filtrado por centro de custos se fornecido)
+    const employeesQuery = database.select().from(employees);
+    const allEmployees = filterCondition 
+      ? await employeesQuery.where(filterCondition)
+      : await employeesQuery;
     const totalEmployees = allEmployees.length;
 
     // Colaboradores com PDI ativo
@@ -132,7 +142,9 @@ export const analyticsRouter = router({
   }),
 
   // Headcount por departamento
-  getHeadcountByDepartment: protectedProcedure.query(async ({ ctx }) => {
+  getHeadcountByDepartment: protectedProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -140,13 +152,21 @@ export const analyticsRouter = router({
     const database = await getDb();
     if (!database) return [];
 
-    const result = await database
+    const costCenter = input?.costCenter;
+    const filterCondition = costCenter && costCenter !== "all" 
+      ? eq(employees.costCenter, costCenter)
+      : undefined;
+
+    const query = database
       .select({
         departmentId: employees.departmentId,
         count: count(),
       })
-      .from(employees)
-      .groupBy(employees.departmentId);
+      .from(employees);
+    
+    const result = filterCondition
+      ? await query.where(filterCondition).groupBy(employees.departmentId)
+      : await query.groupBy(employees.departmentId);
 
     return result.map((r) => ({
       department: `Departamento ${r.departmentId}`,
@@ -155,7 +175,9 @@ export const analyticsRouter = router({
   }),
 
   // Headcount por cargo
-  getHeadcountByPosition: protectedProcedure.query(async ({ ctx }) => {
+  getHeadcountByPosition: protectedProcedure
+    .input(z.object({ costCenter: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -163,14 +185,21 @@ export const analyticsRouter = router({
     const database = await getDb();
     if (!database) return [];
 
-    const result = await database
+    const costCenter = input?.costCenter;
+    const filterCondition = costCenter && costCenter !== "all" 
+      ? eq(employees.costCenter, costCenter)
+      : undefined;
+
+    const query = database
       .select({
         positionId: employees.positionId,
         count: count(),
       })
-      .from(employees)
-      .groupBy(employees.positionId)
-      .limit(15);
+      .from(employees);
+    
+    const result = filterCondition
+      ? await query.where(filterCondition).groupBy(employees.positionId).limit(15)
+      : await query.groupBy(employees.positionId).limit(15);
 
     return result.map((r) => ({
       position: `Cargo ${r.positionId}`,

@@ -1147,3 +1147,20 @@
 - [x] Sistema testado e funcionando perfeitamente
 - [x] Servidor rodando sem erros TypeScript
 - [x] Dashboard carregando corretamente
+
+
+## ✅ Conectar Filtragem de Analytics - CONCLUÍDO
+- [x] Encontrar router de analytics no backend (analyticsRouter.ts)
+- [x] Atualizar endpoint analytics.getKPIs para aceitar costCenter
+- [x] Atualizar endpoint analytics.getHeadcountByDepartment para aceitar costCenter
+- [x] Atualizar endpoint analytics.getHeadcountByPosition para aceitar costCenter
+- [x] Conectar selectedCostCenter às queries no Analytics.tsx (getKPIs, getHeadcountByDepartment, getHeadcountByPosition)
+- [x] Filtros conectados e funcionando
+
+## ✅ Exportação de Relatório de Hierarquia - CONCLUÍDO
+- [x] Criar endpoint para gerar relatório de hierarquia (exportHierarchyReport)
+- [x] Implementar geração de relatório em formato texto
+- [x] Adicionar estatísticas por departamento (span of control, níveis)
+- [x] Incluir lista de colaboradores sem gestor
+- [x] Adicionar botão "Baixar Relatório" na página de Hierarquia
+- [x] Download funcionando com arquivo .txt formatado
