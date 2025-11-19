@@ -18,6 +18,7 @@ import Configuracoes from "./pages/Configuracoes";
 import Perfil from "./pages/Perfil";
 import History from "./pages/History";
 import Funcionarios from "./pages/Funcionarios";
+import FuncionariosAtivos from "./pages/FuncionariosAtivos";
 import Departamentos from "./pages/Departamentos";
 import CentrosCusto from "./pages/CentrosCusto";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
@@ -99,6 +100,7 @@ function Router() {
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
       <Route path="/funcionarios" component={Funcionarios} />
+      <Route path="/funcionarios-ativos" component={FuncionariosAtivos} />
       <Route path="/departamentos" component={Departamentos} />
       <Route path="/centros-custo" component={CentrosCusto} />
       <Route path="/aprovacoes/dashboard" component={AprovacoesD} />

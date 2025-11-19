@@ -359,3 +359,23 @@
 - [x] Verificar endpoint getComparative e lógica de filtros
 - [x] Substituir leftJoin problemático por SQL raw query
 - [x] Implementar combinação correta de filtros (líder + hierarquia)
+
+
+## 📝 Melhorias Formulário de Funcionários
+- [x] Adicionar campo "Chapa" (matrícula) ao schema employees (já existia como employeeCode)
+- [x] Adicionar campo "Salário" ao schema employees (salary em centavos)
+- [x] Adicionar campo "Nível" (Diretoria/Gerência/Coordenação/Supervisão/Operacional) ao schema employees (hierarchyLevel)
+- [x] Adicionar campo "Data de Admissão" ao schema employees (já existia como hireDate)
+- [x] Criar página FuncionariosAtivos.tsx com formulário completo
+- [x] Implementar endpoint employees.update no backend
+- [x] Implementar validações de campos obrigatórios
+- [x] Melhorar layout do modal de edição (modal grande com scroll)
+- [x] Adicionar formatação de moeda para exibição de Salário
+
+## 📄 Backup Completo do Projeto
+- [x] Criar script de backup que exporta todo o código-fonte
+- [x] Incluir schema do banco de dados
+- [x] Incluir package.json e todo.md
+- [x] Gerar arquivo TXT com estrutura completa do projeto (347KB, 9570 linhas)
+- [x] Adicionar timestamp e metadados ao backup
+- [x] Arquivo gerado: backup-completo-20251119-134726.txt

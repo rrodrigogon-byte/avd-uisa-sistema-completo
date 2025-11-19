@@ -100,6 +100,17 @@ export const employees = mysqlTable("employees", {
   positionId: int("positionId").notNull(),
   managerId: int("managerId"), // Gestor direto
   costCenter: varchar("costCenter", { length: 100 }), // Centro de custos
+  
+  // Informações financeiras e hierárquicas
+  salary: int("salary"), // Salário em centavos (ex: 500000 = R$ 5.000,00)
+  hierarchyLevel: mysqlEnum("hierarchyLevel", [
+    "diretoria",
+    "gerencia",
+    "coordenacao",
+    "supervisao",
+    "operacional"
+  ]),
+  
   photoUrl: varchar("photoUrl", { length: 512 }),
   phone: varchar("phone", { length: 20 }),
   address: text("address"),

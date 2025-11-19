@@ -348,6 +348,61 @@ export const appRouter = router({
         return { success: true, message: "Colaborador atualizado com sucesso" };
       }),
 
+    // Atualizar colaborador completo (para formulário de edição)
+    update: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          employeeCode: z.string(),
+          name: z.string(),
+          email: z.string().email(),
+          cpf: z.string().optional(),
+          birthDate: z.string().optional(),
+          hireDate: z.string(),
+          departmentId: z.number(),
+          positionId: z.number(),
+          managerId: z.number().optional(),
+          salary: z.number().optional(),
+          hierarchyLevel: z.enum(["diretoria", "gerencia", "coordenacao", "supervisao", "operacional"]).optional(),
+          phone: z.string().optional(),
+          address: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Database not available",
+          });
+        }
+
+        const updateData: any = {
+          employeeCode: input.employeeCode,
+          name: input.name,
+          email: input.email,
+          hireDate: input.hireDate,
+          departmentId: input.departmentId,
+          positionId: input.positionId,
+          updatedAt: new Date(),
+        };
+
+        if (input.cpf !== undefined) updateData.cpf = input.cpf;
+        if (input.birthDate !== undefined) updateData.birthDate = input.birthDate;
+        if (input.managerId !== undefined) updateData.managerId = input.managerId;
+        if (input.salary !== undefined) updateData.salary = input.salary;
+        if (input.hierarchyLevel !== undefined) updateData.hierarchyLevel = input.hierarchyLevel;
+        if (input.phone !== undefined) updateData.phone = input.phone;
+        if (input.address !== undefined) updateData.address = input.address;
+
+        await database
+          .update(employees)
+          .set(updateData)
+          .where(eq(employees.id, input.id));
+
+        return { success: true, message: "Colaborador atualizado com sucesso" };
+      }),
+
     getDepartments: protectedProcedure.query(async () => {
       const database = await getDb();
       if (!database) return [];
