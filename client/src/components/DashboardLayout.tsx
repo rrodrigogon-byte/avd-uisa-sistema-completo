@@ -96,6 +96,7 @@ const menuItems = [
       { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },
       { icon: MessageSquare, label: "Feedback Contínuo", path: "/feedback" },
       { icon: Trophy, label: "Conquistas e Badges", path: "/badges" },
+      { icon: BarChart3, label: "Pesquisas de Pulse", path: "/pesquisas-pulse" },
     ],
   },
   {
@@ -107,6 +108,7 @@ const menuItems = [
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
       { icon: DollarSign, label: "Centros de Custo", path: "/centros-custo" },
       { icon: GitBranch, label: "Hierarquia Organizacional", path: "/admin/hierarquia" },
+      { icon: FileText, label: "Descrição de Cargos", path: "/descricao-cargos" },
     ],
   },
   {

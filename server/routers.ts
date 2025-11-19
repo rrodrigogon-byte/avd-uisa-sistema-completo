@@ -28,6 +28,8 @@ import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./notificationsRouter";
+import { pulseRouter } from "./routers/pulseRouter";
+import { positionsRouter } from "./routers/positionsRouter";
 import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { eq, and, desc, sql } from "drizzle-orm";
 
@@ -2391,6 +2393,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Notificações
   notifications: notificationsRouter,
+
+  // Router de Pesquisas de Pulse
+  pulse: pulseRouter,
+
+  // Router de Descrição de Cargos
+  positionsManagement: positionsRouter,
 
   // Router de Emails
   emails: router({

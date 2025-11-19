@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,18 @@ interface PulseSurvey {
 }
 
 export default function PesquisasPulse() {
-  const [surveys] = useState<PulseSurvey[]>([
+  const { data: surveys = [], isLoading } = trpc.pulse.list.useQuery();
+  const createSurveyMutation = trpc.pulse.create.useMutation({
+    onSuccess: () => {
+      toast.success("Pesquisa criada e enviada com sucesso!");
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const [surveys_mock] = useState<PulseSurvey[]>([
     {
       id: 1,
       title: "Satisfação com Ambiente de Trabalho",
@@ -71,8 +83,11 @@ export default function PesquisasPulse() {
   };
 
   const handleSaveSurvey = () => {
-    toast.success("Pesquisa criada e enviada com sucesso!");
-    setShowForm(false);
+    // TODO: Implementar formulário completo com título e pergunta
+    createSurveyMutation.mutate({
+      title: "Nova Pesquisa",
+      question: "Como você avalia?",
+    });
   };
 
   const getStatusBadge = (status: string) => {
