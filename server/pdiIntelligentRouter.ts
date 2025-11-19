@@ -14,6 +14,8 @@ import {
   positionCompetencies,
   positions,
   psychometricTests,
+  pdiActions,
+  pdiGovernanceReviews,
 } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
@@ -635,6 +637,182 @@ export const pdiIntelligentRouter = router({
         compatibilityScore: calculateCompatibility(gaps),
       };
     }),
+
+  /**
+   * Adicionar ação ao PDI
+   */
+  addAction: protectedProcedure
+    .input(
+      z.object({
+        planId: z.number(),
+        title: z.string(),
+        description: z.string(),
+        axis: z.enum(["70_pratica", "20_experiencia", "10_educacao"]),
+        developmentArea: z.string(),
+        successMetric: z.string(),
+        evidenceRequired: z.string().optional(),
+        responsible: z.string(),
+        dueDate: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db.insert(pdiActions).values({
+        planId: input.planId,
+        title: input.title,
+        description: input.description,
+        axis: input.axis,
+        developmentArea: input.developmentArea,
+        successMetric: input.successMetric,
+        evidenceRequired: input.evidenceRequired,
+        responsible: input.responsible,
+        dueDate: new Date(input.dueDate),
+        status: "nao_iniciado",
+        progress: 0,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Atualizar status de ação
+   */
+  updateActionStatus: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.enum(["nao_iniciado", "em_andamento", "concluido"]),
+        progress: z.number().min(0).max(100).optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const updates: any = {
+        status: input.status,
+        updatedAt: new Date(),
+      };
+
+      if (input.progress !== undefined) {
+        updates.progress = input.progress;
+      }
+
+      if (input.status === "concluido") {
+        updates.completedAt = new Date();
+        updates.progress = 100;
+      }
+
+      await db.update(pdiActions).set(updates).where(eq(pdiActions.id, input.id));
+
+      return { success: true };
+    }),
+
+  /**
+   * Buscar ações de um PDI
+   */
+  getActions: protectedProcedure
+    .input(z.object({ planId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const actions = await db
+        .select()
+        .from(pdiActions)
+        .where(eq(pdiActions.planId, input.planId))
+        .orderBy(pdiActions.dueDate);
+
+      return actions;
+    }),
+
+  /**
+   * Adicionar feedback de governança (DGC)
+   */
+  addGovernanceReview: protectedProcedure
+    .input(
+      z.object({
+        planId: z.number(),
+        reviewDate: z.string(),
+        reviewerId: z.number(),
+        reviewerRole: z.enum(["dgc", "mentor", "sponsor"]),
+        readinessIndex: z.number().min(1).max(5),
+        keyPoints: z.string(),
+        strengths: z.string().optional(),
+        improvements: z.string().optional(),
+        nextSteps: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db.insert(pdiGovernanceReviews).values({
+        planId: input.planId,
+        reviewDate: new Date(input.reviewDate),
+        reviewerId: input.reviewerId,
+        reviewerRole: input.reviewerRole,
+        readinessIndex: input.readinessIndex.toString(),
+        keyPoints: input.keyPoints,
+        strengths: input.strengths,
+        improvements: input.improvements,
+        nextSteps: input.nextSteps,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Buscar histórico de feedbacks de governança
+   */
+  getGovernanceReviews: protectedProcedure
+    .input(z.object({ planId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const reviews = await db
+        .select({
+          id: pdiGovernanceReviews.id,
+          reviewDate: pdiGovernanceReviews.reviewDate,
+          readinessIndex: pdiGovernanceReviews.readinessIndex,
+          keyPoints: pdiGovernanceReviews.keyPoints,
+          strengths: pdiGovernanceReviews.strengths,
+          improvements: pdiGovernanceReviews.improvements,
+          nextSteps: pdiGovernanceReviews.nextSteps,
+          reviewerName: employees.name,
+          reviewerRole: pdiGovernanceReviews.reviewerRole,
+        })
+        .from(pdiGovernanceReviews)
+        .leftJoin(employees, eq(pdiGovernanceReviews.reviewerId, employees.id))
+        .where(eq(pdiGovernanceReviews.planId, input.planId))
+        .orderBy(desc(pdiGovernanceReviews.reviewDate));
+
+      return reviews;
+    }),
+
+  /**
+   * Calcular evolução do IPS ao longo do tempo
+   */
+  getIPSEvolution: protectedProcedure
+    .input(z.object({ planId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const evolution = await db
+        .select({
+          reviewDate: pdiGovernanceReviews.reviewDate,
+          readinessIndex: pdiGovernanceReviews.readinessIndex,
+        })
+        .from(pdiGovernanceReviews)
+        .where(eq(pdiGovernanceReviews.planId, input.planId))
+        .orderBy(pdiGovernanceReviews.reviewDate);
+
+      return evolution;
+    }),
 });
 
 /**
@@ -661,3 +839,5 @@ function calculateCompatibility(gaps: any): number {
 
   return Math.round(compatibility);
 }
+
+

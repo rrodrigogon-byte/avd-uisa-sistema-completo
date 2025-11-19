@@ -233,14 +233,14 @@ export default function NineBoxComparativo() {
               <div className="space-y-2">
                 <Label>Filtrar por Líder</Label>
                 <Select 
-                  value={selectedLeaderId?.toString() || ""} 
-                  onValueChange={(value) => setSelectedLeaderId(value ? parseInt(value) : null)}
+                  value={selectedLeaderId?.toString() || "todos"} 
+                  onValueChange={(value) => setSelectedLeaderId(value === "todos" ? null : parseInt(value))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione um líder" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos os colaboradores</SelectItem>
+                    <SelectItem value="todos">Todos os colaboradores</SelectItem>
                     {leaders?.map((leader) => (
                       <SelectItem key={leader.id} value={leader.id.toString()}>
                         {leader.name} - {leader.positionTitle} ({leader.subordinatesCount} subordinados)

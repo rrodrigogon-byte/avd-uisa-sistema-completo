@@ -1581,3 +1581,72 @@ export const marketBenchmarks = mysqlTable("marketBenchmarks", {
 
 export type MarketBenchmark = typeof marketBenchmarks.$inferSelect;
 export type InsertMarketBenchmark = typeof marketBenchmarks.$inferInsert;
+
+
+// ============================================================================
+// PDI INTELIGENTE - AÇÕES E ACOMPANHAMENTO (MODELO NADIA)
+// ============================================================================
+
+/**
+ * Ações do PDI Inteligente (Modelo 70-20-10)
+ * Tabela de ações específicas do plano de desenvolvimento com status e métricas
+ */
+export const pdiActions = mysqlTable("pdiActions", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(), // Relacionamento com pdiPlans
+  
+  // Informações da ação
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  axis: mysqlEnum("axis", ["70_pratica", "20_experiencia", "10_educacao"]).notNull(), // Eixo 70-20-10
+  developmentArea: varchar("developmentArea", { length: 100 }).notNull(), // Ex: "Visão Holística", "Liderança Sênior"
+  
+  // Métrica de sucesso
+  successMetric: text("successMetric").notNull(), // Como medir o sucesso
+  evidenceRequired: text("evidenceRequired"), // Evidências necessárias
+  
+  // Responsáveis
+  responsible: varchar("responsible", { length: 255 }).notNull(), // Ex: "Nadia C. (Líder), Carlos M. (Sponsor)"
+  
+  // Prazo e status
+  dueDate: datetime("dueDate").notNull(),
+  status: mysqlEnum("status", ["nao_iniciado", "em_andamento", "concluido"]).default("nao_iniciado").notNull(),
+  progress: int("progress").default(0).notNull(), // Percentual 0-100
+  
+  // Auditoria
+  completedAt: datetime("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiAction = typeof pdiActions.$inferSelect;
+export type InsertPdiAction = typeof pdiActions.$inferInsert;
+
+/**
+ * Acompanhamento e Feedbacks do PDI (Governança DGC)
+ * Registros de reuniões de acompanhamento com índice de prontidão
+ */
+export const pdiGovernanceReviews = mysqlTable("pdiGovernanceReviews", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  
+  // Data e responsável
+  reviewDate: datetime("reviewDate").notNull(),
+  reviewerId: int("reviewerId").notNull(), // Quem fez o acompanhamento (DGC, Gestor, Sponsor)
+  reviewerRole: mysqlEnum("reviewerRole", ["dgc", "mentor", "sponsor"]).notNull(),
+  
+  // Índice de Prontidão para Sucessão (IPS)
+  readinessIndex: decimal("readinessIndex", { precision: 3, scale: 1 }).notNull(), // 1.0 a 5.0
+  
+  // Feedback
+  keyPoints: text("keyPoints").notNull(), // Pontos-chave da reunião
+  strengths: text("strengths"), // Pontos fortes observados
+  improvements: text("improvements"), // Áreas de melhoria
+  nextSteps: text("nextSteps"), // Próximos passos
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PdiGovernanceReview = typeof pdiGovernanceReviews.$inferSelect;
+export type InsertPdiGovernanceReview = typeof pdiGovernanceReviews.$inferInsert;

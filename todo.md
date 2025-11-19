@@ -286,3 +286,69 @@
 - [ ] Criar interface de consenso do líder
 - [ ] Habilitar/desabilitar botões conforme etapa
 - [ ] Testar fluxo completo
+
+
+## 📋 PDI Inteligente Completo - Modelo Nadia (Prioridade Máxima)
+- [x] Criar schema de ações do PDI (pdiActions) com campos: título, descrição, eixo (70/20/10), métrica de sucesso, responsáveis, prazo, status (não iniciado/em andamento/concluído)
+- [x] Criar schema de feedbacks/acompanhamento (pdiGovernanceReviews) com campos: data reunião, índice de prontidão (IPS 1-5), feedback textual, pontos-chave
+- [x] Criar endpoint para adicionar ação ao PDI
+- [x] Criar endpoint para atualizar status de ação
+- [x] Criar endpoint para adicionar feedback de acompanhamento
+- [x] Criar endpoint para buscar histórico de feedbacks
+- [x] Criar endpoint para calcular evolução do IPS ao longo do tempo
+- [x] Implementar página de visualização de PDI com tabela de ações editáveis (/pdi-inteligente/:id/detalhes)
+- [x] Implementar formulário de adicionar/editar ações
+- [x] Implementar seletor de status (não iniciado/em andamento/concluído) com cores
+- [x] Implementar seção de acompanhamento DGC com formulário de feedback
+- [x] Implementar gráfico de evolução do IPS (Chart.js)
+- [x] Implementar histórico de reuniões de governança
+- [ ] Implementar botões de salvar progresso e exportar JSON
+- [ ] Testar fluxo completo de criação, edição e acompanhamento
+
+## 🔄 Fluxo Completo de Avaliação 360° com Emails (Prioridade Alta)
+- [ ] Atualizar schema performanceEvaluations com campo workflowStatus (pending_self, pending_manager, pending_consensus, completed)
+- [ ] Adicionar campos de datas (selfCompletedAt, managerCompletedAt, consensusCompletedAt)
+- [ ] Criar endpoint evaluation360.submitSelfAssessment
+- [ ] Criar endpoint evaluation360.submitManagerAssessment
+- [ ] Criar endpoint evaluation360.submitConsensus
+- [ ] Integrar envio de email automático ao gestor quando autoavaliação é concluída
+- [ ] Integrar envio de email automático ao líder quando avaliação do gestor é concluída
+- [ ] Criar página de autoavaliação (/avaliacoes/autoavaliacao/:id)
+- [ ] Criar página de avaliação do gestor (/avaliacoes/gestor/:id)
+- [ ] Criar página de consenso do líder (/avaliacoes/consenso/:id)
+- [ ] Implementar lógica de habilitação/desabilitação de botões por etapa
+- [ ] Adicionar validações de permissão (apenas gestor pode avaliar, apenas líder pode fazer consenso)
+- [ ] Testar fluxo completo: autoavaliação → email → avaliação gestor → email → consenso
+
+## 📊 Página de Benchmarking de Mercado (Prioridade Alta)
+- [ ] Criar página /benchmarking com layout moderno
+- [ ] Implementar endpoint benchmarking.getComparison para buscar dados UISA vs 21 perfis de mercado
+- [ ] Criar gráfico radar comparando DISC médio UISA vs setor selecionado
+- [ ] Criar gráfico radar comparando Big Five médio UISA vs setor selecionado
+- [ ] Implementar filtros por setor (Agronegócio, Indústria, Tecnologia, Financeiro, etc)
+- [ ] Implementar filtros por cargo (Gerente, Coordenador, Analista, etc)
+- [ ] Adicionar análise automática de gaps competitivos (dimensões abaixo da média)
+- [ ] Adicionar análise de vantagens organizacionais (dimensões acima da média)
+- [ ] Implementar cards de insights estratégicos
+- [ ] Adicionar botão de exportação de relatório de benchmarking em PDF
+- [ ] Testar comparações com todos os 21 perfis de mercado
+
+## 🌳 Sistema de Metas em Cascata Hierárquico (Prioridade Média)
+- [ ] Criar schema de metas organizacionais (organizationalGoals)
+- [ ] Criar schema de vinculação de metas (goalHierarchy) com parentGoalId
+- [ ] Criar endpoint para criar meta organizacional
+- [ ] Criar endpoint para desdobrar meta em metas departamentais
+- [ ] Criar endpoint para desdobrar meta departamental em metas individuais
+- [ ] Criar endpoint para buscar árvore hierárquica de metas
+- [ ] Implementar página de metas em cascata (/metas/cascata)
+- [ ] Implementar visualização em árvore (ReactFlow ou similar)
+- [ ] Implementar cálculo automático de contribuição percentual de cada nível
+- [ ] Implementar alertas quando meta superior é alterada
+- [ ] Adicionar indicadores visuais de progresso agregado por nível
+- [ ] Implementar propagação de mudanças de cima para baixo
+- [ ] Testar fluxo completo: meta organizacional → departamental → individual
+
+
+## 🐛 Correção Erro SelectItem Nine Box Comparativo
+- [x] Corrigir SelectItem com value vazio na página /nine-box-comparativo
+- [x] Substituir value="" por value="todos" e ajustar lógica do Select
