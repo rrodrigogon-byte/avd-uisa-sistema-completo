@@ -53,7 +53,7 @@ async function sendTestInvites() {
           continue;
         }
 
-        const testUrl = `https://3000-ipmp0a4ptf6awjhw09efq-4f54ef5c.manusvm.computer/testes/${testType}`;
+        const testUrl = `https://3000-ipmp0a4ptf6awjhw09efq-4f54ef5c.manusvm.computer/teste-${testType}`;
         
         const emailTemplate = createTestInviteEmail({
           employeeName: employee[0].name,

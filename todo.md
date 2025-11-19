@@ -1066,3 +1066,8 @@
 - [ ] Implementar visualização de histórico de emails
 - [ ] Adicionar métricas de taxa de entrega e falhas
 - [ ] Implementar reenvio manual de notificações
+
+## 🔧 Correção de Rotas dos Testes
+- [x] Verificar rotas existentes dos testes psicométricos no App.tsx
+- [x] Corrigir URLs no template testInviteTemplate.ts (/teste-disc, /teste-bigfive, /teste-mbti, /teste-ie, /teste-vark)
+- [x] Links corrigidos (emails já foram enviados anteriormente com sucesso)
