@@ -1604,3 +1604,15 @@
 - [x] Corrigir value para string não-vazia ou remover item
 - [x] Testar página de criar meta
 - [x] Validar que erro foi resolvido
+
+## 💰 Formatação Monetária R$ e Validar SMART
+
+- [x] Criar helper de formatação monetária R$ (pt-BR)
+- [x] Aplicar formatação R$ em campos de bônus (Metas)
+- [x] Aplicar formatação R$ em campos de valores (PDI, Avaliações)
+- [ ] Corrigir botão "Validar SMART" em CriarMetaSMART.tsx
+- [ ] Testar gravação de meta após validação SMART
+- [ ] Analisar arquivos HTML/PDF de PDIs enviados
+- [ ] Extrair dados dos PDIs (Agenor, Pablo, Paulo, Nadia, Callegari, Eduardo, Fernando)
+- [ ] Importar PDIs para o banco de dados
+- [ ] Validar PDIs importados no sistema

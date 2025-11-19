@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { formatCurrency, parseCurrency, formatCurrencyInput } from "@/lib/currency";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ import {
  * Validação em tempo real dos 5 critérios SMART
  */
 export default function CriarMetaSMART() {
-  const [, navigate] = useLocation();
+  const [, setLocation] = useLocation();
   // Toast já importado do sonner
   const [step, setStep] = useState(1);
 
@@ -70,7 +71,7 @@ export default function CriarMetaSMART() {
       toast.success("Meta criada com sucesso!", {
         description: `Score SMART: ${data.validation.score}/100`,
       });
-      navigate("/metas");
+      setLocation("/metas");
     },
     onError: (error) => {
       toast.error("Erro ao criar meta", {
@@ -147,7 +148,7 @@ export default function CriarMetaSMART() {
     <div className="container mx-auto p-6 max-w-4xl">
       {/* Header */}
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => navigate("/metas")} className="mb-4">
+        <Button variant="ghost" onClick={() => setLocation("/metas")} className="mb-4">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar
         </Button>
@@ -424,18 +425,22 @@ export default function CriarMetaSMART() {
                   </div>
 
                   <div>
-                    <Label htmlFor="bonusAmount">Bônus Fixo (R$)</Label>
+                    <Label htmlFor="bonusAmount">Bônus Fixo</Label>
                     <Input
                       id="bonusAmount"
-                      type="number"
-                      step="0.01"
-                      placeholder="Ex: 1000.00"
-                      value={formData.bonusAmount}
-                      onChange={(e) =>
-                        setFormData({ ...formData, bonusAmount: e.target.value })
-                      }
+                      type="text"
+                      placeholder="R$ 1.000,00"
+                      value={formData.bonusAmount ? formatCurrency(parseFloat(formData.bonusAmount)) : ''}
+                      onChange={(e) => {
+                        const formatted = formatCurrencyInput(e.target.value);
+                        const numValue = parseCurrency(formatted);
+                        setFormData({ ...formData, bonusAmount: numValue.toString() });
+                      }}
                       className="mt-1"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Valor fixo em reais (R$)
+                    </p>
                   </div>
                 </div>
               )}
