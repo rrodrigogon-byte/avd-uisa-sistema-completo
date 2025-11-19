@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Bell, Check, X, AlertCircle, CheckCircle, Info, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { Bell, Check, X, AlertCircle, CheckCircle, Info, TrendingUp, Brain, Target, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 
 /**
  * NotificationCenter - Centro de Notificações em Tempo Real
@@ -18,122 +19,95 @@ import { toast } from "sonner";
  * Features:
  * - Badge de contagem de notificações não lidas
  * - Dropdown com lista de notificações
- * - Integração WebSocket para atualizações em tempo real
+ * - Integração com backend real via tRPC
  * - Tipos de notificações:
- *   - Aprovações pendentes
- *   - Atualizações de PDI
- *   - Mudanças no Mapa de Sucessão
- *   - Conclusão de avaliações
+ *   - Testes psicométricos concluídos
+ *   - Marcos de PDI atingidos
+ *   - Insights críticos identificados
+ *   - Avaliações 360° concluídas
+ *   - Metas atingidas
  * - Marcação de lida/não lida
- * - Limpeza de todas as notificações
+ * - Navegação para links relacionados
  */
-
-export interface Notification {
-  id: number;
-  type: "approval" | "pdi" | "succession" | "evaluation" | "info";
-  title: string;
-  message: string;
-  isRead: boolean;
-  createdAt: Date;
-  link?: string;
-}
 
 export default function NotificationCenter() {
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      type: "approval",
-      title: "Nova Solicitação de Aprovação",
-      message: "João Silva solicitou aprovação de bônus de R$ 5.000",
-      isRead: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 15), // 15 min atrás
-      link: "/aprovacoes/dashboard",
-    },
-    {
-      id: 2,
-      type: "pdi",
-      title: "PDI Atualizado",
-      message: "Maria Santos atualizou o progresso do PDI Inteligente",
-      isRead: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2h atrás
-      link: "/pdi-inteligente/1",
-    },
-    {
-      id: 3,
-      type: "succession",
-      title: "Mapa de Sucessão Modificado",
-      message: "Nova posição crítica adicionada: Diretor de TI",
-      isRead: true,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 dia atrás
-      link: "/mapa-sucessao",
-    },
-    {
-      id: 4,
-      type: "evaluation",
-      title: "Avaliação 360° Concluída",
-      message: "Pedro Costa completou a avaliação 360° do ciclo 2025",
-      isRead: true,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2 dias atrás
-      link: "/avaliacao-360",
-    },
-  ]);
+  const [, setLocation] = useLocation();
 
-  // Queries (simulado - pode ser conectado ao backend)
-  // const { data: notifications, refetch } = trpc.notifications.list.useQuery();
+  // Buscar notificações do backend
+  const { data: notifications, refetch } = trpc.notifications.list.useQuery({
+    limit: 20,
+  });
 
-  // WebSocket integration (simulado)
-  useEffect(() => {
-    // TODO: Conectar ao WebSocket real
-    // const ws = new WebSocket('ws://localhost:3000');
-    // ws.onmessage = (event) => {
-    //   const notification = JSON.parse(event.data);
-    //   setNotifications(prev => [notification, ...prev]);
-    //   toast.info(notification.title);
-    // };
-    // return () => ws.close();
-  }, []);
+  // Contar não lidas
+  const { data: unreadCount } = trpc.notifications.countUnread.useQuery();
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  // Mutation para marcar como lida
+  const markAsReadMutation = trpc.notifications.markAsRead.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
-  const markAsRead = (id: number) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
+  // Mutation para marcar todas como lidas
+  const markAllAsReadMutation = trpc.notifications.markAllAsRead.useMutation({
+    onSuccess: () => {
+      refetch();
+      toast.success("Todas as notificações marcadas como lidas");
+    },
+  });
+
+  const handleNotificationClick = (notification: any) => {
+    // Marcar como lida
+    if (!notification.read) {
+      markAsReadMutation.mutate({ id: notification.id });
+    }
+
+    // Navegar para o link se existir
+    if (notification.link) {
+      setLocation(notification.link);
+      setOpen(false);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    toast.success("Todas as notificações marcadas como lidas");
+  const handleMarkAllAsRead = () => {
+    if ((unreadCount || 0) > 0) {
+      markAllAsReadMutation.mutate();
+    }
   };
 
-  const clearAll = () => {
-    setNotifications([]);
-    toast.success("Todas as notificações removidas");
-  };
-
-  const getIcon = (type: Notification["type"]) => {
+  const getIcon = (type: string) => {
     switch (type) {
+      case "test_completed":
+        return <Brain className="h-5 w-5 text-blue-500" />;
+      case "pdi_milestone":
+        return <Target className="h-5 w-5 text-green-500" />;
+      case "insight_critical":
+        return <AlertCircle className="h-5 w-5 text-orange-500" />;
+      case "evaluation_completed":
+        return <CheckCircle className="h-5 w-5 text-purple-500" />;
+      case "goal_achieved":
+        return <Trophy className="h-5 w-5 text-yellow-500" />;
       case "approval":
         return <CheckCircle className="h-5 w-5 text-blue-500" />;
       case "pdi":
         return <TrendingUp className="h-5 w-5 text-green-500" />;
       case "succession":
         return <AlertCircle className="h-5 w-5 text-orange-500" />;
-      case "evaluation":
-        return <Check className="h-5 w-5 text-purple-500" />;
       default:
         return <Info className="h-5 w-5 text-gray-500" />;
     }
   };
 
-  const formatTimeAgo = (date: Date) => {
+  const formatTimeAgo = (date: Date | string) => {
     const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
+    const notifDate = new Date(date);
+    const diffMs = now.getTime() - notifDate.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
+    if (diffMins < 1) return "agora";
     if (diffMins < 60) return `${diffMins}m atrás`;
     if (diffHours < 24) return `${diffHours}h atrás`;
     return `${diffDays}d atrás`;
@@ -144,12 +118,12 @@ export default function NotificationCenter() {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          {unreadCount > 0 && (
+          {(unreadCount || 0) > 0 && (
             <Badge
               variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
             >
-              {unreadCount > 9 ? "9+" : unreadCount}
+              {(unreadCount || 0) > 9 ? "9+" : unreadCount}
             </Badge>
           )}
         </Button>
@@ -159,35 +133,26 @@ export default function NotificationCenter() {
           <div>
             <h3 className="font-semibold">Notificações</h3>
             <p className="text-xs text-muted-foreground">
-              {unreadCount} não {unreadCount === 1 ? "lida" : "lidas"}
+              {unreadCount || 0} não {(unreadCount || 0) === 1 ? "lida" : "lidas"}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {unreadCount > 0 && (
+            {(unreadCount || 0) > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={markAllAsRead}
+                onClick={handleMarkAllAsRead}
                 className="text-xs"
+                disabled={markAllAsReadMutation.isPending}
               >
                 Marcar todas como lidas
-              </Button>
-            )}
-            {notifications.length > 0 && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={clearAll}
-                className="h-8 w-8"
-              >
-                <X className="h-4 w-4" />
               </Button>
             )}
           </div>
         </div>
 
         <ScrollArea className="h-[400px]">
-          {notifications.length === 0 ? (
+          {!notifications || notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Bell className="h-12 w-12 text-muted-foreground/50 mb-3" />
               <p className="text-sm text-muted-foreground">
@@ -201,15 +166,9 @@ export default function NotificationCenter() {
                   key={notification.id}
                   className={cn(
                     "px-4 py-3 hover:bg-accent transition-colors cursor-pointer",
-                    !notification.isRead && "bg-blue-50/50 dark:bg-blue-950/20"
+                    !notification.read && "bg-blue-50/50 dark:bg-blue-950/20"
                   )}
-                  onClick={() => {
-                    markAsRead(notification.id);
-                    if (notification.link) {
-                      window.location.href = notification.link;
-                    }
-                    setOpen(false);
-                  }}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex gap-3">
                     <div className="flex-shrink-0 mt-0.5">
@@ -220,11 +179,11 @@ export default function NotificationCenter() {
                         <p className="font-medium text-sm">
                           {notification.title}
                         </p>
-                        {!notification.isRead && (
+                        {!notification.read && (
                           <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                         {notification.message}
                       </p>
                       <p className="text-xs text-muted-foreground mt-2">
@@ -238,14 +197,14 @@ export default function NotificationCenter() {
           )}
         </ScrollArea>
 
-        {notifications.length > 0 && (
+        {notifications && notifications.length > 0 && (
           <div className="border-t px-4 py-2">
             <Button
               variant="ghost"
               size="sm"
               className="w-full text-xs"
               onClick={() => {
-                window.location.href = "/notificacoes";
+                setLocation("/notificacoes");
                 setOpen(false);
               }}
             >

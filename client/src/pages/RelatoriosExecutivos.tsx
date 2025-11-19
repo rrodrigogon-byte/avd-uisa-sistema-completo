@@ -18,6 +18,8 @@ import {
   Lightbulb
 } from "lucide-react";
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { exportRelatorioExecutivoPDF } from "@/utils/pdfExport";
+import { toast } from "sonner";
 
 /**
  * Página de Relatórios Executivos de RH
@@ -220,6 +222,27 @@ export default function RelatoriosExecutivos() {
   const discDistribution = prepareDISCDistribution();
   const profilesByDept = prepareProfilesByDepartment();
 
+  // Handler para exportar PDF
+  const handleExportPDF = () => {
+    try {
+      exportRelatorioExecutivoPDF({
+        discDistribution,
+        profilesByDept,
+        totalDepartments: discByDept?.length || 0,
+        totalTests: discByDept?.reduce((sum, d) => sum + d.count, 0) || 0,
+        totalPositions: discByPosition?.length || 0,
+        coverage: discByDept && discByDept.length > 0
+          ? (discByDept.filter(d => d.count > 0).length / discByDept.length) * 100
+          : 0,
+        insights,
+      });
+      toast.success("Relatório exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      toast.error("Erro ao exportar relatório. Tente novamente.");
+    }
+  };
+
   if (user?.role !== 'admin') {
     return (
       <DashboardLayout>
@@ -247,7 +270,7 @@ export default function RelatoriosExecutivos() {
               Insights estratégicos sobre perfis psicométricos organizacionais
             </p>
           </div>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={handleExportPDF}>
             <Download className="h-4 w-4" />
             Exportar PDF
           </Button>

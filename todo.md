@@ -140,3 +140,35 @@
 - [ ] Melhorar visualização de gráficos e métricas
 - [ ] Adicionar animações e transições suaves
 - [ ] Implementar tema moderno e profissional
+
+
+## 📄 Exportação de Relatórios em PDF
+
+- [x] Instalar biblioteca html2pdf ou puppeteer
+- [x] Criar função de exportação de relatórios executivos
+- [x] Criar função de exportação de dashboards comparativos
+- [x] Criar função de exportação de recomendações de PDI
+- [x] Adicionar botões de exportação nas páginas
+- [x] Implementar templates de PDF profissionais
+- [x] Adicionar logo e branding nos PDFs
+
+## 🔔 Sistema de Notificações Push
+
+- [x] Criar schema de notificações no banco de dados
+- [x] Implementar endpoint de criação de notificações
+- [x] Criar componente de centro de notificações no header
+- [ ] Implementar notificações quando colaborador completa teste (trigger automático)
+- [ ] Implementar notificações quando PDI atinge marco (trigger automático)
+- [ ] Implementar notificações de insights críticos (trigger automático)
+- [x] Adicionar badge de contagem de não lidas
+- [x] Implementar marcação de lida/não lida
+
+## 📊 Módulo de Benchmarking Externo
+
+- [ ] Criar schema de dados de benchmarking
+- [ ] Popular dados de médias de mercado por setor/cargo
+- [ ] Criar página de benchmarking comparativo
+- [ ] Implementar gráficos de comparação UISA vs Mercado
+- [ ] Adicionar análise de vantagens competitivas
+- [ ] Implementar identificação de gaps vs mercado
+- [ ] Criar relatório de posicionamento competitivo

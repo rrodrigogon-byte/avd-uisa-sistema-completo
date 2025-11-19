@@ -2305,70 +2305,6 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       }),
   }),
 
-  // Router de Notificações
-  notifications: router({
-    // Buscar notificações do usuário
-    getNotifications: protectedProcedure.query(async ({ ctx }) => {
-      const database = await getDb();
-      if (!database) return [];
-
-      const userNotifications = await database.select()
-        .from(notifications)
-        .where(eq(notifications.userId, ctx.user.id))
-        .orderBy(desc(notifications.createdAt))
-        .limit(50);
-
-      return userNotifications;
-    }),
-
-    // Contar notificações não lidas
-    getUnreadCount: protectedProcedure.query(async ({ ctx }) => {
-      const database = await getDb();
-      if (!database) return 0;
-
-      const unread = await database.select()
-        .from(notifications)
-        .where(and(
-          eq(notifications.userId, ctx.user.id),
-          eq(notifications.read, false)
-        ));
-
-      return unread.length;
-    }),
-
-    // Marcar notificação como lida
-    markAsRead: protectedProcedure
-      .input(z.object({ id: z.number() }))
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
-
-        await database.update(notifications)
-          .set({ read: true, readAt: new Date() })
-          .where(and(
-            eq(notifications.id, input.id),
-            eq(notifications.userId, ctx.user.id)
-          ));
-
-        return { success: true };
-      }),
-
-    // Marcar todas como lidas
-    markAllAsRead: protectedProcedure.mutation(async ({ ctx }) => {
-      const database = await getDb();
-      if (!database) throw new Error("Database not available");
-
-      await database.update(notifications)
-        .set({ read: true, readAt: new Date() })
-        .where(and(
-          eq(notifications.userId, ctx.user.id),
-          eq(notifications.read, false)
-        ));
-
-      return { success: true };
-    }),
-  }),
-
   // Router de Analytics (apenas admin)
   analytics: analyticsRouter,
 
@@ -2401,6 +2337,100 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   calibrationDiretoria: calibrationRouter,
   gamification: gamificationRouter,
   integrations: integrationsRouter,
+
+  // Router de Notificações
+  notifications: router({
+    // Buscar notificações do usuário
+    list: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional().default(50),
+        unreadOnly: z.boolean().optional().default(false),
+      }))
+      .query(async ({ ctx, input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const conditions = [eq(notifications.userId, ctx.user.id)];
+        if (input.unreadOnly) {
+          conditions.push(eq(notifications.read, false));
+        }
+
+        const results = await database.select()
+          .from(notifications)
+          .where(and(...conditions))
+          .orderBy(desc(notifications.createdAt))
+          .limit(input.limit);
+
+        return results;
+      }),
+
+    // Contar notificações não lidas
+    countUnread: protectedProcedure
+      .query(async ({ ctx }) => {
+        const database = await getDb();
+        if (!database) return 0;
+
+        const [result] = await database.select({ count: sql<number>`count(*)` })
+          .from(notifications)
+          .where(and(
+            eq(notifications.userId, ctx.user.id),
+            eq(notifications.read, false)
+          ));
+
+        return result?.count || 0;
+      }),
+
+    // Marcar como lida
+    markAsRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(notifications)
+          .set({ read: true, readAt: new Date() })
+          .where(and(
+            eq(notifications.id, input.id),
+            eq(notifications.userId, ctx.user.id)
+          ));
+
+        return { success: true };
+      }),
+
+    // Marcar todas como lidas
+    markAllAsRead: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(notifications)
+          .set({ read: true, readAt: new Date() })
+          .where(and(
+            eq(notifications.userId, ctx.user.id),
+            eq(notifications.read, false)
+          ));
+
+        return { success: true };
+      }),
+
+    // Criar notificação (apenas admin)
+    create: protectedProcedure
+      .input(z.object({
+        userId: z.number(),
+        type: z.string(),
+        title: z.string(),
+        message: z.string(),
+        link: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Apenas administradores podem criar notificações");
+        }
+
+        const notification = await createNotification(input);
+        return notification;
+      }),
+  }),
 
   // Router de Emails
   emails: router({
@@ -2846,6 +2876,32 @@ async function calculateProfile(
   }
 
   return profile;
+}
+
+// ============================================================================
+// ROUTER DE NOTIFICAÇÕES
+// ============================================================================
+
+async function createNotification(data: {
+  userId: number;
+  type: string;
+  title: string;
+  message: string;
+  link?: string;
+}) {
+  const database = await getDb();
+  if (!database) return null;
+
+  const [notification] = await database.insert(notifications).values({
+    userId: data.userId,
+    type: data.type,
+    title: data.title,
+    message: data.message,
+    link: data.link,
+    read: false,
+  }).$returningId();
+
+  return notification;
 }
 
 export type AppRouter = typeof appRouter;
