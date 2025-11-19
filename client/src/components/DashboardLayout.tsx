@@ -106,6 +106,7 @@ const menuItems = [
       { icon: Users, label: "Funcionários", path: "/funcionarios" },
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
       { icon: DollarSign, label: "Centros de Custo", path: "/centros-custo" },
+      { icon: GitBranch, label: "Hierarquia Organizacional", path: "/admin/hierarquia" },
     ],
   },
   {
@@ -132,6 +133,7 @@ const menuItems = [
       { icon: BarChart3, label: "Analytics (Admin)", path: "/admin/analytics" },
       { icon: Mail, label: "SMTP (Admin)", path: "/admin/smtp" },
       { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
+      { icon: Mail, label: "Dashboard de Emails", path: "/admin/emails" },
       { icon: Calendar, label: "Relatórios Agendados", path: "/admin/scheduled-reports" },
       { icon: BarChart3, label: "Report Builder", path: "/admin/report-builder" },
       { icon: TrendingUp, label: "Analytics (Reports)", path: "/admin/report-analytics" },

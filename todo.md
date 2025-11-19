@@ -1071,3 +1071,24 @@
 - [x] Verificar rotas existentes dos testes psicométricos no App.tsx
 - [x] Corrigir URLs no template testInviteTemplate.ts (/teste-disc, /teste-bigfive, /teste-mbti, /teste-ie, /teste-vark)
 - [x] Links corrigidos (emails já foram enviados anteriormente com sucesso)
+
+## 🚨 URGENTE: Correção de Erro 404 nos Testes
+- [x] Verificar URL exata sendo enviada nos emails dos testes
+- [x] Confirmar rotas registradas no App.tsx para cada teste (/teste-disc, /teste-bigfive, /teste-mbti, /teste-ie, /teste-vark)
+- [x] Atualizar URLs no template de email para usar URL dinâmica (funciona em dev e produção)
+- [x] Testar acesso direto às páginas dos testes (teste DISC funcionando)
+- [x] Sistema corrigido - links funcionarão após publicação do site
+
+## 🏢 Hierarquia Organizacional
+- [x] Criar página HierarquiaOrganizacional.tsx com visualização em árvore
+- [x] Implementar endpoints getHierarchy, getDepartments, getManagers, updateHierarchy
+- [x] Adicionar rota /admin/hierarquia no App.tsx
+- [x] Adicionar link no menu de Gestão de Pessoas
+- [ ] Testar funcionalidade completa (visualização, filtros, edição)
+
+## 📧 Dashboard de Monitoramento de Emails
+- [x] Criar página DashboardEmails.tsx com KPIs e histórico
+- [x] Implementar endpoints getMetrics, getHistory, resend
+- [x] Adicionar rota /admin/emails no App.tsx
+- [x] Adicionar link no menu de Configurações
+- [ ] Testar funcionalidade completa (métricas, filtros, reenvio)

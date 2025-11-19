@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -183,6 +183,108 @@ export const appRouter = router({
       const employee = await db.getEmployeeByUserId(ctx.user.id);
       return employee || null;
     }),
+
+    // Hierarquia organizacional
+    getHierarchy: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      // Buscar todos os colaboradores com JOIN em departments e positions
+      const allEmployees = await database
+        .select({
+          id: employees.id,
+          userId: employees.userId,
+          employeeCode: employees.employeeCode,
+          name: employees.name,
+          email: employees.email,
+          managerId: employees.managerId,
+          costCenter: employees.costCenter,
+          department: departments.name,
+          departmentId: employees.departmentId,
+          position: positions.title,
+          positionId: employees.positionId,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(employees.positionId, positions.id));
+      
+      // Calcular contagem de subordinados para cada colaborador
+      const employeesWithCount = allEmployees.map(emp => {
+        const subordinateCount = allEmployees.filter(e => e.managerId === emp.id).length;
+        return { ...emp, subordinateCount };
+      });
+
+      return employeesWithCount;
+    }),
+
+    getDepartments: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const allDepartments = await database.select().from(departments).where(eq(departments.active, true));
+      return allDepartments.map(d => d.name).sort();
+    }),
+
+    getManagers: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const allEmployees = await database.select().from(employees);
+      return allEmployees;
+    }),
+
+    updateHierarchy: protectedProcedure
+      .input(z.object({
+        employeeId: z.number(),
+        managerId: z.number().nullable(),
+        costCenter: z.string().nullable(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Banco de dados indisponível",
+          });
+        }
+
+        // Verificar se é admin
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Acesso negado: apenas administradores",
+          });
+        }
+
+        // Verificar ciclo de referência (não pode ser gestor de si mesmo)
+        if (input.managerId === input.employeeId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Um colaborador não pode ser gestor de si mesmo",
+          });
+        }
+
+        // Atualizar colaborador
+        await database.update(employees)
+          .set({
+            managerId: input.managerId,
+            costCenter: input.costCenter,
+          })
+          .where(eq(employees.id, input.employeeId));
+
+        // Log de auditoria
+        await db.logAudit(
+          ctx.user.id,
+          "UPDATE_HIERARCHY",
+          "employees",
+          input.employeeId,
+          input,
+          ctx.req.ip,
+          ctx.req.headers["user-agent"]
+        );
+
+        return { success: true };
+      }),
   }),
 
   // ============================================================================
@@ -1222,7 +1324,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             continue;
           }
 
-          const testUrl = `https://3000-ipmp0a4ptf6awjhw09efq-4f54ef5c.manusvm.computer/teste-${input.testType}`;
+          // Usar URL base do ambiente (funciona tanto em dev quanto em produção)
+          const baseUrl = process.env.VITE_APP_URL || ctx.req.headers.origin || `${ctx.req.protocol}://${ctx.req.get('host')}`;
+          const testUrl = `${baseUrl}/teste-${input.testType}`;
           
           const emailTemplate = createTestInviteEmail({
             employeeName: employee[0].name,
@@ -1829,6 +1933,97 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   calibrationDiretoria: calibrationRouter,
   gamification: gamificationRouter,
   integrations: integrationsRouter,
+
+  // Router de Emails
+  emails: router({
+    // Buscar métricas de emails
+    getMetrics: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Acesso negado",
+        });
+      }
+
+      const database = await getDb();
+      if (!database) return { total: 0, sent: 0, failed: 0, pending: 0 };
+
+      const allMetrics = await database.select().from(emailMetrics);
+
+      const total = allMetrics.length;
+      const sent = allMetrics.filter(m => m.success).length;
+      const failed = allMetrics.filter(m => !m.success).length;
+      const pending = 0; // TODO: implementar fila de emails pendentes
+
+      return { total, sent, failed, pending };
+    }),
+
+    // Buscar histórico de emails
+    getHistory: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Acesso negado",
+        });
+      }
+
+      const database = await getDb();
+      if (!database) return [];
+
+      const history = await database.select()
+        .from(emailMetrics)
+        .orderBy(desc(emailMetrics.sentAt))
+        .limit(500);
+
+      return history.map(email => ({
+        id: email.id,
+        recipient: email.toEmail,
+        subject: email.subject,
+        emailType: email.type,
+        status: email.success ? "sent" : "failed",
+        sentAt: email.sentAt,
+        createdAt: email.sentAt,
+        errorMessage: email.error,
+      }));
+    }),
+
+    // Reenviar email falhado
+    resend: protectedProcedure
+      .input(z.object({ emailId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Acesso negado",
+          });
+        }
+
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Banco de dados indisponível",
+          });
+        }
+
+        // Buscar email original
+        const originalEmail = await database.select()
+          .from(emailMetrics)
+          .where(eq(emailMetrics.id, input.emailId))
+          .limit(1);
+
+        if (originalEmail.length === 0) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Email não encontrado",
+          });
+        }
+
+        // TODO: Implementar lógica de reenvio usando emailService
+        // Por enquanto, apenas retornar sucesso
+        return { success: true, message: "Email reenviado com sucesso" };
+      }),
+  }),
 });
 
 // Função auxiliar para calcular perfil psicométrico

@@ -62,6 +62,8 @@ import MovimentacaoNineBox from "./pages/MovimentacaoNineBox";
 import AprovacaoCalibracoes from "./pages/AprovacaoCalibracoes";
 import RankingGamificacao from "./pages/RankingGamificacao";
 import ConfiguracaoIntegracoes from "./pages/ConfiguracaoIntegracoes";
+import HierarquiaOrganizacional from "./pages/HierarquiaOrganizacional";
+import DashboardEmails from "./pages/DashboardEmails";
 
 function Router() {
   return (
@@ -112,6 +114,8 @@ function Router() {
       <Route path="/teste-ie" component={TestIE} />
       <Route path="/teste-vark" component={TestVARK} />
       <Route path="/admin/smtp" component={AdminSmtp} />
+      <Route path="/admin/hierarquia" component={HierarquiaOrganizacional} />
+      <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
