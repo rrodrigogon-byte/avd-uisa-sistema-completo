@@ -1372,7 +1372,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   psychometric: router({
     // Buscar perguntas de um teste específico (PÚBLICO - sem necessidade de login)
     getQuestionsPublic: publicProcedure
-      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]) }))
+      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]) }))
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -1387,7 +1387,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
     // Buscar perguntas de um teste específico (PROTEGIDO - requer login)
     getQuestions: protectedProcedure
-      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]) }))
+      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]) }))
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -1403,7 +1403,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     // Submeter respostas de um teste (PÚBLICO - sem necessidade de login)
     submitTestPublic: publicProcedure
       .input(z.object({
-        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
         email: z.string().email(),
         responses: z.array(z.object({
           questionId: z.number(),
@@ -1460,7 +1460,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     // Submeter respostas de um teste (PROTEGIDO - requer login)
     submitTest: protectedProcedure
       .input(z.object({
-        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
         responses: z.array(z.object({
           questionId: z.number(),
           score: z.number().min(1).max(5),
@@ -1613,7 +1613,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     sendTestInvite: protectedProcedure
       .input(z.object({
         emails: z.array(z.string().email()),
-        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
       }))
       .mutation(async ({ input, ctx }) => {
         // Verificar se é admin
@@ -2663,7 +2663,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
 // Função auxiliar para calcular perfil psicométrico
 async function calculateProfile(
-  testType: "disc" | "bigfive" | "mbti" | "ie" | "vark",
+  testType: "disc" | "bigfive" | "mbti" | "ie" | "vark" | "leadership" | "careeranchors",
   responses: Array<{ questionId: number; score: number }>,
   database: any
 ) {

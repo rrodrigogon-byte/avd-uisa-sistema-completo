@@ -45,6 +45,9 @@ import TestBigFive from "./pages/TestBigFive";
 import TestMBTI from "./pages/TestMBTI";
 import TestIE from "./pages/TestIE";
 import TestVARK from "./pages/TestVARK";
+import TestLeadership from "./pages/TestLeadership";
+import TestCareerAnchors from "./pages/TestCareerAnchors";
+import EnviarTestes from "./pages/EnviarTestes";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
 import ScheduledReports from "./pages/ScheduledReports";
@@ -118,6 +121,9 @@ function Router() {
       <Route path="/teste-mbti" component={TestMBTI} />
       <Route path="/teste-ie" component={TestIE} />
       <Route path="/teste-vark" component={TestVARK} />
+      <Route path="/teste-lideranca" component={TestLeadership} />
+      <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
+      <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path="/admin/hierarquia" component={HierarquiaOrganizacional} />
       <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />

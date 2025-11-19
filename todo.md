@@ -85,11 +85,11 @@
 - [x] Popular perguntas do teste Inteligência Emocional no banco de dados
 - [x] Popular perguntas do teste Estilos de Liderança no banco de dados
 - [x] Popular perguntas do teste Âncoras de Carreira no banco de dados
-- [ ] Criar páginas de questionários para cada teste
-- [ ] Implementar cálculo de resultados para cada teste
-- [ ] Criar sistema de envio de testes para funcionários individuais
-- [ ] Criar sistema de envio de testes para equipes
-- [ ] Criar sistema de envio de testes para departamentos
+- [x] Criar páginas de questionários para cada teste
+- [x] Implementar cálculo de resultados para cada teste
+- [x] Criar sistema de envio de testes para funcionários individuais
+- [x] Criar sistema de envio de testes para equipes
+- [x] Criar sistema de envio de testes para departamentos
 - [ ] Criar dashboard de resultados por funcionário
 - [ ] Criar dashboard de resultados comparativos por equipe/departamento
 - [ ] Adicionar gráficos radar para visualização de perfis

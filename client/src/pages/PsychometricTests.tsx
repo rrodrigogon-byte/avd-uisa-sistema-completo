@@ -195,6 +195,54 @@ export default function PsychometricTests() {
               </Button>
             </CardContent>
           </Card>
+
+          <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-purple-600" />
+                Estilos de Liderança
+              </CardTitle>
+              <CardDescription>
+                Identifica seus estilos de liderança predominantes baseado em Lewin, Bass e Goleman
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">30 perguntas · 10 minutos</span>
+                <Badge variant="secondary" className="bg-purple-100 text-purple-700">Novo</Badge>
+              </div>
+              <Button
+                className="w-full bg-purple-600 hover:bg-purple-700"
+                onClick={() => setLocation("/teste-lideranca")}
+              >
+                Iniciar Teste
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="border-teal-200 bg-gradient-to-br from-teal-50 to-cyan-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-teal-600" />
+                Âncoras de Carreira
+              </CardTitle>
+              <CardDescription>
+                Identifica suas motivações profissionais segundo Edgar Schein
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">40 perguntas · 12 minutos</span>
+                <Badge variant="secondary" className="bg-teal-100 text-teal-700">Novo</Badge>
+              </div>
+              <Button
+                className="w-full bg-teal-600 hover:bg-teal-700"
+                onClick={() => setLocation("/teste-ancoras-carreira")}
+              >
+                Iniciar Teste
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Resultados DISC */}

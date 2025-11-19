@@ -214,4 +214,18 @@ export const testInfo = {
     estimatedTime: "8-10 minutos",
     questionCount: 20,
   },
+  leadership: {
+    name: "Teste de Estilos de Liderança",
+    type: "Avaliação de Liderança",
+    description: "Identifica seus estilos de liderança predominantes entre Autocrático, Democrático, Transformacional, Transacional, Coaching e Laissez-faire. Baseado em teorias de Lewin, Bass e Goleman.",
+    estimatedTime: "10-12 minutos",
+    questionCount: 30,
+  },
+  careeranchors: {
+    name: "Teste de Âncoras de Carreira",
+    type: "Avaliação de Motivação Profissional",
+    description: "Identifica suas âncoras de carreira segundo Edgar Schein: Competência Técnica, Competência Gerencial, Autonomia, Segurança, Criatividade Empreendedora, Serviço, Desafio e Estilo de Vida.",
+    estimatedTime: "12-15 minutos",
+    questionCount: 40,
+  },
 };
