@@ -33,7 +33,7 @@ export const goalApprovalsRouter = router({
           status: goalApprovals.status,
           comments: goalApprovals.comments,
           createdAt: goalApprovals.createdAt,
-          decidedAt: goalApprovals.decidedAt,
+          approvedAt: goalApprovals.approvedAt,
           approverName: users.name,
         })
         .from(goalApprovals)
@@ -87,7 +87,7 @@ export const goalApprovalsRouter = router({
         approverRole: approverRole as "manager" | "hr" | "director",
         status: "approved",
         comments: input.comments || null,
-        decidedAt: new Date(),
+        approvedAt: new Date(),
       });
 
       // Atualizar status da meta
@@ -155,7 +155,7 @@ export const goalApprovalsRouter = router({
         approverRole: approverRole as "manager" | "hr" | "director",
         status: "rejected",
         comments: input.comments,
-        decidedAt: new Date(),
+        approvedAt: new Date(),
       });
 
       // Atualizar status da meta

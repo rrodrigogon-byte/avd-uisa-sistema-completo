@@ -1132,8 +1132,8 @@ export const goalApprovals = mysqlTable("goalApprovals", {
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
   comments: text("comments"),
   
+  approvedAt: timestamp("approvedAt"), // Data de aprovação/rejeição
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  decidedAt: timestamp("decidedAt"),
 });
 
 export const goalComments = mysqlTable("goalComments", {

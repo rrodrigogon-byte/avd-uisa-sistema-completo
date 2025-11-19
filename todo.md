@@ -186,6 +186,12 @@
 - [x] Implementar validação de permissões (apenas gestor/RH/admin pode aprovar)
 
 ### 3. Analytics com Dados Reais
+- [x] **URGENTE: Investigar IDs reais das metas no banco de dados (SELECT id, title FROM smartGoals)**
+- [x] **URGENTE: Corrigir erro de ID 60001 inexistente na página de detalhes da meta**
+- [x] Corrigir endpoint list para buscar employee vinculado ao usuário
+- [x] Corrigir endpoint getDashboard para buscar employee vinculado ao usuário
+- [x] Corrigir endpoint getById para usar approvedAt em vez de decidedAt
+- [x] Corrigir schema goalApprovals para sincronizar com banco de dados
 - [ ] Criar analyticsRouter.ts com endpoints para dados reais
 - [ ] Implementar query para progresso de metas por mês
 - [ ] Implementar query para taxa de conclusão de avaliações 360°

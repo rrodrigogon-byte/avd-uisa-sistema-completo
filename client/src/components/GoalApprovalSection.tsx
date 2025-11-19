@@ -222,8 +222,8 @@ export default function GoalApprovalSection({
                     {approval.approverRole === "hr" && "RH"}
                     {approval.approverRole === "director" && "Diretor"}
                     {" • "}
-                    {approval.decidedAt
-                      ? new Date(approval.decidedAt).toLocaleDateString("pt-BR", {
+                    {approval.approvedAt
+                      ? new Date(approval.approvedAt).toLocaleDateString("pt-BR", {
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",

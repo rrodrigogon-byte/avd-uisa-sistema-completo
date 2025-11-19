@@ -208,7 +208,16 @@ export const goalsRouter = router({
       const db = await getDb();
       if (!db) return [];
 
-      const conditions = [eq(smartGoals.employeeId, ctx.user.id)];
+      // Buscar employee vinculado ao usuário
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      if (!employee) return [];
+
+      const conditions = [eq(smartGoals.employeeId, employee.id)];
       if (input.cycleId) conditions.push(eq(smartGoals.cycleId, input.cycleId));
       if (input.status) conditions.push(eq(smartGoals.status, input.status));
       if (input.category) conditions.push(eq(smartGoals.category, input.category));
@@ -246,44 +255,60 @@ export const goalsRouter = router({
         .where(eq(goalMilestones.goalId, input.goalId))
         .orderBy(goalMilestones.dueDate);
 
-      // Buscar aprovações
-      const approvals = await db
-        .select({
-          id: goalApprovals.id,
-          approverId: goalApprovals.approverId,
-          approverRole: goalApprovals.approverRole,
-          status: goalApprovals.status,
-          comments: goalApprovals.comments,
-          createdAt: goalApprovals.createdAt,
-          decidedAt: goalApprovals.decidedAt,
-          approverName: employees.name,
-        })
-        .from(goalApprovals)
-        .leftJoin(employees, eq(goalApprovals.approverId, employees.id))
-        .where(eq(goalApprovals.goalId, input.goalId))
-        .orderBy(goalApprovals.createdAt);
+      // Buscar aprovações (com tratamento de erro)
+      let approvals: any[] = [];
+      try {
+        const approvalsData = await db
+          .select()
+          .from(goalApprovals)
+          .leftJoin(employees, eq(goalApprovals.approverId, employees.id))
+          .where(eq(goalApprovals.goalId, input.goalId));
 
-      // Buscar comentários
-      const comments = await db
-        .select({
-          id: goalComments.id,
-          authorId: goalComments.authorId,
-          comment: goalComments.comment,
-          createdAt: goalComments.createdAt,
-          authorName: employees.name,
-        })
-        .from(goalComments)
-        .leftJoin(employees, eq(goalComments.authorId, employees.id))
-        .where(eq(goalComments.goalId, input.goalId))
-        .orderBy(desc(goalComments.createdAt));
+        approvals = approvalsData.map((row) => ({
+          id: row.goalApprovals.id,
+          approverId: row.goalApprovals.approverId,
+          approverRole: row.goalApprovals.approverRole,
+          status: row.goalApprovals.status,
+          comments: row.goalApprovals.comments,
+          createdAt: row.goalApprovals.createdAt,
+          approvedAt: row.goalApprovals.approvedAt,
+          approverName: row.employees?.name || null,
+        }));
+      } catch (error) {
+        console.error("[goalsRouter] Erro ao buscar aprovações:", error);
+      }
 
-      // Buscar evidências
-      const { goalEvidences } = await import("../drizzle/schema");
-      const evidences = await db
-        .select()
-        .from(goalEvidences)
-        .where(eq(goalEvidences.goalId, input.goalId))
-        .orderBy(desc(goalEvidences.uploadedAt));
+      // Buscar comentários (com tratamento de erro)
+      let comments: any[] = [];
+      try {
+        comments = await db
+          .select({
+            id: goalComments.id,
+            authorId: goalComments.authorId,
+            comment: goalComments.comment,
+            createdAt: goalComments.createdAt,
+            authorName: employees.name,
+          })
+          .from(goalComments)
+          .leftJoin(employees, eq(goalComments.authorId, employees.id))
+          .where(eq(goalComments.goalId, input.goalId))
+          .orderBy(desc(goalComments.createdAt));
+      } catch (error) {
+        console.error("[goalsRouter] Erro ao buscar comentários:", error);
+      }
+
+      // Buscar evidências (com tratamento de erro)
+      let evidences: any[] = [];
+      try {
+        const { goalEvidences } = await import("../drizzle/schema");
+        evidences = await db
+          .select()
+          .from(goalEvidences)
+          .where(eq(goalEvidences.goalId, input.goalId))
+          .orderBy(desc(goalEvidences.uploadedAt));
+      } catch (error) {
+        console.error("[goalsRouter] Erro ao buscar evidências:", error);
+      }
 
       return {
         ...goal,
@@ -479,7 +504,7 @@ export const goalsRouter = router({
         .set({
           status: "approved",
           comments: input.comments,
-          decidedAt: new Date(),
+          approvedAt: new Date(),
         })
         .where(eq(goalApprovals.id, approval.id));
 
@@ -553,7 +578,7 @@ export const goalsRouter = router({
         .set({
           status: "rejected",
           comments: input.comments,
-          decidedAt: new Date(),
+          approvedAt: new Date(),
         })
         .where(eq(goalApprovals.id, approval.id));
 
@@ -686,7 +711,22 @@ export const goalsRouter = router({
           potentialBonus: 0,
         };
 
-      const conditions = [eq(smartGoals.employeeId, ctx.user.id)];
+      // Buscar employee vinculado ao usuário
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      if (!employee)
+        return {
+          activeGoals: 0,
+          completedGoals: 0,
+          completionRate: 0,
+          potentialBonus: 0,
+        };
+
+      const conditions = [eq(smartGoals.employeeId, employee.id)];
       if (input.cycleId) conditions.push(eq(smartGoals.cycleId, input.cycleId));
 
       const goals = await db
