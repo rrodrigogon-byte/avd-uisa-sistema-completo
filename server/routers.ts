@@ -1174,7 +1174,22 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Testes Psicométricos
   psychometric: router({
-    // Buscar perguntas de um teste específico
+    // Buscar perguntas de um teste específico (PÚBLICO - sem necessidade de login)
+    getQuestionsPublic: publicProcedure
+      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]) }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const questions = await database.select()
+          .from(testQuestions)
+          .where(eq(testQuestions.testType, input.testType))
+          .orderBy(testQuestions.questionNumber);
+
+        return questions;
+      }),
+
+    // Buscar perguntas de um teste específico (PROTEGIDO - requer login)
     getQuestions: protectedProcedure
       .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]) }))
       .query(async ({ input }) => {
@@ -1189,7 +1204,64 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         return questions;
       }),
 
-    // Submeter respostas de um teste
+    // Submeter respostas de um teste (PÚBLICO - sem necessidade de login)
+    submitTestPublic: publicProcedure
+      .input(z.object({
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]),
+        email: z.string().email(),
+        responses: z.array(z.object({
+          questionId: z.number(),
+          score: z.number().min(1).max(5),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        // Buscar colaborador pelo email
+        const employee = await database.select()
+          .from(employees)
+          .where(eq(employees.email, input.email))
+          .limit(1);
+
+        if (employee.length === 0) {
+          throw new Error("Email não encontrado. Por favor, verifique se o email está correto.");
+        }
+
+        // Calcular perfil baseado nas respostas
+        const profile = await calculateProfile(input.testType, input.responses, database);
+
+        // Preparar valores para inserção
+        const testValues: any = {
+          employeeId: employee[0].id,
+          testType: input.testType,
+          completedAt: new Date(),
+          responses: JSON.stringify(input.responses),
+        };
+
+        // Adicionar scores específicos baseado no tipo de teste
+        if (input.testType === "disc") {
+          testValues.discDominance = Math.round((profile.D || 0) * 20);
+          testValues.discInfluence = Math.round((profile.I || 0) * 20);
+          testValues.discSteadiness = Math.round((profile.S || 0) * 20);
+          testValues.discCompliance = Math.round((profile.C || 0) * 20);
+          const maxDimension = Object.entries(profile).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+          testValues.discProfile = maxDimension;
+        } else if (input.testType === "bigfive") {
+          testValues.bigFiveOpenness = Math.round((profile.O || 0) * 20);
+          testValues.bigFiveConscientiousness = Math.round((profile.C || 0) * 20);
+          testValues.bigFiveExtraversion = Math.round((profile.E || 0) * 20);
+          testValues.bigFiveAgreeableness = Math.round((profile.A || 0) * 20);
+          testValues.bigFiveNeuroticism = Math.round((profile.N || 0) * 20);
+        }
+
+        // Salvar teste no banco
+        await database.insert(psychometricTests).values(testValues);
+
+        return { success: true, profile, employeeName: employee[0].name };
+      }),
+
+    // Submeter respostas de um teste (PROTEGIDO - requer login)
     submitTest: protectedProcedure
       .input(z.object({
         testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark"]),

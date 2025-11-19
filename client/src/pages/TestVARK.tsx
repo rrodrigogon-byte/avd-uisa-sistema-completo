@@ -1,162 +1,330 @@
 import { useState } from "react";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { trpc } from "@/lib/trpc";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { useLocation } from "wouter";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Loader2, Brain, CheckCircle2, Mail, ArrowLeft } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { APP_LOGO, APP_TITLE } from "@/const";
+
+/**
+ * Página de Teste VARK (Versão Pública - sem necessidade de login)
+ * Questionário interativo com 20 perguntas
+ */
 
 export default function TestVARK() {
-  const { user } = useAuth();
-  const [, setLocation] = useLocation();
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<Record<number, number>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [testCompleted, setTestCompleted] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
-  const { data: questions, isLoading } = trpc.psychometric.getQuestions.useQuery({ testType: "vark" });
-  const submitMutation = trpc.psychometric.submitTest.useMutation();
+  // Buscar perguntas DISC (endpoint público)
+  const { data: questions, isLoading } = trpc.psychometric.getQuestionsPublic.useQuery({ testType: "vark" });
 
-  if (isLoading) {
-    return <div className="container py-8">Carregando perguntas...</div>;
-  }
+  // Mutation para submeter teste (endpoint público)
+  const submitMutation = trpc.psychometric.submitTestPublic.useMutation({
+    onSuccess: (data) => {
+      setResult(data);
+      setTestCompleted(true);
+      setIsSubmitting(false);
+      toast.success(`Parabéns, ${data.employeeName}! Teste VARK concluído com sucesso!`);
+    },
+    onError: (error) => {
+      toast.error(`Erro ao submeter teste: ${error.message}`);
+      setIsSubmitting(false);
+    },
+  });
 
-  if (!questions || questions.length === 0) {
-    return <div className="container py-8">Nenhuma pergunta encontrada.</div>;
-  }
+  const handleResponseChange = (questionId: number, score: number) => {
+    setResponses({ ...responses, [questionId]: score });
+  };
 
-  const totalQuestions = questions.length;
-  const answeredCount = Object.keys(responses).length;
-  const progress = (answeredCount / totalQuestions) * 100;
-
-  const handleSubmit = async () => {
-    if (answeredCount < totalQuestions) {
-      toast.error(`Por favor, responda todas as ${totalQuestions} perguntas`);
+  const handleNext = () => {
+    if (!questions) return;
+    
+    const currentQuestionId = questions[currentQuestion].id;
+    if (!responses[currentQuestionId]) {
+      toast.error("Por favor, selecione uma resposta antes de continuar");
       return;
     }
 
-    try {
-      await submitMutation.mutateAsync({
-        testType: "vark",
-        responses: Object.entries(responses).map(([questionId, score]) => ({
-          questionId: parseInt(questionId),
-          score,
-        })),
-      });
-
-      toast.success("Teste VARK enviado com sucesso!");
-      setLocation("/testes-psicometricos");
-    } catch (error) {
-      toast.error("Erro ao enviar teste");
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
     }
   };
 
-  // Agrupar perguntas por dimensão
-  const groupedQuestions = questions.reduce((acc, q) => {
-    if (!acc[q.dimension]) acc[q.dimension] = [];
-    acc[q.dimension].push(q);
-    return acc;
-  }, {} as Record<string, typeof questions>);
-
-  const dimensionDescriptions: Record<string, string> = {
-    "Visual": "Prefere aprender através de imagens, diagramas e representações visuais",
-    "Auditivo": "Aprende melhor ouvindo explicações, discussões e conteúdo falado",
-    "Leitura/Escrita": "Prefere ler textos e fazer anotações escritas para fixar o aprendizado",
-    "Cinestésico": "Aprende melhor através de experiências práticas e atividades hands-on",
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
   };
 
-  return (
-    <div className="container max-w-4xl py-8">
-      <Button
-        variant="ghost"
-        onClick={() => setLocation("/testes-psicometricos")}
-        className="mb-4"
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Voltar
-      </Button>
+  const handleFinish = () => {
+    if (!questions) return;
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Teste VARK - Estilos de Aprendizagem</CardTitle>
-          <CardDescription>
-            Descubra seu estilo preferido de aprendizagem: Visual, Auditivo, Leitura/Escrita ou Cinestésico.
-            Responda com sinceridade sobre como você prefere aprender.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Progresso</span>
-              <span className="font-medium">
-                {answeredCount} de {totalQuestions} perguntas
-              </span>
-            </div>
-            <Progress value={progress} className="h-2" />
-          </div>
-        </CardContent>
-      </Card>
+    // Verificar se todas as perguntas foram respondidas
+    const unanswered = questions.filter(q => !responses[q.id]);
+    if (unanswered.length > 0) {
+      toast.error(`Ainda faltam ${unanswered.length} pergunta(s) para responder`);
+      return;
+    }
 
-      <div className="space-y-6">
-        {Object.entries(groupedQuestions).map(([dimension, qs]) => (
-          <Card key={dimension}>
-            <CardHeader>
-              <CardTitle className="text-lg">{dimension}</CardTitle>
-              <CardDescription>{dimensionDescriptions[dimension]}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {qs.map((q) => {
-                const isAnswered = responses[q.id] !== undefined;
-                
-                return (
-                  <div key={q.id} className="space-y-3">
-                    <div className="flex items-start gap-2">
-                      {isAnswered && <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />}
-                      <Label className="text-base font-normal leading-relaxed">
-                        {q.questionText}
-                      </Label>
-                    </div>
-                    <RadioGroup
-                      value={responses[q.id]?.toString()}
-                      onValueChange={(value) =>
-                        setResponses({ ...responses, [q.id]: parseInt(value) })
-                      }
-                    >
-                      <div className="grid grid-cols-5 gap-2">
-                        {[1, 2, 3, 4, 5].map((score) => (
-                          <div key={score} className="flex flex-col items-center gap-2">
-                            <RadioGroupItem value={score.toString()} id={`q${q.id}-${score}`} />
-                            <Label
-                              htmlFor={`q${q.id}-${score}`}
-                              className="text-xs text-center cursor-pointer"
-                            >
-                              {score === 1 && "Discordo totalmente"}
-                              {score === 2 && "Discordo"}
-                              {score === 3 && "Neutro"}
-                              {score === 4 && "Concordo"}
-                              {score === 5 && "Concordo totalmente"}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </RadioGroup>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-        ))}
+    // Mostrar formulário de email
+    setShowEmailForm(true);
+  };
+
+  const handleSubmit = () => {
+    if (!email || !email.includes('@')) {
+      toast.error("Por favor, insira um email válido");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const formattedResponses = Object.entries(responses).map(([questionId, score]) => ({
+      questionId: parseInt(questionId),
+      score,
+    }));
+
+    submitMutation.mutate({
+      testType: "vark",
+      email: email,
+      responses: formattedResponses,
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando teste...</p>
+        </div>
       </div>
+    );
+  }
 
-      <div className="mt-8 flex justify-end">
-        <Button
-          size="lg"
-          onClick={handleSubmit}
-          disabled={answeredCount < totalQuestions || submitMutation.isPending}
-        >
-          {submitMutation.isPending ? "Enviando..." : "Enviar Teste VARK"}
-        </Button>
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>Teste VARK</CardTitle>
+            <CardDescription>Nenhuma pergunta encontrada</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
+  // Tela de resultado
+  if (testCompleted && result) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-2xl w-full">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="w-10 h-10 text-green-600" />
+            </div>
+            <CardTitle className="text-2xl">Teste Concluído com Sucesso!</CardTitle>
+            <CardDescription className="text-base mt-2">
+              Obrigado por completar o Teste VARK, {result.employeeName}!
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2">Seu Perfil VARK</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white p-3 rounded border">
+                  <div className="text-sm text-muted-foreground">Dominância (D)</div>
+                  <div className="text-2xl font-bold text-orange-600">{result.profile.D?.toFixed(1) || '0.0'}</div>
+                </div>
+                <div className="bg-white p-3 rounded border">
+                  <div className="text-sm text-muted-foreground">Influência (I)</div>
+                  <div className="text-2xl font-bold text-orange-600">{result.profile.I?.toFixed(1) || '0.0'}</div>
+                </div>
+                <div className="bg-white p-3 rounded border">
+                  <div className="text-sm text-muted-foreground">Estabilidade (S)</div>
+                  <div className="text-2xl font-bold text-orange-600">{result.profile.S?.toFixed(1) || '0.0'}</div>
+                </div>
+                <div className="bg-white p-3 rounded border">
+                  <div className="text-sm text-muted-foreground">Conformidade (C)</div>
+                  <div className="text-2xl font-bold text-orange-600">{result.profile.C?.toFixed(1) || '0.0'}</div>
+                </div>
+              </div>
+              {result.profile.dominantProfile && (
+                <div className="mt-4 p-3 bg-white rounded border">
+                  <div className="text-sm text-muted-foreground">Perfil Dominante</div>
+                  <div className="text-xl font-bold text-orange-600">{result.profile.dominantProfile}</div>
+                </div>
+              )}
+            </div>
+            <p className="text-sm text-center text-muted-foreground">
+              Seus resultados foram salvos e estão disponíveis para análise pela equipe de RH.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Formulário de email
+  if (showEmailForm) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader>
+            <div className="mx-auto mb-4 w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+              <Mail className="w-10 h-10 text-orange-600" />
+            </div>
+            <CardTitle className="text-center">Quase lá!</CardTitle>
+            <CardDescription className="text-center">
+              Para finalizar, precisamos do seu email para associar os resultados
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email Corporativo</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="seu.email@uisa.com.br"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2"
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                Use o mesmo email que recebeu o convite para este teste
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowEmailForm(false)}
+                className="flex-1"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="flex-1"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Finalizar
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const progress = (Object.keys(responses).length / questions.length) * 100;
+  const currentQ = questions[currentQuestion];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white">
+      <div className="max-w-3xl mx-auto p-4 py-8 space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Brain className="h-10 w-10 text-orange-600" />
+            <h1 className="text-3xl font-bold tracking-tight">Teste VARK</h1>
+          </div>
+          <p className="text-muted-foreground">
+            Avalie cada afirmação de acordo com o quanto você concorda
+          </p>
+        </div>
+
+        {/* Barra de Progresso */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Progresso</span>
+                <span>{Object.keys(responses).length} de {questions.length} perguntas</span>
+              </div>
+              <Progress value={progress} className="h-2" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pergunta Atual */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              Pergunta {currentQuestion + 1} de {questions.length}
+            </CardTitle>
+            <CardDescription className="text-base mt-4">
+              {currentQ.questionText}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={responses[currentQ.id]?.toString()}
+              onValueChange={(value) => handleResponseChange(currentQ.id, parseInt(value))}
+            >
+              <div className="space-y-3">
+                {[
+                  { value: 1, label: "1 - Discordo totalmente" },
+                  { value: 2, label: "2 - Discordo parcialmente" },
+                  { value: 3, label: "3 - Neutro" },
+                  { value: 4, label: "4 - Concordo parcialmente" },
+                  { value: 5, label: "5 - Concordo totalmente" },
+                ].map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-accent transition-colors">
+                    <RadioGroupItem value={option.value.toString()} id={`q${currentQ.id}-${option.value}`} />
+                    <Label htmlFor={`q${currentQ.id}-${option.value}`} className="flex-1 cursor-pointer">
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </RadioGroup>
+          </CardContent>
+        </Card>
+
+        {/* Navegação */}
+        <div className="flex justify-between">
+          <Button
+            variant="outline"
+            onClick={handlePrevious}
+            disabled={currentQuestion === 0}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Anterior
+          </Button>
+
+          {currentQuestion < questions.length - 1 ? (
+            <Button onClick={handleNext}>
+              Próxima
+            </Button>
+          ) : (
+            <Button
+              onClick={handleFinish}
+              disabled={Object.keys(responses).length < questions.length}
+            >
+              <CheckCircle2 className="w-4 h-4 mr-2" />
+              Concluir Teste
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

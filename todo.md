@@ -1102,3 +1102,16 @@
 - [x] Testar /teste-vark
 - [x] Criar script de envio para rodrigo.goncalves@uisa.com.br
 - [x] Enviar todos os 5 testes (DISC, Big Five, MBTI, IE, VARK)
+
+## 🔧 Correção dos Testes Psicométricos
+- [x] Diagnosticar problemas específicos nos testes
+- [x] Verificar se os endpoints de submissão estão funcionando (OK)
+- [x] Verificar salvamento de respostas no banco de dados (perguntas OK: DISC=40, BigFive=50, MBTI=60, IE=25, VARK=20)
+- [x] PROBLEMA IDENTIFICADO: Links dos emails não abrem a página do teste
+- [x] Verificar se é problema de autenticação (testes requerem login) - CONFIRMADO
+- [x] Criar versão pública dos testes (sem necessidade de login) - COMPLETO
+- [x] Criar endpoints públicos getQuestionsPublic e submitTestPublic
+- [x] Adaptar todas as 5 páginas de testes (DISC, Big Five, MBTI, IE, VARK)
+- [x] Adicionar formulário de email no final do teste
+- [x] Testar DISC e Big Five - funcionando perfeitamente
+- [x] Validar exibição de resultados após conclusão
