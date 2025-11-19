@@ -87,7 +87,7 @@
 ## 🐛 Erros Conhecidos
 
 ### Bugs de Banco de Dados
-- [x] Corrigir erro: tabela goalMilestones não existe no banco de dados (página /metas/1/progresso) - RESOLVIDO
+- [x] Corrigir erro: query goalMilestones falhando (página /metas/1/progresso) - RESOLVIDO
 
 ### Erros TypeScript (26 erros)
 
