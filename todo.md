@@ -1529,3 +1529,15 @@
 - [ ] Testar todos os fluxos end-to-end
 - [ ] Corrigir bugs encontrados
 - [ ] Validar responsividade mobile
+
+
+## 🐛 Correção Urgente: Cálculo de Testes Psicométricos
+- [x] Analisar página TestDISC.tsx para entender lógica de cálculo
+- [x] Verificar endpoint backend de salvamento de resultados
+- [x] Identificar problema: perguntas sem dimensões corretas
+- [x] Criar script seed-disc-questions.mjs com 40 perguntas DISC
+- [x] Popular banco com perguntas corretas (10 por dimensão D, I, S, C)
+- [x] Validar que cálculo agora funciona corretamente
+- [ ] Testar teste DISC novamente e verificar resultados
+- [ ] Aplicar mesma correção para outros testes (Big Five, MBTI, IE, VARK)
+- [ ] Validar resultados na página de visualização RH
