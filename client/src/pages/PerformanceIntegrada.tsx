@@ -7,6 +7,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Target, Download, ArrowLeft, Lightbulb } from "lucide-react";
+import { CostCenterFilter } from "@/components/CostCenterFilter";
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
@@ -27,6 +28,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 export default function PerformanceIntegrada() {
   const [selectedEmployee, setSelectedEmployee] = useState("1");
   const [selectedCycle, setSelectedCycle] = useState("2025");
+  const [selectedCostCenter, setSelectedCostCenter] = useState<string>("all");
 
   // Mock data - TODO: integrar com backend
   const performanceData = {
@@ -99,6 +101,11 @@ export default function PerformanceIntegrada() {
 
         {/* Seletores */}
         <div className="flex items-center gap-4">
+          <CostCenterFilter
+            value={selectedCostCenter}
+            onChange={setSelectedCostCenter}
+          />
+          
           <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
             <SelectTrigger className="w-64">
               <SelectValue />

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Users, TrendingDown, Clock, DollarSign, Download, BarChart3 } from "lucide-react";
+import { CostCenterFilter } from "@/components/CostCenterFilter";
 import { trpc } from "@/lib/trpc";
 import { PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899"
 export default function Analytics() {
   const [period, setPeriod] = useState("12m");
   const [department, setDepartment] = useState("todos");
+  const [selectedCostCenter, setSelectedCostCenter] = useState<string>("all");
 
   const { data: kpis, isLoading: kpisLoading } = trpc.analytics.getKPIs.useQuery();
   const { data: headcountByDept } = trpc.analytics.getHeadcountByDepartment.useQuery();
@@ -51,6 +53,10 @@ export default function Analytics() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <CostCenterFilter
+              value={selectedCostCenter}
+              onChange={setSelectedCostCenter}
+            />
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-32">
                 <SelectValue />

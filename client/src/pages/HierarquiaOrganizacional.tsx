@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import { trpc } from "@/lib/trpc";
@@ -10,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Users, Building2, Search, Edit, ChevronRight, ChevronDown, User } from "lucide-react";
+import { Users, Building2, Search, Edit, ChevronRight, ChevronDown, User, Upload } from "lucide-react";
 
 interface TreeNode {
   employee: any;
@@ -19,6 +20,7 @@ interface TreeNode {
 }
 
 export default function HierarquiaOrganizacional() {
+  const [, setLocation] = useLocation();
   const { user, loading: authLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
@@ -209,11 +211,17 @@ export default function HierarquiaOrganizacional() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Hierarquia Organizacional</h1>
-          <p className="mt-2 text-gray-600">
-            Visualize e gerencie a estrutura hierárquica da organização
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Hierarquia Organizacional</h1>
+            <p className="mt-2 text-gray-600">
+              Visualize e gerencie a estrutura hierárquica da organização
+            </p>
+          </div>
+          <Button onClick={() => setLocation("/admin/hierarquia/importar")} size="lg">
+            <Upload className="mr-2 h-4 w-4" />
+            Importar em Massa
+          </Button>
         </div>
 
         {/* KPIs */}
