@@ -231,9 +231,20 @@ export default function DashboardExecutivo() {
             <CardContent>
               {nineBoxLoading ? (
                 <Skeleton className="h-[300px] w-full" />
+              ) : nineBoxData && nineBoxData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={nineBoxData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="category" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="count" fill="#3B82F6" name="Colaboradores" />
+                  </BarChart>
+                </ResponsiveContainer>
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                  <p>Grid Nine Box (3x3) será renderizado aqui</p>
+                  <p>Nenhum dado de Nine Box disponível</p>
                 </div>
               )}
             </CardContent>

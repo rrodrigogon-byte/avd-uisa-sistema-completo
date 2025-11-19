@@ -192,3 +192,29 @@
 - [x] Adicionar busca textual por título e mensagem
 - [x] Implementar paginação (limite de 100 notificações)
 - [x] Adicionar botão de limpar todas as notificações (marcar todas como lidas)
+
+
+## 🔧 Correções Urgentes
+
+### Analytics de RH
+- [x] Corrigir layout quebrado com legenda sobrepondo conteúdo
+- [x] Reorganizar posicionamento dos gráficos
+- [x] Ajustar z-index e overflow da legenda
+
+### Dashboard Executivo
+- [x] Adicionar seção de distribuição do Nine Box
+- [x] Implementar gráfico de distribuição por quadrante
+- [x] Adicionar métricas de talentos por categoria
+
+### Criar Meta SMART
+- [x] Implementar lógica de seleção exclusiva entre % e Bônus Fixo
+- [x] Corrigir botão "Validar SMART" para funcionar
+- [x] Garantir que meta seja gravada corretamente
+- [x] Adicionar validações de campos obrigatórios
+
+## 📊 Módulo de Benchmarking Externo
+- [ ] Criar schema de dados de mercado
+- [ ] Popular dados de benchmark por setor/cargo
+- [ ] Criar página de comparação com médias de mercado
+- [ ] Implementar gráficos radar comparativos
+- [ ] Adicionar análise de gaps competitivos

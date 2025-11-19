@@ -107,6 +107,22 @@ export default function CriarMetaSMART() {
       return;
     }
 
+    // Validar bônus exclusivo
+    if (formData.bonusEligible) {
+      if (formData.bonusPercentage && formData.bonusAmount) {
+        toast.error("Bônus inválido", {
+          description: "Escolha apenas um tipo de bônus: percentual OU fixo",
+        });
+        return;
+      }
+      if (!formData.bonusPercentage && !formData.bonusAmount) {
+        toast.error("Bônus obrigatório", {
+          description: "Preencha o bônus percentual ou fixo",
+        });
+        return;
+      }
+    }
+
     await createMutation.mutateAsync({
       title: formData.title,
       description: formData.description,
@@ -408,40 +424,64 @@ export default function CriarMetaSMART() {
               </div>
 
               {formData.bonusEligible && (
-                <div className="grid grid-cols-2 gap-4 p-4 bg-green-50 rounded-lg">
-                  <div>
-                    <Label htmlFor="bonusPercentage">Bônus Percentual (%)</Label>
-                    <Input
-                      id="bonusPercentage"
-                      type="number"
-                      step="0.01"
-                      placeholder="Ex: 5.5"
-                      value={formData.bonusPercentage}
-                      onChange={(e) =>
-                        setFormData({ ...formData, bonusPercentage: e.target.value })
-                      }
-                      className="mt-1"
-                    />
-                  </div>
+                <div className="space-y-4 p-4 bg-green-50 rounded-lg">
+                  <p className="text-sm font-medium text-gray-700">
+                    Escolha o tipo de bônus (apenas um):
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="bonusPercentage">Bônus Percentual (%)</Label>
+                      <Input
+                        id="bonusPercentage"
+                        type="number"
+                        step="0.01"
+                        placeholder="Ex: 5.5"
+                        value={formData.bonusPercentage}
+                        onChange={(e) =>
+                          setFormData({ 
+                            ...formData, 
+                            bonusPercentage: e.target.value,
+                            bonusAmount: "" // Limpa o outro campo
+                          })
+                        }
+                        disabled={!!formData.bonusAmount}
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Percentual do salário
+                      </p>
+                    </div>
 
-                  <div>
-                    <Label htmlFor="bonusAmount">Bônus Fixo</Label>
-                    <Input
-                      id="bonusAmount"
-                      type="text"
-                      placeholder="R$ 1.000,00"
-                      value={formData.bonusAmount ? formatCurrency(parseFloat(formData.bonusAmount)) : ''}
-                      onChange={(e) => {
-                        const formatted = formatCurrencyInput(e.target.value);
-                        const numValue = parseCurrency(formatted);
-                        setFormData({ ...formData, bonusAmount: numValue.toString() });
-                      }}
-                      className="mt-1"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Valor fixo em reais (R$)
-                    </p>
+                    <div>
+                      <Label htmlFor="bonusAmount">Bônus Fixo</Label>
+                      <Input
+                        id="bonusAmount"
+                        type="text"
+                        placeholder="R$ 1.000,00"
+                        value={formData.bonusAmount ? formatCurrency(parseFloat(formData.bonusAmount)) : ''}
+                        onChange={(e) => {
+                          const formatted = formatCurrencyInput(e.target.value);
+                          const numValue = parseCurrency(formatted);
+                          setFormData({ 
+                            ...formData, 
+                            bonusAmount: numValue.toString(),
+                            bonusPercentage: "" // Limpa o outro campo
+                          });
+                        }}
+                        disabled={!!formData.bonusPercentage}
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Valor fixo em reais (R$)
+                      </p>
+                    </div>
                   </div>
+                  {!formData.bonusPercentage && !formData.bonusAmount && (
+                    <p className="text-xs text-orange-600 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      Preencha um dos campos de bônus
+                    </p>
+                  )}
                 </div>
               )}
 

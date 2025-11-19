@@ -147,15 +147,27 @@ export default function Analytics() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={400}>
                 <PieChart>
-                  <Pie data={headcountByDept || []} dataKey="count" nameKey="department" cx="50%" cy="50%" outerRadius={100} label>
+                  <Pie 
+                    data={headcountByDept || []} 
+                    dataKey="count" 
+                    nameKey="department" 
+                    cx="50%" 
+                    cy="45%" 
+                    outerRadius={80}
+                    label={false}
+                  >
                     {(headcountByDept || []).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip />
-                  <Legend />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={80}
+                    wrapperStyle={{ paddingTop: "20px", maxHeight: "80px", overflow: "auto" }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>

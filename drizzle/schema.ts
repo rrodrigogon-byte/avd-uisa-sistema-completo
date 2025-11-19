@@ -1532,3 +1532,52 @@ export const smtpConfig = mysqlTable("smtp_config", {
 
 export type SmtpConfig = typeof smtpConfig.$inferSelect;
 export type InsertSmtpConfig = typeof smtpConfig.$inferInsert;
+
+// ============================================================================
+// BENCHMARKING EXTERNO
+// ============================================================================
+
+/**
+ * Dados de Benchmarking de Mercado
+ * Armazena médias de mercado por setor, cargo e região para comparação
+ */
+export const marketBenchmarks = mysqlTable("marketBenchmarks", {
+  id: int("id").autoincrement().primaryKey(),
+  sector: varchar("sector", { length: 100 }).notNull(), // Setor (TI, Saúde, Financeiro, etc)
+  position: varchar("position", { length: 100 }).notNull(), // Cargo
+  region: varchar("region", { length: 100 }).default("Brasil").notNull(), // Região
+  
+  // Métricas de Performance
+  avgPerformanceScore: int("avgPerformanceScore"), // Média de performance (0-100)
+  avgEngagementScore: int("avgEngagementScore"), // Média de engajamento (0-100)
+  avgTurnoverRate: int("avgTurnoverRate"), // Taxa de turnover (%)
+  avgTenureYears: int("avgTenureYears"), // Tempo médio de permanência (anos)
+  
+  // Métricas Salariais
+  avgSalary: int("avgSalary"), // Salário médio
+  medianSalary: int("medianSalary"), // Salário mediano
+  
+  // Perfis Psicométricos Médios (DISC)
+  avgDiscD: int("avgDiscD"), // Dominância (0-100)
+  avgDiscI: int("avgDiscI"), // Influência (0-100)
+  avgDiscS: int("avgDiscS"), // Estabilidade (0-100)
+  avgDiscC: int("avgDiscC"), // Conformidade (0-100)
+  
+  // Perfis Psicométricos Médios (Big Five)
+  avgOpenness: int("avgOpenness"), // Abertura (0-100)
+  avgConscientiousness: int("avgConscientiousness"), // Conscienciosidade (0-100)
+  avgExtraversion: int("avgExtraversion"), // Extroversão (0-100)
+  avgAgreeableness: int("avgAgreeableness"), // Amabilidade (0-100)
+  avgNeuroticism: int("avgNeuroticism"), // Neuroticismo (0-100)
+  
+  // Metadados
+  sampleSize: int("sampleSize"), // Tamanho da amostra
+  dataSource: varchar("dataSource", { length: 255 }), // Fonte dos dados
+  year: int("year").notNull(), // Ano de referência
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MarketBenchmark = typeof marketBenchmarks.$inferSelect;
+export type InsertMarketBenchmark = typeof marketBenchmarks.$inferInsert;
