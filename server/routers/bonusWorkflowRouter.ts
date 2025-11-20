@@ -36,7 +36,7 @@ export const bonusWorkflowRouter = router({
       query = sql`${query} GROUP BY w.id ORDER BY w.createdAt DESC`;
 
       const result = await db.execute(query);
-      return result.rows;
+      return result as any;
     }),
 
   // Buscar workflow por ID com níveis
@@ -53,7 +53,7 @@ export const bonusWorkflowRouter = router({
         WHERE w.id = ${id}
       `);
 
-      if (!workflow.rows[0]) {
+      if (!workflow[0]) {
         throw new Error("Workflow não encontrado");
       }
 
@@ -64,8 +64,8 @@ export const bonusWorkflowRouter = router({
       `);
 
       return {
-        ...workflow.rows[0],
-        levels: levels.rows,
+        ...workflow[0],
+        levels: levels as any,
       };
     }),
 
@@ -176,7 +176,7 @@ export const bonusWorkflowRouter = router({
         WHERE workflowId = ${id} AND status = 'em_andamento'
       `);
 
-      if (Number(instances.rows[0].count) > 0) {
+      if (Number(instances[0].count) > 0) {
         throw new Error("Não é possível excluir workflow com instâncias ativas");
       }
 
@@ -206,11 +206,11 @@ export const bonusWorkflowRouter = router({
         WHERE bc.id = ${input.bonusCalculationId}
       `);
 
-      if (!calculation.rows[0]) {
+      if (!calculation[0]) {
         throw new Error("Cálculo de bônus não encontrado");
       }
 
-      const calc = calculation.rows[0];
+      const calc = calculation[0];
 
       // Encontrar workflow aplicável
       const workflow = await db.execute(sql`
@@ -223,11 +223,11 @@ export const bonusWorkflowRouter = router({
         LIMIT 1
       `);
 
-      if (!workflow.rows[0]) {
+      if (!workflow[0]) {
         throw new Error("Nenhum workflow aplicável encontrado");
       }
 
-      const workflowId = Number(workflow.rows[0].id);
+      const workflowId = Number(workflow[0].id);
 
       // Criar instância de workflow
       const instanceResult = await db.execute(sql`
@@ -245,7 +245,7 @@ export const bonusWorkflowRouter = router({
       `);
 
       // Criar aprovações pendentes para cada nível
-      for (const level of levels.rows) {
+      for (const level of levels as any) {
         // Buscar aprovador baseado no role
         let approverId = null;
 
@@ -253,13 +253,13 @@ export const bonusWorkflowRouter = router({
           const manager = await db.execute(sql`
             SELECT managerId FROM employees WHERE id = ${calc.employeeId}
           `);
-          approverId = manager.rows[0]?.managerId;
+          approverId = manager[0]?.managerId;
         } else if (level.approverRole === 'gerente' || level.approverRole === 'diretor') {
           // Buscar primeiro usuário com role admin (simplificado)
           const admin = await db.execute(sql`
             SELECT id FROM users WHERE role = 'admin' LIMIT 1
           `);
-          approverId = admin.rows[0]?.id;
+          approverId = admin[0]?.id;
         }
 
         if (approverId) {
@@ -311,11 +311,12 @@ export const bonusWorkflowRouter = router({
         WHERE bla.id = ${input.approvalId}
       `);
 
-      if (!approval.rows[0]) {
+      const approvalData = approval as any;
+      if (!approvalData[0]) {
         throw new Error("Aprovação não encontrada");
       }
 
-      const currentApproval = approval.rows[0];
+      const currentApproval = approvalData[0];
 
       // Verificar se é o último nível
       const totalLevels = await db.execute(sql`
@@ -323,7 +324,7 @@ export const bonusWorkflowRouter = router({
         WHERE workflowId = ${currentApproval.workflowId}
       `);
 
-      if (currentApproval.levelOrder >= Number(totalLevels.rows[0].count)) {
+      if (currentApproval.levelOrder >= Number(totalLevels[0].count)) {
         // Último nível aprovado - marcar workflow como aprovado
         await db.execute(sql`
           UPDATE bonusWorkflowInstances
@@ -346,12 +347,12 @@ export const bonusWorkflowRouter = router({
           WHERE bc.id = ${currentApproval.bonusCalculationId}
         `);
 
-        if (calculation.rows[0]?.userId) {
+        if (calculation[0]?.userId) {
           await createNotification({
-            userId: calculation.rows[0].userId,
+            userId: calculation[0].userId,
             type: 'bonus_approved',
             title: 'Bônus Aprovado!',
-            message: `Seu bônus no valor de R$ ${(calculation.rows[0].totalAmount / 100).toFixed(2)} foi aprovado em todos os níveis.`,
+            message: `Seu bônus no valor de R$ ${(calculation[0].totalAmount / 100).toFixed(2)} foi aprovado em todos os níveis.`,
             link: `/bonus/meus-bonus`,
           });
         }
@@ -376,12 +377,13 @@ export const bonusWorkflowRouter = router({
             AND bal.levelOrder = ${nextLevel}
         `);
 
-        if (nextApproval.rows[0]) {
+        const nextApprovalData = nextApproval as any;
+        if (nextApprovalData[0]) {
           await createNotification({
-            userId: nextApproval.rows[0].approverId,
+            userId: nextApprovalData[0].approverId,
             type: 'bonus_approval',
             title: 'Novo Bônus para Aprovação',
-            message: `Bônus de ${nextApproval.rows[0].employeeName} no valor de R$ ${(nextApproval.rows[0].totalAmount / 100).toFixed(2)} aguarda sua aprovação (Nível ${nextLevel}).`,
+            message: `Bônus de ${nextApprovalData[0].employeeName} no valor de R$ ${(nextApprovalData[0].totalAmount / 100).toFixed(2)} aguarda sua aprovação (Nível ${nextLevel}).`,
             link: `/aprovacoes/bonus-workflow/${currentApproval.workflowInstanceId}`,
           });
         }
@@ -415,11 +417,12 @@ export const bonusWorkflowRouter = router({
         WHERE bla.id = ${input.approvalId}
       `);
 
-      if (!approval.rows[0]) {
+      const approvalData = approval as any;
+      if (!approvalData[0]) {
         throw new Error("Aprovação não encontrada");
       }
 
-      const currentApproval = approval.rows[0];
+      const currentApproval = approvalData[0];
 
       // Marcar workflow como rejeitado
       await db.execute(sql`
@@ -443,12 +446,13 @@ export const bonusWorkflowRouter = router({
         WHERE bc.id = ${currentApproval.bonusCalculationId}
       `);
 
-      if (calculation.rows[0]?.userId) {
+      const calcData = calculation as any;
+      if (calcData[0]?.userId) {
         await createNotification({
-          userId: calculation.rows[0].userId,
+          userId: calcData[0].userId,
           type: 'bonus_rejected',
           title: 'Bônus Rejeitado',
-          message: `Seu bônus no valor de R$ ${(calculation.rows[0].totalAmount / 100).toFixed(2)} foi rejeitado. Motivo: ${input.comments}`,
+          message: `Seu bônus no valor de R$ ${(calcData[0].totalAmount / 100).toFixed(2)} foi rejeitado. Motivo: ${input.comments}`,
           link: `/bonus/meus-bonus`,
         });
       }
@@ -491,6 +495,6 @@ export const bonusWorkflowRouter = router({
         ORDER BY bwi.startedAt ASC
       `);
 
-      return instances.rows;
+      return instances as any;
     }),
 });

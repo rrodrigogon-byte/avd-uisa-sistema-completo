@@ -105,9 +105,13 @@ import PrevisaoBonus from "./pages/PrevisaoBonus";
 import AprovacaoBonusLote from "./pages/AprovacaoBonusLote";
 import BonusAuditoria from "./pages/BonusAuditoria";
 import AvaliacoesPendentes from "./pages/AvaliacoesPendentes";
+import AvaliacoesAprovacao from "./pages/AvaliacoesAprovacao";
 import HierarquiaOrganizacional from "./pages/HierarquiaOrganizacional";
 import HierarquiaImport from "./pages/HierarquiaImport";
 import DashboardEmails from "./pages/DashboardEmails";
+import BonusWorkflows from "./pages/admin/BonusWorkflows";
+import BonusCompliance from "./pages/compliance/BonusCompliance";
+import ExportarFolha from "./pages/folha-pagamento/ExportarFolha";
 
 function Router() {
   return (
@@ -130,6 +134,10 @@ function Router() {
       <Route path="/aprovacoes/bonus-lote" component={AprovacaoBonusLote} />
       <Route path="/bonus/auditoria" component={BonusAuditoria} />
       <Route path="/avaliacoes-pendentes" component={AvaliacoesPendentes} />
+      <Route path="/aprovacoes/avaliacoes" component={AvaliacoesAprovacao} />
+      <Route path="/admin/bonus-workflows" component={BonusWorkflows} />
+      <Route path="/compliance/bonus" component={BonusCompliance} />
+      <Route path="/folha-pagamento/exportar" component={ExportarFolha} />
        <Route path="/avaliacoes" component={Avaliacoes} />
       <Route path="/avaliacoes/autoavaliacao/:id" component={Avaliacao360Autoavaliacao} />
       <Route path="/avaliacoes/gestor/:id" component={Avaliacao360Gestor} />
