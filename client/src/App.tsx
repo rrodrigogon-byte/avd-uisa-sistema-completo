@@ -100,7 +100,8 @@ import RankingGamificacao from "./pages/RankingGamificacao";
 import ConfiguracaoIntegracoes from "./pages/ConfiguracaoIntegracoes";
 import BonusPolicies from "@/pages/Bonus";
 import AprovacaoBonus from "@/pages/AprovacaoBonus";
-import RelatorioBonus from "@/pages/RelatorioBonus";
+import RelatorioBonus from "./pages/RelatorioBonus";
+import PrevisaoBonus from "./pages/PrevisaoBonus";
 import AvaliacoesPendentes from "./pages/AvaliacoesPendentes";
 import HierarquiaOrganizacional from "./pages/HierarquiaOrganizacional";
 import HierarquiaImport from "./pages/HierarquiaImport";
@@ -123,6 +124,7 @@ function Router() {
       <Route path="/bonus" component={BonusPolicies} />
       <Route path="/aprovacoes/bonus" component={AprovacaoBonus} />
       <Route path="/relatorios/bonus" component={RelatorioBonus} />
+      <Route path="/previsao-bonus" component={PrevisaoBonus} />
       <Route path="/avaliacoes-pendentes" component={AvaliacoesPendentes} />
        <Route path="/avaliacoes" component={Avaliacoes} />
       <Route path="/avaliacoes/autoavaliacao/:id" component={Avaliacao360Autoavaliacao} />

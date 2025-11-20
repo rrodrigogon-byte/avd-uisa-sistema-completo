@@ -132,7 +132,16 @@ const menuItems = [
       { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
     ],
   },
-  { icon: DollarSign, label: "Bônus", path: "/bonus" },
+  {
+    icon: DollarSign,
+    label: "Bônus",
+    isSection: true,
+    children: [
+      { icon: DollarSign, label: "Políticas", path: "/bonus" },
+      { icon: TrendingUp, label: "Previsão", path: "/previsao-bonus" },
+      { icon: FileText, label: "Relatórios", path: "/relatorios/bonus" },
+    ],
+  },
   { icon: HistoryIcon, label: "Histórico", path: "/historico" },
   { icon: FileText, label: "Relatórios", path: "/relatorios" },
   {

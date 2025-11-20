@@ -239,3 +239,38 @@
 - [x] Integrar Chart.js no relatório de bônus
 - [x] Criar endpoint backend para dados agregados por mês (getMonthlyTrends e getDepartmentDistribution)
 - [x] Testar visualizações com dados reais
+
+
+## 🚀 NOVA SESSÃO - MELHORIAS AVANÇADAS DE BÔNUS
+
+### Opção 1: Filtros Avançados nos Gráficos
+- [x] Adicionar seletor de período (3, 6, 12 meses) nos gráficos
+- [x] Adicionar filtro de departamentos específicos
+- [x] Implementar filtro por status de bônus
+- [x] Adicionar botão "Limpar Filtros"
+- [x] Sincronizar filtros entre gráficos
+
+### Opção 2: Exportação PDF do Relatório
+- [x] Instalar biblioteca jsPDF e html2canvas
+- [x] Criar função de exportação PDF
+- [x] Incluir KPIs no PDF
+- [x] Incluir gráficos como imagens no PDF
+- [x] Incluir tabela de dados no PDF
+- [x] Adicionar cabeçalho e rodapé profissional
+- [x] Testar geração e download do PDF
+
+### Opção 3: Dashboard de Previsão de Bônus
+- [x] Criar nova página /previsao-bonus
+- [x] Criar endpoint backend para simulação (usa endpoints existentes)
+- [x] Implementar cálculo de previsão baseado em metas
+- [x] Adicionar gráfico de projeção futura
+- [x] Implementar simulador interativo
+- [x] Adicionar comparação com histórico
+- [x] Adicionar rota no App.tsx
+
+### Melhorias Extras
+- [x] Adicionar gráfico de pizza (distribuição por status)
+- [x] Adicionar indicadores de tendência (↑↓) com comparação mês anterior
+- [x] Adicionar tooltips informativos nos gráficos
+- [x] Melhorar responsividade dos gráficos
+- [x] Adicionar menu lateral com submenu de Bônus
