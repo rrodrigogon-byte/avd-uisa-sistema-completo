@@ -205,7 +205,7 @@ export default function Calibracao() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="text-base flex items-center gap-2">
-                        Colaborador #{evaluation.employeeId}
+                        {evaluation.employeeName || `Colaborador #${evaluation.employeeId}`}
                         <Badge variant="outline">Ciclo #{evaluation.cycleId}</Badge>
                         <Badge variant={
                           evaluation.status === "concluida" ? "default" :

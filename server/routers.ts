@@ -1937,11 +1937,29 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             emailTemplate.html
           );
 
-          results.push({
-            email,
-            success: sent,
-            message: sent ? "Convite enviado com sucesso" : "Erro ao enviar email",
-          });
+          if (!sent) {
+            // Verificar se SMTP está configurado
+            const smtpConfig = await database.select()
+              .from(systemSettings)
+              .where(eq(systemSettings.settingKey, "smtp_config"))
+              .limit(1);
+            
+            const errorMessage = smtpConfig.length === 0 
+              ? "SMTP não configurado. Acesse /admin/smtp para configurar"
+              : "Erro ao enviar email. Verifique as configurações SMTP";
+            
+            results.push({
+              email,
+              success: false,
+              message: errorMessage,
+            });
+          } else {
+            results.push({
+              email,
+              success: true,
+              message: "Convite enviado com sucesso",
+            });
+          }
         }
 
         return { results };
@@ -2330,8 +2348,24 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         const database = await getDb();
         if (!database) return [];
 
-        const evals = await database.select()
+        // Buscar avaliações com nome do colaborador
+        const evals = await database.select({
+          id: performanceEvaluations.id,
+          employeeId: performanceEvaluations.employeeId,
+          employeeName: employees.name,
+          employeeCode: employees.employeeCode,
+          cycleId: performanceEvaluations.cycleId,
+          type: performanceEvaluations.type,
+          status: performanceEvaluations.status,
+          finalScore: performanceEvaluations.finalScore,
+          selfEvaluationCompleted: performanceEvaluations.selfEvaluationCompleted,
+          managerEvaluationCompleted: performanceEvaluations.managerEvaluationCompleted,
+          peersEvaluationCompleted: performanceEvaluations.peersEvaluationCompleted,
+          subordinatesEvaluationCompleted: performanceEvaluations.subordinatesEvaluationCompleted,
+          createdAt: performanceEvaluations.createdAt,
+        })
           .from(performanceEvaluations)
+          .leftJoin(employees, eq(performanceEvaluations.employeeId, employees.id))
           .orderBy(desc(performanceEvaluations.createdAt))
           .limit(100);
 

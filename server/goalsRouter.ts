@@ -12,7 +12,6 @@ import {
 } from "../drizzle/schema";
 import { getDb, getUserEmployee } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
-import { TRPCError } from "@trpc/server";
 
 /**
  * Router de Metas SMART

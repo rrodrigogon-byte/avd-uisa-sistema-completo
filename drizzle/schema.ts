@@ -1869,6 +1869,10 @@ export const pulseSurveys = mysqlTable("pulseSurveys", {
   // Público-alvo
   targetDepartmentId: int("targetDepartmentId"), // null = todos os departamentos
   targetEmployeeIds: json("targetEmployeeIds"), // Array de IDs específicos (opcional)
+  targetGroups: json("targetGroups"), // Array de grupos: ["all", "diretoria", "department", "costCenter", "emails"]
+  targetDepartmentIds: json("targetDepartmentIds"), // Array de IDs de departamentos
+  targetCostCenterIds: json("targetCostCenterIds"), // Array de IDs de centros de custo
+  targetEmails: json("targetEmails"), // Array de emails específicos
   
   // Criação e auditoria
   createdById: int("createdById").notNull(),

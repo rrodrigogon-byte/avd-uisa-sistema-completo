@@ -44,6 +44,9 @@ export default function EnviarTestes() {
   // Buscar departamentos
   const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery();
 
+  // Buscar centros de custo
+  const { data: costCenters, isLoading: loadingCostCenters } = trpc.costCenters.list.useQuery();
+
   // Mutation para enviar convites
   const sendInviteMutation = trpc.psychometric.sendTestInvite.useMutation({
     onSuccess: (data) => {
@@ -189,10 +192,12 @@ export default function EnviarTestes() {
 
         {/* Tabs de Envio */}
         <Tabs defaultValue="individual" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="individual">Individual</TabsTrigger>
             <TabsTrigger value="team">Equipe/Múltiplos</TabsTrigger>
             <TabsTrigger value="department">Departamento</TabsTrigger>
+            <TabsTrigger value="diretoria">Diretoria</TabsTrigger>
+            <TabsTrigger value="costcenter">Centro de Custos</TabsTrigger>
           </TabsList>
 
           {/* Envio Individual */}
@@ -348,6 +353,135 @@ export default function EnviarTestes() {
                             <Button
                               onClick={() => handleSendToDepartment(dept.id)}
                               disabled={sendingDepartment || !selectedTest || deptEmployees.length === 0}
+                              size="sm"
+                            >
+                              {sendingDepartment ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Send className="w-4 h-4 mr-2" />
+                                  Enviar
+                                </>
+                              )}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Envio para Diretoria */}
+          <TabsContent value="diretoria">
+            <Card>
+              <CardHeader>
+                <CardTitle>Enviar para Diretoria</CardTitle>
+                <CardDescription>
+                  Todos os membros da diretoria receberão o teste
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  onClick={() => {
+                    if (!selectedTest) {
+                      toast.error("Selecione um teste");
+                      return;
+                    }
+                    const diretoriaEmployees = employees?.filter(
+                      e => e.employee.status === 'ativo' && 
+                           e.employee.email && 
+                           (e.position?.title.toLowerCase().includes('diretor') || 
+                            e.position?.title.toLowerCase().includes('ceo') ||
+                            e.position?.title.toLowerCase().includes('presidente'))
+                    ) || [];
+                    const emails = diretoriaEmployees.map(e => e.employee.email).filter(Boolean) as string[];
+                    
+                    if (emails.length === 0) {
+                      toast.error("Nenhum membro da diretoria encontrado");
+                      return;
+                    }
+                    
+                    setSendingDepartment(true);
+                    sendInviteMutation.mutate({
+                      testType: selectedTest as any,
+                      emails,
+                    });
+                  }}
+                  disabled={sendingDepartment || !selectedTest}
+                  className="w-full"
+                >
+                  {sendingDepartment ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Enviar para Diretoria
+                    </>
+                  )}
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Serão enviados convites para todos os cargos que contêm "Diretor", "CEO" ou "Presidente" no título.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Envio para Centro de Custos */}
+          <TabsContent value="costcenter">
+            <Card>
+              <CardHeader>
+                <CardTitle>Enviar para Centro de Custos</CardTitle>
+                <CardDescription>
+                  Todos os funcionários ativos do centro de custos receberão o teste
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingEmployees ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {costCenters?.map((cc: any) => {
+                      const ccEmployees = employees?.filter(
+                        e => e.employee.costCenterId === cc.id && e.employee.status === 'ativo' && e.employee.email
+                      ) || [];
+                      return (
+                        <Card key={cc.id} className="border-gray-200">
+                          <CardContent className="flex items-center justify-between p-4">
+                            <div className="flex items-center gap-3">
+                              <Building2 className="h-5 w-5 text-gray-500" />
+                              <div>
+                                <div className="font-medium">{cc.name}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  {ccEmployees.length} funcionário(s) ativo(s)
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => {
+                                if (!selectedTest) {
+                                  toast.error("Selecione um teste");
+                                  return;
+                                }
+                                const emails = ccEmployees.map(e => e.employee.email).filter(Boolean) as string[];
+                                if (emails.length === 0) {
+                                  toast.error("Nenhum funcionário ativo com email neste centro de custos");
+                                  return;
+                                }
+                                setSendingDepartment(true);
+                                sendInviteMutation.mutate({
+                                  testType: selectedTest as any,
+                                  emails,
+                                });
+                              }}
+                              disabled={sendingDepartment || !selectedTest || ccEmployees.length === 0}
                               size="sm"
                             >
                               {sendingDepartment ? (

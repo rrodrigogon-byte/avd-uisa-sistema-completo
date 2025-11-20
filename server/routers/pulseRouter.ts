@@ -11,6 +11,10 @@ const createSurveySchema = z.object({
   question: z.string().min(10, "Pergunta deve ter no mínimo 10 caracteres"),
   description: z.string().optional(),
   targetDepartmentId: z.number().optional(),
+  targetGroups: z.array(z.enum(["all", "diretoria", "department", "costCenter", "emails"])).optional(),
+  targetDepartmentIds: z.array(z.number()).optional(),
+  targetCostCenterIds: z.array(z.number()).optional(),
+  targetEmails: z.array(z.string().email()).optional(),
 });
 
 const submitResponseSchema = z.object({
@@ -107,6 +111,10 @@ export const pulseRouter = router({
         targetDepartmentId: input.targetDepartmentId,
         createdById: ctx.user.id,
         status: "draft",
+        targetGroups: input.targetGroups ? JSON.stringify(input.targetGroups) : null,
+        targetDepartmentIds: input.targetDepartmentIds ? JSON.stringify(input.targetDepartmentIds) : null,
+        targetCostCenterIds: input.targetCostCenterIds ? JSON.stringify(input.targetCostCenterIds) : null,
+        targetEmails: input.targetEmails ? JSON.stringify(input.targetEmails) : null,
       });
 
       return {

@@ -62,6 +62,7 @@ import ValidacaoLider from "./pages/ValidacaoLider";
 import AnaliseGaps from "./pages/AnaliseGaps";
 import ImportacaoDescricoes from "./pages/ImportacaoDescricoes";
 import PesquisasPulse from "./pages/PesquisasPulse";
+import CriarPesquisaPulse from "./pages/CriarPesquisaPulse";
 import ResponderPesquisaPulse from "./pages/ResponderPesquisaPulse";
 import ResultadosPesquisaPulse from "./pages/ResultadosPesquisaPulse";
 import Feedbacks from "./pages/Feedbacks";
@@ -206,6 +207,7 @@ function Router() {
       <Route path="/analise-gaps" component={AnaliseGaps} />
       <Route path="/importacao-descricoes" component={ImportacaoDescricoes} />
       <Route path="/pesquisas-pulse" component={PesquisasPulse} />
+      <Route path="/pesquisas-pulse/criar" component={CriarPesquisaPulse} />
       <Route path="/pesquisa/:id" component={ResponderPesquisaPulse} />
       <Route path="/pesquisas-pulse/resultados/:id" component={ResultadosPesquisaPulse} />
       <Route path="/notificacoes" component={Notificacoes} />

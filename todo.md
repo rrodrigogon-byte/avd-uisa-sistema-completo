@@ -212,3 +212,37 @@
 - [x] Corrigir botão de salvar meta (usar employeeId correto via getUserEmployee)
 - [x] Implementar vinculação de meta ao profissional (targetEmployeeId opcional)
 - [x] Adicionar validação de permissões (admin/gestor pode criar para outros)
+
+
+## 🎯 NOVA SESSÃO - MELHORIAS DE CALIBRAÇÃO E PESQUISA PULSE
+
+### Calibração - Exibir Nome Completo
+- [x] Alterar exibição de código para nome completo do funcionário
+- [x] Atualizar query no backend para incluir nome (getEvaluations com join employees)
+- [x] Ajustar frontend para exibir nome ao invés de código
+
+### Pesquisa Pulse - Desenvolvimento Completo
+- [x] Criar interface para nova pesquisa Pulse (CriarPesquisaPulse.tsx)
+- [x] Implementar envio para grupos de pessoas (wizard de 3 etapas)
+- [x] Adicionar seleção de destinátarios (todos, diretoria, departamentos, centros de custo, emails)
+- [x] Adicionar campos ao schema (targetGroups, targetDepartmentIds, targetCostCenterIds, targetEmails)
+- [ ] Integrar com sistema de emails real (atualmente usando placeholder)
+
+### Testes - Envio para Grupos
+- [x] Permitir envio para diretoria (tab dedicada)
+- [x] Permitir envio para emails específicos (tab individual)
+- [x] Permitir envio para departamento (já existia)
+- [x] Permitir envio para centro de custos (nova tab)
+- [ ] Implementar seleção múltipla de grupo### Correção de Email
+- [x] Identificar e corrigir erro ao enviar email de testes
+- [x] Adicionar mensagem clara quando SMTP não está configurado
+- [x] Melhorar tratamento de erro em sendTestInviteserviço de email
+- [ ] Testar envio end-to-end
+
+### Interface de Envio de Pesquisas
+- [x] Criar página dedicada para envio de pesquisas (CriarPesquisaPulse.tsx)
+- [x] Deixar claro o caminho funcional (documentação + card de ajuda)
+- [x] Adicionar card "Como Funciona?" em PesquisasPulse.tsx
+- [x] Documentar rotas e fluxo completo no códigou
+- [ ] Implementar wizard de envio (selecionar pesquisa → selecionar destinatários → confirmar)
+- [ ] Adicionar feedback visual de progresso

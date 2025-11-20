@@ -1,3 +1,24 @@
+/**
+ * Página de Pesquisas Pulse - Dashboard de Pesquisas de Clima Organizacional
+ * 
+ * FLUXO FUNCIONAL:
+ * 1. Admin/RH acessa /pesquisas-pulse (esta página)
+ * 2. Clica em "Nova Pesquisa" → Redireciona para /pesquisas-pulse/criar
+ * 3. Preenche formulário em 3 etapas (CriarPesquisaPulse.tsx):
+ *    - Etapa 1: Título, pergunta, descrição
+ *    - Etapa 2: Seleciona destinátrios (todos, diretoria, departamentos, centros de custo, emails)
+ *    - Etapa 3: Confirma e envia convites por email
+ * 4. Colaboradores recebem email com link: /pesquisa/:id
+ * 5. Colaboradores respondem (nota 0-10 + comentário opcional) - ResponderPesquisaPulse.tsx
+ * 6. Admin/RH visualiza resultados em /pesquisas-pulse/resultados/:id
+ * 
+ * ROTAS:
+ * - /pesquisas-pulse - Dashboard de pesquisas (esta página)
+ * - /pesquisas-pulse/criar - Criar nova pesquisa
+ * - /pesquisa/:id - Responder pesquisa (PÚB LICA - sem autenticação)
+ * - /pesquisas-pulse/resultados/:id - Ver resultados
+ */
+
 import { useState } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -80,16 +101,10 @@ export default function PesquisasPulse() {
   const [showForm, setShowForm] = useState(false);
 
   const handleCreateSurvey = () => {
-    setShowForm(true);
+    setLocation("/pesquisas-pulse/criar");
   };
 
-  const handleSaveSurvey = () => {
-    // TODO: Implementar formulário completo com título e pergunta
-    createSurveyMutation.mutate({
-      title: "Nova Pesquisa",
-      question: "Como você avalia?",
-    });
-  };
+  // Removido - agora usa página dedicada /pesquisas-pulse/criar
 
   const getStatusBadge = (status: string) => {
     const colors: Record<string, string> = {
@@ -129,6 +144,24 @@ export default function PesquisasPulse() {
             Nova Pesquisa
           </Button>
         </div>
+
+        {/* Card de Ajuda - Fluxo Funcional */}
+        <Card className="border-blue-200 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-blue-600" />
+              Como Funciona?
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ol className="list-decimal list-inside space-y-2 text-sm">
+              <li><strong>Criar Pesquisa:</strong> Clique em "Nova Pesquisa" e preencha título, pergunta e selecione destinátrios</li>
+              <li><strong>Enviar Convites:</strong> Escolha grupos (todos, diretoria, departamentos, centros de custo ou emails específicos)</li>
+              <li><strong>Colaboradores Respondem:</strong> Recebem email com link direto para responder (nota 0-10 + comentário)</li>
+              <li><strong>Visualizar Resultados:</strong> Acompanhe estatísticas, média de satisfação e comentários em tempo real</li>
+            </ol>
+          </CardContent>
+        </Card>
 
         {/* KPIs */}
         <div className="grid gap-4 md:grid-cols-4">
