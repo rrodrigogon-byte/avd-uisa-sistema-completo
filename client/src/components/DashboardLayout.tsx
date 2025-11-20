@@ -21,12 +21,14 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 import NotificationCenter from "./NotificationCenter";
+import { GlobalSearch, useGlobalSearchShortcut } from "./GlobalSearch";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 // Componente de seção com submenu
 function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
@@ -243,6 +245,10 @@ function DashboardLayoutContent({
   const sidebarRef = useRef<HTMLDivElement>(null);
   const activeMenuItem = menuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
+  const [searchOpen, setSearchOpen] = useState(false);
+  
+  // Ativar atalho de teclado Ctrl+K / Cmd+K
+  useGlobalSearchShortcut(() => setSearchOpen(true));
 
   useEffect(() => {
     if (isCollapsed) {
@@ -414,10 +420,46 @@ function DashboardLayoutContent({
                 </div>
               </div>
             </div>
-            <NotificationCenter />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSearchOpen(true)}
+                className="h-9 w-9"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+              <NotificationCenter />
+            </div>
           </div>
         )}
-        <main className="flex-1 p-4">{children}</main>
+        {!isMobile && (
+          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
+              <h1 className="text-lg font-semibold">{activeMenuItem?.label ?? APP_TITLE}</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setSearchOpen(true)}
+                className="h-9 gap-2 px-3"
+              >
+                <Search className="h-4 w-4" />
+                <span className="text-sm text-muted-foreground">Buscar...</span>
+                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </Button>
+              <NotificationCenter />
+            </div>
+          </div>
+        )}
+        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+        <main className="flex-1 p-4">
+          <Breadcrumbs />
+          {children}
+        </main>
       </SidebarInset>
     </>
   );

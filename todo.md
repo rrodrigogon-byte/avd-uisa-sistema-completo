@@ -239,3 +239,21 @@
 - [ ] Implementar lazy loading de componentes
 - [ ] Reduzir bundle size do frontend
 - [ ] Otimizar imagens e assets
+
+
+---
+
+## 🔗 INTEGRAÇÃO DE COMPONENTES - FASE 6
+
+### Busca Global ✅
+- [x] Integrar GlobalSearch no DashboardLayout
+- [x] Adicionar botão de busca no header
+- [x] Ativar hook useGlobalSearchShortcut
+- [x] Testar atalho Ctrl+K / Cmd+K
+- [x] Adicionar ícone de busca visível
+
+### Breadcrumbs ✅
+- [x] Adicionar Breadcrumbs em todas as páginas principais
+- [x] Integrar com DashboardLayout
+- [x] Testar navegação via breadcrumbs
+- [x] Validar labels de rotas
