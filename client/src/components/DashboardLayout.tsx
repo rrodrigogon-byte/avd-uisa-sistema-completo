@@ -132,6 +132,7 @@ const menuItems = [
       { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
     ],
   },
+  { icon: DollarSign, label: "Bônus", path: "/bonus" },
   { icon: HistoryIcon, label: "Histórico", path: "/historico" },
   { icon: FileText, label: "Relatórios", path: "/relatorios" },
   {

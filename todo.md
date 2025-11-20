@@ -166,3 +166,26 @@
 - [ ] Learning Management
 - [ ] Performance Analytics
 - [ ] Workforce Planning
+
+## 🎯 NOVA SESSÃO - MELHORIAS FINAIS
+
+### Item 1: Menu Lateral
+- [x] Adicionar item "Bônus" no DashboardLayout
+- [x] Adicionar ícone apropriado (DollarSign)
+- [x] Configurar rota /bonus
+- [x] Testar navegação
+
+### Item 2: Endpoint de Avaliações Pendentes
+- [x] Criar endpoint evaluations.listPending no evaluationsRouter
+- [x] Implementar query com filtros (evaluatorId, type, status)
+- [x] Integrar com performanceEvaluations, evaluation360, autoavaliações
+- [x] Testar endpoint com dados reais
+
+### Item 3: Testes Automatizados
+- [x] Criar arquivo de teste bonus.test.ts
+- [x] Testar endpoint list (listar políticas)
+- [x] Testar endpoint create (criar política)
+- [x] Testar endpoint calculateBonus (cálculo de elegibilidade)
+- [x] Testar validações de multiplicadores
+- [x] Testar integração com metas
+- [x] Executar todos os testes e validar (6/6 testes passando)

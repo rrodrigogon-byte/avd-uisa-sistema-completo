@@ -731,6 +731,118 @@ export const appRouter = router({
         return { id: evaluationId, success: true };
       }),
 
+    // Buscar avaliações pendentes do usuário logado (como avaliador)
+    listPending: protectedProcedure
+      .input(z.object({ 
+        evaluatorId: z.number().optional() 
+      }))
+      .query(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Buscar employee do usuário logado
+        const employee = await db.getEmployeeByUserId(ctx.user!.id);
+        if (!employee) return [];
+
+        const evaluatorId = input.evaluatorId || employee.id;
+
+        // Buscar avaliações 360° onde o usuário é avaliador
+        const evaluations360 = await database
+          .select({
+            id: evaluation360.id,
+            employeeId: evaluation360.employeeId,
+            cycleId: evaluation360.cycleId,
+            type: sql<string>`'360'`.as('type'),
+            status: evaluation360.workflowStatus,
+            deadline: evaluation360.deadline,
+          })
+          .from(evaluation360)
+          .where(
+            sql`${evaluation360.workflowStatus} IN ('pending_manager', 'pending_consensus') AND ${evaluation360.managerId} = ${evaluatorId}`
+          );
+
+        // Buscar autoavaliações pendentes
+        const autoAvaliacoes = await database
+          .select({
+            id: evaluation360.id,
+            employeeId: evaluation360.employeeId,
+            cycleId: evaluation360.cycleId,
+            type: sql<string>`'autoavaliacao'`.as('type'),
+            status: evaluation360.workflowStatus,
+            deadline: evaluation360.deadline,
+          })
+          .from(evaluation360)
+          .where(
+            sql`${evaluation360.workflowStatus} = 'pending_self' AND ${evaluation360.employeeId} = ${evaluatorId}`
+          );
+
+        // Buscar avaliações de performance pendentes
+        const performanceEvals = await database
+          .select({
+            id: performanceEvaluations.id,
+            employeeId: performanceEvaluations.employeeId,
+            cycleId: performanceEvaluations.cycleId,
+            type: sql<string>`'performance'`.as('type'),
+            status: performanceEvaluations.status,
+            deadline: sql<Date | null>`NULL`.as('deadline'),
+          })
+          .from(performanceEvaluations)
+          .where(
+            sql`${performanceEvaluations.status} IN ('pendente', 'em_andamento')`
+          );
+
+        // Combinar todas as avaliações
+        const allEvaluations = [...evaluations360, ...autoAvaliacoes, ...performanceEvals];
+
+        // Buscar dados dos colaboradores
+        const employeeIds = [...new Set(allEvaluations.map(e => e.employeeId))];
+        const employeesData = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+            positionId: employees.positionId,
+          })
+          .from(employees)
+          .where(sql`${employees.id} IN (${sql.join(employeeIds, sql`, `)})`);
+
+        // Buscar dados dos cargos
+        const positionIds = employeesData.map(e => e.positionId).filter(Boolean);
+        const positionsData = positionIds.length > 0
+          ? await database
+              .select()
+              .from(positions)
+              .where(sql`${positions.id} IN (${sql.join(positionIds, sql`, `)})`)
+          : [];
+
+        // Buscar dados dos ciclos
+        const cycleIds = [...new Set(allEvaluations.map(e => e.cycleId))];
+        const cyclesData = cycleIds.length > 0
+          ? await database
+              .select()
+              .from(evaluationCycles)
+              .where(sql`${evaluationCycles.id} IN (${sql.join(cycleIds, sql`, `)})`)
+          : [];
+
+        // Montar resposta com dados completos
+        return allEvaluations.map(evaluation => {
+          const emp = employeesData.find(e => e.id === evaluation.employeeId);
+          const position = positionsData.find((p: any) => p.id === emp?.positionId);
+          const cycle = cyclesData.find((c: any) => c.id === evaluation.cycleId);
+
+          return {
+            id: evaluation.id,
+            employeeId: evaluation.employeeId,
+            employeeName: emp?.name || null,
+            positionTitle: (position as any)?.title || null,
+            cycleId: evaluation.cycleId,
+            cycleName: (cycle as any)?.name || null,
+            type: evaluation.type,
+            status: evaluation.status,
+            deadline: evaluation.deadline,
+          };
+        });
+      }),
+
     // Buscar avaliações pendentes da equipe do gestor
     getPendingByManager: protectedProcedure
       .input(z.object({ managerId: z.number() }))
