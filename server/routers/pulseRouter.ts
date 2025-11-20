@@ -85,7 +85,7 @@ export const pulseRouter = router({
         return {
           ...survey,
           responses: stats?.responses || 0,
-          avgScore: stats?.avgScore ? Number(stats.avgScore.toFixed(1)) : 0,
+          avgScore: stats?.avgScore ? Number(Number(stats.avgScore).toFixed(1)) : 0,
         };
       })
     );
@@ -285,7 +285,7 @@ export const pulseRouter = router({
       return {
         surveyId: input.surveyId,
         totalResponses: stats?.totalResponses || 0,
-        avgScore: stats?.avgScore ? Number(stats.avgScore.toFixed(1)) : 0,
+        avgScore: stats?.avgScore ? Number(Number(stats.avgScore).toFixed(1)) : 0,
         distribution: distributionObj,
         comments: comments.map((c) => ({
           id: c.id,

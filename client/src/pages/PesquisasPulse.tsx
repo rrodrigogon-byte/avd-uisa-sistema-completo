@@ -20,7 +20,7 @@
  */
 
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,6 +54,7 @@ interface PulseSurvey {
 }
 
 export default function PesquisasPulse() {
+  const [, setLocation] = useLocation();
   const { data: surveys = [], isLoading } = trpc.pulse.list.useQuery();
   const createSurveyMutation = trpc.pulse.create.useMutation({
     onSuccess: () => {

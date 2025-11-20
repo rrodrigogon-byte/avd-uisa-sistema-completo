@@ -295,8 +295,8 @@
 - [x] SMTP funcionando 100% (teste direto enviou email com sucesso)
 - [x] Corrigir cache do frontend para reconhecer adminRouter (admin duplicado removido)
 - [ ] Publicar nova versão para forçar rebuild (em andamento)
-- [ ] Testar email via interface após publicação
-- [ ] Corrigir botão "Nova Pesquisa" em Pesquisa Pulse
+- [ ] Testar email via interface (SMTP funcionando via teste direto)
+- [x] Corrigir botão "Nova Pesquisa" em Pesquisa Pulse (useLocation adicionado)
 - [ ] Identificar e corrigir "botões de sala"
 
 ### Validação Completa de Funcionalidades
