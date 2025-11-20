@@ -499,3 +499,11 @@ export const emailService = {
     }
   },
 };
+
+/**
+ * Função auxiliar para enviar email genérico
+ * @param options - Opções de envio (to, subject, html)
+ */
+export async function sendEmail(options: { to: string; subject: string; html: string }) {
+  return emailService.sendCustomEmail(options.to, options.subject, options.html);
+}

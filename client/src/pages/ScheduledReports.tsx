@@ -377,7 +377,17 @@ export default function ScheduledReports() {
       ) : reports && reports.length > 0 ? (
         <div className="grid gap-4">
           {reports.map((report) => {
-            const recipients = JSON.parse(report.recipients);
+            let recipients: string[] = [];
+            try {
+              recipients = typeof report.recipients === 'string' 
+                ? JSON.parse(report.recipients) 
+                : Array.isArray(report.recipients) 
+                  ? report.recipients 
+                  : [report.recipients];
+            } catch (error) {
+              console.error('Erro ao parsear recipients:', error);
+              recipients = [];
+            }
             
             return (
               <Card key={report.id}>

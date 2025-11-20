@@ -286,3 +286,24 @@
 - [ ] Implementar feedback visual em todas as ações
 - [ ] Adicionar loading states em operações assíncronas
 - [ ] Melhorar mensagens de erro com sugestões de solução
+
+
+## 🚨 CORREÇÕES CRÍTICAS - PRIORIDADE MÁXIMA
+
+### Erros Identificados pelo Usuário
+- [x] Corrigir erro de JSON parsing em Scheduled Reports (try-catch adicionado)
+- [x] SMTP funcionando 100% (teste direto enviou email com sucesso)
+- [x] Corrigir cache do frontend para reconhecer adminRouter (admin duplicado removido)
+- [ ] Publicar nova versão para forçar rebuild (em andamento)
+- [ ] Testar email via interface após publicação
+- [ ] Corrigir botão "Nova Pesquisa" em Pesquisa Pulse
+- [ ] Identificar e corrigir "botões de sala"
+
+### Validação Completa de Funcionalidades
+- [ ] Testar fluxo completo de Pesquisa Pulse (criar → enviar → responder → ver resultados)
+- [x] Calibração com filtros funcionando (busca, departamento, ciclo, status)
+- [x] Todos os 7 testes psicométricos validados (DISC corrigido para 40 perguntas)
+- [ ] Validar que emails estão sendo enviados corretamente via interface
+- [ ] Verificar que não há erros de console em nenhuma página
+- [ ] Testar Scheduled Reports completo
+- [ ] Validar todos os workflows de aprovação

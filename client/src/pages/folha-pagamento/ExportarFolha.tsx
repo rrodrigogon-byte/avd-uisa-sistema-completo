@@ -20,7 +20,8 @@ export default function ExportarFolha() {
     referenceMonth: selectedMonth + "-01",
   });
 
-  const { data: exportHistory } = trpc.payroll.getExportHistory?.useQuery() || { data: [] };
+  // TODO: Implementar getExportHistory no payrollRouter
+  const exportHistory: any[] = [];
 
   const handleExport = async () => {
     setIsExporting(true);

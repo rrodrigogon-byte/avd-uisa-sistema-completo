@@ -24,8 +24,8 @@ export default function AdminSmtp() {
   // Buscar configurações SMTP
   const { data: smtpConfig, isLoading, refetch } = trpc.admin.getSmtpConfig.useQuery();
 
-  // Mutation para atualizar configurações
-  const updateMutation = trpc.admin.updateSmtpConfig.useMutation({
+  // Mutation para salvar configurações
+  const saveMutation = trpc.admin.saveSmtpConfig.useMutation({
     onSuccess: () => {
       toast.success("Configurações SMTP salvas com sucesso!");
       refetch();
@@ -35,13 +35,13 @@ export default function AdminSmtp() {
     },
   });
 
-  // Mutation para testar conexão
-  const testMutation = trpc.admin.testSmtpConnection.useMutation({
+  // Mutation para testar envio de email
+  const testMutation = trpc.admin.sendTestEmail.useMutation({
     onSuccess: (data) => {
       if (data.success) {
-        toast.success(data.message || "E-mail de teste enviado!");
+        toast.success(data.message || "E-mail de teste enviado com sucesso!");
       } else {
-        toast.error(data.message || "Falha ao enviar e-mail de teste");
+        toast.error("Falha ao enviar e-mail de teste");
       }
       setIsTesting(false);
     },
@@ -71,7 +71,7 @@ export default function AdminSmtp() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate(formData);
+    saveMutation.mutate(formData);
   };
 
   const handleTest = () => {
@@ -81,10 +81,7 @@ export default function AdminSmtp() {
     }
 
     setIsTesting(true);
-    testMutation.mutate({
-      ...formData,
-      testEmail,
-    });
+    testMutation.mutate({ to: testEmail });
   };
 
   // Verificar se é admin
@@ -246,9 +243,9 @@ export default function AdminSmtp() {
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={updateMutation.isPending}
+                  disabled={saveMutation.isPending}
                 >
-                  {updateMutation.isPending ? (
+                  {saveMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Salvando...
