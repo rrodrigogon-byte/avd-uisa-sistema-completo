@@ -673,6 +673,30 @@ export const successionCandidates = mysqlTable("successionCandidates", {
 export type SuccessionCandidate = typeof successionCandidates.$inferSelect;
 export type InsertSuccessionCandidate = typeof successionCandidates.$inferInsert;
 
+/**
+ * Histórico de alterações em planos de sucessão
+ */
+export const successionHistory = mysqlTable("successionHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  candidateId: int("candidateId"), // Null se for alteração no plano, preenchido se for no candidato
+  userId: int("userId").notNull(), // Quem fez a alteração
+  actionType: mysqlEnum("actionType", [
+    "plan_created", "plan_updated", "plan_deleted",
+    "candidate_added", "candidate_updated", "candidate_removed",
+    "risk_updated", "timeline_updated", "development_updated",
+    "test_sent" // Envio de teste psicométrico
+  ]).notNull(),
+  fieldName: varchar("fieldName", { length: 100 }), // Campo alterado
+  oldValue: text("oldValue"), // Valor anterior
+  newValue: text("newValue"), // Novo valor
+  notes: text("notes"), // Observações adicionais
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SuccessionHistory = typeof successionHistory.$inferSelect;
+export type InsertSuccessionHistory = typeof successionHistory.$inferInsert;
+
 // ============================================================================
 // TABELAS DE NOTIFICAÇÕES E E-MAIL
 // ============================================================================

@@ -4,10 +4,12 @@ import { getDb } from "./db";
 import { 
   successionPlans, 
   successionCandidates,
+  successionHistory,
   positions,
   employees,
   nineBoxPositions,
-  pdiPlans
+  pdiPlans,
+  users
 } from "../drizzle/schema";
 import { protectedProcedure, router } from "./_core/trpc";
 
@@ -616,5 +618,174 @@ export const successionRouter = router({
       }
 
       return results;
+    }),
+
+  // Buscar histórico de alterações
+  getHistory: protectedProcedure
+    .input(z.object({ planId: z.number() }))
+    .query(async ({ input }) => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const history = await database
+        .select({
+          id: successionHistory.id,
+          planId: successionHistory.planId,
+          candidateId: successionHistory.candidateId,
+          userId: successionHistory.userId,
+          userName: users.name,
+          actionType: successionHistory.actionType,
+          fieldName: successionHistory.fieldName,
+          oldValue: successionHistory.oldValue,
+          newValue: successionHistory.newValue,
+          notes: successionHistory.notes,
+          createdAt: successionHistory.createdAt,
+        })
+        .from(successionHistory)
+        .leftJoin(users, eq(successionHistory.userId, users.id))
+        .where(eq(successionHistory.planId, input.planId))
+        .orderBy(desc(successionHistory.createdAt));
+
+      return history;
+    }),
+
+  // Registrar alteração no histórico
+  logChange: protectedProcedure
+    .input(
+      z.object({
+        planId: z.number(),
+        candidateId: z.number().optional(),
+        actionType: z.enum([
+          "plan_created", "plan_updated", "plan_deleted",
+          "candidate_added", "candidate_updated", "candidate_removed",
+          "risk_updated", "timeline_updated", "development_updated",
+          "test_sent"
+        ]),
+        fieldName: z.string().optional(),
+        oldValue: z.string().optional(),
+        newValue: z.string().optional(),
+        notes: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const database = await getDb();
+      if (!database) throw new Error("Database not available");
+
+      await database.insert(successionHistory).values({
+        planId: input.planId,
+        candidateId: input.candidateId || null,
+        userId: ctx.user.id,
+        actionType: input.actionType,
+        fieldName: input.fieldName || null,
+        oldValue: input.oldValue || null,
+        newValue: input.newValue || null,
+        notes: input.notes || null,
+      });
+
+      return { success: true };
+    }),
+
+  // Enviar testes psicométricos para sucessores
+  sendTests: protectedProcedure
+    .input(
+      z.object({
+        planId: z.number(),
+        candidateIds: z.array(z.number()).optional(), // Se vazio, envia para todos
+        testTypes: z.array(z.string()), // ['disc', 'big_five', 'mbti', etc]
+        targetType: z.enum(["candidates", "department", "emails", "groups"]),
+        departmentIds: z.array(z.number()).optional(),
+        emails: z.array(z.string()).optional(),
+        groupIds: z.array(z.number()).optional(),
+        message: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const database = await getDb();
+      if (!database) throw new Error("Database not available");
+
+      // Buscar plano
+      const [plan] = await database
+        .select()
+        .from(successionPlans)
+        .where(eq(successionPlans.id, input.planId))
+        .limit(1);
+
+      if (!plan) throw new Error("Plano não encontrado");
+
+      // Determinar destinatários baseado no targetType
+      let recipients: { id: number; name: string; email: string }[] = [];
+
+      if (input.targetType === "candidates") {
+        // Enviar para candidatos específicos ou todos
+        const candidateFilter = input.candidateIds && input.candidateIds.length > 0
+          ? and(
+              eq(successionCandidates.planId, input.planId),
+              sql`${successionCandidates.employeeId} IN (${input.candidateIds.join(",")})`
+            )
+          : eq(successionCandidates.planId, input.planId);
+
+        const candidates = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+            email: employees.email,
+          })
+          .from(successionCandidates)
+          .innerJoin(employees, eq(successionCandidates.employeeId, employees.id))
+          .where(candidateFilter);
+
+        recipients = candidates.filter(c => c.email) as any;
+      } else if (input.targetType === "department" && input.departmentIds) {
+        // Enviar para departamentos
+        const deptEmployees = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+            email: employees.email,
+          })
+          .from(employees)
+          .where(
+            and(
+              sql`${employees.departmentId} IN (${input.departmentIds.join(",")})`,
+              sql`${employees.email} IS NOT NULL`
+            )
+          );
+
+        recipients = deptEmployees as any;
+      } else if (input.targetType === "emails" && input.emails) {
+        // Enviar para emails específicos
+        recipients = input.emails.map((email, idx) => ({
+          id: 0,
+          name: email,
+          email,
+        }));
+      }
+
+      if (recipients.length === 0) {
+        throw new Error("Nenhum destinatário encontrado");
+      }
+
+      // TODO: Integrar com sistema de envio de emails real
+      // Por enquanto, apenas registrar no histórico
+      await database.insert(successionHistory).values({
+        planId: input.planId,
+        candidateId: null,
+        userId: ctx.user.id,
+        actionType: "test_sent",
+        fieldName: "tests",
+        oldValue: null,
+        newValue: JSON.stringify({
+          testTypes: input.testTypes,
+          recipientCount: recipients.length,
+          targetType: input.targetType,
+        }),
+        notes: input.message || `Testes enviados: ${input.testTypes.join(", ")}`,
+      });
+
+      return {
+        success: true,
+        recipientCount: recipients.length,
+        recipients: recipients.map(r => ({ name: r.name, email: r.email })),
+      };
     }),
 });

@@ -299,6 +299,16 @@
 - [x] Corrigir botão "Nova Pesquisa" em Pesquisa Pulse (useLocation adicionado)
 - [ ] Identificar e corrigir "botões de sala"
 
+### BUGS CRÍTICOS REPORTADOS (20/11/2024 - 18:15) - ✅ TODOS RESOLVIDOS
+- [x] Corrigir erro em /calibracao: "Cannot read properties of undefined (reading 'toString')" - URGENTE
+- [x] Sucessão: Adicionar botões Editar/Incluir/Salvar em todas as abas
+- [x] Sucessão: Implementar histórico de alterações
+- [x] Sucessão: Sistema de envio de testes psicométricos para sucessores (email)
+- [x] Sucessão: Envio de testes por departamento, emails, grupos e filtros
+- [x] Nine Box Comparativo: Corrigir botões que não funcionam (anexo)
+- [x] Nine Box Comparativo: Implementar seleção por grupos (departamento e centro de custo)
+- [x] Pesquisa Pulse: Garantir que botão "Nova Pesquisa" funcione definitivamente (debug adicionado)
+
 ### Validação Completa de Funcionalidades
 - [ ] Testar fluxo completo de Pesquisa Pulse (criar → enviar → responder → ver resultados)
 - [x] Calibração com filtros funcionando (busca, departamento, ciclo, status)

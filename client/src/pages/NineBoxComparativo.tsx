@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, TrendingUp, Users, Award, Download, Filter } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import { Bar, Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -44,10 +45,14 @@ export default function NineBoxComparativo() {
   const [selectedPositions, setSelectedPositions] = useState<number[]>([]);
   const [hierarchyLevel, setHierarchyLevel] = useState<string>("all");
   const [selectedLeaderId, setSelectedLeaderId] = useState<number | null>(null);
+  const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<number[]>([]);
+  const [selectedCostCenterIds, setSelectedCostCenterIds] = useState<number[]>([]);
 
   // Queries
   const { data: positions, isLoading: loadingPositions } = trpc.nineBoxComparative.getAvailablePositions.useQuery();
   const { data: leaders } = trpc.nineBoxComparative.getLeaders.useQuery();
+  const { data: departments } = trpc.employees.getDepartments.useQuery();
+  const { data: costCenters } = trpc.employees.getCostCenters.useQuery();
   const { data: comparative, isLoading: loadingComparative } = trpc.nineBoxComparative.getComparative.useQuery(
     { 
       positionIds: selectedPositions.length > 0 ? selectedPositions : undefined,
@@ -192,7 +197,34 @@ export default function NineBoxComparativo() {
             </p>
           </div>
           
-          <Button variant="outline">
+          <Button 
+            variant="outline"
+            onClick={() => {
+              if (!comparative || comparative.length === 0) {
+                toast.error("Nenhum dado para exportar");
+                return;
+              }
+              // Criar CSV
+              const headers = ["Cargo", "Colaboradores", "Performance Média", "Potencial Médio", "% Alto Desempenho", "% Alto Potencial", "% Stars"];
+              const rows = comparative.map(c => [
+                c.positionTitle,
+                c.employeeCount,
+                c.avgPerformance.toFixed(2),
+                c.avgPotential.toFixed(2),
+                c.highPerformersPercent.toFixed(1) + "%",
+                c.highPotentialPercent.toFixed(1) + "%",
+                c.starsPercent.toFixed(1) + "%"
+              ]);
+              const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
+              const blob = new Blob([csv], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `nine-box-comparativo-${new Date().toISOString().split('T')[0]}.csv`;
+              a.click();
+              toast.success("Relatório exportado com sucesso!");
+            }}
+          >
             <Download className="h-4 w-4 mr-2" />
             Exportar Relatório
           </Button>
@@ -210,7 +242,7 @@ export default function NineBoxComparativo() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Filtro por Nível Hierárquico */}
               <div className="space-y-2">
                 <Label>Nível Hierárquico</Label>
@@ -244,6 +276,60 @@ export default function NineBoxComparativo() {
                     {leaders?.map((leader) => (
                       <SelectItem key={leader.id} value={leader.id.toString()}>
                         {leader.name} - {leader.positionTitle} ({leader.subordinatesCount} subordinados)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Filtro por Departamento */}
+              <div className="space-y-2">
+                <Label>Departamento</Label>
+                <Select 
+                  value={selectedDepartmentIds.length === 1 ? selectedDepartmentIds[0].toString() : "todos"}
+                  onValueChange={(value) => {
+                    if (value === "todos") {
+                      setSelectedDepartmentIds([]);
+                    } else {
+                      setSelectedDepartmentIds([parseInt(value)]);
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos os departamentos</SelectItem>
+                    {departments?.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id.toString()}>
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Filtro por Centro de Custo */}
+              <div className="space-y-2">
+                <Label>Centro de Custo</Label>
+                <Select 
+                  value={selectedCostCenterIds.length === 1 ? selectedCostCenterIds[0].toString() : "todos"}
+                  onValueChange={(value) => {
+                    if (value === "todos") {
+                      setSelectedCostCenterIds([]);
+                    } else {
+                      setSelectedCostCenterIds([parseInt(value)]);
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos os centros</SelectItem>
+                    {costCenters?.map((cc) => (
+                      <SelectItem key={cc.id} value={cc.id.toString()}>
+                        {cc.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

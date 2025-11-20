@@ -256,8 +256,8 @@ export default function Calibracao() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    {departments?.map((dept) => (
-                      <SelectItem key={dept.id} value={dept.id.toString()}>
+                    {departments?.filter(dept => dept.id).map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id!.toString()}>
                         {dept.name}
                       </SelectItem>
                     ))}
@@ -277,8 +277,8 @@ export default function Calibracao() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    {cycles?.map((cycle) => (
-                      <SelectItem key={cycle.id} value={cycle.id.toString()}>
+                    {cycles?.filter(cycle => cycle.id).map((cycle) => (
+                      <SelectItem key={cycle.id} value={cycle.id!.toString()}>
                         {cycle.name}
                       </SelectItem>
                     ))}

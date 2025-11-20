@@ -102,7 +102,14 @@ export default function PesquisasPulse() {
   const [showForm, setShowForm] = useState(false);
 
   const handleCreateSurvey = () => {
-    setLocation("/pesquisas-pulse/criar");
+    console.log("[DEBUG] Botão Nova Pesquisa clicado - Redirecionando para /pesquisas-pulse/criar");
+    try {
+      setLocation("/pesquisas-pulse/criar");
+      toast.success("Redirecionando para criar pesquisa...");
+    } catch (error) {
+      console.error("[ERROR] Erro ao redirecionar:", error);
+      toast.error("Erro ao redirecionar. Tente novamente.");
+    }
   };
 
   // Removido - agora usa página dedicada /pesquisas-pulse/criar
