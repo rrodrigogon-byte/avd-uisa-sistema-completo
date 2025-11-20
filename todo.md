@@ -176,3 +176,27 @@
 - [x] Criar relatório de inconsistências
 - [x] Adicionar alertas automáticos para discrepâncias >20%
 - [x] Criar página de visualização de dados de ponto
+
+
+---
+
+## 📊 VISUALIZAÇÃO DE DISCREPÂNCIAS E ALERTAS AUTOMÁTICOS - FASE 4
+
+### Página de Visualização de Discrepâncias ✅
+- [x] Criar página /discrepancias com dashboard completo
+- [x] Implementar gráfico de tendências de discrepâncias (linha temporal)
+- [x] Criar ranking de colaboradores com maiores inconsistências
+- [x] Adicionar filtros por período (data início/fim)
+- [x] Adicionar filtros por departamento
+- [x] Adicionar filtros por severidade de discrepância
+- [x] Implementar KPIs (total de discrepâncias, média de %, críticas)
+- [x] Criar tabela detalhada de discrepâncias com ações
+
+### Job Agendado de Alertas Automáticos ✅
+- [x] Criar arquivo de job agendado (cron)
+- [x] Implementar função de cálculo diário de discrepâncias
+- [x] Configurar job para rodar diariamente às 6h da manhã
+- [x] Integrar com timeClockRouter.calculateDiscrepancies
+- [x] Adicionar logs de execução do job
+- [x] Testar execução manual do job
+- [x] Validar criação automática de alertas

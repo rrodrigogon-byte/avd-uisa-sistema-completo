@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import { getDb } from './db';
 import { startNotificationCron } from './jobs/notificationCron';
+import { calculateDailyDiscrepancies } from './jobs/calculateDiscrepancies';
 import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals } from '../drizzle/schema';
 import { eq, and, lt, gte } from 'drizzle-orm';
 import { emailService } from './utils/emailService';
@@ -235,6 +236,18 @@ export const pdiOverdueJob = cron.schedule('0 10 * * *', async () => {
   }
 });
 
+// Job de cálculo de discrepâncias (executa diariamente às 6h)
+export const calculateDiscrepanciesJob = cron.schedule('0 6 * * *', async () => {
+  console.log('[Cron] Executando job de cálculo de discrepâncias...');
+  
+  try {
+    const result = await calculateDailyDiscrepancies();
+    console.log('[Cron] Resultado do cálculo de discrepâncias:', result);
+  } catch (error) {
+    console.error('[Cron] Erro ao calcular discrepâncias:', error);
+  }
+});
+
 // Iniciar todos os cron jobs
 export function startCronJobs() {
   console.log('[Cron] Iniciando cron jobs...');
@@ -242,6 +255,7 @@ export function startCronJobs() {
   evaluationReminderJob.start();
   pdiOverdueJob.start();
   scheduledReportsJob.start();
+  calculateDiscrepanciesJob.start();
   // Iniciar job de notificações automáticas
   startNotificationCron();
   
