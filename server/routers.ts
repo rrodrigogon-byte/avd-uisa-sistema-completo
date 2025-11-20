@@ -36,6 +36,7 @@ import { productivityRouter } from "./routers/productivityRouter";
 import { importRouter } from "./routers/importRouter";
 import { alertsRouter } from "./routers/alertsRouter";
 import { timeClockRouter } from "./routers/timeClockRouter";
+import { organizationRouter } from "./routers/organizationRouter";
 import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { eq, and, desc, sql } from "drizzle-orm";
 
@@ -2413,6 +2414,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   import: importRouter,
   alerts: alertsRouter,
   timeClock: timeClockRouter,
+  organization: organizationRouter,
 
   // Router de Emails
   emails: router({

@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import { getDb } from './db';
 import { startNotificationCron } from './jobs/notificationCron';
 import { calculateDailyDiscrepancies } from './jobs/calculateDiscrepancies';
+import { sendPulseEmailsJob } from './jobs/sendPulseEmails';
 import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals } from '../drizzle/schema';
 import { eq, and, lt, gte } from 'drizzle-orm';
 import { emailService } from './utils/emailService';
@@ -248,6 +249,17 @@ export const calculateDiscrepanciesJob = cron.schedule('0 6 * * *', async () => 
   }
 });
 
+// Job de envio de e-mails de Pesquisas Pulse (executa a cada 8 horas)
+export const pulseSurveyEmailJob = cron.schedule('0 */8 * * *', async () => {
+  console.log('[Cron] Executando job de envio de e-mails Pulse...');
+  
+  try {
+    await sendPulseEmailsJob();
+  } catch (error) {
+    console.error('[Cron] Erro ao enviar e-mails Pulse:', error);
+  }
+});
+
 // Iniciar todos os cron jobs
 export function startCronJobs() {
   console.log('[Cron] Iniciando cron jobs...');
@@ -256,6 +268,7 @@ export function startCronJobs() {
   pdiOverdueJob.start();
   scheduledReportsJob.start();
   calculateDiscrepanciesJob.start();
+  pulseSurveyEmailJob.start();
   // Iniciar job de notificações automáticas
   startNotificationCron();
   
@@ -269,6 +282,7 @@ export function stopCronJobs() {
   evaluationReminderJob.stop();
   pdiOverdueJob.stop();
   scheduledReportsJob.stop();
+  pulseSurveyEmailJob.stop();
   console.log('[Cron] Cron jobs parados');
 }
 

@@ -41,6 +41,25 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
+/**
+ * Admin Users - Usuários administrativos do sistema
+ */
+export const adminUsers = mysqlTable("adminUsers", {
+  id: int("id").autoincrement().primaryKey(),
+  username: varchar("username", { length: 100 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: mysqlEnum("role", ["super_admin", "admin", "hr_manager"]).default("admin").notNull(),
+  active: boolean("active").default(true).notNull(),
+  lastLoginAt: datetime("lastLoginAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type InsertAdminUser = typeof adminUsers.$inferInsert;
+
 export const passwordResetTokens = mysqlTable("passwordResetTokens", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
@@ -71,6 +90,24 @@ export const departments = mysqlTable("departments", {
 
 export type Department = typeof departments.$inferSelect;
 export type InsertDepartment = typeof departments.$inferInsert;
+
+/**
+ * Centros de Custos
+ */
+export const costCenters = mysqlTable("costCenters", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  departmentId: int("departmentId"), // Departamento vinculado
+  budget: decimal("budget", { precision: 15, scale: 2 }), // Orçamento
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CostCenter = typeof costCenters.$inferSelect;
+export type InsertCostCenter = typeof costCenters.$inferInsert;
 
 export const positions = mysqlTable("positions", {
   id: int("id").autoincrement().primaryKey(),
@@ -1753,6 +1790,35 @@ export const pulseSurveyResponses = mysqlTable("pulseSurveyResponses", {
 
 export type PulseSurveyResponse = typeof pulseSurveyResponses.$inferSelect;
 export type InsertPulseSurveyResponse = typeof pulseSurveyResponses.$inferInsert;
+
+/**
+ * Histórico de Envios de E-mail das Pesquisas Pulse
+ */
+export const pulseSurveyEmailLogs = mysqlTable("pulseSurveyEmailLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamentos
+  surveyId: int("surveyId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Dados do envio
+  email: varchar("email", { length: 320 }).notNull(),
+  status: mysqlEnum("status", ["pending", "sent", "failed"]).default("pending").notNull(),
+  
+  // Controle de tentativas
+  attemptCount: int("attemptCount").default(0).notNull(),
+  lastAttemptAt: datetime("lastAttemptAt"),
+  
+  // Erro (se houver)
+  errorMessage: text("errorMessage"),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  sentAt: datetime("sentAt"),
+});
+
+export type PulseSurveyEmailLog = typeof pulseSurveyEmailLogs.$inferSelect;
+export type InsertPulseSurveyEmailLog = typeof pulseSurveyEmailLogs.$inferInsert;
 
 
 // ============================================================================

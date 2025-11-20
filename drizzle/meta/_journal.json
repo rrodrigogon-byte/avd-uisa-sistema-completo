@@ -253,6 +253,27 @@
       "when": 1763602333942,
       "tag": "0035_fluffy_jane_foster",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1763609620845,
+      "tag": "0036_small_the_liberteens",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "5",
+      "when": 1763609820088,
+      "tag": "0037_goofy_havok",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "5",
+      "when": 1763609935369,
+      "tag": "0038_high_enchantress",
+      "breakpoints": true
     }
   ]
 }

@@ -257,3 +257,105 @@
 - [x] Integrar com DashboardLayout
 - [x] Testar navegação via breadcrumbs
 - [x] Validar labels de rotas
+
+
+---
+
+## 🔧 CORREÇÕES E DESENVOLVIMENTOS CRÍTICOS - FASE 7
+
+### Pesquisa Pulse - Envio Automático ✅
+- [x] Criar job cron para envio de e-mails a cada 8 horas
+- [x] Implementar lógica de verificação de validade da pesquisa
+- [x] Adicionar controle de e-mails já enviados (evitar duplicação)
+- [x] Permitir envio para todos os funcionários
+- [x] Criar tabela de histórico de envios
+- [x] Testar envio automático
+
+### Cadastro de Funcionários ⏳
+- [ ] Corrigir erro ao criar funcionário
+- [ ] Validar campos obrigatórios
+- [ ] Integrar com departamentos e centros de custos
+- [ ] Adicionar upload de foto
+- [ ] Testar criação, edição e exclusão
+
+### Departamentos e Centros de Custos ✅
+- [x] Criar CRUD completo de Departamentos
+- [x] Criar CRUD completo de Centros de Custos
+- [x] Adicionar página de listagem
+- [x] Adicionar formulário de criação/edição
+- [x] Implementar hierarquia de departamentos
+- [x] Testar todas as operações
+
+### Avaliações Pendentes ⏳
+- [ ] Corrigir erro 404
+- [ ] Criar página de Avaliações Pendentes
+- [ ] Listar avaliações pendentes do usuário
+- [ ] Adicionar filtros e ordenação
+- [ ] Implementar ações (iniciar avaliação)
+
+### Página de Envio de Teste ⏳
+- [ ] Criar página de Envio de Teste
+- [ ] Adicionar formulário de teste de e-mail
+- [ ] Permitir envio para e-mail específico
+- [ ] Mostrar preview do e-mail
+- [ ] Adicionar logs de envio
+
+
+---
+
+## 🚀 SISTEMA ENTERPRISE - FASE 8 (ORACLE HCM INSPIRED)
+
+### Autenticação Admin ⏳
+- [ ] Criar tabela de admin users com senha hash
+- [ ] Implementar login admin separado
+- [ ] Adicionar middleware de verificação admin
+- [ ] Criar página de gestão de usuários admin
+- [ ] Implementar reset de senha admin
+
+### Monitoramento Automático de Produtividade ⏳
+- [ ] Criar sistema de captura de atividades do computador
+- [ ] Implementar registro automático de tarefas
+- [ ] Adicionar tracking de tempo por aplicação
+- [ ] Criar categorização inteligente de atividades
+- [ ] Implementar dashboard de produtividade em tempo real
+- [ ] Adicionar relatórios de uso de tempo
+
+### Sistema Completo de Pesquisas ⏳
+- [ ] Pesquisa de Clima Organizacional
+- [ ] Pesquisa de Engajamento
+- [ ] Pesquisa Pulse (já implementada)
+- [ ] Pesquisa de Satisfação
+- [ ] Pesquisa 360° Feedback
+- [ ] Pesquisa de Onboarding
+- [ ] Pesquisa de Offboarding
+- [ ] Dashboard consolidado de pesquisas
+
+### Sistema de Bônus por Cargo ⏳
+- [ ] Criar tabela de políticas de bônus por cargo
+- [ ] Implementar multiplicadores de salário (ex: 1.5x, 2x, 3x)
+- [ ] Vincular bônus a atingimento de metas
+- [ ] Criar regras de elegibilidade UISA
+- [ ] Implementar cálculo automático de bônus
+- [ ] Adicionar workflow de aprovação de bônus
+- [ ] Criar relatórios de projeção de bônus
+- [ ] Implementar histórico de pagamentos
+
+### Categorias de Metas Enterprise ⏳
+- [ ] Metas de Liderança (gestão de equipe, desenvolvimento de pessoas)
+- [ ] Metas Comportamentais (valores, competências, cultura)
+- [ ] Metas Financeiras (receita, custos, margem, EBITDA)
+- [ ] Metas de Sucessão (preparação de sucessores, pipeline)
+- [ ] Metas Operacionais (produtividade, qualidade, eficiência)
+- [ ] Metas de Inovação (projetos, melhorias, transformação)
+- [ ] Metas de Compliance (regulatórias, auditoria, governança)
+- [ ] Sistema de pesos por categoria
+
+### Melhorias Oracle HCM ⏳
+- [ ] Talent Profile (perfil completo do colaborador)
+- [ ] Career Development (plano de carreira estruturado)
+- [ ] Succession Planning (matriz de sucessão 9-box)
+- [ ] Compensation Management (gestão de remuneração total)
+- [ ] Learning Management (trilhas de aprendizagem)
+- [ ] Performance Analytics (dashboards executivos)
+- [ ] Workforce Planning (planejamento de força de trabalho)
+- [ ] Employee Journey (jornada do colaborador)
