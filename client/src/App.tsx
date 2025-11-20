@@ -49,6 +49,10 @@ import AuditTrail from "./pages/AuditTrail";
 import Analytics from "./pages/Analytics";
 import AnalyticsAvancado from "./pages/AnalyticsAvancado";
 import DescricaoCargos from "./pages/DescricaoCargos";
+import DescricaoCargosUISA from "./pages/DescricaoCargosUISA";
+import CriarDescricaoCargo from "./pages/CriarDescricaoCargo";
+import DetalhesDescricaoCargo from "./pages/DetalhesDescricaoCargo";
+import MinhasAtividades from "./pages/MinhasAtividades";
 import PesquisasPulse from "./pages/PesquisasPulse";
 import ResponderPesquisaPulse from "./pages/ResponderPesquisaPulse";
 import ResultadosPesquisaPulse from "./pages/ResultadosPesquisaPulse";
@@ -153,6 +157,10 @@ function Router() {
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/descricao-cargos" component={DescricaoCargos} />
+      <Route path="/descricao-cargos-uisa" component={DescricaoCargosUISA} />
+      <Route path="/descricao-cargos-uisa/criar" component={CriarDescricaoCargo} />
+      <Route path="/descricao-cargos-uisa/:id" component={DetalhesDescricaoCargo} />
+      <Route path="/minhas-atividades" component={MinhasAtividades} />
       <Route path="/pesquisas-pulse" component={PesquisasPulse} />
       <Route path="/pesquisa/:id" component={ResponderPesquisaPulse} />
       <Route path="/pesquisas-pulse/resultados/:id" component={ResultadosPesquisaPulse} />

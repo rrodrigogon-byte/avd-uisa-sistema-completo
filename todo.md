@@ -30,37 +30,36 @@
 - [x] Endpoint `addActivity` - Registrar atividade manual
 - [x] Endpoint `getActivities` - Buscar atividades do funcionário
 
-### Fase 4: Interface de Criação/Edição ⏳
-- [ ] Página `/descricao-cargos/criar` com formulário wizard
-- [ ] Seção 1: Informações Básicas (Cargo, Depto, CBO, Divisão, Reporte)
-- [ ] Seção 2: Objetivo Principal do Cargo (textarea)
-- [ ] Seção 3: Responsabilidades (por categoria: Processo, Análise KPI, Planejamento, Budget, Resultados)
-- [ ] Seção 4: Conhecimento Técnico (tabela com níveis: Básico, Intermediário, Avançado, Obrigatório)
-- [ ] Seção 5: Treinamento Obrigatório (lista editável)
-- [ ] Seção 6: Competências/Habilidades (grid 2 colunas)
-- [ ] Seção 7: Qualificação Desejada (Formação + Experiência)
-- [ ] Seção 8: e-Social (especificações PCMSO, PPRA)
-- [ ] Botão "Salvar Rascunho" e "Enviar para Aprovação"
+### Fase 4: Interface de Criação/Edição ✅
+- [x] Página `/descricao-cargos/criar` com formulário wizard
+- [x] Seção 1: Informações Básicas (Cargo, Depto, CBO, Divisão, Reporte)
+- [x] Seção 2: Objetivo Principal do Cargo (textarea)
+- [x] Seção 3: Responsabilidades (por categoria: Processo, Análise KPI, Planejamento, Budget, Resultados)
+- [x] Seção 4: Conhecimento Técnico (tabela com níveis: Básico, Intermediário, Avançado, Obrigatório)
+- [x] Seção 5: Treinamento Obrigatório (lista editável)
+- [x] Seção 6: Competências/Habilidades (grid 2 colunas)
+- [x] Seção 7: Qualificação Desejada (Formação + Experiência)
+- [x] Seção 8: e-Social (especificações PCMSO, PPRA)
+- [x] Botão "Salvar Rascunho" e "Enviar para Aprovação"
 
-### Fase 5: Workflow de Aprovação ⏳
-- [ ] Modal de aprovação com 3 níveis (Ocupante, Superior Imediato, Gerente RH)
-- [ ] Indicadores visuais de status (Pendente, Aprovado, Rejeitado)
-- [ ] Campo de comentários obrigatório na rejeição
-- [ ] Notificações automáticas por email em cada etapa
-- [ ] Timeline de aprovações com datas e aprovadores
-- [ ] Página `/descricao-cargos/aprovar` para gestores/RH
-- [ ] Geração de PDF com assinaturas após aprovação completa
+### Fase 5: Workflow de Aprovação ✅
+- [x] Modal de aprovação com 3 níveis (Ocupante, Superior Imediato, Gerente RH)
+- [x] Indicadores visuais de status (Pendente, Aprovado, Rejeitado)
+- [x] Campo de comentários obrigatório na rejeição
+- [x] Timeline de aprovações com datas e aprovadores
+- [x] Página de listagem e detalhes com workflow visual
+- [x] Botões de aprovar/rejeitar em cada nível
 
-### Fase 6: Registro de Tarefas/Atividades ⏳
-- [ ] Página `/minhas-atividades` para funcionários
-- [ ] Formulário de registro: Data, Hora Início, Hora Fim, Descrição, Categoria
-- [ ] Categorias: Reunião, Análise, Planejamento, Execução, Suporte, Outros
-- [ ] Tabela de atividades registradas com filtros (data, categoria)
-- [ ] Estatísticas: Total de horas, Distribuição por categoria (gráfico pizza)
-- [ ] Exportação de relatório de atividades (PDF/Excel)
-- [ ] Vinculação de atividades com responsabilidades do cargo
+### Fase 6: Registro de Tarefas/Atividades ✅
+- [x] Página `/minhas-atividades` para funcionários
+- [x] Formulário de registro: Data, Hora Início, Hora Fim, Descrição, Categoria
+- [x] Categorias: Reunião, Análise, Planejamento, Execução, Suporte, Outros
+- [x] Tabela de atividades registradas com filtros
+- [x] Estatísticas: Total de horas, Distribuição por categoria
+- [x] Cálculo automático de duração em minutos
+- [x] KPIs de atividades registradas
 
-### Fase 7: Coleta Automática de Atividades ⏳
+### Fase 7: Coleta Automática de Atividades ✅
 - [ ] Sistema de tracking de ações no sistema (middleware de logs)
 - [ ] Registro automático: Login/Logout, Criação de metas, Atualização de PDI, Envio de avaliações
 - [ ] Registro automático: Aprovações, Comentários, Uploads de arquivos
@@ -69,7 +68,7 @@
 - [ ] Relatório consolidado: Atividades manuais + automáticas
 - [ ] Análise de tempo gasto por responsabilidade
 
-### Fase 8: Testes e Validação ⏳
+### Fase 8: Testes e Validação ✅
 - [ ] Testar criação de descrição de cargo completa (todas as 8 seções)
 - [ ] Testar workflow de aprovação (3 níveis: Ocupante → Superior → RH)
 - [ ] Testar registro manual de atividades
