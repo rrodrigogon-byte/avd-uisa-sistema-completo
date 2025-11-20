@@ -1753,3 +1753,211 @@ export const pulseSurveyResponses = mysqlTable("pulseSurveyResponses", {
 
 export type PulseSurveyResponse = typeof pulseSurveyResponses.$inferSelect;
 export type InsertPulseSurveyResponse = typeof pulseSurveyResponses.$inferInsert;
+
+
+// ============================================================================
+// DESCRIÇÃO DE CARGOS (JOB DESCRIPTIONS) - TEMPLATE UISA
+// ============================================================================
+
+/**
+ * Descrições de Cargo - Baseado no template oficial UISA
+ * Inclui: Objetivo, Responsabilidades, Conhecimentos, Competências, Qualificações
+ */
+export const jobDescriptions = mysqlTable("jobDescriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Informações Básicas (Cabeçalho)
+  positionId: int("positionId").notNull(), // Vinculação com tabela positions
+  positionTitle: varchar("positionTitle", { length: 255 }).notNull(), // Cargo
+  departmentId: int("departmentId").notNull(),
+  departmentName: varchar("departmentName", { length: 255 }).notNull(), // Depto
+  cbo: varchar("cbo", { length: 50 }), // Código Brasileiro de Ocupações
+  division: varchar("division", { length: 255 }), // Divisão (ex: ADMINISTRATIVA)
+  reportsTo: varchar("reportsTo", { length: 255 }), // Superior Imediato (ex: COORDENADOR PLANEJAMENTO CUSTOS)
+  revision: varchar("revision", { length: 50 }), // Número da revisão
+  
+  // Objetivo Principal do Cargo
+  mainObjective: text("mainObjective").notNull(),
+  
+  // Treinamento Obrigatório
+  mandatoryTraining: json("mandatoryTraining"), // Array de strings
+  
+  // Qualificação Desejada
+  educationLevel: varchar("educationLevel", { length: 255 }), // Ex: Ensino Superior
+  requiredExperience: text("requiredExperience"), // Ex: Desejável de 4 a 6 anos no cargo ou posições similares
+  
+  // e-Social
+  eSocialSpecs: text("eSocialSpecs"), // Especificações do Programa de Medicina e Segurança do Trabalho
+  
+  // Status e Workflow
+  status: mysqlEnum("status", ["draft", "pending_occupant", "pending_manager", "pending_hr", "approved", "rejected"]).default("draft").notNull(),
+  
+  // Auditoria
+  createdById: int("createdById").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  approvedAt: datetime("approvedAt"),
+});
+
+export type JobDescription = typeof jobDescriptions.$inferSelect;
+export type InsertJobDescription = typeof jobDescriptions.$inferInsert;
+
+/**
+ * Responsabilidades do Cargo - Agrupadas por categoria
+ */
+export const jobResponsibilities = mysqlTable("jobResponsibilities", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  
+  // Categoria da responsabilidade
+  category: varchar("category", { length: 100 }).notNull(), // Ex: Processo, Análise KPI, Planejamento, Budget/Capex/Forecast, Resultados
+  
+  // Descrição da responsabilidade
+  description: text("description").notNull(),
+  
+  // Ordem de exibição
+  displayOrder: int("displayOrder").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type JobResponsibility = typeof jobResponsibilities.$inferSelect;
+export type InsertJobResponsibility = typeof jobResponsibilities.$inferInsert;
+
+/**
+ * Conhecimentos Técnicos - Com níveis de proficiência
+ */
+export const jobKnowledge = mysqlTable("jobKnowledge", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  
+  // Nome do conhecimento técnico
+  name: varchar("name", { length: 255 }).notNull(), // Ex: Office, Análise Processos, Processo Produtivo e Transformação Açúcar e Álcool
+  
+  // Nível de proficiência
+  level: mysqlEnum("level", ["basico", "intermediario", "avancado", "obrigatorio"]).notNull(),
+  
+  // Ordem de exibição
+  displayOrder: int("displayOrder").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type JobKnowledge = typeof jobKnowledge.$inferSelect;
+export type InsertJobKnowledge = typeof jobKnowledge.$inferInsert;
+
+/**
+ * Competências e Habilidades - Grid 2 colunas
+ */
+export const jobCompetencies = mysqlTable("jobCompetencies", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  
+  // Nome da competência/habilidade
+  name: varchar("name", { length: 255 }).notNull(), // Ex: Planejamento, Organização e Controle, Comunicação, Análise e Solução de Problemas
+  
+  // Tipo (para organizar em colunas)
+  type: mysqlEnum("type", ["competencia", "habilidade"]).default("competencia").notNull(),
+  
+  // Ordem de exibição
+  displayOrder: int("displayOrder").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type JobCompetency = typeof jobCompetencies.$inferSelect;
+export type InsertJobCompetency = typeof jobCompetencies.$inferInsert;
+
+/**
+ * Aprovações de Descrição de Cargo - Workflow 3 níveis
+ */
+export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  
+  // Nível de aprovação
+  approvalLevel: mysqlEnum("approvalLevel", ["occupant", "manager", "hr"]).notNull(), // Ocupante do Cargo, Superior Imediato, Gerente de RH
+  
+  // Aprovador
+  approverId: int("approverId").notNull(),
+  approverName: varchar("approverName", { length: 255 }).notNull(),
+  
+  // Status da aprovação
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  
+  // Comentários
+  comments: text("comments"),
+  
+  // Datas
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  decidedAt: datetime("decidedAt"),
+});
+
+export type JobDescriptionApproval = typeof jobDescriptionApprovals.$inferSelect;
+export type InsertJobDescriptionApproval = typeof jobDescriptionApprovals.$inferInsert;
+
+// ============================================================================
+// REGISTRO DE ATIVIDADES E TAREFAS
+// ============================================================================
+
+/**
+ * Atividades Manuais - Registradas pelo funcionário
+ */
+export const employeeActivities = mysqlTable("employeeActivities", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamentos
+  employeeId: int("employeeId").notNull(),
+  jobDescriptionId: int("jobDescriptionId"), // Vinculação com descrição de cargo (opcional)
+  responsibilityId: int("responsibilityId"), // Vinculação com responsabilidade específica (opcional)
+  
+  // Informações da atividade
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["reuniao", "analise", "planejamento", "execucao", "suporte", "outros"]).notNull(),
+  
+  // Tempo
+  activityDate: datetime("activityDate").notNull(),
+  startTime: varchar("startTime", { length: 5 }), // HH:MM
+  endTime: varchar("endTime", { length: 5 }), // HH:MM
+  durationMinutes: int("durationMinutes"), // Calculado automaticamente
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmployeeActivity = typeof employeeActivities.$inferSelect;
+export type InsertEmployeeActivity = typeof employeeActivities.$inferInsert;
+
+/**
+ * Logs de Atividades Automáticas - Coletadas pelo sistema
+ */
+export const activityLogs = mysqlTable("activityLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamentos
+  employeeId: int("employeeId").notNull(),
+  userId: int("userId").notNull(),
+  
+  // Tipo de atividade
+  activityType: varchar("activityType", { length: 100 }).notNull(), // Ex: login, logout, create_goal, update_pdi, submit_evaluation
+  
+  // Detalhes da atividade
+  activityDescription: varchar("activityDescription", { length: 500 }),
+  entityType: varchar("entityType", { length: 100 }), // Ex: goal, pdi, evaluation, feedback
+  entityId: int("entityId"), // ID da entidade relacionada
+  
+  // Metadados
+  metadata: json("metadata"), // Dados adicionais (ex: IP, user agent, etc)
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ActivityLog = typeof activityLogs.$inferSelect;
+export type InsertActivityLog = typeof activityLogs.$inferInsert;

@@ -30,6 +30,7 @@ import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./notificationsRouter";
 import { pulseRouter } from "./routers/pulseRouter";
 import { positionsRouter } from "./routers/positionsRouter";
+import { jobDescriptionsRouter } from "./routers/jobDescriptionsRouter";
 import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { eq, and, desc, sql } from "drizzle-orm";
 
@@ -2399,6 +2400,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Descrição de Cargos
   positionsManagement: positionsRouter,
+  
+  // Router de Descrição de Cargos - Template UISA
+  jobDescriptions: jobDescriptionsRouter,
 
   // Router de Emails
   emails: router({
