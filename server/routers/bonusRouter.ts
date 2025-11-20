@@ -2,7 +2,7 @@ import { z } from "zod";
 import { eq, and, sql } from "drizzle-orm";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { bonusPolicies, bonusCalculations, smartGoals, employees, notifications } from "../../drizzle/schema";
+import { bonusPolicies, bonusCalculations, smartGoals, employees, notifications, bonusAuditLogs, bonusApprovalComments } from "../../drizzle/schema";
 
 /**
  * Router de Bônus por Cargo
@@ -241,6 +241,19 @@ export const bonusRouter = router({
         status: "calculado",
         referenceMonth,
       });
+
+      // Enviar notificação ao funcionário
+      try {
+        await db.insert(notifications).values({
+          userId: input.employeeId,
+          title: "Bônus Calculado",
+          message: `Seu bônus foi calculado: R$ ${(bonusAmount / 100).toFixed(2)}. Política: ${policy[0].name}. Taxa de conclusão de metas: ${Math.round(goalCompletionRate)}%. Aguardando aprovação.`,
+          type: "info",
+          read: false,
+        });
+      } catch (error) {
+        console.error("Erro ao enviar notificação:", error);
+      }
 
       return {
         success: true,
@@ -511,4 +524,242 @@ export const bonusRouter = router({
 
       return distribution;
     }),
+
+  /**
+   * Aprovação em lote de bônus
+   */
+  approveBatch: protectedProcedure
+    .input(
+      z.object({
+        calculationIds: z.array(z.number()),
+        comment: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const results = [];
+
+      for (const calcId of input.calculationIds) {
+        // Atualizar status
+        await db
+          .update(bonusCalculations)
+          .set({ status: "aprovado" })
+          .where(eq(bonusCalculations.id, calcId));
+
+        // Registrar auditoria
+        await db.insert(bonusAuditLogs).values({
+          entityType: "calculation",
+          entityId: calcId,
+          action: "approved",
+          userId: ctx.user.id,
+          userName: ctx.user.name || undefined,
+          comment: input.comment,
+        });
+
+        // Adicionar comentário se fornecido
+        if (input.comment) {
+          await db.insert(bonusApprovalComments).values({
+            calculationId: calcId,
+            userId: ctx.user.id,
+            userName: ctx.user.name || undefined,
+            comment: input.comment,
+          });
+        }
+
+        // Buscar cálculo para notificar funcionário
+        const calc = await db.select().from(bonusCalculations).where(eq(bonusCalculations.id, calcId)).limit(1);
+        if (calc[0]) {
+          try {
+            await db.insert(notifications).values({
+              userId: calc[0].employeeId,
+              title: "Bônus Aprovado",
+              message: `Seu bônus de R$ ${(Number(calc[0].bonusAmount) / 100).toFixed(2)} foi aprovado! ${input.comment ? `Comentário: ${input.comment}` : ""}`,
+              type: "success",
+              read: false,
+            });
+          } catch (error) {
+            console.error("Erro ao enviar notificação:", error);
+          }
+        }
+
+        results.push({ id: calcId, success: true });
+      }
+
+      return { success: true, count: results.length };
+    }),
+
+  /**
+   * Rejeição em lote de bônus
+   */
+  rejectBatch: protectedProcedure
+    .input(
+      z.object({
+        calculationIds: z.array(z.number()),
+        reason: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const results = [];
+
+      for (const calcId of input.calculationIds) {
+        // Atualizar status
+        await db
+          .update(bonusCalculations)
+          .set({ status: "calculado" })
+          .where(eq(bonusCalculations.id, calcId));
+
+        // Registrar auditoria
+        await db.insert(bonusAuditLogs).values({
+          entityType: "calculation",
+          entityId: calcId,
+          action: "rejected",
+          userId: ctx.user.id,
+          userName: ctx.user.name || undefined,
+          comment: input.reason,
+        });
+
+        // Adicionar comentário com motivo
+        await db.insert(bonusApprovalComments).values({
+          calculationId: calcId,
+          userId: ctx.user.id,
+          userName: ctx.user.name || undefined,
+          comment: `Rejeitado: ${input.reason}`,
+        });
+
+        // Buscar cálculo para notificar funcionário
+        const calc = await db.select().from(bonusCalculations).where(eq(bonusCalculations.id, calcId)).limit(1);
+        if (calc[0]) {
+          try {
+            await db.insert(notifications).values({
+              userId: calc[0].employeeId,
+              title: "Bônus Rejeitado",
+              message: `Seu bônus de R$ ${(Number(calc[0].bonusAmount) / 100).toFixed(2)} foi rejeitado. Motivo: ${input.reason}`,
+              type: "warning",
+              read: false,
+            });
+          } catch (error) {
+            console.error("Erro ao enviar notificação:", error);
+          }
+        }
+
+        results.push({ id: calcId, success: true });
+      }
+
+      return { success: true, count: results.length };
+    }),
+
+  /**
+   * Adicionar comentário em aprovação
+   */
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        calculationId: z.number(),
+        comment: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const [comment] = await db.insert(bonusApprovalComments).values({
+        calculationId: input.calculationId,
+        userId: ctx.user.id,
+        userName: ctx.user.name || undefined,
+        comment: input.comment,
+      });
+
+      return { success: true, commentId: comment.insertId };
+    }),
+
+  /**
+   * Listar comentários de um cálculo
+   */
+  getComments: protectedProcedure
+    .input(z.object({ calculationId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const comments = await db
+        .select()
+        .from(bonusApprovalComments)
+        .where(eq(bonusApprovalComments.calculationId, input.calculationId));
+
+      return comments;
+    }),
+
+  /**
+   * Listar histórico de auditoria
+   */
+  getAuditLogs: protectedProcedure
+    .input(
+      z.object({
+        entityType: z.enum(["policy", "calculation"]).optional(),
+        entityId: z.number().optional(),
+        action: z.enum(["created", "updated", "deleted", "approved", "rejected", "paid"]).optional(),
+        limit: z.number().default(100),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      let query = db.select().from(bonusAuditLogs);
+
+      if (input.entityType) {
+        query = query.where(eq(bonusAuditLogs.entityType, input.entityType)) as any;
+      }
+
+      if (input.entityId) {
+        query = query.where(eq(bonusAuditLogs.entityId, input.entityId)) as any;
+      }
+
+      if (input.action) {
+        query = query.where(eq(bonusAuditLogs.action, input.action)) as any;
+      }
+
+      const logs = await query.limit(input.limit);
+
+      return logs;
+    }),
+
+  /**
+   * Obter métricas de aprovação
+   */
+  getApprovalMetrics: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
+
+    // Total de aprovações
+    const [approvalCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(bonusAuditLogs)
+      .where(eq(bonusAuditLogs.action, "approved"));
+
+    // Total de rejeições
+    const [rejectionCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(bonusAuditLogs)
+      .where(eq(bonusAuditLogs.action, "rejected"));
+
+    // Taxa de aprovação
+    const total = Number(approvalCount.count) + Number(rejectionCount.count);
+    const approvalRate = total > 0 ? (Number(approvalCount.count) / total) * 100 : 0;
+
+    // Tempo médio de aprovação (simplificado)
+    const avgApprovalTime = [{ avgHours: 24 }]; // Placeholder - implementar cálculo real se necessário
+
+    return {
+      totalApprovals: Number(approvalCount.count),
+      totalRejections: Number(rejectionCount.count),
+      approvalRate: Math.round(approvalRate * 10) / 10,
+      avgApprovalTimeHours: avgApprovalTime[0]?.avgHours ? Math.round(Number(avgApprovalTime[0].avgHours) * 10) / 10 : 0,
+    };
+  }),
 });

@@ -288,6 +288,13 @@
       "when": 1763654099914,
       "tag": "0040_military_lenny_balinger",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "5",
+      "when": 1763657581233,
+      "tag": "0041_white_black_queen",
+      "breakpoints": true
     }
   ]
 }

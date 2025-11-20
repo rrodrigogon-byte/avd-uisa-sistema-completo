@@ -132,6 +132,37 @@ export const bonusCalculations = mysqlTable("bonusCalculations", {
 export type BonusCalculation = typeof bonusCalculations.$inferSelect;
 export type InsertBonusCalculation = typeof bonusCalculations.$inferInsert;
 
+// Tabela de Auditoria de Bônus
+export const bonusAuditLogs = mysqlTable("bonusAuditLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  entityType: mysqlEnum("entityType", ["policy", "calculation"]).notNull(),
+  entityId: int("entityId").notNull(),
+  action: mysqlEnum("action", ["created", "updated", "deleted", "approved", "rejected", "paid"]).notNull(),
+  userId: int("userId").notNull(),
+  userName: varchar("userName", { length: 200 }),
+  fieldName: varchar("fieldName", { length: 100 }),
+  oldValue: text("oldValue"),
+  newValue: text("newValue"),
+  comment: text("comment"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type BonusAuditLog = typeof bonusAuditLogs.$inferSelect;
+export type InsertBonusAuditLog = typeof bonusAuditLogs.$inferInsert;
+
+// Tabela de Comentários em Aprovações de Bônus
+export const bonusApprovalComments = mysqlTable("bonusApprovalComments", {
+  id: int("id").autoincrement().primaryKey(),
+  calculationId: int("calculationId").notNull(),
+  userId: int("userId").notNull(),
+  userName: varchar("userName", { length: 200 }),
+  comment: text("comment").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type BonusApprovalComment = typeof bonusApprovalComments.$inferSelect;
+export type InsertBonusApprovalComment = typeof bonusApprovalComments.$inferInsert;
+
 export const passwordResetTokens = mysqlTable("passwordResetTokens", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),

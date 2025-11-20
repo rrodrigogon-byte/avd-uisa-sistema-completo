@@ -274,3 +274,43 @@
 - [x] Adicionar tooltips informativos nos gráficos
 - [x] Melhorar responsividade dos gráficos
 - [x] Adicionar menu lateral com submenu de Bônus
+
+
+## 🚀 NOVA SESSÃO - MELHORIAS DE GESTÃO E AUDITORIA DE BÔNUS
+
+### Melhoria 1: Notificações Automáticas de Bônus
+- [x] Criar endpoint para envio de notificações de bônus (usa tabela notifications existente)
+- [x] Implementar templates de mensagem para cada status
+- [x] Adicionar trigger automático ao calcular bônus
+- [x] Adicionar trigger ao aprovar bônus
+- [x] Adicionar trigger ao rejeitar bônus
+- [x] Incluir resumo personalizado na notificação
+- [x] Integrado com sistema de notificações existente
+
+### Melhoria 2: Dashboard de Aprovação em Lote
+- [x] Criar nova página /aprovacoes/bonus-lote
+- [x] Implementar seleção múltipla de bônus
+- [x] Adicionar filtros (departamento, período, faixa de valor)
+- [x] Criar endpoint backend para aprovação em lote (approveBatch, rejectBatch)
+- [x] Implementar rejeição em lote com motivo
+- [x] Adicionar confirmação antes de aprovar/rejeitar
+- [x] Adicionar rota no App.tsx
+- [x] Atualizar menu lateral
+
+### Melhoria 3: Histórico de Ajustes e Auditoria
+- [x] Criar tabela bonus_audit_logs no schema
+- [x] Implementar triggers de auditoria em políticas (via approveBatch/rejectBatch)
+- [x] Implementar triggers de auditoria em cálculos (via approveBatch/rejectBatch)
+- [x] Criar endpoint para listar histórico (getAuditLogs, getApprovalMetrics)
+- [x] Criar página /bonus/auditoria
+- [x] Mostrar quem alterou, quando e valores antes/depois
+- [x] Adicionar filtros no histórico
+- [x] Implementar exportação do histórico (Excel)
+
+### Melhorias Extras
+- [x] Sistema de comentários em aprovações (addComment, getComments)
+- [x] Exportação de histórico para Excel
+- [x] Dashboard de métricas de aprovação (getApprovalMetrics)
+- [x] Filtros avançados no histórico
+- [x] Indicadores de tempo médio de aprovação
+- [x] Taxa de aprovação vs rejeição

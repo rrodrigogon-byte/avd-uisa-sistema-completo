@@ -139,6 +139,8 @@ const menuItems = [
     children: [
       { icon: DollarSign, label: "Políticas", path: "/bonus" },
       { icon: TrendingUp, label: "Previsão", path: "/previsao-bonus" },
+      { icon: CheckSquare, label: "Aprovação em Lote", path: "/aprovacoes/bonus-lote" },
+      { icon: FileSearch, label: "Auditoria", path: "/bonus/auditoria" },
       { icon: FileText, label: "Relatórios", path: "/relatorios/bonus" },
     ],
   },
