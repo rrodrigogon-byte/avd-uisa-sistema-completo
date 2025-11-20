@@ -1961,3 +1961,6 @@ export const activityLogs = mysqlTable("activityLogs", {
 
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = typeof activityLogs.$inferInsert;
+
+// Re-export from schema-alerts.ts
+export * from "./schema-alerts";

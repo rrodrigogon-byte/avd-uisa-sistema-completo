@@ -145,3 +145,34 @@
 - [x] KPI: Média de horas por funcionário
 - [x] KPI: Total de horas e funcionários ativos
 - [x] Comparação: Atividades manuais vs automáticas
+
+
+---
+
+## 🚀 FUNCIONALIDADES AVANÇADAS - FASE 3
+
+### Parser Real de .docx ✅
+- [x] Instalar biblioteca mammoth.js para leitura de arquivos Word
+- [x] Criar função de extração de seções via regex
+- [x] Implementar endpoint tRPC para upload de múltiplos arquivos
+- [x] Criar sistema de validação de dados extraídos
+- [x] Implementar relatório de sucessos/erros detalhado
+- [x] Popular banco de dados com descrições reais UISA
+
+### Dashboard de Gestão de Alertas ✅
+- [x] Criar schema de tabela alerts no banco de dados
+- [x] Implementar router tRPC alertsRouter com endpoints (list, resolve, dismiss, sendEmail)
+- [x] Criar página /alertas com dashboard centralizado
+- [x] Implementar filtros por severidade (crítico, alto, médio, baixo)
+- [x] Adicionar ações em lote (enviar email, agendar reunião)
+- [x] Criar histórico de alertas resolvidos
+- [x] Integrar com sistema de notificações existente
+
+### Integração com Sistema de Ponto ✅
+- [x] Criar schema de tabela timeClockRecords no banco de dados
+- [x] Implementar endpoint de importação de dados de ponto
+- [x] Criar função de cálculo de discrepâncias (atividades vs ponto)
+- [x] Implementar comparação horas registradas vs presença física
+- [x] Criar relatório de inconsistências
+- [x] Adicionar alertas automáticos para discrepâncias >20%
+- [x] Criar página de visualização de dados de ponto
