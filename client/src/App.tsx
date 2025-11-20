@@ -2,7 +2,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import Alertas from "@/pages/Alertas";
-import Discrepancias from "@/pages/Discrepancias";
+import Discrepancias from "./pages/Discrepancias";
+import Departamentos from "./pages/Departamentos";
+import CentrosCustos from "./pages/CentrosCustos";
+import SucessaoInteligente from "./pages/SucessaoInteligente";
 import ImportacaoPonto from "@/pages/ImportacaoPonto";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -22,8 +25,6 @@ import Perfil from "./pages/Perfil";
 import History from "./pages/History";
 import Funcionarios from "./pages/Funcionarios";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
-import Departamentos from "./pages/Departamentos";
-import CentrosCusto from "./pages/CentrosCusto";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
 import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
 import Bonus from "./pages/aprovacoes/Bonus";
@@ -133,7 +134,7 @@ function Router() {
       <Route path="/funcionarios" component={Funcionarios} />
       <Route path="/funcionarios-ativos" component={FuncionariosAtivos} />
       <Route path="/departamentos" component={Departamentos} />
-      <Route path="/centros-custo" component={CentrosCusto} />
+      <Route path="/centros-custo" component={CentrosCustos} />
       <Route path="/aprovacoes/dashboard" component={AprovacoesD} />
       <Route path="/aprovacoes/solicitacoes" component={MinhasSolicitacoes} />      <Route path={"/aprovacoes/bonus"} component={Bonus} />
       <Route path="/aprovacoes/metas" component={AprovarMetas} />
@@ -171,6 +172,9 @@ function Router() {
       <Route path="/relatorios-produtividade" component={RelatoriosProdutividade} />
       <Route path="/alertas" component={Alertas} />
       <Route path="/discrepancias" component={Discrepancias} />
+      <Route path="/departamentos" component={Departamentos} />
+      <Route path="/centros-custos" component={CentrosCustos} />
+      <Route path="/sucessao-inteligente" component={SucessaoInteligente} />
       <Route path="/importacao-ponto" component={ImportacaoPonto} />
       <Route path="/validacao-lider" component={ValidacaoLider} />
       <Route path="/analise-gaps" component={AnaliseGaps} />

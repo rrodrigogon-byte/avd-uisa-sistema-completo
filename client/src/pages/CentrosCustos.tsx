@@ -14,6 +14,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -24,95 +31,109 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Building2, Plus, Pencil, Trash2, Search } from "lucide-react";
+import { DollarSign, Plus, Pencil, Trash2, Search, Filter } from "lucide-react";
 
-interface Department {
+interface CostCenter {
   id: number;
   code: string;
   name: string;
   description: string | null;
-  managerId: number | null;
-  parentId: number | null;
+  departmentId: number | null;
+  departmentName: string | null;
+  budget: string | null;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export default function Departamentos() {
+export default function CentrosCustos() {
   const [search, setSearch] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState<number | undefined>(undefined);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
+  const [editingCostCenter, setEditingCostCenter] = useState<CostCenter | null>(null);
   const [formData, setFormData] = useState({
     code: "",
     name: "",
     description: "",
+    departmentId: undefined as number | undefined,
+    budget: "",
     active: true,
   });
 
   const utils = trpc.useUtils();
-  const { data: departments, isLoading } = trpc.organization.departments.list.useQuery({ search });
+  const { data: costCenters, isLoading } = trpc.organization.costCenters.list.useQuery({
+    search,
+    departmentId: departmentFilter,
+  });
+  const { data: departments } = trpc.organization.departments.list.useQuery({});
 
-  const createMutation = trpc.organization.departments.create.useMutation({
+  const createMutation = trpc.organization.costCenters.create.useMutation({
     onSuccess: () => {
-      toast.success("Departamento criado com sucesso!");
-      utils.organization.departments.list.invalidate();
+      toast.success("Centro de custos criado com sucesso!");
+      utils.organization.costCenters.list.invalidate();
       closeDialog();
     },
     onError: (error) => {
-      toast.error(`Erro ao criar departamento: ${error.message}`);
+      toast.error(`Erro ao criar centro de custos: ${error.message}`);
     },
   });
 
-  const updateMutation = trpc.organization.departments.update.useMutation({
+  const updateMutation = trpc.organization.costCenters.update.useMutation({
     onSuccess: () => {
-      toast.success("Departamento atualizado com sucesso!");
-      utils.organization.departments.list.invalidate();
+      toast.success("Centro de custos atualizado com sucesso!");
+      utils.organization.costCenters.list.invalidate();
       closeDialog();
     },
     onError: (error) => {
-      toast.error(`Erro ao atualizar departamento: ${error.message}`);
+      toast.error(`Erro ao atualizar centro de custos: ${error.message}`);
     },
   });
 
-  const deleteMutation = trpc.organization.departments.delete.useMutation({
+  const deleteMutation = trpc.organization.costCenters.delete.useMutation({
     onSuccess: () => {
-      toast.success("Departamento excluído com sucesso!");
-      utils.organization.departments.list.invalidate();
+      toast.success("Centro de custos excluído com sucesso!");
+      utils.organization.costCenters.list.invalidate();
     },
     onError: (error) => {
-      toast.error(`Erro ao excluir departamento: ${error.message}`);
+      toast.error(`Erro ao excluir centro de custos: ${error.message}`);
     },
   });
 
   const openCreateDialog = () => {
-    setEditingDepartment(null);
+    setEditingCostCenter(null);
     setFormData({
       code: "",
       name: "",
       description: "",
+      departmentId: undefined,
+      budget: "",
       active: true,
     });
     setIsDialogOpen(true);
   };
 
-  const openEditDialog = (department: Department) => {
-    setEditingDepartment(department);
+  const openEditDialog = (costCenter: CostCenter) => {
+    setEditingCostCenter(costCenter);
     setFormData({
-      code: department.code,
-      name: department.name,
-      description: department.description || "",
-      active: department.active,
+      code: costCenter.code,
+      name: costCenter.name,
+      description: costCenter.description || "",
+      departmentId: costCenter.departmentId || undefined,
+      budget: costCenter.budget || "",
+      active: costCenter.active,
     });
     setIsDialogOpen(true);
   };
 
   const closeDialog = () => {
     setIsDialogOpen(false);
-    setEditingDepartment(null);
+    setEditingCostCenter(null);
     setFormData({
       code: "",
       name: "",
       description: "",
+      departmentId: undefined,
+      budget: "",
       active: true,
     });
   };
@@ -120,20 +141,35 @@ export default function Departamentos() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (editingDepartment) {
+    const budgetNumber = formData.budget ? parseFloat(formData.budget) : undefined;
+
+    if (editingCostCenter) {
       updateMutation.mutate({
-        id: editingDepartment.id,
+        id: editingCostCenter.id,
         ...formData,
+        budget: budgetNumber,
       });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate({
+        ...formData,
+        budget: budgetNumber,
+      });
     }
   };
 
   const handleDelete = (id: number) => {
-    if (confirm("Tem certeza que deseja excluir este departamento?")) {
+    if (confirm("Tem certeza que deseja excluir este centro de custos?")) {
       deleteMutation.mutate({ id });
     }
+  };
+
+  const formatCurrency = (value: string | null) => {
+    if (!value) return "-";
+    const num = parseFloat(value);
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(num);
   };
 
   return (
@@ -142,29 +178,29 @@ export default function Departamentos() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Building2 className="h-8 w-8" />
-              Departamentos
+              <DollarSign className="h-8 w-8" />
+              Centros de Custos
             </h1>
             <p className="text-muted-foreground mt-1">
-              Gerencie a estrutura organizacional da empresa
+              Gerencie os centros de custos da organização
             </p>
           </div>
           <Button onClick={openCreateDialog}>
             <Plus className="h-4 w-4 mr-2" />
-            Novo Departamento
+            Novo Centro de Custos
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Departamentos Cadastrados</CardTitle>
+            <CardTitle>Centros de Custos Cadastrados</CardTitle>
             <CardDescription>
-              Lista de todos os departamentos da organização
+              Lista de todos os centros de custos
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="mb-4">
-              <div className="relative">
+            <div className="mb-4 flex gap-4">
+              <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Buscar por nome ou código..."
@@ -173,15 +209,34 @@ export default function Departamentos() {
                   className="pl-10"
                 />
               </div>
+              <Select
+                value={departmentFilter?.toString() || "all"}
+                onValueChange={(value) =>
+                  setDepartmentFilter(value === "all" ? undefined : parseInt(value))
+                }
+              >
+                <SelectTrigger className="w-[250px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filtrar por departamento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os departamentos</SelectItem>
+                  {departments?.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id.toString()}>
+                      {dept.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {isLoading ? (
               <div className="text-center py-8 text-muted-foreground">
-                Carregando departamentos...
+                Carregando centros de custos...
               </div>
-            ) : !departments || departments.length === 0 ? (
+            ) : !costCenters || costCenters.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                Nenhum departamento encontrado
+                Nenhum centro de custos encontrado
               </div>
             ) : (
               <Table>
@@ -189,21 +244,23 @@ export default function Departamentos() {
                   <TableRow>
                     <TableHead>Código</TableHead>
                     <TableHead>Nome</TableHead>
-                    <TableHead>Descrição</TableHead>
+                    <TableHead>Departamento</TableHead>
+                    <TableHead>Orçamento</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {departments.map((dept) => (
-                    <TableRow key={dept.id}>
-                      <TableCell className="font-mono">{dept.code}</TableCell>
-                      <TableCell className="font-medium">{dept.name}</TableCell>
+                  {costCenters.map((cc) => (
+                    <TableRow key={cc.id}>
+                      <TableCell className="font-mono">{cc.code}</TableCell>
+                      <TableCell className="font-medium">{cc.name}</TableCell>
                       <TableCell className="text-muted-foreground">
-                        {dept.description || "-"}
+                        {cc.departmentName || "-"}
                       </TableCell>
+                      <TableCell>{formatCurrency(cc.budget)}</TableCell>
                       <TableCell>
-                        {dept.active ? (
+                        {cc.active ? (
                           <Badge variant="default">Ativo</Badge>
                         ) : (
                           <Badge variant="secondary">Inativo</Badge>
@@ -214,14 +271,14 @@ export default function Departamentos() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => openEditDialog(dept)}
+                            onClick={() => openEditDialog(cc)}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDelete(dept.id)}
+                            onClick={() => handleDelete(cc.id)}
                           >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
@@ -239,12 +296,12 @@ export default function Departamentos() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingDepartment ? "Editar Departamento" : "Novo Departamento"}
+                {editingCostCenter ? "Editar Centro de Custos" : "Novo Centro de Custos"}
               </DialogTitle>
               <DialogDescription>
-                {editingDepartment
-                  ? "Atualize as informações do departamento"
-                  : "Preencha os dados do novo departamento"}
+                {editingCostCenter
+                  ? "Atualize as informações do centro de custos"
+                  : "Preencha os dados do novo centro de custos"}
               </DialogDescription>
             </DialogHeader>
 
@@ -256,7 +313,7 @@ export default function Departamentos() {
                     id="code"
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                    placeholder="Ex: TI, RH, FIN"
+                    placeholder="Ex: CC001, CC-TI-01"
                     required
                   />
                 </div>
@@ -267,8 +324,41 @@ export default function Departamentos() {
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ex: Tecnologia da Informação"
+                    placeholder="Ex: Infraestrutura TI"
                     required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="department">Departamento</Label>
+                  <Select
+                    value={formData.departmentId?.toString() || ""}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, departmentId: value ? parseInt(value) : undefined })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um departamento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments?.map((dept) => (
+                        <SelectItem key={dept.id} value={dept.id.toString()}>
+                          {dept.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="budget">Orçamento (R$)</Label>
+                  <Input
+                    id="budget"
+                    type="number"
+                    step="0.01"
+                    value={formData.budget}
+                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                    placeholder="0.00"
                   />
                 </div>
 
@@ -278,7 +368,7 @@ export default function Departamentos() {
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Descreva as responsabilidades do departamento"
+                    placeholder="Descreva o propósito deste centro de custos"
                     rows={3}
                   />
                 </div>
@@ -291,7 +381,7 @@ export default function Departamentos() {
                     onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                     className="h-4 w-4"
                   />
-                  <Label htmlFor="active">Departamento ativo</Label>
+                  <Label htmlFor="active">Centro de custos ativo</Label>
                 </div>
               </div>
 
@@ -303,7 +393,7 @@ export default function Departamentos() {
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                 >
-                  {editingDepartment ? "Atualizar" : "Criar"}
+                  {editingCostCenter ? "Atualizar" : "Criar"}
                 </Button>
               </DialogFooter>
             </form>

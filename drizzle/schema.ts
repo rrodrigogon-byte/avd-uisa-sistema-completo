@@ -60,6 +60,77 @@ export const adminUsers = mysqlTable("adminUsers", {
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type InsertAdminUser = typeof adminUsers.$inferInsert;
 
+// ============================================================================
+// TABELAS DE BÔNUS POR CARGO
+// ============================================================================
+
+export const bonusPolicies = mysqlTable("bonusPolicies", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  positionId: int("positionId"), // Cargo específico ou null para todos
+  departmentId: int("departmentId"), // Departamento específico ou null
+  
+  // Multiplicadores
+  salaryMultiplier: decimal("salaryMultiplier", { precision: 5, scale: 2 }).notNull(), // Ex: 1.5 = 150% do salário
+  minMultiplier: decimal("minMultiplier", { precision: 5, scale: 2 }).default("0.5"), // Mínimo
+  maxMultiplier: decimal("maxMultiplier", { precision: 5, scale: 2 }).default("2.0"), // Máximo
+  
+  // Critérios de Elegibilidade
+  minPerformanceRating: mysqlEnum("minPerformanceRating", ["abaixo_expectativas", "atende_expectativas", "supera_expectativas", "excepcional"]).default("atende_expectativas"),
+  minTenureMonths: int("minTenureMonths").default(6), // Mínimo de meses na empresa
+  requiresGoalCompletion: boolean("requiresGoalCompletion").default(true),
+  minGoalCompletionRate: int("minGoalCompletionRate").default(70), // % mínimo de metas atingidas
+  
+  // Período de Vigência
+  validFrom: datetime("validFrom").notNull(),
+  validUntil: datetime("validUntil"),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  approvalStatus: mysqlEnum("approvalStatus", ["pendente", "aprovado", "rejeitado"]).default("pendente").notNull(),
+  approvedBy: int("approvedBy"), // ID do aprovador
+  approvedAt: datetime("approvedAt"),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: datetime("createdAt").default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: datetime("updatedAt").default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export type BonusPolicy = typeof bonusPolicies.$inferSelect;
+export type InsertBonusPolicy = typeof bonusPolicies.$inferInsert;
+
+// Tabela de Cálculos de Bônus
+export const bonusCalculations = mysqlTable("bonusCalculations", {
+  id: int("id").autoincrement().primaryKey(),
+  policyId: int("policyId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Valores Calculados
+  baseSalary: decimal("baseSalary", { precision: 10, scale: 2 }).notNull(),
+  appliedMultiplier: decimal("appliedMultiplier", { precision: 5, scale: 2 }).notNull(),
+  bonusAmount: decimal("bonusAmount", { precision: 10, scale: 2 }).notNull(),
+  
+  // Justificativa
+  performanceScore: int("performanceScore"), // 0-100
+  goalCompletionRate: int("goalCompletionRate"), // 0-100
+  adjustmentReason: text("adjustmentReason"),
+  
+  // Status
+  status: mysqlEnum("status", ["calculado", "aprovado", "pago", "cancelado"]).default("calculado").notNull(),
+  approvedBy: int("approvedBy"),
+  approvedAt: datetime("approvedAt"),
+  paidAt: datetime("paidAt"),
+  
+  // Metadados
+  calculatedAt: datetime("calculatedAt").default(sql`CURRENT_TIMESTAMP`).notNull(),
+  referenceMonth: varchar("referenceMonth", { length: 7 }).notNull(), // YYYY-MM
+});
+
+export type BonusCalculation = typeof bonusCalculations.$inferSelect;
+export type InsertBonusCalculation = typeof bonusCalculations.$inferInsert;
+
 export const passwordResetTokens = mysqlTable("passwordResetTokens", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
