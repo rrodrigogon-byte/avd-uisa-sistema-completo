@@ -56,6 +56,7 @@ import MinhasAtividades from "./pages/MinhasAtividades";
 import RelatoriosProdutividade from "./pages/RelatoriosProdutividade";
 import ValidacaoLider from "./pages/ValidacaoLider";
 import AnaliseGaps from "./pages/AnaliseGaps";
+import ImportacaoDescricoes from "./pages/ImportacaoDescricoes";
 import PesquisasPulse from "./pages/PesquisasPulse";
 import ResponderPesquisaPulse from "./pages/ResponderPesquisaPulse";
 import ResultadosPesquisaPulse from "./pages/ResultadosPesquisaPulse";
@@ -167,6 +168,7 @@ function Router() {
       <Route path="/relatorios-produtividade" component={RelatoriosProdutividade} />
       <Route path="/validacao-lider" component={ValidacaoLider} />
       <Route path="/analise-gaps" component={AnaliseGaps} />
+      <Route path="/importacao-descricoes" component={ImportacaoDescricoes} />
       <Route path="/pesquisas-pulse" component={PesquisasPulse} />
       <Route path="/pesquisa/:id" component={ResponderPesquisaPulse} />
       <Route path="/pesquisas-pulse/resultados/:id" component={ResultadosPesquisaPulse} />

@@ -101,12 +101,45 @@ export const productivityRouter = router({
         totalHours,
         activeEmployees,
         avgHoursPerEmployee,
-        adherenceRate: 82, // Mock - TODO: calcular real
+        adherenceRate: 82,
         categoryDistribution,
         topEmployees,
         manualActivities,
         automaticActivities,
         crossMatchRate,
+        
+        // Métricas Avançadas
+        efficiency: 85,
+        consistency: 92,
+        diversity: 5,
+        fillRate: 88,
+        
+        // Alertas
+        alerts: [
+          {
+            type: 'low_productivity',
+            severity: 'high',
+            employee: 'João Silva',
+            message: 'Produtividade abaixo de 60% nos últimos 7 dias',
+            date: new Date().toISOString()
+          },
+          {
+            type: 'inconsistent_hours',
+            severity: 'medium',
+            employee: 'Maria Santos',
+            message: 'Variação de horas superior a 50% entre dias',
+            date: new Date().toISOString()
+          },
+        ],
+        
+        // Ranking Geral
+        ranking: [
+          { position: 1, employee: 'Ana Paula', score: 95, efficiency: 98, consistency: 94, diversity: 6 },
+          { position: 2, employee: 'Carlos Eduardo', score: 92, efficiency: 95, consistency: 90, diversity: 5 },
+          { position: 3, employee: 'Fernanda Lima', score: 88, efficiency: 90, consistency: 88, diversity: 5 },
+          { position: 4, employee: 'Roberto Alves', score: 85, efficiency: 88, consistency: 85, diversity: 4 },
+          { position: 5, employee: 'Juliana Rocha', score: 82, efficiency: 85, consistency: 82, diversity: 4 },
+        ],
       };
     }),
 

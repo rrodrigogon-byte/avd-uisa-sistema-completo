@@ -33,6 +33,7 @@ import { positionsRouter } from "./routers/positionsRouter";
 import { jobDescriptionsRouter } from "./routers/jobDescriptionsRouter";
 import { jobDescriptionsPDFRouter } from "./routers/jobDescriptionsPDF";
 import { productivityRouter } from "./routers/productivityRouter";
+import { importRouter } from "./routers/importRouter";
 import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { eq, and, desc, sql } from "drizzle-orm";
 
@@ -2407,6 +2408,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   jobDescriptions: jobDescriptionsRouter,
   jobDescriptionsPDF: jobDescriptionsPDFRouter,
   productivity: productivityRouter,
+  import: importRouter,
 
   // Router de Emails
   emails: router({

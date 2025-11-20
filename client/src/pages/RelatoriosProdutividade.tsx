@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,6 +19,8 @@ import { Badge } from "@/components/ui/badge";
 export default function RelatoriosProdutividade() {
   const [period, setPeriod] = useState("30");
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [employeeSearch, setEmployeeSearch] = useState("");
+  const [productivityFilter, setProductivityFilter] = useState("all");
 
   const { data: productivityData } = trpc.productivity.getReport.useQuery({
     days: parseInt(period),
@@ -60,7 +63,7 @@ export default function RelatoriosProdutividade() {
         {/* Filtros */}
         <Card className="mb-8">
           <CardContent className="pt-6">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Período</label>
                 <Select value={period} onValueChange={setPeriod}>
@@ -88,6 +91,28 @@ export default function RelatoriosProdutividade() {
                         {dept.name}
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Buscar Funcionário</label>
+                <Input
+                  placeholder="Digite nome ou chapa..."
+                  value={employeeSearch}
+                  onChange={(e) => setEmployeeSearch(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Produtividade</label>
+                <Select value={productivityFilter} onValueChange={setProductivityFilter}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem value="high">Alta (&gt;80%)</SelectItem>
+                    <SelectItem value="medium">Média (60-80%)</SelectItem>
+                    <SelectItem value="low">Baixa (&lt;60%)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -242,6 +267,147 @@ export default function RelatoriosProdutividade() {
                 )}
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+
+        {/* Métricas Avançadas */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Métricas Avançadas de Produtividade</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-blue-600 mb-2">
+                  {productivityData?.efficiency || 0}%
+                </div>
+                <div className="text-sm font-medium mb-1">Eficiência</div>
+                <div className="text-xs text-muted-foreground">
+                  Horas trabalhadas / esperadas
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-green-600 mb-2">
+                  {productivityData?.consistency || 0}%
+                </div>
+                <div className="text-sm font-medium mb-1">Consistência</div>
+                <div className="text-xs text-muted-foreground">
+                  Regularidade dia a dia
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-purple-600 mb-2">
+                  {productivityData?.diversity || 0}
+                </div>
+                <div className="text-sm font-medium mb-1">Diversidade</div>
+                <div className="text-xs text-muted-foreground">
+                  Categorias diferentes
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-orange-600 mb-2">
+                  {productivityData?.fillRate || 0}%
+                </div>
+                <div className="text-sm font-medium mb-1">Taxa de Preenchimento</div>
+                <div className="text-xs text-muted-foreground">
+                  Dias com atividades
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Ranking Geral */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Ranking Geral de Produtividade</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Posição</TableHead>
+                  <TableHead>Funcionário</TableHead>
+                  <TableHead>Score</TableHead>
+                  <TableHead>Eficiência</TableHead>
+                  <TableHead>Consistência</TableHead>
+                  <TableHead>Diversidade</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {productivityData?.ranking?.map((item: any) => (
+                  <TableRow key={item.position}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {item.position <= 3 && (
+                          <span className="text-2xl">
+                            {item.position === 1 ? "🥇" : item.position === 2 ? "🥈" : "🥉"}
+                          </span>
+                        )}
+                        {item.position > 3 && <span className="font-bold">#{item.position}</span>}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{item.employee}</TableCell>
+                    <TableCell>
+                      <Badge variant="default">{item.score}</Badge>
+                    </TableCell>
+                    <TableCell>{item.efficiency}%</TableCell>
+                    <TableCell>{item.consistency}%</TableCell>
+                    <TableCell>{item.diversity}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        {/* Alertas de Baixa Produtividade */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-orange-600">⚠️</span>
+              Alertas de Produtividade
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {productivityData?.alerts?.map((alert: any, index: number) => (
+                <div
+                  key={index}
+                  className={`p-4 border-l-4 rounded ${
+                    alert.severity === 'high'
+                      ? 'border-red-500 bg-red-50 dark:bg-red-950'
+                      : alert.severity === 'medium'
+                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-950'
+                      : 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-medium">{alert.employee}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{alert.message}</div>
+                    </div>
+                    <Badge
+                      variant={
+                        alert.severity === 'high'
+                          ? 'destructive'
+                          : alert.severity === 'medium'
+                          ? 'default'
+                          : 'secondary'
+                      }
+                    >
+                      {alert.severity === 'high' ? 'Alta' : alert.severity === 'medium' ? 'Média' : 'Baixa'}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+              {(!productivityData?.alerts || productivityData.alerts.length === 0) && (
+                <div className="text-center py-8 text-green-600">
+                  <span className="text-4xl">✓</span>
+                  <p className="mt-2 font-medium">Nenhum alerta de produtividade</p>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
