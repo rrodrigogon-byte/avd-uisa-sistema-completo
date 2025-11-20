@@ -142,3 +142,32 @@
 - [x] Documentar fontes de dados (metas, 360°, competências)
 - [x] Criar diagrama de fluxo de dados
 - [x] Gerar documento SISTEMA-COLETA-PERFORMANCE.md (15+ páginas)
+
+
+## 🔧 SESSÃO ATUAL - IMPLEMENTAÇÕES AVANÇADAS
+
+### Correções de Código (Arquivos Anexos)
+- [ ] Aplicar correções do pasted_content_3.txt
+- [ ] Aplicar correções do pasted_content_4.txt
+- [ ] Validar correções aplicadas
+
+### Parser de Descrições UISA
+- [x] Criar script de parser de arquivos .docx (parse-uisa-job-descriptions.mjs)
+- [x] Implementar extração de dados estruturados (mammoth + regex)
+- [x] Criar endpoint de importação em massa (uisaImportRouter)
+- [x] Processar 481 arquivos extraídos (3.7 MB JSON gerado)
+- [x] Gerar relatório de importação (stats por departamento e nível)
+
+### Página de Aprovação em Cadeia
+- [x] Criar /aprovacoes/bonus-workflow/:id (BonusWorkflowApproval.tsx)
+- [x] Exibir detalhes do workflow e níveis
+- [x] Mostrar histórico de aprovações (timeline visual)
+- [x] Implementar ações de aprovar/rejeitar (com validações)
+- [x] Adicionar comentários obrigatórios para rejeição
+
+### Confirmação de Pagamento
+- [x] Criar endpoint payroll.confirmPayment (payrollRouter.ts)
+- [x] Implementar marcação em lote (status aprovado → pago)
+- [x] Adicionar validações de segurança (isAdmin, status aprovado)
+- [x] Criar endpoint getPaidBonuses para consulta
+- [x] Criar endpoint cancelPayment para reverter pagamentos
