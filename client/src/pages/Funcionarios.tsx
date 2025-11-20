@@ -23,12 +23,65 @@ export default function Funcionarios() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
+  const [formData, setFormData] = useState({
+    employeeCode: "",
+    name: "",
+    email: "",
+    cpf: "",
+    birthDate: "",
+    hireDate: "",
+    departmentId: "",
+    positionTitle: "",
+    salary: "",
+  });
 
   // Buscar funcionários
   const { data: employees, isLoading, refetch } = trpc.employees.list.useQuery();
 
   // Buscar departamentos
   const { data: departments } = trpc.departments.list.useQuery();
+
+  // Mutation para criar funcionário
+  const createMutation = trpc.employees.create.useMutation({
+    onSuccess: () => {
+      toast.success("Funcionário criado com sucesso!");
+      setIsCreateDialogOpen(false);
+      setFormData({
+        employeeCode: "",
+        name: "",
+        email: "",
+        cpf: "",
+        birthDate: "",
+        hireDate: "",
+        departmentId: "",
+        positionTitle: "",
+        salary: "",
+      });
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(`Erro ao criar funcionário: ${error.message}`);
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.email || !formData.employeeCode) {
+      toast.error("Preencha os campos obrigatórios (Nome, E-mail, Matrícula)");
+      return;
+    }
+
+    createMutation.mutate({
+      employeeCode: formData.employeeCode,
+      name: formData.name,
+      email: formData.email,
+      cpf: formData.cpf || undefined,
+      birthDate: formData.birthDate ? new Date(formData.birthDate) : undefined,
+      hireDate: formData.hireDate ? new Date(formData.hireDate) : undefined,
+      departmentId: formData.departmentId ? parseInt(formData.departmentId) : undefined,
+      positionTitle: formData.positionTitle || undefined,
+      salary: formData.salary ? parseFloat(formData.salary) : undefined,
+    });
+  };
 
   // Filtrar funcionários
   const filteredEmployees = employees?.filter((emp) => {
@@ -201,32 +254,57 @@ export default function Funcionarios() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Matrícula</Label>
-                <Input placeholder="Ex: 12345" />
+                <Label>Matrícula *</Label>
+                <Input 
+                  placeholder="Ex: 12345" 
+                  value={formData.employeeCode}
+                  onChange={(e) => setFormData({...formData, employeeCode: e.target.value})}
+                />
               </div>
               <div>
-                <Label>Nome Completo</Label>
-                <Input placeholder="Ex: João Silva" />
+                <Label>Nome Completo *</Label>
+                <Input 
+                  placeholder="Ex: João Silva" 
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                />
               </div>
               <div>
-                <Label>E-mail</Label>
-                <Input type="email" placeholder="Ex: joao@uisa.com.br" />
+                <Label>E-mail *</Label>
+                <Input 
+                  type="email" 
+                  placeholder="Ex: joao@uisa.com.br" 
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                />
               </div>
               <div>
                 <Label>CPF</Label>
-                <Input placeholder="Ex: 123.456.789-00" />
+                <Input 
+                  placeholder="Ex: 123.456.789-00" 
+                  value={formData.cpf}
+                  onChange={(e) => setFormData({...formData, cpf: e.target.value})}
+                />
               </div>
               <div>
                 <Label>Data de Nascimento</Label>
-                <Input type="date" />
+                <Input 
+                  type="date" 
+                  value={formData.birthDate}
+                  onChange={(e) => setFormData({...formData, birthDate: e.target.value})}
+                />
               </div>
               <div>
                 <Label>Data de Admissão</Label>
-                <Input type="date" />
+                <Input 
+                  type="date" 
+                  value={formData.hireDate}
+                  onChange={(e) => setFormData({...formData, hireDate: e.target.value})}
+                />
               </div>
               <div>
                 <Label>Departamento</Label>
-                <Select>
+                <Select value={formData.departmentId} onValueChange={(value) => setFormData({...formData, departmentId: value})}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
@@ -241,7 +319,20 @@ export default function Funcionarios() {
               </div>
               <div>
                 <Label>Cargo</Label>
-                <Input placeholder="Ex: Analista" />
+                <Input 
+                  placeholder="Ex: Analista" 
+                  value={formData.positionTitle}
+                  onChange={(e) => setFormData({...formData, positionTitle: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label>Salário</Label>
+                <Input 
+                  type="number" 
+                  placeholder="Ex: 5000" 
+                  value={formData.salary}
+                  onChange={(e) => setFormData({...formData, salary: e.target.value})}
+                />
               </div>
             </div>
 
@@ -252,8 +343,8 @@ export default function Funcionarios() {
               }}>
                 Cancelar
               </Button>
-              <Button>
-                {isEditDialogOpen ? "Salvar Alterações" : "Criar Funcionário"}
+              <Button onClick={handleSubmit} disabled={createMutation.isPending}>
+                {createMutation.isPending ? "Criando..." : isEditDialogOpen ? "Salvar Alterações" : "Criar Funcionário"}
               </Button>
             </DialogFooter>
           </DialogContent>

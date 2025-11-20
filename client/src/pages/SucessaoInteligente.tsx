@@ -26,72 +26,53 @@ import { TrendingUp, Users, Target, Award, CheckCircle2, AlertCircle } from "luc
 export default function SucessaoInteligente() {
   const [selectedPosition, setSelectedPosition] = useState<number | undefined>(undefined);
 
-  // Mock data - substituir por queries tRPC reais
-  const positions = [
-    { id: 1, title: "Gerente de TI", department: "Tecnologia" },
-    { id: 2, title: "Diretor Financeiro", department: "Financeiro" },
-    { id: 3, title: "Coordenador de RH", department: "Recursos Humanos" },
-  ];
+  // Buscar dados reais do banco
+  const { data: positions } = trpc.positionsManagement.list.useQuery();
+  const { data: successorsData } = trpc.succession.listCandidates.useQuery(
+    { positionId: selectedPosition },
+    { enabled: !!selectedPosition }
+  );
+  const { data: pdiPlans } = trpc.pdiIntelligent.list.useQuery();
+  const { data: nineBoxData } = trpc.nineBox.list.useQuery();
+  const { data: performanceData } = trpc.evaluations.list.useQuery();
 
-  const successors = [
-    {
-      id: 1,
-      name: "João Silva",
-      currentPosition: "Analista Sênior TI",
-      readinessLevel: "imediato",
-      readinessScore: 92,
+  // Processar dados de sucessores com informações integradas
+  const successors = successorsData?.map((candidate: any) => {
+    // Buscar PDI do candidato
+    const pdi = pdiPlans?.find((p: any) => p.employeeId === candidate.employeeId);
+    const pdiItems = pdi?.items || [];
+    const completedItems = pdiItems.filter((item: any) => item.status === 'completed').length;
+    const totalItems = pdiItems.length;
+    const pdiProgress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+
+    // Buscar Nine Box do candidato
+    const nineBox = nineBoxData?.find((nb: any) => nb.employeeId === candidate.employeeId);
+    const nineBoxLabel = nineBox ? `${nineBox.performance} / ${nineBox.potential}` : "Não avaliado";
+
+    // Buscar avaliação de performance do candidato
+    const performance = performanceData?.find((p: any) => p.employeeId === candidate.employeeId);
+    const performanceRating = (performance as any)?.overallRating || "atende_expectativas";
+
+    return {
+      id: candidate.id,
+      name: candidate.employeeName || "Candidato",
+      currentPosition: candidate.currentPosition || "Não informado",
+      readinessLevel: candidate.readinessLevel || "2_3_anos",
+      readinessScore: candidate.readinessScore || 0,
       pdi: {
-        progress: 85,
-        completedActions: 8,
-        totalActions: 10,
-        keyAreas: ["Liderança", "Gestão de Projetos", "Comunicação"],
+        progress: Math.round(pdiProgress),
+        completedActions: completedItems,
+        totalActions: totalItems,
+        keyAreas: pdiItems.slice(0, 3).map((item: any) => item.title || "N/A"),
       },
       performance: {
-        rating: "excepcional",
-        trend: "crescente",
-      },
-      nineBox: "Alto Desempenho / Alto Potencial",
-      competencyGaps: ["Gestão Financeira", "Visão Estratégica"],
-    },
-    {
-      id: 2,
-      name: "Maria Santos",
-      currentPosition: "Coordenadora de Projetos",
-      readinessLevel: "1_ano",
-      readinessScore: 78,
-      pdi: {
-        progress: 60,
-        completedActions: 6,
-        totalActions: 12,
-        keyAreas: ["Gestão de Pessoas", "Negociação", "Planejamento"],
-      },
-      performance: {
-        rating: "supera_expectativas",
-        trend: "crescente",
-      },
-      nineBox: "Alto Desempenho / Médio Potencial",
-      competencyGaps: ["Liderança de Equipes Grandes", "Gestão de Orçamento"],
-    },
-    {
-      id: 3,
-      name: "Carlos Oliveira",
-      currentPosition: "Especialista TI",
-      readinessLevel: "2_3_anos",
-      readinessScore: 65,
-      pdi: {
-        progress: 40,
-        completedActions: 4,
-        totalActions: 15,
-        keyAreas: ["Liderança", "Comunicação Executiva", "Gestão de Mudanças"],
-      },
-      performance: {
-        rating: "atende_expectativas",
+        rating: performanceRating,
         trend: "estavel",
       },
-      nineBox: "Médio Desempenho / Alto Potencial",
-      competencyGaps: ["Experiência em Gestão", "Visão de Negócio", "Relacionamento Stakeholders"],
-    },
-  ];
+      nineBox: nineBoxLabel,
+      competencyGaps: candidate.developmentNeeds?.split(',') || [],
+    };
+  }) || [];
 
   const getReadinessLabel = (level: string) => {
     const labels: Record<string, string> = {
@@ -200,7 +181,7 @@ export default function SucessaoInteligente() {
                 <SelectValue placeholder="Selecione uma posição" />
               </SelectTrigger>
               <SelectContent>
-                {positions.map((pos) => (
+                {positions?.map((pos: any) => (
                   <SelectItem key={pos.id} value={pos.id.toString()}>
                     {pos.title} - {pos.department}
                   </SelectItem>
@@ -228,7 +209,7 @@ export default function SucessaoInteligente() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {successors.map((successor) => (
+                    {successors.map((successor: any) => (
                       <div key={successor.id} className="border rounded-lg p-4 space-y-4">
                         <div className="flex items-start justify-between">
                           <div className="space-y-1">
@@ -278,7 +259,7 @@ export default function SucessaoInteligente() {
                           </div>
                           <Progress value={successor.pdi.progress} className="h-2" />
                           <div className="flex flex-wrap gap-2">
-                            {successor.pdi.keyAreas.map((area, idx) => (
+                            {successor.pdi.keyAreas.map((area: any, idx: any) => (
                               <Badge key={idx} variant="outline" className="text-xs">
                                 {area}
                               </Badge>
@@ -291,7 +272,7 @@ export default function SucessaoInteligente() {
                           <div className="space-y-2">
                             <span className="text-sm font-medium">Gaps de Competências</span>
                             <div className="flex flex-wrap gap-2">
-                              {successor.competencyGaps.map((gap, idx) => (
+                              {successor.competencyGaps.map((gap: any, idx: any) => (
                                 <Badge key={idx} variant="destructive" className="text-xs">
                                   {gap}
                                 </Badge>
@@ -352,7 +333,7 @@ export default function SucessaoInteligente() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {successors.map((successor) => (
+                      {successors.map((successor: any) => (
                         <TableRow key={successor.id}>
                           <TableCell className="font-medium">{successor.name}</TableCell>
                           <TableCell>{successor.pdi.totalActions} ações</TableCell>

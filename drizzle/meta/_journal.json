@@ -281,6 +281,13 @@
       "when": 1763610203769,
       "tag": "0039_ambiguous_makkari",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "5",
+      "when": 1763654099914,
+      "tag": "0040_military_lenny_balinger",
+      "breakpoints": true
     }
   ]
 }

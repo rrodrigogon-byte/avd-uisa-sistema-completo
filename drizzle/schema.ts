@@ -12,6 +12,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
+import { sql } from "drizzle-orm";
 
 /**
  * Sistema AVD UISA - Schema Completo
