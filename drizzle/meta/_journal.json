@@ -274,6 +274,13 @@
       "when": 1763609935369,
       "tag": "0038_high_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "5",
+      "when": 1763610203769,
+      "tag": "0039_ambiguous_makkari",
+      "breakpoints": true
     }
   ]
 }

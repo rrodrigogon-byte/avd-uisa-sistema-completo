@@ -359,3 +359,38 @@
 - [ ] Performance Analytics (dashboards executivos)
 - [ ] Workforce Planning (planejamento de força de trabalho)
 - [ ] Employee Journey (jornada do colaborador)
+
+
+---
+
+## 🎯 SISTEMA INTELIGENTE DE SUCESSÃO - FASE 9
+
+### Integração PDI + Sucessão ⏳
+- [ ] Exibir PDI completo de cada funcionário no mapa de sucessão
+- [ ] Mostrar ações de desenvolvimento em andamento
+- [ ] Indicar progresso de preparação para sucessão
+- [ ] Destacar competências desenvolvidas vs requeridas
+- [ ] Criar timeline de preparação estimada
+
+### Unificação de Processos ⏳
+- [ ] Integrar Performance + PDI + Nine Box + Metas em visão única
+- [ ] Dashboard consolidado de Talent Profile
+- [ ] Score unificado de prontidão para sucessão
+- [ ] Matriz de gaps de competências
+- [ ] Histórico completo de desenvolvimento
+
+### Automação Inteligente ⏳
+- [ ] Engine de identificação automática de sucessores
+- [ ] Algoritmo de matching cargo x candidato
+- [ ] Cálculo de readiness score (0-100%)
+- [ ] Sugestões automáticas de ações de desenvolvimento
+- [ ] Alertas de riscos de sucessão (posições críticas sem sucessor)
+- [ ] Recomendações de movimentações internas
+
+### Dashboard de Pipeline de Talentos ⏳
+- [ ] Visão executiva de pipeline por nível hierárquico
+- [ ] Matriz de sucessão 9-box integrada
+- [ ] Indicadores de cobertura de sucessão
+- [ ] Tempo médio de preparação por posição
+- [ ] Análise de diversidade no pipeline
+- [ ] Projeção de movimentações futuras
