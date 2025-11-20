@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { employeeActivities, activityLogs, jobDescriptions, users } from "../../drizzle/schema";
+import { employeeActivities, activityLogs, jobDescriptions, users, employees, departments, positions } from "../../drizzle/schema";
 import { eq, and, gte, sql } from "drizzle-orm";
 
 export const productivityRouter = router({
@@ -70,15 +70,40 @@ export const productivityRouter = router({
         .orderBy(sql`SUM(${employeeActivities.durationMinutes}) DESC`)
         .limit(10);
 
-      const topEmployees = topEmployeesResult.map((emp) => ({
-        id: emp.employeeId,
-        name: `Funcionário ${emp.employeeId}`, // TODO: Buscar nome real
-        department: "Departamento", // TODO: Buscar departamento real
-        position: "Cargo", // TODO: Buscar cargo real
-        totalHours: Math.round((emp.totalMinutes || 0) / 60),
-        activityCount: emp.activityCount || 0,
-        adherenceRate: 85, // TODO: Calcular taxa de aderência real
-      }));
+      // Buscar dados dos colaboradores com departamento e cargo
+      const employeeIds = topEmployeesResult.map(e => e.employeeId);
+      const employeesData = employeeIds.length > 0 ? await db
+        .select({
+          id: employees.id,
+          name: employees.name,
+          departmentId: employees.departmentId,
+          positionId: employees.positionId,
+          departmentName: departments.name,
+          positionTitle: positions.title,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(employees.positionId, positions.id))
+        .where(sql`${employees.id} IN (${sql.join(employeeIds.map(id => sql`${id}`), sql`, `)})`) : [];
+      
+      const employeeMap = new Map(employeesData.map(e => [e.id, e]));
+      
+      const topEmployees = topEmployeesResult.map((emp) => {
+        const empData = employeeMap.get(emp.employeeId);
+        const totalMinutes = emp.totalMinutes || 0;
+        const expectedMinutes = 8 * 60 * 22; // 8h/dia * 22 dias úteis
+        const adherenceRate = expectedMinutes > 0 ? Math.min(100, (totalMinutes / expectedMinutes) * 100) : 0;
+        
+        return {
+          id: emp.employeeId,
+          name: empData?.name || `Colaborador ${emp.employeeId}`,
+          department: empData?.departmentName || "N/A",
+          position: empData?.positionTitle || "N/A",
+          totalHours: Math.round(totalMinutes / 60),
+          activityCount: emp.activityCount || 0,
+          adherenceRate: Math.round(adherenceRate),
+        };
+      });
 
       // Atividades manuais vs automáticas
       const manualActivitiesResult = await db

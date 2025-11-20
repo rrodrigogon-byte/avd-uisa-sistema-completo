@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import Alertas from "@/pages/Alertas";
 import Discrepancias from "@/pages/Discrepancias";
+import ImportacaoPonto from "@/pages/ImportacaoPonto";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -170,6 +171,7 @@ function Router() {
       <Route path="/relatorios-produtividade" component={RelatoriosProdutividade} />
       <Route path="/alertas" component={Alertas} />
       <Route path="/discrepancias" component={Discrepancias} />
+      <Route path="/importacao-ponto" component={ImportacaoPonto} />
       <Route path="/validacao-lider" component={ValidacaoLider} />
       <Route path="/analise-gaps" component={AnaliseGaps} />
       <Route path="/importacao-descricoes" component={ImportacaoDescricoes} />

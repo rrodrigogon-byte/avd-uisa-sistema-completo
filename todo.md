@@ -200,3 +200,42 @@
 - [x] Adicionar logs de execução do job
 - [x] Testar execução manual do job
 - [x] Validar criação automática de alertas
+
+
+---
+
+## 🔧 MELHORIAS DE PRODUTIVIDADE E CORREÇÕES - FASE 5
+
+### Melhorias de Produtividade ✅
+- [x] Adicionar página de Importação de Ponto com upload CSV/Excel
+- [ ] Implementar exportação de relatórios (Excel/PDF) em Discrepâncias
+- [x] Criar atalhos de teclado para ações frequentes
+- [x] Adicionar busca global no sistema
+- [x] Implementar breadcrumbs para navegação
+- [ ] Adicionar tooltips explicativos em campos complexos
+- [ ] Criar página de onboarding/tour guiado
+
+### Melhorias de UX ⏳
+- [ ] Adicionar estados de loading em todas as páginas
+- [ ] Implementar skeleton loaders para tabelas
+- [ ] Melhorar feedback visual de ações (toasts, confirmações)
+- [ ] Adicionar paginação em tabelas grandes
+- [ ] Implementar ordenação de colunas em tabelas
+- [ ] Adicionar filtros salvos (favoritos)
+- [ ] Melhorar responsividade mobile
+
+### Correções de Bugs ✅
+- [ ] Corrigir erros de validação de formulários
+- [ ] Ajustar formatação de datas (timezone)
+- [x] Corrigir queries lentas no banco de dados
+- [ ] Resolver problemas de autenticação/sessão
+- [ ] Corrigir links quebrados no menu lateral
+- [ ] Ajustar cores de contraste para acessibilidade
+
+### Otimizações de Performance ✅
+- [ ] Implementar cache de queries frequentes
+- [x] Otimizar queries com muitos JOINs
+- [x] Adicionar índices no banco de dados
+- [ ] Implementar lazy loading de componentes
+- [ ] Reduzir bundle size do frontend
+- [ ] Otimizar imagens e assets
