@@ -109,7 +109,8 @@ import AvaliacoesAprovacao from "./pages/AvaliacoesAprovacao";
 import HierarquiaOrganizacional from "./pages/HierarquiaOrganizacional";
 import HierarquiaImport from "./pages/HierarquiaImport";
 import DashboardEmails from "./pages/DashboardEmails";
-import BonusWorkflows from "@/pages/admin/BonusWorkflows";
+import BonusWorkflows from "./pages/admin/BonusWorkflows";
+import ImportUISA from "./pages/admin/ImportUISA";
 import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval";
 import BonusCompliance from "./pages/compliance/BonusCompliance";
 import ExportarFolha from "./pages/folha-pagamento/ExportarFolha";
@@ -137,6 +138,7 @@ function Router() {
       <Route path="/avaliacoes-pendentes" component={AvaliacoesPendentes} />
       <Route path="/aprovacoes/avaliacoes" component={AvaliacoesAprovacao} />
       <Route path="/admin/bonus-workflows" component={BonusWorkflows} />
+      <Route path="/admin/import-uisa" component={ImportUISA} />
       <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} />
       <Route path="/compliance/bonus" component={BonusCompliance} />
       <Route path="/folha-pagamento/exportar" component={ExportarFolha} />

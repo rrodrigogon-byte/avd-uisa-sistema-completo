@@ -762,4 +762,125 @@ export const bonusRouter = router({
       avgApprovalTimeHours: avgApprovalTime[0]?.avgHours ? Math.round(Number(avgApprovalTime[0].avgHours) * 10) / 10 : 0,
     };
   }),
+
+  /**
+   * Métricas de SLA e Compliance
+   * Retorna estatísticas de tempo médio de aprovação, pendências e alertas
+   */
+  getSLAMetrics: protectedProcedure
+    .input(
+      z.object({
+        departmentId: z.number().optional(),
+        days: z.number().default(30),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+
+      // Buscar cálculos de bônus no período
+      const baseQuery = db
+        .select({
+          id: bonusCalculations.id,
+          status: bonusCalculations.status,
+          createdAt: bonusCalculations.createdAt,
+          approvedAt: bonusCalculations.approvedAt,
+          departmentId: employees.departmentId,
+          departmentName: departments.name,
+        })
+        .from(bonusCalculations)
+        .leftJoin(employees, eq(bonusCalculations.employeeId, employees.id))
+        .leftJoin(departments, eq(employees.departmentId, departments.id));
+
+      const calculations = input.departmentId
+        ? await baseQuery.where(
+            and(
+              gte(bonusCalculations.createdAt, startDate),
+              eq(employees.departmentId, input.departmentId)
+            )
+          )
+        : await baseQuery.where(gte(bonusCalculations.createdAt, startDate));
+
+      // Calcular tempo médio de aprovação
+      const approvedCalculations = calculations.filter(
+        (c) => c.status === "approved" && c.approvedAt && c.createdAt
+      );
+
+      let avgApprovalTimeHours = 0;
+      if (approvedCalculations.length > 0) {
+        const totalHours = approvedCalculations.reduce((sum, calc) => {
+          const created = new Date(calc.createdAt!);
+          const approved = new Date(calc.approvedAt!);
+          const hours = (approved.getTime() - created.getTime()) / (1000 * 60 * 60);
+          return sum + hours;
+        }, 0);
+        avgApprovalTimeHours = totalHours / approvedCalculations.length;
+      }
+
+      // Pendências críticas (> 7 dias)
+      const criticalThresholdDate = new Date();
+      criticalThresholdDate.setDate(criticalThresholdDate.getDate() - 7);
+
+      const criticalPending = calculations.filter(
+        (c) =>
+          c.status === "pending" &&
+          c.createdAt &&
+          new Date(c.createdAt) < criticalThresholdDate
+      );
+
+      // Distribuição por departamento
+      const byDepartment: Record<string, { total: number; avgHours: number; pending: number }> = {};
+
+      calculations.forEach((calc) => {
+        const deptName = calc.departmentName || "Sem Departamento";
+        if (!byDepartment[deptName]) {
+          byDepartment[deptName] = { total: 0, avgHours: 0, pending: 0 };
+        }
+        byDepartment[deptName].total++;
+        if (calc.status === "pending") {
+          byDepartment[deptName].pending++;
+        }
+      });
+
+      // Calcular tempo médio por departamento
+      Object.keys(byDepartment).forEach((deptName) => {
+        const deptCalcs = calculations.filter(
+          (c) => (c.departmentName || "Sem Departamento") === deptName && c.status === "approved" && c.approvedAt && c.createdAt
+        );
+        if (deptCalcs.length > 0) {
+          const totalHours = deptCalcs.reduce((sum, calc) => {
+            const created = new Date(calc.createdAt!);
+            const approved = new Date(calc.approvedAt!);
+            const hours = (approved.getTime() - created.getTime()) / (1000 * 60 * 60);
+            return sum + hours;
+          }, 0);
+          byDepartment[deptName].avgHours = totalHours / deptCalcs.length;
+        }
+      });
+
+      return {
+        avgApprovalTimeHours: Math.round(avgApprovalTimeHours * 10) / 10,
+        totalCalculations: calculations.length,
+        pendingCount: calculations.filter((c) => c.status === "pending").length,
+        approvedCount: approvedCalculations.length,
+        criticalPendingCount: criticalPending.length,
+        criticalPending: criticalPending.map((c) => ({
+          id: c.id,
+          createdAt: c.createdAt,
+          departmentName: c.departmentName,
+          daysWaiting: Math.floor(
+            (new Date().getTime() - new Date(c.createdAt!).getTime()) / (1000 * 60 * 60 * 24)
+          ),
+        })),
+        byDepartment: Object.entries(byDepartment).map(([name, stats]) => ({
+          departmentName: name,
+          total: stats.total,
+          avgApprovalTimeHours: Math.round(stats.avgHours * 10) / 10,
+          pendingCount: stats.pending,
+        })),
+      };
+    }),
 });

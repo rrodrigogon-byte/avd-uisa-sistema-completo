@@ -1,6 +1,6 @@
 import { getDb } from "../db";
 import { employees, users } from "../../drizzle/schema";
-import { eq, or, and, inArray } from "drizzle-orm";
+import { eq, or, and, inArray, sql } from "drizzle-orm"; // Importar 'sql' para CTEs
 
 /**
  * Verifica se o usuário é administrador (verifica na tabela users)
@@ -49,41 +49,37 @@ export async function getDirectSubordinates(leaderEmployeeId: number): Promise<n
 }
 
 /**
- * Retorna lista de IDs de todos os subordinados (diretos e indiretos) do líder
+ * Retorna lista de IDs de todos os subordinados (diretos e indiretos) do líder.
+ * PERFORMANCE FIX CRÍTICO: Implementação de CTEs Recursivas (Padrão Enterprise)
  * @param leaderEmployeeId - ID do colaborador líder (employees.id)
- * PERFORMANCE ALERT: A implementação atual usa N+1 queries. O ideal é usar CTEs Recursivas.
  */
 export async function getAllSubordinates(leaderEmployeeId: number): Promise<number[]> {
   const db = await getDb();
   if (!db) return [];
+  
+  // Consulta de CTE Recursiva em SQL (funciona no MySQL 8.0+, PostgreSQL, SQL Server)
+  const subordinatesQuery = sql.raw(`
+    WITH RECURSIVE subordinates_cte (id, managerId) AS (
+        -- Anchor member: Subordinados diretos
+        SELECT id, managerId 
+        FROM employees 
+        WHERE managerId = ${leaderEmployeeId}
+        
+        UNION ALL
+        
+        -- Recursive member: Subordinados dos subordinados
+        SELECT e.id, e.managerId 
+        FROM employees e 
+        INNER JOIN subordinates_cte s ON e.managerId = s.id
+    )
+    SELECT id FROM subordinates_cte;
+  `);
+  
+  // Drizzle's execute retorna o resultado da query raw
+  const [result] = await db.execute(subordinatesQuery);
 
-  const allSubordinates: number[] = [];
-  const queue: number[] = [leaderEmployeeId]; // Começa com o ID do líder
-  const processed = new Set<number>(); // Usa 'processed' para evitar reprocessar nós
-
-  while (queue.length > 0) {
-    const currentId = queue.shift()!;
-    if (processed.has(currentId)) continue;
-    processed.add(currentId);
-
-    // FIX: Não adiciona o ID do líder à lista de subordinados
-    if (currentId !== leaderEmployeeId) {
-        allSubordinates.push(currentId);
-    }
-
-    const directSubs = await db
-      .select({ id: employees.id })
-      .from(employees)
-      .where(eq(employees.managerId, currentId));
-
-    for (const sub of directSubs) {
-      if (!processed.has(sub.id)) {
-        queue.push(sub.id);
-      }
-    }
-  }
-
-  return allSubordinates;
+  // Mapear o resultado para um array de IDs
+  return (result as unknown as { id: number }[]).map(row => row.id);
 }
 
 /**

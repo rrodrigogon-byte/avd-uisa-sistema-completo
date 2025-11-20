@@ -175,6 +175,35 @@ export async function getEmployeeByUserId(userId: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+
+
+/**
+ * Busca o salário e o ID do cargo do colaborador (em centavos)
+ * CRÍTICO para cálculo de bônus e produtividade
+ */
+export async function getEmployeeSalary(employeeId: number): Promise<{ salary: number | null; positionId: number | null; positionTitle: string | null } | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select({ 
+        salary: employees.salary, 
+        positionId: employees.positionId,
+        positionTitle: positions.title,
+    })
+    .from(employees)
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(employees.id, employeeId))
+    .limit(1);
+
+  // Garante que o salário seja retornado como number (em centavos) ou null
+  return result.length > 0 ? {
+    salary: result[0].salary || null,
+    positionId: result[0].positionId || null,
+    positionTitle: result[0].positionTitle || null,
+  } : undefined;
+}
+
 // ============================================================================
 // METAS
 // ============================================================================

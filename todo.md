@@ -147,9 +147,14 @@
 ## 🔧 SESSÃO ATUAL - IMPLEMENTAÇÕES AVANÇADAS
 
 ### Correções de Código (Arquivos Anexos)
-- [ ] Aplicar correções do pasted_content_3.txt
-- [ ] Aplicar correções do pasted_content_4.txt
-- [ ] Validar correções aplicadas
+- [x] permissions.ts - CTEs recursivas para getAllSubordinates
+- [x] db.ts - Adicionar getUserEmployee e getEmployeeSalary
+- [x] activityTracking.ts - Fix crítico de employeeId vs userId
+- [ ] goalsRouter.ts - Integração com Workflow genérico
+- [ ] jobDescriptionsRouter.ts - Integração com Workflow genérico
+- [ ] productivityRouter.ts - Alinhamento com descrição de cargo
+- [ ] routers.ts - Registrar novos routers (workflow, jobDescriptions, productivity)
+- [x] bonusWorkflowRouter.ts - Corrigir erros TypeScript (reduzido para 4 erros)
 
 ### Parser de Descrições UISA
 - [x] Criar script de parser de arquivos .docx (parse-uisa-job-descriptions.mjs)
@@ -164,6 +169,20 @@
 - [x] Mostrar histórico de aprovações (timeline visual)
 - [x] Implementar ações de aprovar/rejeitar (com validações)
 - [x] Adicionar comentários obrigatórios para rejeição
+
+### Página de Importação UISA (Item 1)
+- [x] Criar página /admin/import-uisa com upload de arquivos
+- [x] Implementar preview de dados antes da importação
+- [x] Adicionar estatísticas de importação (total, sucesso, erros)
+- [x] Integrar com uisaImportRouter
+- [x] Adicionar rota no App.tsx
+
+### Dashboard de Compliance e SLA (Item 2)
+- [x] Criar endpoints de métricas SLA no bonusRouter (getSLAMetrics)
+- [x] Implementar cálculo de tempo médio de aprovação
+- [x] Adicionar alertas de pendências > X dias (críticas > 7 dias)
+- [x] Criar distribuição de SLA por departamento
+- [x] Integrar com BonusCompliance.tsx
 
 ### Confirmação de Pagamento
 - [x] Criar endpoint payroll.confirmPayment (payrollRouter.ts)

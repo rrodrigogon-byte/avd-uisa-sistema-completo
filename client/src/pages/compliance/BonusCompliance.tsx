@@ -42,6 +42,10 @@ export default function BonusCompliance() {
   const { data: calculations } = trpc.bonus.listCalculations.useQuery();
   const { data: departments } = trpc.departments.list.useQuery();
   const { data: approvalMetrics } = trpc.bonus.getApprovalMetrics.useQuery();
+  const { data: slaMetrics, isLoading: slaLoading } = trpc.bonus.getSLAMetrics.useQuery({
+    departmentId: selectedDepartment === "all" ? undefined : parseInt(selectedDepartment),
+    days: selectedPeriod,
+  });
 
   // Filtrar dados por departamento e período
   const filteredData = useMemo(() => {
