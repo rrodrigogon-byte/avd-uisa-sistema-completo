@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
-import { ArrowLeft, CheckCircle, XCircle, Clock, FileText } from "lucide-react";
+import { ArrowLeft, CheckCircle, XCircle, Clock, FileText, Download } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -27,6 +27,33 @@ export default function DetalhesDescricaoCargo({ params }: { params: { id: strin
   const [selectedApprovalId, setSelectedApprovalId] = useState<number | null>(null);
 
   const { data: jobDesc, refetch } = trpc.jobDescriptions.getById.useQuery({ id: parseInt(params.id) });
+  
+  const exportPDFMutation = trpc.jobDescriptionsPDF.exportPDF.useMutation({
+    onSuccess: (data) => {
+      // Converter base64 para blob e fazer download
+      const byteCharacters = atob(data.pdfBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = data.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('PDF gerado com sucesso!');
+    },
+    onError: (error) => {
+      toast.error('Erro ao gerar PDF: ' + error.message);
+    },
+  });
 
   const approveMutation = trpc.jobDescriptions.approve.useMutation({
     onSuccess: () => {
@@ -81,9 +108,20 @@ export default function DetalhesDescricaoCargo({ params }: { params: { id: strin
           Voltar
         </Button>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">{jobDesc.positionTitle}</h1>
-          <p className="text-muted-foreground">{jobDesc.departmentName}</p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{jobDesc.positionTitle}</h1>
+            <p className="text-muted-foreground">{jobDesc.departmentName}</p>
+          </div>
+          {jobDesc.status === 'approved' && (
+            <Button 
+              onClick={() => exportPDFMutation.mutate({ jobDescriptionId: jobDesc.id })}
+              disabled={exportPDFMutation.isPending}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {exportPDFMutation.isPending ? 'Gerando PDF...' : 'Exportar PDF'}
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-6">

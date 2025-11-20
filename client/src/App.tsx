@@ -53,6 +53,7 @@ import DescricaoCargosUISA from "./pages/DescricaoCargosUISA";
 import CriarDescricaoCargo from "./pages/CriarDescricaoCargo";
 import DetalhesDescricaoCargo from "./pages/DetalhesDescricaoCargo";
 import MinhasAtividades from "./pages/MinhasAtividades";
+import RelatoriosProdutividade from "./pages/RelatoriosProdutividade";
 import PesquisasPulse from "./pages/PesquisasPulse";
 import ResponderPesquisaPulse from "./pages/ResponderPesquisaPulse";
 import ResultadosPesquisaPulse from "./pages/ResultadosPesquisaPulse";
@@ -161,6 +162,7 @@ function Router() {
       <Route path="/descricao-cargos-uisa/criar" component={CriarDescricaoCargo} />
       <Route path="/descricao-cargos-uisa/:id" component={DetalhesDescricaoCargo} />
       <Route path="/minhas-atividades" component={MinhasAtividades} />
+      <Route path="/relatorios-produtividade" component={RelatoriosProdutividade} />
       <Route path="/pesquisas-pulse" component={PesquisasPulse} />
       <Route path="/pesquisa/:id" component={ResponderPesquisaPulse} />
       <Route path="/pesquisas-pulse/resultados/:id" component={ResultadosPesquisaPulse} />

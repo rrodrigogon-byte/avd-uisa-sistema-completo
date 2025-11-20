@@ -113,3 +113,35 @@
 ### Fase 6: Finalização ⏳
 - [ ] Salvar checkpoint final
 - [ ] Sistema 100% COMPLETO
+
+
+---
+
+## 📄 NOVAS FUNCIONALIDADES - FASE 2
+
+### Exportação em PDF ✅
+- [x] Endpoint backend `exportJobDescriptionPDF` para gerar PDF
+- [x] Template PDF com todas as 8 seções da descrição
+- [x] Seção de assinaturas digitais dos 3 níveis (Ocupante, Superior, RH)
+- [x] Botão "Exportar PDF" na página de detalhes (somente se aprovado)
+- [x] Download automático do PDF gerado
+
+### Notificações Automáticas ✅
+- [x] Integração com sistema de notificações do template
+- [x] Notificação ao enviar para aprovação (para Ocupante)
+- [x] Notificação ao aprovar nível 1 (para Superior Imediato)
+- [x] Notificação ao aprovar nível 2 (para Gerente RH)
+- [x] Notificação ao aprovar nível 3 (para criador - aprovação completa)
+- [x] Notificação ao rejeitar em qualquer nível (para criador)
+- [x] Sistema de notificações integrado
+
+### Relatórios de Produtividade ✅
+- [x] Página `/relatorios-produtividade` com dashboard gerencial
+- [x] Gráfico: Atividades registradas vs Responsabilidades do cargo
+- [x] Gráfico: Distribuição de tempo por categoria (barras)
+- [x] Tabela: Top 10 funcionários mais produtivos
+- [x] Filtros: Período, Departamento
+- [x] KPI: Taxa de aderência às responsabilidades (%)
+- [x] KPI: Média de horas por funcionário
+- [x] KPI: Total de horas e funcionários ativos
+- [x] Comparação: Atividades manuais vs automáticas

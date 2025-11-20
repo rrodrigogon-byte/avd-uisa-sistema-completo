@@ -111,6 +111,7 @@ const menuItems = [
       { icon: FileText, label: "Descrição de Cargos", path: "/descricao-cargos" },
       { icon: FileText, label: "Descrição de Cargos UISA", path: "/descricao-cargos-uisa" },
       { icon: Clock, label: "Minhas Atividades", path: "/minhas-atividades" },
+      { icon: BarChart3, label: "Relatórios de Produtividade", path: "/relatorios-produtividade" },
     ],
   },
   {

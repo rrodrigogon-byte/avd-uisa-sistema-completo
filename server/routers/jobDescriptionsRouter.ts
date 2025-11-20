@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
+import { notifyOwner } from "../_core/notification";
+import { logActivity } from "../_core/activityTracking";
 import { 
   jobDescriptions, 
   jobResponsibilities, 
@@ -164,6 +166,14 @@ export const jobDescriptionsRouter = router({
         );
       }
 
+      // Log de atividade automática
+      await logActivity({
+        userId: ctx.user.id,
+        activityType: "create_job_description",
+        description: `Criou descrição de cargo: ${input.positionTitle}`,
+        metadata: { jobDescriptionId: jobDescId, positionTitle: input.positionTitle },
+      });
+
       return { id: jobDescId, success: true };
     }),
 
@@ -249,7 +259,21 @@ export const jobDescriptionsRouter = router({
         },
       ]);
 
-      // TODO: Enviar notificação por email para o ocupante
+      // Buscar descrição para notificação
+      const [jobDesc] = await db.select().from(jobDescriptions).where(eq(jobDescriptions.id, input.id));
+      
+      // Enviar notificação
+      await notifyOwner({
+        title: `Nova Descrição de Cargo Enviada para Aprovação`,
+        content: `A descrição do cargo "${jobDesc.positionTitle}" (${jobDesc.departmentName}) foi enviada para aprovação e aguarda revisão do ocupante do cargo.`,
+      });
+
+      // Log de atividade
+      await logActivity({
+        userId: ctx.user.id,
+        activityType: "other",
+        description: `Enviou descrição de cargo para aprovação: ${jobDesc.positionTitle}`,
+      });
 
       return { success: true };
     }),
@@ -295,7 +319,32 @@ export const jobDescriptionsRouter = router({
 
       await db.update(jobDescriptions).set({ status: newStatus }).where(eq(jobDescriptions.id, approval.jobDescriptionId));
 
-      // TODO: Enviar notificação para próximo aprovador
+      // Buscar descrição para notificação
+      const [jobDesc] = await db.select().from(jobDescriptions).where(eq(jobDescriptions.id, approval.jobDescriptionId));
+      
+      // Enviar notificação
+      let notificationTitle = "";
+      let notificationContent = "";
+      
+      if (approval.approvalLevel === 'occupant') {
+        notificationTitle = `Descrição de Cargo Aprovada - Próximo Nível`;
+        notificationContent = `A descrição do cargo "${jobDesc.positionTitle}" foi aprovada pelo ocupante e aguarda aprovação do Superior Imediato.`;
+      } else if (approval.approvalLevel === 'manager') {
+        notificationTitle = `Descrição de Cargo - Aprovação do RH Pendente`;
+        notificationContent = `A descrição do cargo "${jobDesc.positionTitle}" foi aprovada pelo Superior Imediato e aguarda aprovação final do RH.`;
+      }
+      
+      if (notificationTitle) {
+        await notifyOwner({ title: notificationTitle, content: notificationContent });
+      }
+
+      // Log de atividade
+      await logActivity({
+        userId: ctx.user.id,
+        activityType: "approve_job_description",
+        description: `Aprovou descrição de cargo: ${jobDesc.positionTitle} (Nível: ${approval.approvalLevel})`,
+        metadata: { jobDescriptionId: approval.jobDescriptionId, approvalLevel: approval.approvalLevel },
+      });
 
       return { success: true };
     }),
@@ -308,7 +357,7 @@ export const jobDescriptionsRouter = router({
       approvalId: z.number(),
       comments: z.string(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
@@ -327,7 +376,22 @@ export const jobDescriptionsRouter = router({
       // Atualizar status da descrição de cargo para rejected
       await db.update(jobDescriptions).set({ status: 'rejected' }).where(eq(jobDescriptions.id, approval.jobDescriptionId));
 
-      // TODO: Enviar notificação para criador
+      // Buscar descrição para notificação
+      const [jobDesc] = await db.select().from(jobDescriptions).where(eq(jobDescriptions.id, approval.jobDescriptionId));
+      
+      // Enviar notificação de rejeição
+      await notifyOwner({
+        title: `Descrição de Cargo Rejeitada`,
+        content: `A descrição do cargo "${jobDesc.positionTitle}" foi rejeitada. Motivo: ${input.comments}`,
+      });
+
+      // Log de atividade
+      await logActivity({
+        userId: ctx.user.id,
+        activityType: "reject_job_description",
+        description: `Rejeitou descrição de cargo: ${jobDesc.positionTitle}`,
+        metadata: { jobDescriptionId: approval.jobDescriptionId, comments: input.comments },
+      });
 
       return { success: true };
     }),
@@ -381,6 +445,14 @@ export const jobDescriptionsRouter = router({
         startTime: input.startTime,
         endTime: input.endTime,
         durationMinutes,
+      });
+
+      // Log de atividade automática
+      await logActivity({
+        userId: input.employeeId,
+        activityType: "register_activity",
+        description: `Registrou atividade: ${input.title}`,
+        metadata: { category: input.category, durationMinutes },
       });
 
       return { success: true };
