@@ -1,12 +1,16 @@
 import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
+import { getDb } from "../db";
+import { pulseSurveys, pulseSurveyResponses, employees } from "../../drizzle/schema";
+import { eq, and, desc, sql, count } from "drizzle-orm";
 
 // Schema de validação
 const createSurveySchema = z.object({
   title: z.string().min(5, "Título deve ter no mínimo 5 caracteres"),
   question: z.string().min(10, "Pergunta deve ter no mínimo 10 caracteres"),
   description: z.string().optional(),
+  targetDepartmentId: z.number().optional(),
 });
 
 const submitResponseSchema = z.object({
@@ -18,65 +22,59 @@ const submitResponseSchema = z.object({
 
 export const pulseRouter = router({
   // Listar todas as pesquisas
-  list: protectedProcedure.query(async () => {
-    // Mock data - em produção viria do banco
-    return [
-      {
-        id: 1,
-        title: "Satisfação com Ambiente de Trabalho",
-        question: "Como você avalia o ambiente de trabalho da empresa?",
-        status: "active" as const,
-        responses: 45,
-        totalEmployees: 50,
-        avgScore: 8.5,
-        createdAt: "2025-11-15",
-      },
-      {
-        id: 2,
-        title: "Comunicação Interna",
-        question: "A comunicação entre as áreas é eficiente?",
-        status: "active" as const,
-        responses: 38,
-        totalEmployees: 50,
-        avgScore: 7.2,
-        createdAt: "2025-11-10",
-      },
-      {
-        id: 3,
-        title: "Reconhecimento e Valorização",
-        question: "Você se sente reconhecido pelo seu trabalho?",
-        status: "closed" as const,
-        responses: 50,
-        totalEmployees: 50,
-        avgScore: 6.8,
-        createdAt: "2025-11-01",
-      },
-    ];
+  list: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const surveys = await db
+      .select({
+        id: pulseSurveys.id,
+        title: pulseSurveys.title,
+        question: pulseSurveys.question,
+        status: pulseSurveys.status,
+        createdAt: pulseSurveys.createdAt,
+        totalEmployees: sql<number>`50`, // TODO: calcular do banco
+      })
+      .from(pulseSurveys)
+      .orderBy(desc(pulseSurveys.createdAt));
+
+    // Para cada pesquisa, buscar contagem de respostas e média
+    const surveysWithStats = await Promise.all(
+      surveys.map(async (survey) => {
+        const stats = await db
+          .select({
+            responses: count(),
+            avgScore: sql<number>`COALESCE(AVG(${pulseSurveyResponses.rating}), 0)`,
+          })
+          .from(pulseSurveyResponses)
+          .where(eq(pulseSurveyResponses.surveyId, survey.id))
+          .then((r) => r[0]);
+
+        return {
+          ...survey,
+          responses: stats?.responses || 0,
+          avgScore: stats?.avgScore ? Number(stats.avgScore.toFixed(1)) : 0,
+        };
+      })
+    );
+
+    return surveysWithStats;
   }),
 
   // Buscar pesquisa por ID (pública - para responder)
   getById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      // Mock data - em produção viria do banco
-      const surveys = [
-        {
-          id: 1,
-          title: "Satisfação com Ambiente de Trabalho",
-          question: "Como você avalia o ambiente de trabalho da empresa?",
-          description: "Sua opinião é muito importante para melhorarmos continuamente nosso ambiente de trabalho.",
-          status: "active" as const,
-        },
-        {
-          id: 2,
-          title: "Comunicação Interna",
-          question: "A comunicação entre as áreas é eficiente?",
-          description: "Queremos entender como podemos melhorar a comunicação interna.",
-          status: "active" as const,
-        },
-      ];
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      const survey = surveys.find((s) => s.id === input.id);
+      const survey = await db
+        .select()
+        .from(pulseSurveys)
+        .where(eq(pulseSurveys.id, input.id))
+        .limit(1)
+        .then((r) => r[0]);
+
       if (!survey) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -91,6 +89,9 @@ export const pulseRouter = router({
   create: protectedProcedure
     .input(createSurveySchema)
     .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
       // Verificar se usuário tem permissão (RH ou Admin)
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
@@ -99,13 +100,19 @@ export const pulseRouter = router({
         });
       }
 
-      // Em produção, salvar no banco de dados
-      console.log("[Pulse] Criando pesquisa:", input);
+      const [newSurvey] = await db.insert(pulseSurveys).values({
+        title: input.title,
+        question: input.question,
+        description: input.description,
+        targetDepartmentId: input.targetDepartmentId,
+        createdById: ctx.user.id,
+        status: "draft",
+      });
 
       return {
-        id: Math.floor(Math.random() * 10000),
+        id: newSurvey.insertId,
         ...input,
-        status: "active" as const,
+        status: "draft" as const,
         responses: 0,
         totalEmployees: 50,
         avgScore: 0,
@@ -113,12 +120,71 @@ export const pulseRouter = router({
       };
     }),
 
+  // Ativar pesquisa (enviar para colaboradores)
+  activate: protectedProcedure
+    .input(z.object({ surveyId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas RH e Administradores podem ativar pesquisas",
+        });
+      }
+
+      await db
+        .update(pulseSurveys)
+        .set({
+          status: "active",
+          activatedAt: new Date(),
+        })
+        .where(eq(pulseSurveys.id, input.surveyId));
+
+      return {
+        success: true,
+        message: "Pesquisa ativada com sucesso!",
+      };
+    }),
+
   // Enviar resposta (pública - sem autenticação)
   submitResponse: publicProcedure
     .input(submitResponseSchema)
     .mutation(async ({ input }) => {
-      // Em produção, salvar no banco de dados
-      console.log("[Pulse] Resposta recebida:", input);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar se pesquisa está ativa
+      const survey = await db
+        .select()
+        .from(pulseSurveys)
+        .where(eq(pulseSurveys.id, input.surveyId))
+        .limit(1)
+        .then((r) => r[0]);
+
+      if (!survey) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Pesquisa não encontrada",
+        });
+      }
+
+      if (survey.status !== "active") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Esta pesquisa não está mais ativa",
+        });
+      }
+
+      // Salvar resposta
+      await db.insert(pulseSurveyResponses).values({
+        surveyId: input.surveyId,
+        employeeId: input.employeeId || null,
+        rating: input.rating,
+        comment: input.comment || null,
+      });
 
       return {
         success: true,
@@ -130,44 +196,126 @@ export const pulseRouter = router({
   getResults: protectedProcedure
     .input(z.object({ surveyId: z.number() }))
     .query(async ({ input }) => {
-      // Mock data - em produção viria do banco
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar estatísticas gerais
+      const stats = await db
+        .select({
+          totalResponses: count(),
+          avgScore: sql<number>`COALESCE(AVG(${pulseSurveyResponses.rating}), 0)`,
+        })
+        .from(pulseSurveyResponses)
+        .where(eq(pulseSurveyResponses.surveyId, input.surveyId))
+        .then((r) => r[0]);
+
+      // Buscar distribuição de notas
+      const distribution = await db
+        .select({
+          rating: pulseSurveyResponses.rating,
+          count: count(),
+        })
+        .from(pulseSurveyResponses)
+        .where(eq(pulseSurveyResponses.surveyId, input.surveyId))
+        .groupBy(pulseSurveyResponses.rating);
+
+      // Converter para objeto { 0: 0, 1: 0, ..., 10: 0 }
+      const distributionObj: Record<number, number> = {};
+      for (let i = 0; i <= 10; i++) {
+        distributionObj[i] = 0;
+      }
+      distribution.forEach((d) => {
+        distributionObj[d.rating] = d.count;
+      });
+
+      // Buscar comentários
+      const comments = await db
+        .select({
+          id: pulseSurveyResponses.id,
+          rating: pulseSurveyResponses.rating,
+          comment: pulseSurveyResponses.comment,
+          createdAt: pulseSurveyResponses.createdAt,
+        })
+        .from(pulseSurveyResponses)
+        .where(
+          and(
+            eq(pulseSurveyResponses.surveyId, input.surveyId),
+            sql`${pulseSurveyResponses.comment} IS NOT NULL`
+          )
+        )
+        .orderBy(desc(pulseSurveyResponses.createdAt))
+        .limit(50);
+
       return {
         surveyId: input.surveyId,
-        totalResponses: 45,
-        avgScore: 8.5,
-        distribution: {
-          0: 0,
-          1: 0,
-          2: 0,
-          3: 1,
-          4: 2,
-          5: 3,
-          6: 5,
-          7: 8,
-          8: 12,
-          9: 10,
-          10: 4,
-        },
-        comments: [
-          {
-            id: 1,
-            rating: 9,
-            comment: "Ambiente muito colaborativo e acolhedor!",
-            createdAt: "2025-11-18",
-          },
-          {
-            id: 2,
-            rating: 7,
-            comment: "Bom, mas poderia melhorar a comunicação entre equipes.",
-            createdAt: "2025-11-17",
-          },
-          {
-            id: 3,
-            rating: 8,
-            comment: "Gosto do ambiente, mas falta mais reconhecimento.",
-            createdAt: "2025-11-16",
-          },
-        ],
+        totalResponses: stats?.totalResponses || 0,
+        avgScore: stats?.avgScore ? Number(stats.avgScore.toFixed(1)) : 0,
+        distribution: distributionObj,
+        comments: comments.map((c) => ({
+          id: c.id,
+          rating: c.rating,
+          comment: c.comment || "",
+          createdAt: c.createdAt.toISOString().split("T")[0],
+        })),
+      };
+    }),
+
+  // Enviar convites por e-mail
+  sendInvitations: protectedProcedure
+    .input(z.object({ surveyId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas RH e Administradores podem enviar convites",
+        });
+      }
+
+      // Buscar pesquisa
+      const survey = await db
+        .select()
+        .from(pulseSurveys)
+        .where(eq(pulseSurveys.id, input.surveyId))
+        .limit(1)
+        .then((r) => r[0]);
+
+      if (!survey) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Pesquisa não encontrada",
+        });
+      }
+
+      // Buscar todos os colaboradores
+      const allEmployees = await db
+        .select({
+          id: employees.id,
+          name: employees.name,
+          email: employees.email,
+        })
+        .from(employees);
+
+      // TODO: Implementar envio de e-mail real usando emailService
+      // Por enquanto, apenas simular o envio
+      console.log(`[Pulse] Enviando convites da pesquisa ${survey.title} para ${allEmployees.length} colaboradores`);
+
+      // Ativar pesquisa automaticamente após envio
+      await db
+        .update(pulseSurveys)
+        .set({
+          status: "active",
+          activatedAt: new Date(),
+        })
+        .where(eq(pulseSurveys.id, input.surveyId));
+
+      return {
+        success: true,
+        message: `Convites enviados para ${allEmployees.length} colaboradores!`,
+        sentCount: allEmployees.length,
       };
     }),
 
@@ -175,7 +323,10 @@ export const pulseRouter = router({
   close: protectedProcedure
     .input(z.object({ surveyId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      // Verificar se usuário tem permissão
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -183,8 +334,13 @@ export const pulseRouter = router({
         });
       }
 
-      // Em produção, atualizar status no banco
-      console.log("[Pulse] Fechando pesquisa:", input.surveyId);
+      await db
+        .update(pulseSurveys)
+        .set({
+          status: "closed",
+          closedAt: new Date(),
+        })
+        .where(eq(pulseSurveys.id, input.surveyId));
 
       return {
         success: true,

@@ -79,6 +79,8 @@ export const positions = mysqlTable("positions", {
   description: text("description"),
   level: mysqlEnum("level", ["junior", "pleno", "senior", "especialista", "coordenador", "gerente", "diretor"]),
   departmentId: int("departmentId"),
+  salaryMin: int("salaryMin"),
+  salaryMax: int("salaryMax"),
   active: boolean("active").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -1693,3 +1695,61 @@ export const pdiGovernanceReviews = mysqlTable("pdiGovernanceReviews", {
 
 export type PdiGovernanceReview = typeof pdiGovernanceReviews.$inferSelect;
 export type InsertPdiGovernanceReview = typeof pdiGovernanceReviews.$inferInsert;
+
+
+// ============================================================================
+// PESQUISAS DE PULSE (ENGAJAMENTO E CLIMA ORGANIZACIONAL)
+// ============================================================================
+
+/**
+ * Pesquisas de Pulse - Questionários rápidos de clima e engajamento
+ */
+export const pulseSurveys = mysqlTable("pulseSurveys", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Informações da pesquisa
+  title: varchar("title", { length: 255 }).notNull(),
+  question: text("question").notNull(),
+  description: text("description"),
+  
+  // Status e controle
+  status: mysqlEnum("status", ["draft", "active", "closed"]).default("draft").notNull(),
+  
+  // Público-alvo
+  targetDepartmentId: int("targetDepartmentId"), // null = todos os departamentos
+  targetEmployeeIds: json("targetEmployeeIds"), // Array de IDs específicos (opcional)
+  
+  // Criação e auditoria
+  createdById: int("createdById").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  
+  // Datas de ativação e encerramento
+  activatedAt: datetime("activatedAt"),
+  closedAt: datetime("closedAt"),
+});
+
+export type PulseSurvey = typeof pulseSurveys.$inferSelect;
+export type InsertPulseSurvey = typeof pulseSurveys.$inferInsert;
+
+/**
+ * Respostas das Pesquisas de Pulse
+ */
+export const pulseSurveyResponses = mysqlTable("pulseSurveyResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamentos
+  surveyId: int("surveyId").notNull(),
+  employeeId: int("employeeId"), // null = resposta anônima
+  
+  // Resposta
+  rating: int("rating").notNull(), // 0-10
+  comment: text("comment"),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }), // Para evitar duplicatas
+});
+
+export type PulseSurveyResponse = typeof pulseSurveyResponses.$inferSelect;
+export type InsertPulseSurveyResponse = typeof pulseSurveyResponses.$inferInsert;

@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
+import { getDb } from "../db";
+import { positions, departments } from "../../drizzle/schema";
+import { eq, and, desc, sql, count, avg } from "drizzle-orm";
 
 // Schema de validação
 const createPositionSchema = z.object({
@@ -20,68 +23,67 @@ const updatePositionSchema = createPositionSchema.partial().extend({
 export const positionsRouter = router({
   // Listar todos os cargos
   list: protectedProcedure.query(async () => {
-    // Mock data - em produção viria do banco
-    return [
-      {
-        id: 1,
-        code: "DEV-001",
-        title: "Desenvolvedor Full Stack",
-        description: "Responsável pelo desenvolvimento de aplicações web completas, desde o frontend até o backend.",
-        level: "pleno" as const,
-        department: "Tecnologia",
-        departmentId: 1,
-        salaryMin: 8000,
-        salaryMax: 12000,
-        active: true,
-      },
-      {
-        id: 2,
-        code: "GER-001",
-        title: "Gerente de Projetos",
-        description: "Gerencia projetos de TI, coordena equipes e garante a entrega dentro do prazo e orçamento.",
-        level: "gerente" as const,
-        department: "Tecnologia",
-        departmentId: 1,
-        salaryMin: 15000,
-        salaryMax: 20000,
-        active: true,
-      },
-      {
-        id: 3,
-        code: "ANA-001",
-        title: "Analista de RH",
-        description: "Realiza processos de recrutamento, seleção e desenvolvimento de pessoas.",
-        level: "pleno" as const,
-        department: "Recursos Humanos",
-        departmentId: 2,
-        salaryMin: 6000,
-        salaryMax: 9000,
-        active: true,
-      },
-    ];
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const allPositions = await db
+      .select({
+        id: positions.id,
+        code: positions.code,
+        title: positions.title,
+        description: positions.description,
+        level: positions.level,
+        departmentId: positions.departmentId,
+        salaryMin: positions.salaryMin,
+        salaryMax: positions.salaryMax,
+        active: positions.active,
+        departmentName: departments.name,
+      })
+      .from(positions)
+      .leftJoin(departments, eq(positions.departmentId, departments.id))
+      .where(eq(positions.active, true))
+      .orderBy(desc(positions.createdAt));
+
+    return allPositions.map((p) => ({
+      id: p.id,
+      code: p.code,
+      title: p.title,
+      description: p.description,
+      level: p.level,
+      department: p.departmentName || "Sem departamento",
+      departmentId: p.departmentId,
+      salaryMin: p.salaryMin,
+      salaryMax: p.salaryMax,
+      active: p.active,
+    }));
   }),
 
   // Buscar cargo por ID
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      // Mock data - em produção viria do banco
-      const positions = [
-        {
-          id: 1,
-          code: "DEV-001",
-          title: "Desenvolvedor Full Stack",
-          description: "Responsável pelo desenvolvimento de aplicações web completas, desde o frontend até o backend.",
-          level: "pleno" as const,
-          department: "Tecnologia",
-          departmentId: 1,
-          salaryMin: 8000,
-          salaryMax: 12000,
-          active: true,
-        },
-      ];
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      const position = positions.find((p) => p.id === input.id);
+      const position = await db
+        .select({
+          id: positions.id,
+          code: positions.code,
+          title: positions.title,
+          description: positions.description,
+          level: positions.level,
+          departmentId: positions.departmentId,
+          salaryMin: positions.salaryMin,
+          salaryMax: positions.salaryMax,
+          active: positions.active,
+          departmentName: departments.name,
+        })
+        .from(positions)
+        .leftJoin(departments, eq(positions.departmentId, departments.id))
+        .where(eq(positions.id, input.id))
+        .limit(1)
+        .then((r) => r[0]);
+
       if (!position) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -89,13 +91,27 @@ export const positionsRouter = router({
         });
       }
 
-      return position;
+      return {
+        id: position.id,
+        code: position.code,
+        title: position.title,
+        description: position.description,
+        level: position.level,
+        department: position.departmentName || "Sem departamento",
+        departmentId: position.departmentId,
+        salaryMin: position.salaryMin,
+        salaryMax: position.salaryMax,
+        active: position.active,
+      };
     }),
 
   // Criar novo cargo
   create: protectedProcedure
     .input(createPositionSchema)
     .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
       // Verificar se usuário tem permissão (RH ou Admin)
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
@@ -112,13 +128,36 @@ export const positionsRouter = router({
         });
       }
 
-      // Em produção, salvar no banco de dados
-      console.log("[Positions] Criando cargo:", input);
+      // Verificar se código já existe
+      const existingPosition = await db
+        .select()
+        .from(positions)
+        .where(eq(positions.code, input.code))
+        .limit(1)
+        .then((r) => r[0]);
+
+      if (existingPosition) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Já existe um cargo com este código",
+        });
+      }
+
+      const [newPosition] = await db.insert(positions).values({
+        code: input.code,
+        title: input.title,
+        description: input.description,
+        level: input.level,
+        departmentId: input.departmentId || null,
+        salaryMin: input.salaryMin,
+        salaryMax: input.salaryMax,
+        active: true,
+      });
 
       return {
-        id: Math.floor(Math.random() * 10000),
+        id: newPosition.insertId,
         ...input,
-        department: "Tecnologia", // Em produção, buscar do banco
+        department: "Tecnologia", // TODO: buscar do banco
         active: true,
       };
     }),
@@ -127,7 +166,10 @@ export const positionsRouter = router({
   update: protectedProcedure
     .input(updatePositionSchema)
     .mutation(async ({ input, ctx }) => {
-      // Verificar se usuário tem permissão
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -143,8 +185,12 @@ export const positionsRouter = router({
         });
       }
 
-      // Em produção, atualizar no banco de dados
-      console.log("[Positions] Atualizando cargo:", input);
+      const { id, ...updateData } = input;
+
+      await db
+        .update(positions)
+        .set(updateData)
+        .where(eq(positions.id, id));
 
       return {
         success: true,
@@ -156,7 +202,10 @@ export const positionsRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      // Verificar se usuário tem permissão
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -164,8 +213,10 @@ export const positionsRouter = router({
         });
       }
 
-      // Em produção, fazer soft delete no banco
-      console.log("[Positions] Excluindo cargo:", input.id);
+      await db
+        .update(positions)
+        .set({ active: false })
+        .where(eq(positions.id, input.id));
 
       return {
         success: true,
@@ -175,21 +226,59 @@ export const positionsRouter = router({
 
   // Obter estatísticas de cargos
   getStats: protectedProcedure.query(async () => {
-    // Mock data - em produção viria do banco
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const stats = await db
+      .select({
+        total: count(),
+        avgSalary: avg(positions.salaryMin),
+      })
+      .from(positions)
+      .where(eq(positions.active, true))
+      .then((r) => r[0]);
+
+    // Contar por nível
+    const byLevel = await db
+      .select({
+        level: positions.level,
+        count: count(),
+      })
+      .from(positions)
+      .where(eq(positions.active, true))
+      .groupBy(positions.level);
+
+    const byLevelObj: Record<string, number> = {
+      junior: 0,
+      pleno: 0,
+      senior: 0,
+      especialista: 0,
+      coordenador: 0,
+      gerente: 0,
+      diretor: 0,
+    };
+
+    byLevel.forEach((l) => {
+      if (l.level) {
+        byLevelObj[l.level] = l.count;
+      }
+    });
+
+    // Contar departamentos únicos
+    const deptCount = await db
+      .select({
+        count: sql<number>`COUNT(DISTINCT ${positions.departmentId})`,
+      })
+      .from(positions)
+      .where(eq(positions.active, true))
+      .then((r) => r[0]);
+
     return {
-      total: 3,
-      active: 3,
-      byLevel: {
-        junior: 0,
-        pleno: 2,
-        senior: 0,
-        especialista: 0,
-        coordenador: 0,
-        gerente: 1,
-        diretor: 0,
-      },
-      avgSalary: 11666,
-      departments: 2,
+      total: stats?.total || 0,
+      active: stats?.total || 0,
+      byLevel: byLevelObj,
+      avgSalary: stats?.avgSalary ? Math.round(Number(stats.avgSalary)) : 0,
+      departments: deptCount?.count || 0,
     };
   }),
 });

@@ -225,6 +225,20 @@
       "when": 1763583445182,
       "tag": "0031_flat_magdalene",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "5",
+      "when": 1763597464489,
+      "tag": "0032_yielding_quasar",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1763598009338,
+      "tag": "0033_true_monster_badoon",
+      "breakpoints": true
     }
   ]
 }
