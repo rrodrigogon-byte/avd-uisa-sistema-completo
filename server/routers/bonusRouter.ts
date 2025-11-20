@@ -2,7 +2,7 @@ import { z } from "zod";
 import { eq, and, sql } from "drizzle-orm";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { bonusPolicies, bonusCalculations, smartGoals, employees } from "../../drizzle/schema";
+import { bonusPolicies, bonusCalculations, smartGoals, employees, notifications } from "../../drizzle/schema";
 
 /**
  * Router de Bônus por Cargo
@@ -315,6 +315,31 @@ export const bonusRouter = router({
           adjustmentReason: input.comments,
         })
         .where(eq(bonusCalculations.id, input.calculationId));
+
+      // Enviar notificação ao colaborador
+      const calculation = await db
+        .select()
+        .from(bonusCalculations)
+        .where(eq(bonusCalculations.id, input.calculationId))
+        .limit(1);
+
+      if (calculation[0]) {
+        const employee = await db
+          .select()
+          .from(employees)
+          .where(eq(employees.id, calculation[0].employeeId))
+          .limit(1);
+
+        if (employee[0] && employee[0].userId) {
+          await db.insert(notifications).values({
+            userId: employee[0].userId,
+            title: "Bônus Aprovado! 🎉",
+            message: `Seu bônus de R$ ${Number(calculation[0].bonusAmount).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} foi aprovado e será processado em breve.`,
+            type: "success",
+            link: "/bonus",
+          });
+        }
+      }
 
       return { success: true };
     }),

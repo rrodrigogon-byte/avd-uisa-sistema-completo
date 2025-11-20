@@ -746,34 +746,34 @@ export const appRouter = router({
 
         const evaluatorId = input.evaluatorId || employee.id;
 
-        // Buscar avaliações 360° onde o usuário é avaliador
+        // Buscar avaliações 360° onde o usuário é avaliador (usando performanceEvaluations)
         const evaluations360 = await database
           .select({
-            id: evaluation360.id,
-            employeeId: evaluation360.employeeId,
-            cycleId: evaluation360.cycleId,
+            id: performanceEvaluations.id,
+            employeeId: performanceEvaluations.employeeId,
+            cycleId: performanceEvaluations.cycleId,
             type: sql<string>`'360'`.as('type'),
-            status: evaluation360.workflowStatus,
-            deadline: evaluation360.deadline,
+            status: performanceEvaluations.workflowStatus,
+            deadline: sql<Date | null>`NULL`.as('deadline'),
           })
-          .from(evaluation360)
+          .from(performanceEvaluations)
           .where(
-            sql`${evaluation360.workflowStatus} IN ('pending_manager', 'pending_consensus') AND ${evaluation360.managerId} = ${evaluatorId}`
+            sql`${performanceEvaluations.type} = '360' AND ${performanceEvaluations.workflowStatus} IN ('pending_manager', 'pending_consensus')`
           );
 
         // Buscar autoavaliações pendentes
         const autoAvaliacoes = await database
           .select({
-            id: evaluation360.id,
-            employeeId: evaluation360.employeeId,
-            cycleId: evaluation360.cycleId,
+            id: performanceEvaluations.id,
+            employeeId: performanceEvaluations.employeeId,
+            cycleId: performanceEvaluations.cycleId,
             type: sql<string>`'autoavaliacao'`.as('type'),
-            status: evaluation360.workflowStatus,
-            deadline: evaluation360.deadline,
+            status: performanceEvaluations.workflowStatus,
+            deadline: sql<Date | null>`NULL`.as('deadline'),
           })
-          .from(evaluation360)
+          .from(performanceEvaluations)
           .where(
-            sql`${evaluation360.workflowStatus} = 'pending_self' AND ${evaluation360.employeeId} = ${evaluatorId}`
+            sql`${performanceEvaluations.type} = '360' AND ${performanceEvaluations.workflowStatus} = 'pending_self' AND ${performanceEvaluations.employeeId} = ${evaluatorId}`
           );
 
         // Buscar avaliações de performance pendentes
@@ -795,15 +795,17 @@ export const appRouter = router({
         const allEvaluations = [...evaluations360, ...autoAvaliacoes, ...performanceEvals];
 
         // Buscar dados dos colaboradores
-        const employeeIds = [...new Set(allEvaluations.map(e => e.employeeId))];
-        const employeesData = await database
-          .select({
-            id: employees.id,
-            name: employees.name,
-            positionId: employees.positionId,
-          })
-          .from(employees)
-          .where(sql`${employees.id} IN (${sql.join(employeeIds, sql`, `)})`);
+        const employeeIds = Array.from(new Set(allEvaluations.map(e => e.employeeId)));
+        const employeesData = employeeIds.length > 0
+          ? await database
+              .select({
+                id: employees.id,
+                name: employees.name,
+                positionId: employees.positionId,
+              })
+              .from(employees)
+              .where(sql`${employees.id} IN (${sql.join(employeeIds, sql`, `)})`)
+          : [];
 
         // Buscar dados dos cargos
         const positionIds = employeesData.map(e => e.positionId).filter(Boolean);
@@ -815,7 +817,7 @@ export const appRouter = router({
           : [];
 
         // Buscar dados dos ciclos
-        const cycleIds = [...new Set(allEvaluations.map(e => e.cycleId))];
+        const cycleIds = Array.from(new Set(allEvaluations.map(e => e.cycleId)));
         const cyclesData = cycleIds.length > 0
           ? await database
               .select()
