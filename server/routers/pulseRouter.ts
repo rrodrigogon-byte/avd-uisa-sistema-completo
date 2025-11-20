@@ -25,6 +25,34 @@ const submitResponseSchema = z.object({
 });
 
 export const pulseRouter = router({
+  // Buscar pesquisa pública (sem autenticação)
+  getPublicSurvey: publicProcedure
+    .input(z.object({ surveyId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const survey = await db
+        .select({
+          id: pulseSurveys.id,
+          title: pulseSurveys.title,
+          question: pulseSurveys.question,
+          description: pulseSurveys.description,
+          status: pulseSurveys.status,
+        })
+        .from(pulseSurveys)
+        .where(
+          and(
+            eq(pulseSurveys.id, input.surveyId),
+            eq(pulseSurveys.status, "active")
+          )
+        )
+        .limit(1)
+        .then((r) => r[0]);
+
+      return survey || null;
+    }),
+
   // Listar todas as pesquisas
   list: protectedProcedure.query(async ({ ctx }) => {
     const db = await getDb();
@@ -307,9 +335,45 @@ export const pulseRouter = router({
         })
         .from(employees);
 
-      // TODO: Implementar envio de e-mail real usando emailService
-      // Por enquanto, apenas simular o envio
-      console.log(`[Pulse] Enviando convites da pesquisa ${survey.title} para ${allEmployees.length} colaboradores`);
+      // Implementar envio de e-mail real usando emailService
+      const { emailService } = await import("../utils/emailService");
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const employee of allEmployees) {
+        if (!employee.email) continue;
+
+        const surveyLink = `${process.env.VITE_APP_URL || 'http://localhost:3000'}/pesquisa/${survey.id}`;
+        
+        const emailSent = await emailService.sendCustomEmail(
+          employee.email,
+          `Pesquisa: ${survey.title}`,
+          `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #F39200;">Nova Pesquisa Pulse</h2>
+              <p>Olá, ${employee.name}!</p>
+              <p>Você foi convidado(a) a participar da seguinte pesquisa:</p>
+              <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="margin-top: 0;">${survey.title}</h3>
+                <p>${survey.question}</p>
+              </div>
+              <p>Sua opinião é muito importante para nós!</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${surveyLink}" style="background: #F39200; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Responder Pesquisa</a>
+              </div>
+              <p style="color: #666; font-size: 12px;">Este é um email automático do Sistema AVD UISA.</p>
+            </div>
+          `
+        );
+
+        if (emailSent) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      }
+
+      console.log(`[Pulse] Enviados: ${successCount}, Falhas: ${failCount}`);
 
       // Ativar pesquisa automaticamente após envio
       await db
@@ -322,8 +386,9 @@ export const pulseRouter = router({
 
       return {
         success: true,
-        message: `Convites enviados para ${allEmployees.length} colaboradores!`,
-        sentCount: allEmployees.length,
+        message: `Convites enviados: ${successCount} sucesso, ${failCount} falhas`,
+        sentCount: successCount,
+        failedCount: failCount,
       };
     }),
 

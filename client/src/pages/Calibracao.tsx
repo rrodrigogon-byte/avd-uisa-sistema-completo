@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
-import { AlertCircle, ArrowDownUp, CheckCircle2, Edit, History, Loader2, TrendingDown, TrendingUp } from "lucide-react";
+import { AlertCircle, ArrowDownUp, CheckCircle2, Edit, Filter, History, Loader2, Search, TrendingDown, TrendingUp } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -33,8 +34,38 @@ export default function Calibracao() {
     reason: "",
   });
 
+  // Filtros
+  const [filters, setFilters] = useState({
+    search: "",
+    department: "all",
+    cycle: "all",
+    status: "all",
+  });
+
   // Buscar avaliações
   const { data: evaluations, isLoading, refetch } = trpc.calibration.getEvaluations.useQuery({});
+
+  // Buscar departamentos e ciclos para filtros
+  const { data: departments } = trpc.employees.getDepartments.useQuery();
+  const { data: cycles } = trpc.evaluationCycles.list.useQuery();
+
+  // Filtrar avaliações
+  const filteredEvaluations = evaluations?.filter((evaluation) => {
+    const matchSearch = filters.search === "" || 
+      evaluation.employeeName?.toLowerCase().includes(filters.search.toLowerCase()) ||
+      evaluation.employeeCode?.toLowerCase().includes(filters.search.toLowerCase());
+    
+    const matchDepartment = filters.department === "all" || 
+      evaluation.departmentId?.toString() === filters.department;
+    
+    const matchCycle = filters.cycle === "all" || 
+      evaluation.cycleId?.toString() === filters.cycle;
+    
+    const matchStatus = filters.status === "all" || 
+      evaluation.status === filters.status;
+    
+    return matchSearch && matchDepartment && matchCycle && matchStatus;
+  }) || [];
 
   // Buscar histórico de calibração
   const { data: history } = trpc.calibration.getHistory.useQuery(
@@ -189,17 +220,114 @@ export default function Calibracao() {
           </Card>
         </div>
 
+        {/* Filtros */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Filtros
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-4 gap-4">
+              {/* Busca */}
+              <div className="space-y-2">
+                <Label>Buscar Colaborador</Label>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Nome ou chapa..."
+                    value={filters.search}
+                    onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                    className="pl-8"
+                  />
+                </div>
+              </div>
+
+              {/* Departamento */}
+              <div className="space-y-2">
+                <Label>Departamento</Label>
+                <Select
+                  value={filters.department}
+                  onValueChange={(value) => setFilters({ ...filters, department: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {departments?.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id.toString()}>
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Ciclo */}
+              <div className="space-y-2">
+                <Label>Ciclo de Avaliação</Label>
+                <Select
+                  value={filters.cycle}
+                  onValueChange={(value) => setFilters({ ...filters, cycle: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {cycles?.map((cycle) => (
+                      <SelectItem key={cycle.id} value={cycle.id.toString()}>
+                        {cycle.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select
+                  value={filters.status}
+                  onValueChange={(value) => setFilters({ ...filters, status: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="pendente">Pendente</SelectItem>
+                    <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                    <SelectItem value="concluida">Concluída</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Contador de resultados */}
+            <div className="mt-4 text-sm text-muted-foreground">
+              Exibindo {filteredEvaluations.length} de {evaluations?.length || 0} avaliações
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Lista de Avaliações */}
         <div className="space-y-4">
-          {!evaluations || evaluations.length === 0 ? (
+          {!filteredEvaluations || filteredEvaluations.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Nenhuma avaliação encontrada</p>
+                <p className="text-muted-foreground">
+                  {evaluations && evaluations.length > 0 
+                    ? "Nenhuma avaliação encontrada com os filtros selecionados" 
+                    : "Nenhuma avaliação encontrada"}
+                </p>
               </CardContent>
             </Card>
           ) : (
-            evaluations.map((evaluation) => (
+            filteredEvaluations.map((evaluation) => (
               <Card key={evaluation.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">

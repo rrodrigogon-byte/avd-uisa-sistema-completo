@@ -246,3 +246,43 @@
 - [x] Documentar rotas e fluxo completo no códigou
 - [ ] Implementar wizard de envio (selecionar pesquisa → selecionar destinatários → confirmar)
 - [ ] Adicionar feedback visual de progresso
+
+
+## Melhorias Avançadas - Sessão Atual
+
+### Calibração - Melhorias Avançadas
+- [ ] Adicionar filtros por departamento, ciclo e status
+- [ ] Implementar busca por nome de colaborador
+- [ ] Adicionar exportação de relatório de calibração (PDF/Excel)
+- [ ] Criar histórico de alterações de calibração
+- [ ] Adicionar gráficos de distribuição de notas
+- [ ] Implementar comparação antes/depois da calibração
+
+### Pesquisa Pulse - Implementação Completa
+- [ ] Implementar envio real de emails com links únicos
+- [ ] Criar página pública de resposta (/pesquisa/:id)
+- [ ] Validar salvamento de respostas no banco
+- [ ] Criar dashboard de resultados com gráficos
+- [ ] Adicionar análise de sentimento dos comentários
+- [ ] Implementar notificações de novas respostas
+
+### Envio de Testes - Validação Completa
+- [ ] Validar todos os 7 testes psicométricos (DISC, Big Five, MBTI, IE, VARK, Liderança, Âncoras)
+- [ ] Garantir cálculo correto de perfis para cada teste
+- [ ] Testar envio para diretoria, departamentos e centros de custos
+- [ ] Validar templates de email para cada tipo de teste
+- [ ] Criar dashboard de acompanhamento de testes enviados
+
+### SMTP - Configuração e Testes
+- [ ] Verificar configuração SMTP no banco
+- [ ] Testar envio real de email
+- [ ] Validar todos os templates de email
+- [ ] Implementar retry automático em caso de falha
+- [ ] Adicionar logs detalhados de envio
+
+### Interface - UX Avançada
+- [ ] Adicionar tooltips explicativos em campos complexos
+- [ ] Criar tour guiado para novos usuários
+- [ ] Implementar feedback visual em todas as ações
+- [ ] Adicionar loading states em operações assíncronas
+- [ ] Melhorar mensagens de erro com sugestões de solução

@@ -64,6 +64,7 @@ import ImportacaoDescricoes from "./pages/ImportacaoDescricoes";
 import PesquisasPulse from "./pages/PesquisasPulse";
 import CriarPesquisaPulse from "./pages/CriarPesquisaPulse";
 import ResponderPesquisaPulse from "./pages/ResponderPesquisaPulse";
+import PesquisaPublica from "./pages/PesquisaPublica";
 import ResultadosPesquisaPulse from "./pages/ResultadosPesquisaPulse";
 import Feedbacks from "./pages/Feedbacks";
 import Badges from "./pages/Badges";
@@ -208,8 +209,8 @@ function Router() {
       <Route path="/importacao-descricoes" component={ImportacaoDescricoes} />
       <Route path="/pesquisas-pulse" component={PesquisasPulse} />
       <Route path="/pesquisas-pulse/criar" component={CriarPesquisaPulse} />
-      <Route path="/pesquisa/:id" component={ResponderPesquisaPulse} />
-      <Route path="/pesquisas-pulse/resultados/:id" component={ResultadosPesquisaPulse} />
+      <Route path="/pesquisa/:id" component={PesquisaPublica} />
+      <Route path="/pesquisas/pulse/responder/:id" component={ResponderPesquisaPulse} />
       <Route path="/notificacoes" component={Notificacoes} />
       <Route path="/testes/comparativo" component={DashboardComparativoTestes} />
       <Route path="/relatorios-executivos" component={RelatoriosExecutivos} />
