@@ -27,7 +27,7 @@ import Funcionarios from "./pages/Funcionarios";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
 import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
-import Bonus from "./pages/aprovacoes/Bonus";
+import BonusAprovacoes from "./pages/aprovacoes/Bonus";
 import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
 import SucessaoMelhorado from "./pages/SucessaoMelhorado";
@@ -98,7 +98,7 @@ import MovimentacaoNineBox from "./pages/MovimentacaoNineBox";
 import AprovacaoCalibracoes from "./pages/AprovacaoCalibracoes";
 import RankingGamificacao from "./pages/RankingGamificacao";
 import ConfiguracaoIntegracoes from "./pages/ConfiguracaoIntegracoes";
-import Bonus from "@/pages/Bonus";
+import BonusPolicies from "@/pages/Bonus";
 import AprovacaoBonus from "@/pages/AprovacaoBonus";
 import RelatorioBonus from "@/pages/RelatorioBonus";
 import AvaliacoesPendentes from "./pages/AvaliacoesPendentes";
@@ -120,7 +120,7 @@ function Router() {
       <Route path="/executivo/aprovacoes" component={AprovacaoCalibracoes} />
       <Route path="/gamificacao/ranking" component={RankingGamificacao} />
       <Route path="/configuracoes/integracoes" component={ConfiguracaoIntegracoes} />
-      <Route path="/bonus" component={Bonus} />
+      <Route path="/bonus" component={BonusPolicies} />
       <Route path="/aprovacoes/bonus" component={AprovacaoBonus} />
       <Route path="/relatorios/bonus" component={RelatorioBonus} />
       <Route path="/avaliacoes-pendentes" component={AvaliacoesPendentes} />
@@ -144,7 +144,7 @@ function Router() {
       <Route path="/departamentos" component={Departamentos} />
       <Route path="/centros-custo" component={CentrosCustos} />
       <Route path="/aprovacoes/dashboard" component={AprovacoesD} />
-      <Route path="/aprovacoes/solicitacoes" component={MinhasSolicitacoes} />      <Route path={"/aprovacoes/bonus"} component={Bonus} />
+      <Route path="/aprovacoes/solicitacoes" component={MinhasSolicitacoes} />      <Route path={"/aprovacoes/bonus"} component={BonusAprovacoes} />
       <Route path="/aprovacoes/metas" component={AprovarMetas} />
       <Route path="/configuracoes/bonus" component={ConfiguracaoBonus} />
       <Route path="/configuracoes/workflows-bonus" component={ConfiguracaoWorkflowsBonus} />

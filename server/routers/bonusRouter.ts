@@ -415,4 +415,100 @@ export const bonusRouter = router({
         totalBonusAmount: Number(bonusSum[0]?.total || 0),
       };
     }),
+
+  /**
+   * Obter tendências mensais de bônus
+   * Retorna dados agregados por mês para gráficos
+   */
+  getMonthlyTrends: protectedProcedure
+    .input(
+      z.object({
+        months: z.number().default(6), // Últimos 6 meses por padrão
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const monthsToFetch = input?.months || 6;
+
+      // Buscar cálculos dos últimos N meses
+      const calculations = await db
+        .select({
+          referenceMonth: bonusCalculations.referenceMonth,
+          bonusAmount: bonusCalculations.bonusAmount,
+          status: bonusCalculations.status,
+        })
+        .from(bonusCalculations);
+
+      // Agrupar por mês
+      const monthlyData: Record<string, { total: number; count: number; paid: number }> = {};
+
+      calculations.forEach((calc) => {
+        const month = calc.referenceMonth || "N/A";
+        if (!monthlyData[month]) {
+          monthlyData[month] = { total: 0, count: 0, paid: 0 };
+        }
+        monthlyData[month].total += Number(calc.bonusAmount || 0);
+        monthlyData[month].count += 1;
+        if (calc.status === "pago") {
+          monthlyData[month].paid += Number(calc.bonusAmount || 0);
+        }
+      });
+
+      // Converter para array e ordenar por mês
+      const trends = Object.entries(monthlyData)
+        .map(([month, data]) => ({
+          month,
+          totalAmount: data.total,
+          count: data.count,
+          paidAmount: data.paid,
+          averageBonus: data.count > 0 ? data.total / data.count : 0,
+        }))
+        .sort((a, b) => a.month.localeCompare(b.month))
+        .slice(-monthsToFetch); // Pegar apenas os últimos N meses
+
+      return trends;
+    }),
+
+  /**
+   * Obter distribuição de bônus por departamento
+   */
+  getDepartmentDistribution: protectedProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar cálculos com informações de colaboradores e departamentos
+      const results = await db
+        .select({
+          departmentId: employees.departmentId,
+          bonusAmount: bonusCalculations.bonusAmount,
+        })
+        .from(bonusCalculations)
+        .leftJoin(employees, eq(bonusCalculations.employeeId, employees.id))
+        .where(eq(bonusCalculations.status, "pago"));
+
+      // Agrupar por departamento
+      const deptData: Record<number, { total: number; count: number }> = {};
+
+      results.forEach((row) => {
+        const deptId = row.departmentId || 0;
+        if (!deptData[deptId]) {
+          deptData[deptId] = { total: 0, count: 0 };
+        }
+        deptData[deptId].total += Number(row.bonusAmount || 0);
+        deptData[deptId].count += 1;
+      });
+
+      // Converter para array
+      const distribution = Object.entries(deptData).map(([deptId, data]) => ({
+        departmentId: Number(deptId),
+        totalAmount: data.total,
+        count: data.count,
+        averageBonus: data.count > 0 ? data.total / data.count : 0,
+      }));
+
+      return distribution;
+    }),
 });

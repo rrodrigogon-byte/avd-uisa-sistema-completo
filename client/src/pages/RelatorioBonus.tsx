@@ -19,8 +19,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { DollarSign, Download, TrendingUp, Users, Calendar, Filter } from "lucide-react";
+import { DollarSign, Download, TrendingUp, Users, Calendar, Filter, LineChart as LineChartIcon, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import ExcelJS from "exceljs";
+import { Line, Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Registrar componentes do Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function RelatorioBonus() {
   const [filterStatus, setFilterStatus] = useState<string>("pago");
@@ -35,6 +60,12 @@ export default function RelatorioBonus() {
   // Buscar estatísticas
   const { data: stats } = trpc.bonus.getStats.useQuery();
 
+  // Buscar tendências mensais
+  const { data: monthlyTrends } = trpc.bonus.getMonthlyTrends.useQuery({ months: 6 });
+
+  // Buscar distribuição por departamento
+  const { data: deptDistribution } = trpc.bonus.getDepartmentDistribution.useQuery();
+
   // Filtrar por termo de busca
   const filteredCalculations = calculations?.filter((calc: any) => {
     const matchesSearch = searchTerm === "" || 
@@ -44,9 +75,108 @@ export default function RelatorioBonus() {
     return matchesSearch && matchesMonth;
   });
 
-  const handleExportToExcel = () => {
-    // Implementar exportação para Excel
-    toast.info("Exportação para Excel em desenvolvimento");
+  const handleExportToExcel = async () => {
+    try {
+      if (!filteredCalculations || filteredCalculations.length === 0) {
+        toast.error("Nenhum dado para exportar");
+        return;
+      }
+
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Relatório de Bônus");
+
+      // Definir colunas
+      worksheet.columns = [
+        { header: "ID", key: "id", width: 10 },
+        { header: "Colaborador", key: "employeeName", width: 30 },
+        { header: "Política", key: "policyName", width: 25 },
+        { header: "Salário Base", key: "baseSalary", width: 15 },
+        { header: "Multiplicador", key: "multiplier", width: 15 },
+        { header: "Valor Bônus", key: "bonusAmount", width: 15 },
+        { header: "Status", key: "status", width: 15 },
+        { header: "Mês Referência", key: "referenceMonth", width: 15 },
+        { header: "Data Cálculo", key: "calculatedAt", width: 20 },
+        { header: "Data Pagamento", key: "paidAt", width: 20 },
+      ];
+
+      // Estilizar cabeçalho
+      worksheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+      worksheet.getRow(1).fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF4F46E5" },
+      };
+      worksheet.getRow(1).alignment = { vertical: "middle", horizontal: "center" };
+
+      // Adicionar dados
+      filteredCalculations.forEach((calc: any) => {
+        worksheet.addRow({
+          id: calc.id,
+          employeeName: calc.employeeName || "N/A",
+          policyName: calc.policyName || "N/A",
+          baseSalary: Number(calc.baseSalary || 0) / 100,
+          multiplier: calc.multiplier || 0,
+          bonusAmount: Number(calc.bonusAmount || 0) / 100,
+          status: calc.status === "pago" ? "Pago" : calc.status === "aprovado" ? "Aprovado" : "Calculado",
+          referenceMonth: calc.referenceMonth || "N/A",
+          calculatedAt: calc.calculatedAt ? new Date(calc.calculatedAt).toLocaleDateString("pt-BR") : "N/A",
+          paidAt: calc.paidAt ? new Date(calc.paidAt).toLocaleDateString("pt-BR") : "N/A",
+        });
+      });
+
+      // Formatar colunas de valores monetários
+      worksheet.getColumn("baseSalary").numFmt = 'R$ #,##0.00';
+      worksheet.getColumn("bonusAmount").numFmt = 'R$ #,##0.00';
+
+      // Adicionar bordas
+      worksheet.eachRow((row, rowNumber) => {
+        row.eachCell((cell) => {
+          cell.border = {
+            top: { style: "thin" },
+            left: { style: "thin" },
+            bottom: { style: "thin" },
+            right: { style: "thin" },
+          };
+        });
+      });
+
+      // Adicionar linha de totais
+      const totalRow = worksheet.addRow({
+        id: "",
+        employeeName: "TOTAL",
+        policyName: "",
+        baseSalary: "",
+        multiplier: "",
+        bonusAmount: totalPaid / 100,
+        status: "",
+        referenceMonth: "",
+        calculatedAt: "",
+        paidAt: "",
+      });
+      totalRow.font = { bold: true };
+      totalRow.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFE5E7EB" },
+      };
+
+      // Gerar arquivo
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `relatorio-bonus-${new Date().toISOString().split("T")[0]}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Relatório exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar:", error);
+      toast.error("Erro ao exportar relatório");
+    }
   };
 
   const totalPaid = filteredCalculations?.reduce(
@@ -197,6 +327,168 @@ export default function RelatorioBonus() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Gráficos de Evolução */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Gráfico de Evolução Mensal */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LineChartIcon className="w-5 h-5 text-blue-600" />
+              Evolução Mensal de Bônus
+            </CardTitle>
+            <CardDescription>
+              Tendência dos últimos 6 meses
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {monthlyTrends && monthlyTrends.length > 0 ? (
+              <Line
+                data={{
+                  labels: monthlyTrends.map((t) => t.month),
+                  datasets: [
+                    {
+                      label: "Total de Bônus (R$)",
+                      data: monthlyTrends.map((t) => Number(t.totalAmount) / 100),
+                      borderColor: "rgb(59, 130, 246)",
+                      backgroundColor: "rgba(59, 130, 246, 0.1)",
+                      tension: 0.4,
+                    },
+                    {
+                      label: "Bônus Pagos (R$)",
+                      data: monthlyTrends.map((t) => Number(t.paidAmount) / 100),
+                      borderColor: "rgb(34, 197, 94)",
+                      backgroundColor: "rgba(34, 197, 94, 0.1)",
+                      tension: 0.4,
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "top" as const,
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: function (context) {
+                          let label = context.dataset.label || "";
+                          if (label) {
+                            label += ": ";
+                          }
+                          if (context.parsed.y !== null) {
+                            label += new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(context.parsed.y);
+                          }
+                          return label;
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: function (value) {
+                          return new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                            notation: "compact",
+                          }).format(value as number);
+                        },
+                      },
+                    },
+                  },
+                }}
+                height={300}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-gray-400">
+                Sem dados disponíveis
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Gráfico de Distribuição por Departamento */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-purple-600" />
+              Distribuição por Departamento
+            </CardTitle>
+            <CardDescription>
+              Comparação de bônus entre departamentos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {deptDistribution && deptDistribution.length > 0 ? (
+              <Bar
+                data={{
+                  labels: deptDistribution.map((d) => `Dept. ${d.departmentId}`),
+                  datasets: [
+                    {
+                      label: "Total de Bônus (R$)",
+                      data: deptDistribution.map((d) => Number(d.totalAmount) / 100),
+                      backgroundColor: "rgba(147, 51, 234, 0.7)",
+                      borderColor: "rgb(147, 51, 234)",
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: function (context) {
+                          let label = context.dataset.label || "";
+                          if (label) {
+                            label += ": ";
+                          }
+                          if (context.parsed.y !== null) {
+                            label += new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(context.parsed.y);
+                          }
+                          return label;
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: function (value) {
+                          return new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                            notation: "compact",
+                          }).format(value as number);
+                        },
+                      },
+                    },
+                  },
+                }}
+                height={300}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-gray-400">
+                Sem dados disponíveis
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Tabela de Bônus */}
       <Card>
