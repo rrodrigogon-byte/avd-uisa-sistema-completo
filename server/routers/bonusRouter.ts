@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, gte, desc } from "drizzle-orm";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { bonusPolicies, bonusCalculations, smartGoals, employees, notifications, bonusAuditLogs, bonusApprovalComments } from "../../drizzle/schema";
+import { bonusPolicies, bonusCalculations, smartGoals, employees, notifications, bonusAuditLogs, bonusApprovalComments, departments } from "../../drizzle/schema";
 
 /**
  * Router de Bônus por Cargo
@@ -786,7 +786,7 @@ export const bonusRouter = router({
         .select({
           id: bonusCalculations.id,
           status: bonusCalculations.status,
-          createdAt: bonusCalculations.createdAt,
+          calculatedAt: bonusCalculations.calculatedAt,
           approvedAt: bonusCalculations.approvedAt,
           departmentId: employees.departmentId,
           departmentName: departments.name,
@@ -798,23 +798,23 @@ export const bonusRouter = router({
       const calculations = input.departmentId
         ? await baseQuery.where(
             and(
-              gte(bonusCalculations.createdAt, startDate),
+              gte(bonusCalculations.calculatedAt, startDate),
               eq(employees.departmentId, input.departmentId)
             )
           )
-        : await baseQuery.where(gte(bonusCalculations.createdAt, startDate));
+        : await baseQuery.where(gte(bonusCalculations.calculatedAt, startDate));
 
       // Calcular tempo médio de aprovação
       const approvedCalculations = calculations.filter(
-        (c) => c.status === "approved" && c.approvedAt && c.createdAt
+        (c) => c.status === "aprovado" && c.approvedAt && c.calculatedAt
       );
 
       let avgApprovalTimeHours = 0;
       if (approvedCalculations.length > 0) {
         const totalHours = approvedCalculations.reduce((sum, calc) => {
-          const created = new Date(calc.createdAt!);
+          const calculated = new Date(calc.calculatedAt!);
           const approved = new Date(calc.approvedAt!);
-          const hours = (approved.getTime() - created.getTime()) / (1000 * 60 * 60);
+          const hours = (approved.getTime() - calculated.getTime()) / (1000 * 60 * 60);
           return sum + hours;
         }, 0);
         avgApprovalTimeHours = totalHours / approvedCalculations.length;
@@ -826,9 +826,9 @@ export const bonusRouter = router({
 
       const criticalPending = calculations.filter(
         (c) =>
-          c.status === "pending" &&
-          c.createdAt &&
-          new Date(c.createdAt) < criticalThresholdDate
+          c.status === "calculado" &&
+          c.calculatedAt &&
+          new Date(c.calculatedAt) < criticalThresholdDate
       );
 
       // Distribuição por departamento
@@ -840,7 +840,7 @@ export const bonusRouter = router({
           byDepartment[deptName] = { total: 0, avgHours: 0, pending: 0 };
         }
         byDepartment[deptName].total++;
-        if (calc.status === "pending") {
+        if (calc.status === "calculado") {
           byDepartment[deptName].pending++;
         }
       });
@@ -848,13 +848,13 @@ export const bonusRouter = router({
       // Calcular tempo médio por departamento
       Object.keys(byDepartment).forEach((deptName) => {
         const deptCalcs = calculations.filter(
-          (c) => (c.departmentName || "Sem Departamento") === deptName && c.status === "approved" && c.approvedAt && c.createdAt
+          (c) => (c.departmentName || "Sem Departamento") === deptName && c.status === "aprovado" && c.approvedAt && c.calculatedAt
         );
         if (deptCalcs.length > 0) {
           const totalHours = deptCalcs.reduce((sum, calc) => {
-            const created = new Date(calc.createdAt!);
+            const calculated = new Date(calc.calculatedAt!);
             const approved = new Date(calc.approvedAt!);
-            const hours = (approved.getTime() - created.getTime()) / (1000 * 60 * 60);
+            const hours = (approved.getTime() - calculated.getTime()) / (1000 * 60 * 60);
             return sum + hours;
           }, 0);
           byDepartment[deptName].avgHours = totalHours / deptCalcs.length;
@@ -864,15 +864,15 @@ export const bonusRouter = router({
       return {
         avgApprovalTimeHours: Math.round(avgApprovalTimeHours * 10) / 10,
         totalCalculations: calculations.length,
-        pendingCount: calculations.filter((c) => c.status === "pending").length,
+        pendingCount: calculations.filter((c) => c.status === "calculado").length,
         approvedCount: approvedCalculations.length,
         criticalPendingCount: criticalPending.length,
         criticalPending: criticalPending.map((c) => ({
           id: c.id,
-          createdAt: c.createdAt,
+          calculatedAt: c.calculatedAt,
           departmentName: c.departmentName,
           daysWaiting: Math.floor(
-            (new Date().getTime() - new Date(c.createdAt!).getTime()) / (1000 * 60 * 60 * 24)
+            (new Date().getTime() - new Date(c.calculatedAt!).getTime()) / (1000 * 60 * 60 * 24)
           ),
         })),
         byDepartment: Object.entries(byDepartment).map(([name, stats]) => ({

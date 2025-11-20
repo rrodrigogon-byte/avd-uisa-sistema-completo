@@ -2,10 +2,30 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { eq, and, sql } from "drizzle-orm";
-// Notification helper - usar diretamente do _core/notification.ts se necessário
+import { notifications } from "../../drizzle/schema";
+
+/**
+ * Criar notificação no banco de dados para o usuário
+ */
 const createNotification = async (params: { userId: number; type: string; title: string; message: string; link: string }) => {
-  // Placeholder - implementar notificação real se necessário
-  console.log('[Notification]', params);
+  const db = await getDb();
+  if (!db) {
+    console.warn('[Notification] Database not available');
+    return;
+  }
+
+  try {
+    await db.insert(notifications).values({
+      userId: params.userId,
+      type: params.type,
+      title: params.title,
+      message: params.message,
+      link: params.link,
+    });
+    console.log(`[Notification] Enviada para usuário ${params.userId}: ${params.title}`);
+  } catch (error) {
+    console.error('[Notification] Erro ao criar notificação:', error);
+  }
 };
 
 export const bonusWorkflowRouter = router({

@@ -190,3 +190,25 @@
 - [x] Adicionar validações de segurança (isAdmin, status aprovado)
 - [x] Criar endpoint getPaidBonuses para consulta
 - [x] Criar endpoint cancelPayment para reverter pagamentos
+
+
+## 🔧 NOVA SESSÃO - CORREÇÕES E MELHORIAS FINAIS
+
+### Correções TypeScript Críticas
+- [x] Corrigir 4 erros em bonusRouter.ts (importar gte, ajustar tipo createdAt → calculatedAt)
+- [ ] Limpar cache de build para resolver duplicação de getUserEmployee
+
+### Notificações Reais
+- [x] Substituir placeholder em bonusWorkflowRouter por integração real
+- [x] Usar tabela notifications do schema para persistência
+- [x] Implementar createNotification com insert no banco
+
+### Testes Vitest
+- [x] Criar teste para endpoint getSLAMetrics (sla-metrics.test.ts)
+- [x] Executar testes e validar resultados (2/2 passed)
+- [ ] Criar teste para validação de importação UISA (opcional)
+
+### Meta SMART - Correção de Funcionalidade
+- [x] Corrigir botão de salvar meta (usar employeeId correto via getUserEmployee)
+- [x] Implementar vinculação de meta ao profissional (targetEmployeeId opcional)
+- [x] Adicionar validação de permissões (admin/gestor pode criar para outros)

@@ -12,6 +12,7 @@ import {
 } from "../drizzle/schema";
 import { getDb, getUserEmployee } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 
 /**
  * Router de Metas SMART
@@ -128,11 +129,39 @@ export const goalsRouter = router({
         bonusAmount: z.number().optional(),
         pdiPlanId: z.number().optional(),
         cycleId: z.number(),
+        targetEmployeeId: z.number().optional(), // Permitir vincular a outro profissional
       })
     )
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar employeeId correto do usuário logado
+      const currentEmployee = await getUserEmployee(ctx.user.id);
+      if (!currentEmployee) {
+        throw new TRPCError({ 
+          code: "NOT_FOUND", 
+          message: "Colaborador não encontrado" 
+        });
+      }
+
+      // Determinar o employeeId alvo (próprio ou de outro profissional)
+      let targetEmployeeId = currentEmployee.id;
+      
+      if (input.targetEmployeeId) {
+        // Validar permissão para criar meta para outro profissional
+        const isAdmin = ctx.user.role === 'admin' || ctx.user.role === 'rh';
+        const isManager = currentEmployee.managerId !== null;
+        
+        if (!isAdmin && !isManager) {
+          throw new TRPCError({ 
+            code: "FORBIDDEN", 
+            message: "Apenas gestores e administradores podem criar metas para outros profissionais" 
+          });
+        }
+        
+        targetEmployeeId = input.targetEmployeeId;
+      }
 
       // Validar critérios SMART automaticamente
       const validation = {
@@ -153,7 +182,7 @@ export const goalsRouter = router({
 
       // Criar meta
       const [result] = await db.insert(smartGoals).values({
-        employeeId: ctx.user.id,
+        employeeId: targetEmployeeId,
         cycleId: input.cycleId,
         pdiPlanId: input.pdiPlanId,
         title: input.title,
