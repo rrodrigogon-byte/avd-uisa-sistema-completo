@@ -51,6 +51,7 @@ import AnalyticsAvancado from "./pages/AnalyticsAvancado";
 import DescricaoCargos from "./pages/DescricaoCargos";
 import PesquisasPulse from "./pages/PesquisasPulse";
 import ResponderPesquisaPulse from "./pages/ResponderPesquisaPulse";
+import ResultadosPesquisaPulse from "./pages/ResultadosPesquisaPulse";
 import Feedbacks from "./pages/Feedbacks";
 import Badges from "./pages/Badges";
 import PsychometricTests from "./pages/PsychometricTests";
@@ -154,6 +155,7 @@ function Router() {
       <Route path="/descricao-cargos" component={DescricaoCargos} />
       <Route path="/pesquisas-pulse" component={PesquisasPulse} />
       <Route path="/pesquisa/:id" component={ResponderPesquisaPulse} />
+      <Route path="/pesquisas-pulse/resultados/:id" component={ResultadosPesquisaPulse} />
       <Route path="/notificacoes" component={Notificacoes} />
       <Route path="/testes/comparativo" component={DashboardComparativoTestes} />
       <Route path="/relatorios-executivos" component={RelatoriosExecutivos} />

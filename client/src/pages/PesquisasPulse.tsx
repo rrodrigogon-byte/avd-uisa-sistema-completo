@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -260,6 +261,7 @@ export default function PesquisasPulse() {
                   <TableHead>Respostas</TableHead>
                   <TableHead>Nota Média</TableHead>
                   <TableHead>Data</TableHead>
+                  <TableHead>Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -286,6 +288,13 @@ export default function PesquisasPulse() {
                       </div>
                     </TableCell>
                     <TableCell>{new Date(survey.createdAt).toLocaleDateString("pt-BR")}</TableCell>
+                    <TableCell>
+                      <Link href={`/pesquisas-pulse/resultados/${survey.id}`}>
+                        <Button variant="outline" size="sm">
+                          Ver Resultados
+                        </Button>
+                      </Link>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
