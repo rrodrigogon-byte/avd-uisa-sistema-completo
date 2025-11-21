@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, TrendingUp, Users, Award, Download, Filter } from "lucide-react";
+import { Loader2, TrendingUp, Users, Award, Download, Filter, FileDown } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { exportToPDF, generateSectionHTML, generateTableHTML, generateInfoGridHTML, generateBadgeHTML } from "@/lib/pdfExport";
 import { Bar, Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -78,6 +79,106 @@ export default function NineBoxComparativo() {
 
   const clearAll = () => {
     setSelectedPositions([]);
+  };
+
+  const handleExportPDF = async () => {
+    if (!comparative || comparative.length === 0) {
+      toast.error("Nenhum dado para exportar");
+      return;
+    }
+
+    // Calcular totais
+    const totalEmployees = comparative.reduce((sum, c) => sum + c.totalEmployees, 0);
+    const avgPerformance = (
+      comparative.reduce((sum, c) => sum + c.avgPerformance * c.totalEmployees, 0) /
+      totalEmployees
+    ).toFixed(2);
+    const avgPotential = (
+      comparative.reduce((sum, c) => sum + c.avgPotential * c.totalEmployees, 0) /
+      totalEmployees
+    ).toFixed(2);
+    const totalStars = comparative.reduce((sum, c) => sum + c.starsCount, 0);
+
+    // Gerar conteúdo HTML
+    const content = `
+      ${generateSectionHTML(
+        "Resumo Geral",
+        generateInfoGridHTML([
+          { label: "Total de Colaboradores", value: totalEmployees.toString() },
+          { label: "Média de Performance", value: avgPerformance },
+          { label: "Média de Potencial", value: avgPotential },
+          { label: "Total de Stars", value: totalStars.toString() },
+        ])
+      )}
+
+      ${generateSectionHTML(
+        "Análise Detalhada por Cargo",
+        generateTableHTML(
+          ["Cargo", "Colaboradores", "Perf Média", "Pot Médio", "Alto Desemp.", "Alto Pot.", "Stars"],
+          comparative.map((c) => [
+            c.positionTitle,
+            c.employeeCount.toString(),
+            c.avgPerformance.toFixed(2),
+            c.avgPotential.toFixed(2),
+            `${c.highPerformersPercent.toFixed(1)}%`,
+            `${c.highPotentialPercent.toFixed(1)}%`,
+            `${c.starsPercent.toFixed(1)}% (${c.starsCount})`,
+          ])
+        )
+      )}
+
+      ${generateSectionHTML(
+        "Distribuição Nine Box por Cargo",
+        comparative
+          .map(
+            (c) => `
+          <div class="card">
+            <div class="card-title">${c.positionTitle}</div>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Alto Desempenho</div>
+                <div class="info-value">${c.highPerformersPercent.toFixed(1)}%</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Alto Potencial</div>
+                <div class="info-value">${c.highPotentialPercent.toFixed(1)}%</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Stars</div>
+                <div class="info-value">${c.starsPercent.toFixed(1)}% (${c.starsCount})</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Enigmas</div>
+                <div class="info-value">${c.enigmasPercent.toFixed(1)}% (${c.enigmasCount})</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Solid Performers</div>
+                <div class="info-value">${c.solidPerformersPercent.toFixed(1)}% (${c.solidPerformersCount})</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Dilemas</div>
+                <div class="info-value">${c.dilemasPercent.toFixed(1)}% (${c.dilemasCount})</div>
+              </div>
+            </div>
+          </div>
+        `
+          )
+          .join("")
+      )}
+    `;
+
+    try {
+      await exportToPDF({
+        title: "Nine Box Comparativo",
+        subtitle: "Distribuição de Talentos por Cargo",
+        content,
+        filename: `nine-box-comparativo-${new Date().toISOString().split('T')[0]}.pdf`,
+        orientation: "landscape",
+      });
+      toast.success("PDF gerado com sucesso!");
+    } catch (error: any) {
+      toast.error(`Erro ao gerar PDF: ${error.message}`);
+    }
   };
 
   // Preparar dados para gráfico de barras (Performance e Potencial médios)
@@ -197,11 +298,20 @@ export default function NineBoxComparativo() {
             </p>
           </div>
           
-          <Button 
-            variant="outline"
-            onClick={() => {
-              if (!comparative || comparative.length === 0) {
-                toast.error("Nenhum dado para exportar");
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => handleExportPDF()}
+              disabled={!comparative || comparative.length === 0}
+            >
+              <FileDown className="h-4 w-4 mr-2" />
+              Exportar PDF
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                if (!comparative || comparative.length === 0) {
+                  toast.error("Nenhum dado para exportar");
                 return;
               }
               // Criar CSV
@@ -226,8 +336,9 @@ export default function NineBoxComparativo() {
             }}
           >
             <Download className="h-4 w-4 mr-2" />
-            Exportar Relatório
+            Exportar CSV
           </Button>
+          </div>
         </div>
 
         {/* Filtros Hierárquicos */}

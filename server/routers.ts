@@ -28,6 +28,7 @@ import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./notificationsRouter";
+import { sendEmail } from "./emailService";
 import { pulseRouter } from "./routers/pulseRouter";
 import { positionsRouter } from "./routers/positionsRouter";
 import { jobDescriptionsRouter } from "./routers/jobDescriptionsRouter";
@@ -1708,6 +1709,104 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         // Salvar teste no banco
         await database.insert(psychometricTests).values(testValues);
 
+        // Enviar notificação por email para gestor e RH
+        try {
+          const testTypeLabels: Record<string, string> = {
+            disc: "DISC - Avaliação Comportamental",
+            bigfive: "Big Five (OCEAN) - Personalidade",
+            mbti: "MBTI - Tipo de Personalidade",
+            ie: "Inteligência Emocional",
+            vark: "VARK - Estilos de Aprendizagem",
+            leadership: "Estilos de Liderança",
+            careeranchors: "Âncoras de Carreira",
+          };
+
+          const testLabel = testTypeLabels[input.testType] || input.testType.toUpperCase();
+          const profileSummary = input.testType === 'disc'
+            ? `Perfil: ${profile.profile || 'N/A'} (D:${profile.D || 0}, I:${profile.I || 0}, S:${profile.S || 0}, C:${profile.C || 0})`
+            : input.testType === 'bigfive'
+            ? `Perfis: O:${Math.round((profile.O || 0) * 20)}, C:${Math.round((profile.C || 0) * 20)}, E:${Math.round((profile.E || 0) * 20)}, A:${Math.round((profile.A || 0) * 20)}, N:${Math.round((profile.N || 0) * 20)}`
+            : `Perfil: ${profile.profile || 'Concluído'}`;
+
+          // Buscar gestor do colaborador
+          let managerEmail = null;
+          if (employee[0].managerId) {
+            const manager = await database.select()
+              .from(employees)
+              .where(eq(employees.id, employee[0].managerId))
+              .limit(1);
+            
+            if (manager.length > 0 && manager[0].email) {
+              managerEmail = manager[0].email;
+            }
+          }
+
+          // Buscar email do owner/admin (do ENV)
+          const ownerEmail = process.env.OWNER_EMAIL || null;
+
+          // Lista de destinatários
+          const recipients = [managerEmail, ownerEmail].filter(Boolean) as string[];
+
+          if (recipients.length > 0) {
+            await sendEmail({
+              to: recipients.join(', '),
+              subject: `✅ Teste Psicométrico Concluído - ${employee[0].name}`,
+              html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+                    .info-box { background: white; padding: 20px; border-left: 4px solid #8b5cf6; margin: 20px 0; }
+                    .button { display: inline-block; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px; }
+                    .footer { text-align: center; color: #6b7280; font-size: 12px; margin-top: 20px; }
+                  </style>
+                </head>
+                <body>
+                  <div class="container">
+                    <div class="header">
+                      <h1 style="margin: 0;">✅ Teste Concluído!</h1>
+                    </div>
+                    <div class="content">
+                      <p>Olá,</p>
+                      <p>O colaborador <strong>${employee[0].name}</strong> concluiu um teste psicométrico.</p>
+                      
+                      <div class="info-box">
+                        <h3 style="margin-top: 0; color: #8b5cf6;">📊 Detalhes do Teste</h3>
+                        <p><strong>Teste:</strong> ${testLabel}</p>
+                        <p><strong>Colaborador:</strong> ${employee[0].name}</p>
+                        <p><strong>Email:</strong> ${employee[0].email}</p>
+                        <p><strong>Data/Hora:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                        <p><strong>Resultado:</strong> ${profileSummary}</p>
+                      </div>
+
+                      <p>Acesse o sistema para visualizar o relatório completo e insights detalhados.</p>
+                      
+                      <a href="${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/testes-psicometricos/resultados" class="button">
+                        Ver Resultados Completos
+                      </a>
+
+                      <p style="margin-top: 30px;">Atenciosamente,<br><strong>Sistema AVD UISA</strong></p>
+                    </div>
+                    <div class="footer">
+                      <p>Este é um email automático do Sistema AVD UISA</p>
+                      <p>${new Date().toLocaleDateString('pt-BR')}</p>
+                    </div>
+                  </div>
+                </body>
+                </html>
+              `,
+            });
+          }
+        } catch (error) {
+          console.error('[Psychometric] Erro ao enviar email de notificação:', error);
+          // Não falhar a operação principal se email falhar
+        }
+
         return { success: true, profile, employeeName: employee[0].name };
       }),
 
@@ -1765,27 +1864,115 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         // Salvar teste no banco
         await database.insert(psychometricTests).values(testValues);
 
-        // Criar notificação para gestores/RH
+        // Criar notificação in-app e email para gestores/RH
         try {
+          const testTypeLabels: Record<string, string> = {
+            disc: "DISC - Avaliação Comportamental",
+            bigfive: "Big Five (OCEAN) - Personalidade",
+            mbti: "MBTI - Tipo de Personalidade",
+            ie: "Inteligência Emocional",
+            vark: "VARK - Estilos de Aprendizagem",
+            leadership: "Estilos de Liderança",
+            careeranchors: "Âncoras de Carreira",
+          };
+
+          const testLabel = testTypeLabels[input.testType] || input.testType.toUpperCase();
+          const profileSummary = input.testType === 'disc'
+            ? `Perfil: ${profile.profile || 'N/A'} (D:${profile.D || 0}, I:${profile.I || 0}, S:${profile.S || 0}, C:${profile.C || 0})`
+            : input.testType === 'bigfive'
+            ? `Perfis: O:${Math.round((profile.O || 0) * 20)}, C:${Math.round((profile.C || 0) * 20)}, E:${Math.round((profile.E || 0) * 20)}, A:${Math.round((profile.A || 0) * 20)}, N:${Math.round((profile.N || 0) * 20)}`
+            : `Perfil: ${profile.profile || 'Concluído'}`;
+
           // Buscar gestor do colaborador
+          let managerEmail = null;
           if (employee[0].managerId) {
             const manager = await database.select()
               .from(employees)
               .where(eq(employees.id, employee[0].managerId))
               .limit(1);
 
-            if (manager.length > 0 && manager[0].userId) {
-              await createNotification({
-                userId: manager[0].userId,
-                type: "test_completed",
-                title: "Teste Psicométrico Concluído",
-                message: `${employee[0].name} completou o teste ${input.testType.toUpperCase()}`,
-                link: `/testes/resultados-rh`,
-              });
+            if (manager.length > 0) {
+              // Notificação in-app
+              if (manager[0].userId) {
+                await createNotification({
+                  userId: manager[0].userId,
+                  type: "test_completed",
+                  title: "Teste Psicométrico Concluído",
+                  message: `${employee[0].name} completou o teste ${testLabel}`,
+                  link: `/testes-psicometricos/resultados`,
+                });
+              }
+              
+              // Email
+              if (manager[0].email) {
+                managerEmail = manager[0].email;
+              }
             }
           }
+
+          // Buscar email do owner/admin (do ENV)
+          const ownerEmail = process.env.OWNER_EMAIL || null;
+
+          // Lista de destinatários
+          const recipients = [managerEmail, ownerEmail].filter(Boolean) as string[];
+
+          if (recipients.length > 0) {
+            await sendEmail({
+              to: recipients.join(', '),
+              subject: `✅ Teste Psicométrico Concluído - ${employee[0].name}`,
+              html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+                    .info-box { background: white; padding: 20px; border-left: 4px solid #8b5cf6; margin: 20px 0; }
+                    .button { display: inline-block; padding: 12px 24px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px; }
+                    .footer { text-align: center; color: #6b7280; font-size: 12px; margin-top: 20px; }
+                  </style>
+                </head>
+                <body>
+                  <div class="container">
+                    <div class="header">
+                      <h1 style="margin: 0;">✅ Teste Concluído!</h1>
+                    </div>
+                    <div class="content">
+                      <p>Olá,</p>
+                      <p>O colaborador <strong>${employee[0].name}</strong> concluiu um teste psicométrico.</p>
+                      
+                      <div class="info-box">
+                        <h3 style="margin-top: 0; color: #8b5cf6;">📊 Detalhes do Teste</h3>
+                        <p><strong>Teste:</strong> ${testLabel}</p>
+                        <p><strong>Colaborador:</strong> ${employee[0].name}</p>
+                        <p><strong>Email:</strong> ${employee[0].email || 'N/A'}</p>
+                        <p><strong>Data/Hora:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                        <p><strong>Resultado:</strong> ${profileSummary}</p>
+                      </div>
+
+                      <p>Acesse o sistema para visualizar o relatório completo e insights detalhados.</p>
+                      
+                      <a href="${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/testes-psicometricos/resultados" class="button">
+                        Ver Resultados Completos
+                      </a>
+
+                      <p style="margin-top: 30px;">Atenciosamente,<br><strong>Sistema AVD UISA</strong></p>
+                    </div>
+                    <div class="footer">
+                      <p>Este é um email automático do Sistema AVD UISA</p>
+                      <p>${new Date().toLocaleDateString('pt-BR')}</p>
+                    </div>
+                  </div>
+                </body>
+                </html>
+              `,
+            });
+          }
         } catch (error) {
-          console.error("Erro ao criar notificação:", error);
+          console.error('[Psychometric] Erro ao criar notificação/email:', error);
           // Não falhar a operação principal se notificação falhar
         }
 
