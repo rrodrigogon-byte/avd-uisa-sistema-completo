@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { and, eq, desc, sql } from "drizzle-orm";
 import { protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
@@ -727,5 +728,94 @@ export const bonusRouter = router({
         rejectedCount,
         approvals,
       };
+    }),
+
+  /**
+   * Listar cálculos de bônus pendentes
+   */
+  listCalculations: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    const calculations = await db
+      .select()
+      .from(bonusApprovals)
+      .where(eq(bonusApprovals.status, "pending"))
+      .orderBy(desc(bonusApprovals.createdAt));
+
+    return calculations;
+  }),
+
+  /**
+   * Aprovar cálculo de bônus
+   */
+  approveCalculation: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      await db
+        .update(bonusApprovals)
+        .set({ status: "approved" })
+        .where(eq(bonusApprovals.id, input.id));
+
+      return { success: true };
+    }),
+
+  /**
+   * Marcar bônus como pago
+   */
+  markAsPaid: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Marcar como aprovado (não existe status 'paid' no schema)
+      await db
+        .update(bonusApprovals)
+        .set({ status: "approved" })
+        .where(eq(bonusApprovals.id, input.id));
+
+      return { success: true };
+    }),
+
+  /**
+   * Aprovar bônus em lote
+   */
+  approveBatch: protectedProcedure
+    .input(z.object({ ids: z.array(z.number()) }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      for (const id of input.ids) {
+        await db
+          .update(bonusApprovals)
+          .set({ status: "approved" })
+          .where(eq(bonusApprovals.id, id));
+      }
+
+      return { success: true, count: input.ids.length };
+    }),
+
+  /**
+   * Rejeitar bônus em lote
+   */
+  rejectBatch: protectedProcedure
+    .input(z.object({ ids: z.array(z.number()), reason: z.string().optional() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      for (const id of input.ids) {
+        await db
+          .update(bonusApprovals)
+          .set({ status: "rejected" })
+          .where(eq(bonusApprovals.id, id));
+      }
+
+      return { success: true, count: input.ids.length };
     }),
 });

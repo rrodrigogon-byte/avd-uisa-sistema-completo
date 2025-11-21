@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -442,7 +442,15 @@ export const appRouter = router({
       if (!database) return [];
 
       const allDepartments = await database.select().from(departments).where(eq(departments.active, true));
-      return allDepartments.map(d => d.name).sort();
+      return allDepartments;
+    }),
+
+    getCostCenters: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const allCostCenters = await database.select().from(costCenters).where(eq(costCenters.active, true));
+      return allCostCenters;
     }),
 
     getManagers: protectedProcedure.query(async () => {
@@ -612,227 +620,8 @@ export const appRouter = router({
   }),
 
   // ============================================================================
-  // METAS
+  // METAS (movido para goalsRouter.ts)
   // ============================================================================
-  goals: router({
-    list: protectedProcedure
-      .input(z.object({ 
-        employeeId: z.number().optional(),
-        cycleId: z.number().optional(),
-      }))
-      .query(async ({ input, ctx }) => {
-        const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
-        if (!employeeId) {
-          return [];
-        }
-        return await db.getGoalsByEmployee(employeeId, input.cycleId);
-      }),
-
-    getById: protectedProcedure
-      .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        const goal = await db.getGoalById(input.id);
-        if (!goal) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Meta não encontrada",
-          });
-        }
-        return goal;
-      }),
-
-    // Buscar metas da equipe do gestor
-    getTeamGoals: protectedProcedure
-      .input(z.object({ managerId: z.number() }))
-      .query(async ({ input }) => {
-        const database = await getDb();
-        if (!database) return [];
-
-        // Buscar subordinados diretos
-        const teamMembers = await database
-          .select({ id: employees.id })
-          .from(employees)
-          .where(eq(employees.managerId, input.managerId));
-
-        const teamMemberIds = teamMembers.map(e => e.id);
-        if (teamMemberIds.length === 0) return [];
-
-        // Buscar metas dos subordinados
-        const teamGoals = await database
-          .select()
-          .from(goals)
-          .where(sql`${goals.employeeId} IN (${sql.join(teamMemberIds, sql`, `)})`);
-
-        // Buscar dados dos colaboradores
-        const employeesData = await database
-          .select({
-            id: employees.id,
-            name: employees.name,
-          })
-          .from(employees)
-          .where(sql`${employees.id} IN (${sql.join(teamMemberIds, sql`, `)})`);
-
-        return teamGoals.map(goal => ({
-          ...goal,
-          employee: employeesData.find(e => e.id === goal.employeeId),
-        }));
-      }),
-
-    create: protectedProcedure
-      .input(z.object({
-        cycleId: z.number(),
-        employeeId: z.number(),
-        title: z.string().min(1),
-        description: z.string().optional(),
-        type: z.enum(["individual", "equipe", "organizacional"]),
-        category: z.enum(["quantitativa", "qualitativa"]),
-        targetValue: z.string().optional(),
-        unit: z.string().optional(),
-        weight: z.number().default(1),
-        startDate: z.date(),
-        endDate: z.date(),
-        linkedToPLR: z.boolean().default(false),
-        linkedToBonus: z.boolean().default(false),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Banco de dados indisponível",
-          });
-        }
-
-        const [result] = await database.insert(goals).values({
-          ...input,
-          createdBy: ctx.user!.id,
-          status: "rascunho",
-          progress: 0,
-        });
-
-        const goalId = Number(result.insertId);
-
-        await db.logAudit(
-          ctx.user!.id,
-          "CREATE",
-          "goals",
-          goalId,
-          input,
-          ctx.req.ip,
-          ctx.req.headers["user-agent"]
-        );
-
-        return { id: goalId, success: true };
-      }),
-
-    updateProgress: protectedProcedure
-      .input(z.object({
-        id: z.number(),
-        progress: z.number().min(0).max(100),
-        currentValue: z.string().optional(),
-        notes: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Banco de dados indisponível",
-          });
-        }
-
-        const goal = await db.getGoalById(input.id);
-        if (!goal) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Meta não encontrada",
-          });
-        }
-
-        await database.update(goals)
-          .set({
-            progress: input.progress,
-            currentValue: input.currentValue,
-            status: input.progress === 100 ? "concluida" : "em_andamento",
-          })
-          .where(eq(goals.id, input.id));
-
-        await db.logAudit(
-          ctx.user!.id,
-          "UPDATE_PROGRESS",
-          "goals",
-          input.id,
-          { progress: input.progress, currentValue: input.currentValue },
-          ctx.req.ip,
-          ctx.req.headers["user-agent"]
-        );
-
-        // Verificar badges de metas se progresso = 100%
-        if (input.progress === 100 && goal.employeeId) {
-          const { checkGoalBadges } = await import("./services/badgeService");
-          await checkGoalBadges(goal.employeeId);
-
-          // Criar notificação de meta atingida
-          try {
-            const employee = await database.select()
-              .from(employees)
-              .where(eq(employees.id, goal.employeeId))
-              .limit(1);
-
-            if (employee.length > 0 && employee[0].managerId) {
-              const manager = await database.select()
-                .from(employees)
-                .where(eq(employees.id, employee[0].managerId))
-                .limit(1);
-
-              if (manager.length > 0 && manager[0].userId) {
-                await createNotification({
-                  userId: manager[0].userId,
-                  type: "goal_achieved",
-                  title: "Meta Atingida",
-                  message: `${employee[0].name} atingiu 100% da meta: ${goal.title}`,
-                  link: `/metas`,
-                });
-              }
-            }
-          } catch (error) {
-            console.error("Erro ao criar notificação de meta:", error);
-          }
-        }
-
-        // Notificar marcos de progresso (25%, 50%, 75%)
-        const milestones = [25, 50, 75];
-        if (milestones.includes(input.progress) && goal.employeeId) {
-          try {
-            const employee = await database.select()
-              .from(employees)
-              .where(eq(employees.id, goal.employeeId))
-              .limit(1);
-
-            if (employee.length > 0 && employee[0].managerId) {
-              const manager = await database.select()
-                .from(employees)
-                .where(eq(employees.id, employee[0].managerId))
-                .limit(1);
-
-              if (manager.length > 0 && manager[0].userId) {
-                await createNotification({
-                  userId: manager[0].userId,
-                  type: "pdi_milestone",
-                  title: "Marco de Progresso Atingido",
-                  message: `${employee[0].name} atingiu ${input.progress}% da meta: ${goal.title}`,
-                  link: `/metas`,
-                });
-              }
-            }
-          } catch (error) {
-            console.error("Erro ao criar notificação de marco:", error);
-          }
-        }
-
-        return { success: true };
-      }),
-  }),
 
   // ============================================================================
   // AVALIAÇÕES 360°
@@ -2725,7 +2514,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   reportAnalytics: reportAnalyticsRouter,
   
   // Router de Metas SMART
-  smartGoals: goalsRouter,
+  goals: goalsRouter,
   goalApprovals: goalApprovalsRouter,
   uisaImport: uisaImportRouter,
   payroll: payrollRouter,

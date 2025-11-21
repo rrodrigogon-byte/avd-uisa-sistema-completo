@@ -129,7 +129,7 @@ export default function AdesaoMetasCorporativas() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">
-                {adherenceData?.employeesWithProgress || 0}
+                {adherenceData?.stats.employeesWithRecentUpdate || 0}
               </div>
               <p className="text-xs text-muted-foreground">Últimos 7 dias</p>
             </CardContent>
@@ -155,8 +155,8 @@ export default function AdesaoMetasCorporativas() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {adherenceData?.adherenceRate
-                  ? `${adherenceData.adherenceRate.toFixed(1)}%`
+                {adherenceData?.stats.adherenceRate
+                  ? `${adherenceData.stats.adherenceRate.toFixed(1)}%`
                   : "0%"}
               </div>
               <p className="text-xs text-muted-foreground">Engajamento geral</p>
