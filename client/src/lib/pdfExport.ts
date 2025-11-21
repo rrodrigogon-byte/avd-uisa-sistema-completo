@@ -326,3 +326,272 @@ export function generateSectionHTML(title: string, content: string): string {
     </div>
   `;
 }
+
+
+/**
+ * Exporta PDI Inteligente para PDF
+ */
+export async function exportPDIPDF(pdi: any) {
+  const content = `
+    ${generateSectionHTML('Informações do PDI', `
+      ${generateInfoGridHTML([
+        { label: 'Colaborador', value: pdi.employeeName || 'N/A' },
+        { label: 'Posição Alvo', value: pdi.targetPositionName || 'N/A' },
+        { label: 'Duração', value: `${pdi.duration || 0} meses` },
+        { label: 'Progresso Geral', value: `${pdi.overallProgress || 0}%` },
+        { label: 'Status', value: generateBadgeHTML(
+          pdi.status === 'draft' ? 'Rascunho' :
+          pdi.status === 'submitted' ? 'Submetido' :
+          pdi.status === 'approved' ? 'Aprovado' :
+          pdi.status === 'in_progress' ? 'Em Andamento' :
+          pdi.status === 'completed' ? 'Concluído' : 'Cancelado',
+          pdi.status === 'approved' || pdi.status === 'completed' ? 'success' :
+          pdi.status === 'in_progress' ? 'info' :
+          pdi.status === 'cancelled' ? 'danger' : 'warning'
+        ) },
+        { label: 'Criado em', value: new Date(pdi.createdAt).toLocaleDateString('pt-BR') }
+      ])}
+    `)}
+    
+    ${pdi.objectives ? generateSectionHTML('Objetivos', `
+      <div class="card">
+        <p>${pdi.objectives}</p>
+      </div>
+    `) : ''}
+    
+    ${pdi.actions && pdi.actions.length > 0 ? generateSectionHTML('Plano de Ação 70-20-10', `
+      ${generateTableHTML(
+        ['Ação', 'Tipo', 'Prazo', 'Status', 'Progresso'],
+        pdi.actions.map((action: any) => [
+          action.actionDescription || '',
+          action.actionType === 'experiential' ? '70% Experiência' :
+          action.actionType === 'mentoring' ? '20% Mentoria' :
+          action.actionType === 'formal' ? '10% Formal' : 'Outro',
+          action.deadline ? new Date(action.deadline).toLocaleDateString('pt-BR') : 'N/A',
+          action.status === 'not_started' ? 'Não Iniciado' :
+          action.status === 'in_progress' ? 'Em Andamento' :
+          action.status === 'completed' ? 'Concluído' : 'Cancelado',
+          `${action.progress || 0}%`
+        ])
+      )}
+    `) : ''}
+    
+    ${pdi.keyAreas && pdi.keyAreas.length > 0 ? generateSectionHTML('Áreas-Chave de Desenvolvimento', `
+      <ul style="list-style: disc; padding-left: 30px;">
+        ${pdi.keyAreas.map((area: string) => `<li style="margin: 8px 0;">${area}</li>`).join('')}
+      </ul>
+    `) : ''}
+    
+    ${pdi.competencyGaps && pdi.competencyGaps.length > 0 ? generateSectionHTML('Gaps de Competências', `
+      ${generateTableHTML(
+        ['Competência', 'Nível Atual', 'Nível Alvo', 'Gap', 'Prioridade'],
+        pdi.competencyGaps.map((gap: any) => [
+          gap.competencyName || '',
+          `${gap.currentLevel || 0}`,
+          `${gap.targetLevel || 0}`,
+          `${(gap.targetLevel || 0) - (gap.currentLevel || 0)}`,
+          gap.priority === 'high' ? generateBadgeHTML('Alta', 'danger') :
+          gap.priority === 'medium' ? generateBadgeHTML('Média', 'warning') :
+          generateBadgeHTML('Baixa', 'info')
+        ])
+      )}
+    `) : ''}
+  `;
+
+  await exportToPDF({
+    title: 'Plano de Desenvolvimento Individual (PDI)',
+    subtitle: `${pdi.employeeName || 'Colaborador'} - ${pdi.targetPositionName || 'Posição Alvo'}`,
+    content,
+    filename: `PDI_${pdi.employeeName?.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+    orientation: 'portrait'
+  });
+}
+
+
+/**
+ * Exporta Meta SMART para PDF
+ */
+export async function exportMetaSMARTPDF(meta: any) {
+  const smartValidation = meta.smartValidation ? JSON.parse(meta.smartValidation) : {};
+  
+  const content = `
+    ${generateSectionHTML('Informações da Meta', `
+      ${generateInfoGridHTML([
+        { label: 'Título', value: meta.title || 'N/A' },
+        { label: 'Colaborador', value: meta.employeeName || 'N/A' },
+        { label: 'Categoria', value: 
+          meta.category === 'financial' ? 'Financeira' :
+          meta.category === 'behavioral' ? 'Comportamental' :
+          meta.category === 'corporate' ? 'Corporativa' :
+          meta.category === 'development' ? 'Desenvolvimento' : 'Outra'
+        },
+        { label: 'Tipo', value: meta.type === 'individual' ? 'Individual' : 'Equipe' },
+        { label: 'Progresso', value: `${meta.currentValue || 0} / ${meta.targetValue || 0} ${meta.unit || ''}` },
+        { label: 'Percentual', value: `${meta.progress || 0}%` },
+        { label: 'Status', value: generateBadgeHTML(
+          meta.status === 'draft' ? 'Rascunho' :
+          meta.status === 'active' ? 'Ativa' :
+          meta.status === 'completed' ? 'Concluída' :
+          meta.status === 'cancelled' ? 'Cancelada' : 'Vencida',
+          meta.status === 'completed' ? 'success' :
+          meta.status === 'active' ? 'info' :
+          meta.status === 'overdue' ? 'danger' : 'warning'
+        ) },
+        { label: 'Prazo', value: meta.deadline ? new Date(meta.deadline).toLocaleDateString('pt-BR') : 'N/A' }
+      ])}
+    `)}
+    
+    ${meta.description ? generateSectionHTML('Descrição', `
+      <div class="card">
+        <p>${meta.description}</p>
+      </div>
+    `) : ''}
+    
+    ${generateSectionHTML('Validação SMART', `
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Específica (S)</div>
+          <div class="info-value">${smartValidation.specific ? '✓ Sim' : '✗ Não'}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Mensurável (M)</div>
+          <div class="info-value">${smartValidation.measurable ? '✓ Sim' : '✗ Não'}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Atingível (A)</div>
+          <div class="info-value">${smartValidation.achievable ? '✓ Sim' : '✗ Não'}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Relevante (R)</div>
+          <div class="info-value">${smartValidation.relevant ? '✓ Sim' : '✗ Não'}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Temporal (T)</div>
+          <div class="info-value">${smartValidation.timeBound ? '✓ Sim' : '✗ Não'}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Score SMART</div>
+          <div class="info-value">${smartValidation.score || 0}%</div>
+        </div>
+      </div>
+    `)}
+    
+    ${meta.milestones && meta.milestones.length > 0 ? generateSectionHTML('Marcos Intermediários', `
+      ${generateTableHTML(
+        ['Marco', 'Prazo', 'Status', 'Progresso'],
+        meta.milestones.map((milestone: any) => [
+          milestone.title || '',
+          milestone.dueDate ? new Date(milestone.dueDate).toLocaleDateString('pt-BR') : 'N/A',
+          milestone.status === 'not_started' ? 'Não Iniciado' :
+          milestone.status === 'in_progress' ? 'Em Andamento' :
+          milestone.status === 'completed' ? 'Concluído' : 'Vencido',
+          `${milestone.progress || 0}%`
+        ])
+      )}
+    `) : ''}
+    
+    ${meta.bonusEligible ? generateSectionHTML('Informações de Bônus', `
+      ${generateInfoGridHTML([
+        { label: 'Elegível para Bônus', value: 'Sim' },
+        { label: 'Tipo de Bônus', value: meta.bonusType === 'percentage' ? 'Percentual' : 'Fixo' },
+        { label: 'Valor', value: meta.bonusType === 'percentage' ? `${meta.bonusPercentage || 0}%` : `R$ ${(meta.bonusAmount || 0) / 100}` }
+      ])}
+    `) : ''}
+  `;
+
+  await exportToPDF({
+    title: 'Meta SMART',
+    subtitle: `${meta.title || 'Meta'} - ${meta.employeeName || 'Colaborador'}`,
+    content,
+    filename: `Meta_SMART_${meta.title?.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+    orientation: 'portrait'
+  });
+}
+
+
+/**
+ * Exporta Avaliação 360° para PDF
+ */
+export async function export360PDF(avaliacao: any) {
+  // Calcular médias por categoria
+  const categorias = avaliacao.respostas?.reduce((acc: any, resp: any) => {
+    if (!acc[resp.categoria]) {
+      acc[resp.categoria] = { total: 0, count: 0 };
+    }
+    acc[resp.categoria].total += resp.nota || 0;
+    acc[resp.categoria].count += 1;
+    return acc;
+  }, {}) || {};
+
+  const categoriasHTML = Object.entries(categorias).map(([cat, data]: [string, any]) => {
+    const media = data.count > 0 ? (data.total / data.count).toFixed(1) : '0.0';
+    return `
+      <div class="info-item">
+        <div class="info-label">${cat}</div>
+        <div class="info-value">${media} / 5.0</div>
+      </div>
+    `;
+  }).join('');
+
+  const content = `
+    ${generateSectionHTML('Informações da Avaliação', `
+      ${generateInfoGridHTML([
+        { label: 'Colaborador', value: avaliacao.employeeName || 'N/A' },
+        { label: 'Ciclo', value: avaliacao.cycleName || 'N/A' },
+        { label: 'Tipo', value: avaliacao.type === '360' ? '360°' : 'Outro' },
+        { label: 'Status', value: generateBadgeHTML(
+          avaliacao.status === 'draft' ? 'Rascunho' :
+          avaliacao.status === 'in_progress' ? 'Em Andamento' :
+          avaliacao.status === 'completed' ? 'Concluída' : 'Cancelada',
+          avaliacao.status === 'completed' ? 'success' :
+          avaliacao.status === 'in_progress' ? 'info' : 'warning'
+        ) },
+        { label: 'Média Geral', value: `${avaliacao.mediaGeral?.toFixed(1) || '0.0'} / 5.0` },
+        { label: 'Criada em', value: new Date(avaliacao.createdAt).toLocaleDateString('pt-BR') }
+      ])}
+    `)}
+    
+    ${categoriasHTML ? generateSectionHTML('Médias por Categoria', `
+      <div class="info-grid">
+        ${categoriasHTML}
+      </div>
+    `) : ''}
+    
+    ${avaliacao.respostas && avaliacao.respostas.length > 0 ? generateSectionHTML('Avaliações Detalhadas', `
+      ${generateTableHTML(
+        ['Categoria', 'Pergunta', 'Nota', 'Avaliador'],
+        avaliacao.respostas.map((resp: any) => [
+          resp.categoria || '',
+          resp.pergunta || '',
+          `${resp.nota || 0} / 5`,
+          resp.avaliadorNome || 'Anônimo'
+        ])
+      )}
+    `) : ''}
+    
+    ${avaliacao.comentarios && avaliacao.comentarios.length > 0 ? generateSectionHTML('Comentários', `
+      ${avaliacao.comentarios.map((com: any) => `
+        <div class="card">
+          <div class="card-title">${com.avaliadorNome || 'Anônimo'}</div>
+          <p><strong>Pontos Fortes:</strong> ${com.pontosFortes || 'N/A'}</p>
+          <p><strong>Pontos de Melhoria:</strong> ${com.pontosMelhoria || 'N/A'}</p>
+          ${com.comentarioGeral ? `<p><strong>Comentário:</strong> ${com.comentarioGeral}</p>` : ''}
+        </div>
+      `).join('')}
+    `) : ''}
+    
+    ${avaliacao.planoAcao ? generateSectionHTML('Plano de Ação', `
+      <div class="card">
+        <p>${avaliacao.planoAcao}</p>
+      </div>
+    `) : ''}
+  `;
+
+  await exportToPDF({
+    title: 'Avaliação 360°',
+    subtitle: `${avaliacao.employeeName || 'Colaborador'} - ${avaliacao.cycleName || 'Ciclo'}`,
+    content,
+    filename: `Avaliacao_360_${avaliacao.employeeName?.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+    orientation: 'portrait'
+  });
+}

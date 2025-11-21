@@ -55,6 +55,12 @@ export default function DashboardExecutivo() {
     trpc.executive.getFlightRisk.useQuery({ riskLevel: "alto", limit: 10 });
   const { data: nineBoxData, isLoading: nineBoxLoading } =
     trpc.executive.getPerformanceDistribution.useQuery({});
+  
+  // Novos endpoints de tendência temporal
+  const { data: nineBoxTrend, isLoading: nineBoxTrendLoading } =
+    trpc.executive.getNineBoxTrend.useQuery({ quarters: 4 });
+  const { data: pdiCompletionRate, isLoading: pdiCompletionLoading } =
+    trpc.executive.getPDICompletionRate.useQuery({ months: 12 });
 
   // Calcular engajamento médio (simulado)
   const engajamento = 8.2;
@@ -469,6 +475,123 @@ export default function DashboardExecutivo() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Gráficos de Tendência Temporal */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Evolução de Performance (já existe como performanceTrend) */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded bg-blue-100 flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle>Evolução de Performance</CardTitle>
+                  <CardDescription>Últimos 6 meses - Média geral</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {perfTrendLoading ? (
+                <Skeleton className="h-64 w-full" />
+              ) : (
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={performanceTrend || []}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="avgPerformance" 
+                      stroke="#3b82f6" 
+                      strokeWidth={2}
+                      name="Performance Média (%)" 
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Taxa de Conclusão de PDI */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded bg-green-100 flex items-center justify-center">
+                  <Target className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <CardTitle>Taxa de Conclusão de PDI</CardTitle>
+                  <CardDescription>Últimos 12 meses - Percentual mensal</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {pdiCompletionLoading ? (
+                <Skeleton className="h-64 w-full" />
+              ) : (
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={pdiCompletionRate || []}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="completionRate" fill="#10b981" name="Taxa de Conclusão (%)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Nine Box ao Longo do Tempo */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded bg-purple-100 flex items-center justify-center">
+                <Activity className="h-4 w-4 text-purple-600" />
+              </div>
+              <div>
+                <CardTitle>Nine Box - Movimentação Temporal</CardTitle>
+                <CardDescription>Últimos 4 trimestres - Distribuição de colaboradores</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {nineBoxTrendLoading ? (
+              <Skeleton className="h-64 w-full" />
+            ) : (
+              <div className="space-y-4">
+                {(nineBoxTrend || []).map((quarter) => (
+                  <div key={quarter.quarter} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold">{quarter.quarter}</h4>
+                      <span className="text-sm text-muted-foreground">
+                        Total: {quarter.total} colaboradores
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {quarter.distribution.map((item: any, idx: number) => (
+                        <div 
+                          key={idx}
+                          className="p-3 rounded bg-accent text-center"
+                        >
+                          <div className="text-xs text-muted-foreground">
+                            Perf: {item.performance} | Pot: {item.potential}
+                          </div>
+                          <div className="text-lg font-bold">{item.count}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Status de Sucessão - Posições Críticas */}
         <Card>

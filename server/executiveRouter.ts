@@ -532,5 +532,98 @@ export const executiveRouter = router({
         status: "Em desenvolvimento" as const,
       }));
     }),
+
+  /**
+   * Nine Box ao Longo do Tempo (movimentação temporal)
+   * Retorna distribuição de colaboradores no Nine Box por trimestre
+   */
+  getNineBoxTrend: adminProcedure
+    .input(
+      z.object({
+        quarters: z.number().min(2).max(8).default(4),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { quarters } = input;
+
+      // Buscar distribuição Nine Box por trimestre
+      const result = await db.execute(`
+        SELECT 
+          CONCAT(YEAR(createdAt), '-Q', QUARTER(createdAt)) as quarter,
+          performance,
+          potential,
+          COUNT(*) as count
+        FROM nineBoxPositions
+        WHERE createdAt >= DATE_SUB(NOW(), INTERVAL ${quarters * 3} MONTH)
+        GROUP BY quarter, performance, potential
+        ORDER BY quarter ASC
+      `);
+
+      // Agrupar por trimestre
+      const grouped: Record<string, any[]> = {};
+      const rows = Array.isArray(result[0]) ? result[0] : [];
+      rows.forEach((row: any) => {
+        if (!grouped[row.quarter]) {
+          grouped[row.quarter] = [];
+        }
+        grouped[row.quarter].push({
+          performance: row.performance,
+          potential: row.potential,
+          count: row.count,
+        });
+      });
+
+      return Object.entries(grouped).map(([quarter, data]) => ({
+        quarter,
+        distribution: data,
+        total: data.reduce((sum, item) => sum + item.count, 0),
+      }));
+    }),
+
+  /**
+   * Taxa de Conclusão de PDI (mensal)
+   * Retorna percentual de PDIs concluídos vs criados por mês
+   */
+  getPDICompletionRate: adminProcedure
+    .input(
+      z.object({
+        months: z.number().min(3).max(24).default(12),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { months } = input;
+
+      // Buscar PDIs criados e concluídos por mês
+      const result = await db.execute(`
+        SELECT 
+          DATE_FORMAT(createdAt, '%Y-%m') as month,
+          COUNT(*) as totalCreated,
+          SUM(CASE WHEN status = 'concluido' THEN 1 ELSE 0 END) as totalCompleted,
+          SUM(CASE WHEN status = 'em_andamento' THEN 1 ELSE 0 END) as totalInProgress,
+          SUM(CASE WHEN status = 'cancelado' THEN 1 ELSE 0 END) as totalCancelled
+        FROM pdiPlans
+        WHERE createdAt >= DATE_SUB(NOW(), INTERVAL ${months} MONTH)
+        GROUP BY DATE_FORMAT(createdAt, '%Y-%m')
+        ORDER BY month ASC
+      `);
+
+      const rows = Array.isArray(result[0]) ? result[0] : [];
+      return rows.map((row: any) => ({
+        month: row.month,
+        totalCreated: row.totalCreated || 0,
+        totalCompleted: row.totalCompleted || 0,
+        totalInProgress: row.totalInProgress || 0,
+        totalCancelled: row.totalCancelled || 0,
+        completionRate: row.totalCreated > 0 
+          ? parseFloat(((row.totalCompleted / row.totalCreated) * 100).toFixed(2))
+          : 0,
+      }));
+    }),
 });
 

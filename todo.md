@@ -355,3 +355,24 @@
 - [x] Validar fluxo completo de Avaliações 360°
 - [ ] Criar testes automatizados para endpoints críticos
 - [ ] Documentar novos recursos implementados
+
+
+### 🚀 PRÓXIMOS PASSOS - MELHORIAS CRÍTICAS (20/11/2024 - 20:45)
+
+**Passo 1: Configurar SMTP Real**
+- [x] Validar configuração SMTP existente em /admin/smtp
+- [x] Testar envio de email real para rodrigo.goncalves@uisa.com.br
+- [x] Documentar credenciais e configuração
+
+**Passo 2: Expandir Exportação PDF**
+- [x] PDI Inteligente: Criar função exportPDIPDF com ações 70-20-10
+- [x] Metas SMART: Criar função exportMetaPDF com progresso e validação
+- [x] Avaliações 360°: Criar função export360PDF com gráfico radar
+- [x] Adicionar botões "Exportar PDF" nas 3 páginas
+
+**Passo 3: Dashboard Executivo - Gráficos Temporais**
+- [x] Criar endpoint executiveRouter.getPerformanceTrend (últimos 12 meses)
+- [x] Criar endpoint executiveRouter.getNineBoxTrend (movimentação temporal)
+- [x] Criar endpoint executiveRouter.getPDICompletionRate (taxa mensal)
+- [x] Implementar 3 gráficos Chart.js no Dashboard Executivo
+- [x] Adicionar filtros de período (3, 6, 12 meses)

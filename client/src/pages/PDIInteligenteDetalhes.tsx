@@ -14,6 +14,7 @@ import { Loader2, Plus, Save, Download, ArrowLeft, TrendingUp, Calendar, Target 
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { toast } from "sonner";
+import { exportPDIPDF } from "@/lib/pdfExport";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -252,7 +253,29 @@ export default function PDIInteligenteDetalhes() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={async () => {
+                try {
+                  await exportPDIPDF({
+                    employeeName: pdi.employees?.name,
+                    targetPositionName: pdi.positions?.title,
+                    duration: Math.ceil((new Date(pdi.pdiPlans.endDate).getTime() - new Date(pdi.pdiPlans.startDate).getTime()) / (1000 * 60 * 60 * 24 * 30)),
+                    overallProgress: pdi.pdiPlans.overallProgress,
+                    status: pdi.pdiPlans.status,
+                    createdAt: pdi.pdiPlans.createdAt,
+                    objectives: pdi.pdiPlans.strategicObjectives,
+                    actions: actions || [],
+                    keyAreas: pdi.pdiIntelligentDetails?.keyDevelopmentAreas ? JSON.parse(pdi.pdiIntelligentDetails.keyDevelopmentAreas) : [],
+                    competencyGaps: pdi.competencyGaps || []
+                  });
+                  toast.success('PDF exportado com sucesso!');
+                } catch (error) {
+                  console.error('Erro ao exportar PDF:', error);
+                  toast.error('Erro ao exportar PDF');
+                }
+              }}
+            >
               <Download className="h-4 w-4 mr-2" />
               Exportar PDF
             </Button>

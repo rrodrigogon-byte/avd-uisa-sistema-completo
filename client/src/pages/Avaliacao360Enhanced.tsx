@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { CheckCircle2, Clock, Users, Loader2, TrendingUp, AlertCircle, BarChart3, Download } from "lucide-react";
-import { generate360PDF } from "@/lib/generate360PDF";
+import { export360PDF } from "@/lib/pdfExport";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Radar } from "react-chartjs-2";
@@ -248,15 +248,27 @@ export default function Avaliacao360Enhanced() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => {
+                            onClick={async () => {
                               try {
-                                generate360PDF({
-                                  evaluation,
-                                  averages: details?.averages ?? { self: 0, manager: 0, peers: 0, subordinates: 0 },
-                                  responses: details?.responses ?? { self: [], manager: [], peers: [], subordinates: [] },
-                                }, evaluation.employeeName || `Colaborador #${evaluation.employeeId}`);
+                                await export360PDF({
+                                  employeeName: evaluation.employeeName || `Colaborador #${evaluation.employeeId}`,
+                                  cycleName: `Ciclo #${evaluation.cycleId}`,
+                                  type: '360',
+                                  status: evaluation.status,
+                                  mediaGeral: evaluation.finalScore,
+                                  createdAt: evaluation.createdAt,
+                                  respostas: [
+                                    ...(details?.responses?.self || []).map((r: any) => ({ ...r, avaliadorNome: 'Autoavaliação' })),
+                                    ...(details?.responses?.manager || []).map((r: any) => ({ ...r, avaliadorNome: 'Gestor' })),
+                                    ...(details?.responses?.peers || []).map((r: any) => ({ ...r, avaliadorNome: 'Pares' })),
+                                    ...(details?.responses?.subordinates || []).map((r: any) => ({ ...r, avaliadorNome: 'Subordinados' }))
+                                  ],
+                                  comentarios: [],
+                                  planoAcao: evaluation.planoAcao
+                                });
                                 toast.success("Relatório PDF gerado com sucesso!");
                               } catch (error) {
+                                console.error('Erro ao gerar PDF:', error);
                                 toast.error("Erro ao gerar PDF");
                               }
                             }}

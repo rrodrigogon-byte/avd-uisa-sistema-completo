@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { exportMetaSMARTPDF } from "@/lib/pdfExport";
 import {
   Target,
   TrendingUp,
@@ -325,11 +326,43 @@ export default function DetalhesMeta() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => exportPDFMutation.mutate({ goalId })}
-            disabled={exportPDFMutation.isPending}
+            onClick={async () => {
+              try {
+                await exportMetaSMARTPDF({
+                  title: goal.title,
+                  employeeName: goal.employeeName,
+                  category: goal.category,
+                  type: goal.type,
+                  currentValue: goal.currentValue,
+                  targetValue: goal.targetValue,
+                  unit: goal.unit,
+                  progress: goal.progress,
+                  status: goal.status,
+                  deadline: goal.deadline,
+                  description: goal.description,
+                  smartValidation: JSON.stringify({
+                    specific: goal.isSpecific,
+                    measurable: goal.isMeasurable,
+                    achievable: goal.isAchievable,
+                    relevant: goal.isRelevant,
+                    timeBound: goal.isTimeBound,
+                    score: smartScore
+                  }),
+                  milestones: goal.milestones || [],
+                  bonusEligible: goal.bonusEligible,
+                  bonusType: goal.bonusType,
+                  bonusPercentage: goal.bonusPercentage,
+                  bonusAmount: goal.bonusAmount
+                });
+                toast.success('PDF exportado com sucesso!');
+              } catch (error) {
+                console.error('Erro ao exportar PDF:', error);
+                toast.error('Erro ao exportar PDF');
+              }
+            }}
           >
             <Download className="w-4 h-4 mr-2" />
-            {exportPDFMutation.isPending ? "Exportando..." : "Exportar PDF"}
+            Exportar PDF
           </Button>
           {goal.status === "draft" && (
             <Link href={`/metas/${goalId}/editar`}>
