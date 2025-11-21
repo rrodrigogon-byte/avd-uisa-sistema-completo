@@ -23,6 +23,7 @@ import {
   Filter,
   Calendar,
   Download,
+  ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -78,6 +79,9 @@ export default function MetasSMART() {
 
   // Buscar ciclos disponíveis
   const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery();
+
+  // Buscar metas do PDI
+  const { data: pdiGoals = [], isLoading: loadingPDI } = trpc.pdi.list.useQuery({});
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -145,6 +149,14 @@ export default function MetasSMART() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
+          <Button
+            variant="ghost"
+            onClick={() => window.history.back()}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
           <h1 className="text-3xl font-bold text-gray-900">Metas SMART</h1>
           <p className="text-gray-600 mt-1">
             Gerencie suas metas com critérios SMART e acompanhe seu progresso
@@ -342,9 +354,81 @@ export default function MetasSMART() {
         </CardContent>
       </Card>
 
-      {/* Lista de Metas */}
+      {/* Metas do PDI */}
+      {pdiGoals.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-purple-600" />
+              Metas do PDI ({pdiGoals.length})
+            </CardTitle>
+            <CardDescription>
+              Acompanhe o progresso das metas de desenvolvimento do seu Plano de Desenvolvimento Individual
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {pdiGoals.map((pdi: any) => (
+                <div key={pdi.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900">{pdi.title}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{pdi.description}</p>
+                    </div>
+                    <Badge variant="outline" className="bg-purple-50 text-purple-700">
+                      PDI
+                    </Badge>
+                  </div>
+
+                  {/* Progresso do PDI */}
+                  <div className="mb-3">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-gray-600">Progresso Geral</span>
+                      <span className="font-semibold">{pdi.progress || 0}%</span>
+                    </div>
+                    <Progress value={pdi.progress || 0} className="h-2" />
+                  </div>
+
+                  {/* Datas do PDI */}
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>
+                        {format(new Date(pdi.startDate), "dd/MM/yyyy", { locale: ptBR })} -{" "}
+                        {format(new Date(pdi.endDate), "dd/MM/yyyy", { locale: ptBR })}
+                      </span>
+                    </div>
+                    {new Date(pdi.endDate) < new Date() && pdi.status !== "completed" && (
+                      <Badge variant="destructive" className="flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        Vencido
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Ações do PDI */}
+                  <div className="flex gap-2">
+                    <Link href={`/pdi/${pdi.id}`}>
+                      <Button variant="outline" size="sm">
+                        Ver Detalhes
+                      </Button>
+                    </Link>
+                    <Link href={`/pdi/${pdi.id}/progresso`}>
+                      <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                        Atualizar Progresso
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Lista de Metas SMART */}
       <div className="space-y-4">
-        <h2 className="text-xl font-bold">Minhas Metas ({goals.length})</h2>
+        <h2 className="text-xl font-bold">Minhas Metas SMART ({goals.length})</h2>
 
         {goals.length === 0 ? (
           <Card>

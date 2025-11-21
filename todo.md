@@ -418,3 +418,16 @@
 - [x] Mostrar lista de profissionais no quadrante selecionado
 - [x] Exibir informações detalhadas (nome, cargo, performance, potencial)
 - [x] Adicionar ações rápidas (ver perfil, editar avaliação)
+
+### Correções em Metas SMART
+- [ ] Corrigir botão de criar meta individual em /metas/criar (não está salvando)
+- [x] Adicionar botão "Voltar" na página de Metas SMART
+- [ ] Validar formulário de criação de metas
+- [ ] Testar fluxo completo de criação
+
+### Integração PDI com Metas
+- [x] Exibir metas do PDI individual na página de Metas SMART
+- [x] Permitir medição e acompanhamento de progresso das metas do PDI
+- [ ] Adicionar filtro para separar metas SMART e metas do PDI
+- [ ] Sincronizar status entre PDI e metas
+- [x] Criar visualização unificada de todas as metas (SMART + PDI)
