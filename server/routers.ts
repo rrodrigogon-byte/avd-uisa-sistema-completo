@@ -47,6 +47,7 @@ import { advancedAnalyticsRouter } from "./advancedAnalyticsRouter";
 import { evaluationTemplatesRouter } from "./routers/evaluationTemplatesRouter";
 import { calibrationDirectorRouter } from "./routers/calibrationDirectorRouter";
 import { reportsRouter } from "./routers/reportsRouter";
+import { calibrationMeetingRouter } from "./calibrationMeetingRouter";
 import { and, desc, eq, sql, gte, lte } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2689,6 +2690,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Calibração Diretoria Nine Box
   calibrationDirector: calibrationDirectorRouter,
+
+  // Router de Reuniões de Calibração em Tempo Real
+  calibrationMeeting: calibrationMeetingRouter,
 
   // Router de Relatórios de Progresso de Ciclos
   cycleReports: reportsRouter,

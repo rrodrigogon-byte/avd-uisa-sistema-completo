@@ -2317,5 +2317,72 @@ export const templateQuestions = mysqlTable("templateQuestions", {
 export type TemplateQuestion = typeof templateQuestions.$inferSelect;
 export type InsertTemplateQuestion = typeof templateQuestions.$inferInsert;
 
+// ============================================================================
+// TABELAS DE CALIBRAÇÃO EM TEMPO REAL
+// ============================================================================
+
+/**
+ * Calibration Meeting Participants - Participantes das reuniões de calibração
+ */
+export const calibrationParticipants = mysqlTable("calibrationParticipants", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull(),
+  userId: int("userId").notNull(),
+  role: mysqlEnum("role", ["facilitator", "participant", "observer"]).default("participant").notNull(),
+  joinedAt: datetime("joinedAt"),
+  leftAt: datetime("leftAt"),
+  isOnline: boolean("isOnline").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CalibrationParticipant = typeof calibrationParticipants.$inferSelect;
+export type InsertCalibrationParticipant = typeof calibrationParticipants.$inferInsert;
+
+/**
+ * Calibration Votes - Sistema de votação para consenso
+ */
+export const calibrationVotes = mysqlTable("calibrationVotes", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull(),
+  evaluationId: int("evaluationId").notNull(),
+  voterId: int("voterId").notNull(),
+  proposedScore: int("proposedScore").notNull(),
+  justification: text("justification"),
+  voteType: mysqlEnum("voteType", ["approve", "reject", "abstain"]).default("approve").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CalibrationVote = typeof calibrationVotes.$inferSelect;
+export type InsertCalibrationVote = typeof calibrationVotes.$inferInsert;
+
+/**
+ * Calibration Comparisons - Comparações lado a lado de avaliações
+ */
+export const calibrationComparisons = mysqlTable("calibrationComparisons", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull(),
+  evaluationId: int("evaluationId").notNull(),
+  
+  // Notas de diferentes avaliadores
+  selfScore: int("selfScore"),
+  managerScore: int("managerScore"),
+  peerScores: json("peerScores"), // Array de notas dos pares
+  
+  // Consenso
+  consensusScore: int("consensusScore"),
+  consensusReachedAt: datetime("consensusReachedAt"),
+  consensusBy: int("consensusBy"),
+  
+  // Discrepâncias
+  hasDiscrepancy: boolean("hasDiscrepancy").default(false).notNull(),
+  discrepancyReason: text("discrepancyReason"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CalibrationComparison = typeof calibrationComparisons.$inferSelect;
+export type InsertCalibrationComparison = typeof calibrationComparisons.$inferInsert;
+
 // Re-export from schema-alerts.ts
 export * from "./schema-alerts";

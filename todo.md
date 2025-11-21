@@ -352,3 +352,43 @@
 - [x] Adicionar filtros avançados no dashboard de sucessão
 - [x] Criar fluxo de calibração de avaliações (reuniões de calibração)
 - [x] Implementar comparação de avaliações entre gestores
+
+
+---
+
+## 🚀 PRÓXIMAS FUNCIONALIDADES AVANÇADAS - 21/11/2024 15:10
+
+### Fase 1: Fluxo Completo de Calibração com Reuniões em Tempo Real
+- [x] Criar tabelas calibrationParticipants, calibrationVotes, calibrationComparisons
+- [x] Criar router backend calibrationMeetingRouter com 15 endpoints
+- [x] Criar interface de lista de reuniões (/calibracao/reunioes)
+- [x] Implementar criação de reuniões com participantes
+- [x] Adicionar sistema de votação/consenso (endpoints prontos)
+- [x] Implementar endpoints de chat em tempo real
+- [x] Adicionar histórico de ajustes com justificativas
+- [x] Criar endpoints para salvar decisões da reunião
+- [ ] Criar página de reunião em tempo real (/calibracao/reuniao/:id) - PENDENTE
+- [ ] Integrar WebSocket para chat e atualizações em tempo real - PENDENTE
+
+### Fase 2: Sistema de Notificações Push em Tempo Real
+- [ ] Implementar WebSocket para notificações em tempo real (já existe, expandir)
+- [ ] Criar sistema de alertas para aprovações pendentes (metas, avaliações, PDI)
+- [ ] Adicionar alertas para metas vencendo (7, 3, 1 dia antes)
+- [ ] Implementar notificações para avaliações atrasadas
+- [ ] Criar badge de contador no ícone de notificações (header)
+- [ ] Adicionar som/vibração para alertas críticos
+- [ ] Implementar preferências de notificação por usuário (/configuracoes/notificacoes)
+- [ ] Criar página de histórico de notificações (/notificacoes/historico)
+- [ ] Adicionar filtros por tipo, data e status (lida/não lida)
+
+### Fase 3: Dashboard Mobile-First para Gestores
+- [ ] Criar layout responsivo mobile-first (/gestor/mobile)
+- [ ] Implementar KPIs otimizados para tela pequena (cards compactos)
+- [ ] Adicionar gestos de swipe para navegação entre seções
+- [ ] Criar cards compactos para metas e avaliações (lista vertical)
+- [ ] Implementar filtros em bottom sheet (modal inferior)
+- [ ] Adicionar modo offline com cache local (Service Worker)
+- [ ] Otimizar performance para conexões lentas (lazy loading)
+- [ ] Implementar pull-to-refresh para atualizar dados
+- [ ] Adicionar atalhos rápidos (aprovar/rejeitar com 1 toque)
+- [ ] Criar visualização de gráficos otimizada para mobile
