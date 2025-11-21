@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure, adminProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { pushSubscriptions } from "../../drizzle/schema";
+import { pushSubscriptions, pushNotificationLogs } from "../../drizzle/schema";
 import { eq, and, sql, gte, lte, desc } from "drizzle-orm";
 
 export const pushNotificationsRouter = router({
@@ -182,10 +182,121 @@ export const pushNotificationsRouter = router({
     }),
 
   /**
-   * **NOVO: Histórico de notificações enviadas (simulado)**
-   * Nota: Este endpoint retorna dados simulados. Para implementação real,
-   * seria necessário criar uma tabela `pushNotificationLogs` para registrar
-   * cada notificação enviada.
+   * Registrar notificação enviada
+   */
+  logNotification: protectedProcedure
+    .input(
+      z.object({
+        type: z.string(),
+        title: z.string(),
+        message: z.string(),
+        actionUrl: z.string().optional(),
+        deviceType: z.enum(["desktop", "mobile", "tablet"]).optional(),
+        status: z.enum(["enviada", "aberta", "erro"]).optional(),
+        errorMessage: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const result = await db.insert(pushNotificationLogs).values({
+        userId: ctx.user.id,
+        type: input.type,
+        title: input.title,
+        message: input.message,
+        actionUrl: input.actionUrl || null,
+        deviceType: input.deviceType || "desktop",
+        status: input.status || "enviada",
+        errorMessage: input.errorMessage || null,
+      });
+
+      return { logId: result[0].insertId };
+    }),
+
+  /**
+   * Marcar notificação como aberta
+   */
+  markAsOpened: protectedProcedure
+    .input(z.object({ logId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      await db
+        .update(pushNotificationLogs)
+        .set({ status: "aberta", openedAt: new Date() })
+        .where(eq(pushNotificationLogs.id, input.logId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Buscar logs reais de notificações
+   */
+  getRealLogs: adminProcedure
+    .input(
+      z.object({
+        limit: z.number().optional(),
+        offset: z.number().optional(),
+        userId: z.number().optional(),
+        type: z.string().optional(),
+        status: z.enum(["enviada", "aberta", "erro"]).optional(),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const limit = input.limit || 50;
+      const offset = input.offset || 0;
+
+      let conditions = [];
+      if (input.userId) conditions.push(sql`pnl.userId = ${input.userId}`);
+      if (input.type) conditions.push(sql`pnl.type = ${input.type}`);
+      if (input.status) conditions.push(sql`pnl.status = ${input.status}`);
+      if (input.startDate) conditions.push(sql`pnl.sentAt >= ${input.startDate}`);
+      if (input.endDate) conditions.push(sql`pnl.sentAt <= ${input.endDate}`);
+
+      const whereClause = conditions.length > 0 ? sql`WHERE ${sql.join(conditions, sql` AND `)}` : sql``;
+
+      const logsResult = await db.execute(
+        sql`SELECT 
+           pnl.*,
+           u.name as userName,
+           u.email as userEmail
+           FROM pushNotificationLogs pnl
+           LEFT JOIN users u ON u.id = pnl.userId
+           ${whereClause}
+           ORDER BY pnl.sentAt DESC
+           LIMIT ${limit} OFFSET ${offset}`
+      );
+
+      const logs = (logsResult[0] as unknown as any[]).map((row: any) => ({
+        id: row.id,
+        userId: row.userId,
+        userName: row.userName,
+        userEmail: row.userEmail,
+        type: row.type,
+        title: row.title,
+        message: row.message,
+        actionUrl: row.actionUrl,
+        deviceType: row.deviceType,
+        status: row.status,
+        errorMessage: row.errorMessage,
+        sentAt: row.sentAt,
+        openedAt: row.openedAt,
+        createdAt: row.createdAt,
+      }));
+
+      return logs;
+    }),
+
+  /**
+   * **ANTIGO: Histórico de notificações enviadas (simulado) - DEPRECATED**
+   * Use getRealLogs ao invés deste endpoint
    */
   getNotificationHistory: adminProcedure
     .input(

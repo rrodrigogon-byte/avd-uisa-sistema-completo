@@ -43,7 +43,9 @@ import {
   Save,
   Filter,
   X,
+  FileDown,
 } from "lucide-react";
+import { generateCalibrationPDF } from "@/lib/calibrationPDF";
 
 interface Employee {
   id: number;
@@ -261,6 +263,26 @@ export default function CalibracaoDiretoria() {
     });
   };
 
+  const handleExportPDF = async () => {
+    if (!sessionId) {
+      toast.error("Selecione uma sessão para exportar");
+      return;
+    }
+
+    try {
+      // Buscar dados completos da sessão
+      const reportData = await trpc.calibrationDirector.getCalibrationReportData.query({ sessionId });
+      
+      // Gerar PDF
+      await generateCalibrationPDF(reportData);
+      
+      toast.success("Relatório PDF gerado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao gerar relatório PDF");
+      console.error(error);
+    }
+  };
+
   const activeEmployee = useMemo(
     () => employees?.find((e) => e.id === activeId),
     [activeId, employees]
@@ -280,6 +302,14 @@ export default function CalibracaoDiretoria() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            onClick={handleExportPDF}
+            variant="outline"
+            disabled={!sessionId}
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Exportar PDF
+          </Button>
           <Button onClick={handleCreateSession} variant="outline">
             Nova Sessão
           </Button>

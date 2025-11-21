@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   XCircle,
   Star,
+  Download,
+  Upload,
 } from "lucide-react";
 import {
   Dialog,
@@ -32,6 +34,8 @@ export default function TemplatesAvaliacao() {
   const [, setLocation] = useLocation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(null);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
 
   // Queries
   const { data: templates, isLoading, refetch } = trpc.evaluationTemplates.list.useQuery({
@@ -70,6 +74,20 @@ export default function TemplatesAvaliacao() {
     },
   });
 
+  const [exportingId, setExportingId] = useState<number | null>(null);
+
+  const importMutation = trpc.evaluationTemplates.importTemplate.useMutation({
+    onSuccess: () => {
+      toast.success("Template importado com sucesso!");
+      refetch();
+      setImportDialogOpen(false);
+      setImportFile(null);
+    },
+    onError: (error) => {
+      toast.error(`Erro ao importar template: ${error.message}`);
+    },
+  });
+
   const handleDelete = () => {
     if (selectedTemplateId) {
       deleteMutation.mutate({ id: selectedTemplateId });
@@ -92,6 +110,43 @@ export default function TemplatesAvaliacao() {
       id,
       isDefault: !currentStatus,
     });
+  };
+
+  const handleExport = async (id: number) => {
+    try {
+      setExportingId(id);
+      const data = await trpc.evaluationTemplates.exportTemplate.query({ id });
+      
+      // Criar blob e fazer download
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `template-${data.template.name.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success("Template exportado com sucesso!");
+    } catch (error: any) {
+      toast.error(`Erro ao exportar template: ${error.message}`);
+    } finally {
+      setExportingId(null);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importFile) {
+      toast.error("Selecione um arquivo JSON para importar");
+      return;
+    }
+
+    try {
+      const text = await importFile.text();
+      importMutation.mutate({ json: text });
+    } catch (error) {
+      toast.error("Erro ao ler arquivo");
+    }
   };
 
   const getTemplateTypeBadge = (type: string) => {
@@ -127,10 +182,20 @@ export default function TemplatesAvaliacao() {
             Crie e gerencie questionários personalizados para diferentes cargos e departamentos
           </p>
         </div>
-        <Button onClick={() => setLocation("/admin/templates-avaliacao/criar")} size="lg">
-          <Plus className="h-5 w-5 mr-2" />
-          Novo Template
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setImportDialogOpen(true)}
+            size="lg"
+          >
+            <Upload className="h-5 w-5 mr-2" />
+            Importar Template
+          </Button>
+          <Button onClick={() => setLocation("/admin/templates-avaliacao/criar")} size="lg">
+            <Plus className="h-5 w-5 mr-2" />
+            Novo Template
+          </Button>
+        </div>
       </div>
 
       {/* KPIs */}
@@ -276,6 +341,15 @@ export default function TemplatesAvaliacao() {
                 <Button
                   variant="outline"
                   size="sm"
+                  onClick={() => handleExport(template.id)}
+                  disabled={exportingId === template.id}
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  {exportingId === template.id ? "Exportando..." : "Exportar"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => handleToggleActive(template.id, template.isActive)}
                   disabled={updateMutation.isPending}
                 >
@@ -298,6 +372,55 @@ export default function TemplatesAvaliacao() {
           </Card>
         ))}
       </div>
+
+      {/* Dialog de Importação */}
+      <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Importar Template</DialogTitle>
+            <DialogDescription>
+              Selecione um arquivo JSON de template para importar
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Arquivo JSON
+              </label>
+              <input
+                type="file"
+                accept=".json"
+                onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+                className="block w-full text-sm text-gray-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-primary file:text-white
+                  hover:file:bg-primary/90"
+              />
+            </div>
+            {importFile && (
+              <div className="text-sm text-gray-600">
+                Arquivo selecionado: <span className="font-medium">{importFile.name}</span>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setImportDialogOpen(false);
+              setImportFile(null);
+            }}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleImport}
+              disabled={!importFile || importMutation.isPending}
+            >
+              {importMutation.isPending ? "Importando..." : "Importar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog de Confirmação de Exclusão */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

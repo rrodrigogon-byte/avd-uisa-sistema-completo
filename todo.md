@@ -218,3 +218,48 @@
 - [x] Notificar quando badge é conquistado
 - [x] Job agendado para verificar metas atrasadas (diário)
 - [x] Job agendado para verificar PDIs próximos do prazo (diário)
+
+
+## 🎯 SESSÃO ATUAL - 21/11/2024 11:30 (MELHORIAS FINAIS)
+
+### 1. Integrar Botões de Exportação nas Páginas
+- [x] Adicionar botão "Exportar Template" na página /admin/templates-avaliacao
+- [x] Adicionar botão "Importar Template" na página /admin/templates-avaliacao
+- [x] Adicionar botão "Exportar PDF" na página /admin/calibracao-diretoria
+- [x] Testar exportação de templates (JSON)
+- [x] Testar importação de templates (validação)
+- [x] Testar geração de PDF de calibração
+
+### 2. Criar Tabela pushNotificationLogs no Schema
+- [x] Criar tabela pushNotificationLogs (id, userId, type, title, message, sentAt, openedAt, deviceType, status)
+- [x] Adicionar endpoint pushNotifications.logNotification
+- [x] Adicionar endpoint pushNotifications.markAsOpened
+- [x] Adicionar endpoint pushNotifications.getRealLogs
+- [ ] Integrar logging automático em sendPushNotificationToUser (próxima sessão)
+- [x] Migrar Dashboard de Notificações para usar dados reais
+
+### 3. Adicionar Filtros Avançados no Dashboard de Notificações
+- [x] Adicionar filtro por período customizado (data início/fim)
+- [x] Adicionar filtro por tipo de notificação (meta, avaliação, PDI, feedback, etc)
+- [x] Adicionar filtro por status (enviada, aberta, erro)
+- [x] Adicionar busca por colaborador (nome/email)
+- [x] Atualizar tabela com base nos filtros aplicados
+- [x] Adicionar botão "Limpar Filtros"
+- [x] Adicionar contador de notificações filtradas
+
+
+## ✅ CONCLUÍDO - 21/11/2024 13:14
+
+### Melhorias Finais Implementadas
+- [x] Adicionar botão "Exportar Template" na página /admin/templates-avaliacao
+- [x] Adicionar botão "Importar Template" na página /admin/templates-avaliacao
+- [x] Adicionar botão "Exportar PDF" na página /admin/calibracao-diretoria
+- [x] Criar tabela pushNotificationLogs (id, userId, type, title, message, sentAt, openedAt, deviceType, status)
+- [x] Adicionar endpoint pushNotifications.logNotification
+- [x] Adicionar endpoint pushNotifications.markAsOpened
+- [x] Adicionar endpoint pushNotifications.getRealLogs
+- [x] Adicionar filtro por tipo de notificação no Dashboard
+- [x] Adicionar filtro por período customizado (data início/fim) no Dashboard
+- [x] Adicionar filtro por status (enviada, aberta, erro) no Dashboard
+- [x] Adicionar busca por colaborador (nome/email) no Dashboard
+- [x] Migrar Dashboard de Notificações para usar dados reais (getRealLogs)

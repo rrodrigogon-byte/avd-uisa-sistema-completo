@@ -2224,6 +2224,39 @@ export const pushSubscriptions = mysqlTable("pushSubscriptions", {
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
 export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
 
+/**
+ * Push Notification Logs - Registro de notificações push enviadas
+ */
+export const pushNotificationLogs = mysqlTable("pushNotificationLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamento
+  userId: int("userId").notNull(),
+  
+  // Conteúdo da notificação
+  type: varchar("type", { length: 100 }).notNull(), // meta_atrasada, avaliacao_pendente, consenso_pendente, pdi_prazo, etc
+  title: varchar("title", { length: 200 }).notNull(),
+  message: text("message").notNull(),
+  actionUrl: varchar("actionUrl", { length: 500 }), // URL para redirecionar ao clicar
+  
+  // Metadados do dispositivo
+  deviceType: mysqlEnum("deviceType", ["desktop", "mobile", "tablet"]).default("desktop"),
+  
+  // Status de entrega
+  status: mysqlEnum("status", ["enviada", "aberta", "erro"]).default("enviada").notNull(),
+  errorMessage: text("errorMessage"), // Mensagem de erro se status = erro
+  
+  // Timestamps
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  openedAt: timestamp("openedAt"), // Quando foi aberta/clicada
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PushNotificationLog = typeof pushNotificationLogs.$inferSelect;
+export type InsertPushNotificationLog = typeof pushNotificationLogs.$inferInsert;
+
 // ============================================================================
 // TABELAS DE TEMPLATES DE AVALIAÇÃO
 // ============================================================================

@@ -1,8 +1,17 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Bell, Smartphone, Monitor, Tablet, TrendingUp, Clock, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Loader2, Bell, Smartphone, Monitor, Tablet, TrendingUp, Clock, Users, Filter, X } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -24,6 +33,17 @@ export default function NotificacoesAnalytics() {
     endDate: new Date(),
   });
 
+  // Filtros avançados
+  const [filters, setFilters] = useState({
+    type: "",
+    status: "" as "" | "enviada" | "aberta" | "erro",
+    searchTerm: "",
+    customStartDate: "",
+    customEndDate: "",
+  });
+
+  const [showFilters, setShowFilters] = useState(false);
+
   // Queries
   const { data: metrics, isLoading: loadingMetrics } = trpc.pushNotifications.getNotificationMetrics.useQuery({
     startDate: dateRange.startDate,
@@ -33,10 +53,40 @@ export default function NotificacoesAnalytics() {
   const { data: hourlyEngagement, isLoading: loadingHourly } =
     trpc.pushNotifications.getEngagementByHour.useQuery();
 
-  const { data: history, isLoading: loadingHistory } = trpc.pushNotifications.getNotificationHistory.useQuery({
-    limit: 20,
+  // Usar endpoint real de logs
+  const { data: realLogs, isLoading: loadingHistory } = trpc.pushNotifications.getRealLogs.useQuery({
+    limit: 50,
     offset: 0,
+    type: filters.type || undefined,
+    status: filters.status || undefined,
+    startDate: filters.customStartDate ? new Date(filters.customStartDate) : undefined,
+    endDate: filters.customEndDate ? new Date(filters.customEndDate) : undefined,
   });
+
+  // Filtrar por termo de busca no frontend
+  const filteredLogs = useMemo(() => {
+    if (!realLogs) return [];
+    if (!filters.searchTerm) return realLogs;
+
+    const term = filters.searchTerm.toLowerCase();
+    return realLogs.filter(
+      (log: any) =>
+        log.userName?.toLowerCase().includes(term) ||
+        log.userEmail?.toLowerCase().includes(term) ||
+        log.title?.toLowerCase().includes(term) ||
+        log.message?.toLowerCase().includes(term)
+    );
+  }, [realLogs, filters.searchTerm]);
+
+  const handleClearFilters = () => {
+    setFilters({
+      type: "",
+      status: "",
+      searchTerm: "",
+      customStartDate: "",
+      customEndDate: "",
+    });
+  };
 
   if (loadingMetrics || loadingHourly || loadingHistory) {
     return (
@@ -102,8 +152,8 @@ export default function NotificacoesAnalytics() {
             <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{history?.length || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Últimas 20 notificações</p>
+            <div className="text-2xl font-bold">{realLogs?.length || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">Últimas 50 notificações</p>
           </CardContent>
         </Card>
       </div>
@@ -161,43 +211,181 @@ export default function NotificacoesAnalytics() {
         </CardContent>
       </Card>
 
+      {/* Filtros Avançados */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Filtros Avançados</CardTitle>
+              <CardDescription>Refine sua busca de notificações</CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              {showFilters ? "Ocultar" : "Mostrar"} Filtros
+            </Button>
+          </div>
+        </CardHeader>
+        {showFilters && (
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Tipo de Notificação</Label>
+                <Select
+                  value={filters.type}
+                  onValueChange={(value) => setFilters({ ...filters, type: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos os tipos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Todos os tipos</SelectItem>
+                    <SelectItem value="meta_atrasada">Meta Atrasada</SelectItem>
+                    <SelectItem value="avaliacao_pendente">Avaliação Pendente</SelectItem>
+                    <SelectItem value="consenso_pendente">Consenso Pendente</SelectItem>
+                    <SelectItem value="pdi_prazo">PDI Próximo do Prazo</SelectItem>
+                    <SelectItem value="meta_aprovada">Meta Aprovada</SelectItem>
+                    <SelectItem value="meta_rejeitada">Meta Rejeitada</SelectItem>
+                    <SelectItem value="feedback_recebido">Feedback Recebido</SelectItem>
+                    <SelectItem value="badge_conquistado">Badge Conquistado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select
+                  value={filters.status}
+                  onValueChange={(value: any) => setFilters({ ...filters, status: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos os status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Todos os status</SelectItem>
+                    <SelectItem value="enviada">Enviada</SelectItem>
+                    <SelectItem value="aberta">Aberta</SelectItem>
+                    <SelectItem value="erro">Erro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Buscar Colaborador</Label>
+                <Input
+                  placeholder="Nome ou email..."
+                  value={filters.searchTerm}
+                  onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Data Início</Label>
+                <Input
+                  type="date"
+                  value={filters.customStartDate}
+                  onChange={(e) => setFilters({ ...filters, customStartDate: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Data Fim</Label>
+                <Input
+                  type="date"
+                  value={filters.customEndDate}
+                  onChange={(e) => setFilters({ ...filters, customEndDate: e.target.value })}
+                />
+              </div>
+
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  onClick={handleClearFilters}
+                  className="w-full"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Limpar Filtros
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
       {/* Histórico de Notificações */}
       <Card>
         <CardHeader>
           <CardTitle>Histórico de Notificações Enviadas</CardTitle>
-          <CardDescription>Últimas 20 notificações (dados simulados)</CardDescription>
+          <CardDescription>
+            {filteredLogs.length} notificações encontradas
+            {filters.searchTerm && ` (filtrado por "${filters.searchTerm}")`}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Usuário</TableHead>
-                <TableHead>Dispositivo</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead>Título</TableHead>
+                <TableHead>Dispositivo</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Enviado em</TableHead>
+                <TableHead>Aberto em</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {history?.map((notification: any) => (
-                <TableRow key={notification.id}>
-                  <TableCell className="font-medium">{notification.userName || "Desconhecido"}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="capitalize">
-                      {notification.deviceType}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{notification.title}</TableCell>
-                  <TableCell>
-                    <Badge variant={notification.status === "delivered" ? "default" : "destructive"}>
-                      {notification.status === "delivered" ? "Entregue" : "Falhou"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {new Date(notification.sentAt).toLocaleString("pt-BR")}
+              {filteredLogs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                    Nenhuma notificação encontrada com os filtros aplicados
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                filteredLogs.map((log: any) => (
+                  <TableRow key={log.id}>
+                    <TableCell className="font-medium">
+                      <div>
+                        <div>{log.userName || "Desconhecido"}</div>
+                        <div className="text-xs text-muted-foreground">{log.userEmail}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="capitalize">
+                        {log.type.replace(/_/g, " ")}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate">{log.title}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="capitalize">
+                        {log.deviceType}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          log.status === "aberta"
+                            ? "default"
+                            : log.status === "enviada"
+                            ? "secondary"
+                            : "destructive"
+                        }
+                      >
+                        {log.status === "aberta" ? "✓ Aberta" : log.status === "enviada" ? "Enviada" : "✗ Erro"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(log.sentAt).toLocaleString("pt-BR")}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {log.openedAt ? new Date(log.openedAt).toLocaleString("pt-BR") : "-"}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
