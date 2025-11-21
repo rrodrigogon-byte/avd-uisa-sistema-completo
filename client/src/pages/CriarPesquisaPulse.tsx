@@ -84,6 +84,14 @@ export default function CriarPesquisaPulse() {
         toast.error("Preencha título e pergunta");
         return;
       }
+      if (formData.title.length < 5) {
+        toast.error("Título deve ter no mínimo 5 caracteres");
+        return;
+      }
+      if (formData.question.length < 10) {
+        toast.error("Pergunta deve ter no mínimo 10 caracteres");
+        return;
+      }
       setStep(2);
     } else if (step === 2) {
       if (targetGroups.length === 0 && targetDepartmentIds.length === 0 && targetCostCenterIds.length === 0 && !targetEmails) {
@@ -157,24 +165,32 @@ export default function CriarPesquisaPulse() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Título da Pesquisa *</Label>
+                <Label htmlFor="title">Título da Pesquisa * (mínimo 5 caracteres)</Label>
                 <Input
                   id="title"
                   placeholder="Ex: Satisfação com Ambiente de Trabalho"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className={formData.title && formData.title.length < 5 ? "border-red-500" : ""}
                 />
+                {formData.title && formData.title.length < 5 && (
+                  <p className="text-xs text-red-500">{formData.title.length}/5 caracteres</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="question">Pergunta *</Label>
+                <Label htmlFor="question">Pergunta * (mínimo 10 caracteres)</Label>
                 <Textarea
                   id="question"
                   placeholder="Ex: Como você avalia o ambiente de trabalho da empresa?"
                   rows={3}
                   value={formData.question}
                   onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                  className={formData.question && formData.question.length < 10 ? "border-red-500" : ""}
                 />
+                {formData.question && formData.question.length < 10 && (
+                  <p className="text-xs text-red-500">{formData.question.length}/10 caracteres</p>
+                )}
               </div>
 
               <div className="space-y-2">

@@ -330,3 +330,15 @@
 - [ ] Testar fluxo completo de Sucessão (criar plano → adicionar sucessores → enviar testes → verificar histórico)
 - [ ] Validar envio de emails real (configurar SMTP e testar)
 - [ ] Exportar relatórios em PDF para Sucessão
+
+### 🚀 NOVAS TAREFAS SOLICITADAS (20/11/2024 - 20:15)
+- [x] Corrigir erro de validação na criação de Pesquisa Pulse (título mínimo 5 caracteres)
+- [x] Adicionar botão de enviar testes na página principal de Testes Psicométricos
+- [ ] Configurar SMTP para envio real de emails (Gmail/SendGrid)
+- [x] Implementar exportação PDF para Sucessão
+- [ ] Implementar exportação PDF para Nine Box Comparativo
+- [ ] Implementar exportação PDF para outros relatórios
+- [ ] Validar fluxo completo de Sucessão (criar → adicionar → enviar testes → histórico)
+- [ ] Validar fluxo completo de Metas SMART
+- [ ] Validar fluxo completo de Avaliações 360°
+- [ ] Implementar melhorias adicionais sugeridas pelo usuário

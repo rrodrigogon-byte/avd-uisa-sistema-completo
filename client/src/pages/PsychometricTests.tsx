@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import { trpc } from "@/lib/trpc";
@@ -54,14 +55,26 @@ export default function PsychometricTests() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <Brain className="h-8 w-8" />
-            Testes Psicométricos
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Conheça seu perfil comportamental e de personalidade
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+              <Brain className="h-8 w-8" />
+              Testes Psicométricos
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Conheça seu perfil comportamental e de personalidade
+            </p>
+          </div>
+          {user?.role === 'admin' && (
+            <Button
+              size="lg"
+              onClick={() => setLocation("/testes/enviar")}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            >
+              <Users className="h-5 w-5 mr-2" />
+              Enviar Testes para Colaboradores
+            </Button>
+          )}
         </div>
 
         {/* Testes Disponíveis */}

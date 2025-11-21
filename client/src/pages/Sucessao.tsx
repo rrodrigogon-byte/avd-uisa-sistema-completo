@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Users, TrendingUp, AlertCircle, Plus, UserPlus, Award, Calendar, Target, Pencil, Trash2, Save, History, Send } from "lucide-react";
+import { Loader2, Users, TrendingUp, AlertCircle, Plus, UserPlus, Award, Calendar, Target, Pencil, Trash2, Save, History, Send, FileDown } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { exportToPDF, generateSectionHTML, generateTableHTML, generateInfoGridHTML, generateBadgeHTML, generateCardHTML } from "@/lib/pdfExport";
 
 /**
  * Página de Mapa de Sucessão - COMPLETA
@@ -226,6 +227,67 @@ export default function Sucessao() {
     });
   };
 
+  const handleExportPDF = async () => {
+    if (!selectedPlan) return;
+
+    const position = positions?.find(p => p.id === selectedPlan.positionId);
+    const currentHolder = employees?.find(e => e.id === selectedPlan.currentHolderId);
+    const candidates = selectedPlan.candidates || [];
+
+    // Gerar conteúdo HTML
+    const content = `
+      ${generateSectionHTML(
+        "Informações do Plano",
+        generateInfoGridHTML([
+          { label: "Posição", value: position?.title || "N/A" },
+          { label: "Titular Atual", value: currentHolder?.name || "N/A" },
+          { label: "Nível de Risco", value: selectedPlan.riskLevel ? generateBadgeHTML(selectedPlan.riskLevel.toUpperCase(), selectedPlan.riskLevel === 'critico' ? 'danger' : selectedPlan.riskLevel === 'alto' ? 'warning' : 'info') : "N/A" },
+          { label: "Risco de Saída", value: selectedPlan.exitRisk || "N/A" },
+          { label: "Gap de Competências", value: selectedPlan.competencyGap || "N/A" },
+          { label: "Tempo de Preparação", value: selectedPlan.preparationTime ? `${selectedPlan.preparationTime} meses` : "N/A" },
+        ])
+      )}
+
+      ${generateSectionHTML(
+        "Sucessores Identificados",
+        candidates.length > 0
+          ? generateTableHTML(
+              ["Nome", "Prontidão", "Potencial", "Prioridade"],
+              candidates.map((c: any) => {
+                const emp = employees?.find(e => e.id === c.candidateId);
+                return [
+                  emp?.name || "N/A",
+                  c.readiness || "N/A",
+                  c.potential || "N/A",
+                  c.priority?.toString() || "N/A",
+                ];
+              })
+            )
+          : "<p>Nenhum sucessor identificado ainda.</p>"
+      )}
+
+      ${generateSectionHTML(
+        "Plano de Desenvolvimento",
+        generateCardHTML(
+          "Ações de Desenvolvimento",
+          selectedPlan.notes || "Nenhuma ação definida ainda."
+        )
+      )}
+    `;
+
+    try {
+      await exportToPDF({
+        title: "Plano de Sucessão",
+        subtitle: `${position?.title || "Posição"} - ${currentHolder?.name || "Titular"}`,
+        content,
+        filename: `sucessao-${position?.title || "plano"}.pdf`,
+      });
+      toast.success("PDF gerado com sucesso!");
+    } catch (error: any) {
+      toast.error(`Erro ao gerar PDF: ${error.message}`);
+    }
+  };
+
   const handleSelectPlan = (planId: number) => {
     setSelectedPlanId(planId);
     const plan = plans?.find(p => p.id === planId);
@@ -271,13 +333,23 @@ export default function Sucessao() {
             </p>
           </div>
 
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Plano
+          <div className="flex gap-2">
+            {selectedPlanId && (
+              <Button
+                variant="outline"
+                onClick={() => handleExportPDF()}
+              >
+                <FileDown className="h-4 w-4 mr-2" />
+                Exportar PDF
               </Button>
-            </DialogTrigger>
+            )}
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Plano
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Criar Plano de Sucessão</DialogTitle>
@@ -392,6 +464,7 @@ export default function Sucessao() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Estatísticas */}
