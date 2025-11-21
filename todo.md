@@ -467,3 +467,112 @@
 - [ ] Templates de avaliação baseados em melhores práticas
 - [ ] Configurar competências e dimensões por tipo de avaliação
 - [ ] Dashboard de acompanhamento do ciclo
+
+
+## 🚨 NOVA SESSÃO - 21/11/2024 16:10 - CORREÇÕES E PRÓXIMOS PASSOS
+
+### 1. Correção de Erros TypeScript Críticos
+- [ ] Corrigir AdesaoMetasCorporativas.tsx - Property 'sendAdherenceReminders' não existe
+- [ ] Corrigir NineBoxComparativo.tsx - Properties inexistentes (highPerformersPercent, dilemasPercent, employeeCount)
+- [ ] Corrigir NineBoxComparativo.tsx - Filtros com tipo 'string' ao invés de objeto
+- [ ] Corrigir PDIInteligenteDetalhes.tsx - Property 'strategicObjectives' não existe
+- [ ] Corrigir PDIInteligenteDetalhes.tsx - Property 'pdiIntelligentDetails' não existe
+- [ ] Corrigir PDIInteligenteDetalhes.tsx - Property 'profile' não existe em testes psicométricos
+- [ ] Corrigir PesquisasPulse.tsx - Função 'handleSaveSurvey' não existe
+
+### 2. Templates de Avaliação Profissionais
+- [ ] Criar biblioteca de competências baseadas em frameworks reconhecidos
+- [ ] Implementar dimensões de Leadership Pipeline
+- [ ] Adicionar competências de liderança (Kouzes & Posner)
+- [ ] Criar templates por nível hierárquico (Operacional, Coordenação, Gerência, Diretoria)
+- [ ] Integrar templates com criação de ciclos de avaliação
+- [ ] Permitir seleção de template ao criar ciclo
+- [ ] Pré-visualização de perguntas do template
+
+### 3. Sistema de Permissões de Admin Completo
+- [ ] Implementar middleware de permissões granulares
+- [ ] Admin pode editar qualquer meta (individual ou corporativa)
+- [ ] Admin pode editar qualquer avaliação 360°
+- [ ] Admin pode editar qualquer PDI
+- [ ] Criar tabela de auditoria de alterações de admin
+- [ ] Registrar histórico: quem alterou, quando, o que mudou
+- [ ] Dashboard de auditoria de alterações de admin
+- [ ] Notificar funcionário quando admin altera seus dados
+
+### 4. Dashboard de Acompanhamento de Ciclo
+- [ ] Criar página /ciclos/:id/acompanhamento
+- [ ] KPIs: Total de participantes, Concluídos, Pendentes, Taxa de conclusão
+- [ ] Gráfico de evolução temporal (conclusões por semana)
+- [ ] Gráfico de distribuição por departamento
+- [ ] Tabela de funcionários com status (pendente/em andamento/concluído)
+- [ ] Filtros por departamento, cargo, status
+- [ ] Alertas de prazos vencidos (vermelho)
+- [ ] Botão de enviar lembretes em massa
+- [ ] Exportação de relatório de acompanhamento (PDF/Excel)
+
+### 5. Telas e Funções Faltantes
+- [ ] Validar todas as rotas do menu lateral
+- [ ] Implementar páginas faltantes identificadas
+- [ ] Corrigir botões que não funcionam
+- [ ] Validar todos os formulários
+- [ ] Testar fluxos completos end-to-end
+
+### 6. Melhorias de UX
+- [ ] Adicionar loading states em todas as mutations
+- [ ] Implementar skeleton loaders
+- [ ] Melhorar mensagens de erro (mais descritivas)
+- [ ] Adicionar confirmações antes de ações destrutivas
+- [ ] Implementar undo para ações críticas
+
+
+## 🎯 PRIORIDADE MÁXIMA - MAPA DE SUCESSÃO UISA COMPLETO - 21/11/2024 16:25
+
+### Análise do PPT e Extração de Dados
+- [ ] Analisar arquivo PPT CópiadeMapaSucessórioGerencial-SF24.25(2).pptx
+- [ ] Extrair TODOS os nomes de funcionários
+- [ ] Extrair TODOS os cargos e posições
+- [ ] Extrair estrutura organizacional completa
+- [ ] Extrair sucessores de cada posição
+- [ ] Extrair níveis de prontidão (Pronto Agora, 1-2 anos, 2-3 anos)
+- [ ] Extrair dados de performance e potencial
+
+### Implementação do Mapa de Sucessão
+- [ ] Criar/atualizar schema com dados reais do PPT
+- [ ] Popular banco de dados com estrutura organizacional UISA
+- [ ] Popular funcionários com nomes reais
+- [ ] Popular planos de sucessão com dados reais
+- [ ] Implementar botão INCLUIR (novo plano de sucessão)
+- [ ] Implementar botão MODIFICAR (editar sucessor existente)
+- [ ] Implementar botão DELETAR (remover sucessor)
+- [ ] Implementar botão SALVAR (persistir alterações)
+- [ ] Implementar botão PDI (criar/visualizar PDI do sucessor)
+- [ ] Implementar visualização em cards com hierarquia
+- [ ] Implementar filtros por departamento/diretoria
+- [ ] Implementar busca por nome/cargo
+- [ ] Implementar exportação para PDF/Excel
+- [ ] Implementar dashboard de estatísticas
+
+
+## 🔐 PERMISSÕES ADMIN RODRIGO.GONCALVES - 21/11/2024 16:35
+
+### Permissões Full de Admin
+- [x] Garantir que rodrigo.goncalves tenha role='admin' no banco
+- [x] Admin pode editar QUALQUER meta (individual ou corporativa)
+- [ ] Admin pode editar QUALQUER avaliação 360°
+- [ ] Admin pode editar QUALQUER PDI
+- [ ] Admin pode aprovar/rejeitar QUALQUER item pendente
+- [ ] Admin pode acessar TODAS as páginas do sistema
+- [ ] Admin pode ver dados de TODOS os funcionários
+- [ ] Admin pode modificar ciclos de avaliação ativos
+- [ ] Admin pode resetar senhas de qualquer usuário
+- [ ] Admin pode deletar registros (com confirmação)
+
+### Fluxos Claros de Criação e Aprovação
+- [ ] Documentar fluxo completo de criação de avaliação 360°
+- [ ] Documentar fluxo completo de aprovação de metas
+- [ ] Documentar fluxo completo de criação de PDI
+- [ ] Adicionar tooltips explicativos em cada etapa
+- [ ] Criar wizard step-by-step para processos complexos
+- [ ] Adicionar validações claras em cada etapa
+- [ ] Mensagens de erro descritivas
+- [ ] Confirmações antes de ações irreversíveis

@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { z } from "zod";
-import { evaluationCycles, performanceEvaluations, smartGoals, pdiPlans } from "../drizzle/schema";
+import { evaluationCycles, performanceEvaluations, smartGoals, pdiPlans, employees } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 
@@ -401,15 +401,16 @@ export const cyclesRouter = router({
       }
 
       // Buscar todos os funcionários ativos
-      const employees = await db.query.employees.findMany({
-        where: (employees, { eq }) => eq(employees.status, "ativo"),
-      });
+      const employeesList = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.status, "ativo"));
 
       let count = 0;
 
       // Gerar avaliações para cada tipo selecionado
       for (const type of input.types) {
-        for (const employee of employees) {
+        for (const employee of employeesList) {
           // Verificar se já existe avaliação deste tipo para este funcionário neste ciclo
           const existing = await db
             .select()

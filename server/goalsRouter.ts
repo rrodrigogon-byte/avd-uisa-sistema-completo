@@ -9,6 +9,7 @@ import {
   employees,
   evaluationCycles,
   pdiPlans,
+  notifications,
 } from "../drizzle/schema";
 import { getDb, getUserEmployee } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
@@ -354,6 +355,7 @@ export const goalsRouter = router({
 
   /**
    * Atualizar progresso da meta
+   * Admin pode editar qualquer meta
    */
   updateProgress: protectedProcedure
     .input(
@@ -375,6 +377,23 @@ export const goalsRouter = router({
           code: "NOT_FOUND",
           message: "Employee não encontrado para este usuário",
         });
+      }
+
+      // Verificar permissão: admin pode editar qualquer meta
+      if (ctx.user.role !== 'admin') {
+        // Verificar se a meta pertence ao funcionário
+        const [goal] = await db
+          .select()
+          .from(smartGoals)
+          .where(eq(smartGoals.id, input.goalId))
+          .limit(1);
+        
+        if (!goal || goal.employeeId !== employee.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Você não tem permissão para editar esta meta",
+          });
+        }
       }
 
       // Atualizar meta
@@ -1664,4 +1683,57 @@ export const goalsRouter = router({
 
     return goals;
   }),
+
+  /**
+   * Enviar lembretes de adesão para funcionários atrasados
+   */
+  sendAdherenceReminders: protectedProcedure
+    .input(
+      z.object({
+        employeeIds: z.array(z.number()).optional(),
+        departmentId: z.number().optional(),
+        goalId: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar funcionários que precisam de lembrete
+      let employeesToNotify: number[] = [];
+
+      if (input.employeeIds && input.employeeIds.length > 0) {
+        employeesToNotify = input.employeeIds;
+      } else {
+        // Buscar funcionários atrasados baseado nos filtros
+        const conditions = [];
+        if (input.departmentId) {
+          conditions.push(eq(employees.departmentId, input.departmentId));
+        }
+        conditions.push(eq(employees.status, "ativo"));
+
+        const employeesList = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(and(...conditions));
+
+        employeesToNotify = employeesList.map((e) => e.id);
+      }
+
+      // Enviar notificações para cada funcionário
+      for (const employeeId of employeesToNotify) {
+        await db.insert(notifications).values({
+          userId: employeeId,
+          type: "meta_atrasada",
+          title: "Lembrete: Atualizar progresso de meta",
+          message: "Você não atualiza o progresso de suas metas há mais de 7 dias. Por favor, atualize o status.",
+          read: false,
+        });
+      }
+
+      return {
+        success: true,
+        count: employeesToNotify.length,
+      };
+    }),
 });

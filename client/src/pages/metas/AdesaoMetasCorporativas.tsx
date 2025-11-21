@@ -36,7 +36,7 @@ export default function AdesaoMetasCorporativas() {
   });
 
   const { data: departments } = trpc.departments.list.useQuery();
-  const { data: corporateGoals } = trpc.goals.listCorporate.useQuery();
+  const { data: corporateGoals } = trpc.goals.listCorporateGoals.useQuery();
 
   const sendReminders = trpc.goals.sendAdherenceReminders.useMutation({
     onSuccess: () => {

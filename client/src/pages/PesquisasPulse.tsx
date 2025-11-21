@@ -277,7 +277,7 @@ export default function PesquisasPulse() {
                 <Button variant="outline" onClick={() => setShowForm(false)}>
                   Cancelar
                 </Button>
-                <Button onClick={handleSaveSurvey}>
+                <Button onClick={handleCreateSurvey}>
                   <Send className="mr-2 h-4 w-4" />
                   Criar e Enviar
                 </Button>

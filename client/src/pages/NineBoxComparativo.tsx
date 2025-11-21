@@ -117,7 +117,7 @@ export default function NineBoxComparativo() {
           ["Cargo", "Colaboradores", "Perf Média", "Pot Médio", "Alto Desemp.", "Alto Pot.", "Stars"],
           comparative.map((c) => [
             c.positionTitle,
-            c.employeeCount.toString(),
+            c.totalEmployees.toString(),
             c.avgPerformance.toFixed(2),
             c.avgPotential.toFixed(2),
             `${c.highPerformersPercent.toFixed(1)}%`,
@@ -149,15 +149,15 @@ export default function NineBoxComparativo() {
               </div>
               <div class="info-item">
                 <div class="info-label">Enigmas</div>
-                <div class="info-value">${c.enigmasPercent.toFixed(1)}% (${c.enigmasCount})</div>
+                <div class="info-value">${c.highPotentialPercent.toFixed(1)}%</div>
               </div>
               <div class="info-item">
                 <div class="info-label">Solid Performers</div>
-                <div class="info-value">${c.solidPerformersPercent.toFixed(1)}% (${c.solidPerformersCount})</div>
+                <div class="info-value">${c.highPerformersPercent.toFixed(1)}%</div>
               </div>
               <div class="info-item">
                 <div class="info-label">Dilemas</div>
-                <div class="info-value">${c.dilemasPercent.toFixed(1)}% (${c.dilemasCount})</div>
+                <div class="info-value">${c.starsPercent.toFixed(1)}%</div>
               </div>
             </div>
           </div>
@@ -318,7 +318,7 @@ export default function NineBoxComparativo() {
               const headers = ["Cargo", "Colaboradores", "Performance Média", "Potencial Médio", "% Alto Desempenho", "% Alto Potencial", "% Stars"];
               const rows = comparative.map(c => [
                 c.positionTitle,
-                c.employeeCount,
+                c.totalEmployees,
                 c.avgPerformance.toFixed(2),
                 c.avgPotential.toFixed(2),
                 c.highPerformersPercent.toFixed(1) + "%",
@@ -411,7 +411,7 @@ export default function NineBoxComparativo() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todos">Todos os departamentos</SelectItem>
-                    {departments?.filter(d => d?.id).map((dept) => (
+                    {departments?.filter((d: any) => d?.id).map((dept: any) => (
                       <SelectItem key={dept.id} value={dept.id.toString()}>
                         {dept.name}
                       </SelectItem>
@@ -438,7 +438,7 @@ export default function NineBoxComparativo() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todos">Todos os centros</SelectItem>
-                    {costCenters?.filter(c => c?.id).map((cc) => (
+                    {costCenters?.filter((c: any) => c?.id).map((cc: any) => (
                       <SelectItem key={cc.id} value={cc.id.toString()}>
                         {cc.name}
                       </SelectItem>
