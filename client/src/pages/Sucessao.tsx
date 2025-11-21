@@ -91,6 +91,15 @@ export default function Sucessao() {
     onError: (error) => toast.error(`Erro: ${error.message}`),
   });
 
+  const deletePlan = trpc.succession.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Plano de sucessão deletado com sucesso!");
+      setSelectedPlanId(null);
+      refetch();
+    },
+    onError: (error) => toast.error(`Erro ao deletar: ${error.message}`),
+  });
+
   const updatePlan = trpc.succession.update.useMutation({
     onSuccess: () => {
       toast.success("Plano atualizado com sucesso!");
@@ -285,7 +294,7 @@ export default function Sucessao() {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        {positions?.map((pos) => (
+                        {positions?.filter(p => p?.id).map((pos) => (
                           <SelectItem key={pos.id} value={pos.id.toString()}>
                             {pos.title}
                           </SelectItem>
@@ -301,7 +310,7 @@ export default function Sucessao() {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        {employees?.map((emp) => (
+                        {employees?.filter(e => e?.id).map((emp) => (
                           <SelectItem key={emp.id} value={emp.id.toString()}>
                             {emp.name}
                           </SelectItem>
@@ -470,6 +479,29 @@ export default function Sucessao() {
                       <CardDescription className="mt-2">
                         {plan.currentHolderName || "Sem titular"}
                       </CardDescription>
+                    </div>
+                    <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleSelectPlan(plan.id)}
+                        title="Editar plano"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (confirm(`Deseja realmente deletar o plano de sucessão para "${plan.positionTitle}"?`)) {
+                            deletePlan.mutate(plan.id);
+                          }
+                        }}
+                        title="Deletar plano"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardHeader>
@@ -864,7 +896,7 @@ export default function Sucessao() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.map((emp) => (
+                      {employees?.filter(e => e?.id).map((emp) => (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.name}
                         </SelectItem>

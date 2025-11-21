@@ -317,3 +317,16 @@
 - [ ] Verificar que não há erros de console em nenhuma página
 - [ ] Testar Scheduled Reports completo
 - [ ] Validar todos os workflows de aprovação
+
+
+### 🚨 BUGS CRÍTICOS - NOVA RODADA (20/11/2024 - 18:45)
+- [x] Nine Box Comparativo: Erro ao carregar página (corrigido com .filter())
+- [x] Pesquisa Pulse: Botão "Nova Pesquisa" funciona perfeitamente
+- [x] Sucessão: Botões Editar/Deletar adicionados em todos os cards + CRUD completo nas abas
+- [ ] Descrições de Cargos: Dados sumiram (aguardando localização exata)
+- [ ] SMTP/Email: Ainda não funciona (4ª tentativa de correção)
+
+### 📋 PRÓXIMOS PASSOS SOLICITADOS
+- [ ] Testar fluxo completo de Sucessão (criar plano → adicionar sucessores → enviar testes → verificar histórico)
+- [ ] Validar envio de emails real (configurar SMTP e testar)
+- [ ] Exportar relatórios em PDF para Sucessão

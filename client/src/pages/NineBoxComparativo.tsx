@@ -273,7 +273,7 @@ export default function NineBoxComparativo() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todos">Todos os colaboradores</SelectItem>
-                    {leaders?.map((leader) => (
+                    {leaders?.filter(l => l?.id).map((leader) => (
                       <SelectItem key={leader.id} value={leader.id.toString()}>
                         {leader.name} - {leader.positionTitle} ({leader.subordinatesCount} subordinados)
                       </SelectItem>
@@ -300,7 +300,7 @@ export default function NineBoxComparativo() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todos">Todos os departamentos</SelectItem>
-                    {departments?.map((dept) => (
+                    {departments?.filter(d => d?.id).map((dept) => (
                       <SelectItem key={dept.id} value={dept.id.toString()}>
                         {dept.name}
                       </SelectItem>
@@ -327,7 +327,7 @@ export default function NineBoxComparativo() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todos">Todos os centros</SelectItem>
-                    {costCenters?.map((cc) => (
+                    {costCenters?.filter(c => c?.id).map((cc) => (
                       <SelectItem key={cc.id} value={cc.id.toString()}>
                         {cc.name}
                       </SelectItem>
