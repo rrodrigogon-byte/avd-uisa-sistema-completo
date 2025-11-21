@@ -33,8 +33,8 @@
 - [x] Associar templates a cargos/departamentos específicos
 - [x] Pré-visualização de template antes de salvar
 - [x] Duplicar templates existentes
-- [ ] Importar/exportar templates (JSON)
-- [ ] Integrar templates com avaliação 360°
+- [x] Importar/exportar templates (JSON)
+- [x] Integrar templates com avaliação 360°
 
 ### 4. Tela de Calibração Diretoria com Nine Box Interativo
 - [x] Criar página /admin/calibracao-diretoria
@@ -49,10 +49,18 @@
 - [x] Histórico de calibrações anteriores
 - [x] Comparação antes/depois da calibração
 - [ ] Notificação automática ao RH quando calibração é salva
-- [ ] Exportação de relatório de calibração com evidências
-- [ ] Controle de acesso (apenas Admin e Diretoria)
+- [x] Exportação de relatório de calibração com evidências (PDF)
+- [x] Controle de acesso (apenas Admin e Diretoria)
 
-### 5. Melhorias no Envio de Avaliações
+### 5. Dashboard de Notificações Push Analytics
+- [x] Criar página /admin/notificacoes-analytics
+- [x] Endpoint getNotificationMetrics (taxa abertura, tipos, horários)
+- [x] KPIs: Total enviadas, Taxa de abertura, Tempo médio de resposta
+- [x] Gráfico de tipos mais frequentes (Chart.js)
+- [x] Gráfico de horários de maior engajamento
+- [x] Tabela de notificações enviadas com status
+
+### 6. Melhorias no Envio de Avaliações
 - [ ] Envio em lote de avaliações 360° por departamento
 - [ ] Template de email personalizável para convites
 - [ ] Agendamento de envio (data/hora específica)

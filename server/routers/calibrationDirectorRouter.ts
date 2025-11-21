@@ -275,6 +275,90 @@ export const calibrationDirectorRouter = router({
 
       return (data[0] as unknown) as any[];
     }),
+
+  /**
+   * Buscar dados completos para geração de PDF de calibração
+   */
+  getCalibrationReportData: protectedProcedure
+    .input(z.object({ sessionId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar sessão
+      const sessionResult = await db.execute(
+        sql`SELECT * FROM calibrationSessions WHERE id = ${input.sessionId}`
+      );
+      const session = (sessionResult[0] as unknown as any[])[0];
+
+      if (!session) throw new Error("Sessão não encontrada");
+
+      // Buscar posições com histórico
+      const positionsResult = await db.execute(
+        sql`SELECT 
+            cp.id,
+            e.name as employeeName,
+            e.employeeCode,
+            e.position,
+            e.department,
+            cp.performanceScore as performanceAfter,
+            cp.potentialScore as potentialAfter,
+            cp.justification,
+            cp.evidenceFiles as evidences,
+            cp.previousPosition,
+            u.name as changedBy,
+            cp.updatedAt as changedAt
+           FROM calibrationPositions cp
+           JOIN employees e ON e.id = cp.employeeId
+           LEFT JOIN users u ON u.id = cp.changedBy
+           WHERE cp.sessionId = ${input.sessionId}
+           ORDER BY e.name`
+      );
+
+      const positions = (positionsResult[0] as unknown as any[]).map((pos: any) => {
+        // Parse previousPosition para obter valores antes
+        let performanceBefore = pos.performanceAfter;
+        let potentialBefore = pos.potentialAfter;
+
+        if (pos.previousPosition) {
+          try {
+            const prev = JSON.parse(pos.previousPosition);
+            performanceBefore = prev.performanceScore || pos.performanceAfter;
+            potentialBefore = prev.potentialScore || pos.potentialAfter;
+          } catch (e) {
+            // Manter valores atuais se parsing falhar
+          }
+        }
+
+        return {
+          id: pos.id,
+          employeeName: pos.employeeName,
+          employeeCode: pos.employeeCode,
+          position: pos.position,
+          department: pos.department,
+          performanceBefore,
+          potentialBefore,
+          performanceAfter: pos.performanceAfter,
+          potentialAfter: pos.potentialAfter,
+          justification: pos.justification || "Sem justificativa",
+          evidences: pos.evidences,
+          changedBy: pos.changedBy || "Sistema",
+          changedAt: pos.changedAt || new Date(),
+        };
+      });
+
+      return {
+        session: {
+          id: session.id,
+          name: session.sessionName,
+          description: session.notes || null,
+          startDate: session.sessionDate || session.createdAt,
+          endDate: session.completedAt || null,
+          status: session.status,
+        },
+        positions,
+      };
+    }),
 });
 
 /**

@@ -234,17 +234,17 @@ export default function TemplatesAvaliacao() {
                 <div>
                   Criado em: {new Date(template.createdAt).toLocaleDateString("pt-BR")}
                 </div>
-                {template.targetRoles && JSON.parse(template.targetRoles as string).length > 0 && (
+                {template.targetRoles && (JSON.parse(template.targetRoles as string) as any[]).length > 0 ? (
                   <div>
-                    Cargos-alvo: {JSON.parse(template.targetRoles as string).length}
+                    Cargos-alvo: {(JSON.parse(template.targetRoles as string) as any[]).length}
                   </div>
-                )}
+                ) : null}
                 {template.targetDepartments &&
-                  JSON.parse(template.targetDepartments as string).length > 0 && (
+                  (JSON.parse(template.targetDepartments as string) as any[]).length > 0 ? (
                     <div>
-                      Departamentos-alvo: {JSON.parse(template.targetDepartments as string).length}
+                      Departamentos-alvo: {(JSON.parse(template.targetDepartments as string) as any[]).length}
                     </div>
-                  )}
+                  ) : null}
               </div>
 
               <div className="flex flex-wrap gap-2">

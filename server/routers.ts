@@ -42,7 +42,7 @@ import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { uisaImportRouter } from "./routers/uisaImportRouter";
 import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
-import { pushNotificationsRouter } from "./pushNotificationsRouter";
+import { pushNotificationsRouter } from "./routers/pushNotificationsRouter";
 import { advancedAnalyticsRouter } from "./advancedAnalyticsRouter";
 import { evaluationTemplatesRouter } from "./routers/evaluationTemplatesRouter";
 import { calibrationDirectorRouter } from "./routers/calibrationDirectorRouter";

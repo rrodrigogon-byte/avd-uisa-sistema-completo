@@ -112,19 +112,20 @@ import AvaliacoesAprovacao from "./pages/AvaliacoesAprovacao";
 import HierarquiaOrganizacional from "./pages/HierarquiaOrganizacional";
 import HierarquiaImport from "./pages/HierarquiaImport";
 import DashboardEmails from "./pages/DashboardEmails";
-import BonusWorkflows from "./pages/admin/BonusWorkflows";
-import ImportUISA from "./pages/admin/ImportUISA";
+// import BonusWorkflows from "./pages/admin/BonusWorkflows"; // Temporariamente desabilitado
+// import ImportUISA from "./pages/admin/ImportUISA"; // Temporariamente desabilitado
 import GerenciarSenhasLideres from "./pages/admin/GerenciarSenhasLideres";
 import HistoricoSenhas from "./pages/admin/HistoricoSenhas";
 import MetasCorporativas from "./pages/MetasCorporativas";
-import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
+// import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas"; // Temporariamente desabilitado
 import TemplatesAvaliacao from "./pages/admin/TemplatesAvaliacao";
 import CriarTemplateAvaliacao from "./pages/admin/CriarTemplateAvaliacao";
 import CalibracaoDiretoria from "./pages/admin/CalibracaoDiretoria";
+import NotificacoesAnalytics from "./pages/admin/NotificacoesAnalytics";
 import ConfigurarAvaliacoes from "./pages/avaliacoes/ConfigurarAvaliacoes";
-import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval";
-import BonusCompliance from "./pages/compliance/BonusCompliance";
-import ExportarFolha from "./pages/folha-pagamento/ExportarFolha";
+// import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval"; // Temporariamente desabilitado
+// import BonusCompliance from "./pages/compliance/BonusCompliance"; // Temporariamente desabilitado
+// import ExportarFolha from "./pages/folha-pagamento/ExportarFolha"; // Temporariamente desabilitado
 import NotificacoesConfig from "./pages/configuracoes/Notificacoes";
 import AnalyticsAvancadoPage from "./pages/analytics/AnalyticsAvancado";
 
@@ -151,15 +152,15 @@ function Router() {
       <Route path="/bonus/auditoria" component={BonusAuditoria} />
       <Route path="/avaliacoes-pendentes" component={AvaliacoesPendentes} />
       <Route path="/aprovacoes/avaliacoes" component={AvaliacoesAprovacao} />
-      <Route path="/admin/bonus-workflows" component={BonusWorkflows} />
-      <Route path="/admin/import-uisa" component={ImportUISA} />
+      {/* <Route path="/admin/bonus-workflows" component={BonusWorkflows} /> */}
+      {/* <Route path="/admin/import-uisa" component={ImportUISA} /> */}
       <Route path="/admin/gerenciar-senhas-lideres" component={GerenciarSenhasLideres} />
       <Route path="/admin/historico-senhas" component={HistoricoSenhas} />
       <Route path="/metas/corporativas" component={MetasCorporativas} />
-      <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} />
-      <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} />
-      <Route path="/compliance/bonus" component={BonusCompliance} />
-      <Route path="/folha-pagamento/exportar" component={ExportarFolha} />
+      {/* <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} /> */}
+      {/* <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} /> */}
+      {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}
+      {/* <Route path="/folha-pagamento/exportar" component={ExportarFolha} /> */}
        <Route path="/avaliacoes" component={Avaliacoes} />
       <Route path="/avaliacoes/configurar" component={ConfigurarAvaliacoes} />
       <Route path="/avaliacoes/autoavaliacao/:id" component={Avaliacao360Autoavaliacao} />
@@ -201,6 +202,7 @@ function Router() {
       <Route path="/admin/templates-avaliacao" component={TemplatesAvaliacao} />
       <Route path="/admin/templates-avaliacao/criar" component={CriarTemplateAvaliacao} />
       <Route path="/admin/calibracao-diretoria" component={CalibracaoDiretoria} />
+      <Route path="/admin/notificacoes-analytics" component={NotificacoesAnalytics} />
       <Route path={"/admin/succession-import"} component={SuccessionImport} />
       <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />

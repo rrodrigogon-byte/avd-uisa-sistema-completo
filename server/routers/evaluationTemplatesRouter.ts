@@ -360,4 +360,115 @@ export const evaluationTemplatesRouter = router({
 
       return { success: true };
     }),
+
+  /**
+   * Exportar template como JSON
+   */
+  exportTemplate: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const [template] = await db
+        .select()
+        .from(evaluationTemplates)
+        .where(eq(evaluationTemplates.id, input.id))
+        .limit(1);
+
+      if (!template) {
+        throw new Error("Template não encontrado");
+      }
+
+      const questions = await db
+        .select()
+        .from(templateQuestions)
+        .where(eq(templateQuestions.templateId, input.id))
+        .orderBy(templateQuestions.displayOrder);
+
+      // Retornar JSON completo
+      return {
+        version: "1.0",
+        exportedAt: new Date().toISOString(),
+        template: {
+          name: template.name,
+          description: template.description,
+          templateType: template.templateType,
+          targetRoles: template.targetRoles ? JSON.parse(template.targetRoles as string) : [],
+          targetDepartments: template.targetDepartments ? JSON.parse(template.targetDepartments as string) : [],
+          questions: questions.map((q) => ({
+            category: q.category,
+            questionText: q.questionText,
+            questionType: q.questionType,
+            options: q.options ? JSON.parse(q.options as string) : [],
+            weight: q.weight,
+            displayOrder: q.displayOrder,
+            isRequired: q.isRequired,
+            helpText: q.helpText,
+          })),
+        },
+      };
+    }),
+
+  /**
+   * Importar template de JSON
+   */
+  importTemplate: protectedProcedure
+    .input(
+      z.object({
+        json: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Parse JSON
+      let data;
+      try {
+        data = JSON.parse(input.json);
+      } catch (error) {
+        throw new Error("JSON inválido");
+      }
+
+      // Validar estrutura
+      if (!data.template || !data.template.name || !Array.isArray(data.template.questions)) {
+        throw new Error("Estrutura de JSON inválida. Certifique-se de que o arquivo contém 'template.name' e 'template.questions'.");
+      }
+
+      const { template } = data;
+
+      // Inserir template
+      const result = await db.insert(evaluationTemplates).values({
+        name: template.name,
+        description: template.description || null,
+        templateType: template.templateType || "custom",
+        targetRoles: template.targetRoles ? JSON.stringify(template.targetRoles) : null,
+        targetDepartments: template.targetDepartments ? JSON.stringify(template.targetDepartments) : null,
+        isActive: false, // Importado como inativo por segurança
+        isDefault: false,
+        createdBy: ctx.user.id,
+      });
+
+      const templateId = result[0].insertId;
+
+      // Inserir perguntas
+      if (template.questions.length > 0) {
+        await db.insert(templateQuestions).values(
+          template.questions.map((q: any) => ({
+            templateId,
+            category: q.category,
+            questionText: q.questionText,
+            questionType: q.questionType,
+            options: q.options ? JSON.stringify(q.options) : null,
+            weight: q.weight || 1,
+            displayOrder: q.displayOrder,
+            isRequired: q.isRequired !== false,
+            helpText: q.helpText || null,
+          }))
+        );
+      }
+
+      return { templateId, name: template.name, success: true };
+    }),
 });
