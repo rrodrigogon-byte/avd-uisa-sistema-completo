@@ -46,31 +46,32 @@ export const cyclesRouter = router({
     .input(
       z.object({
         name: z.string(),
-        year: z.number(),
-        type: z.enum(["anual", "semestral", "trimestral"]),
         startDate: z.string(), // ISO date string
         endDate: z.string(),
-        selfEvaluationDeadline: z.string().optional(),
-        managerEvaluationDeadline: z.string().optional(),
-        consensusDeadline: z.string().optional(),
-        description: z.string().optional(),
+        selfEvaluationDeadline: z.string().nullable().optional(),
+        managerEvaluationDeadline: z.string().nullable().optional(),
+        consensusDeadline: z.string().nullable().optional(),
+        description: z.string().nullable().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
+      // Extrair ano da data de início
+      const year = new Date(input.startDate).getFullYear();
+
       const result = await db.insert(evaluationCycles).values({
         name: input.name,
-        year: input.year,
-        type: input.type,
+        year: year,
+        type: "anual",
         startDate: new Date(input.startDate),
         endDate: new Date(input.endDate),
         selfEvaluationDeadline: input.selfEvaluationDeadline ? new Date(input.selfEvaluationDeadline) : null,
         managerEvaluationDeadline: input.managerEvaluationDeadline ? new Date(input.managerEvaluationDeadline) : null,
         consensusDeadline: input.consensusDeadline ? new Date(input.consensusDeadline) : null,
         description: input.description || null,
-        status: "planejamento",
+        status: "planejado",
       });
 
       return { id: 0, success: true }; // ID será gerado pelo auto-increment
@@ -84,15 +85,12 @@ export const cyclesRouter = router({
       z.object({
         id: z.number(),
         name: z.string().optional(),
-        year: z.number().optional(),
-        type: z.enum(["anual", "semestral", "trimestral"]).optional(),
         startDate: z.string().optional(),
         endDate: z.string().optional(),
-        selfEvaluationDeadline: z.string().optional(),
-        managerEvaluationDeadline: z.string().optional(),
-        consensusDeadline: z.string().optional(),
-        status: z.enum(["planejamento", "em_andamento", "concluido", "cancelado"]).optional(),
-        description: z.string().optional(),
+        selfEvaluationDeadline: z.string().nullable().optional(),
+        managerEvaluationDeadline: z.string().nullable().optional(),
+        consensusDeadline: z.string().nullable().optional(),
+        description: z.string().nullable().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -101,14 +99,11 @@ export const cyclesRouter = router({
 
       const updateData: any = {};
       if (input.name) updateData.name = input.name;
-      if (input.year) updateData.year = input.year;
-      if (input.type) updateData.type = input.type;
       if (input.startDate) updateData.startDate = new Date(input.startDate);
       if (input.endDate) updateData.endDate = new Date(input.endDate);
       if (input.selfEvaluationDeadline) updateData.selfEvaluationDeadline = new Date(input.selfEvaluationDeadline);
       if (input.managerEvaluationDeadline) updateData.managerEvaluationDeadline = new Date(input.managerEvaluationDeadline);
       if (input.consensusDeadline) updateData.consensusDeadline = new Date(input.consensusDeadline);
-      if (input.status) updateData.status = input.status;
       if (input.description !== undefined) updateData.description = input.description;
 
       await db
@@ -172,6 +167,31 @@ export const cyclesRouter = router({
 
   /**
    * Deletar ciclo
+   */
+  /**
+   * Ativar/desativar ciclo
+   */
+  toggleActive: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        active: z.boolean(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db
+        .update(evaluationCycles)
+        .set({ active: input.active })
+        .where(eq(evaluationCycles.id, input.id));
+
+      return { success: true };
+    }),
+
+  /**
+   * Excluir ciclo
    */
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

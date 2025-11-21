@@ -3,6 +3,8 @@ import { getDb } from './db';
 import { startNotificationCron } from './jobs/notificationCron';
 import { calculateDailyDiscrepancies } from './jobs/calculateDiscrepancies';
 import { sendPulseEmailsJob } from './jobs/sendPulseEmails';
+import { sendConsensusReminders } from './jobs/consensusReminders';
+import { sendCorporateGoalsReminders } from './jobs/corporateGoalsReminders';
 import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals } from '../drizzle/schema';
 import { eq, and, lt, gte } from 'drizzle-orm';
 import { emailService } from './utils/emailService';
@@ -248,6 +250,28 @@ export const calculateDiscrepanciesJob = cron.schedule('0 6 * * *', async () => 
   }
 });
 
+// Job de lembretes de consenso pendente (executa diariamente às 9h)
+export const consensusReminderJob = cron.schedule('0 9 * * *', async () => {
+  console.log('[Cron] Executando job de lembretes de consenso pendente...');
+  
+  try {
+    await sendConsensusReminders();
+  } catch (error) {
+    console.error('[Cron] Erro ao enviar lembretes de consenso:', error);
+  }
+});
+
+// Job de lembretes de metas corporativas sem progresso (executa diariamente às 10h)
+export const corporateGoalsReminderJob = cron.schedule('0 10 * * *', async () => {
+  console.log('[Cron] Executando job de lembretes de metas corporativas...');
+  
+  try {
+    await sendCorporateGoalsReminders();
+  } catch (error) {
+    console.error('[Cron] Erro ao enviar lembretes de metas corporativas:', error);
+  }
+});
+
 // Job de envio de e-mails de Pesquisas Pulse (executa a cada 8 horas)
 export const pulseSurveyEmailJob = cron.schedule('0 */8 * * *', async () => {
   console.log('[Cron] Executando job de envio de e-mails Pulse...');
@@ -268,6 +292,8 @@ export function startCronJobs() {
   scheduledReportsJob.start();
   calculateDiscrepanciesJob.start();
   pulseSurveyEmailJob.start();
+  consensusReminderJob.start();
+  corporateGoalsReminderJob.start();
   // Iniciar job de notificações automáticas
   startNotificationCron();
   
@@ -282,6 +308,8 @@ export function stopCronJobs() {
   pdiOverdueJob.stop();
   scheduledReportsJob.stop();
   pulseSurveyEmailJob.stop();
+  consensusReminderJob.stop();
+  corporateGoalsReminderJob.stop();
   console.log('[Cron] Cron jobs parados');
 }
 

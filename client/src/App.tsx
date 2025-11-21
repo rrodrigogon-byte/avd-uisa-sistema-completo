@@ -115,7 +115,10 @@ import DashboardEmails from "./pages/DashboardEmails";
 import BonusWorkflows from "./pages/admin/BonusWorkflows";
 import ImportUISA from "./pages/admin/ImportUISA";
 import GerenciarSenhasLideres from "./pages/admin/GerenciarSenhasLideres";
+import HistoricoSenhas from "./pages/admin/HistoricoSenhas";
 import MetasCorporativas from "./pages/MetasCorporativas";
+import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
+import ConfigurarAvaliacoes from "./pages/avaliacoes/ConfigurarAvaliacoes";
 import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval";
 import BonusCompliance from "./pages/compliance/BonusCompliance";
 import ExportarFolha from "./pages/folha-pagamento/ExportarFolha";
@@ -145,11 +148,14 @@ function Router() {
       <Route path="/admin/bonus-workflows" component={BonusWorkflows} />
       <Route path="/admin/import-uisa" component={ImportUISA} />
       <Route path="/admin/gerenciar-senhas-lideres" component={GerenciarSenhasLideres} />
+      <Route path="/admin/historico-senhas" component={HistoricoSenhas} />
       <Route path="/metas/corporativas" component={MetasCorporativas} />
+      <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} />
       <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} />
       <Route path="/compliance/bonus" component={BonusCompliance} />
       <Route path="/folha-pagamento/exportar" component={ExportarFolha} />
        <Route path="/avaliacoes" component={Avaliacoes} />
+      <Route path="/avaliacoes/configurar" component={ConfigurarAvaliacoes} />
       <Route path="/avaliacoes/autoavaliacao/:id" component={Avaliacao360Autoavaliacao} />
       <Route path="/avaliacoes/gestor/:id" component={Avaliacao360Gestor} />
       <Route path="/avaliacoes/consenso/:id" component={Avaliacao360Consenso} />

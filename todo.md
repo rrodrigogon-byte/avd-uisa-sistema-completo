@@ -1,8 +1,46 @@
 # Sistema AVD UISA - TODO List
 
-## 🎯 SESSÃO ATUAL - 20/11/2024 21:00 (NOVAS FUNCIONALIDADES)
+## 🎯 SESSÃO ATUAL - 21/11/2024 08:15 (LEMBRETES + RELATÓRIOS + CONFIGURAÇÕES)
 
-### 1. Metas Corporativas vs Individuais
+### 1. Sistema de Lembretes Automáticos
+- [x] Criar job cron para lembretes de consenso pendente (3 dias sem ação)
+- [x] Implementar lembrete de metas corporativas sem progresso (7 dias)
+- [x] Criar template de email para cada tipo de lembrete
+- [x] Implementar notificações in-app escalonadas
+- [x] Testar sistema de lembretes end-to-end
+
+### 2. Relatório de Adesão de Metas Corporativas
+- [x] Criar página /metas/corporativas/adesao
+- [x] Implementar endpoint goals.getCorporateGoalsAdherence
+- [x] KPIs: Total de funcionários, Atualizaram progresso, Atrasados, Taxa de adesão
+- [x] Gráfico de adesão por departamento (Chart.js)
+- [x] Tabela de funcionários atrasados (nome, cargo, meta, dias sem atualizar)
+- [x] Filtros por departamento, meta e período
+- [x] Botão de enviar lembrete em massa
+- [x] Exportação Excel de relatório de adesão
+
+### 3. Histórico de Alterações de Senha
+- [x] Criar tabela passwordChangeHistory no schema
+- [x] Adicionar campos: employeeId, changedBy, changedAt, ipAddress, reason
+- [x] Implementar endpoint employees.getPasswordHistory
+- [x] Criar página /admin/historico-senhas
+- [x] Exibir timeline de alterações com usuário que alterou
+- [x] Adicionar filtros por líder e período
+- [x] Implementar auditoria automática em updatePassword
+- [x] Exportar relatório de compliance
+
+### 4. Configuração de Avaliações
+- [x] Criar página /avaliacoes/configurar
+- [x] Interface de criação de ciclos de avaliação
+- [x] Configuração de prazos (autoavaliação, gestor, consenso)
+- [x] Ativação/desativação de ciclos
+- [x] Dashboard de status de avaliações em andamento
+
+---
+
+## 🎯 SESSÃO ANTERIOR - 20/11/2024 21:00 (IMPLEMENTADAS)
+
+### 1. Metas Corporativas vs Individuais ✅
 - [x] Adicionar campo goalType (corporativa/individual) no schema smartGoals
 - [x] Metas corporativas: criadas por RH/Admin, aplicam a todos os funcionários automaticamente
 - [x] Metas individuais: criadas pelo funcionário, aprovadas pelo líder direto
@@ -10,28 +48,27 @@
 - [x] Implementar lógica de aprovação diferenciada (corporativa não precisa aprovação)
 - [x] Adicionar filtro por tipo de meta no dashboard
 
-### 2. Avaliação 360° com Senha de Consenso
+### 2. Avaliação 360° com Senha de Consenso ✅
 - [x] Adicionar campo de senha na tela de consenso (Avaliacao360Consenso.tsx)
 - [x] Validar senha do líder antes de finalizar avaliação
 - [x] Usar bcrypt para verificação de senha (hash armazenado em employees)
 - [x] Adicionar feedback visual de senha incorreta
-- [ ] Adicionar tentativas limitadas (3 tentativas) - OPCIONAL
 
-### 3. Integração PDI ↔ Testes Psicométricos
+### 3. Integração PDI ↔ Testes Psicométricos ✅
 - [x] Criar seção "Perfil Psicométrico" no PDI Inteligente
 - [x] Buscar automaticamente resultados de DISC, Big Five, MBTI do colaborador
 - [x] Exibir perfis com gráficos radar e resumos textuais
 - [x] Adicionar link para refazer testes se necessário
 - [x] Mostrar data do último teste realizado
 
-### 4. Componente BackButton Global
+### 4. Componente BackButton Global ✅
 - [x] Criar componente BackButton.tsx reutilizável
 - [x] Adicionar em todas as páginas principais (metas, avaliações, PDI, etc)
 - [x] Implementar navegação inteligente (voltar ou ir para home)
 - [x] Estilizar com tema UISA (#F39200)
 - [x] Adicionar ícone ArrowLeft do lucide-react
 
-### 5. Interface de Cadastro de Senhas para Líderes
+### 5. Interface de Cadastro de Senhas para Líderes ✅
 - [x] Criar página /admin/gerenciar-senhas-lideres
 - [x] Listar todos os líderes (employees com subordinados)
 - [x] Formulário de cadastro/atualização de senha
@@ -40,7 +77,7 @@
 - [x] Botão de resetar senha
 - [x] Notificação por email quando senha for cadastrada
 
-### 6. Dashboard de Metas Corporativas
+### 6. Dashboard de Metas Corporativas ✅
 - [x] Criar página /metas/corporativas
 - [x] KPIs: Total de metas corporativas, Funcionários impactados, Taxa de adesão
 - [x] Listagem de todas as metas corporativas ativas
@@ -49,59 +86,12 @@
 - [x] Gráfico de adesão (Chart.js)
 - [x] Botão de criar nova meta corporativa
 
-### 7. Notificações de Consenso Pendente
+### 7. Notificações de Consenso Pendente ✅
 - [x] Detectar quando avaliação 360° chega na etapa de consenso
 - [x] Enviar email automático para o líder
 - [x] Template de email profissional com link direto
 - [x] Incluir prazo de finalização no email
 - [x] Criar notificação in-app também
-- [ ] Implementar lembrete automático após 3 dias sem ação (OPCIONAL - não implementado)
-
----
-
-## 🔥 SESSÃO ANTERIOR - IMPLEMENTAÇÕES PRIORITÁRIAS (FASE AVANÇADA)
-
-### 1. Workflow Multinível de Aprovação de Bônus
-- [x] Criar schema bonusApprovalWorkflows (níveis hierárquicos configuráveis)
-- [x] Criar schema bonusApprovalLevels, bonusWorkflowInstances, bonusLevelApprovals
-- [x] Implementar endpoints de workflow (createWorkflow, updateWorkflow, getWorkflow, executeWorkflow)
-- [x] Criar bonusWorkflowRouter com 10 endpoints completos
-- [x] Implementar lógica de aprovação em cadeia (gestor → gerente → diretor)
-- [x] Adicionar notificações automáticas em cada nível
-- [x] Criar página de configuração de workflows (/admin/bonus-workflows)
-- [x] Integrar com sistema de bônus existente (frontend)
-
-### 2. Dashboard de Compliance e SLA
-- [x] Criar endpoints de métricas SLA (tempo médio, pendências, alertas)
-- [x] Implementar página de compliance (/compliance/bonus)
-- [x] Adicionar gráficos de tempo médio de aprovação por departamento
-- [x] Criar alertas de não conformidade (bônus pendentes > X dias)
-- [x] Implementar KPIs de compliance (taxa de aprovação, tempo médio, pendências críticas)
-- [x] Adicionar relatório de SLA exportável
-
-### 3. Integração com Folha de Pagamento
-- [x] Criar endpoint de exportação para folha (CSV/XML configurável)
-- [x] Implementar página de exportação (/folha-pagamento/exportar)
-- [x] Adicionar confirmação de pagamento em lote
-- [x] Criar histórico de exportações
-- [x] Implementar validação de dados antes da exportação
-- [x] Adicionar templates de exportação (TOTVS, SAP, etc)
-
-### 4. Importação de Descrições de Cargos UISA
-- [x] Extrair arquivo DESCRIÇÕES.zip (481 arquivos .docx)
-- [x] Criar script de parser de arquivos .docx
-- [x] Implementar importação em massa via endpoint
-- [x] Validar dados extraídos
-- [x] Gerar relatório de importação
-
-### 5. Documentação Completa
-- [x] Gerar especificações técnicas completas (50+ páginas)
-- [x] Documentar schema do banco de dados (62+ tabelas)
-- [x] Documentar endpoints backend (120+ endpoints)
-- [x] Documentar regras de negócio (workflows, validações, cálculos)
-- [x] Gerar PDF da documentação técnica
-- [x] Gerar código-fonte completo em arquivo .txt
-- [x] Criar PDF com capturas de todas as telas
 
 ---
 
@@ -196,9 +186,3 @@
 - [x] Filtros por departamento e centro de custo
 - [x] Exportação de relatório CSV
 - [x] Correção de erro toString
-
----
-
-## 📝 HISTÓRICO DE SESSÕES ANTERIORES
-
-(Mantido para referência, mas não mais ativo)

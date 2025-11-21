@@ -42,7 +42,7 @@ import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { uisaImportRouter } from "./routers/uisaImportRouter";
 import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { and, desc, eq, sql, gte, lte } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
@@ -496,6 +496,7 @@ export const appRouter = router({
         z.object({
           employeeId: z.number(),
           password: z.string().min(8),
+          reason: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -516,6 +517,17 @@ export const appRouter = router({
           .update(employees)
           .set({ passwordHash, updatedAt: new Date() })
           .where(eq(employees.id, input.employeeId));
+
+        // Registrar no histórico de alterações
+        const { passwordChangeHistory } = await import("../drizzle/schema");
+        await database.insert(passwordChangeHistory).values({
+          employeeId: input.employeeId,
+          changedBy: ctx.user!.id,
+          changedByName: ctx.user!.name || "Usuário desconhecido",
+          reason: input.reason || "Cadastro/atualização de senha",
+          ipAddress: null,
+          userAgent: null,
+        });
 
         // Buscar dados do colaborador para enviar email
         const employee = await database
@@ -539,6 +551,57 @@ export const appRouter = router({
         }
 
         return { success: true, message: "Senha atualizada com sucesso" };
+      }),
+
+    // Histórico de alterações de senha
+    getPasswordHistory: protectedProcedure
+      .input(
+        z.object({
+          employeeId: z.number().optional(),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const { passwordChangeHistory } = await import("../drizzle/schema");
+
+        let query = database
+          .select({
+            id: passwordChangeHistory.id,
+            employeeId: passwordChangeHistory.employeeId,
+            employeeName: employees.name,
+            employeeEmail: employees.email,
+            changedBy: passwordChangeHistory.changedBy,
+            changedByName: passwordChangeHistory.changedByName,
+            reason: passwordChangeHistory.reason,
+            ipAddress: passwordChangeHistory.ipAddress,
+            createdAt: passwordChangeHistory.createdAt,
+          })
+          .from(passwordChangeHistory)
+          .innerJoin(employees, eq(passwordChangeHistory.employeeId, employees.id))
+          .orderBy(desc(passwordChangeHistory.createdAt));
+
+        // Aplicar filtros
+        const conditions = [];
+        if (input.employeeId) {
+          conditions.push(eq(passwordChangeHistory.employeeId, input.employeeId));
+        }
+        if (input.startDate) {
+          conditions.push(gte(passwordChangeHistory.createdAt, new Date(input.startDate)));
+        }
+        if (input.endDate) {
+          conditions.push(lte(passwordChangeHistory.createdAt, new Date(input.endDate)));
+        }
+
+        if (conditions.length > 0) {
+          query = query.where(and(...conditions)) as any;
+        }
+
+        const history = await query;
+        return history;
       }),
   }),
 

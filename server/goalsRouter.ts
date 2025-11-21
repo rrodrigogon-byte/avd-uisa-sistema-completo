@@ -1479,6 +1479,166 @@ export const goalsRouter = router({
     }),
 
   /**
+   * Relatório de adesão de metas corporativas
+   */
+  getCorporateGoalsAdherence: protectedProcedure
+    .input(
+      z.object({
+        departmentId: z.number().optional(),
+        goalId: z.number().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Buscar todas as metas corporativas ativas
+      let goalsQuery = db
+        .select({
+          goalId: smartGoals.id,
+          goalTitle: smartGoals.title,
+          goalCategory: smartGoals.category,
+          goalDeadline: smartGoals.endDate,
+          employeeId: employees.id,
+          employeeName: employees.name,
+          employeeEmail: employees.email,
+          departmentId: employees.departmentId,
+          currentValue: smartGoals.currentValue,
+          targetValue: smartGoals.targetValue,
+          progress: smartGoals.progress,
+          lastUpdate: smartGoals.updatedAt,
+          status: smartGoals.status,
+        })
+        .from(smartGoals)
+        .innerJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(eq(smartGoals.goalType, 'corporate'));
+
+      // Aplicar filtros
+      const conditions = [eq(smartGoals.goalType, 'corporate')];
+      if (input.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+      if (input.goalId) {
+        conditions.push(eq(smartGoals.id, input.goalId));
+      }
+      if (input.startDate) {
+        conditions.push(gte(smartGoals.updatedAt, new Date(input.startDate)));
+      }
+      if (input.endDate) {
+        conditions.push(lte(smartGoals.updatedAt, new Date(input.endDate)));
+      }
+
+      const goalsData = await db
+        .select({
+          goalId: smartGoals.id,
+          goalTitle: smartGoals.title,
+          goalCategory: smartGoals.category,
+          goalDeadline: smartGoals.endDate,
+          employeeId: employees.id,
+          employeeName: employees.name,
+          employeeEmail: employees.email,
+          departmentId: employees.departmentId,
+          currentValue: smartGoals.currentValue,
+          targetValue: smartGoals.targetValue,
+          progress: smartGoals.progress,
+          lastUpdate: smartGoals.updatedAt,
+          status: smartGoals.status,
+        })
+        .from(smartGoals)
+        .innerJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(and(...conditions));
+
+      // Calcular estatísticas
+      const totalEmployees = new Set(goalsData.map(g => g.employeeId)).size;
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const employeesWithRecentUpdate = new Set(
+        goalsData
+          .filter(g => g.lastUpdate >= sevenDaysAgo)
+          .map(g => g.employeeId)
+      ).size;
+
+      const employeesDelayed = new Set(
+        goalsData
+          .filter(g => g.lastUpdate < sevenDaysAgo && g.status === 'in_progress')
+          .map(g => g.employeeId)
+      ).size;
+
+      const adherenceRate = totalEmployees > 0 
+        ? Math.round((employeesWithRecentUpdate / totalEmployees) * 100)
+        : 0;
+
+      // Agrupar por departamento
+      const deptMap = new Map<number, {
+        departmentId: number;
+        totalEmployees: number;
+        updated: number;
+        delayed: number;
+        adherenceRate: number;
+      }>();
+
+      goalsData.forEach(g => {
+        if (!g.departmentId) return;
+        
+        if (!deptMap.has(g.departmentId)) {
+          deptMap.set(g.departmentId, {
+            departmentId: g.departmentId,
+            totalEmployees: 0,
+            updated: 0,
+            delayed: 0,
+            adherenceRate: 0,
+          });
+        }
+
+        const dept = deptMap.get(g.departmentId)!;
+        dept.totalEmployees++;
+        
+        if (g.lastUpdate >= sevenDaysAgo) {
+          dept.updated++;
+        } else if (g.status === 'in_progress') {
+          dept.delayed++;
+        }
+      });
+
+      const byDepartment = Array.from(deptMap.values()).map(d => ({
+        ...d,
+        adherenceRate: d.totalEmployees > 0 
+          ? Math.round((d.updated / d.totalEmployees) * 100)
+          : 0,
+      }));
+
+      // Listar funcionários atrasados
+      const delayedEmployees = goalsData
+        .filter(g => g.lastUpdate < sevenDaysAgo && g.status === 'in_progress')
+        .map(g => ({
+          employeeId: g.employeeId,
+          employeeName: g.employeeName,
+          employeeEmail: g.employeeEmail,
+          goalId: g.goalId,
+          goalTitle: g.goalTitle,
+          daysWithoutUpdate: Math.floor(
+            (new Date().getTime() - g.lastUpdate.getTime()) / (1000 * 60 * 60 * 24)
+          ),
+          progress: g.progress || 0,
+          lastUpdate: g.lastUpdate,
+        }));
+
+      return {
+        stats: {
+          totalEmployees,
+          employeesWithRecentUpdate,
+          employeesDelayed,
+          adherenceRate,
+        },
+        byDepartment,
+        delayedEmployees,
+      };
+    }),
+
+  /**
    * Listar metas corporativas
    */
   listCorporateGoals: protectedProcedure.query(async () => {

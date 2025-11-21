@@ -339,7 +339,8 @@ export const evaluationCycles = mysqlTable("evaluationCycles", {
   type: mysqlEnum("type", ["anual", "semestral", "trimestral"]).notNull(),
   startDate: datetime("startDate").notNull(),
   endDate: datetime("endDate").notNull(),
-  status: mysqlEnum("status", ["planejamento", "em_andamento", "concluido", "cancelado"]).default("planejamento").notNull(),
+  status: mysqlEnum("status", ["planejado", "em_andamento", "concluido", "cancelado"]).default("planejado").notNull(),
+  active: boolean("active").default(true).notNull(),
   description: text("description"),
   // Prazos por etapa do fluxo 360°
   selfEvaluationDeadline: datetime("selfEvaluationDeadline"),
@@ -751,6 +752,24 @@ export const auditLogs = mysqlTable("auditLogs", {
 
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = typeof auditLogs.$inferInsert;
+
+/**
+ * Histórico de Alterações de Senha
+ * Auditoria de mudanças de senha de líderes para consenso
+ */
+export const passwordChangeHistory = mysqlTable("passwordChangeHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(), // Líder que teve a senha alterada
+  changedBy: int("changedBy").notNull(), // Usuário que alterou (admin/RH)
+  changedByName: varchar("changedByName", { length: 255 }), // Nome do usuário
+  reason: text("reason"), // Motivo da alteração
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PasswordChangeHistory = typeof passwordChangeHistory.$inferSelect;
+export type InsertPasswordChangeHistory = typeof passwordChangeHistory.$inferInsert;
 
 // ============================================================================
 // SISTEMA DE FEEDBACK CONTÍNUO
