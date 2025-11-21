@@ -2717,7 +2717,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     sendTest: protectedProcedure
       .input(z.object({ recipientEmail: z.string().email() }))
       .mutation(async ({ input }) => {
-        const { sendTestEmail } = await import('./emailService');
+        const { sendTestEmail } = await import('./utils/emailService');
         return await sendTestEmail(input.recipientEmail);
       }),
 

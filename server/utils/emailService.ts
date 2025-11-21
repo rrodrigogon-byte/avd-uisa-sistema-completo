@@ -149,3 +149,38 @@ export const emailService = {
     return sendCustomEmail(to, `⚠️ Ação Vencida: ${data.actionTitle}`, html);
   },
 };
+
+// Função para enviar email de teste
+export async function sendTestEmail(recipientEmail: string): Promise<{ success: boolean; message: string }> {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #F39200 0%, #FF6B00 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="margin: 0;">✅ Email de Teste</h1>
+      </div>
+      <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p>Olá!</p>
+        <p>Este é um <strong>email de teste</strong> do Sistema AVD UISA.</p>
+        <p>Se você recebeu esta mensagem, significa que a configuração SMTP está funcionando corretamente! 🎉</p>
+        <div style="background: white; padding: 20px; border-left: 4px solid #F39200; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #F39200;">📧 Informações do Teste</h3>
+          <p><strong>Data/Hora:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+          <p><strong>Destinatário:</strong> ${recipientEmail}</p>
+          <p><strong>Sistema:</strong> AVD UISA - Avaliação de Desempenho</p>
+        </div>
+        <p>Atenciosamente,<br><strong>Sistema AVD UISA</strong></p>
+      </div>
+      <div style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 20px;">
+        <p>Este é um email automático do Sistema AVD UISA</p>
+      </div>
+    </div>
+  `;
+
+  const success = await sendCustomEmail(recipientEmail, '✅ Email de Teste - Sistema AVD UISA', html);
+  
+  return {
+    success,
+    message: success 
+      ? `Email de teste enviado com sucesso para ${recipientEmail}` 
+      : 'Falha ao enviar email de teste. Verifique as configurações SMTP.'
+  };
+}

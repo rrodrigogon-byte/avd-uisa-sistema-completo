@@ -475,3 +475,38 @@
 - [ ] Adicionar botão "Voltar ao Início" em TODAS as telas do sistema
 - [ ] Testar fluxo completo de aprovações
 - [ ] Testar fluxo completo de Avaliação 360°
+
+
+### 🎯 CONTINUAÇÃO - IMPLEMENTAÇÕES FINAIS (20/11/2024 - 21:00)
+
+#### 1. Configuração SMTP
+- [x] Criar interface de configuração SMTP no sistema
+- [x] Adicionar campos: Host, Port, User, Password, From Name, From Email
+- [x] Implementar teste de conexão SMTP (função sendTestEmail)
+- [x] Salvar configurações no banco de dados (tabela smtpConfig)
+- [x] Endpoints backend implementados (smtpConfig.get, smtpConfig.save, email.sendTest)
+- [x] Página /configuracoes/smtp funcionando completamente
+
+#### 2. Avaliação 360° - Fluxo Completo
+- [ ] Implementar avaliação de comportamentos (baseada em melhores práticas)
+- [ ] Implementar avaliações por cargos
+- [ ] Implementar avaliações por função
+- [ ] **Fluxo de Avaliação:**
+  - [ ] Etapa 1: Funcionário responde autoavaliação
+  - [ ] Etapa 2: Líder responde avaliação do funcionário
+  - [ ] Etapa 3: Consenso - Líder insere senha de aprovação para finalizar
+- [ ] Adicionar validação de senha do líder no consenso
+- [ ] Criar tela de consenso com comparação lado a lado
+- [ ] Implementar bloqueio de edição após consenso aprovado
+
+#### 3. Integração PDI com Testes Psicométricos
+- [ ] PDI busca resultados dos testes do colaborador
+- [ ] Exibir perfis DISC, Big Five, MBTI, IE no PDI
+- [ ] Usar resultados para recomendar ações de desenvolvimento
+- [ ] Integrar com Mapa de Sucessão (mostrar testes dos sucessores)
+- [ ] Adicionar seção "Perfil Psicométrico" no PDI
+
+#### 4. Botão Voltar em Todas as Telas
+- [ ] Criar componente reutilizável BackButton
+- [ ] Adicionar em todas as páginas do sistema
+- [ ] Testar navegação em todas as telas
