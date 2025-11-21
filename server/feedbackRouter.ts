@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getDb } from "./db";
 import { feedbacks, employees, pdiPlans } from "../drizzle/schema";
 import { protectedProcedure, router } from "./_core/trpc";
+import { notifyNewFeedback } from "./notificationEvents";
 
 export const feedbackRouter = router({
   // Criar novo feedback
@@ -31,6 +32,11 @@ export const feedbackRouter = router({
         const { checkFeedbackBadges } = await import("./services/badgeService");
         await checkFeedbackBadges(input.employeeId);
       }
+
+      // Enviar notificação de novo feedback
+      const managerResult = await database.select().from(employees).where(eq(employees.userId, ctx.user.id)).limit(1);
+      const managerName = managerResult[0]?.name || "Seu gestor";
+      await notifyNewFeedback(input.employeeId, managerName);
 
       return { success: true };
     }),

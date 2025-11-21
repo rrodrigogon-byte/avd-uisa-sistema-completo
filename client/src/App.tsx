@@ -118,6 +118,9 @@ import GerenciarSenhasLideres from "./pages/admin/GerenciarSenhasLideres";
 import HistoricoSenhas from "./pages/admin/HistoricoSenhas";
 import MetasCorporativas from "./pages/MetasCorporativas";
 import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
+import TemplatesAvaliacao from "./pages/admin/TemplatesAvaliacao";
+import CriarTemplateAvaliacao from "./pages/admin/CriarTemplateAvaliacao";
+import CalibracaoDiretoria from "./pages/admin/CalibracaoDiretoria";
 import ConfigurarAvaliacoes from "./pages/avaliacoes/ConfigurarAvaliacoes";
 import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval";
 import BonusCompliance from "./pages/compliance/BonusCompliance";
@@ -195,6 +198,9 @@ function Router() {
       <Route path="/nine-box-comparativo" component={NineBoxComparativo} />
       <Route path="/admin/report-builder" component={ReportBuilder} />
       <Route path="/admin/report-analytics" component={ReportAnalytics} />
+      <Route path="/admin/templates-avaliacao" component={TemplatesAvaliacao} />
+      <Route path="/admin/templates-avaliacao/criar" component={CriarTemplateAvaliacao} />
+      <Route path="/admin/calibracao-diretoria" component={CalibracaoDiretoria} />
       <Route path={"/admin/succession-import"} component={SuccessionImport} />
       <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />

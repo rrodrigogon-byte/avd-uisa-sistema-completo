@@ -44,6 +44,8 @@ import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
 import { pushNotificationsRouter } from "./pushNotificationsRouter";
 import { advancedAnalyticsRouter } from "./advancedAnalyticsRouter";
+import { evaluationTemplatesRouter } from "./routers/evaluationTemplatesRouter";
+import { calibrationDirectorRouter } from "./routers/calibrationDirectorRouter";
 import { and, desc, eq, sql, gte, lte } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2661,6 +2663,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Notificações Push
   pushNotifications: pushNotificationsRouter,
+
+  // Router de Templates de Avaliação Customizados
+  evaluationTemplates: evaluationTemplatesRouter,
+
+  // Router de Calibração Diretoria Nine Box
+  calibrationDirector: calibrationDirectorRouter,
 
   // Router de Relatórios Agendados (apenas admin)
   scheduledReports: scheduledReportsRouter,

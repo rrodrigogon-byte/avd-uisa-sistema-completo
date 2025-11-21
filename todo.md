@@ -24,30 +24,30 @@
 - [x] Filtros avançados (período, departamento, cargo, centro de custo)
 
 ### 3. Sistema de Templates de Avaliação Customizados
-- [ ] Criar tabela evaluationTemplates no schema
-- [ ] Criar tabela templateQuestions para perguntas customizadas
-- [ ] Criar página /admin/templates-avaliacao
-- [ ] Interface de criação de templates (drag-and-drop)
-- [ ] Categorias de perguntas (competências, comportamento, resultados)
-- [ ] Tipos de resposta (escala 1-5, texto, múltipla escolha)
-- [ ] Associar templates a cargos/departamentos específicos
-- [ ] Pré-visualização de template antes de salvar
-- [ ] Duplicar templates existentes
+- [x] Criar tabela evaluationTemplates no schema
+- [x] Criar tabela templateQuestions para perguntas customizadas
+- [x] Criar página /admin/templates-avaliacao
+- [x] Interface de criação de templates (drag-and-drop)
+- [x] Categorias de perguntas (competências, comportamento, resultados)
+- [x] Tipos de resposta (escala 1-5, texto, múltipla escolha)
+- [x] Associar templates a cargos/departamentos específicos
+- [x] Pré-visualização de template antes de salvar
+- [x] Duplicar templates existentes
 - [ ] Importar/exportar templates (JSON)
 - [ ] Integrar templates com avaliação 360°
 
 ### 4. Tela de Calibração Diretoria com Nine Box Interativo
-- [ ] Criar página /admin/calibracao-diretoria
-- [ ] Grid Nine Box interativo (drag-and-drop)
-- [ ] Filtros: Nível hierárquico, Gerência, Diretoria, Coordenação, Departamento, Centro de Custos
-- [ ] Exibir foto, nome, cargo e score atual de cada profissional
-- [ ] Modal de edição ao clicar no profissional
-- [ ] Permitir alterar posição no Nine Box (performance x potencial)
-- [ ] Campo de justificativa obrigatória para mudanças
-- [ ] Sistema de upload de evidências (PDF, imagens, documentos)
-- [ ] Tabela de anexos com preview
-- [ ] Histórico de calibrações anteriores
-- [ ] Comparação antes/depois da calibração
+- [x] Criar página /admin/calibracao-diretoria
+- [x] Grid Nine Box interativo (drag-and-drop)
+- [x] Filtros: Nível hierárquico, Gerência, Diretoria, Coordenação, Departamento, Centro de Custos
+- [x] Exibir foto, nome, cargo e score atual de cada profissional
+- [x] Modal de edição ao clicar no profissional
+- [x] Permitir alterar posição no Nine Box (performance x potencial)
+- [x] Campo de justificativa obrigatória para mudanças
+- [x] Sistema de upload de evidências (PDF, imagens, documentos)
+- [x] Tabela de anexos com preview
+- [x] Histórico de calibrações anteriores
+- [x] Comparação antes/depois da calibração
 - [ ] Notificação automática ao RH quando calibração é salva
 - [ ] Exportação de relatório de calibração com evidências
 - [ ] Controle de acesso (apenas Admin e Diretoria)
@@ -197,3 +197,16 @@
 - [x] Filtros por departamento e centro de custo
 - [x] Exportação de relatório CSV
 - [x] Correção de erro toString
+
+
+### 5. Integração de Notificações Push com Eventos
+- [x] Notificar quando há consenso pendente em avaliação 360°
+- [x] Notificar quando meta está atrasada
+- [x] Notificar quando nova avaliação é recebida
+- [x] Notificar quando novo feedback é recebido
+- [x] Notificar quando PDI está próximo do prazo
+- [x] Notificar quando meta é aprovada/rejeitada
+- [x] Notificar quando ciclo de avaliação está próximo do fim
+- [x] Notificar quando badge é conquistado
+- [x] Job agendado para verificar metas atrasadas (diário)
+- [x] Job agendado para verificar PDIs próximos do prazo (diário)
