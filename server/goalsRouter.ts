@@ -1477,4 +1477,31 @@ export const goalsRouter = router({
         byCategory,
       };
     }),
+
+  /**
+   * Listar metas corporativas
+   */
+  listCorporateGoals: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    // Buscar todas as metas corporativas
+    const goals = await db
+      .select({
+        id: smartGoals.id,
+        title: smartGoals.title,
+        description: smartGoals.description,
+        status: smartGoals.status,
+        progress: smartGoals.progress,
+        deadline: smartGoals.endDate,
+        goalType: smartGoals.goalType,
+        category: smartGoals.category,
+        createdAt: smartGoals.createdAt,
+      })
+      .from(smartGoals)
+      .where(sql`${smartGoals.goalType} = 'corporate'`)
+      .orderBy(desc(smartGoals.createdAt));
+
+    return goals;
+  }),
 });

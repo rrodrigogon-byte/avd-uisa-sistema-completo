@@ -6,6 +6,7 @@ import {
   performanceEvaluations,
   evaluationResponses,
   employees,
+  notifications,
 } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
@@ -224,18 +225,86 @@ export const evaluation360Router = router({
           .limit(1);
 
         if (leaders.length > 0 && leaders[0].email) {
-          // Enviar email para o líder
+          // Calcular prazo (7 dias a partir de agora)
+          const deadline = new Date();
+          deadline.setDate(deadline.getDate() + 7);
+          const deadlineStr = deadline.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+
+          // Enviar email para o líder com template profissional
           await sendEmail({
             to: leaders[0].email,
-            subject: `Avaliação 360° - Aguardando consenso de ${employee[0].name}`,
+            subject: `⚠️ Consenso Pendente - Avaliação 360° de ${employee[0].name}`,
             html: `
-              <h2>Avaliação 360° - Consenso Final</h2>
-              <p>Olá ${leaders[0].name},</p>
-              <p>A avaliação do gestor de <strong>${employee[0].name}</strong> foi concluída.</p>
-              <p>Agora é necessário fazer o consenso final.</p>
-              <p><a href="${process.env.VITE_OAUTH_PORTAL_URL}/avaliacoes/consenso/${input.evaluationId}">Clique aqui para fazer o consenso</a></p>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px; }
+    .alert { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 20px 0; border-radius: 4px; }
+    .button { display: inline-block; background: #f97316; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+    .info-box { background: #f3f4f6; padding: 16px; border-radius: 6px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎯 Sistema AVD UISA</h1>
+      <p style="margin: 0; font-size: 18px;">Avaliação 360°</p>
+    </div>
+    <div class="content">
+      <h2>⚠️ Consenso Pendente</h2>
+      <p>Olá <strong>${leaders[0].name}</strong>,</p>
+      <div class="alert">
+        <p style="margin: 0;"><strong>⏰ Ação Necessária:</strong> Uma avaliação 360° está aguardando seu consenso final.</p>
+      </div>
+      <div class="info-box">
+        <p><strong>👤 Colaborador:</strong> ${employee[0].name}</p>
+        <p><strong>📅 Prazo:</strong> ${deadlineStr}</p>
+        <p><strong>📝 Status:</strong> Autoavaliação e Avaliação do Gestor concluídas</p>
+      </div>
+      <p>A etapa de consenso é fundamental para finalizar o processo de avaliação. Você precisará usar sua senha de aprovação para confirmar a nota final.</p>
+      <p style="text-align: center;">
+        <a href="${process.env.VITE_OAUTH_PORTAL_URL}/avaliacoes/consenso/${input.evaluationId}" class="button">
+          🔒 Acessar Consenso Agora
+        </a>
+      </p>
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+      <p style="font-size: 14px; color: #6b7280;">
+        <strong>Importante:</strong> Se você não possui senha de aprovação cadastrada, entre em contato com o RH.
+      </p>
+      <p style="font-size: 12px; color: #9ca3af;">
+        Este é um e-mail automático. Por favor, não responda.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
             `,
           });
+
+          // Criar notificação in-app também
+          if (leaders[0].userId) {
+            try {
+              await db.insert(notifications).values({
+                userId: leaders[0].userId,
+                type: "consensus_pending",
+                title: "Consenso Pendente - Avaliação 360°",
+                message: `A avaliação 360° de ${employee[0].name} está aguardando seu consenso final. Prazo: ${deadlineStr}`,
+                link: `/avaliacoes/consenso/${input.evaluationId}`,
+                read: false,
+              });
+            } catch (notifError) {
+              console.error("[submitManagerEvaluation] Erro ao criar notificação:", notifError);
+            }
+          }
         }
       }
 

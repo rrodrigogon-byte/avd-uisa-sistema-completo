@@ -31,6 +31,32 @@
 - [x] Estilizar com tema UISA (#F39200)
 - [x] Adicionar ícone ArrowLeft do lucide-react
 
+### 5. Interface de Cadastro de Senhas para Líderes
+- [x] Criar página /admin/gerenciar-senhas-lideres
+- [x] Listar todos os líderes (employees com subordinados)
+- [x] Formulário de cadastro/atualização de senha
+- [x] Validação de força de senha (mínimo 8 caracteres)
+- [x] Hash com bcrypt antes de salvar
+- [x] Botão de resetar senha
+- [x] Notificação por email quando senha for cadastrada
+
+### 6. Dashboard de Metas Corporativas
+- [x] Criar página /metas/corporativas
+- [x] KPIs: Total de metas corporativas, Funcionários impactados, Taxa de adesão
+- [x] Listagem de todas as metas corporativas ativas
+- [x] Filtros por departamento e status
+- [x] Estatísticas de progresso por departamento
+- [x] Gráfico de adesão (Chart.js)
+- [x] Botão de criar nova meta corporativa
+
+### 7. Notificações de Consenso Pendente
+- [x] Detectar quando avaliação 360° chega na etapa de consenso
+- [x] Enviar email automático para o líder
+- [x] Template de email profissional com link direto
+- [x] Incluir prazo de finalização no email
+- [x] Criar notificação in-app também
+- [ ] Implementar lembrete automático após 3 dias sem ação (OPCIONAL - não implementado)
+
 ---
 
 ## 🔥 SESSÃO ANTERIOR - IMPLEMENTAÇÕES PRIORITÁRIAS (FASE AVANÇADA)

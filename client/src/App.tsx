@@ -114,6 +114,8 @@ import HierarquiaImport from "./pages/HierarquiaImport";
 import DashboardEmails from "./pages/DashboardEmails";
 import BonusWorkflows from "./pages/admin/BonusWorkflows";
 import ImportUISA from "./pages/admin/ImportUISA";
+import GerenciarSenhasLideres from "./pages/admin/GerenciarSenhasLideres";
+import MetasCorporativas from "./pages/MetasCorporativas";
 import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval";
 import BonusCompliance from "./pages/compliance/BonusCompliance";
 import ExportarFolha from "./pages/folha-pagamento/ExportarFolha";
@@ -142,6 +144,8 @@ function Router() {
       <Route path="/aprovacoes/avaliacoes" component={AvaliacoesAprovacao} />
       <Route path="/admin/bonus-workflows" component={BonusWorkflows} />
       <Route path="/admin/import-uisa" component={ImportUISA} />
+      <Route path="/admin/gerenciar-senhas-lideres" component={GerenciarSenhasLideres} />
+      <Route path="/metas/corporativas" component={MetasCorporativas} />
       <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} />
       <Route path="/compliance/bonus" component={BonusCompliance} />
       <Route path="/folha-pagamento/exportar" component={ExportarFolha} />

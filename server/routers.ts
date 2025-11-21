@@ -446,6 +446,100 @@ export const appRouter = router({
       const allEmployees = await database.select().from(employees);
       return allEmployees;
     }),
+
+    // Buscar todos os líderes (colaboradores com subordinados)
+    getLeaders: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      // Buscar todos os colaboradores
+      const allEmployees = await database
+        .select({
+          id: employees.id,
+          name: employees.name,
+          email: employees.email,
+          departmentId: employees.departmentId,
+          positionId: employees.positionId,
+          managerId: employees.managerId,
+          passwordHash: employees.passwordHash,
+        })
+        .from(employees);
+
+      // Buscar departamentos e cargos
+      const depts = await database.select().from(departments);
+      const positionsData = await database.select().from(positions);
+
+      // Filtrar apenas líderes (quem tem subordinados)
+      const leaders = allEmployees.filter(emp => {
+        const subordinatesCount = allEmployees.filter(e => e.managerId === emp.id).length;
+        return subordinatesCount > 0;
+      });
+
+      // Retornar com dados completos
+      return leaders.map(leader => {
+        const subordinatesCount = allEmployees.filter(e => e.managerId === leader.id).length;
+        return {
+          id: leader.id,
+          name: leader.name,
+          email: leader.email,
+          department: depts.find(d => d.id === leader.departmentId)?.name || "N/A",
+          position: positionsData.find((p: any) => p.id === leader.positionId)?.title || "N/A",
+          subordinatesCount,
+          hasPassword: !!leader.passwordHash,
+        };
+      });
+    }),
+
+    // Atualizar senha de líder
+    updatePassword: protectedProcedure
+      .input(
+        z.object({
+          employeeId: z.number(),
+          password: z.string().min(8),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Database not available",
+          });
+        }
+
+        // Hash da senha com bcrypt
+        const bcrypt = await import("bcryptjs");
+        const passwordHash = await bcrypt.hash(input.password, 10);
+
+        // Atualizar senha no banco
+        await database
+          .update(employees)
+          .set({ passwordHash, updatedAt: new Date() })
+          .where(eq(employees.id, input.employeeId));
+
+        // Buscar dados do colaborador para enviar email
+        const employee = await database
+          .select()
+          .from(employees)
+          .where(eq(employees.id, input.employeeId))
+          .limit(1);
+
+        if (employee.length > 0 && employee[0].email) {
+          // Enviar email de notificação
+          try {
+            await sendEmail({
+              to: employee[0].email,
+              subject: "Senha de Aprovação Cadastrada - Sistema AVD UISA",
+              html: `<p>Olá ${employee[0].name},</p><p>Sua senha de aprovação para consensos em Avaliações 360° foi cadastrada com sucesso.</p><p>Você poderá utilizar esta senha para aprovar avaliações na etapa de consenso.</p><p>Atenciosamente,<br>Equipe AVD UISA</p>`,
+            });
+          } catch (emailError) {
+            console.error("[updatePassword] Erro ao enviar email:", emailError);
+            // Não falhar a operação se o email falhar
+          }
+        }
+
+        return { success: true, message: "Senha atualizada com sucesso" };
+      }),
   }),
 
   // ============================================================================
