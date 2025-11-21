@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import {
   performanceEvaluations,
   evaluationResponses,
@@ -250,6 +251,7 @@ export const evaluation360Router = router({
         evaluationId: z.number(),
         finalScore: z.number().min(0).max(100),
         consensusNotes: z.string().optional(),
+        password: z.string().min(1, "Senha obrigatória"),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -279,6 +281,33 @@ export const evaluation360Router = router({
 
       // Verificar se o usuário é líder (pode fazer consenso)
       // TODO: Implementar lógica de verificação de permissão de líder
+
+      // Buscar employee do líder logado para validar senha
+      const [leader] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      if (!leader) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Colaborador não encontrado" });
+      }
+
+      // Validar senha do líder
+      if (!leader.passwordHash) {
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "Senha não cadastrada. Entre em contato com o RH." 
+        });
+      }
+
+      const isPasswordValid = await bcrypt.compare(input.password, leader.passwordHash);
+      if (!isPasswordValid) {
+        throw new TRPCError({ 
+          code: "UNAUTHORIZED", 
+          message: "Senha incorreta. Tente novamente." 
+        });
+      }
 
       // Atualizar avaliação com nota final
       await db

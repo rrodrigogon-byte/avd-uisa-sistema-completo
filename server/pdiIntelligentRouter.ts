@@ -813,6 +813,59 @@ export const pdiIntelligentRouter = router({
 
       return evolution;
     }),
+
+  /**
+   * Buscar perfil psicométrico do colaborador (DISC, Big Five, MBTI)
+   */
+  getPsychometricProfile: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      // Buscar últimos resultados de cada teste
+      const discResult = await db
+        .select()
+        .from(psychometricTests)
+        .where(
+          and(
+            eq(psychometricTests.employeeId, input.employeeId),
+            sql`${psychometricTests.testType} = 'disc'`
+          )
+        )
+        .orderBy(desc(psychometricTests.completedAt))
+        .limit(1);
+
+      const bigFiveResult = await db
+        .select()
+        .from(psychometricTests)
+        .where(
+          and(
+            eq(psychometricTests.employeeId, input.employeeId),
+            sql`${psychometricTests.testType} = 'bigfive'`
+          )
+        )
+        .orderBy(desc(psychometricTests.completedAt))
+        .limit(1);
+
+      const mbtiResult = await db
+        .select()
+        .from(psychometricTests)
+        .where(
+          and(
+            eq(psychometricTests.employeeId, input.employeeId),
+            sql`${psychometricTests.testType} = 'mbti'`
+          )
+        )
+        .orderBy(desc(psychometricTests.completedAt))
+        .limit(1);
+
+      return {
+        disc: discResult[0] || null,
+        bigFive: bigFiveResult[0] || null,
+        mbti: mbtiResult[0] || null,
+      };
+    }),
 });
 
 /**

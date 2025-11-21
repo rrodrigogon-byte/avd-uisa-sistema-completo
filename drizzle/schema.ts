@@ -235,6 +235,7 @@ export const employees = mysqlTable("employees", {
   employeeCode: varchar("employeeCode", { length: 50 }).notNull().unique(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 320 }).notNull(),
+  passwordHash: varchar("passwordHash", { length: 255 }), // Senha para validação de consenso
   cpf: varchar("cpf", { length: 14 }).unique(),
   birthDate: datetime("birthDate"),
   hireDate: datetime("hireDate").notNull(),
@@ -1247,6 +1248,7 @@ export const smartGoals = mysqlTable("smartGoals", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
   type: mysqlEnum("type", ["individual", "team", "organizational"]).notNull(),
+  goalType: mysqlEnum("goalType", ["individual", "corporate"]).default("individual").notNull(), // Nova: corporativa ou individual
   category: mysqlEnum("category", ["financial", "behavioral", "corporate", "development"]).notNull(),
   
   // Critérios SMART

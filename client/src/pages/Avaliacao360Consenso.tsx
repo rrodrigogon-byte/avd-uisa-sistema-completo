@@ -5,9 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, CheckCircle2, ArrowLeft, Check, Eye, EyeOff } from "lucide-react";
+import { Loader2, CheckCircle2, ArrowLeft, Check, Eye, EyeOff, Lock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import BackButton from "@/components/BackButton";
 
 /**
  * Avaliação 360° - Etapa 3: Consenso do Líder
@@ -25,6 +28,8 @@ export default function Avaliacao360Consenso() {
 
   const [responses, setResponses] = useState<Record<number, number>>({});
   const [showComparison, setShowComparison] = useState(true);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // Queries
   const { data: evaluation, isLoading } = trpc.evaluation360.getEvaluationWithWorkflow.useQuery({ evaluationId });
@@ -47,6 +52,13 @@ export default function Avaliacao360Consenso() {
       return;
     }
 
+    if (!password || password.trim() === "") {
+      toast.error("Senha obrigatória", {
+        description: "Digite sua senha para confirmar o consenso final",
+      });
+      return;
+    }
+
     const answersArray = questions.map((q: any) => ({
       questionId: q.id,
       score: responses[q.id] || 0,
@@ -59,6 +71,7 @@ export default function Avaliacao360Consenso() {
       evaluationId,
       finalScore,
       consensusNotes: "Consenso final do líder",
+      password, // Validar senha do líder
     });
   };
 
@@ -113,9 +126,7 @@ export default function Avaliacao360Consenso() {
       <div className="space-y-6 max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/avaliacoes")}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+          <BackButton fallbackPath="/avaliacoes" variant="ghost" label="" />
           <div className="flex-1">
             <h1 className="text-2xl font-bold">Avaliação 360° - Consenso do Líder</h1>
             <p className="text-sm text-muted-foreground">
@@ -300,6 +311,45 @@ export default function Avaliacao360Consenso() {
             );
           })}
         </div>
+
+        {/* Confirmação com Senha */}
+        <Card className="bg-amber-50 border-amber-300">
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Lock className="h-5 w-5 text-amber-700 mt-1" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-amber-900 mb-1">Confirmação de Senha</h3>
+                  <p className="text-sm text-amber-800 mb-3">
+                    Para garantir a autenticidade do consenso final, digite sua senha de acesso ao sistema
+                  </p>
+                  <div className="max-w-md">
+                    <Label htmlFor="password" className="text-amber-900">Senha do Líder *</Label>
+                    <div className="relative mt-1">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Digite sua senha"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pr-10"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-full"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Botão de Enviar */}
         <Card className="bg-green-50 border-green-200">

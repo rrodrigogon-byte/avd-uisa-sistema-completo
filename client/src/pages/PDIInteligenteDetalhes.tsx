@@ -80,6 +80,10 @@ export default function PDIInteligenteDetalhes() {
     { planId: pdiId! },
     { enabled: !!pdiId }
   );
+  const { data: psychometricProfile } = trpc.pdiIntelligent.getPsychometricProfile.useQuery(
+    { employeeId: pdi?.pdiPlans.employeeId! },
+    { enabled: !!pdi?.pdiPlans.employeeId }
+  );
 
   // Mutations
   const addActionMutation = trpc.pdiIntelligent.addAction.useMutation({
@@ -281,6 +285,111 @@ export default function PDIInteligenteDetalhes() {
             </Button>
           </div>
         </div>
+
+        {/* Seção 0: Perfil Psicométrico */}
+        <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-purple-900">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Perfil Psicométrico
+            </CardTitle>
+            <CardDescription className="text-purple-800">
+              Resultados dos testes de personalidade e comportamento
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* DISC */}
+              <div className="bg-white rounded-lg p-4 border border-purple-200">
+                <h4 className="font-semibold text-purple-900 mb-2">DISC</h4>
+                {psychometricProfile?.disc ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-700">
+                      <strong>Perfil:</strong> {psychometricProfile.disc.profile || "N/A"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Último teste: {psychometricProfile.disc.completedAt ? new Date(psychometricProfile.disc.completedAt).toLocaleDateString("pt-BR") : "N/A"}
+                    </p>
+                    <Link href="/testes-psicometricos">
+                      <Button variant="outline" size="sm" className="w-full mt-2">
+                        Ver Detalhes
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-gray-500 mb-2">Teste não realizado</p>
+                    <Link href="/testes-psicometricos">
+                      <Button variant="outline" size="sm">
+                        Fazer Teste
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Big Five */}
+              <div className="bg-white rounded-lg p-4 border border-purple-200">
+                <h4 className="font-semibold text-purple-900 mb-2">Big Five</h4>
+                {psychometricProfile?.bigFive ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-700">
+                      <strong>Perfil:</strong> {psychometricProfile.bigFive.profile || "N/A"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Último teste: {psychometricProfile.bigFive.completedAt ? new Date(psychometricProfile.bigFive.completedAt).toLocaleDateString("pt-BR") : "N/A"}
+                    </p>
+                    <Link href="/testes-psicometricos">
+                      <Button variant="outline" size="sm" className="w-full mt-2">
+                        Ver Detalhes
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-gray-500 mb-2">Teste não realizado</p>
+                    <Link href="/testes-psicometricos">
+                      <Button variant="outline" size="sm">
+                        Fazer Teste
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* MBTI */}
+              <div className="bg-white rounded-lg p-4 border border-purple-200">
+                <h4 className="font-semibold text-purple-900 mb-2">MBTI</h4>
+                {psychometricProfile?.mbti ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-700">
+                      <strong>Tipo:</strong> {psychometricProfile.mbti.profile || "N/A"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Último teste: {psychometricProfile.mbti.completedAt ? new Date(psychometricProfile.mbti.completedAt).toLocaleDateString("pt-BR") : "N/A"}
+                    </p>
+                    <Link href="/testes-psicometricos">
+                      <Button variant="outline" size="sm" className="w-full mt-2">
+                        Ver Detalhes
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-gray-500 mb-2">Teste não realizado</p>
+                    <Link href="/testes-psicometricos">
+                      <Button variant="outline" size="sm">
+                        Fazer Teste
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Seção 1: Plano de Ação Detalhado (70-20-10) */}
         <Card>

@@ -18,6 +18,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import BackButton from "@/components/BackButton";
 import {
   CheckCircle2,
   XCircle,
@@ -42,6 +43,7 @@ export default function CriarMetaSMART() {
     title: "",
     description: "",
     type: "individual" as "individual" | "team" | "organizational",
+    goalType: "individual" as "individual" | "corporate",
     category: "development" as "financial" | "behavioral" | "corporate" | "development",
     measurementUnit: "",
     targetValue: "",
@@ -127,6 +129,7 @@ export default function CriarMetaSMART() {
       title: formData.title,
       description: formData.description,
       type: formData.type,
+      goalType: formData.goalType,
       category: formData.category,
       measurementUnit: formData.measurementUnit || undefined,
       targetValue: formData.targetValue ? parseFloat(formData.targetValue) : undefined,
@@ -164,10 +167,7 @@ export default function CriarMetaSMART() {
     <div className="container mx-auto p-6 max-w-4xl">
       {/* Header */}
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => setLocation("/metas")} className="mb-4">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar
-        </Button>
+        <BackButton fallbackPath="/metas" className="mb-4" />
         <h1 className="text-3xl font-bold text-gray-900">Criar Nova Meta SMART</h1>
         <p className="text-gray-600 mt-1">
           Defina uma meta com critérios SMART para garantir clareza e atingibilidade
@@ -242,6 +242,27 @@ export default function CriarMetaSMART() {
                 </Select>
               </div>
 
+              <div>
+                <Label htmlFor="goalType">Escopo da Meta</Label>
+                <Select
+                  value={formData.goalType}
+                  onValueChange={(v: any) => setFormData({ ...formData, goalType: v })}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="individual">Individual (aprovação do líder)</SelectItem>
+                    <SelectItem value="corporate">Corporativa (aplica a todos)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Corporativas são criadas por RH/Admin e aplicam a todos os funcionários
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="category">Categoria</Label>
                 <Select

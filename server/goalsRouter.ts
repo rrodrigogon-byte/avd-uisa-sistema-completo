@@ -117,6 +117,7 @@ export const goalsRouter = router({
         title: z.string().min(10),
         description: z.string().min(50),
         type: z.enum(["individual", "team", "organizational"]),
+        goalType: z.enum(["individual", "corporate"]).default("individual"), // Nova: corporativa ou individual
         category: z.enum(["financial", "behavioral", "corporate", "development"]),
         measurementUnit: z.string().optional(),
         targetValue: z.number().optional(),
@@ -187,6 +188,7 @@ export const goalsRouter = router({
         title: input.title,
         description: input.description,
         type: input.type,
+        goalType: input.goalType,
         category: input.category,
         measurementUnit: input.measurementUnit,
         targetValue: input.targetValue?.toString(),
@@ -201,8 +203,9 @@ export const goalsRouter = router({
         isAchievable: validation.isAchievable,
         isRelevant: validation.isRelevant,
         isTimeBound: validation.isTimeBound,
-        status: "draft",
-        approvalStatus: "not_submitted",
+        // Metas corporativas não precisam de aprovação
+        status: input.goalType === "corporate" ? "approved" : "draft",
+        approvalStatus: input.goalType === "corporate" ? "approved" : "not_submitted",
         createdBy: ctx.user.id,
       });
 
@@ -230,6 +233,7 @@ export const goalsRouter = router({
         category: z
           .enum(["financial", "behavioral", "corporate", "development"])
           .optional(),
+        goalType: z.enum(["individual", "corporate"]).optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -249,6 +253,7 @@ export const goalsRouter = router({
       if (input.cycleId) conditions.push(eq(smartGoals.cycleId, input.cycleId));
       if (input.status) conditions.push(eq(smartGoals.status, input.status));
       if (input.category) conditions.push(eq(smartGoals.category, input.category));
+      if (input.goalType) conditions.push(eq(smartGoals.goalType, input.goalType));
 
       const goals = await db
         .select()
