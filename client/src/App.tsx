@@ -122,12 +122,15 @@ import ConfigurarAvaliacoes from "./pages/avaliacoes/ConfigurarAvaliacoes";
 import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval";
 import BonusCompliance from "./pages/compliance/BonusCompliance";
 import ExportarFolha from "./pages/folha-pagamento/ExportarFolha";
+import NotificacoesConfig from "./pages/configuracoes/Notificacoes";
+import AnalyticsAvancadoPage from "./pages/analytics/AnalyticsAvancado";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />          <Route path="/gestor" component={DashboardGestor} />
-          <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />      <Route path={"/metas"} component={MetasSMART} />
+          <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />
+      <Route path="/configuracoes/notificacoes" component={NotificacoesConfig} />      <Route path={"/metas"} component={MetasSMART} />
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
       <Route path={"/metas/:id"} component={DetalhesMeta} />
       <Route path={"/metas/:id/editar"} component={EditarMeta} />
@@ -235,7 +238,7 @@ function Router() {
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />
       <Route path="/analytics" component={Analytics} />
-      <Route path="/analytics/avancado" component={AnalyticsAvancado} />
+      <Route path="/analytics/avancado" component={AnalyticsAvancadoPage} />
                 <Route path="/avaliar-360/:id" component={Avaliar360} />
           <Route path="/admin/audit-log" component={AuditTrail} />
           <Route path="/admin/analytics" component={Analytics} />

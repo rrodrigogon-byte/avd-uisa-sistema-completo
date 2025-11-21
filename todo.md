@@ -1,6 +1,74 @@
 # Sistema AVD UISA - TODO List
 
-## 🎯 SESSÃO ATUAL - 21/11/2024 08:15 (LEMBRETES + RELATÓRIOS + CONFIGURAÇÕES)
+## 🎯 SESSÃO ATUAL - 21/11/2024 08:40 (NOTIFICAÇÕES PUSH + ANALYTICS + TEMPLATES + CALIBRAÇÃO)
+
+### 1. Sistema de Notificações Push (Browser/Mobile)
+- [x] Implementar Web Push API para notificações browser
+- [x] Criar service worker para notificações offline
+- [x] Adicionar botão "Permitir Notificações" no dashboard
+- [x] Criar tabela pushSubscriptions no schema
+- [x] Implementar endpoint para registrar subscription
+- [x] Integrar push notifications com sistema de lembretes
+- [x] Testar notificações em Chrome, Firefox e Safari
+- [x] Adicionar suporte a notificações mobile (PWA)
+
+### 2. Dashboard de Analytics Avançado com Tendências Históricas
+- [x] Criar página /analytics/avancado
+- [x] Gráfico de tendência de adesão de metas (últimos 12 meses)
+- [x] Gráfico de evolução de performance por departamento
+- [x] Análise de ciclos de avaliação (comparação ano a ano)
+- [x] Tendência de conclusão de PDI ao longo do tempo
+- [x] Heatmap de engajamento por mês/departamento
+- [x] Previsão de performance (machine learning básico)
+- [x] Exportação de relatórios customizados
+- [x] Filtros avançados (período, departamento, cargo, centro de custo)
+
+### 3. Sistema de Templates de Avaliação Customizados
+- [ ] Criar tabela evaluationTemplates no schema
+- [ ] Criar tabela templateQuestions para perguntas customizadas
+- [ ] Criar página /admin/templates-avaliacao
+- [ ] Interface de criação de templates (drag-and-drop)
+- [ ] Categorias de perguntas (competências, comportamento, resultados)
+- [ ] Tipos de resposta (escala 1-5, texto, múltipla escolha)
+- [ ] Associar templates a cargos/departamentos específicos
+- [ ] Pré-visualização de template antes de salvar
+- [ ] Duplicar templates existentes
+- [ ] Importar/exportar templates (JSON)
+- [ ] Integrar templates com avaliação 360°
+
+### 4. Tela de Calibração Diretoria com Nine Box Interativo
+- [ ] Criar página /admin/calibracao-diretoria
+- [ ] Grid Nine Box interativo (drag-and-drop)
+- [ ] Filtros: Nível hierárquico, Gerência, Diretoria, Coordenação, Departamento, Centro de Custos
+- [ ] Exibir foto, nome, cargo e score atual de cada profissional
+- [ ] Modal de edição ao clicar no profissional
+- [ ] Permitir alterar posição no Nine Box (performance x potencial)
+- [ ] Campo de justificativa obrigatória para mudanças
+- [ ] Sistema de upload de evidências (PDF, imagens, documentos)
+- [ ] Tabela de anexos com preview
+- [ ] Histórico de calibrações anteriores
+- [ ] Comparação antes/depois da calibração
+- [ ] Notificação automática ao RH quando calibração é salva
+- [ ] Exportação de relatório de calibração com evidências
+- [ ] Controle de acesso (apenas Admin e Diretoria)
+
+### 5. Melhorias no Envio de Avaliações
+- [ ] Envio em lote de avaliações 360° por departamento
+- [ ] Template de email personalizável para convites
+- [ ] Agendamento de envio (data/hora específica)
+- [ ] Lembrete automático para avaliações não respondidas
+- [ ] Dashboard de acompanhamento de respostas em tempo real
+
+### 6. Melhorias em Retornos e Feedback
+- [ ] Página de feedback consolidado pós-avaliação
+- [ ] Geração automática de relatório individual
+- [ ] Sugestões de desenvolvimento baseadas em resultados
+- [ ] Comparação com média do departamento/empresa
+- [ ] Plano de ação sugerido automaticamente
+
+---
+
+## 🎯 SESSÃO ANTERIOR - 21/11/2024 08:15 (LEMBRETES + RELATÓRIOS + CONFIGURAÇÕES)
 
 ### 1. Sistema de Lembretes Automáticos
 - [x] Criar job cron para lembretes de consenso pendente (3 dias sem ação)
@@ -35,63 +103,6 @@
 - [x] Configuração de prazos (autoavaliação, gestor, consenso)
 - [x] Ativação/desativação de ciclos
 - [x] Dashboard de status de avaliações em andamento
-
----
-
-## 🎯 SESSÃO ANTERIOR - 20/11/2024 21:00 (IMPLEMENTADAS)
-
-### 1. Metas Corporativas vs Individuais ✅
-- [x] Adicionar campo goalType (corporativa/individual) no schema smartGoals
-- [x] Metas corporativas: criadas por RH/Admin, aplicam a todos os funcionários automaticamente
-- [x] Metas individuais: criadas pelo funcionário, aprovadas pelo líder direto
-- [x] Atualizar interface de criação de metas com seletor de tipo
-- [x] Implementar lógica de aprovação diferenciada (corporativa não precisa aprovação)
-- [x] Adicionar filtro por tipo de meta no dashboard
-
-### 2. Avaliação 360° com Senha de Consenso ✅
-- [x] Adicionar campo de senha na tela de consenso (Avaliacao360Consenso.tsx)
-- [x] Validar senha do líder antes de finalizar avaliação
-- [x] Usar bcrypt para verificação de senha (hash armazenado em employees)
-- [x] Adicionar feedback visual de senha incorreta
-
-### 3. Integração PDI ↔ Testes Psicométricos ✅
-- [x] Criar seção "Perfil Psicométrico" no PDI Inteligente
-- [x] Buscar automaticamente resultados de DISC, Big Five, MBTI do colaborador
-- [x] Exibir perfis com gráficos radar e resumos textuais
-- [x] Adicionar link para refazer testes se necessário
-- [x] Mostrar data do último teste realizado
-
-### 4. Componente BackButton Global ✅
-- [x] Criar componente BackButton.tsx reutilizável
-- [x] Adicionar em todas as páginas principais (metas, avaliações, PDI, etc)
-- [x] Implementar navegação inteligente (voltar ou ir para home)
-- [x] Estilizar com tema UISA (#F39200)
-- [x] Adicionar ícone ArrowLeft do lucide-react
-
-### 5. Interface de Cadastro de Senhas para Líderes ✅
-- [x] Criar página /admin/gerenciar-senhas-lideres
-- [x] Listar todos os líderes (employees com subordinados)
-- [x] Formulário de cadastro/atualização de senha
-- [x] Validação de força de senha (mínimo 8 caracteres)
-- [x] Hash com bcrypt antes de salvar
-- [x] Botão de resetar senha
-- [x] Notificação por email quando senha for cadastrada
-
-### 6. Dashboard de Metas Corporativas ✅
-- [x] Criar página /metas/corporativas
-- [x] KPIs: Total de metas corporativas, Funcionários impactados, Taxa de adesão
-- [x] Listagem de todas as metas corporativas ativas
-- [x] Filtros por departamento e status
-- [x] Estatísticas de progresso por departamento
-- [x] Gráfico de adesão (Chart.js)
-- [x] Botão de criar nova meta corporativa
-
-### 7. Notificações de Consenso Pendente ✅
-- [x] Detectar quando avaliação 360° chega na etapa de consenso
-- [x] Enviar email automático para o líder
-- [x] Template de email profissional com link direto
-- [x] Incluir prazo de finalização no email
-- [x] Criar notificação in-app também
 
 ---
 

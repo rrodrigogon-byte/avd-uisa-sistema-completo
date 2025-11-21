@@ -2191,5 +2191,98 @@ export const activityLogs = mysqlTable("activityLogs", {
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = typeof activityLogs.$inferInsert;
 
+// ============================================================================
+// TABELAS DE NOTIFICAÇÕES PUSH
+// ============================================================================
+
+/**
+ * Push Subscriptions - Assinaturas de notificações push do navegador
+ */
+export const pushSubscriptions = mysqlTable("pushSubscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamento
+  userId: int("userId").notNull(),
+  
+  // Dados da subscription (Web Push API)
+  endpoint: varchar("endpoint", { length: 500 }).notNull(),
+  p256dh: varchar("p256dh", { length: 200 }).notNull(), // Public key
+  auth: varchar("auth", { length: 100 }).notNull(), // Auth secret
+  
+  // Metadados do dispositivo
+  userAgent: varchar("userAgent", { length: 500 }),
+  deviceType: mysqlEnum("deviceType", ["desktop", "mobile", "tablet"]).default("desktop"),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastUsedAt: timestamp("lastUsedAt").defaultNow().notNull(),
+});
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
+
+// ============================================================================
+// TABELAS DE TEMPLATES DE AVALIAÇÃO
+// ============================================================================
+
+/**
+ * Evaluation Templates - Templates customizados de avaliação
+ */
+export const evaluationTemplates = mysqlTable("evaluationTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Informações básicas
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  templateType: mysqlEnum("templateType", ["360", "180", "90", "custom"]).default("custom").notNull(),
+  
+  // Alvos (JSON arrays de IDs)
+  targetRoles: json("targetRoles"), // Array de IDs de cargos
+  targetDepartments: json("targetDepartments"), // Array de IDs de departamentos
+  
+  // Status
+  isActive: boolean("isActive").default(true).notNull(),
+  isDefault: boolean("isDefault").default(false).notNull(),
+  
+  // Auditoria
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvaluationTemplate = typeof evaluationTemplates.$inferSelect;
+export type InsertEvaluationTemplate = typeof evaluationTemplates.$inferInsert;
+
+/**
+ * Template Questions - Perguntas customizadas dos templates
+ */
+export const templateQuestions = mysqlTable("templateQuestions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamento
+  templateId: int("templateId").notNull(),
+  
+  // Conteúdo da pergunta
+  category: varchar("category", { length: 100 }).notNull(), // competencias, comportamento, resultados, etc
+  questionText: text("questionText").notNull(),
+  questionType: mysqlEnum("questionType", ["scale_1_5", "scale_1_10", "text", "multiple_choice", "yes_no"]).default("scale_1_5").notNull(),
+  options: json("options"), // Opções para multiple_choice
+  
+  // Configurações
+  weight: int("weight").default(1).notNull(), // Peso da pergunta no cálculo final
+  displayOrder: int("displayOrder").default(0).notNull(),
+  isRequired: boolean("isRequired").default(true).notNull(),
+  helpText: text("helpText"), // Texto de ajuda/explicação
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TemplateQuestion = typeof templateQuestions.$inferSelect;
+export type InsertTemplateQuestion = typeof templateQuestions.$inferInsert;
+
 // Re-export from schema-alerts.ts
 export * from "./schema-alerts";

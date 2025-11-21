@@ -323,6 +323,20 @@
       "when": 1763731670871,
       "tag": "0045_soft_johnny_blaze",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "5",
+      "when": 1763732845318,
+      "tag": "0046_lazy_punisher",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "5",
+      "when": 1763738234659,
+      "tag": "0047_blushing_mephistopheles",
+      "breakpoints": true
     }
   ]
 }

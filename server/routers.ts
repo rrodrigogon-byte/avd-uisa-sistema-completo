@@ -42,6 +42,8 @@ import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { uisaImportRouter } from "./routers/uisaImportRouter";
 import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
+import { pushNotificationsRouter } from "./pushNotificationsRouter";
+import { advancedAnalyticsRouter } from "./advancedAnalyticsRouter";
 import { and, desc, eq, sql, gte, lte } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2648,11 +2650,17 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // Router de Analytics (apenas admin)
   analytics: analyticsRouter,
 
+  // Router de Analytics Avançado com Tendências Históricas
+  advancedAnalytics: advancedAnalyticsRouter,
+
   // Router de Feedback Contínuo
   feedback: feedbackRouter,
 
   // Router de Badges Gamificado
   badges: badgesRouter,
+
+  // Router de Notificações Push
+  pushNotifications: pushNotificationsRouter,
 
   // Router de Relatórios Agendados (apenas admin)
   scheduledReports: scheduledReportsRouter,
