@@ -431,3 +431,39 @@
 - [ ] Adicionar filtro para separar metas SMART e metas do PDI
 - [ ] Sincronizar status entre PDI e metas
 - [x] Criar visualização unificada de todas as metas (SMART + PDI)
+
+
+---
+
+## 🔧 CORREÇÕES E MELHORIAS - 21/11/2024 16:02
+
+### Erro tRPC - Notificações
+- [x] Criar router notifications.getMyNotifications
+- [x] Implementar backend de notificações
+- [x] Testar integração com NotificationBell
+
+### Permissões de Admin
+- [ ] Permitir admin editar todas as metas (individual, equipe, corporativa)
+- [ ] Permitir admin editar todas as avaliações 360°
+- [ ] Permitir admin editar todas as avaliações Enhanced
+- [ ] Adicionar controle de acesso baseado em role (admin vs user)
+
+### Templates de Avaliação - Melhores Práticas
+- [ ] Criar templates completos de avaliação 360°
+- [ ] Criar templates de avaliação Enhanced
+- [ ] Adicionar competências baseadas em frameworks reconhecidos
+- [ ] Incluir escalas de avaliação padronizadas
+- [ ] Documentar melhores práticas de avaliação
+
+
+### Sistema Completo de Ciclos de Avaliação
+- [x] Criar página de gestão de ciclos (/ciclos-avaliacao/gerenciar)
+- [x] Implementar abertura de novo ciclo com configurações
+- [x] Gerar avaliações automaticamente para todos os funcionários
+- [x] Suportar múltiplos tipos: 360°, Enhanced, Performance Integrada
+- [ ] Permitir edição de ciclos ativos
+- [x] Funcionalidade de reabrir ciclo finalizado
+- [x] Finalizar ciclo e bloquear edições
+- [ ] Templates de avaliação baseados em melhores práticas
+- [ ] Configurar competências e dimensões por tipo de avaliação
+- [ ] Dashboard de acompanhamento do ciclo

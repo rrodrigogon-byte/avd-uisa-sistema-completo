@@ -133,6 +133,7 @@ import DashboardSucessaoFiltros from "./pages/sucessao/DashboardSucessaoFiltros"
 import CalibrationMeetingsList from "./pages/calibracao/CalibrationMeetingsList";
 import CalibrationMeetingRoom from "./pages/calibracao/CalibrationMeetingRoom";
 import CiclosAtivos from "./pages/CiclosAtivos";
+import GerenciarCiclosAvaliacao from "./pages/GerenciarCiclosAvaliacao";
 import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
 
 function Router() {
@@ -181,6 +182,7 @@ function Router() {
       <Route path="/metas-cascata" component={MetasCascata} />
       <Route path="/dashboard-executivo" component={DashboardExecutivoConsolidado} />
       <Route path="/ciclos-avaliacao" component={CiclosAvaliacao} />
+      <Route path="/ciclos-avaliacao/gerenciar" component={GerenciarCiclosAvaliacao} />
       <Route path="/ciclos/ativos" component={CiclosAtivos} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />

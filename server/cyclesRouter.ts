@@ -376,6 +376,109 @@ export const cyclesRouter = router({
   }),
 
   /**
+   * Gerar avaliações automaticamente para todos os funcionários
+   */
+  generateEvaluations: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number(),
+        types: z.array(z.enum(["360", "180", "90"])),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar ciclo
+      const cycle = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, input.cycleId))
+        .limit(1);
+
+      if (cycle.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Ciclo não encontrado" });
+      }
+
+      // Buscar todos os funcionários ativos
+      const employees = await db.query.employees.findMany({
+        where: (employees, { eq }) => eq(employees.status, "ativo"),
+      });
+
+      let count = 0;
+
+      // Gerar avaliações para cada tipo selecionado
+      for (const type of input.types) {
+        for (const employee of employees) {
+          // Verificar se já existe avaliação deste tipo para este funcionário neste ciclo
+          const existing = await db
+            .select()
+            .from(performanceEvaluations)
+            .where(
+              and(
+                eq(performanceEvaluations.cycleId, input.cycleId),
+                eq(performanceEvaluations.employeeId, employee.id),
+                eq(performanceEvaluations.type, type)
+              )
+            )
+            .limit(1);
+
+          if (existing.length === 0) {
+            // Criar avaliação
+            await db.insert(performanceEvaluations).values({
+              cycleId: input.cycleId,
+              employeeId: employee.id,
+              type: type,
+              status: "pendente",
+              workflowStatus: "pending_self",
+              selfEvaluationCompleted: false,
+              managerEvaluationCompleted: false,
+              peersEvaluationCompleted: false,
+              subordinatesEvaluationCompleted: false,
+            });
+            count++;
+          }
+        }
+      }
+
+      return { success: true, count };
+    }),
+
+  /**
+   * Finalizar ciclo
+   */
+  finalize: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db
+        .update(evaluationCycles)
+        .set({ status: "concluido" })
+        .where(eq(evaluationCycles.id, input.cycleId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Reabrir ciclo finalizado
+   */
+  reopen: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db
+        .update(evaluationCycles)
+        .set({ status: "em_andamento" })
+        .where(eq(evaluationCycles.id, input.cycleId));
+
+      return { success: true };
+    }),
+
+  /**
    * Enviar lembretes para participantes de um ciclo
    */
   sendReminders: protectedProcedure

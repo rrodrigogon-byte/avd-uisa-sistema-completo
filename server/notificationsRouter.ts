@@ -5,6 +5,34 @@ import { notifications } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export const notificationsRouter = router({
+  // Alias para compatibilidade com NotificationBell
+  getMyNotifications: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(50).optional(),
+        onlyUnread: z.boolean().optional(),
+      }).optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const conditions = [eq(notifications.userId, ctx.user.id)];
+      
+      if (input?.onlyUnread) {
+        conditions.push(eq(notifications.read, false));
+      }
+
+      const result = await db
+        .select()
+        .from(notifications)
+        .where(and(...conditions))
+        .orderBy(desc(notifications.createdAt))
+        .limit(input?.limit || 50);
+
+      return result;
+    }),
+
   // Listar notificações do usuário
   list: protectedProcedure
     .input(
