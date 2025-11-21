@@ -48,10 +48,10 @@ export const cyclesRouter = router({
         name: z.string(),
         startDate: z.string(), // ISO date string
         endDate: z.string(),
-        selfEvaluationDeadline: z.string().nullable().optional(),
-        managerEvaluationDeadline: z.string().nullable().optional(),
-        consensusDeadline: z.string().nullable().optional(),
-        description: z.string().nullable().optional(),
+        selfEvaluationDeadline: z.string().optional(),
+        managerEvaluationDeadline: z.string().optional(),
+        consensusDeadline: z.string().optional(),
+        description: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -61,16 +61,28 @@ export const cyclesRouter = router({
       // Extrair ano da data de início
       const year = new Date(input.startDate).getFullYear();
 
+      // Helper para converter string vazia/undefined em null
+      const parseDate = (dateStr: string | undefined): Date | null => {
+        if (!dateStr || dateStr.trim() === '') return null;
+        return new Date(dateStr);
+      };
+
+      // Converter undefined/empty para null ANTES de inserir
+      const selfEvaluationDeadline = parseDate(input.selfEvaluationDeadline);
+      const managerEvaluationDeadline = parseDate(input.managerEvaluationDeadline);
+      const consensusDeadline = parseDate(input.consensusDeadline);
+      const description = input.description && input.description.trim() !== '' ? input.description : null;
+
       const result = await db.insert(evaluationCycles).values({
         name: input.name,
         year: year,
         type: "anual",
         startDate: new Date(input.startDate),
         endDate: new Date(input.endDate),
-        selfEvaluationDeadline: input.selfEvaluationDeadline ? new Date(input.selfEvaluationDeadline) : null,
-        managerEvaluationDeadline: input.managerEvaluationDeadline ? new Date(input.managerEvaluationDeadline) : null,
-        consensusDeadline: input.consensusDeadline ? new Date(input.consensusDeadline) : null,
-        description: input.description || null,
+        selfEvaluationDeadline,
+        managerEvaluationDeadline,
+        consensusDeadline,
+        description,
         status: "planejado",
       });
 
@@ -97,13 +109,19 @@ export const cyclesRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
+      // Helper para converter string vazia em null
+      const parseDate = (dateStr: string | null | undefined): Date | null => {
+        if (!dateStr || dateStr.trim() === '') return null;
+        return new Date(dateStr);
+      };
+
       const updateData: any = {};
       if (input.name) updateData.name = input.name;
       if (input.startDate) updateData.startDate = new Date(input.startDate);
       if (input.endDate) updateData.endDate = new Date(input.endDate);
-      if (input.selfEvaluationDeadline) updateData.selfEvaluationDeadline = new Date(input.selfEvaluationDeadline);
-      if (input.managerEvaluationDeadline) updateData.managerEvaluationDeadline = new Date(input.managerEvaluationDeadline);
-      if (input.consensusDeadline) updateData.consensusDeadline = new Date(input.consensusDeadline);
+      if (input.selfEvaluationDeadline !== undefined) updateData.selfEvaluationDeadline = parseDate(input.selfEvaluationDeadline);
+      if (input.managerEvaluationDeadline !== undefined) updateData.managerEvaluationDeadline = parseDate(input.managerEvaluationDeadline);
+      if (input.consensusDeadline !== undefined) updateData.consensusDeadline = parseDate(input.consensusDeadline);
       if (input.description !== undefined) updateData.description = input.description;
 
       await db

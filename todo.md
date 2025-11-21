@@ -248,6 +248,17 @@
 - [x] Adicionar contador de notificações filtradas
 
 
+## 🔧 CORREÇÃO URGENTE - 21/11/2024 13:30
+
+### Erro ao Criar Ciclo de Avaliação
+- [x] Analisar erro SQL: campos selfEvaluationDeadline, managerEvaluationDeadline, consensusDeadline com valores vazios
+- [x] Corrigir schema evaluationCycles (campos já eram nullable)
+- [x] Corrigir endpoint cyclesRouter.create para aceitar valores nulos (tratamento de undefined/null)
+- [x] Corrigir enum de status no banco de dados (planejamento → planejado)
+- [x] Testar criação de ciclo com e sem deadlines
+- [x] Validar funcionamento completo
+
+
 ## ✅ CONCLUÍDO - 21/11/2024 13:14
 
 ### Melhorias Finais Implementadas
