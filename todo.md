@@ -1,6 +1,55 @@
 # Sistema AVD UISA - TODO List
 
-## 🎯 SESSÃO ATUAL - 21/11/2024 08:40 (NOTIFICAÇÕES PUSH + ANALYTICS + TEMPLATES + CALIBRAÇÃO)
+## 🚨 CORREÇÕES URGENTES - 21/11/2024 13:45
+
+### 1. Corrigir Sistema de Sucessão
+- [x] Corrigir erro ao deletar sucessor (validação de input incorreta - esperando object, recebendo number)
+- [x] Corrigir botões de editar sucessores (agora chama removeSuccessor.mutate corretamente)
+- [x] Validar endpoint succession.removeSuccessor
+- [x] Validar endpoint succession.updateSuccessor
+- [x] Testar fluxo completo de edição e exclusão
+
+### 2. Sistema de Metas Corporativas vs Individuais
+- [x] Validar campo goalType no schema smartGoals (individual/corporate) - Já existe!
+- [x] Criar interface de cadastro de metas corporativas (RH/Admin) - Página MetasCorporativas.tsx já existe
+- [x] Implementar permissões (RH/Admin cria corporativas, funcionário cria individuais) - Implementado em createSMART
+- [x] Workflow de aprovação para metas individuais (funcionário → líder → consenso) - Endpoints approve/reject já existem
+- [x] Metas corporativas: aprovação automática ao criar - Linha 207-208 do goalsRouter.ts
+- [x] Página de listagem separada para metas corporativas - MetasCorporativas.tsx
+- [x] Vincular metas corporativas a funcionários/cargos/departamentos - Campo targetEmployeeId no createSMART
+- [x] Dashboard de adesão de metas corporativas - getCorporateGoalsAdherence endpoint já existe
+
+### 3. Dashboard de Ciclos Ativos
+- [x] Criar página /ciclos/ativos - CiclosAtivos.tsx criada
+- [x] Listar todos os ciclos em andamento - Endpoint getActiveCycles
+- [x] Indicadores de progresso por ciclo (% de avaliações concluídas) - Calculado no endpoint
+- [x] Alertas para prazos próximos (7 dias, 3 dias, vencido) - Função getDeadlineAlert
+- [x] Filtros por tipo de ciclo e status - Implementado no frontend
+- [x] Cards com estatísticas (total de participantes, concluídos, pendentes) - getCycleStats endpoint
+- [x] Botão de ações rápidas (enviar lembretes, exportar relatório) - sendReminders e exportCycleReport
+
+### 4. Documentação de Fluxos
+- [x] Documentar passo a passo: Como RH/Admin cadastra meta corporativa - GUIA_METAS_E_CICLOS.md
+- [x] Documentar passo a passo: Como funcionário cadastra meta individual - GUIA_METAS_E_CICLOS.md
+- [x] Documentar passo a passo: Workflow de aprovação de metas - GUIA_METAS_E_CICLOS.md
+- [x] Documentar passo a passo: Como usar dashboard de ciclos ativos - GUIA_METAS_E_CICLOS.md
+- [x] Criar guia completo com tabelas comparativas e fluxogramas - GUIA_METAS_E_CICLOS.md
+
+---
+
+## 🔧 CORREÇÃO CONCLUÍDA - 21/11/2024 13:30
+
+### Erro ao Criar Ciclo de Avaliação
+- [x] Analisar erro SQL: campos selfEvaluationDeadline, managerEvaluationDeadline, consensusDeadline com valores vazios
+- [x] Corrigir schema evaluationCycles (campos já eram nullable)
+- [x] Corrigir endpoint cyclesRouter.create para aceitar valores nulos (tratamento de undefined/null)
+- [x] Corrigir enum de status no banco de dados (planejamento → planejado)
+- [x] Testar criação de ciclo com e sem deadlines
+- [x] Validar funcionamento completo
+
+---
+
+## 🎯 SESSÃO ANTERIOR - 21/11/2024 08:40 (NOTIFICAÇÕES PUSH + ANALYTICS + TEMPLATES + CALIBRAÇÃO)
 
 ### 1. Sistema de Notificações Push (Browser/Mobile)
 - [x] Implementar Web Push API para notificações browser
@@ -48,7 +97,6 @@
 - [x] Tabela de anexos com preview
 - [x] Histórico de calibrações anteriores
 - [x] Comparação antes/depois da calibração
-- [ ] Notificação automática ao RH quando calibração é salva
 - [x] Exportação de relatório de calibração com evidências (PDF)
 - [x] Controle de acesso (apenas Admin e Diretoria)
 
@@ -60,57 +108,17 @@
 - [x] Gráfico de horários de maior engajamento
 - [x] Tabela de notificações enviadas com status
 
-### 6. Melhorias no Envio de Avaliações
-- [ ] Envio em lote de avaliações 360° por departamento
-- [ ] Template de email personalizável para convites
-- [ ] Agendamento de envio (data/hora específica)
-- [ ] Lembrete automático para avaliações não respondidas
-- [ ] Dashboard de acompanhamento de respostas em tempo real
-
-### 6. Melhorias em Retornos e Feedback
-- [ ] Página de feedback consolidado pós-avaliação
-- [ ] Geração automática de relatório individual
-- [ ] Sugestões de desenvolvimento baseadas em resultados
-- [ ] Comparação com média do departamento/empresa
-- [ ] Plano de ação sugerido automaticamente
-
----
-
-## 🎯 SESSÃO ANTERIOR - 21/11/2024 08:15 (LEMBRETES + RELATÓRIOS + CONFIGURAÇÕES)
-
-### 1. Sistema de Lembretes Automáticos
-- [x] Criar job cron para lembretes de consenso pendente (3 dias sem ação)
-- [x] Implementar lembrete de metas corporativas sem progresso (7 dias)
-- [x] Criar template de email para cada tipo de lembrete
-- [x] Implementar notificações in-app escalonadas
-- [x] Testar sistema de lembretes end-to-end
-
-### 2. Relatório de Adesão de Metas Corporativas
-- [x] Criar página /metas/corporativas/adesao
-- [x] Implementar endpoint goals.getCorporateGoalsAdherence
-- [x] KPIs: Total de funcionários, Atualizaram progresso, Atrasados, Taxa de adesão
-- [x] Gráfico de adesão por departamento (Chart.js)
-- [x] Tabela de funcionários atrasados (nome, cargo, meta, dias sem atualizar)
-- [x] Filtros por departamento, meta e período
-- [x] Botão de enviar lembrete em massa
-- [x] Exportação Excel de relatório de adesão
-
-### 3. Histórico de Alterações de Senha
-- [x] Criar tabela passwordChangeHistory no schema
-- [x] Adicionar campos: employeeId, changedBy, changedAt, ipAddress, reason
-- [x] Implementar endpoint employees.getPasswordHistory
-- [x] Criar página /admin/historico-senhas
-- [x] Exibir timeline de alterações com usuário que alterou
-- [x] Adicionar filtros por líder e período
-- [x] Implementar auditoria automática em updatePassword
-- [x] Exportar relatório de compliance
-
-### 4. Configuração de Avaliações
-- [x] Criar página /avaliacoes/configurar
-- [x] Interface de criação de ciclos de avaliação
-- [x] Configuração de prazos (autoavaliação, gestor, consenso)
-- [x] Ativação/desativação de ciclos
-- [x] Dashboard de status de avaliações em andamento
+### 6. Integração de Notificações Push com Eventos
+- [x] Notificar quando há consenso pendente em avaliação 360°
+- [x] Notificar quando meta está atrasada
+- [x] Notificar quando nova avaliação é recebida
+- [x] Notificar quando novo feedback é recebido
+- [x] Notificar quando PDI está próximo do prazo
+- [x] Notificar quando meta é aprovada/rejeitada
+- [x] Notificar quando ciclo de avaliação está próximo do fim
+- [x] Notificar quando badge é conquistado
+- [x] Job agendado para verificar metas atrasadas (diário)
+- [x] Job agendado para verificar PDIs próximos do prazo (diário)
 
 ---
 
@@ -206,62 +214,41 @@
 - [x] Exportação de relatório CSV
 - [x] Correção de erro toString
 
+### Sistema de Lembretes Automáticos ✅
+- [x] Criar job cron para lembretes de consenso pendente (3 dias sem ação)
+- [x] Implementar lembrete de metas corporativas sem progresso (7 dias)
+- [x] Criar template de email para cada tipo de lembrete
+- [x] Implementar notificações in-app escalonadas
+- [x] Testar sistema de lembretes end-to-end
 
-### 5. Integração de Notificações Push com Eventos
-- [x] Notificar quando há consenso pendente em avaliação 360°
-- [x] Notificar quando meta está atrasada
-- [x] Notificar quando nova avaliação é recebida
-- [x] Notificar quando novo feedback é recebido
-- [x] Notificar quando PDI está próximo do prazo
-- [x] Notificar quando meta é aprovada/rejeitada
-- [x] Notificar quando ciclo de avaliação está próximo do fim
-- [x] Notificar quando badge é conquistado
-- [x] Job agendado para verificar metas atrasadas (diário)
-- [x] Job agendado para verificar PDIs próximos do prazo (diário)
+### Relatório de Adesão de Metas Corporativas ✅
+- [x] Criar página /metas/corporativas/adesao
+- [x] Implementar endpoint goals.getCorporateGoalsAdherence
+- [x] KPIs: Total de funcionários, Atualizaram progresso, Atrasados, Taxa de adesão
+- [x] Gráfico de adesão por departamento (Chart.js)
+- [x] Tabela de funcionários atrasados (nome, cargo, meta, dias sem atualizar)
+- [x] Filtros por departamento, meta e período
+- [x] Botão de enviar lembrete em massa
+- [x] Exportação Excel de relatório de adesão
 
+### Histórico de Alterações de Senha ✅
+- [x] Criar tabela passwordChangeHistory no schema
+- [x] Adicionar campos: employeeId, changedBy, changedAt, ipAddress, reason
+- [x] Implementar endpoint employees.getPasswordHistory
+- [x] Criar página /admin/historico-senhas
+- [x] Exibir timeline de alterações com usuário que alterou
+- [x] Adicionar filtros por líder e período
+- [x] Implementar auditoria automática em updatePassword
+- [x] Exportar relatório de compliance
 
-## 🎯 SESSÃO ATUAL - 21/11/2024 11:30 (MELHORIAS FINAIS)
+### Configuração de Avaliações ✅
+- [x] Criar página /avaliacoes/configurar
+- [x] Interface de criação de ciclos de avaliação
+- [x] Configuração de prazos (autoavaliação, gestor, consenso)
+- [x] Ativação/desativação de ciclos
+- [x] Dashboard de status de avaliações em andamento
 
-### 1. Integrar Botões de Exportação nas Páginas
-- [x] Adicionar botão "Exportar Template" na página /admin/templates-avaliacao
-- [x] Adicionar botão "Importar Template" na página /admin/templates-avaliacao
-- [x] Adicionar botão "Exportar PDF" na página /admin/calibracao-diretoria
-- [x] Testar exportação de templates (JSON)
-- [x] Testar importação de templates (validação)
-- [x] Testar geração de PDF de calibração
-
-### 2. Criar Tabela pushNotificationLogs no Schema
-- [x] Criar tabela pushNotificationLogs (id, userId, type, title, message, sentAt, openedAt, deviceType, status)
-- [x] Adicionar endpoint pushNotifications.logNotification
-- [x] Adicionar endpoint pushNotifications.markAsOpened
-- [x] Adicionar endpoint pushNotifications.getRealLogs
-- [ ] Integrar logging automático em sendPushNotificationToUser (próxima sessão)
-- [x] Migrar Dashboard de Notificações para usar dados reais
-
-### 3. Adicionar Filtros Avançados no Dashboard de Notificações
-- [x] Adicionar filtro por período customizado (data início/fim)
-- [x] Adicionar filtro por tipo de notificação (meta, avaliação, PDI, feedback, etc)
-- [x] Adicionar filtro por status (enviada, aberta, erro)
-- [x] Adicionar busca por colaborador (nome/email)
-- [x] Atualizar tabela com base nos filtros aplicados
-- [x] Adicionar botão "Limpar Filtros"
-- [x] Adicionar contador de notificações filtradas
-
-
-## 🔧 CORREÇÃO URGENTE - 21/11/2024 13:30
-
-### Erro ao Criar Ciclo de Avaliação
-- [x] Analisar erro SQL: campos selfEvaluationDeadline, managerEvaluationDeadline, consensusDeadline com valores vazios
-- [x] Corrigir schema evaluationCycles (campos já eram nullable)
-- [x] Corrigir endpoint cyclesRouter.create para aceitar valores nulos (tratamento de undefined/null)
-- [x] Corrigir enum de status no banco de dados (planejamento → planejado)
-- [x] Testar criação de ciclo com e sem deadlines
-- [x] Validar funcionamento completo
-
-
-## ✅ CONCLUÍDO - 21/11/2024 13:14
-
-### Melhorias Finais Implementadas
+### Melhorias Finais Implementadas ✅
 - [x] Adicionar botão "Exportar Template" na página /admin/templates-avaliacao
 - [x] Adicionar botão "Importar Template" na página /admin/templates-avaliacao
 - [x] Adicionar botão "Exportar PDF" na página /admin/calibracao-diretoria

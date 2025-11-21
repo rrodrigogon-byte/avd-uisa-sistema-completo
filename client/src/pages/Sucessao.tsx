@@ -123,6 +123,22 @@ export default function Sucessao() {
     onError: (error) => toast.error(`Erro: ${error.message}`),
   });
 
+  const removeSuccessor = trpc.succession.removeSuccessor.useMutation({
+    onSuccess: () => {
+      toast.success("Sucessor removido com sucesso!");
+      refetch();
+    },
+    onError: (error) => toast.error(`Erro ao deletar: ${error.message}`),
+  });
+
+  const updateSuccessor = trpc.succession.updateSuccessor.useMutation({
+    onSuccess: () => {
+      toast.success("Sucessor atualizado com sucesso!");
+      refetch();
+    },
+    onError: (error) => toast.error(`Erro ao atualizar: ${error.message}`),
+  });
+
   // Handlers
   const handleCreatePlan = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -710,11 +726,16 @@ export default function Sucessao() {
                                 className="text-destructive hover:text-destructive"
                                 onClick={() => {
                                   if (confirm(`Remover ${successor.employeeName} como sucessor?`)) {
-                                    toast.info("Funcionalidade de remoção em desenvolvimento");
+                                    removeSuccessor.mutate({ id: successor.id });
                                   }
                                 }}
+                                disabled={removeSuccessor.isPending}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                {removeSuccessor.isPending ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
                               </Button>
                             </div>
                           </div>

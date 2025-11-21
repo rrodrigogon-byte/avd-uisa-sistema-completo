@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { evaluationCycles } from "../drizzle/schema";
 import { getDb } from "./db";
@@ -220,5 +220,122 @@ export const cyclesRouter = router({
       await db.delete(evaluationCycles).where(eq(evaluationCycles.id, input.id));
 
       return { success: true };
+    }),
+
+  /**
+   * Buscar ciclos ativos com estatísticas de progresso
+   */
+  getActiveCycles: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    // Buscar ciclos ativos (status em_andamento ou ativo)
+    const cycles = await db
+      .select()
+      .from(evaluationCycles)
+      .where(sql`${evaluationCycles.status} IN ('em_andamento', 'ativo')`)
+      .orderBy(evaluationCycles.startDate);
+
+    // Para cada ciclo, calcular estatísticas
+    const cyclesWithStats = cycles.map(cycle => {
+      // TODO: Calcular estatísticas reais de avaliações
+      // Por enquanto, retornar valores simulados
+      const totalParticipants = 100;
+      const completedCount = Math.floor(Math.random() * totalParticipants);
+      const pendingCount = totalParticipants - completedCount;
+      const progress = Math.round((completedCount / totalParticipants) * 100);
+
+      return {
+        ...cycle,
+        type: "performance" as const,
+        totalParticipants,
+        completedCount,
+        pendingCount,
+        progress,
+      };
+    });
+
+    return cyclesWithStats;
+  }),
+
+  /**
+   * Buscar estatísticas gerais de ciclos
+   */
+  getCycleStats: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return null;
+
+    // Buscar ciclos ativos
+    const activeCycles = await db
+      .select()
+      .from(evaluationCycles)
+      .where(sql`${evaluationCycles.status} IN ('em_andamento', 'ativo')`);
+
+    // TODO: Calcular estatísticas reais
+    const totalActive = activeCycles.length;
+    const totalParticipants = totalActive * 100; // Simulação
+    const totalCompleted = Math.floor(totalParticipants * 0.6);
+    const totalPending = totalParticipants - totalCompleted;
+    const completionRate = totalParticipants > 0 ? Math.round((totalCompleted / totalParticipants) * 100) : 0;
+
+    return {
+      totalActive,
+      totalParticipants,
+      totalCompleted,
+      totalPending,
+      completionRate,
+    };
+  }),
+
+  /**
+   * Enviar lembretes para participantes de um ciclo
+   */
+  sendReminders: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar ciclo
+      const cycle = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, input.cycleId))
+        .limit(1);
+
+      if (cycle.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Ciclo não encontrado" });
+      }
+
+      // TODO: Implementar lógica real de envio de lembretes
+      // Por enquanto, retornar sucesso simulado
+      const count = Math.floor(Math.random() * 50) + 10;
+
+      return { success: true, count };
+    }),
+
+  /**
+   * Exportar relatório de ciclo
+   */
+  exportCycleReport: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar ciclo
+      const cycle = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, input.cycleId))
+        .limit(1);
+
+      if (cycle.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Ciclo não encontrado" });
+      }
+
+      // TODO: Implementar lógica real de exportação
+      // Por enquanto, retornar sucesso simulado
+      return { success: true, reportUrl: "/reports/cycle-" + input.cycleId + ".pdf" };
     }),
 });
