@@ -293,3 +293,62 @@
 - [x] Notificar funcionário quando meta é aprovada
 - [x] Notificar funcionário quando meta é rejeitada
 - [ ] Integrar com sistema de notificações existente
+
+
+---
+
+## 🚨 CORREÇÕES URGENTES - MENU E FUNCIONALIDADES (21/11/2024 14:15)
+
+### Itens Faltando no Menu
+- [x] Adicionar "Ciclos Ativos" no menu (seção Aprovações ou Performance)
+- [x] Adicionar "Metas Corporativas" no menu (seção Metas)
+- [x] Adicionar "Adesão de Metas Corporativas" no menu (seção Metas)
+- [ ] Adicionar "Configurar Avaliações" no menu (seção Performance ou Configurações)
+- [ ] Adicionar "Histórico de Senhas" no menu (seção Configurações - Admin)
+- [ ] Adicionar "Gerenciar Senhas Líderes" no menu (seção Configurações - Admin)
+- [ ] Adicionar "Mapa de Sucessão UISA" no menu (seção Desenvolvimento)
+- [ ] Adicionar "Sucessão Inteligente" no menu (seção Desenvolvimento)
+- [ ] Adicionar "Templates de Avaliação" no menu (seção Configurações - Admin)
+- [ ] Adicionar "Calibração Diretoria" no menu (seção Performance ou Configurações - Admin)
+- [ ] Adicionar "Notificações Analytics" no menu (seção Configurações - Admin)
+- [ ] Adicionar "Analytics Avançado" no menu (seção Analytics)
+- [ ] Adicionar "Importar Ponto" no menu (seção Gestão de Pessoas)
+- [ ] Adicionar "Discrepâncias" no menu (seção Gestão de Pessoas)
+- [ ] Adicionar "Alertas" no menu (seção Gestão de Pessoas)
+- [ ] Adicionar "Configurações de Notificações Push" no menu (seção Configurações)
+- [ ] Adicionar "Importar UISA" no menu (seção Configurações - Admin)
+- [ ] Adicionar "Benchmarking" no menu (seção Analytics)
+- [ ] Adicionar "Funcionários Ativos" no menu (seção Gestão de Pessoas)
+- [ ] Adicionar "Workflows de Bônus" no menu (seção Bônus ou Configurações - Admin)
+- [ ] Adicionar "Compliance de Bônus" no menu (seção Bônus)
+- [ ] Adicionar "Exportar Folha" no menu (seção Bônus ou Folha de Pagamento)
+
+### Funcionalidades a Validar 100%
+- [ ] Testar aprovação de metas SMART (botões aprovar/rejeitar)
+- [ ] Testar aprovação de ciclos de avaliação
+- [ ] Testar dashboard de ciclos ativos (dados reais)
+- [ ] Testar metas corporativas (criação, aprovação automática)
+- [ ] Testar adesão de metas corporativas (relatório)
+- [ ] Testar configuração de avaliações (criar/editar ciclos)
+- [ ] Testar histórico de senhas (auditoria)
+- [ ] Testar gerenciamento de senhas de líderes
+- [ ] Testar mapa de sucessão UISA (editar/incluir)
+- [ ] Testar sucessão inteligente (filtros, pipeline)
+- [ ] Testar templates de avaliação (criar/editar/importar/exportar)
+- [ ] Testar calibração diretoria (drag-and-drop, evidências)
+- [ ] Testar notificações push (browser/mobile)
+- [ ] Testar analytics avançado (gráficos temporais)
+- [ ] Testar importação de ponto eletrônico
+- [ ] Testar dashboard de discrepâncias
+- [ ] Testar sistema de alertas
+- [ ] Testar benchmarking
+- [ ] Testar workflows de bônus multinível
+- [ ] Testar compliance de bônus (SLA)
+- [ ] Testar exportação para folha de pagamento
+
+### Próximas Funcionalidades Solicitadas
+- [x] Criar página de relatórios de progresso de ciclos (/relatorios/ciclos)
+- [x] Implementar gráficos de evolução (avaliações 360°, metas, PDI)
+- [x] Adicionar filtros avançados no dashboard de sucessão
+- [x] Criar fluxo de calibração de avaliações (reuniões de calibração)
+- [x] Implementar comparação de avaliações entre gestores

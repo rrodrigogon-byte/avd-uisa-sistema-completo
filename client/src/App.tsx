@@ -128,6 +128,8 @@ import ConfigurarAvaliacoes from "./pages/avaliacoes/ConfigurarAvaliacoes";
 // import ExportarFolha from "./pages/folha-pagamento/ExportarFolha"; // Temporariamente desabilitado
 import NotificacoesConfig from "./pages/configuracoes/Notificacoes";
 import AnalyticsAvancadoPage from "./pages/analytics/AnalyticsAvancado";
+import ProgressoCiclos from "./pages/relatorios/ProgressoCiclos";
+import DashboardSucessaoFiltros from "./pages/sucessao/DashboardSucessaoFiltros";
 
 function Router() {
   return (
@@ -177,6 +179,7 @@ function Router() {
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />
+      <Route path="/relatorios/ciclos" component={ProgressoCiclos} />
       <Route path="/calibracao" component={Calibracao} />
       <Route path="/configuracoes" component={Configuracoes} />
       <Route path="/perfil" component={Perfil} />
@@ -230,6 +233,7 @@ function Router() {
       <Route path="/departamentos" component={Departamentos} />
       <Route path="/centros-custos" component={CentrosCustos} />
       <Route path="/sucessao-inteligente" component={SucessaoInteligente} />
+      <Route path="/sucessao/dashboard-filtros" component={DashboardSucessaoFiltros} />
       <Route path="/importacao-ponto" component={ImportacaoPonto} />
       <Route path="/validacao-lider" component={ValidacaoLider} />
       <Route path="/analise-gaps" component={AnaliseGaps} />

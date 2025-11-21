@@ -801,4 +801,150 @@ export const successionRouter = router({
         recipients: recipients.map(r => ({ name: r.name, email: r.email })),
       };
     }),
+
+  /**
+   * Listar planos de sucessão com filtros avançados
+   */
+  listWithFilters: protectedProcedure
+    .input(
+      z.object({
+        departmentId: z.number().optional(),
+        readinessLevel: z.string().optional(),
+        riskLevel: z.string().optional(),
+        searchQuery: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const database = await getDb();
+      if (!database) return [];
+
+      // Buscar todos os candidatos com joins
+      let query = database
+        .select({
+          id: successionCandidates.id,
+          planId: successionCandidates.planId,
+          successorName: employees.name,
+          successorId: successionCandidates.employeeId,
+          currentPosition: sql<string>`current_pos.title`,
+          targetPosition: sql<string>`target_pos.title`,
+          department: sql<string>`dept.name`,
+          departmentId: employees.departmentId,
+          readinessLevel: successionCandidates.readinessLevel,
+          riskLevel: successionPlans.riskLevel,
+          performanceRating: successionCandidates.performanceRating,
+          potentialRating: successionCandidates.potentialRating,
+          readinessScore: successionCandidates.readinessScore,
+        })
+        .from(successionCandidates)
+        .leftJoin(employees, eq(successionCandidates.employeeId, employees.id))
+        .leftJoin(
+          sql`positions as current_pos`,
+          sql`${employees.positionId} = current_pos.id`
+        )
+        .leftJoin(successionPlans, eq(successionCandidates.planId, successionPlans.id))
+        .leftJoin(
+          sql`positions as target_pos`,
+          sql`${successionPlans.positionId} = target_pos.id`
+        )
+        .leftJoin(sql`departments as dept`, sql`${employees.departmentId} = dept.id`);
+
+      // Aplicar filtros
+      const conditions = [];
+
+      if (input.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+
+      if (input.readinessLevel) {
+        conditions.push(eq(successionCandidates.readinessLevel, input.readinessLevel as any));
+      }
+
+      if (input.riskLevel) {
+        conditions.push(eq(successionPlans.riskLevel, input.riskLevel as any));
+      }
+
+      if (input.searchQuery) {
+        conditions.push(sql`${employees.name} LIKE ${`%${input.searchQuery}%`}`);
+      }
+
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions)) as any;
+      }
+
+      const results = await query;
+      return results;
+    }),
+
+  /**
+   * Buscar estatísticas de sucessão
+   */
+  getStats: protectedProcedure
+    .input(
+      z.object({
+        departmentId: z.number().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const database = await getDb();
+      if (!database) {
+        return {
+          totalSuccessors: 0,
+          readyNow: 0,
+          highRisk: 0,
+          coverageRate: 0,
+        };
+      }
+
+      // Buscar todos os candidatos
+      let query = database
+        .select({
+          readinessLevel: successionCandidates.readinessLevel,
+          riskLevel: successionPlans.riskLevel,
+        })
+        .from(successionCandidates)
+        .leftJoin(employees, eq(successionCandidates.employeeId, employees.id))
+        .leftJoin(successionPlans, eq(successionCandidates.planId, successionPlans.id));
+
+      if (input.departmentId) {
+        query = query.where(eq(employees.departmentId, input.departmentId)) as any;
+      }
+
+      const candidates = await query;
+
+      const totalSuccessors = candidates.length;
+      const readyNow = candidates.filter((c) => c.readinessLevel === "imediato").length;
+      const highRisk = candidates.filter(
+        (c) => c.riskLevel === "alto" || c.riskLevel === "critico"
+      ).length;
+
+      // Calcular taxa de cobertura (simplificado)
+      const coverageRate = totalSuccessors > 0 ? Math.round((readyNow / totalSuccessors) * 100) : 0;
+
+      return {
+        totalSuccessors,
+        readyNow,
+        highRisk,
+        coverageRate,
+      };
+    }),
+
+  /**
+   * Exportar relatório de sucessão
+   */
+  exportReport: protectedProcedure
+    .input(
+      z.object({
+        departmentId: z.number().optional(),
+        readinessLevel: z.string().optional(),
+        riskLevel: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      // TODO: Implementar exportação real
+      const filename = `relatorio-sucessao-${Date.now()}.xlsx`;
+      return {
+        url: `/api/reports/download/${filename}`,
+        filename,
+      };
+    }),
 });
