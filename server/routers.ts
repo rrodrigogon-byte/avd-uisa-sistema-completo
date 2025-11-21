@@ -900,7 +900,9 @@ export const appRouter = router({
     // Buscar avaliações pendentes do usuário logado (como avaliador)
     listPending: protectedProcedure
       .input(z.object({ 
-        evaluatorId: z.number().optional() 
+        evaluatorId: z.number().optional(),
+        status: z.string().optional(),
+        cycleId: z.number().optional(),
       }))
       .query(async ({ input, ctx }) => {
         const database = await getDb();
@@ -992,7 +994,7 @@ export const appRouter = router({
           : [];
 
         // Montar resposta com dados completos
-        return allEvaluations.map(evaluation => {
+        let results = allEvaluations.map(evaluation => {
           const emp = employeesData.find(e => e.id === evaluation.employeeId);
           const position = positionsData.find((p: any) => p.id === emp?.positionId);
           const cycle = cyclesData.find((c: any) => c.id === evaluation.cycleId);
@@ -1007,8 +1009,25 @@ export const appRouter = router({
             type: evaluation.type,
             status: evaluation.status,
             deadline: evaluation.deadline,
+            evaluatorType: 'manager',
+            finalScore: null,
+            comments: null,
+            createdAt: null,
+            completedAt: null,
           };
         });
+
+        // Filtrar por status se fornecido
+        if (input.status) {
+          results = results.filter(r => r.status === input.status);
+        }
+
+        // Filtrar por ciclo se fornecido
+        if (input.cycleId) {
+          results = results.filter(r => r.cycleId === input.cycleId);
+        }
+
+        return results;
       }),
 
     // Buscar avaliações pendentes da equipe do gestor

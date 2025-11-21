@@ -254,13 +254,20 @@ export const successionRouter = router({
   updateSuccessor: protectedProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.number().optional(),
+        successorId: z.number().optional(), // Alias para id
         readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]).optional(),
         priority: z.number().optional(),
         // Novos campos de avaliação
+        performance: z.number().min(1).max(5).optional(),
+        potential: z.number().min(1).max(5).optional(),
         performanceRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
         potentialRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
         nineBoxPosition: z.string().optional(),
+        nineBoxScore: z.string().optional(),
+        nineBoxCategory: z.string().optional(),
+        lossRisk: z.enum(["baixo", "medio", "alto"]).optional(),
+        lossImpact: z.enum(["baixo", "medio", "alto"]).optional(),
         // Análise e desenvolvimento
         gapAnalysis: z.string().optional(),
         developmentActions: z.string().optional(),
@@ -272,12 +279,18 @@ export const successionRouter = router({
       const database = await getDb();
       if (!database) throw new Error("Database not available");
 
-      const { id, ...data } = input;
+      // Usar successorId se fornecido, caso contrário usar id
+      const successorId = input.successorId || input.id;
+      if (!successorId) {
+        throw new Error("ID do sucessor é obrigatório");
+      }
+
+      const { id, successorId: _, ...data } = input;
 
       await database
         .update(successionCandidates)
         .set(data)
-        .where(eq(successionCandidates.id, id));
+        .where(eq(successionCandidates.id, successorId));
 
       return { success: true };
     }),

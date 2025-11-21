@@ -203,12 +203,28 @@ export const goalApprovalsRouter = router({
         .update(smartGoals)
         .set({
           approvalStatus: "pending_manager",
+          status: "pending_approval",
           updatedAt: new Date(),
         })
         .where(eq(smartGoals.id, input.goalId));
 
-      // TODO: Enviar notificação ao gestor
-      // Requer implementação de relação employee -> manager
+      // Buscar o gestor do colaborador (managerId)
+      const [employee] = await db
+        .select({ managerId: users.id, managerName: users.name })
+        .from(users)
+        .where(eq(users.id, goal.employeeId))
+        .limit(1);
+
+      // Se houver gestor, enviar notificação
+      if (employee?.managerId) {
+        await createNotification({
+          userId: employee.managerId,
+          type: "goal_pending_approval",
+          title: "Nova Meta para Aprovar",
+          message: `${ctx.user.name} enviou a meta "${goal.title}" para sua aprovação`,
+          link: `/metas/${input.goalId}`,
+        });
+      }
 
       return { success: true };
     }),

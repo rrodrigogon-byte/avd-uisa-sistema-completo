@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { z } from "zod";
-import { evaluationCycles } from "../drizzle/schema";
+import { evaluationCycles, performanceEvaluations, smartGoals, pdiPlans } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 
@@ -236,24 +236,67 @@ export const cyclesRouter = router({
       .where(sql`${evaluationCycles.status} IN ('em_andamento', 'ativo')`)
       .orderBy(evaluationCycles.startDate);
 
-    // Para cada ciclo, calcular estatísticas
-    const cyclesWithStats = cycles.map(cycle => {
-      // TODO: Calcular estatísticas reais de avaliações
-      // Por enquanto, retornar valores simulados
-      const totalParticipants = 100;
-      const completedCount = Math.floor(Math.random() * totalParticipants);
-      const pendingCount = totalParticipants - completedCount;
-      const progress = Math.round((completedCount / totalParticipants) * 100);
+    // Para cada ciclo, calcular estatísticas reais
+    const cyclesWithStats = await Promise.all(
+      cycles.map(async (cycle) => {
+        // Buscar todas as avaliações 360° do ciclo
+        const evaluations360 = await db
+          .select()
+          .from(performanceEvaluations)
+          .where(
+            and(
+              eq(performanceEvaluations.cycleId, cycle.id),
+              eq(performanceEvaluations.type, "360")
+            )
+          );
 
-      return {
-        ...cycle,
-        type: "performance" as const,
-        totalParticipants,
-        completedCount,
-        pendingCount,
-        progress,
-      };
-    });
+        // Buscar metas SMART do ciclo (se houver)
+        const goalsCount = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(smartGoals)
+          .where(
+            and(
+              gte(smartGoals.startDate, cycle.startDate),
+              lte(smartGoals.endDate, cycle.endDate)
+            )
+          );
+
+        // Buscar PDIs do ciclo (se houver)
+        const pdiCount = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(pdiPlans)
+          .where(
+            and(
+              gte(pdiPlans.createdAt, cycle.startDate),
+              lte(pdiPlans.createdAt, cycle.endDate)
+            )
+          );
+
+        // Calcular estatísticas de avaliações 360°
+        const totalEvaluations = evaluations360.length;
+        const completedEvaluations = evaluations360.filter(
+          (e) => e.status === "concluida" || e.workflowStatus === "completed"
+        ).length;
+        const pendingEvaluations = totalEvaluations - completedEvaluations;
+
+        // Calcular progresso total
+        const totalParticipants = totalEvaluations + (goalsCount[0]?.count || 0) + (pdiCount[0]?.count || 0);
+        const completedCount = completedEvaluations;
+        const progress = totalParticipants > 0 ? Math.round((completedCount / totalParticipants) * 100) : 0;
+
+        return {
+          ...cycle,
+          type: "performance" as const,
+          totalParticipants,
+          completedCount,
+          pendingCount: totalParticipants - completedCount,
+          progress,
+          evaluations360Count: totalEvaluations,
+          goalsCount: goalsCount[0]?.count || 0,
+          pdiCount: pdiCount[0]?.count || 0,
+        };
+      })
+    );
 
     return cyclesWithStats;
   }),
@@ -271,10 +314,55 @@ export const cyclesRouter = router({
       .from(evaluationCycles)
       .where(sql`${evaluationCycles.status} IN ('em_andamento', 'ativo')`);
 
-    // TODO: Calcular estatísticas reais
+    // Calcular estatísticas reais de todos os ciclos ativos
+    let totalParticipants = 0;
+    let totalCompleted = 0;
+
+    for (const cycle of activeCycles) {
+      // Buscar avaliações 360° do ciclo
+      const evaluations360 = await db
+        .select()
+        .from(performanceEvaluations)
+        .where(
+          and(
+            eq(performanceEvaluations.cycleId, cycle.id),
+            eq(performanceEvaluations.type, "360")
+          )
+        );
+
+      // Buscar metas SMART do ciclo
+      const goalsCount = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(smartGoals)
+        .where(
+          and(
+            gte(smartGoals.startDate, cycle.startDate),
+            lte(smartGoals.endDate, cycle.endDate)
+          )
+        );
+
+      // Buscar PDIs do ciclo
+      const pdiCount = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(pdiPlans)
+        .where(
+          and(
+            gte(pdiPlans.createdAt, cycle.startDate),
+            lte(pdiPlans.createdAt, cycle.endDate)
+          )
+        );
+
+      // Somar participantes
+      totalParticipants += evaluations360.length + (goalsCount[0]?.count || 0) + (pdiCount[0]?.count || 0);
+
+      // Somar concluídos
+      const completedEvaluations = evaluations360.filter(
+        (e) => e.status === "concluida" || e.workflowStatus === "completed"
+      ).length;
+      totalCompleted += completedEvaluations;
+    }
+
     const totalActive = activeCycles.length;
-    const totalParticipants = totalActive * 100; // Simulação
-    const totalCompleted = Math.floor(totalParticipants * 0.6);
     const totalPending = totalParticipants - totalCompleted;
     const completionRate = totalParticipants > 0 ? Math.round((totalCompleted / totalParticipants) * 100) : 0;
 

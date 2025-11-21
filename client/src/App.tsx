@@ -163,9 +163,13 @@ function Router() {
       {/* <Route path="/folha-pagamento/exportar" component={ExportarFolha} /> */}
        <Route path="/avaliacoes" component={Avaliacoes} />
       <Route path="/avaliacoes/configurar" component={ConfigurarAvaliacoes} />
-      <Route path="/avaliacoes/autoavaliacao/:id" component={Avaliacao360Autoavaliacao} />
-      <Route path="/avaliacoes/gestor/:id" component={Avaliacao360Gestor} />
-      <Route path="/avaliacoes/consenso/:id" component={Avaliacao360Consenso} />
+       <Route path="/avaliacoes/360/:id" component={Avaliacao360Enhanced} />
+       <Route path="/avaliacoes/360/:id/autoavaliacao" component={Avaliacao360Autoavaliacao} />
+       <Route path="/avaliacoes/360/:id/gestor" component={Avaliacao360Gestor} />
+       <Route path="/avaliacoes/360/:id/consenso" component={Avaliacao360Consenso} />
+       <Route path="/avaliacoes/autoavaliacao/:id" component={Avaliacao360Autoavaliacao} />
+       <Route path="/avaliacoes/gestor/:id" component={Avaliacao360Gestor} />
+       <Route path="/avaliacoes/consenso/:id" component={Avaliacao360Consenso} />
       <Route path="/benchmarking" component={BenchmarkingMercado} />
       <Route path="/metas-cascata" component={MetasCascata} />
       <Route path="/dashboard-executivo" component={DashboardExecutivoConsolidado} />

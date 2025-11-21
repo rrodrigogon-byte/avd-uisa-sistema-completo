@@ -320,7 +320,7 @@ export const evaluation360Router = router({
         evaluationId: z.number(),
         finalScore: z.number().min(0).max(100),
         consensusNotes: z.string().optional(),
-        password: z.string().min(1, "Senha obrigatória"),
+        comments: z.string().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -351,7 +351,7 @@ export const evaluation360Router = router({
       // Verificar se o usuário é líder (pode fazer consenso)
       // TODO: Implementar lógica de verificação de permissão de líder
 
-      // Buscar employee do líder logado para validar senha
+      // Buscar employee do líder logado
       const [leader] = await db
         .select()
         .from(employees)
@@ -360,22 +360,6 @@ export const evaluation360Router = router({
 
       if (!leader) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Colaborador não encontrado" });
-      }
-
-      // Validar senha do líder
-      if (!leader.passwordHash) {
-        throw new TRPCError({ 
-          code: "BAD_REQUEST", 
-          message: "Senha não cadastrada. Entre em contato com o RH." 
-        });
-      }
-
-      const isPasswordValid = await bcrypt.compare(input.password, leader.passwordHash);
-      if (!isPasswordValid) {
-        throw new TRPCError({ 
-          code: "UNAUTHORIZED", 
-          message: "Senha incorreta. Tente novamente." 
-        });
       }
 
       // Atualizar avaliação com nota final
@@ -414,6 +398,77 @@ export const evaluation360Router = router({
       }
 
       return { success: true, nextStep: "completed" };
+    }),
+
+  /**
+   * Rejeitar consenso do líder (Etapa 3)
+   */
+  rejectConsensus: protectedProcedure
+    .input(
+      z.object({
+        evaluationId: z.number(),
+        reason: z.string().min(1, "Motivo obrigatório"),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar avaliação
+      const evaluation = await db
+        .select()
+        .from(performanceEvaluations)
+        .where(eq(performanceEvaluations.id, input.evaluationId))
+        .limit(1);
+
+      if (evaluation.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Avaliação não encontrada" });
+      }
+
+      const eval360 = evaluation[0];
+
+      // Verificar se está na etapa correta
+      if (eval360.workflowStatus !== "pending_consensus") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Esta avaliação não está aguardando consenso",
+        });
+      }
+
+      // Atualizar avaliação para voltar ao status anterior
+      await db
+        .update(performanceEvaluations)
+        .set({
+          workflowStatus: "pending_manager",
+          status: "em_andamento",
+          updatedAt: new Date(),
+        })
+        .where(eq(performanceEvaluations.id, input.evaluationId));
+
+      // Buscar colaborador para enviar email de rejeição
+      const employee = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, eval360.employeeId))
+        .limit(1);
+
+      if (employee.length > 0 && employee[0].email) {
+        // Enviar email para o colaborador
+        await sendEmail({
+          to: employee[0].email,
+          subject: "Avaliação 360° Rejeitada",
+          html: `
+            <h2>Avaliação 360° Rejeitada</h2>
+            <p>Olá ${employee[0].name},</p>
+            <p>Sua avaliação 360° foi rejeitada pelo líder.</p>
+            <p><strong>Motivo:</strong> ${input.reason}</p>
+            <p>A avaliação retornou para a etapa anterior. Por favor, revise e reenvie.</p>
+            <p><a href="${process.env.VITE_OAUTH_PORTAL_URL}/avaliacoes">Ver detalhes da avaliação</a></p>
+          `,
+        });
+      }
+
+      return { success: true, nextStep: "pending_manager" };
     }),
 
   /**

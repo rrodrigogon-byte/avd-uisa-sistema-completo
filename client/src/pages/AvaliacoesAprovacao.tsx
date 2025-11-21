@@ -8,12 +8,24 @@ import { CheckCircle2, XCircle, Clock, User, Calendar, FileText } from "lucide-r
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useLocation } from "wouter";
 
 export default function AvaliacoesAprovacao() {
   const [selectedTab, setSelectedTab] = useState<"pendentes" | "concluidas">("pendentes");
+  const [selectedCycleId, setSelectedCycleId] = useState<number | undefined>();
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [selectedEvaluation, setSelectedEvaluation] = useState<number | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [, navigate] = useLocation();
   
+  const { data: cycles } = trpc.evaluationCycles.list.useQuery();
   const { data: pendingEvaluations, isLoading, refetch } = trpc.evaluations.listPending.useQuery({
-    status: selectedTab === "pendentes" ? "pendente" : "concluida",
+    status: selectedTab === "pendentes" ? "pending_consensus" : "completed",
+    cycleId: selectedCycleId,
   });
 
   const approveEvaluation = trpc.evaluation360.submitConsensus.useMutation({
@@ -26,12 +38,50 @@ export default function AvaliacoesAprovacao() {
     },
   });
 
+  const rejectEvaluation = trpc.evaluation360.rejectConsensus.useMutation({
+    onSuccess: () => {
+      toast.success("Avaliação rejeitada com sucesso!");
+      setRejectDialogOpen(false);
+      setRejectReason("");
+      setSelectedEvaluation(null);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao rejeitar: ${error.message}`);
+    },
+  });
+
   const handleApprove = (evaluationId: number, finalScore: number) => {
     approveEvaluation.mutate({
       evaluationId,
       finalScore,
       comments: "Aprovado via painel de aprovações",
     });
+  };
+
+  const handleReject = (evaluationId: number) => {
+    setSelectedEvaluation(evaluationId);
+    setRejectDialogOpen(true);
+  };
+
+  const confirmReject = () => {
+    if (!selectedEvaluation) return;
+    if (!rejectReason.trim()) {
+      toast.error("Por favor, informe o motivo da rejeição");
+      return;
+    }
+    rejectEvaluation.mutate({
+      evaluationId: selectedEvaluation,
+      reason: rejectReason,
+    });
+  };
+
+  const handleViewDetails = (evaluationId: number) => {
+    navigate(`/avaliacoes/360/${evaluationId}`);
+  };
+
+  const handleStartSelfEvaluation = (evaluationId: number) => {
+    navigate(`/avaliacoes/360/${evaluationId}/autoavaliacao`);
   };
 
   if (isLoading) {
@@ -54,6 +104,27 @@ export default function AvaliacoesAprovacao() {
         <p className="text-muted-foreground">
           Gerencie e aprove avaliações de desempenho pendentes
         </p>
+      </div>
+
+      {/* Filtro de Ciclos */}
+      <div className="mb-6">
+        <Label htmlFor="cycle-filter">Filtrar por Ciclo</Label>
+        <Select
+          value={selectedCycleId?.toString() || "all"}
+          onValueChange={(value) => setSelectedCycleId(value === "all" ? undefined : Number(value))}
+        >
+          <SelectTrigger id="cycle-filter" className="w-full md:w-[300px]">
+            <SelectValue placeholder="Todos os ciclos" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os ciclos</SelectItem>
+            {cycles?.map((cycle) => (
+              <SelectItem key={cycle.id} value={cycle.id.toString()}>
+                {cycle.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* KPIs */}
@@ -179,7 +250,20 @@ export default function AvaliacoesAprovacao() {
                         <CheckCircle2 className="h-4 w-4 mr-2" />
                         Aprovar Avaliação
                       </Button>
-                      <Button variant="outline" className="flex-1">
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleReject(evaluation.id)}
+                        disabled={rejectEvaluation.isPending}
+                        className="flex-1"
+                      >
+                        <XCircle className="h-4 w-4 mr-2" />
+                        Reprovar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleViewDetails(evaluation.id)}
+                        className="flex-1"
+                      >
                         <FileText className="h-4 w-4 mr-2" />
                         Ver Detalhes
                       </Button>
@@ -243,7 +327,11 @@ export default function AvaliacoesAprovacao() {
                       </div>
                     )}
 
-                    <Button variant="outline" className="w-full">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleViewDetails(evaluation.id)}
+                      className="w-full"
+                    >
                       <FileText className="h-4 w-4 mr-2" />
                       Ver Detalhes Completos
                     </Button>
@@ -254,6 +342,42 @@ export default function AvaliacoesAprovacao() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Dialog de Rejeição */}
+      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reprovar Avaliação</DialogTitle>
+            <DialogDescription>
+              Por favor, informe o motivo da rejeição desta avaliação.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="reject-reason">Motivo da Rejeição</Label>
+              <Textarea
+                id="reject-reason"
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="Descreva o motivo da rejeição..."
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmReject}
+              disabled={rejectEvaluation.isPending || !rejectReason.trim()}
+            >
+              Confirmar Rejeição
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -560,6 +560,8 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
 function EditSuccessorForm({ successor, onSave, onCancel }: any) {
   const [formData, setFormData] = useState({
     readinessLevel: successor.readinessLevel || "1_ano",
+    performance: successor.performance || 3,
+    potential: successor.potential || 3,
     nineBoxScore: successor.nineBoxScore || "",
     nineBoxCategory: successor.nineBoxCategory || "",
     lossRisk: successor.lossRisk || "medio",
@@ -583,7 +585,38 @@ function EditSuccessorForm({ successor, onSave, onCancel }: any) {
               <SelectItem value="1_ano">Pronto em até 12 meses</SelectItem>
               <SelectItem value="2_3_anos">Pronto em até 24 meses</SelectItem>
               <SelectItem value="mais_3_anos">Pronto em até 36 meses</SelectItem>
-              <SelectItem value="externo">Recurso Externo</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Performance (1-5)</Label>
+          <Select value={formData.performance.toString()} onValueChange={(v) => setFormData({...formData, performance: parseInt(v)})}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">1 - Abaixo do Esperado</SelectItem>
+              <SelectItem value="2">2 - Parcialmente Adequado</SelectItem>
+              <SelectItem value="3">3 - Adequado</SelectItem>
+              <SelectItem value="4">4 - Acima do Esperado</SelectItem>
+              <SelectItem value="5">5 - Excepcional</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Potencial (1-5)</Label>
+          <Select value={formData.potential.toString()} onValueChange={(v) => setFormData({...formData, potential: parseInt(v)})}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">1 - Limitado</SelectItem>
+              <SelectItem value="2">2 - Moderado</SelectItem>
+              <SelectItem value="3">3 - Alto</SelectItem>
+              <SelectItem value="4">4 - Muito Alto</SelectItem>
+              <SelectItem value="5">5 - Excepcional</SelectItem>
             </SelectContent>
           </Select>
         </div>

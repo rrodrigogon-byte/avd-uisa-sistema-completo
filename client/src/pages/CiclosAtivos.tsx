@@ -28,22 +28,22 @@ export default function CiclosAtivos() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Queries
-  const { data: activeCycles, isLoading, refetch } = trpc.cycles.getActiveCycles.useQuery();
-  const { data: cycleStats } = trpc.cycles.getCycleStats.useQuery();
+  const { data: activeCycles, isLoading, refetch } = trpc.evaluationCycles.getActiveCycles.useQuery();
+  const { data: cycleStats } = trpc.evaluationCycles.getCycleStats.useQuery();
 
   // Mutations
-  const sendReminders = trpc.cycles.sendReminders.useMutation({
-    onSuccess: (data) => {
+  const sendReminders = trpc.evaluationCycles.sendReminders.useMutation({
+    onSuccess: (data: any) => {
       toast.success(`Lembretes enviados para ${data.count} pessoas!`);
     },
-    onError: (error) => toast.error(`Erro: ${error.message}`),
+    onError: (error: any) => toast.error(`Erro: ${error.message}`),
   });
 
-  const exportReport = trpc.cycles.exportCycleReport.useMutation({
+  const exportReport = trpc.evaluationCycles.exportCycleReport.useMutation({
     onSuccess: () => {
       toast.success("Relatório exportado com sucesso!");
     },
-    onError: (error) => toast.error(`Erro: ${error.message}`),
+    onError: (error: any) => toast.error(`Erro: ${error.message}`),
   });
 
   // Helpers
@@ -71,7 +71,7 @@ export default function CiclosAtivos() {
   };
 
   // Filtrar ciclos
-  const filteredCycles = activeCycles?.filter(cycle => {
+  const filteredCycles = activeCycles?.filter((cycle: any) => {
     const matchesType = typeFilter === "all" || cycle.type === typeFilter;
     const matchesStatus = statusFilter === "all" || cycle.status === statusFilter;
     return matchesType && matchesStatus;
@@ -231,7 +231,7 @@ export default function CiclosAtivos() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {filteredCycles.map((cycle) => {
+            {filteredCycles.map((cycle: any) => {
               const selfDeadlineAlert = getDeadlineAlert(cycle.selfEvaluationDeadline);
               const managerDeadlineAlert = getDeadlineAlert(cycle.managerEvaluationDeadline);
               const consensusDeadlineAlert = getDeadlineAlert(cycle.consensusDeadline);

@@ -261,3 +261,35 @@
 - [x] Adicionar filtro por status (enviada, aberta, erro) no Dashboard
 - [x] Adicionar busca por colaborador (nome/email) no Dashboard
 - [x] Migrar Dashboard de Notificações para usar dados reais (getRealLogs)
+
+
+---
+
+## 🐛 CORREÇÕES CRÍTICAS - 21/11/2024 14:00
+
+### 1. Página de Aprovações de Avaliações (/aprovacoes/avaliacoes)
+- [x] Corrigir erro de validação "password expected string, received undefined"
+- [x] Remover campo password obrigatório da aprovação
+- [x] Adicionar filtro de ciclos funcionando
+- [x] Implementar botão "Reprovar" com modal de justificativa
+- [x] Corrigir navegação do botão "Ver Detalhes"
+- [x] Corrigir botão "Iniciar Autoavaliação" (navegação)
+
+### 2. Dashboard de Ciclos Ativos
+- [x] Substituir valores simulados por queries reais ao banco
+- [x] Integrar com avaliações 360° (performanceEvaluations)
+- [x] Integrar com metas SMART (smartGoals)
+- [x] Integrar com PDI (pdiPlans)
+- [x] Calcular progresso real de cada ciclo
+
+### 3. Botão de Editar Sucessor
+- [x] Criar modal de edição completo
+- [x] Campos: performance, potencial, prontidão, notas
+- [x] Integrar com mutation updateSuccessor
+- [x] Validação de campos obrigatórios
+
+### 4. Notificações Push para Workflow de Metas
+- [x] Notificar líder quando meta é enviada para aprovação
+- [x] Notificar funcionário quando meta é aprovada
+- [x] Notificar funcionário quando meta é rejeitada
+- [ ] Integrar com sistema de notificações existente
