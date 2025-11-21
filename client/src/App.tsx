@@ -130,6 +130,10 @@ import NotificacoesConfig from "./pages/configuracoes/Notificacoes";
 import AnalyticsAvancadoPage from "./pages/analytics/AnalyticsAvancado";
 import ProgressoCiclos from "./pages/relatorios/ProgressoCiclos";
 import DashboardSucessaoFiltros from "./pages/sucessao/DashboardSucessaoFiltros";
+import CalibrationMeetingsList from "./pages/calibracao/CalibrationMeetingsList";
+import CalibrationMeetingRoom from "./pages/calibracao/CalibrationMeetingRoom";
+import CiclosAtivos from "./pages/CiclosAtivos";
+import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
 
 function Router() {
   return (
@@ -159,6 +163,7 @@ function Router() {
       <Route path="/admin/gerenciar-senhas-lideres" component={GerenciarSenhasLideres} />
       <Route path="/admin/historico-senhas" component={HistoricoSenhas} />
       <Route path="/metas/corporativas" component={MetasCorporativas} />
+      <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} />
       {/* <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} /> */}
       {/* <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} /> */}
       {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}
@@ -176,11 +181,14 @@ function Router() {
       <Route path="/metas-cascata" component={MetasCascata} />
       <Route path="/dashboard-executivo" component={DashboardExecutivoConsolidado} />
       <Route path="/ciclos-avaliacao" component={CiclosAvaliacao} />
+      <Route path="/ciclos/ativos" component={CiclosAtivos} />
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />
       <Route path="/relatorios/ciclos" component={ProgressoCiclos} />
       <Route path="/calibracao" component={Calibracao} />
+      <Route path="/calibracao/reunioes" component={CalibrationMeetingsList} />
+      <Route path="/calibracao/reuniao/:id" component={CalibrationMeetingRoom} />
       <Route path="/configuracoes" component={Configuracoes} />
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />

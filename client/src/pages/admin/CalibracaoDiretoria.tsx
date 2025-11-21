@@ -358,7 +358,7 @@ export default function CalibracaoDiretoria() {
                   <SelectValue placeholder="Todos os níveis" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="Diretoria">Diretoria</SelectItem>
                   <SelectItem value="Gerência">Gerência</SelectItem>
                   <SelectItem value="Coordenação">Coordenação</SelectItem>

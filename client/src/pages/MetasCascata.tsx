@@ -209,7 +209,7 @@ export default function MetasCascata() {
               Visualização em árvore da propagação de metas organizacionais → departamentais → individuais
             </p>
           </div>
-          <Button>
+          <Button onClick={() => navigate("/metas/criar")}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Meta
           </Button>

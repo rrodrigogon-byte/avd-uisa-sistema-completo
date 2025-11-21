@@ -367,8 +367,8 @@
 - [x] Implementar endpoints de chat em tempo real
 - [x] Adicionar histórico de ajustes com justificativas
 - [x] Criar endpoints para salvar decisões da reunião
-- [ ] Criar página de reunião em tempo real (/calibracao/reuniao/:id) - PENDENTE
-- [ ] Integrar WebSocket para chat e atualizações em tempo real - PENDENTE
+- [ ] Criar página de reunião em tempo real (/calibracao/reuniao/:id) - EM ANDAMENTO
+- [ ] Integrar WebSocket para chat e atualizações em tempo real - EM ANDAMENTO
 
 ### Fase 2: Sistema de Notificações Push em Tempo Real
 - [ ] Implementar WebSocket para notificações em tempo real (já existe, expandir)
@@ -392,3 +392,29 @@
 - [ ] Implementar pull-to-refresh para atualizar dados
 - [ ] Adicionar atalhos rápidos (aprovar/rejeitar com 1 toque)
 - [ ] Criar visualização de gráficos otimizada para mobile
+
+
+---
+
+## 🚨 CORREÇÕES URGENTES - 21/11/2024 15:55
+
+### Erros 404 e Páginas Faltantes
+- [x] Criar página /metas/corporativas/adesao (AdesaoMetasCorporativas.tsx)
+- [x] Criar rota /ciclos/ativos (CiclosAtivos.tsx)
+- [x] Adicionar rotas faltantes no App.tsx
+
+### Botões e Funcionalidades Quebradas
+- [x] Corrigir botão "Nova Meta" em Metas em Cascata
+- [x] Corrigir erro Select.Item em Calibração Diretoria (value vazio)
+
+### Sucessão Inteligente
+- [ ] Completar implementação da página /sucessao-inteligente
+- [ ] Adicionar filtros funcionais
+- [ ] Implementar pipeline de sucessão
+- [ ] Testar fluxo completo
+
+### Dashboard Executivo - Nine Box Interativo
+- [x] Adicionar modal de detalhes ao clicar em quadrante do Nine Box
+- [x] Mostrar lista de profissionais no quadrante selecionado
+- [x] Exibir informações detalhadas (nome, cargo, performance, potencial)
+- [x] Adicionar ações rápidas (ver perfil, editar avaliação)
