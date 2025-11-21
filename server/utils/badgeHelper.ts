@@ -83,7 +83,6 @@ export async function grantBadgeIfEligible(employeeId: number, badgeCode: string
         employeeName: employee.name,
         badgeName: badge.name,
         badgeDescription: badge.description || "Conquista desbloqueada!",
-        badgeIcon: badge.icon || "🏆",
       });
 
       if (emailSent) {

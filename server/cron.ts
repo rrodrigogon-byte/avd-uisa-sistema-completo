@@ -226,7 +226,6 @@ export const pdiOverdueJob = cron.schedule('0 10 * * *', async () => {
           employeeName: plan[0].employees.name,
           actionTitle: item.title,
           dueDate: item.endDate.toLocaleDateString('pt-BR'),
-          pdiTitle: 'PDI ' + new Date().getFullYear(),
         });
       }
     }

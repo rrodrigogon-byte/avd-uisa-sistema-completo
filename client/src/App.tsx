@@ -32,6 +32,7 @@ import Workflows from "./pages/aprovacoes/Workflows";
 import Sucessao from "./pages/Sucessao";
 import SucessaoMelhorado from "./pages/SucessaoMelhorado";
 import MapaSucessaoCompleto from "./pages/MapaSucessaoCompleto";
+import MapaSucessaoUISA from "./pages/MapaSucessaoUISA";
 import PDIInteligente from "./pages/PDIInteligente";
 import PDIInteligenteNovo from "./pages/PDIInteligenteNovo";
 import PDIInteligenteDetalhes from "./pages/PDIInteligenteDetalhes";
@@ -173,6 +174,7 @@ function Router() {
       <Route path="/sucessao" component={Sucessao} />
       <Route path="/mapa-sucessao" component={SucessaoMelhorado} />
       <Route path="/mapa-sucessao-completo" component={MapaSucessaoCompleto} />
+      <Route path="/mapa-sucessao-uisa" component={MapaSucessaoUISA} />
       <Route path="/pdi-inteligente/novo" component={PDIInteligenteNovo} />
       <Route path="/pdi-inteligente/:id/detalhes" component={PDIInteligenteDetalhes} />
       <Route path="/pdi-inteligente/:id" component={PDIInteligente} />

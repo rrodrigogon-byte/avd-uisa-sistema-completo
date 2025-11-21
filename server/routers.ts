@@ -2108,7 +2108,20 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
           // Usar URL base do ambiente (funciona tanto em dev quanto em produção)
           const baseUrl = process.env.VITE_APP_URL || ctx.req.headers.origin || `${ctx.req.protocol}://${ctx.req.get('host')}`;
-          const testUrl = `${baseUrl}/teste-${input.testType}`;
+          
+          // Mapeamento de tipos de teste (inglês → português) para URLs corretas
+          const testTypeMap: Record<string, string> = {
+            'disc': 'disc',
+            'bigfive': 'bigfive',
+            'mbti': 'mbti',
+            'ie': 'ie',
+            'vark': 'vark',
+            'leadership': 'lideranca',
+            'career-anchors': 'ancoras-carreira',
+          };
+          
+          const testSlug = testTypeMap[input.testType] || input.testType;
+          const testUrl = `${baseUrl}/teste-${testSlug}`;
           
           const emailTemplate = createTestInviteEmail({
             employeeName: employee[0].name,

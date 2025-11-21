@@ -60,7 +60,6 @@ async function checkAndAwardBadge(employeeId: number, badgeId: number): Promise<
               employeeName: employee[0].name || "Colaborador",
               badgeName: badge[0].name,
               badgeDescription: badge[0].description || "Parabéns pela conquista!",
-              badgeIcon: "🏆",
             }
           );
         } catch (error) {

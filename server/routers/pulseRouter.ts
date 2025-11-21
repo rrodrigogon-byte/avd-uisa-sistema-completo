@@ -326,21 +326,98 @@ export const pulseRouter = router({
         });
       }
 
-      // Buscar todos os colaboradores
-      const allEmployees = await db
-        .select({
-          id: employees.id,
-          name: employees.name,
-          email: employees.email,
-        })
-        .from(employees);
+      // Buscar colaboradores baseado nos filtros da pesquisa
+      let targetEmployees: any[] = [];
+
+      // Parse campos JSON para arrays
+      const targetGroups = Array.isArray(survey.targetGroups) ? survey.targetGroups : [];
+      const targetDepartmentIds = Array.isArray(survey.targetDepartmentIds) ? survey.targetDepartmentIds : [];
+      const targetCostCenterIds = Array.isArray(survey.targetCostCenterIds) ? survey.targetCostCenterIds : [];
+      const targetEmails = Array.isArray(survey.targetEmails) ? survey.targetEmails : [];
+
+      // Se targetGroups incluir "all", buscar todos
+      if (targetGroups && targetGroups.includes("all")) {
+        targetEmployees = await db
+          .select({
+            id: employees.id,
+            name: employees.name,
+            email: employees.email,
+          })
+          .from(employees)
+          .where(eq(employees.status, "ativo"));
+      } else {
+        // Filtrar por departamentos
+        if (targetDepartmentIds && targetDepartmentIds.length > 0) {
+          const deptEmployees = await db
+            .select({
+              id: employees.id,
+              name: employees.name,
+              email: employees.email,
+            })
+            .from(employees)
+            .where(
+              and(
+                eq(employees.status, "ativo"),
+                sql`${employees.departmentId} IN (${targetDepartmentIds.join(",")})`
+              )
+            );
+          targetEmployees.push(...deptEmployees);
+        }
+
+        // Filtrar por centros de custo
+        if (targetCostCenterIds && targetCostCenterIds.length > 0) {
+          const ccEmployees = await db
+            .select({
+              id: employees.id,
+              name: employees.name,
+              email: employees.email,
+            })
+            .from(employees)
+            .where(
+              and(
+                eq(employees.status, "ativo"),
+                sql`${employees.costCenter} IN (${targetCostCenterIds.map((id: number) => `'CC-${id}'`).join(",")})`
+              )
+            );
+          targetEmployees.push(...ccEmployees);
+        }
+
+        // Adicionar emails específicos
+        if (targetEmails && targetEmails.length > 0) {
+          const emailEmployees = await db
+            .select({
+              id: employees.id,
+              name: employees.name,
+              email: employees.email,
+            })
+            .from(employees)
+            .where(
+              and(
+                eq(employees.status, "ativo"),
+                sql`${employees.email} IN (${targetEmails.map((e: string) => `'${e}'`).join(",")})`
+              )
+            );
+          targetEmployees.push(...emailEmployees);
+        }
+
+        // Remover duplicatas
+        const uniqueEmployees = new Map();
+        targetEmployees.forEach((emp) => {
+          if (emp.email && !uniqueEmployees.has(emp.id)) {
+            uniqueEmployees.set(emp.id, emp);
+          }
+        });
+        targetEmployees = Array.from(uniqueEmployees.values());
+      }
+
+      console.log(`[Pulse] Enviando para ${targetEmployees.length} colaboradores`);
 
       // Implementar envio de e-mail real usando emailService
       const { emailService } = await import("../utils/emailService");
       let successCount = 0;
       let failCount = 0;
 
-      for (const employee of allEmployees) {
+      for (const employee of targetEmployees) {
         if (!employee.email) continue;
 
         const surveyLink = `${process.env.VITE_APP_URL || 'http://localhost:3000'}/pesquisa/${survey.id}`;

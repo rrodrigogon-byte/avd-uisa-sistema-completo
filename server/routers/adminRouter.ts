@@ -130,10 +130,10 @@ export const adminRouter = router({
       }
 
       try {
-        await sendEmail({
-          to: input.to,
-          subject: '✅ Teste de Configuração SMTP - Sistema AVD UISA',
-          html: `
+        await sendEmail(
+          input.to,
+          '✅ Teste de Configuração SMTP - Sistema AVD UISA',
+          `
             <!DOCTYPE html>
             <html>
             <head>
@@ -182,8 +182,8 @@ export const adminRouter = router({
               </div>
             </body>
             </html>
-          `,
-        });
+          `
+        );
 
         return {
           success: true,

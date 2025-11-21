@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,7 @@ import {
   Users,
   FileText,
   AlertCircle,
+  Home,
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
@@ -28,33 +30,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 export default function Dashboard() {
   const [period, setPeriod] = useState("30");
-
-  // Mock data - TODO: integrar com backend
-  const kpis = {
-    pendentes: 12,
-    aprovadas: 45,
-    rejeitadas: 3,
-    tempoMedio: 2.5, // dias
-  };
-
-  // Dados para gráfico de barras
-  const requestsByType = [
-    { type: "Férias", count: 15 },
-    { type: "Bônus", count: 12 },
-    { type: "Promoção", count: 8 },
-    { type: "Treinamento", count: 10 },
-    { type: "Outros", count: 15 },
-  ];
-
-  // Dados para gráfico de pizza
-  const statusData = [
-    { name: "Aprovadas", value: 45, color: "#10b981" },
-    { name: "Pendentes", value: 12, color: "#f59e0b" },
-    { name: "Rejeitadas", value: 3, color: "#ef4444" },
-  ];
-
-  // Solicitações pendentes
-  const pendingRequests = [
+  const [pendingRequests, setPendingRequests] = useState([
     {
       id: 1,
       type: "Bônus",
@@ -79,7 +55,46 @@ export default function Dashboard() {
       days: "15 dias",
       priority: "baixa",
     },
+  ]);
+
+  // Mock data - TODO: integrar com backend
+  const kpis = {
+    pendentes: pendingRequests.length,
+    aprovadas: 45,
+    rejeitadas: 3,
+    tempoMedio: 2.5, // dias
+  };
+
+  // Handlers para aprovar/rejeitar
+  const handleApprove = (requestId: number) => {
+    // TODO: Integrar com backend
+    setPendingRequests(prev => prev.filter(r => r.id !== requestId));
+    toast.success("Solicitação aprovada com sucesso!");
+  };
+
+  const handleReject = (requestId: number) => {
+    // TODO: Integrar com backend
+    setPendingRequests(prev => prev.filter(r => r.id !== requestId));
+    toast.error("Solicitação rejeitada");
+  };
+
+  // Dados para gráfico de barras
+  const requestsByType = [
+    { type: "Férias", count: 15 },
+    { type: "Bônus", count: 12 },
+    { type: "Promoção", count: 8 },
+    { type: "Treinamento", count: 10 },
+    { type: "Outros", count: 15 },
   ];
+
+  // Dados para gráfico de pizza
+  const statusData = [
+    { name: "Aprovadas", value: 45, color: "#10b981" },
+    { name: "Pendentes", value: 12, color: "#f59e0b" },
+    { name: "Rejeitadas", value: 3, color: "#ef4444" },
+  ];
+
+
 
   return (
     <DashboardLayout>
@@ -90,8 +105,13 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold">Dashboard de Aprovações</h1>
             <p className="text-muted-foreground">Visão consolidada de solicitações e aprovações</p>
           </div>
-          <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-40">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => window.location.href = '/'}>
+              <Home className="h-4 w-4 mr-2" />
+              Voltar ao Início
+            </Button>
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -101,6 +121,7 @@ export default function Dashboard() {
               <SelectItem value="365">Último ano</SelectItem>
             </SelectContent>
           </Select>
+          </div>
         </div>
 
         {/* KPIs */}
@@ -268,11 +289,19 @@ export default function Dashboard() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button size="sm" variant="default">
+                    <Button 
+                      size="sm" 
+                      variant="default"
+                      onClick={() => handleApprove(request.id)}
+                    >
                       <CheckCircle className="h-4 w-4 mr-1" />
                       Aprovar
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleReject(request.id)}
+                    >
                       <XCircle className="h-4 w-4 mr-1" />
                       Rejeitar
                     </Button>
