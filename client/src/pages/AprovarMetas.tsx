@@ -49,7 +49,7 @@ export default function AprovarMetas() {
   const [comments, setComments] = useState("");
 
   // Buscar metas pendentes de aprovação
-  const { data: goals = [], isLoading, refetch } = trpc.smartGoals.list.useQuery({
+  const { data: goals = [], isLoading, refetch } = trpc.goals.list.useQuery({
     status: "pending_approval",
     cycleId: cycleFilter,
     category: categoryFilter as any,
@@ -59,7 +59,7 @@ export default function AprovarMetas() {
   const { data: cycles = [] } = trpc.evaluationCycles.list.useQuery();
 
   // Aprovar meta
-  const approveMutation = trpc.smartGoals.approve.useMutation({
+  const approveMutation = trpc.goals.approve.useMutation({
     onSuccess: () => {
       toast.success("Meta aprovada com sucesso!");
       setShowApproveDialog(false);
@@ -75,7 +75,7 @@ export default function AprovarMetas() {
   });
 
   // Rejeitar meta
-  const rejectMutation = trpc.smartGoals.reject.useMutation({
+  const rejectMutation = trpc.goals.reject.useMutation({
     onSuccess: () => {
       toast.success("Meta rejeitada");
       setShowRejectDialog(false);

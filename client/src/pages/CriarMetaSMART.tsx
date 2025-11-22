@@ -65,10 +65,10 @@ export default function CriarMetaSMART() {
 
   // Validação SMART
   const [validation, setValidation] = useState<any>(null);
-  const validateMutation = trpc.smartGoals.validateSMART.useMutation();
+  const validateMutation = trpc.goals.validateSMART.useMutation();
 
   // Criar meta
-  const createMutation = trpc.smartGoals.createSMART.useMutation({
+  const createMutation = trpc.goals.createSMART.useMutation({
     onSuccess: (data) => {
       toast.success("Meta criada com sucesso!", {
         description: `Score SMART: ${data.validation.score}/100`,

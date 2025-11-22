@@ -23,7 +23,8 @@ import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { goalsRouter } from "./goalsRouter";
 import { goalsCascadeRouter } from "./goalsCascadeRouter";
 import { cyclesRouter } from "./cyclesRouter";
-import { bonusRouter } from "./bonusRouter";
+import { bonusRouter } from "./routers/bonusRouter";
+import { bonusWorkflowRouter } from "./routers/bonusWorkflowRouter";
 import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
@@ -2519,6 +2520,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   uisaImport: uisaImportRouter,
   payroll: payrollRouter,
   bonus: bonusRouter,
+  bonusWorkflow: bonusWorkflowRouter,
   calibrationDiretoria: calibrationRouter,
   gamification: gamificationRouter,
   integrations: integrationsRouter,

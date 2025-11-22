@@ -374,4 +374,73 @@ export const pushNotificationsRouter = router({
 
     return fullHourlyData;
   }),
+
+  /**
+   * Obter chave pública VAPID
+   */
+  getPublicKey: protectedProcedure.query(() => {
+    // Retornar chave pública VAPID (em produção, usar variável de ambiente)
+    return {
+      publicKey: process.env.VAPID_PUBLIC_KEY || "BEl62iUYgUivxIkv69yViEuiBIa-Ib37J8xQmrysGRcck3-SgVYevXqilhWluXcs1uD5ffz7Y6CtBUez09yV77c"
+    };
+  }),
+
+  /**
+   * Verificar se usuário tem subscription ativa
+   */
+  hasSubscription: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) return { hasSubscription: false };
+
+    const subscriptions = await db
+      .select()
+      .from(pushSubscriptions)
+      .where(
+        and(
+          eq(pushSubscriptions.userId, ctx.user.id),
+          eq(pushSubscriptions.active, true)
+        )
+      )
+      .limit(1);
+
+    return { hasSubscription: subscriptions.length > 0 };
+  }),
+
+  /**
+   * Enviar notificação de teste
+   */
+  sendTestNotification: protectedProcedure
+    .input(z.object({ title: z.string(), message: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar subscriptions ativas do usuário
+      const subscriptions = await db
+        .select()
+        .from(pushSubscriptions)
+        .where(
+          and(
+            eq(pushSubscriptions.userId, ctx.user.id),
+            eq(pushSubscriptions.active, true)
+          )
+        );
+
+      if (subscriptions.length === 0) {
+        throw new Error("Nenhuma subscription ativa encontrada");
+      }
+
+      // Registrar log de notificação
+      await db.insert(pushNotificationLogs).values({
+        userId: ctx.user.id,
+        type: "test",
+        title: input.title,
+        message: input.message,
+        sentAt: new Date(),
+        status: "sent",
+        deviceType: subscriptions[0].deviceType,
+      });
+
+      return { success: true, count: subscriptions.length };
+    }),
 });

@@ -444,7 +444,6 @@ export default function Avaliacoes() {
                   // Criar ciclo no backend
                   createCycleMutation.mutate({
                     name: newCycle.name,
-                    year: newCycle.year,
                     type: newCycle.type as any, // Type assertion para aceitar todos os tipos
                     startDate: new Date(newCycle.startDate).toISOString(),
                     endDate: new Date(newCycle.endDate).toISOString(),

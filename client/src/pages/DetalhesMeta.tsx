@@ -60,7 +60,7 @@ export default function DetalhesMeta() {
   });
 
   // Exportar PDF
-  const exportPDFMutation = trpc.smartGoals.exportPDF.useMutation({
+  const exportPDFMutation = trpc.goals.exportPDF.useMutation({
     onSuccess: (data) => {
       // Converter base64 para blob e fazer download
       const byteCharacters = atob(data.data);
@@ -90,10 +90,10 @@ export default function DetalhesMeta() {
   const goalId = parseInt(id || "0");
 
   // Buscar meta completa
-  const { data: goal, isLoading, refetch } = trpc.smartGoals.getById.useQuery({ goalId });
+  const { data: goal, isLoading, refetch } = trpc.goals.getById.useQuery({ goalId });
 
   // Adicionar comentário
-  const addCommentMutation = trpc.smartGoals.addComment.useMutation({
+  const addCommentMutation = trpc.goals.addComment.useMutation({
     onSuccess: () => {
       toast.success("Comentário adicionado com sucesso!");
       setCommentText("");
@@ -120,7 +120,7 @@ export default function DetalhesMeta() {
   };
 
   // Mutations de evidências
-  const addEvidenceMutation = trpc.smartGoals.addEvidence.useMutation({
+  const addEvidenceMutation = trpc.goals.addEvidence.useMutation({
     onSuccess: () => {
       toast.success("Evidência adicionada com sucesso!");
       refetch();
@@ -132,7 +132,7 @@ export default function DetalhesMeta() {
     },
   });
 
-  const deleteEvidenceMutation = trpc.smartGoals.deleteEvidence.useMutation({
+  const deleteEvidenceMutation = trpc.goals.deleteEvidence.useMutation({
     onSuccess: () => {
       toast.success("Evidência excluída com sucesso!");
       refetch();
@@ -144,7 +144,7 @@ export default function DetalhesMeta() {
     },
   });
 
-  const uploadFileMutation = trpc.smartGoals.uploadEvidenceFile.useMutation();
+  const uploadFileMutation = trpc.goals.uploadEvidenceFile.useMutation();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

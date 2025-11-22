@@ -57,16 +57,16 @@ export default function DashboardBonusRH() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Queries
-  const { data: dashboard, refetch: refetchDashboard } = trpc.bonus.getDashboard.useQuery({
+  const { data: dashboard, refetch: refetchDashboard } = trpc.bonusWorkflow.getDashboard.useQuery({
     cycleId: selectedCycleId,
   });
 
   const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery();
-  const { data: workflows = [] } = trpc.bonus.listWorkflows.useQuery();
-  const { data: pendingApprovals = [] } = trpc.bonus.myPendingApprovals.useQuery();
+  const { data: workflows = [] } = trpc.bonusWorkflow.listWorkflows.useQuery();
+  const { data: pendingApprovals = [] } = trpc.bonusWorkflow.myPendingApprovals.useQuery();
 
   // Mutations
-  const initiateMutation = trpc.bonus.initiateApproval.useMutation({
+  const initiateMutation = trpc.bonusWorkflow.initiateApproval.useMutation({
     onSuccess: () => {
       toast.success("Processo de aprovação iniciado com sucesso!");
       refetchDashboard();
@@ -82,7 +82,7 @@ export default function DashboardBonusRH() {
     },
   });
 
-  const approveMutation = trpc.bonus.approveLevel.useMutation({
+  const approveMutation = trpc.bonusWorkflow.approveLevel.useMutation({
     onSuccess: () => {
       toast.success("Bônus aprovado com sucesso!");
       refetchDashboard();

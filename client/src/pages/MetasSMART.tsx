@@ -39,7 +39,7 @@ export default function MetasSMART() {
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
 
   // Exportar PDF consolidado
-  const exportConsolidatedPDFMutation = trpc.smartGoals.exportConsolidatedPDF.useMutation({
+  const exportConsolidatedPDFMutation = trpc.goals.exportConsolidatedPDF.useMutation({
     onSuccess: (data) => {
       const byteCharacters = atob(data.data);
       const byteNumbers = new Array(byteCharacters.length);
@@ -66,12 +66,12 @@ export default function MetasSMART() {
   });
 
   // Buscar dashboard com KPIs
-  const { data: dashboard, isLoading: loadingDashboard } = trpc.smartGoals.getDashboard.useQuery({
+  const { data: dashboard, isLoading: loadingDashboard } = trpc.goals.getDashboard.useQuery({
     cycleId: cycleFilter,
   });
 
   // Buscar lista de metas
-  const { data: goals = [], isLoading: loadingGoals } = trpc.smartGoals.list.useQuery({
+  const { data: goals = [], isLoading: loadingGoals } = trpc.goals.list.useQuery({
     cycleId: cycleFilter,
     status: statusFilter as any,
     category: categoryFilter as any,

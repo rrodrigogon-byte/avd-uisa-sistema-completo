@@ -72,14 +72,14 @@ export default function NotificationBell() {
   // Atualizar contador de não lidas
   useEffect(() => {
     if (notifications) {
-      const count = (notifications as Notification[]).filter((n) => !n.isRead).length;
+      const count = (notifications as Notification[]).filter((n) => !n.read).length;
       setUnreadCount(count);
     }
   }, [notifications]);
 
   const handleNotificationClick = (notification: Notification) => {
-    if (!notification.isRead) {
-      markAsRead.mutate({ notificationId: notification.id });
+    if (!notification.read) {
+      markAsRead.mutate({ id: notification.id });
     }
 
     if (notification.link) {
@@ -144,7 +144,7 @@ export default function NotificationBell() {
               <DropdownMenuItem
                 key={notification.id}
                 className={`flex flex-col items-start p-3 cursor-pointer ${
-                  !notification.isRead ? "bg-accent" : ""
+                  !notification.read ? "bg-accent" : ""
                 }`}
                 onClick={() => handleNotificationClick(notification)}
               >
@@ -153,7 +153,7 @@ export default function NotificationBell() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-medium text-sm truncate">{notification.title}</p>
-                      {!notification.isRead && (
+                      {!notification.read && (
                         <Badge variant="default" className="text-xs shrink-0">
                           Nova
                         </Badge>

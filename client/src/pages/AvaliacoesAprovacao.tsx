@@ -228,7 +228,7 @@ export default function AvaliacoesAprovacao() {
                       <div>
                         <p className="text-sm font-medium mb-1">Score Final</p>
                         <div className="flex items-center gap-2">
-                          <div className="text-2xl font-bold">{evaluation.finalScore.toFixed(1)}</div>
+                          <div className="text-2xl font-bold">{Number(evaluation.finalScore || 0).toFixed(1)}</div>
                           <div className="text-sm text-muted-foreground">/ 5.0</div>
                         </div>
                       </div>
@@ -243,7 +243,7 @@ export default function AvaliacoesAprovacao() {
 
                     <div className="flex gap-2 pt-4">
                       <Button
-                        onClick={() => handleApprove(evaluation.id, evaluation.finalScore || 0)}
+                        onClick={() => handleApprove(evaluation.id, Number(evaluation.finalScore || 0))}
                         disabled={approveEvaluation.isPending}
                         className="flex-1"
                       >
@@ -321,7 +321,7 @@ export default function AvaliacoesAprovacao() {
                       <div>
                         <p className="text-sm font-medium mb-1">Score Final</p>
                         <div className="flex items-center gap-2">
-                          <div className="text-2xl font-bold">{evaluation.finalScore.toFixed(1)}</div>
+                          <div className="text-2xl font-bold">{Number(evaluation.finalScore || 0).toFixed(1)}</div>
                           <div className="text-sm text-muted-foreground">/ 5.0</div>
                         </div>
                       </div>

@@ -27,7 +27,7 @@ export default function EditarMeta() {
   const goalId = parseInt(id || "0");
 
   // Buscar meta
-  const { data: goal, isLoading } = trpc.smartGoals.getById.useQuery({ goalId });
+  const { data: goal, isLoading } = trpc.goals.getById.useQuery({ goalId });
 
   // Form state
   const [formData, setFormData] = useState({
@@ -46,7 +46,7 @@ export default function EditarMeta() {
   });
 
   // Atualizar meta
-  const updateMutation = trpc.smartGoals.update.useMutation({
+  const updateMutation = trpc.goals.update.useMutation({
     onSuccess: () => {
       toast.success("Meta atualizada com sucesso!");
       navigate(`/metas/${goalId}`);

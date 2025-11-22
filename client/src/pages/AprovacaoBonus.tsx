@@ -30,9 +30,9 @@ export default function AprovacaoBonus() {
   const [filterStatus, setFilterStatus] = useState<string>("calculado");
 
   // Buscar cálculos pendentes de aprovação
-  const { data: calculations, isLoading, refetch } = trpc.bonus.listCalculations.useQuery({
-    status: filterStatus as any,
-  });
+  const { data: calculations, isLoading, refetch } = trpc.bonus.listCalculations.useQuery(
+    filterStatus !== "all" ? { status: filterStatus as any } : undefined
+  );
 
   // Mutation para aprovar
   const approveMutation = trpc.bonus.approveCalculation.useMutation({
@@ -60,7 +60,7 @@ export default function AprovacaoBonus() {
 
   const handleApprove = () => {
     if (selectedCalculation) {
-      approveMutation.mutate({ calculationId: selectedCalculation.id });
+      approveMutation.mutate({ calculationId: selectedCalculation.id, comments: undefined });
     }
   };
 

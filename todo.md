@@ -614,3 +614,38 @@
 - [ ] Pré-visualização de perguntas do template
 - [ ] Importar/exportar templates (JSON)
 - [ ] Associar templates a cargos específicos
+
+
+## 🔥 SESSÃO ATUAL - 22/11/2024 17:00 - Correções TypeScript e Implementações
+
+### Fase 1: Correção de Erros TypeScript (PARCIALMENTE CONCLUÍDA)
+- [x] Corrigir trpc.smartGoals → trpc.goals (6 arquivos)
+- [x] Corrigir import de bonusRouter (estava usando o antigo)
+- [x] Registrar bonusWorkflowRouter no appRouter
+- [x] Criar endpoint getTeamGoals no goalsRouter
+- [x] Corrigir erros de toFixed em AvaliacoesAprovacao
+- [x] Remover campo year inexistente em Avaliacoes
+- [x] Corrigir campo isRead → read em NotificationBell
+- [x] Adicionar endpoints getPublicKey, hasSubscription, sendTestNotification em pushNotificationsRouter
+- [ ] Adicionar endpoints listConfigs, createConfig, updateConfig, deleteConfig no bonusRouter novo
+- [ ] Corrigir endpoints de ConfiguracaoBonus e ConfiguracaoWorkflowsBonus
+- [ ] Corrigir campo paymentDate obrigatório em AprovacaoBonus
+- [ ] Corrigir campos de schema em DetalhesMeta (employeeName, unit, deadline, bonusType)
+- [ ] Adicionar endpoint getEmailStats no emailRouter
+- [ ] Corrigir campo departmentId em Calibracao
+- [ ] Corrigir enum de status em CiclosAvaliacao
+
+**Progresso:** 192 → ~150 erros (42 erros corrigidos)
+
+### Fase 2: Mapa de Sucessão UISA Completo (PENDENTE)
+- [ ] Popular banco de dados com 42 funcionários do PPT
+- [ ] Popular banco de dados com 30 cargos do PPT
+- [ ] Criar interface com botões: Incluir, Modificar, Deletar, Salvar, PDI
+- [ ] Implementar CRUD completo de sucessores
+- [ ] Implementar visualização hierárquica do mapa
+
+### Fase 3: Templates de Avaliação Profissionais (PENDENTE)
+- [ ] Criar biblioteca de competências Leadership Pipeline
+- [ ] Criar templates por nível: Operacional, Coordenação, Gerência, Diretoria, Executivo
+- [ ] Implementar sistema de seleção de templates
+- [ ] Integrar templates com sistema de avaliação 360°

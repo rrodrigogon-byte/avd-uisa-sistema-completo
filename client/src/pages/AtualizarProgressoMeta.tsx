@@ -37,10 +37,10 @@ export default function AtualizarProgressoMeta() {
   const [comment, setComment] = useState("");
 
   // Buscar meta
-  const { data: goal, isLoading, refetch } = trpc.smartGoals.getById.useQuery({ goalId });
+  const { data: goal, isLoading, refetch } = trpc.goals.getById.useQuery({ goalId });
 
   // Atualizar progresso
-  const updateProgressMutation = trpc.smartGoals.updateProgress.useMutation({
+  const updateProgressMutation = trpc.goals.updateProgress.useMutation({
     onSuccess: () => {
       toast.success("Progresso atualizado com sucesso!");
       setProgress("");

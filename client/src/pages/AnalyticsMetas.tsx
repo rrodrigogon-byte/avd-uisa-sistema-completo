@@ -30,7 +30,7 @@ export default function AnalyticsMetas() {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
 
   // Buscar dados de analytics
-  const { data: analytics, isLoading } = trpc.smartGoals.getAnalytics.useQuery({
+  const { data: analytics, isLoading } = trpc.goals.getAnalytics.useQuery({
     period: parseInt(selectedPeriod),
     departmentId: selectedDepartment === "all" ? undefined : parseInt(selectedDepartment),
   });

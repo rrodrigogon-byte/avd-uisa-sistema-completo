@@ -1736,4 +1736,37 @@ export const goalsRouter = router({
         count: employeesToNotify.length,
       };
     }),
+
+  /**
+   * Buscar metas da equipe (para gestores)
+   */
+  getTeamGoals: protectedProcedure
+    .input(z.object({ managerId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Buscar funcionários subordinados ao gestor
+      const teamMembers = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.managerId, input.managerId));
+
+      if (teamMembers.length === 0) return [];
+
+      const teamMemberIds = teamMembers.map((e) => e.id);
+
+      // Buscar metas dos membros da equipe
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            sql`${smartGoals.employeeId} IN (${sql.join(teamMemberIds, sql`, `)})`
+          )
+        )
+        .orderBy(desc(smartGoals.createdAt));
+
+      return goals;
+    }),
 });
