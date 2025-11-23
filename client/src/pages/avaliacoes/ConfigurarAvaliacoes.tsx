@@ -24,7 +24,14 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Settings, Plus, Calendar, Users, CheckCircle2, XCircle, Edit, Trash2 } from "lucide-react";
+import { Settings, Plus, Calendar, Users, CheckCircle2, XCircle, Edit, Trash2, Award } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import BackButton from "@/components/BackButton";
 
 interface EvaluationCycle {
@@ -52,7 +59,14 @@ export default function ConfigurarAvaliacoes() {
     selfEvaluationDeadline: "",
     managerEvaluationDeadline: "",
     consensusDeadline: "",
+    hierarchyLevel: "" as "" | "operacional" | "coordenacao" | "gerencia" | "diretoria",
   });
+  
+  // Buscar templates do nível selecionado
+  const { data: templates } = trpc.evaluationTemplates.getByHierarchyLevel.useQuery(
+    { hierarchyLevel: formData.hierarchyLevel as any },
+    { enabled: !!formData.hierarchyLevel }
+  );
 
   // Queries
   const { data: cycles, isLoading, refetch } = trpc.evaluationCycles.list.useQuery();
@@ -112,6 +126,7 @@ export default function ConfigurarAvaliacoes() {
       selfEvaluationDeadline: "",
       managerEvaluationDeadline: "",
       consensusDeadline: "",
+      hierarchyLevel: "",
     });
   };
 
@@ -431,6 +446,53 @@ export default function ConfigurarAvaliacoes() {
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                   />
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-[#F39200]" />
+                  Template Leadership Pipeline
+                </h4>
+                <div className="mb-4">
+                  <Label>Nível Hierárquico</Label>
+                  <Select
+                    value={formData.hierarchyLevel}
+                    onValueChange={(value: any) =>
+                      setFormData({ ...formData, hierarchyLevel: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o nível hierárquico" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="operacional">Nível Operacional</SelectItem>
+                      <SelectItem value="coordenacao">Nível Coordenação</SelectItem>
+                      <SelectItem value="gerencia">Nível Gerência</SelectItem>
+                      <SelectItem value="diretoria">Nível Diretoria</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {templates && templates.length > 0 && (
+                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                      <p className="text-sm font-semibold text-blue-900 mb-2">
+                        ✅ Template encontrado: {templates[0].name}
+                      </p>
+                      <p className="text-xs text-blue-700 mb-2">
+                        {templates[0].description}
+                      </p>
+                      <div className="text-xs text-blue-600">
+                        <strong>{templates[0].questions?.length || 0} competências</strong> serão aplicadas automaticamente:
+                        <ul className="list-disc list-inside mt-1 space-y-0.5">
+                          {templates[0].questions?.slice(0, 3).map((q: any, idx: number) => (
+                            <li key={idx}>{q.questionText}</li>
+                          ))}
+                          {(templates[0].questions?.length || 0) > 3 && (
+                            <li className="font-semibold">... e mais {(templates[0].questions?.length || 0) - 3} competências</li>
+                          )}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

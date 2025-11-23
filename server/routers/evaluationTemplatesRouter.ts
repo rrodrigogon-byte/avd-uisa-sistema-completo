@@ -36,6 +36,49 @@ export const evaluationTemplatesRouter = router({
     }),
 
   /**
+   * Buscar templates por nível hierárquico (Leadership Pipeline)
+   */
+  getByHierarchyLevel: protectedProcedure
+    .input(
+      z.object({
+        hierarchyLevel: z.enum(["operacional", "coordenacao", "gerencia", "diretoria"]),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const templates = await db
+        .select()
+        .from(evaluationTemplates)
+        .where(
+          and(
+            eq(evaluationTemplates.hierarchyLevel, input.hierarchyLevel),
+            eq(evaluationTemplates.isActive, true)
+          )
+        )
+        .orderBy(desc(evaluationTemplates.createdAt));
+
+      // Buscar perguntas para cada template
+      const templatesWithQuestions = await Promise.all(
+        templates.map(async (template) => {
+          const questions = await db
+            .select()
+            .from(templateQuestions)
+            .where(eq(templateQuestions.templateId, template.id))
+            .orderBy(templateQuestions.displayOrder);
+
+          return {
+            ...template,
+            questions,
+          };
+        })
+      );
+
+      return templatesWithQuestions;
+    }),
+
+  /**
    * Buscar template por ID com perguntas
    */
   getById: protectedProcedure

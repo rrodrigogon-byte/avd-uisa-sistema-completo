@@ -25,6 +25,8 @@ export const nineBoxRouter = router({
         costCenterIds: z.array(z.number()).optional(),
         leaderId: z.number().optional(),
         hierarchyLevel: z.enum(["all", "diretoria", "gerencia", "coordenacao", "supervisao", "outros"]).optional(),
+        performanceFilter: z.enum(["baixa", "media", "alta"]).optional(),
+        potentialFilter: z.enum(["baixo", "medio", "alto"]).optional(),
       })
     )
     .query(async ({ input }) => {
@@ -105,6 +107,12 @@ export const nineBoxRouter = router({
               : undefined,
             employeeIdsFilter && employeeIdsFilter.length > 0
               ? inArray(employees.id, employeeIdsFilter)
+              : undefined,
+            input.performanceFilter
+              ? eq(nineBoxPositions.performance, input.performanceFilter === "baixa" ? 1 : input.performanceFilter === "media" ? 2 : 3)
+              : undefined,
+            input.potentialFilter
+              ? eq(nineBoxPositions.potential, input.potentialFilter === "baixo" ? 1 : input.potentialFilter === "medio" ? 2 : 3)
               : undefined
           )
         )

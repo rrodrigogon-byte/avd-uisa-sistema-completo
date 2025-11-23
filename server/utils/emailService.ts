@@ -1,25 +1,67 @@
 import nodemailer from "nodemailer";
+import { getDb } from "../db";
+import { systemSettings } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
-// Criar transporter baseado em variáveis de ambiente
-function createTransporter() {
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpPort = process.env.SMTP_PORT;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
+// Cache de configuração SMTP
+let cachedSmtpConfig: any = null;
+let lastFetch = 0;
+const CACHE_TTL = 60000; // 1 minuto
 
-  if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
-    console.warn("[EmailService] SMTP não configurado");
+// Buscar configuração SMTP do banco de dados
+async function getSmtpConfig() {
+  const now = Date.now();
+  
+  // Retornar do cache se ainda válido
+  if (cachedSmtpConfig && (now - lastFetch) < CACHE_TTL) {
+    return cachedSmtpConfig;
+  }
+
+  try {
+    const db = await getDb();
+    if (!db) {
+      console.warn("[EmailService] Database not available");
+      return null;
+    }
+
+    const result = await db
+      .select()
+      .from(systemSettings)
+      .where(eq(systemSettings.settingKey, "smtp_config"))
+      .limit(1);
+
+    if (result.length === 0) {
+      console.warn("[EmailService] SMTP não configurado no banco de dados");
+      return null;
+    }
+
+    cachedSmtpConfig = JSON.parse(result[0].settingValue || '{}');
+    lastFetch = now;
+    console.log("[EmailService] SMTP config carregado do banco:", cachedSmtpConfig.host);
+    return cachedSmtpConfig;
+  } catch (error) {
+    console.error("[EmailService] Erro ao buscar SMTP config:", error);
+    return null;
+  }
+}
+
+// Criar transporter baseado na configuração do banco
+async function createTransporter() {
+  const config = await getSmtpConfig();
+  
+  if (!config || !config.host || !config.port || !config.user || !config.pass) {
+    console.warn("[EmailService] SMTP não configurado completamente");
     return null;
   }
 
   try {
     return nodemailer.createTransport({
-      host: smtpHost,
-      port: parseInt(smtpPort),
-      secure: parseInt(smtpPort) === 465,
+      host: config.host,
+      port: parseInt(config.port),
+      secure: config.secure || parseInt(config.port) === 465,
       auth: {
-        user: smtpUser,
-        pass: smtpPass,
+        user: config.user,
+        pass: config.pass,
       },
       tls: {
         rejectUnauthorized: false,
@@ -33,7 +75,7 @@ function createTransporter() {
 
 // Função base de envio de email
 async function sendCustomEmail(to: string, subject: string, html: string): Promise<boolean> {
-  const transporter = createTransporter();
+  const transporter = await createTransporter();
   
   if (!transporter) {
     console.warn("[EmailService] SMTP não configurado");
@@ -41,8 +83,9 @@ async function sendCustomEmail(to: string, subject: string, html: string): Promi
   }
 
   try {
-    const smtpFrom = process.env.SMTP_FROM || process.env.SMTP_USER;
-    const fromName = process.env.SMTP_FROM_NAME || "Sistema AVD UISA";
+    const config = await getSmtpConfig();
+    const smtpFrom = config?.fromEmail || config?.user || "noreply@avduisa.com";
+    const fromName = config?.fromName || "Sistema AVD UISA";
 
     await transporter.sendMail({
       from: `"${fromName}" <${smtpFrom}>`,

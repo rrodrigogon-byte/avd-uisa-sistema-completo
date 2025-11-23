@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, TrendingUp, Users, Award, Download, Filter, FileDown } from "lucide-react";
+import { Loader2, TrendingUp, Users, Award, Download, Filter, FileDown, Star, Save, Trash } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { exportToPDF, generateSectionHTML, generateTableHTML, generateInfoGridHTML, generateBadgeHTML } from "@/lib/pdfExport";
@@ -48,6 +50,69 @@ export default function NineBoxComparativo() {
   const [selectedLeaderId, setSelectedLeaderId] = useState<number | null>(null);
   const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<number[]>([]);
   const [selectedCostCenterIds, setSelectedCostCenterIds] = useState<number[]>([]);
+  const [performanceFilter, setPerformanceFilter] = useState<string>("all");
+  const [potentialFilter, setPotentialFilter] = useState<string>("all");
+  const [savedFilters, setSavedFilters] = useState<any[]>([]);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [filterName, setFilterName] = useState("");
+
+  // Carregar filtros salvos do localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('nineBoxFavoriteFilters');
+    if (saved) {
+      setSavedFilters(JSON.parse(saved));
+    }
+  }, []);
+
+  // Salvar filtro favorito
+  const saveCurrentFilter = () => {
+    if (!filterName.trim()) {
+      toast.error("Digite um nome para o filtro");
+      return;
+    }
+
+    const newFilter = {
+      id: Date.now(),
+      name: filterName,
+      filters: {
+        hierarchyLevel,
+        selectedLeaderId,
+        selectedDepartmentIds,
+        selectedCostCenterIds,
+        performanceFilter,
+        potentialFilter,
+        selectedPositions,
+      },
+      createdAt: new Date().toISOString(),
+    };
+
+    const updated = [...savedFilters, newFilter];
+    setSavedFilters(updated);
+    localStorage.setItem('nineBoxFavoriteFilters', JSON.stringify(updated));
+    setShowSaveDialog(false);
+    setFilterName("");
+    toast.success("Filtro salvo com sucesso!");
+  };
+
+  // Carregar filtro favorito
+  const loadFilter = (filter: any) => {
+    setHierarchyLevel(filter.filters.hierarchyLevel);
+    setSelectedLeaderId(filter.filters.selectedLeaderId);
+    setSelectedDepartmentIds(filter.filters.selectedDepartmentIds);
+    setSelectedCostCenterIds(filter.filters.selectedCostCenterIds);
+    setPerformanceFilter(filter.filters.performanceFilter);
+    setPotentialFilter(filter.filters.potentialFilter);
+    setSelectedPositions(filter.filters.selectedPositions);
+    toast.success(`Filtro "${filter.name}" aplicado!`);
+  };
+
+  // Deletar filtro favorito
+  const deleteFilter = (filterId: number) => {
+    const updated = savedFilters.filter(f => f.id !== filterId);
+    setSavedFilters(updated);
+    localStorage.setItem('nineBoxFavoriteFilters', JSON.stringify(updated));
+    toast.success("Filtro removido!");
+  };
 
   // Queries
   const { data: positions, isLoading: loadingPositions } = trpc.nineBoxComparative.getAvailablePositions.useQuery();
@@ -61,6 +126,8 @@ export default function NineBoxComparativo() {
       hierarchyLevel: hierarchyLevel as "all" | "diretoria" | "gerencia" | "coordenacao" | "supervisao" | "outros",
       departmentIds: selectedDepartmentIds.length > 0 ? selectedDepartmentIds : undefined,
       costCenterIds: selectedCostCenterIds.length > 0 ? selectedCostCenterIds : undefined,
+      performanceFilter: performanceFilter !== "all" ? performanceFilter as "baixa" | "media" | "alta" : undefined,
+      potentialFilter: potentialFilter !== "all" ? potentialFilter as "baixo" | "medio" | "alto" : undefined,
     },
     { enabled: true }
   );
@@ -355,7 +422,7 @@ export default function NineBoxComparativo() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               {/* Filtro por Nível Hierárquico */}
               <div className="space-y-2">
                 <Label>Nível Hierárquico</Label>
@@ -448,6 +515,77 @@ export default function NineBoxComparativo() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Filtro por Performance */}
+              <div className="space-y-2">
+                <Label>Performance</Label>
+                <Select value={performanceFilter} onValueChange={setPerformanceFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem value="baixa">Baixa (1)</SelectItem>
+                    <SelectItem value="media">Média (2)</SelectItem>
+                    <SelectItem value="alta">Alta (3)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Filtro por Potencial */}
+              <div className="space-y-2">
+                <Label>Potencial</Label>
+                <Select value={potentialFilter} onValueChange={setPotentialFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="baixo">Baixo (1)</SelectItem>
+                    <SelectItem value="medio">Médio (2)</SelectItem>
+                    <SelectItem value="alto">Alto (3)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Botões de Ação de Filtros */}
+            <div className="flex gap-2 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSaveDialog(true)}
+                className="flex items-center gap-2"
+              >
+                <Save className="h-4 w-4" />
+                Salvar Filtro Atual
+              </Button>
+              
+              {savedFilters.length > 0 && (
+                <div className="flex gap-2 flex-wrap">
+                  {savedFilters.map((filter) => (
+                    <div key={filter.id} className="flex items-center gap-1 bg-blue-50 border border-blue-200 rounded-md px-2 py-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => loadFilter(filter)}
+                        className="h-auto p-1 hover:bg-blue-100"
+                      >
+                        <Star className="h-3 w-3 mr-1 text-blue-600" />
+                        <span className="text-xs text-blue-900">{filter.name}</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteFilter(filter.id)}
+                        className="h-auto p-1 hover:bg-red-100"
+                      >
+                        <Trash className="h-3 w-3 text-red-600" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -671,6 +809,42 @@ export default function NineBoxComparativo() {
           </Card>
         )}
       </div>
+
+      {/* Dialog para Salvar Filtro */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Salvar Filtro Favorito</DialogTitle>
+            <DialogDescription>
+              Dê um nome para este conjunto de filtros para facilitar o acesso futuro
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Nome do Filtro</Label>
+              <Input
+                value={filterName}
+                onChange={(e) => setFilterName(e.target.value)}
+                placeholder="Ex: Gerência - Alto Desempenho"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    saveCurrentFilter();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={saveCurrentFilter} className="bg-[#F39200] hover:bg-[#D68200]">
+              <Save className="h-4 w-4 mr-2" />
+              Salvar Filtro
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

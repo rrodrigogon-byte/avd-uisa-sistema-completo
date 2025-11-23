@@ -1,3 +1,27 @@
+## 🚨 TAREFAS URGENTES - 23/11/2024
+
+### Bugs Críticos Pesquisa Pulse
+- [x] Corrigir envio de emails da Pesquisa Pulse (aparece 0 enviados)
+- [x] Corrigir erro 404 na página de resultados (/pesquisas-pulse/resultados/:id)
+
+### Seed de Dados Reais
+- [x] Executar script seed-succession-data.mjs
+- [x] Popular 42 funcionários reais
+- [x] Popular 30 cargos reais
+
+### Templates Leadership Pipeline
+- [x] Criar tabela de templates por nível hierárquico
+- [x] Implementar seletor de template ao criar avaliação 360°
+- [x] Carregar competências automaticamente baseado no nível
+
+### Me### Melhorias Nine Box Comparativo
+- [x] Adicionar filtros de Performance (Baixa/Média/Alta)
+- [x] Adicionar filtros de Potencial (Baixo/Médio/Alto)
+- [x] Implementar exportação de gráficos visuais em PDF
+- [x] Sistema de salvar filtros favoritos
+
+---
+
 # Sistema AVD UISA - TODO List
 
 ## 🚨 CORREÇÕES URGENTES - 21/11/2024 13:45

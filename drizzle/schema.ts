@@ -2271,6 +2271,7 @@ export const evaluationTemplates = mysqlTable("evaluationTemplates", {
   name: varchar("name", { length: 200 }).notNull(),
   description: text("description"),
   templateType: mysqlEnum("templateType", ["360", "180", "90", "custom"]).default("custom").notNull(),
+  hierarchyLevel: mysqlEnum("hierarchyLevel", ["operacional", "coordenacao", "gerencia", "diretoria"]), // Nível hierárquico do Leadership Pipeline
   
   // Alvos (JSON arrays de IDs)
   targetRoles: json("targetRoles"), // Array de IDs de cargos
