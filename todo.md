@@ -825,3 +825,18 @@
 - [x] Criar página /ciclos-avaliacao/aprovacao-geral (RH/Diretoria) - AprovacaoGeralCiclo.tsx
 - [x] Registrar todas as rotas no App.tsx
 - [x] Corrigir erro de status "sent" → "enviada" em pushNotifications e sendPulseEmails
+
+## ✅ CONCLUÍDO - Passo 2: Envio de Emails de Testes Psicométricos (23/11/2024 13:52)
+
+- [x] Validar configuração SMTP no banco de dados
+- [x] Criar teste vitest para envio de emails
+- [x] Corrigir estrutura do endpoint sendTestInvite
+- [x] Confirmar envio bem-sucedido de emails
+
+## ✅ CONCLUÍDO - Passo 3: Notificações em Tempo Real (23/11/2024 13:55)
+
+- [x] Criar helper pushNotificationHelper.ts para envio de push notifications
+- [x] Integrar notificações em Pesquisa Pulse (ao ativar pesquisa)
+- [x] Integrar notificações em Ciclo de Avaliação (ao criar ciclo)
+- [x] Integrar notificações em Metas SMART (ao solicitar aprovação)
+- [x] Configurar tipos de notificação: pulse, cycle, goal

@@ -98,6 +98,7 @@ import ConfiguracaoBonus from "@/pages/ConfiguracaoBonus";
 import ConfiguracaoWorkflowsBonus from "@/pages/ConfiguracaoWorkflowsBonus";
 import DashboardBonusRH from "./pages/DashboardBonusRH";
 import MovimentacaoNineBox from "./pages/MovimentacaoNineBox";
+import AprovacaoCalibracoes from "./pages/AprovacaoCalibracoes";
 
 import CiclosAvaliacaoLista from "@/pages/CiclosAvaliacaoLista";
 import CriarCicloAvaliacao from "@/pages/CriarCicloAvaliacao";

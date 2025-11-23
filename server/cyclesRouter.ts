@@ -86,6 +86,34 @@ export const cyclesRouter = router({
         status: "planejado",
       });
 
+      // Enviar notificação push para todos os usuários sobre novo ciclo
+      try {
+        const { sendPushNotificationToAll } = await import("./utils/pushNotificationHelper");
+        await sendPushNotificationToAll(
+          {
+            title: "🎯 Novo Ciclo de Avaliação Criado",
+            body: `${input.name} - Período: ${new Date(input.startDate).toLocaleDateString("pt-BR")} a ${new Date(input.endDate).toLocaleDateString("pt-BR")}`,
+            icon: "/icon-192x192.png",
+            data: {
+              type: "evaluation_cycle",
+              cycleId: 0, // ID será gerado pelo auto-increment
+              url: "/ciclos-avaliacao",
+            },
+            actions: [
+              {
+                action: "view",
+                title: "Ver Detalhes",
+              },
+            ],
+          },
+          "cycle"
+        );
+        console.log(`[Cycles] Notificações push enviadas para novo ciclo: ${input.name}`);
+      } catch (error) {
+        console.error("[Cycles] Erro ao enviar notificações push:", error);
+        // Não falhar a criação se notificações falharem
+      }
+
       return { id: 0, success: true }; // ID será gerado pelo auto-increment
     }),
 

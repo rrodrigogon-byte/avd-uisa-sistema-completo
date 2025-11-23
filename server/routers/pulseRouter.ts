@@ -171,6 +171,21 @@ export const pulseRouter = router({
         });
       }
 
+      // Buscar dados da pesquisa antes de ativar
+      const survey = await db
+        .select()
+        .from(pulseSurveys)
+        .where(eq(pulseSurveys.id, input.surveyId))
+        .limit(1)
+        .then((r) => r[0]);
+
+      if (!survey) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Pesquisa não encontrada",
+        });
+      }
+
       await db
         .update(pulseSurveys)
         .set({
@@ -178,6 +193,34 @@ export const pulseRouter = router({
           activatedAt: new Date(),
         })
         .where(eq(pulseSurveys.id, input.surveyId));
+
+      // Enviar notificação push para todos os usuários
+      try {
+        const { sendPushNotificationToAll } = await import("../utils/pushNotificationHelper");
+        await sendPushNotificationToAll(
+          {
+            title: "📊 Nova Pesquisa Pulse Disponível",
+            body: `${survey.title} - Sua opinião é importante!`,
+            icon: "/icon-192x192.png",
+            data: {
+              type: "pulse_survey",
+              surveyId: survey.id,
+              url: `/pesquisas-pulse/${survey.id}/responder`,
+            },
+            actions: [
+              {
+                action: "respond",
+                title: "Responder Agora",
+              },
+            ],
+          },
+          "pulse"
+        );
+        console.log(`[Pulse] Notificações push enviadas para pesquisa ${survey.id}`);
+      } catch (error) {
+        console.error("[Pulse] Erro ao enviar notificações push:", error);
+        // Não falhar a ativação se notificações falharem
+      }
 
       return {
         success: true,

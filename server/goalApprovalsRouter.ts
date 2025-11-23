@@ -224,6 +224,39 @@ export const goalApprovalsRouter = router({
           message: `${ctx.user.name} enviou a meta "${goal.title}" para sua aprovação`,
           link: `/metas/${input.goalId}`,
         });
+
+        // Enviar notificação push para o gestor
+        try {
+          const { sendPushNotificationToUser } = await import("./utils/pushNotificationHelper");
+          await sendPushNotificationToUser(
+            employee.managerId,
+            {
+              title: "✅ Nova Meta para Aprovar",
+              body: `${ctx.user.name} enviou a meta "${goal.title}" para sua aprovação`,
+              icon: "/icon-192x192.png",
+              data: {
+                type: "goal_approval",
+                goalId: input.goalId,
+                url: `/metas/${input.goalId}`,
+              },
+              actions: [
+                {
+                  action: "approve",
+                  title: "Aprovar",
+                },
+                {
+                  action: "view",
+                  title: "Ver Detalhes",
+                },
+              ],
+            },
+            "goal"
+          );
+          console.log(`[Goals] Notificação push enviada para gestor ${employee.managerId} sobre meta ${input.goalId}`);
+        } catch (error) {
+          console.error("[Goals] Erro ao enviar notificação push:", error);
+          // Não falhar a solicitação se notificação falhar
+        }
       }
 
       return { success: true };
