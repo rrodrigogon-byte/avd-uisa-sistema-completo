@@ -98,7 +98,13 @@ import ConfiguracaoBonus from "@/pages/ConfiguracaoBonus";
 import ConfiguracaoWorkflowsBonus from "@/pages/ConfiguracaoWorkflowsBonus";
 import DashboardBonusRH from "./pages/DashboardBonusRH";
 import MovimentacaoNineBox from "./pages/MovimentacaoNineBox";
-import AprovacaoCalibracoes from "./pages/AprovacaoCalibracoes";
+
+import CiclosAvaliacaoLista from "@/pages/CiclosAvaliacaoLista";
+import CriarCicloAvaliacao from "@/pages/CriarCicloAvaliacao";
+import AderirCicloAvaliacao from "@/pages/AderirCicloAvaliacao";
+import AprovarMetasGestor from "@/pages/AprovarMetasGestor";
+import AcompanharCicloAvaliacao from "@/pages/AcompanharCicloAvaliacao";
+import AprovacaoGeralCiclo from "@/pages/AprovacaoGeralCiclo";
 import RankingGamificacao from "./pages/RankingGamificacao";
 import ConfiguracaoIntegracoes from "./pages/ConfiguracaoIntegracoes";
 import BonusPolicies from "@/pages/Bonus";
@@ -159,7 +165,15 @@ function Router() {
       <Route path="/aprovacoes/bonus-lote" component={AprovacaoBonusLote} />
       <Route path="/bonus/auditoria" component={BonusAuditoria} />
       <Route path="/avaliacoes-pendentes" component={AvaliacoesPendentes} />
-      <Route path="/aprovacoes/avaliacoes" component={AvaliacoesAprovacao} />
+
+
+          {/* Ciclo de Avaliação de Desempenho */}
+          <Route path="/ciclos-avaliacao" component={CiclosAvaliacaoLista} />
+          <Route path="/ciclos-avaliacao/criar" component={CriarCicloAvaliacao} />
+          <Route path="/ciclos-avaliacao/:id/aderir" component={AderirCicloAvaliacao} />
+          <Route path="/ciclos-avaliacao/:id/acompanhar" component={AcompanharCicloAvaliacao} />
+          <Route path="/ciclos-avaliacao/aprovar" component={AprovarMetasGestor} />
+          <Route path="/ciclos-avaliacao/aprovacao-geral" component={AprovacaoGeralCiclo} />
       {/* <Route path="/admin/bonus-workflows" component={BonusWorkflows} /> */}
       {/* <Route path="/admin/import-uisa" component={ImportUISA} /> */}
       <Route path="/admin/gerenciar-senhas-lideres" component={GerenciarSenhasLideres} />

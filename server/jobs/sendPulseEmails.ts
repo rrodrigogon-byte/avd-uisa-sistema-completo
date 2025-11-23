@@ -86,7 +86,7 @@ async function sendSurveyEmails(survey: any) {
 
   const sentEmployeeIds = new Set(
     existingLogs
-      .filter(log => log.status === "sent")
+      .filter(log => log.status === "enviada")
       .map(log => log.employeeId)
   );
 
@@ -155,7 +155,7 @@ async function sendSurveyEmails(survey: any) {
         surveyId: survey.id,
         employeeId: employee.id,
         email: employee.email,
-        status: "sent",
+        status: "enviada",
         attemptCount: 1,
         lastAttemptAt: new Date(),
         sentAt: new Date(),

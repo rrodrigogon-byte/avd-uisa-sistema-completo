@@ -437,7 +437,7 @@ export const pushNotificationsRouter = router({
         title: input.title,
         message: input.message,
         sentAt: new Date(),
-        status: "sent",
+        status: "enviada",
         deviceType: subscriptions[0].deviceType,
       });
 

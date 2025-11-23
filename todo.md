@@ -814,3 +814,14 @@
 - [ ] Acesso rápido a filtros frequentemente usados
 - [ ] Gerenciar filtros salvos (editar, deletar)
 - [ ] Criar tabela savedFilters no schema
+
+## ✅ CONCLUÍDO - Passo 1: Páginas Frontend do Ciclo de Avaliação (23/11/2024 13:45)
+
+- [x] Criar página /ciclos-avaliacao (lista de ciclos) - CiclosAvaliacaoLista.tsx
+- [x] Criar página /ciclos-avaliacao/criar (RH/Admin) - CriarCicloAvaliacao.tsx
+- [x] Criar página /ciclos-avaliacao/:id/aderir (Funcionário) - AderirCicloAvaliacao.tsx
+- [x] Criar página /ciclos-avaliacao/aprovar (Gestor) - AprovarMetasGestor.tsx
+- [x] Criar página /ciclos-avaliacao/:id/acompanhar (Funcionário) - AcompanharCicloAvaliacao.tsx
+- [x] Criar página /ciclos-avaliacao/aprovacao-geral (RH/Diretoria) - AprovacaoGeralCiclo.tsx
+- [x] Registrar todas as rotas no App.tsx
+- [x] Corrigir erro de status "sent" → "enviada" em pushNotifications e sendPulseEmails
