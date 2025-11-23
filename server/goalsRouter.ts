@@ -49,7 +49,7 @@ export const goalsRouter = router({
       // S - Específica: título e descrição detalhados
       if (
         input.title.length >= 10 &&
-        input.description.length >= 20 &&
+        input.description.length >= 10 &&
         /\b(aumentar|reduzir|melhorar|implementar|criar|desenvolver)\b/i.test(
           input.description
         )
@@ -116,7 +116,7 @@ export const goalsRouter = router({
     .input(
       z.object({
         title: z.string().min(5, "Título deve ter no mínimo 5 caracteres"),
-        description: z.string().min(20, "Descrição deve ter no mínimo 20 caracteres"),
+        description: z.string().min(10, "Descrição deve ter no mínimo 10 caracteres"),
         type: z.enum(["individual", "team", "organizational"]),
         goalType: z.enum(["individual", "corporate"]).default("individual"), // Nova: corporativa ou individual
         category: z.enum(["financial", "behavioral", "corporate", "development"]),
@@ -203,7 +203,7 @@ export const goalsRouter = router({
 
       // Validar critérios SMART automaticamente
       const validation = {
-        isSpecific: input.title.length >= 10 && input.description.length >= 20 && /\b(aumentar|reduzir|melhorar|implementar|criar|desenvolver)\b/i.test(input.description),
+        isSpecific: input.title.length >= 10 && input.description.length >= 10 && /\b(aumentar|reduzir|melhorar|implementar|criar|desenvolver)\b/i.test(input.description),
         isMeasurable: !!(input.measurementUnit && input.targetValue !== undefined),
         isAchievable: !!(input.targetValue && input.targetValue > 0 && input.targetValue < 1000000),
         isRelevant: /\b(impacto|resultado|benefício|objetivo|estratégia|crescimento|melhoria)\b/i.test(input.description),

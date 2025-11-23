@@ -231,7 +231,17 @@ export const successionRouter = router({
       const database = await getDb();
       if (!database) throw new Error("Database not available");
 
-      const [result] = await database.insert(successionCandidates).values(input);
+      // Preparar dados com valores default para campos opcionais
+      const candidateData = {
+        ...input,
+        gapAnalysis: input.gapAnalysis || null,
+        developmentActions: input.developmentActions || null,
+        nineBoxPosition: input.nineBoxPosition || null,
+        developmentPlanId: input.developmentPlanId || null,
+        notes: input.notes || null,
+      };
+
+      const [result] = await database.insert(successionCandidates).values(candidateData);
 
       return { id: result.insertId, success: true };
     }),

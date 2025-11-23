@@ -117,6 +117,23 @@ export default function ConfigurarAvaliacoes() {
     },
   });
 
+  const activateGoalsMutation = trpc.cycles.approveForGoals.useMutation({
+    onSuccess: () => {
+      toast.success("Ciclo ativado para criação de metas! Funcionários foram notificados.");
+      setIsDialogOpen(false);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erro ao ativar metas");
+    },
+  });
+
+  const handleActivateGoals = (cycleId: number) => {
+    if (confirm("Tem certeza que deseja ativar este ciclo para criação de metas? Todos os funcionários serão notificados.")) {
+      activateGoalsMutation.mutate({ cycleId });
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -536,17 +553,31 @@ export default function ConfigurarAvaliacoes() {
               </div>
             </div>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSave}
-                className="bg-[#F39200] hover:bg-[#D68200]"
-                disabled={createCycleMutation.isPending || updateCycleMutation.isPending}
-              >
-                {editingCycle ? "Atualizar" : "Criar"} Ciclo
-              </Button>
+            <DialogFooter className="flex justify-between">
+              <div>
+                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  Cancelar
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                {editingCycle && (
+                  <Button
+                    variant="outline"
+                    onClick={() => handleActivateGoals(editingCycle.id)}
+                    className="border-green-600 text-green-600 hover:bg-green-50"
+                  >
+                    <Award className="w-4 h-4 mr-2" />
+                    Ativar Metas
+                  </Button>
+                )}
+                <Button
+                  onClick={handleSave}
+                  className="bg-[#F39200] hover:bg-[#D68200]"
+                  disabled={createCycleMutation.isPending || updateCycleMutation.isPending}
+                >
+                  {editingCycle ? "Atualizar" : "Criar"} Ciclo
+                </Button>
+              </div>
             </DialogFooter>
           </DialogContent>
         </Dialog>

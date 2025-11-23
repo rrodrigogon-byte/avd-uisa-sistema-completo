@@ -873,6 +873,8 @@ function AddSuccessorForm({ planId, employees, onSave, onCancel, isLoading }: an
     priority: 1,
     performanceRating: "medio",
     potentialRating: "medio",
+    gapAnalysis: "",
+    developmentActions: "",
     notes: "",
   });
 
@@ -885,10 +887,15 @@ function AddSuccessorForm({ planId, employees, onSave, onCancel, isLoading }: an
       toast.error("Nível de prontidão é obrigatório");
       return;
     }
-    onSave({
+    // Preparar dados: converter strings vazias em undefined para o backend tratar como NULL
+    const dataToSave = {
       ...formData,
       employeeId: parseInt(formData.employeeId),
-    });
+      gapAnalysis: formData.gapAnalysis?.trim() || undefined,
+      developmentActions: formData.developmentActions?.trim() || undefined,
+      notes: formData.notes?.trim() || undefined,
+    };
+    onSave(dataToSave);
   };
 
   return (
@@ -967,11 +974,31 @@ function AddSuccessorForm({ planId, employees, onSave, onCancel, isLoading }: an
       </div>
 
       <div>
+        <Label>Análise de Gaps</Label>
+        <Textarea 
+          value={formData.gapAnalysis}
+          onChange={(e) => setFormData({...formData, gapAnalysis: e.target.value})}
+          rows={3}
+          placeholder="Análise das lacunas de competências..."
+        />
+      </div>
+
+      <div>
+        <Label>Ações de Desenvolvimento</Label>
+        <Textarea 
+          value={formData.developmentActions}
+          onChange={(e) => setFormData({...formData, developmentActions: e.target.value})}
+          rows={3}
+          placeholder="Ações recomendadas para desenvolvimento..."
+        />
+      </div>
+
+      <div>
         <Label>Comentários</Label>
         <Textarea 
           value={formData.notes}
           onChange={(e) => setFormData({...formData, notes: e.target.value})}
-          rows={4}
+          rows={3}
           placeholder="Comentários sobre o sucessor..."
         />
       </div>

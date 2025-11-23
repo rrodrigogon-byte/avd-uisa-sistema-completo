@@ -1,3 +1,19 @@
+## 🔥 TAREFAS URGENTES - Nova Solicitação (23/11/2024 18:40)
+
+### Correções de Bugs Críticos
+- [x] Corrigir validação de descrição de meta (20 → 10 caracteres mínimo)
+- [x] Corrigir erro ao aprovar metas (validação impedindo aprovação)
+- [x] Corrigir erro ao incluir sucessor (SQL insert com valores faltantes: gapAnalysis, developmentActions)
+- [x] Corrigir e complementar página de Calibração (já funcional)
+- [x] Corrigir e complementar página de Calibração da Diretoria (já funcional)
+
+### Novas Funcionalidades Solicitadas
+- [ ] Implementar exportação real em PDF dos relatórios de PDI (jsPDF + autoTable)
+- [ ] Criar dashboard de notificações enviadas para RH acompanhar
+- [ ] Adicionar filtro de período temporal nos relatórios de PDI (comparar evolução)
+
+---
+
 ## ✅ TAREFAS CONCLUÍDAS - 23/11/2024 18:30
 
 ### Correções Urgentes
@@ -52,17 +68,8 @@
 - ✅ Relatórios visuais de evolução de PDI
 - ✅ Menu atualizado com novos itens
 
----
+- [x] Adicionar botão "Ativar Metas" no modal de edição de ciclo
 
-## 🔄 PRÓXIMAS MELHORIAS SUGERIDAS
-
-### Relatórios de PDI
-- [ ] Implementar exportação real em PDF
-- [ ] Buscar dados reais de ações 70-20-10 do banco
-- [ ] Adicionar gráfico de linha temporal de evolução
-- [ ] Filtro por período de tempo
-
-### Notificações
-- [ ] Criar template de email personalizado
-- [ ] Adicionar notificações in-app
-- [ ] Dashboard de notificações enviadas
+### Novo Bug Reportado
+- [ ] Corrigir envio de Pesquisas Pulse (não está sendo enviado)
+- [ ] Corrigir erro 404 em todos os templates de avaliação
