@@ -92,7 +92,7 @@ export async function sendPushNotificationToUser(
           title: payload.title,
           message: payload.body,
           sentAt: new Date(),
-          status: "enviada",
+          status: "sent",
           deviceType: subscription.deviceType,
         });
 
@@ -109,7 +109,7 @@ export async function sendPushNotificationToUser(
           title: payload.title,
           message: payload.body,
           sentAt: new Date(),
-          status: "erro",
+          status: "failed",
           deviceType: subscription.deviceType,
           errorMessage: error.message,
         });

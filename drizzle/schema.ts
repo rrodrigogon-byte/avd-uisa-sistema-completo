@@ -2248,7 +2248,7 @@ export const pushNotificationLogs = mysqlTable("pushNotificationLogs", {
   deviceType: mysqlEnum("deviceType", ["desktop", "mobile", "tablet"]).default("desktop"),
   
   // Status de entrega
-  status: mysqlEnum("status", ["enviada", "aberta", "erro"]).default("enviada").notNull(),
+  status: mysqlEnum("status", ["sent", "opened", "failed"]).default("sent").notNull(),
   errorMessage: text("errorMessage"), // Mensagem de erro se status = erro
   
   // Timestamps

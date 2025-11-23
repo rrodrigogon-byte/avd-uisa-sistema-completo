@@ -192,7 +192,7 @@ export const pushNotificationsRouter = router({
         message: z.string(),
         actionUrl: z.string().optional(),
         deviceType: z.enum(["desktop", "mobile", "tablet"]).optional(),
-        status: z.enum(["enviada", "aberta", "erro"]).optional(),
+        status: z.enum(["sent", "opened", "failed"]).optional(),
         errorMessage: z.string().optional(),
       })
     )
@@ -207,7 +207,7 @@ export const pushNotificationsRouter = router({
         message: input.message,
         actionUrl: input.actionUrl || null,
         deviceType: input.deviceType || "desktop",
-        status: input.status || "enviada",
+        status: input.status || "sent",
         errorMessage: input.errorMessage || null,
       });
 
@@ -225,7 +225,7 @@ export const pushNotificationsRouter = router({
 
       await db
         .update(pushNotificationLogs)
-        .set({ status: "aberta", openedAt: new Date() })
+        .set({ status: "opened", openedAt: new Date() })
         .where(eq(pushNotificationLogs.id, input.logId));
 
       return { success: true };
@@ -241,7 +241,7 @@ export const pushNotificationsRouter = router({
         offset: z.number().optional(),
         userId: z.number().optional(),
         type: z.string().optional(),
-        status: z.enum(["enviada", "aberta", "erro"]).optional(),
+        status: z.enum(["sent", "opened", "failed"]).optional(),
         startDate: z.date().optional(),
         endDate: z.date().optional(),
       })
@@ -437,7 +437,7 @@ export const pushNotificationsRouter = router({
         title: input.title,
         message: input.message,
         sentAt: new Date(),
-        status: "enviada",
+        status: "sent",
         deviceType: subscriptions[0].deviceType,
       });
 

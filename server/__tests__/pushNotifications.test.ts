@@ -29,7 +29,7 @@ describe("Push Notifications Logs", () => {
       message: "Sua meta está atrasada há 7 dias",
       actionUrl: "/metas/1",
       deviceType: "desktop",
-      status: "enviada",
+      status: "sent",
     });
 
     expect(result).toHaveProperty("logId");
@@ -47,7 +47,7 @@ describe("Push Notifications Logs", () => {
     expect(log).toBeDefined();
     expect(log.type).toBe("meta_atrasada");
     expect(log.title).toBe("Meta Atrasada");
-    expect(log.status).toBe("enviada");
+    expect(log.status).toBe("sent");
   });
 
   it("deve marcar notificação como aberta com markAsOpened", async () => {
@@ -71,7 +71,7 @@ describe("Push Notifications Logs", () => {
       .where(eq(pushNotificationLogs.id, testLogId))
       .limit(1);
 
-    expect(log.status).toBe("aberta");
+    expect(log.status).toBe("opened");
     expect(log.openedAt).toBeDefined();
   });
 
@@ -93,7 +93,7 @@ describe("Push Notifications Logs", () => {
     const testLog = logs.find((log: any) => log.id === testLogId);
     expect(testLog).toBeDefined();
     expect(testLog?.type).toBe("meta_atrasada");
-    expect(testLog?.status).toBe("aberta");
+    expect(testLog?.status).toBe("opened");
   });
 
   it("deve filtrar logs por tipo", async () => {
@@ -122,13 +122,13 @@ describe("Push Notifications Logs", () => {
     });
 
     const logs = await caller.pushNotifications.getRealLogs({
-      status: "aberta",
+      status: "opened",
       limit: 10,
     });
 
     expect(Array.isArray(logs)).toBe(true);
     logs.forEach((log: any) => {
-      expect(log.status).toBe("aberta");
+      expect(log.status).toBe("opened");
     });
   });
 

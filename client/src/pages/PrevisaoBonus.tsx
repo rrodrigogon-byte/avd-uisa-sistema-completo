@@ -43,13 +43,13 @@ export default function PrevisaoBonus() {
   const [goalCompletionRate, setGoalCompletionRate] = useState<number>(75);
 
   // Buscar dados
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: employees } = trpc.employees.list.useQuery();
   const { data: policies } = trpc.bonus.list.useQuery({ active: true });
   const { data: monthlyTrends } = trpc.bonus.getMonthlyTrends.useQuery({ months: 6 });
 
   // Buscar dados do funcionário selecionado
   const { data: employeeData } = trpc.employees.getById.useQuery(
-    selectedEmployee!,
+    { id: selectedEmployee! },
     { enabled: !!selectedEmployee }
   );
 
@@ -59,12 +59,12 @@ export default function PrevisaoBonus() {
 
     // Encontrar política aplicável ao cargo do funcionário
     const applicablePolicy = policies.find(
-      (p: any) => p.positionId === employeeData.positionId
+      (p: any) => p.positionId === employeeData.employee.positionId
     );
 
     if (!applicablePolicy) return null;
 
-    const baseSalary = Number(employeeData.salary || 0);
+    const baseSalary = Number(employeeData.employee.salary || 0);
     
     // Calcular multiplicador baseado em performance e metas
     const performanceFactor = performanceProjection / 100;
@@ -72,14 +72,15 @@ export default function PrevisaoBonus() {
     const combinedFactor = (performanceFactor * 0.6 + goalFactor * 0.4);
     
     // Aplicar multiplicadores da política
-    let multiplier = 0;
-    if (combinedFactor >= 0.9) {
-      multiplier = Number(applicablePolicy.multiplierExceeded || 0);
-    } else if (combinedFactor >= 0.7) {
-      multiplier = Number(applicablePolicy.multiplierMet || 0);
-    } else {
-      multiplier = Number(applicablePolicy.multiplierPartial || 0);
-    }
+    const baseMultiplier = Number(applicablePolicy.salaryMultiplier || 0);
+    const minMult = Number(applicablePolicy.minMultiplier || 0);
+    const maxMult = Number(applicablePolicy.maxMultiplier || 0);
+    
+    // Ajustar multiplicador baseado em performance
+    let multiplier = baseMultiplier * combinedFactor;
+    
+    // Limitar entre min e max
+    multiplier = Math.max(minMult, Math.min(maxMult, multiplier));
 
     const projectedBonus = baseSalary * multiplier;
 
