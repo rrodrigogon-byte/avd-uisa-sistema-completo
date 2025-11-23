@@ -330,7 +330,7 @@ export default function PDIInteligenteDetalhes() {
             </div>
           </CardHeader>
           <CardContent>
-            <GapsMatrixSection pdiId={pdiId} gaps={pdi.competencyGaps} />
+            <GapsMatrixSection pdiId={pdiId} gaps={pdi.gaps || []} />
           </CardContent>
         </Card>
 

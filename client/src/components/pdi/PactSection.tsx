@@ -54,8 +54,8 @@ export default function PactSection({ pdiId, details }: PactSectionProps) {
 
   const getEmployeeName = (id: number | undefined) => {
     if (!id) return "Não definido";
-    const employee = employees?.find((e) => e.id === id);
-    return employee?.name || `Funcionário #${id}`;
+    const employee = employees?.find((e) => e.employee.id === id);
+    return employee?.employee.name || `Funcionário #${id}`;
   };
 
   if (!isEditing) {
@@ -119,8 +119,8 @@ export default function PactSection({ pdiId, details }: PactSectionProps) {
             <SelectContent>
               <SelectItem value="">Nenhum</SelectItem>
               {employees?.map((emp) => (
-                <SelectItem key={emp.id} value={emp.id.toString()}>
-                  {emp.name}
+                <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
+                  {emp.employee.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -139,8 +139,8 @@ export default function PactSection({ pdiId, details }: PactSectionProps) {
             <SelectContent>
               <SelectItem value="">Nenhum</SelectItem>
               {employees?.map((emp) => (
-                <SelectItem key={emp.id} value={emp.id.toString()}>
-                  {emp.name}
+                <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
+                  {emp.employee.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -159,8 +159,8 @@ export default function PactSection({ pdiId, details }: PactSectionProps) {
             <SelectContent>
               <SelectItem value="">Nenhum</SelectItem>
               {employees?.map((emp) => (
-                <SelectItem key={emp.id} value={emp.id.toString()}>
-                  {emp.name}
+                <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
+                  {emp.employee.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -179,8 +179,8 @@ export default function PactSection({ pdiId, details }: PactSectionProps) {
             <SelectContent>
               <SelectItem value="">Nenhum</SelectItem>
               {employees?.map((emp) => (
-                <SelectItem key={emp.id} value={emp.id.toString()}>
-                  {emp.name}
+                <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
+                  {emp.employee.name}
                 </SelectItem>
               ))}
             </SelectContent>

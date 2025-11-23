@@ -370,7 +370,7 @@ export async function getActiveCycle() {
     .from(evaluationCycles)
     .where(
       and(
-        eq(evaluationCycles.status, "em_andamento"),
+        eq(evaluationCycles.status, "ativo"),
         lte(evaluationCycles.startDate, now),
         gte(evaluationCycles.endDate, now)
       )

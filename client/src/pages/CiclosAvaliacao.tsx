@@ -81,6 +81,16 @@ export default function CiclosAvaliacao() {
     },
   });
 
+  const approveForGoalsMutation = trpc.evaluationCycles.approveForGoals.useMutation({
+    onSuccess: () => {
+      toast.success("Ciclo aprovado para preenchimento de metas! Funcionários já podem criar suas metas.");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao aprovar ciclo: ${error.message}`);
+    },
+  });
+
   const handleCreate = () => {
     createMutation.mutate(formData);
   };
@@ -340,7 +350,43 @@ export default function CiclosAvaliacao() {
                     </>
                   )}
 
-                  {(cycle.status === "concluido" || cycle.status === "cancelado") && (
+                  {cycle.status === "concluido" && (
+                    <>
+                      {!cycle.approvedForGoals && (
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => {
+                            if (confirm("Aprovar este ciclo para preenchimento de metas pelos funcionários?")) {
+                              approveForGoalsMutation.mutate({ id: cycle.id });
+                            }
+                          }}
+                        >
+                          <CheckCircle2 className="h-4 w-4 mr-1" />
+                          Aprovar para Metas
+                        </Button>
+                      )}
+                      {cycle.approvedForGoals && (
+                        <Badge variant="default" className="text-green-600">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          Aprovado para Metas
+                        </Badge>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => {
+                          if (confirm("Tem certeza que deseja deletar este ciclo?")) {
+                            deleteMutation.mutate({ id: cycle.id });
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Deletar
+                      </Button>
+                    </>
+                  )}
+                  {cycle.status === "cancelado" && (
                     <Button
                       size="sm"
                       variant="destructive"

@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import CriarMetasCiclo from "@/pages/CriarMetasCiclo";
 import DashboardAprovacoesCiclos from "@/pages/DashboardAprovacoesCiclos";
+import DashboardMetasCiclos from "@/pages/DashboardMetasCiclos";
 import Alertas from "@/pages/Alertas";
 import Discrepancias from "./pages/Discrepancias";
 import Departamentos from "./pages/Departamentos";
@@ -184,6 +185,7 @@ function Router() {
       <Route path="/admin/historico-senhas" component={HistoricoSenhas} />
       <Route path="/metas/corporativas" component={MetasCorporativas} />
       <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} />
+      <Route path="/metas/dashboard-ciclos" component={DashboardMetasCiclos} />
       {/* <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} /> */}
       {/* <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} /> */}
       {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}

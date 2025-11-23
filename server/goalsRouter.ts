@@ -115,7 +115,7 @@ export const goalsRouter = router({
   createSMART: protectedProcedure
     .input(
       z.object({
-        title: z.string().min(10),
+        title: z.string().min(5, "Título deve ter no mínimo 5 caracteres"),
         description: z.string().min(20, "Descrição deve ter no mínimo 20 caracteres"),
         type: z.enum(["individual", "team", "organizational"]),
         goalType: z.enum(["individual", "corporate"]).default("individual"), // Nova: corporativa ou individual
@@ -1833,5 +1833,76 @@ export const goalsRouter = router({
         .orderBy(desc(smartGoals.createdAt));
 
       return goals;
+    }),
+
+  /**
+   * Contar metas por ciclo (para dashboard de acompanhamento)
+   */
+  countByCycle: protectedProcedure
+    .input(z.object({ cycleId: z.number().optional() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Se cycleId for fornecido, buscar apenas para esse ciclo
+      // Senão, buscar para todos os ciclos aprovados
+      const cyclesQuery = input.cycleId
+        ? await db.select().from(evaluationCycles).where(eq(evaluationCycles.id, input.cycleId))
+        : await db.select().from(evaluationCycles).where(eq(evaluationCycles.approvedForGoals, true));
+
+      const results = [];
+      for (const cycle of cyclesQuery) {
+        // Contar total de funcionários ativos
+        const totalEmployees = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(employees)
+          .where(eq(employees.status, "ativo"));
+
+        // Contar quantos funcionários criaram metas neste ciclo
+        const employeesWithGoals = await db
+          .select({ count: sql<number>`COUNT(DISTINCT ${smartGoals.employeeId})` })
+          .from(smartGoals)
+          .where(eq(smartGoals.cycleId, cycle.id));
+
+        // Contar total de metas criadas
+        const totalGoals = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(smartGoals)
+          .where(eq(smartGoals.cycleId, cycle.id));
+
+        // Contar metas aprovadas
+        const approvedGoals = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(smartGoals)
+          .where(and(
+            eq(smartGoals.cycleId, cycle.id),
+            eq(smartGoals.status, "approved")
+          ));
+
+        // Contar metas pendentes de aprovação
+        const pendingGoals = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(smartGoals)
+          .where(and(
+            eq(smartGoals.cycleId, cycle.id),
+            eq(smartGoals.status, "pending_approval")
+          ));
+
+        results.push({
+          cycleId: cycle.id,
+          cycleName: cycle.name,
+          cycleYear: cycle.year,
+          totalEmployees: Number(totalEmployees[0]?.count || 0),
+          employeesWithGoals: Number(employeesWithGoals[0]?.count || 0),
+          totalGoals: Number(totalGoals[0]?.count || 0),
+          approvedGoals: Number(approvedGoals[0]?.count || 0),
+          pendingGoals: Number(pendingGoals[0]?.count || 0),
+          adherencePercentage: totalEmployees[0]?.count
+            ? Math.round((Number(employeesWithGoals[0]?.count || 0) / Number(totalEmployees[0]?.count)) * 100)
+            : 0,
+        });
+      }
+
+      return results;
     }),
 });

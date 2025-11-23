@@ -140,7 +140,7 @@ export default function CriarMetaSMART() {
       bonusPercentage: formData.bonusPercentage ? parseFloat(formData.bonusPercentage) : undefined,
       bonusAmount: formData.bonusAmount ? parseFloat(formData.bonusAmount) : undefined,
       cycleId: parseInt(formData.cycleId),
-      pdiPlanId: formData.pdiPlanId ? parseInt(formData.pdiPlanId) : undefined,
+      pdiPlanId: formData.pdiPlanId && formData.pdiPlanId !== "" ? parseInt(formData.pdiPlanId) : undefined,
     });
   };
 

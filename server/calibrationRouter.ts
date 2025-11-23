@@ -171,7 +171,7 @@ export const calibrationRouter = router({
           const [activeCycle] = await db
             .select()
             .from(evaluationCycles)
-            .where(eq(evaluationCycles.status, "em_andamento"))
+            .where(eq(evaluationCycles.status, "ativo"))
             .limit(1);
 
           if (!activeCycle) {

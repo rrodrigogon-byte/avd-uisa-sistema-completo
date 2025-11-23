@@ -1,3 +1,18 @@
+## 🔴 CORREÇÕES URGENTES - 23/11/2024 17:00
+
+### Erros Críticos Reportados
+- [x] Corrigir erro NaN no pdiPlanId ao salvar meta em /metas/criar
+- [x] Corrigir seletor de funcionários vazio no modal de incluir sucessor (já estava funcionando)
+
+### Novas Funcionalidades Solicitadas
+- [x] Implementar contador real de metas por ciclo (endpoint countByCycle criado)
+- [x] Criar dashboard de acompanhamento de metas por ciclo (DashboardMetasCiclos)
+- [ ] Adicionar workflow de aprovação de metas pelos gestores
+- [ ] Implementar notificações automáticas quando ciclo for aprovado
+- [ ] Criar relatórios consolidados de PDI (evolução gaps, 70-20-10, riscos)
+
+---
+
 ## ✅ CORREÇÕES CRÍTICAS - 23/11/2024 16:15 (CONCLUÍDAS)
 
 ### Problemas Urgentes Reportados pelo Usuário
@@ -78,7 +93,7 @@
 - [x] Pacto de Desenvolvimento: permitir editar e selecionar pessoas (sponsors, mentores, guardiões)
 - [x] Matriz de Gaps: permitir construir e editar gaps de competências
 - [x] Gerar sugestão automática de plano 70-20-10 e permitir alterações
-- [ ] Riscos: trazer principais riscos e permitir inclusão/edição de novos
+- [x] Riscos: trazer principais riscos e permitir inclusão/edição de novos
 
 ### Sistema de Metas Vinculadas a Ciclos
 - [x] Criar página de criação de metas vinculadas ao ciclo aprovado
@@ -86,3 +101,17 @@
 - [x] Implementar notificações automáticas quando ciclo for aprovado
 - [x] Criar dashboard de acompanhamento de aprovações de ciclos
 - [x] Visualizar quais ciclos estão aprovados e quantos funcionários preencheram metas
+
+## ✅ PROBLEMAS URGENTES CORRIGIDOS - 23/11/2024 18:00
+
+### PDI Inteligente - Problemas Críticos
+- [x] Corrigir Pacto de Desenvolvimento mostrando "Colaborador ID: 90908" ao invés do nome
+- [x] Adicionar botões de edição no Pacto de Desenvolvimento para selecionar pessoas
+- [x] Implementar funcionalidade de adicionar/editar gaps na Matriz de Gaps (corrigido acesso aos dados)
+
+### Validação de Metas
+- [x] Reduzir validação mínima de título de meta de 10 para 5 caracteres
+
+### Aprovação de Ciclos
+- [x] Adicionar interface clara para aprovar ciclos 360° (botão "Aprovar para Metas" em ciclos concluídos)
+- [x] Documentar onde e como aprovar ciclos para preenchimento de metas (botão na página /ciclos-avaliacao)
