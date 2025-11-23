@@ -2,8 +2,8 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { systemSettings } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { systemSettings, pulseSurveyEmailLogs } from "../../drizzle/schema";
+import { eq, sql } from "drizzle-orm";
 import { sendEmail } from "../utils/emailService";
 
 /**
@@ -11,6 +11,75 @@ import { sendEmail } from "../utils/emailService";
  * Endpoints para configurações do sistema (SMTP, etc)
  */
 export const adminRouter = router({
+  /**
+   * Obter estatísticas de e-mails
+   */
+  getEmailStats: protectedProcedure.query(async ({ ctx }) => {
+    if (ctx.user.role !== 'admin') {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Apenas administradores podem acessar estatísticas de e-mail',
+      });
+    }
+
+    const db = await getDb();
+    if (!db) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Banco de dados não disponível',
+      });
+    }
+
+    // Buscar estatísticas agregadas
+    const totalSent = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(pulseSurveyEmailLogs)
+      .then(r => r[0]?.count || 0);
+
+    const totalSuccess = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(pulseSurveyEmailLogs)
+      .where(eq(pulseSurveyEmailLogs.status, 'sent'))
+      .then(r => r[0]?.count || 0);
+
+    const totalFailed = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(pulseSurveyEmailLogs)
+      .where(eq(pulseSurveyEmailLogs.status, 'failed'))
+      .then(r => r[0]?.count || 0);
+
+    // Dados mensais (últimos 12 meses)
+    const monthlyData = await db
+      .select({
+        month: sql<string>`DATE_FORMAT(sentAt, '%Y-%m')`,
+        sent: sql<number>`COUNT(*)`,
+        success: sql<number>`SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END)`,
+        failed: sql<number>`SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END)`,
+      })
+      .from(pulseSurveyEmailLogs)
+      .where(sql`sentAt >= DATE_SUB(NOW(), INTERVAL 12 MONTH)`)
+      .groupBy(sql`DATE_FORMAT(sentAt, '%Y-%m')`)
+      .orderBy(sql`DATE_FORMAT(sentAt, '%Y-%m')`);
+
+    // Dados por tipo (simulado - todos são pulse surveys por enquanto)
+    const typeData = [
+      { type: 'Pesquisa Pulse', count: totalSent },
+    ];
+
+    return {
+      totalSent,
+      totalSuccess,
+      totalFailed,
+      successRate: totalSent > 0 ? (totalSuccess / totalSent) * 100 : 0,
+      monthlyData: monthlyData.map(m => ({
+        month: m.month,
+        sent: Number(m.sent),
+        success: Number(m.success),
+        failed: Number(m.failed),
+      })),
+      typeData,
+    };
+  }),
   /**
    * Obter configurações SMTP
    */

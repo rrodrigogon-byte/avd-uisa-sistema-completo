@@ -82,11 +82,11 @@ export default function GerenciarCiclosAvaliacao() {
   const createCycle = trpc.cycles.create.useMutation({
     onSuccess: () => {
       toast.success("Ciclo criado com sucesso!");
-      setCreateDialogOpen(false);
+      setIsCreateDialogOpen(false);
+      setFormData({ name: "", startDate: "", endDate: "" });
       refetch();
-      resetForm();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erro ao criar ciclo", {
         description: error.message,
       });
@@ -95,7 +95,7 @@ export default function GerenciarCiclosAvaliacao() {
 
   // Gerar avaliações
   const generateEvaluations = trpc.cycles.generateEvaluations.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast.success(`${data.count} avaliações geradas com sucesso!`);
       setGenerateDialogOpen(false);
       refetch();
@@ -113,7 +113,7 @@ export default function GerenciarCiclosAvaliacao() {
       toast.success("Ciclo finalizado!");
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erro ao finalizar ciclo", {
         description: error.message,
       });
@@ -126,7 +126,7 @@ export default function GerenciarCiclosAvaliacao() {
       toast.success("Ciclo reaberto!");
       refetch();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error("Erro ao reabrir ciclo", {
         description: error.message,
       });

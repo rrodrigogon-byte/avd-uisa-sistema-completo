@@ -50,7 +50,7 @@ import { calibrationDirectorRouter } from "./routers/calibrationDirectorRouter";
 import { reportsRouter } from "./routers/reportsRouter";
 import { calibrationMeetingRouter } from "./calibrationMeetingRouter";
 import { performanceEvaluationCycleRouter } from "./performanceEvaluationCycleRouter";
-import { and, desc, eq, sql, gte, lte } from "drizzle-orm";
+import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
@@ -437,6 +437,88 @@ export const appRouter = router({
           .where(eq(employees.id, input.id));
 
         return { success: true, message: "Colaborador atualizado com sucesso" };
+      }),
+
+    create: protectedProcedure
+      .input(
+        z.object({
+          employeeCode: z.string(),
+          name: z.string(),
+          email: z.string().email(),
+          cpf: z.string().optional(),
+          birthDate: z.date().optional(),
+          hireDate: z.date().optional(),
+          departmentId: z.number().optional(),
+          positionTitle: z.string().optional(),
+          salary: z.number().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Banco de dados indisponível",
+          });
+        }
+
+        // Verificar se já existe funcionário com mesmo código ou email
+        const existing = await database
+          .select()
+          .from(employees)
+          .where(
+            or(
+              eq(employees.employeeCode, input.employeeCode),
+              eq(employees.email, input.email)
+            )
+          )
+          .limit(1);
+
+        if (existing.length > 0) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Já existe um funcionário com este código ou e-mail",
+          });
+        }
+
+        // Criar cargo se não existir
+        let positionId: number | null = null;
+        if (input.positionTitle) {
+          const existingPosition = await database
+            .select()
+            .from(positions)
+            .where(eq(positions.title, input.positionTitle))
+            .limit(1);
+
+          if (existingPosition.length > 0) {
+            positionId = existingPosition[0].id;
+          } else {
+            // Gerar código único para o cargo
+            const positionCode = `POS-${Date.now()}`;
+            const [newPosition] = await database.insert(positions).values({
+              code: positionCode,
+              title: input.positionTitle,
+              description: `Cargo criado automaticamente: ${input.positionTitle}`,
+              level: "junior",
+            });
+            positionId = Number(newPosition.insertId);
+          }
+        }
+
+        // Criar funcionário
+        const [result] = await database.insert(employees).values({
+          name: input.name,
+          email: input.email,
+          employeeCode: input.employeeCode,
+          departmentId: input.departmentId || 1, // Default para evitar null
+          positionId: positionId || 1, // Default para evitar null
+          hireDate: input.hireDate || new Date(),
+          cpf: input.cpf || null,
+          birthDate: input.birthDate || null,
+          salary: input.salary || null,
+        });
+
+        return { success: true, employeeId: Number(result.insertId) };
       }),
 
     getDepartments: protectedProcedure.query(async () => {
@@ -2515,6 +2597,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Gestão de Ciclos de Avaliação (360°)
   evaluationCycles: cyclesRouter,
+  cycles: cyclesRouter, // Alias para compatibilidade
   
   reportBuilder: reportBuilderRouter,
   reportAnalytics: reportAnalyticsRouter,

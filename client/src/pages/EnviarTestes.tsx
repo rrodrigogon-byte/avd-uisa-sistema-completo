@@ -450,7 +450,7 @@ export default function EnviarTestes() {
                   <div className="space-y-3">
                     {costCenters?.map((cc: any) => {
                       const ccEmployees = employees?.filter(
-                        e => e.employee.costCenterId === cc.id && e.employee.status === 'ativo' && e.employee.email
+                        e => e.employee.costCenter === cc.code && e.employee.status === 'ativo' && e.employee.email
                       ) || [];
                       return (
                         <Card key={cc.id} className="border-gray-200">

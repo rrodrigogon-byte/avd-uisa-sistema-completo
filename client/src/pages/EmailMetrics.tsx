@@ -83,7 +83,7 @@ export default function EmailMetrics() {
 
   // Preparar dados para gráfico de linha (histórico mensal)
   const lineChartData = {
-    labels: stats.monthlyData.map(m => {
+    labels: stats.monthlyData.map((m: { month: string; sent: number; success: number; failed: number }) => {
       const [year, month] = m.month.split('-');
       const date = new Date(parseInt(year), parseInt(month) - 1);
       return date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
@@ -91,7 +91,7 @@ export default function EmailMetrics() {
     datasets: [
       {
         label: 'E-mails Enviados',
-        data: stats.monthlyData.map(m => m.sent),
+        data: stats.monthlyData.map((m: { month: string; sent: number; success: number; failed: number }) => m.sent),
         borderColor: 'rgb(99, 102, 241)',
         backgroundColor: 'rgba(99, 102, 241, 0.1)',
         fill: true,
@@ -99,7 +99,7 @@ export default function EmailMetrics() {
       },
       {
         label: 'Sucesso',
-        data: stats.monthlyData.map(m => m.success),
+        data: stats.monthlyData.map((m: { month: string; sent: number; success: number; failed: number }) => m.success),
         borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
         fill: true,
@@ -107,7 +107,7 @@ export default function EmailMetrics() {
       },
       {
         label: 'Falhas',
-        data: stats.monthlyData.map(m => m.failed),
+        data: stats.monthlyData.map((m: { month: string; sent: number; success: number; failed: number }) => m.failed),
         borderColor: 'rgb(239, 68, 68)',
         backgroundColor: 'rgba(239, 68, 68, 0.1)',
         fill: true,

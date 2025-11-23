@@ -346,7 +346,7 @@ export default function HierarquiaOrganizacional() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os departamentos</SelectItem>
-                  {departments?.map((dept: string) => (
+                  {departments?.map((dept: any) => (
                     <SelectItem key={dept} value={dept}>
                       {dept}
                     </SelectItem>

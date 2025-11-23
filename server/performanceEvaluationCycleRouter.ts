@@ -214,29 +214,44 @@ export const performanceEvaluationCycleRouter = router({
       const db = await getDb();
       if (!db) return [];
 
-      let query = db
-        .select({
-          participant: performanceEvaluationParticipants,
-          employee: employees,
-          department: departments,
-        })
-        .from(performanceEvaluationParticipants)
-        .leftJoin(employees, eq(performanceEvaluationParticipants.employeeId, employees.id))
-        .leftJoin(departments, eq(employees.departmentId, departments.id))
-        .where(eq(performanceEvaluationParticipants.cycleId, input.cycleId));
-
+      let participants; 
       // Se for gestor, filtrar apenas seus subordinados
       if (ctx.user.role === "gestor") {
-        query = query.where(eq(performanceEvaluationParticipants.managerId, ctx.user.id)) as any;
+        participants = await db
+          .select({
+            participant: performanceEvaluationParticipants,
+            employee: employees,
+            department: departments,
+          })
+          .from(performanceEvaluationParticipants)
+          .leftJoin(employees, eq(performanceEvaluationParticipants.employeeId, employees.id))
+          .leftJoin(departments, eq(employees.departmentId, departments.id))
+          .where(
+            and(
+              eq(performanceEvaluationParticipants.cycleId, input.cycleId),
+              eq(performanceEvaluationParticipants.managerId, ctx.user.id),
+              input.status ? eq(performanceEvaluationParticipants.status, input.status) : undefined
+            )
+          );
+      } else {
+        participants = await db
+          .select({
+            participant: performanceEvaluationParticipants,
+            employee: employees,
+            department: departments,
+          })
+          .from(performanceEvaluationParticipants)
+          .leftJoin(employees, eq(performanceEvaluationParticipants.employeeId, employees.id))
+          .leftJoin(departments, eq(employees.departmentId, departments.id))
+          .where(
+            and(
+              eq(performanceEvaluationParticipants.cycleId, input.cycleId),
+              input.status ? eq(performanceEvaluationParticipants.status, input.status) : undefined
+            )
+          );
       }
 
-      if (input.status) {
-        query = query.where(eq(performanceEvaluationParticipants.status, input.status)) as any;
-      }
-
-      const participants = await query;
-
-      return participants.map(p => ({
+      return participants.map((p: any) => ({
         ...p.participant,
         individualGoals: p.participant.individualGoals ? JSON.parse(p.participant.individualGoals) : [],
         employee: p.employee,

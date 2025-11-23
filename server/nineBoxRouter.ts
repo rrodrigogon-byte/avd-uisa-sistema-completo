@@ -99,9 +99,11 @@ export const nineBoxRouter = router({
             input.departmentIds && input.departmentIds.length > 0
               ? inArray(employees.departmentId, input.departmentIds)
               : undefined,
-            input.costCenterIds && input.costCenterIds.length > 0
-              ? inArray(employees.costCenterId, input.costCenterIds)
-              : undefined,
+            // Nota: costCenter é varchar, não int - precisa ser comparado com códigos
+            // TODO: Implementar filtro por costCenter corretamente
+            // input.costCenterIds && input.costCenterIds.length > 0
+            //   ? inArray(employees.costCenter, input.costCenterIds)
+            //   : undefined,
             input.positionIds && input.positionIds.length > 0
               ? inArray(employees.positionId, input.positionIds)
               : undefined,
