@@ -186,6 +186,7 @@ function Router() {
       {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}
       {/* <Route path="/folha-pagamento/exportar" component={ExportarFolha} /> */}
        <Route path="/avaliacoes" component={Avaliacoes} />
+      <Route path="/avaliacoes/criar" component={Avaliacao360Enhanced} />
       <Route path="/avaliacoes/configurar" component={ConfigurarAvaliacoes} />
        <Route path="/avaliacoes/360/:id" component={Avaliacao360Enhanced} />
        <Route path="/avaliacoes/360/:id/autoavaliacao" component={Avaliacao360Autoavaliacao} />
@@ -249,6 +250,7 @@ function Router() {
       <Route path="/teste-lideranca" component={TestLeadership} />
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
       <Route path="/testes/enviar" component={EnviarTestes} />
+      <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
       <Route path="/descricao-cargos" component={DescricaoCargos} />
       <Route path="/descricao-cargos-uisa" component={DescricaoCargosUISA} />
       <Route path="/descricao-cargos-uisa/criar" component={CriarDescricaoCargo} />

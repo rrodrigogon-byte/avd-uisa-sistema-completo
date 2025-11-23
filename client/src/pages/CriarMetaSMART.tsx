@@ -529,20 +529,30 @@ export default function CriarMetaSMART() {
                 </p>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-3">
                 <Button variant="outline" onClick={() => setStep(2)}>
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Voltar
                 </Button>
-                <Button
-                  onClick={handleValidate}
-                  variant="outline"
-                  disabled={validateMutation.isPending}
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
-                >
-                  <Target className="w-4 h-4 mr-2" />
-                  Validar SMART
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleValidate}
+                    variant="outline"
+                    disabled={validateMutation.isPending}
+                    className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                  >
+                    <Target className="w-4 h-4 mr-2" />
+                    {validateMutation.isPending ? "Validando..." : "Validar SMART"}
+                  </Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={createMutation.isPending || !formData.cycleId}
+                    className="bg-[#F39200] hover:bg-[#d67e00]"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {createMutation.isPending ? "Salvando..." : "Salvar Meta"}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

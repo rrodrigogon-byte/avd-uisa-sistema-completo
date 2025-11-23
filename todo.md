@@ -1,3 +1,28 @@
+## 🔥 CORREÇÕES URGENTES - 23/11/2024 15:40
+
+### Erros 404 de Navegação
+- [x] Corrigir rota 404 ao criar PDI em funcionário (/avaliacoes/criar)
+- [x] Corrigir rota 404 ao enviar teste psicométrico (/testes-psicometricos/enviar)
+
+### Problemas de Funcionalidade - Metas
+- [x] Adicionar botão "Salvar" na página de criar metas
+- [x] Adicionar botão "Editar" na página de criar metas (N/A - página de criação)
+- [x] Corrigir botão "Validar Meta SMART" (endpoint corrigido)
+
+### Melhorias de Backend
+- [x] Simplificar retorno de getEmployeeById (estrutura flat)
+- [x] Adicionar campos selfScore e managerScore no schema e banco
+- [x] Criar interfaces TypeScript centralizadas (shared/interfaces.ts)
+- [x] Criar type helpers para callbacks .map() e .filter()
+
+### Testes e Validação
+- [x] Executar testes vitest: admin.getEmailStats (falha por tabela ausente)
+- [x] Executar testes vitest: employees.getById (funciona, erro 404 correto)
+- [x] Executar testes vitest: cycles.* (cycles.list funciona)
+- [x] Validar que correções não quebraram funcionalidades existentes
+
+---
+
 ## 🚨 TAREFAS URGENTES - 23/11/2024
 
 ### NOVO FLUXO - Ciclo de Avaliação de Desempenho

@@ -106,7 +106,7 @@ export const goalsRouter = router({
         validation.feedback.push("Prazo deve estar entre 1 mês e 24 meses");
       }
 
-      return validation;
+      return { data: validation, feedback: validation.feedback };
     }),
 
   /**
