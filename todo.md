@@ -659,3 +659,14 @@
 - [x] Adicionar rota no App.tsx
 - [x] Implementar visualização completa de perfil (avaliação, metas, PDI, Nine Box)
 - [ ] Testar navegação do Nine Box para perfil
+
+
+## 🐛 CORREÇÃO URGENTE - 23/11/2024 18:35 - Filtros do Nine Box Comparativo
+
+### Problema Reportado
+- [x] Corrigir filtro de Nível Hierárquico (Diretoria, Gerência, etc.) que não está funcionando
+- [x] Corrigir filtro de Departamento
+- [x] Corrigir filtro de Performance
+- [x] Corrigir filtro de Potencial
+- [x] Validar que todos os filtros funcionem 100%
+- [ ] Testar combinação de múltiplos filtros

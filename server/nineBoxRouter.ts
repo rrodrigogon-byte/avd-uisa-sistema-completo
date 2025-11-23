@@ -21,6 +21,8 @@ export const nineBoxRouter = router({
       z.object({
         positionIds: z.array(z.number()).optional(),
         departmentId: z.number().optional(),
+        departmentIds: z.array(z.number()).optional(),
+        costCenterIds: z.array(z.number()).optional(),
         leaderId: z.number().optional(),
         hierarchyLevel: z.enum(["all", "diretoria", "gerencia", "coordenacao", "supervisao", "outros"]).optional(),
       })
@@ -92,6 +94,12 @@ export const nineBoxRouter = router({
         .where(
           and(
             input.departmentId ? eq(employees.departmentId, input.departmentId) : undefined,
+            input.departmentIds && input.departmentIds.length > 0
+              ? inArray(employees.departmentId, input.departmentIds)
+              : undefined,
+            input.costCenterIds && input.costCenterIds.length > 0
+              ? inArray(employees.costCenterId, input.costCenterIds)
+              : undefined,
             input.positionIds && input.positionIds.length > 0
               ? inArray(employees.positionId, input.positionIds)
               : undefined,

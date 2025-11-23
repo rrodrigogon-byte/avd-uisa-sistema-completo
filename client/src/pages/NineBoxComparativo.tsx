@@ -59,6 +59,8 @@ export default function NineBoxComparativo() {
       positionIds: selectedPositions.length > 0 ? selectedPositions : undefined,
       leaderId: selectedLeaderId || undefined,
       hierarchyLevel: hierarchyLevel as "all" | "diretoria" | "gerencia" | "coordenacao" | "supervisao" | "outros",
+      departmentIds: selectedDepartmentIds.length > 0 ? selectedDepartmentIds : undefined,
+      costCenterIds: selectedCostCenterIds.length > 0 ? selectedCostCenterIds : undefined,
     },
     { enabled: true }
   );
