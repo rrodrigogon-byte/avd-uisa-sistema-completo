@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { z } from "zod";
 import {
   goalApprovals,
@@ -143,6 +143,43 @@ export const goalsRouter = router({
         throw new TRPCError({ 
           code: "NOT_FOUND", 
           message: "Colaborador não encontrado" 
+        });
+      }
+
+      // Validar datas
+      const startDate = new Date(input.startDate);
+      const endDate = new Date(input.endDate);
+      
+      if (startDate >= endDate) {
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "A data de início deve ser anterior à data de término" 
+        });
+      }
+      
+      // Verificar se há sobreposição com ciclos existentes
+      const overlappingCycles = await db.select()
+        .from(evaluationCycles)
+        .where(
+          and(
+            eq(evaluationCycles.id, input.cycleId),
+            or(
+              and(
+                lte(evaluationCycles.startDate, startDate),
+                gte(evaluationCycles.endDate, startDate)
+              ),
+              and(
+                lte(evaluationCycles.startDate, endDate),
+                gte(evaluationCycles.endDate, endDate)
+              )
+            )
+          )
+        );
+      
+      if (overlappingCycles.length === 0) {
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "As datas da meta devem estar dentro do período do ciclo de avaliação" 
         });
       }
 

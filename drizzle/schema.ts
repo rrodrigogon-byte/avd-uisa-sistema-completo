@@ -339,7 +339,7 @@ export const evaluationCycles = mysqlTable("evaluationCycles", {
   type: mysqlEnum("type", ["anual", "semestral", "trimestral"]).notNull(),
   startDate: datetime("startDate").notNull(),
   endDate: datetime("endDate").notNull(),
-  status: mysqlEnum("status", ["planejado", "em_andamento", "concluido", "cancelado"]).default("planejado").notNull(),
+  status: mysqlEnum("status", ["planejado", "ativo", "concluido", "cancelado"]).default("planejado").notNull(),
   active: boolean("active").default(true).notNull(),
   description: text("description"),
   // Prazos por etapa do fluxo 360°

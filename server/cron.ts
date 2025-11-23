@@ -5,6 +5,7 @@ import { calculateDailyDiscrepancies } from './jobs/calculateDiscrepancies';
 import { sendPulseEmailsJob } from './jobs/sendPulseEmails';
 import { sendConsensusReminders } from './jobs/consensusReminders';
 import { sendCorporateGoalsReminders } from './jobs/corporateGoalsReminders';
+import { calculateAllScores } from './jobs/calculateScores';
 import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals } from '../drizzle/schema';
 import { eq, and, lt, gte } from 'drizzle-orm';
 import { emailService } from './utils/emailService';
@@ -272,6 +273,18 @@ export const corporateGoalsReminderJob = cron.schedule('0 10 * * *', async () =>
   }
 });
 
+// Job de cálculo automático de scores (executa diariamente às 23h)
+export const calculateScoresJob = cron.schedule('0 23 * * *', async () => {
+  console.log('[Cron] Executando job de cálculo de scores...');
+  
+  try {
+    const result = await calculateAllScores();
+    console.log(`[Cron] Scores calculados: ${result.updated} avaliações atualizadas de ${result.processed} processadas`);
+  } catch (error) {
+    console.error('[Cron] Erro ao calcular scores:', error);
+  }
+});
+
 // Job de envio de e-mails de Pesquisas Pulse (executa a cada 8 horas)
 export const pulseSurveyEmailJob = cron.schedule('0 */8 * * *', async () => {
   console.log('[Cron] Executando job de envio de e-mails Pulse...');
@@ -294,6 +307,7 @@ export function startCronJobs() {
   pulseSurveyEmailJob.start();
   consensusReminderJob.start();
   corporateGoalsReminderJob.start();
+  calculateScoresJob.start();
   // Iniciar job de notificações automáticas
   startNotificationCron();
   

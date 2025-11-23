@@ -29,6 +29,7 @@ import AprovacoesD from "./pages/aprovacoes/Dashboard";
 import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
 import BonusAprovacoes from "./pages/aprovacoes/Bonus";
 import Workflows from "./pages/aprovacoes/Workflows";
+import PDIPendentes from "./pages/aprovacoes/PDIPendentes";
 import Sucessao from "./pages/Sucessao";
 import SucessaoMelhorado from "./pages/SucessaoMelhorado";
 import MapaSucessaoCompleto from "./pages/MapaSucessaoCompleto";
@@ -223,6 +224,8 @@ function Router() {
       <Route path="/configuracoes/workflows-bonus" component={ConfiguracaoWorkflowsBonus} />
       <Route path="/rh/dashboard-bonus" component={DashboardBonusRH} />
       <Route path="/aprovacoes/workflows" component={Workflows} />
+      <Route path="/aprovacoes/pdi" component={PDIPendentes} />
+      <Route path="/aprovacoes/avaliacoes" component={AvaliacoesPendentes} />
       <Route path="/sucessao" component={Sucessao} />
       <Route path="/mapa-sucessao" component={SucessaoMelhorado} />
       <Route path="/mapa-sucessao-completo" component={MapaSucessaoCompleto} />

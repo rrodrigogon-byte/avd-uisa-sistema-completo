@@ -211,7 +211,11 @@ export default function Workflows() {
                       <strong>Etapas:</strong> {workflow.steps.length}
                     </span>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => toast.info(`Configuração de workflow "${workflow.name}" em desenvolvimento`)}
+                  >
                     Configurar Workflow
                   </Button>
                 </div>
@@ -265,14 +269,14 @@ export default function Workflows() {
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="metas">Aprovação de Metas</SelectItem>
-                    <SelectItem value="pdi">Aprovação de PDI</SelectItem>
-                    <SelectItem value="avaliacao">Aprovação de Avaliação</SelectItem>
-                    <SelectItem value="bonus">Aprovação de Bônus</SelectItem>
-                    <SelectItem value="ferias">Aprovação de Férias</SelectItem>
-                    <SelectItem value="promocao">Aprovação de Promoção</SelectItem>
-                    <SelectItem value="horas_extras">Aprovação de Horas Extras</SelectItem>
-                    <SelectItem value="despesas">Aprovação de Despesas</SelectItem>
+                    <SelectItem value="aprovacao_metas">Aprovação de Metas</SelectItem>
+                    <SelectItem value="aprovacao_pdi">Aprovação de PDI</SelectItem>
+                    <SelectItem value="aprovacao_avaliacao">Aprovação de Avaliação</SelectItem>
+                    <SelectItem value="aprovacao_bonus">Aprovação de Bônus</SelectItem>
+                    <SelectItem value="aprovacao_ferias">Aprovação de Férias</SelectItem>
+                    <SelectItem value="aprovacao_promocao">Aprovação de Promoção</SelectItem>
+                    <SelectItem value="aprovacao_horas_extras">Aprovação de Horas Extras</SelectItem>
+                    <SelectItem value="aprovacao_despesas">Aprovação de Despesas</SelectItem>
                     <SelectItem value="outro">Outro</SelectItem>
                   </SelectContent>
                 </Select>

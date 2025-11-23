@@ -1,3 +1,22 @@
+## 🔥 NOVAS CORREÇÕES URGENTES - 23/11/2024 16:00
+
+### Erros 404 de Aprovações
+- [x] Criar página /aprovacoes/pdi (PDIs Pendentes)
+- [x] Criar página /aprovacoes/avaliacoes (Avaliações Pendentes)
+- [x] Corrigir página /aprovacoes/workflows (botões não funcionam)
+
+### Correção de Workflows
+- [x] Corrigir erro de validação ao criar workflow (type não aceita valores válidos)
+- [x] Implementar botão "Configurar Workflow" em cada card
+- [x] Corrigir botões de ação nos cards de workflow
+
+### Melhorias de Backend
+- [x] Padronizar enum status: "em_andamento" → "ativo" no schema evaluationCycles
+- [x] Criar job automático para calcular selfScore e managerScore
+- [x] Adicionar validação de datas em metas (startDate < endDate, não sobrepor ciclos)
+
+---
+
 ## 🔥 CORREÇÕES URGENTES - 23/11/2024 15:40
 
 ### Erros 404 de Navegação
