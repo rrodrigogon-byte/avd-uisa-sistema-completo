@@ -589,6 +589,27 @@ export const cyclesRouter = router({
         })
         .where(eq(evaluationCycles.id, input.cycleId));
 
+      // Enviar notificações automáticas para todos os funcionários
+      try {
+        const { sendPushNotificationToAll } = await import("./utils/pushNotificationHelper");
+        await sendPushNotificationToAll(
+          {
+            title: "🎯 Ciclo Aprovado para Metas",
+            body: `${cycle.name} foi aprovado! Crie suas metas agora.`,
+            icon: "/icon-192x192.png",
+            data: {
+              type: "cycle_approved_for_goals",
+              cycleId: input.cycleId,
+              url: `/ciclos/${input.cycleId}/criar-metas`,
+            },
+          },
+          db
+        );
+      } catch (error) {
+        console.error("Erro ao enviar notificações:", error);
+        // Não falhar a aprovação se notificações falharem
+      }
+
       return { success: true };
     }),
 

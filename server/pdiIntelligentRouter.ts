@@ -543,6 +543,142 @@ export const pdiIntelligentRouter = router({
     }),
 
   /**
+   * Atualizar Pacto de Desenvolvimento (sponsors, mentores, guardiões)
+   */
+  updatePact: protectedProcedure
+    .input(
+      z.object({
+        planId: z.number(),
+        mentorId: z.number().optional(),
+        sponsorId1: z.number().optional(),
+        sponsorId2: z.number().optional(),
+        guardianId: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db
+        .update(pdiIntelligentDetails)
+        .set({
+          mentorId: input.mentorId,
+          sponsorId1: input.sponsorId1,
+          sponsorId2: input.sponsorId2,
+          guardianId: input.guardianId,
+        })
+        .where(eq(pdiIntelligentDetails.planId, input.planId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Gerar sugestões automáticas de ações 70-20-10 baseadas nos gaps
+   */
+  generateActionSuggestions: protectedProcedure
+    .input(z.object({ planId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar gaps do PDI
+      const gaps = await db
+        .select({
+          gap: pdiCompetencyGaps,
+          competency: competencies,
+        })
+        .from(pdiCompetencyGaps)
+        .leftJoin(competencies, eq(pdiCompetencyGaps.competencyId, competencies.id))
+        .where(eq(pdiCompetencyGaps.planId, input.planId));
+
+      // Gerar sugestões baseadas nos gaps
+      const suggestions = {
+        pratica_70: gaps.slice(0, 3).map((g, i) => ({
+          title: `Projeto prático: ${g.competency?.name || 'Competência'}`,
+          description: `Liderar projeto que desenvolva ${g.competency?.name?.toLowerCase()} através de aplicação prática no dia a dia`,
+          axis: "70_pratica" as const,
+          developmentArea: g.competency?.name || "Competência",
+          successMetric: `Aumentar nível de ${g.gap.currentLevel} para ${g.gap.targetLevel}`,
+          evidenceRequired: "Resultados mensuráveis do projeto + feedback de stakeholders",
+          dueDate: new Date(Date.now() + (6 + i * 3) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        })),
+        experiencia_20: gaps.slice(0, 2).map((g, i) => ({
+          title: `Mentoria/Job Rotation: ${g.competency?.name || 'Competência'}`,
+          description: `Participar de programa de mentoria ou rotação de função para desenvolver ${g.competency?.name?.toLowerCase()}`,
+          axis: "20_experiencia" as const,
+          developmentArea: g.competency?.name || "Competência",
+          successMetric: `Experiência documentada em ${g.competency?.name}`,
+          evidenceRequired: "Relatório de aprendizados + avaliação do mentor",
+          dueDate: new Date(Date.now() + (9 + i * 4) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        })),
+        educacao_10: gaps.slice(0, 2).map((g, i) => ({
+          title: `Formação: ${g.competency?.name || 'Competência'}`,
+          description: `Curso ou certificação em ${g.competency?.name?.toLowerCase()}`,
+          axis: "10_educacao" as const,
+          developmentArea: g.competency?.name || "Competência",
+          successMetric: "Certificado de conclusão + aplicação prática",
+          evidenceRequired: "Certificado + apresentação de aprendizados",
+          dueDate: new Date(Date.now() + (3 + i * 2) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        })),
+      };
+
+      return suggestions;
+    }),
+
+  /**
+   * Listar principais riscos pré-definidos para PDI
+   */
+  getMainRisks: protectedProcedure
+    .input(z.object({ planId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Buscar riscos já cadastrados
+      const existingRisks = await db
+        .select()
+        .from(pdiRisks)
+        .where(eq(pdiRisks.planId, input.planId));
+
+      // Riscos principais pré-definidos
+      const mainRisks = [
+        {
+          type: "saida" as const,
+          description: "Risco de saída do colaborador durante o período do PDI",
+          impact: "critico" as const,
+          probability: "media" as const,
+          mitigation: "Engajamento contínuo, alinhamento de expectativas e plano de carreira claro",
+        },
+        {
+          type: "gap_competencia" as const,
+          description: "Gaps de competências muito grandes que podem inviabilizar o desenvolvimento no prazo",
+          impact: "alto" as const,
+          probability: "media" as const,
+          mitigation: "Revisão trimestral do plano e ajuste de prazos se necessário",
+        },
+        {
+          type: "tempo_preparo" as const,
+          description: "Tempo insuficiente para preparação adequada para a posição-alvo",
+          impact: "alto" as const,
+          probability: "media" as const,
+          mitigation: "Priorização de competências críticas e extensão do prazo se necessário",
+        },
+        {
+          type: "mudanca_estrategica" as const,
+          description: "Mudanças estratégicas da organização que alterem requisitos da posição-alvo",
+          impact: "medio" as const,
+          probability: "baixa" as const,
+          mitigation: "Revisão semestral do PDI alinhada com estratégia organizacional",
+        },
+      ];
+
+      return {
+        existing: existingRisks,
+        suggestions: mainRisks,
+      };
+    }),
+
+  /**
    * Buscar todos os testes psicométricos de um colaborador
    */
   getEmployeeTests: protectedProcedure

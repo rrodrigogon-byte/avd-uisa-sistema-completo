@@ -69,3 +69,20 @@
 - [x] Criar endpoint cycles.isApprovedForGoals
 - [x] Adicionar componente ApproveCycleButton na página Avaliacao360Enhanced
 - [x] Integrar botão de aprovação nos cards de avaliação
+
+## 🎯 NOVAS MELHORIAS - 23/11/2024 16:30
+
+### PDI Inteligente - Melhorias de Usabilidade
+- [x] Permitir inserção de dados diretamente na página de detalhes do PDI
+- [x] Identificar profissionais sempre pelo nome (não por código)
+- [x] Pacto de Desenvolvimento: permitir editar e selecionar pessoas (sponsors, mentores, guardiões)
+- [x] Matriz de Gaps: permitir construir e editar gaps de competências
+- [x] Gerar sugestão automática de plano 70-20-10 e permitir alterações
+- [ ] Riscos: trazer principais riscos e permitir inclusão/edição de novos
+
+### Sistema de Metas Vinculadas a Ciclos
+- [x] Criar página de criação de metas vinculadas ao ciclo aprovado
+- [x] Permitir que funcionários criem metas assim que ciclo for aprovado
+- [x] Implementar notificações automáticas quando ciclo for aprovado
+- [x] Criar dashboard de acompanhamento de aprovações de ciclos
+- [x] Visualizar quais ciclos estão aprovados e quantos funcionários preencheram metas

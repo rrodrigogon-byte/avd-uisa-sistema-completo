@@ -251,6 +251,34 @@ export const goalsRouter = router({
     }),
 
   /**
+   * Listar metas por ciclo e funcionário
+   */
+  listByCycle: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number(),
+        employeeId: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.cycleId, input.cycleId),
+            eq(smartGoals.employeeId, input.employeeId)
+          )
+        )
+        .orderBy(desc(smartGoals.createdAt));
+
+      return goals;
+    }),
+
+  /**
    * Listar metas do colaborador
    */
   list: protectedProcedure

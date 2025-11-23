@@ -1,6 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
+import CriarMetasCiclo from "@/pages/CriarMetasCiclo";
+import DashboardAprovacoesCiclos from "@/pages/DashboardAprovacoesCiclos";
 import Alertas from "@/pages/Alertas";
 import Discrepancias from "./pages/Discrepancias";
 import Departamentos from "./pages/Departamentos";
@@ -288,11 +290,13 @@ function Router() {
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/analytics/avancado" component={AnalyticsAvancadoPage} />
-                <Route path="/avaliar-360/:id" component={Avaliar360} />
-          <Route path="/admin/audit-log" component={AuditTrail} />
-          <Route path="/admin/analytics" component={Analytics} />
-          <Route path="/feedback" component={Feedbacks} />
-          <Route path="/badges" component={Badges} />
+      <Route path="/avaliar-360/:id" component={Avaliar360} />
+      <Route path="/admin/audit-log" component={AuditTrail} />
+      <Route path="/admin/analytics" component={Analytics} />
+      <Route path="/feedback" component={Feedbacks} />
+      <Route path="/ciclos/:cycleId/criar-metas" component={CriarMetasCiclo} />
+      <Route path="/aprovacoes/ciclos" component={DashboardAprovacoesCiclos} />
+      <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
