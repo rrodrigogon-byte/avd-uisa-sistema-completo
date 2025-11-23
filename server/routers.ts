@@ -49,6 +49,7 @@ import { evaluationTemplatesRouter } from "./routers/evaluationTemplatesRouter";
 import { calibrationDirectorRouter } from "./routers/calibrationDirectorRouter";
 import { reportsRouter } from "./routers/reportsRouter";
 import { calibrationMeetingRouter } from "./calibrationMeetingRouter";
+import { performanceEvaluationCycleRouter } from "./performanceEvaluationCycleRouter";
 import { and, desc, eq, sql, gte, lte } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2534,6 +2535,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Pesquisas de Pulse
   pulse: pulseRouter,
+
+  // Router de Ciclo de Avaliação de Desempenho
+  performanceEvaluationCycle: performanceEvaluationCycleRouter,
 
   // Router de Descrição de Cargos
   positionsManagement: positionsRouter,

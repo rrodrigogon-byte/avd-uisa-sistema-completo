@@ -471,15 +471,20 @@ export type InsertEvaluationResponse = typeof evaluationResponses.$inferInsert;
 
 export const calibrationSessions = mysqlTable("calibrationSessions", {
   id: int("id").autoincrement().primaryKey(),
-  cycleId: int("cycleId").notNull(),
+  sessionName: varchar("sessionName", { length: 255 }),
+  cycleId: int("cycleId"),
   departmentId: int("departmentId"),
-  facilitatorId: int("facilitatorId").notNull(), // Quem conduziu a sessão
-  status: mysqlEnum("status", ["agendada", "em_andamento", "concluida"]).default("agendada").notNull(),
+  departmentFilter: text("departmentFilter"), // JSON array de department IDs
+  levelFilter: text("levelFilter"), // JSON array de níveis hierárquicos
+  facilitatorId: int("facilitatorId"), // Quem conduziu a sessão
+  createdBy: int("createdBy"),
+  status: mysqlEnum("status", ["draft", "in_progress", "completed", "agendada", "em_andamento", "concluida"]).default("draft").notNull(),
   scheduledDate: datetime("scheduledDate"),
   startedAt: datetime("startedAt"),
   completedAt: datetime("completedAt"),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow(),
 });
 
 export type CalibrationSession = typeof calibrationSessions.$inferSelect;
@@ -2384,6 +2389,139 @@ export const calibrationComparisons = mysqlTable("calibrationComparisons", {
 
 export type CalibrationComparison = typeof calibrationComparisons.$inferSelect;
 export type InsertCalibrationComparison = typeof calibrationComparisons.$inferInsert;
+
+// ============================================================================
+// CICLO DE AVALIAÇÃO DE DESEMPENHO
+// ============================================================================
+
+/**
+ * Ciclos de Avaliação de Desempenho
+ * Gerencia ciclos anuais/semestrais com metas corporativas e individuais
+ */
+export const performanceEvaluationCycles = mysqlTable("performanceEvaluationCycles", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  year: int("year").notNull(),
+  period: mysqlEnum("period", ["anual", "semestral", "trimestral"]).default("anual").notNull(),
+  
+  // Prazos
+  startDate: date("startDate").notNull(),
+  endDate: date("endDate").notNull(),
+  adhesionDeadline: date("adhesionDeadline").notNull(), // Prazo para funcionário aderir
+  managerApprovalDeadline: date("managerApprovalDeadline").notNull(), // Prazo para gestor aprovar
+  trackingStartDate: date("trackingStartDate"), // Início do acompanhamento
+  trackingEndDate: date("trackingEndDate"), // Fim do acompanhamento
+  evaluationDeadline: date("evaluationDeadline"), // Prazo para avaliação final
+  
+  // Metas corporativas do ciclo (JSON array de IDs)
+  corporateGoalIds: text("corporateGoalIds"), // JSON: [1, 2, 3]
+  
+  // Status
+  status: mysqlEnum("status", ["planejado", "aberto", "em_andamento", "em_avaliacao", "concluido", "cancelado"]).default("planejado").notNull(),
+  
+  // Auditoria
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PerformanceEvaluationCycle = typeof performanceEvaluationCycles.$inferSelect;
+export type InsertPerformanceEvaluationCycle = typeof performanceEvaluationCycles.$inferInsert;
+
+/**
+ * Participantes do Ciclo de Avaliação
+ * Cada funcionário que participa do ciclo
+ */
+export const performanceEvaluationParticipants = mysqlTable("performanceEvaluationParticipants", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  managerId: int("managerId"), // Gestor responsável pela aprovação
+  
+  // Metas individuais (JSON array de objetos)
+  individualGoals: text("individualGoals"), // JSON: [{title, description, deadline, weight}]
+  
+  // Status do participante no ciclo
+  status: mysqlEnum("status", [
+    "pendente_adesao", // Aguardando funcionário aderir
+    "aguardando_aprovacao_gestor", // Aguardando gestor aprovar metas
+    "metas_aprovadas", // Metas aprovadas, pode acompanhar
+    "em_acompanhamento", // Acompanhando progresso
+    "aguardando_avaliacao", // Aguardando avaliação final
+    "avaliacao_concluida", // Avaliação final concluída
+    "aprovado_rh" // Aprovado pela aprovação geral (RH/Diretoria)
+  ]).default("pendente_adesao").notNull(),
+  
+  // Datas de transição de status
+  adhesionDate: datetime("adhesionDate"), // Data que funcionário aderiu
+  managerApprovalDate: datetime("managerApprovalDate"), // Data que gestor aprovou
+  evaluationDate: datetime("evaluationDate"), // Data da avaliação final
+  finalApprovalDate: datetime("finalApprovalDate"), // Data da aprovação geral
+  
+  // Justificativas
+  managerRejectionReason: text("managerRejectionReason"),
+  managerComments: text("managerComments"),
+  
+  // Scores finais
+  selfEvaluationScore: int("selfEvaluationScore"), // Autoavaliação (1-5)
+  managerEvaluationScore: int("managerEvaluationScore"), // Avaliação do gestor (1-5)
+  finalScore: int("finalScore"), // Score final consensuado
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PerformanceEvaluationParticipant = typeof performanceEvaluationParticipants.$inferSelect;
+export type InsertPerformanceEvaluationParticipant = typeof performanceEvaluationParticipants.$inferInsert;
+
+/**
+ * Evidências de Acompanhamento
+ * Funcionário adiciona evidências durante o acompanhamento
+ */
+export const performanceEvaluationEvidences = mysqlTable("performanceEvaluationEvidences", {
+  id: int("id").autoincrement().primaryKey(),
+  participantId: int("participantId").notNull(),
+  goalType: mysqlEnum("goalType", ["corporativa", "individual"]).notNull(),
+  goalIndex: int("goalIndex"), // Índice da meta no array (corporativa ou individual)
+  
+  // Evidência
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  evidenceType: mysqlEnum("evidenceType", ["documento", "link", "imagem", "video", "texto"]).notNull(),
+  fileUrl: varchar("fileUrl", { length: 512 }), // URL do arquivo no S3
+  linkUrl: varchar("linkUrl", { length: 512 }), // URL externa
+  
+  // Progresso
+  progressPercentage: int("progressPercentage").default(0), // 0-100
+  
+  // Auditoria
+  uploadedBy: int("uploadedBy").notNull(),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PerformanceEvaluationEvidence = typeof performanceEvaluationEvidences.$inferSelect;
+export type InsertPerformanceEvaluationEvidence = typeof performanceEvaluationEvidences.$inferInsert;
+
+/**
+ * Histórico de Aprovações
+ * Registra todas as aprovações/rejeições do ciclo
+ */
+export const performanceEvaluationApprovals = mysqlTable("performanceEvaluationApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  participantId: int("participantId").notNull(),
+  approverType: mysqlEnum("approverType", ["gestor", "rh", "diretoria"]).notNull(),
+  approverId: int("approverId").notNull(),
+  
+  action: mysqlEnum("action", ["aprovado", "rejeitado", "solicitado_ajuste"]).notNull(),
+  comments: text("comments"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PerformanceEvaluationApproval = typeof performanceEvaluationApprovals.$inferSelect;
+export type InsertPerformanceEvaluationApproval = typeof performanceEvaluationApprovals.$inferInsert;
 
 // Re-export from schema-alerts.ts
 export * from "./schema-alerts";

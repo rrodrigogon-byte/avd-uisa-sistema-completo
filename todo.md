@@ -1,5 +1,57 @@
 ## 🚨 TAREFAS URGENTES - 23/11/2024
 
+### NOVO FLUXO - Ciclo de Avaliação de Desempenho
+- [x] Criar schema performanceEvaluationCycles (ciclo, metas corporativas, prazos)
+- [x] Criar schema performanceEvaluationParticipants (funcionário, metas individuais, status)
+- [x] Criar schema performanceEvaluationEvidences (evidências, anexos)
+- [x] Criar schema performanceEvaluationApprovals (histórico de aprovações)
+- [x] Criar endpoints para criar ciclo (RH/Admin)
+- [x] Criar endpoints para adesão do funcionário
+- [x] Criar endpoints para aprovação do gestor
+- [x] Criar endpoints para acompanhamento com evidências
+- [x] Criar endpoints para aprovação geral (RH/Diretoria)
+- [x] Registrar router performanceEvaluationCycle no appRouter
+- [ ] Criar página /ciclos-avaliacao/criar (RH/Admin)
+- [ ] Criar página /ciclos-avaliacao/aderir/:id (Funcionário)
+- [ ] Criar página /ciclos-avaliacao/aprovar-gestor (Gestor)
+- [ ] Criar página /ciclos-avaliacao/acompanhar/:id (Funcionário)
+- [ ] Criar página /ciclos-avaliacao/aprovacao-geral (RH/Diretoria)
+- [ ] Adicionar item "Ciclo de Avaliação de Desempenho" no menu
+- [ ] Testar fluxo completo end-to-end
+
+### PRIORIDADE MÁXIMA - Correção Calibração Diretoria
+- [x] Corrigir erro INSERT na tabela calibrationSessions (campos vazios)
+- [x] Validar schema da tabela calibrationSessions (cycleId, departmentFilter, levelFilter)
+- [x] Ajustar mutation createSession para aceitar valores NULL
+- [ ] Testar criação de sessão de calibração
+
+### Correção de Envio de Emails
+- [ ] Corrigir envio de emails dos testes psicométricos (não está funcionando)
+- [ ] Validar configuração SMTP
+- [ ] Testar envio real de emails de testes
+- [ ] Verificar logs de erro no servidor
+
+### Melhorias Página de Funcionário (/funcionarios/:id)
+- [x] Adicionar botão "Criar Avaliação" quando aba de avaliações estiver vazia
+- [x] Adicionar botão "Criar Meta" quando aba de metas estiver vazia
+- [x] Adicionar botão "Criar PDI" quando aba de PDIs estiver vazia
+- [x] Adicionar botão "Enviar Testes Psicométricos" na aba de testes
+- [x] Adicionar aba "Testes" no perfil do funcionário
+- [ ] Testar fluxo completo de criação a partir da página do funcionário
+
+### Melhorias Página de Metas (/metas/criar)
+- [ ] Adicionar botão "Salvar" funcional
+- [ ] Adicionar botão "Editar" funcional
+- [ ] Adicionar botão "Excluir" funcional
+- [ ] Corrigir botão existente que não funciona
+
+### Sistema de Notificações em Tempo Real
+- [ ] Notificações quando Pesquisa Pulse receber respostas
+- [ ] Notificações quando ciclo de avaliação for iniciado
+- [ ] Notificações quando ciclo de avaliação for finalizado
+- [ ] Notificações quando metas forem aprovadas
+- [ ] Notificações quando metas forem rejeitadas
+
 ### Bugs Críticos Pesquisa Pulse
 - [x] Corrigir envio de emails da Pesquisa Pulse (aparece 0 enviados)
 - [x] Corrigir erro 404 na página de resultados (/pesquisas-pulse/resultados/:id)

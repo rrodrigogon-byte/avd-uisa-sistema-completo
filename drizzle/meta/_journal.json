@@ -358,6 +358,20 @@
       "when": 1763921298978,
       "tag": "0050_common_guardsmen",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "5",
+      "when": 1763922668604,
+      "tag": "0051_flashy_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "5",
+      "when": 1763922901770,
+      "tag": "0052_glossy_living_tribunal",
+      "breakpoints": true
     }
   ]
 }

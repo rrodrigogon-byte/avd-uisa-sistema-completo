@@ -140,11 +140,12 @@ export default function PerfilFuncionario() {
 
         {/* Tabs de Conteúdo */}
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="evaluations">Avaliações</TabsTrigger>
             <TabsTrigger value="goals">Metas</TabsTrigger>
             <TabsTrigger value="pdi">PDI</TabsTrigger>
+            <TabsTrigger value="tests">Testes</TabsTrigger>
             <TabsTrigger value="history">Histórico</TabsTrigger>
           </TabsList>
 
@@ -270,7 +271,14 @@ export default function PerfilFuncionario() {
               <Card className="p-12">
                 <div className="text-center text-gray-500">
                   <Award className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p>Nenhuma avaliação registrada</p>
+                  <p className="mb-4">Nenhuma avaliação registrada</p>
+                  <Button 
+                    onClick={() => navigate(`/avaliacoes/criar?employeeId=${employeeId}`)}
+                    className="bg-[#F39200] hover:bg-[#d97f00]"
+                  >
+                    <Award className="w-4 h-4 mr-2" />
+                    Criar Avaliação
+                  </Button>
                 </div>
               </Card>
             )}
@@ -330,7 +338,14 @@ export default function PerfilFuncionario() {
               <Card className="p-12">
                 <div className="text-center text-gray-500">
                   <Target className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p>Nenhuma meta registrada</p>
+                  <p className="mb-4">Nenhuma meta registrada</p>
+                  <Button 
+                    onClick={() => navigate(`/metas/criar?employeeId=${employeeId}`)}
+                    className="bg-[#F39200] hover:bg-[#d97f00]"
+                  >
+                    <Target className="w-4 h-4 mr-2" />
+                    Criar Meta
+                  </Button>
                 </div>
               </Card>
             )}
@@ -393,10 +408,34 @@ export default function PerfilFuncionario() {
               <Card className="p-12">
                 <div className="text-center text-gray-500">
                   <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p>Nenhum PDI registrado</p>
+                  <p className="mb-4">Nenhum PDI registrado</p>
+                  <Button 
+                    onClick={() => navigate(`/pdi/criar?employeeId=${employeeId}`)}
+                    className="bg-[#F39200] hover:bg-[#d97f00]"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Criar PDI
+                  </Button>
                 </div>
               </Card>
             )}
+          </TabsContent>
+
+          {/* Tab: Testes Psicométricos */}
+          <TabsContent value="tests" className="space-y-4">
+            <Card className="p-12">
+              <div className="text-center text-gray-500">
+                <Award className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                <p className="mb-4">Enviar testes psicométricos para compor o perfil do colaborador</p>
+                <Button 
+                  onClick={() => navigate(`/testes-psicometricos/enviar?employeeId=${employeeId}`)}
+                  className="bg-[#F39200] hover:bg-[#d97f00]"
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Enviar Testes
+                </Button>
+              </div>
+            </Card>
           </TabsContent>
 
           {/* Tab: Histórico */}
