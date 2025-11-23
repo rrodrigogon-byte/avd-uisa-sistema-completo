@@ -130,17 +130,25 @@ export async function getAllEmployees() {
   const db = await getDb();
   if (!db) return [];
 
-  return await db
+  const results = await db
     .select({
-      employee: employees,
-      department: departments,
-      position: positions,
+      id: employees.id,
+      name: employees.name,
+      email: employees.email,
+      departmentId: employees.departmentId,
+      departmentName: departments.name,
+      positionId: employees.positionId,
+      positionTitle: positions.title,
+      hireDate: employees.hireDate,
+      status: employees.status,
     })
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(positions, eq(employees.positionId, positions.id))
     .where(eq(employees.status, "ativo"))
     .orderBy(employees.name);
+
+  return results;
 }
 
 export async function getEmployeeById(id: number) {
@@ -500,4 +508,21 @@ export async function getUserEmployee(userId: number) {
     .limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+// ============================================================================
+// COMPETÊNCIAS
+// ============================================================================
+
+export async function getAllCompetencies() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { competencies } = await import("../drizzle/schema");
+  
+  return await db
+    .select()
+    .from(competencies)
+    .where(eq(competencies.active, true))
+    .orderBy(competencies.name);
 }

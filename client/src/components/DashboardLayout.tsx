@@ -108,6 +108,7 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
+      { icon: FileText, label: "Relatórios de PDI", path: "/relatorios/pdi" },
       { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
       { icon: GitBranch, label: "Mapa de Sucessão UISA", path: "/mapa-sucessao-uisa" },
       { icon: TrendingUp, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
@@ -146,6 +147,7 @@ const menuItems = [
     children: [
       { icon: BarChart, label: "Dashboard", path: "/aprovacoes/dashboard" },
       { icon: Inbox, label: "Minhas Solicitações", path: "/aprovacoes/solicitacoes" },
+      { icon: Calendar, label: "Ciclos de Avaliação", path: "/aprovacoes/ciclos-avaliacao" },
       { icon: CheckSquare, label: "PDIs Pendentes", path: "/aprovacoes/pdi" },
       { icon: Users, label: "Avaliações Pendentes", path: "/aprovacoes/avaliacoes" },
       { icon: Gift, label: "Bônus", path: "/aprovacoes/bonus" },

@@ -4,6 +4,8 @@ import NotFound from "@/pages/NotFound";
 import CriarMetasCiclo from "@/pages/CriarMetasCiclo";
 import DashboardAprovacoesCiclos from "@/pages/DashboardAprovacoesCiclos";
 import DashboardMetasCiclos from "@/pages/DashboardMetasCiclos";
+import AprovacaoCiclos from "@/pages/AprovacaoCiclos";
+import RelatoriosPDI from "@/pages/RelatoriosPDI";
 import Alertas from "@/pages/Alertas";
 import Discrepancias from "./pages/Discrepancias";
 import Departamentos from "./pages/Departamentos";
@@ -298,6 +300,8 @@ function Router() {
       <Route path="/feedback" component={Feedbacks} />
       <Route path="/ciclos/:cycleId/criar-metas" component={CriarMetasCiclo} />
       <Route path="/aprovacoes/ciclos" component={DashboardAprovacoesCiclos} />
+      <Route path="/aprovacoes/ciclos-avaliacao" component={AprovacaoCiclos} />
+      <Route path="/relatorios/pdi" component={RelatoriosPDI} />
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
