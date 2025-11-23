@@ -558,4 +558,55 @@ export const cyclesRouter = router({
       // Por enquanto, retornar sucesso simulado
       return { success: true, reportUrl: "/reports/cycle-" + input.cycleId + ".pdf" };
     }),
+
+  /**
+   * Aprovar ciclo para preenchimento de metas pelos funcionários
+   */
+  approveForGoals: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar se o ciclo existe
+      const [cycle] = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, input.cycleId))
+        .limit(1);
+
+      if (!cycle) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Ciclo não encontrado" });
+      }
+
+      // Atualizar ciclo para aprovado
+      await db
+        .update(evaluationCycles)
+        .set({
+          approvedForGoals: true,
+          approvedForGoalsAt: new Date(),
+          approvedForGoalsBy: ctx.user.id,
+        })
+        .where(eq(evaluationCycles.id, input.cycleId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Verificar se ciclo está aprovado para metas
+   */
+  isApprovedForGoals: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return false;
+
+      const [cycle] = await db
+        .select({ approvedForGoals: evaluationCycles.approvedForGoals })
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, input.cycleId))
+        .limit(1);
+
+      return cycle?.approvedForGoals || false;
+    }),
 });

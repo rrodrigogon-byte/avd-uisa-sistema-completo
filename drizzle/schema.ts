@@ -346,6 +346,10 @@ export const evaluationCycles = mysqlTable("evaluationCycles", {
   selfEvaluationDeadline: datetime("selfEvaluationDeadline"),
   managerEvaluationDeadline: datetime("managerEvaluationDeadline"),
   consensusDeadline: datetime("consensusDeadline"),
+  // Aprovação para preenchimento de metas
+  approvedForGoals: boolean("approvedForGoals").default(false).notNull(),
+  approvedForGoalsAt: datetime("approvedForGoalsAt"),
+  approvedForGoalsBy: int("approvedForGoalsBy"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

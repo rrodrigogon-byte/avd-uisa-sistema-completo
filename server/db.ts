@@ -149,25 +149,9 @@ export async function getEmployeeById(id: number) {
 
   const result = await db
     .select({
-      id: employees.id,
-      userId: employees.userId,
-      employeeCode: employees.employeeCode,
-      name: employees.name,
-      email: employees.email,
-      phone: employees.phone,
-      cpf: employees.cpf,
-      birthDate: employees.birthDate,
-      hireDate: employees.hireDate,
-      status: employees.status,
-      managerId: employees.managerId,
-      departmentId: employees.departmentId,
-      positionId: employees.positionId,
-      costCenter: employees.costCenter,
-      salary: employees.salary,
-      // Campos relacionados
-      departmentName: departments.name,
-      positionTitle: positions.title,
-      positionLevel: positions.level,
+      employee: employees,
+      department: departments,
+      position: positions,
     })
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))

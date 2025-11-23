@@ -10,6 +10,52 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Radar } from "react-chartjs-2";
 
+// Componente de botão de aprovação de ciclo
+function ApproveCycleButton({ cycleId }: { cycleId: number }) {
+  const utils = trpc.useUtils();
+  const { data: isApproved, isLoading: checkingApproval } = trpc.cycles.isApprovedForGoals.useQuery({ cycleId });
+  
+  const approveMutation = trpc.cycles.approveForGoals.useMutation({
+    onSuccess: () => {
+      toast.success("Ciclo aprovado! Funcionários já podem preencher suas metas.");
+      utils.cycles.isApprovedForGoals.invalidate({ cycleId });
+    },
+    onError: (error) => {
+      toast.error(`Erro ao aprovar ciclo: ${error.message}`);
+    },
+  });
+
+  if (checkingApproval) {
+    return (
+      <Button size="sm" variant="outline" disabled>
+        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+        Verificando...
+      </Button>
+    );
+  }
+
+  if (isApproved) {
+    return (
+      <Badge variant="default" className="bg-green-600">
+        <CheckCircle2 className="h-3 w-3 mr-1" />
+        Aprovado para Metas
+      </Badge>
+    );
+  }
+
+  return (
+    <Button
+      size="sm"
+      variant="default"
+      onClick={() => approveMutation.mutate({ cycleId })}
+      disabled={approveMutation.isPending}
+    >
+      {approveMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+      Aprovar Ciclo para Metas
+    </Button>
+  );
+}
+
 /**
  * Página de Avaliação 360° Enhanced
  * Sistema completo de avaliação 360° com múltiplos avaliadores e gráficos comparativos
@@ -319,8 +365,8 @@ export default function Avaliacao360Enhanced() {
                       })}
                     </div>
 
-                    {/* Botão de Detalhes */}
-                    <div className="pt-2">
+                    {/* Botões de Ação */}
+                    <div className="pt-2 flex gap-2">
                       <Button
                         variant={isSelected ? "default" : "outline"}
                         size="sm"
@@ -328,6 +374,7 @@ export default function Avaliacao360Enhanced() {
                       >
                         {isSelected ? "Ocultar Detalhes" : "Ver Detalhes"}
                       </Button>
+                      <ApproveCycleButton cycleId={evaluation.cycleId} />
                     </div>
 
                     {/* Detalhes Expandidos */}
