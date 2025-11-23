@@ -649,3 +649,13 @@
 - [ ] Criar templates por nível: Operacional, Coordenação, Gerência, Diretoria, Executivo
 - [ ] Implementar sistema de seleção de templates
 - [ ] Integrar templates com sistema de avaliação 360°
+
+
+## 🐛 CORREÇÃO URGENTE - 23/11/2024 18:25 - Erro 404 no Perfil do Funcionário
+
+### Problema Reportado
+- [x] Corrigir erro 404 ao clicar em "Ver Perfil" no Nine Box
+- [x] Criar página /funcionarios/:id
+- [x] Adicionar rota no App.tsx
+- [x] Implementar visualização completa de perfil (avaliação, metas, PDI, Nine Box)
+- [ ] Testar navegação do Nine Box para perfil

@@ -111,6 +111,7 @@ import AvaliacoesPendentes from "./pages/AvaliacoesPendentes";
 import AvaliacoesAprovacao from "./pages/AvaliacoesAprovacao";
 import HierarquiaOrganizacional from "./pages/HierarquiaOrganizacional";
 import HierarquiaImport from "./pages/HierarquiaImport";
+import PerfilFuncionario from "./pages/PerfilFuncionario";
 import DashboardEmails from "./pages/DashboardEmails";
 // import BonusWorkflows from "./pages/admin/BonusWorkflows"; // Temporariamente desabilitado
 // import ImportUISA from "./pages/admin/ImportUISA"; // Temporariamente desabilitado
@@ -195,6 +196,7 @@ function Router() {
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
       <Route path="/funcionarios" component={Funcionarios} />
+      <Route path="/funcionarios/:id" component={PerfilFuncionario} />
       <Route path="/funcionarios-ativos" component={FuncionariosAtivos} />
       <Route path="/departamentos" component={Departamentos} />
       <Route path="/centros-custo" component={CentrosCustos} />

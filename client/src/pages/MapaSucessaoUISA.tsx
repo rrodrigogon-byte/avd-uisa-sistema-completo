@@ -3,26 +3,29 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Users, TrendingUp, AlertTriangle, Plus, Edit, Eye, Download } from "lucide-react";
+import { Loader2, Users, TrendingUp, AlertTriangle, Plus, Edit, Eye, Download, Trash2, FileText } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 
 /**
- * Mapa de Sucessão UISA - Versão Completa
- * Inspirado no design do PowerPoint fornecido
+ * Mapa de Sucessão UISA - Versão Completa com CRUD
  * 
- * Features:
- * - Dashboard one-page para visualizar sucessor
- * - Botão Editar completamente funcional
- * - Clicar no card abre o dashboard completo
- * - Botão Incluir para novos planos
- * - Layout profissional com cores UISA (laranja #F39200)
+ * Features Implementadas:
+ * ✅ Dashboard one-page para visualizar sucessores
+ * ✅ Botão Editar completamente funcional
+ * ✅ Botão Incluir para novos planos
+ * ✅ Botão Incluir Sucessor para adicionar sucessores a planos existentes
+ * ✅ Botão Deletar com confirmação
+ * ✅ Botão PDI para vincular com PDI Inteligente
+ * ✅ Botão Salvar com validação
+ * ✅ Layout profissional com cores UISA (laranja #F39200)
  */
 
 interface SuccessorData {
@@ -47,7 +50,7 @@ interface SuccessorData {
   notes?: string;
 }
 
-// Helper functions (movidas para fora do componente para serem acessíveis globalmente)
+// Helper functions
 const getReadinessColor = (level: string) => {
   const colors: Record<string, string> = {
     imediato: "bg-emerald-600",
@@ -77,11 +80,14 @@ const getRiskBadgeColor = (risk: string) => {
 };
 
 export default function MapaSucessaoUISA() {
+  const [, navigate] = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<any | null>(null);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddPlanModal, setShowAddPlanModal] = useState(false);
-  const [selectedSuccessor, setSelectedSuccessor] = useState<SuccessorData | null>(null);
+  const [showAddSuccessorModal, setShowAddSuccessorModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedSuccessor, setSelectedSuccessor] = useState<any | null>(null);
 
   // Queries
   const { data: plansRaw, isLoading, refetch } = trpc.succession.list.useQuery();
@@ -93,6 +99,29 @@ export default function MapaSucessaoUISA() {
     onSuccess: () => {
       toast.success("Sucessor atualizado com sucesso!");
       setShowEditModal(false);
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(`Erro: ${error.message}`);
+    },
+  });
+
+  const addSuccessorMutation = trpc.succession.addSuccessor.useMutation({
+    onSuccess: () => {
+      toast.success("Sucessor adicionado com sucesso!");
+      setShowAddSuccessorModal(false);
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(`Erro: ${error.message}`);
+    },
+  });
+
+  const deleteSuccessorMutation = trpc.succession.removeSuccessor.useMutation({
+    onSuccess: () => {
+      toast.success("Sucessor removido com sucesso!");
+      setShowDeleteConfirm(false);
+      setSelectedSuccessor(null);
       refetch();
     },
     onError: (error: any) => {
@@ -116,10 +145,27 @@ export default function MapaSucessaoUISA() {
     setShowDashboard(true);
   };
 
-  const handleEditClick = (successor: any, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEditClick = (successor: any, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     setSelectedSuccessor(successor);
     setShowEditModal(true);
+  };
+
+  const handleDeleteClick = (successor: any, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setSelectedSuccessor(successor);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleAddSuccessorClick = (plan: any) => {
+    setSelectedPlan(plan);
+    setShowAddSuccessorModal(true);
+  };
+
+  const handlePDIClick = (successor: any) => {
+    // Navegar para PDI Inteligente com dados do sucessor
+    const employeeId = successor.employee?.id || successor.employeeId;
+    navigate(`/pdi-inteligente?employeeId=${employeeId}`);
   };
 
   if (isLoading) {
@@ -140,7 +186,7 @@ export default function MapaSucessaoUISA() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Mapa de Sucessão</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Mapa de Sucessão UISA</h1>
             <p className="text-gray-600 mt-1">Gestão estratégica de sucessão gerencial</p>
           </div>
           <div className="flex gap-3">
@@ -231,31 +277,44 @@ export default function MapaSucessaoUISA() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#F39200] to-[#d97f00] flex items-center justify-center text-white text-xl font-bold">
-                      {plan.position?.name?.charAt(0) || "?"}
+                      {plan.positionTitle?.charAt(0) || "?"}
                     </div>
                     <div>
-                      <CardTitle className="text-lg">{plan.position?.name || "Posição"}</CardTitle>
-                      <p className="text-sm text-gray-600">{plan.position?.department || "Departamento"}</p>
+                      <CardTitle className="text-lg">{plan.positionTitle || "Posição"}</CardTitle>
+                      <p className="text-sm text-gray-600">{plan.currentHolderName || "Vago"}</p>
                       <div className="flex gap-2 mt-2">
-                        <Badge variant="outline" className={getRiskBadgeColor(plan.lossRisk || "baixo")}>
-                          Risco: {plan.lossRisk || "Baixo"}
+                        <Badge variant="outline" className={getRiskBadgeColor(plan.riskLevel || "baixo")}>
+                          Risco: {plan.riskLevel || "Baixo"}
                         </Badge>
-                        <Badge variant="outline" className={getRiskBadgeColor(plan.lossImpact || "baixo")}>
-                          Impacto: {plan.lossImpact || "Baixo"}
+                        <Badge variant="outline" className={getRiskBadgeColor(plan.exitRisk || "baixo")}>
+                          Saída: {plan.exitRisk || "Baixo"}
                         </Badge>
                       </div>
                     </div>
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCardClick(plan);
-                    }}
-                  >
-                    <Eye className="w-4 h-4" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddSuccessorClick(plan);
+                      }}
+                      title="Incluir Sucessor"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick(plan);
+                      }}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
 
@@ -277,17 +336,28 @@ export default function MapaSucessaoUISA() {
                           <div className="flex items-center gap-3">
                             <div className={`w-2 h-2 rounded-full ${getReadinessColor(successor.readinessLevel)}`} />
                             <div>
-                              <p className="text-sm font-medium">{successor.employee?.name}</p>
+                              <p className="text-sm font-medium">{successor.employeeName}</p>
                               <p className="text-xs text-gray-600">{getReadinessLabel(successor.readinessLevel)}</p>
                             </div>
                           </div>
-                          <Button 
-                            size="sm" 
-                            variant="ghost"
-                            onClick={(e) => handleEditClick(successor, e)}
-                          >
-                            <Edit className="w-3 h-3" />
-                          </Button>
+                          <div className="flex gap-1">
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={(e) => handleEditClick(successor, e)}
+                              title="Editar"
+                            >
+                              <Edit className="w-3 h-3" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={(e) => handleDeleteClick(successor, e)}
+                              title="Deletar"
+                            >
+                              <Trash2 className="w-3 h-3 text-red-600" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -296,6 +366,17 @@ export default function MapaSucessaoUISA() {
                   {(!plan.successors || plan.successors.length === 0) && (
                     <div className="text-center py-4 text-sm text-gray-500 bg-gray-50 rounded-lg">
                       Nenhum sucessor identificado
+                      <Button 
+                        size="sm" 
+                        variant="link" 
+                        className="text-[#F39200] ml-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddSuccessorClick(plan);
+                        }}
+                      >
+                        Incluir Sucessor
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -333,10 +414,10 @@ export default function MapaSucessaoUISA() {
             <SuccessionDashboard 
               plan={selectedPlan} 
               onClose={() => setShowDashboard(false)}
-              onEdit={(successor) => {
-                setSelectedSuccessor(successor);
-                setShowEditModal(true);
-              }}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+              onPDI={handlePDIClick}
+              onAddSuccessor={() => handleAddSuccessorClick(selectedPlan)}
             />
           )}
         </SheetContent>
@@ -347,19 +428,80 @@ export default function MapaSucessaoUISA() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editar Sucessor</DialogTitle>
+            <DialogDescription>
+              Atualize as informações do sucessor potencial
+            </DialogDescription>
           </DialogHeader>
           {selectedSuccessor && (
             <EditSuccessorForm 
               successor={selectedSuccessor}
               onSave={(data) => {
                 updateSuccessorMutation.mutate({
-                  successorId: selectedSuccessor.id,
+                  id: selectedSuccessor.id,
                   ...data,
                 });
               }}
               onCancel={() => setShowEditModal(false)}
+              isLoading={updateSuccessorMutation.isPending}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Adicionar Sucessor */}
+      <Dialog open={showAddSuccessorModal} onOpenChange={setShowAddSuccessorModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Incluir Sucessor</DialogTitle>
+            <DialogDescription>
+              Adicione um novo sucessor ao plano de sucessão
+            </DialogDescription>
+          </DialogHeader>
+          {selectedPlan && (
+            <AddSuccessorForm 
+              planId={selectedPlan.id}
+              employees={employees || []}
+              onSave={(data) => addSuccessorMutation.mutate(data)}
+              onCancel={() => setShowAddSuccessorModal(false)}
+              isLoading={addSuccessorMutation.isPending}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Confirmação de Exclusão */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar Exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja remover este sucessor do plano de sucessão?
+              Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => {
+                if (selectedSuccessor) {
+                  deleteSuccessorMutation.mutate({ id: selectedSuccessor.id });
+                }
+              }}
+              disabled={deleteSuccessorMutation.isPending}
+            >
+              {deleteSuccessorMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Removendo...
+                </>
+              ) : (
+                "Confirmar Exclusão"
+              )}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -368,11 +510,16 @@ export default function MapaSucessaoUISA() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Incluir Novo Plano de Sucessão</DialogTitle>
+            <DialogDescription>
+              Crie um novo plano de sucessão para uma posição crítica
+            </DialogDescription>
           </DialogHeader>
           <AddPlanForm 
             positions={positions || []}
+            employees={employees || []}
             onSave={(data) => createPlanMutation.mutate(data)}
             onCancel={() => setShowAddPlanModal(false)}
+            isLoading={createPlanMutation.isPending}
           />
         </DialogContent>
       </Dialog>
@@ -381,11 +528,11 @@ export default function MapaSucessaoUISA() {
 }
 
 // Componente: Dashboard One-Page
-function SuccessionDashboard({ plan, onClose, onEdit }: any) {
+function SuccessionDashboard({ plan, onClose, onEdit, onDelete, onPDI, onAddSuccessor }: any) {
   return (
     <div className="space-y-6">
       <SheetHeader>
-        <SheetTitle className="text-2xl">Mapa Sucessório - {plan.position?.name}</SheetTitle>
+        <SheetTitle className="text-2xl">Mapa Sucessório - {plan.positionTitle}</SheetTitle>
       </SheetHeader>
 
       {/* Titular da Posição */}
@@ -393,32 +540,29 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
         <CardHeader className="bg-gradient-to-r from-[#F39200]/10 to-transparent">
           <div className="flex items-start gap-6">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#F39200] to-[#d97f00] flex items-center justify-center text-white text-3xl font-bold">
-              {plan.position?.name?.charAt(0) || "?"}
+              {plan.positionTitle?.charAt(0) || "?"}
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900">{plan.position?.name}</h3>
-              <p className="text-gray-600">{plan.currentHolder?.name || "Vago"}</p>
+              <h3 className="text-xl font-bold text-gray-900">{plan.positionTitle}</h3>
+              <p className="text-gray-600">{plan.currentHolderName || "Vago"}</p>
               <div className="flex gap-2 mt-3">
-                <Badge className="bg-emerald-600">9Box: 24/25 BA</Badge>
-                <Badge variant="outline">Med: R$ 15.000</Badge>
+                <Badge variant="outline" className={getRiskBadgeColor(plan.riskLevel || "baixo")}>
+                  Risco: {plan.riskLevel || "Baixo"}
+                </Badge>
+                <Badge variant="outline" className={getRiskBadgeColor(plan.exitRisk || "baixo")}>
+                  Saída: {plan.exitRisk || "Baixo"}
+                </Badge>
               </div>
             </div>
-            <div className="text-right">
-              <div className="space-y-2">
-                <div>
-                  <p className="text-xs text-gray-600">Risco de Perda</p>
-                  <Badge className={getRiskBadgeColor(plan.lossRisk || "baixo")}>
-                    {plan.lossRisk || "Baixo"}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600">Impacto da Perda</p>
-                  <Badge className={getRiskBadgeColor(plan.lossImpact || "baixo")}>
-                    {plan.lossImpact || "Baixo"}
-                  </Badge>
-                </div>
-              </div>
-            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={onAddSuccessor}
+              className="gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Incluir Sucessor
+            </Button>
           </div>
         </CardHeader>
       </Card>
@@ -439,7 +583,7 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
                     {/* Foto e Info Básica */}
                     <div className="flex-shrink-0">
                       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white text-2xl font-bold">
-                        {successor.employee?.name?.charAt(0) || "?"}
+                        {successor.employeeName?.charAt(0) || "?"}
                       </div>
                       <div className={`mt-2 text-center text-xs font-semibold px-2 py-1 rounded ${getReadinessColor(successor.readinessLevel)} text-white`}>
                         {index + 1}º
@@ -450,27 +594,37 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-900">{successor.employee?.name}</h4>
-                          <p className="text-sm text-gray-600">{successor.employee?.position || "Cargo Atual"}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {successor.employee?.timeInCompany || "X anos de uisa"} • 
-                            {successor.employee?.timeInPosition || "Y anos na função"}
-                          </p>
+                          <h4 className="text-lg font-semibold text-gray-900">{successor.employeeName}</h4>
+                          <p className="text-sm text-gray-600">Prioridade: {successor.priority}</p>
                         </div>
-                        <Button size="sm" variant="outline" onClick={() => onEdit(successor)}>
-                          <Edit className="w-3 h-3 mr-1" />
-                          Editar
-                        </Button>
-                      </div>
-
-                      {/* 9Box e Mediana */}
-                      <div className="flex gap-4 mt-3">
-                        <Badge className="bg-emerald-600">
-                          9Box: {successor.nineBoxScore || "24/25"} {successor.nineBoxCategory || "BA"}
-                        </Badge>
-                        <Badge variant="outline">
-                          Med: R$ {successor.marketMedian || "12.000"}
-                        </Badge>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => onPDI(successor)}
+                            className="gap-2"
+                            title="Criar/Ver PDI"
+                          >
+                            <FileText className="w-3 h-3" />
+                            PDI
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => onEdit(successor)}
+                          >
+                            <Edit className="w-3 h-3 mr-1" />
+                            Editar
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => onDelete(successor)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
                       </div>
 
                       {/* Prontidão */}
@@ -478,22 +632,6 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
                         <div className="flex items-center gap-2">
                           <div className={`w-3 h-3 rounded-full ${getReadinessColor(successor.readinessLevel)}`} />
                           <span className="text-sm font-medium">{getReadinessLabel(successor.readinessLevel)}</span>
-                        </div>
-                      </div>
-
-                      {/* Risco e Impacto */}
-                      <div className="flex gap-4 mt-3">
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">Risco de Perda</p>
-                          <Badge variant="outline" className={getRiskBadgeColor(successor.lossRisk || "baixo")}>
-                            {successor.lossRisk || "Baixo"}
-                          </Badge>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">Impacto da Perda</p>
-                          <Badge variant="outline" className={getRiskBadgeColor(successor.lossImpact || "baixo")}>
-                            {successor.lossImpact || "Baixo"}
-                          </Badge>
                         </div>
                       </div>
                     </div>
@@ -512,7 +650,15 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
           ) : (
             <Card className="p-8 text-center text-gray-500">
               <Users className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-              <p>Nenhum sucessor identificado para esta posição</p>
+              <p className="mb-4">Nenhum sucessor identificado para esta posição</p>
+              <Button 
+                variant="outline" 
+                onClick={onAddSuccessor}
+                className="gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Incluir Primeiro Sucessor
+              </Button>
             </Card>
           )}
         </div>
@@ -542,10 +688,6 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
               <span>Pronto em até 36 meses</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-amber-700" />
-              <span>Prazo superior a 36 meses</span>
-            </div>
-            <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded bg-black" />
               <span>Recurso Externo</span>
             </div>
@@ -557,13 +699,14 @@ function SuccessionDashboard({ plan, onClose, onEdit }: any) {
 }
 
 // Componente: Formulário de Edição
-function EditSuccessorForm({ successor, onSave, onCancel }: any) {
+function EditSuccessorForm({ successor, onSave, onCancel, isLoading }: any) {
   const [formData, setFormData] = useState({
     readinessLevel: successor.readinessLevel || "1_ano",
     performance: successor.performance || 3,
     potential: successor.potential || 3,
-    nineBoxScore: successor.nineBoxScore || "",
-    nineBoxCategory: successor.nineBoxCategory || "",
+    priority: successor.priority || 1,
+    performanceRating: successor.performanceRating || "medio",
+    potentialRating: successor.potentialRating || "medio",
     lossRisk: successor.lossRisk || "medio",
     lossImpact: successor.lossImpact || "medio",
     gapAnalysis: successor.gapAnalysis || "",
@@ -571,11 +714,19 @@ function EditSuccessorForm({ successor, onSave, onCancel }: any) {
     notes: successor.notes || "",
   });
 
+  const handleSubmit = () => {
+    if (!formData.readinessLevel) {
+      toast.error("Nível de prontidão é obrigatório");
+      return;
+    }
+    onSave(formData);
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label>Nível de Prontidão</Label>
+          <Label>Nível de Prontidão *</Label>
           <Select value={formData.readinessLevel} onValueChange={(v) => setFormData({...formData, readinessLevel: v})}>
             <SelectTrigger>
               <SelectValue />
@@ -587,6 +738,16 @@ function EditSuccessorForm({ successor, onSave, onCancel }: any) {
               <SelectItem value="mais_3_anos">Pronto em até 36 meses</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        <div>
+          <Label>Prioridade</Label>
+          <Input 
+            type="number" 
+            min="1"
+            value={formData.priority} 
+            onChange={(e) => setFormData({...formData, priority: parseInt(e.target.value) || 1})}
+          />
         </div>
 
         <div>
@@ -619,15 +780,6 @@ function EditSuccessorForm({ successor, onSave, onCancel }: any) {
               <SelectItem value="5">5 - Excepcional</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-
-        <div>
-          <Label>9Box Score</Label>
-          <Input 
-            value={formData.nineBoxScore} 
-            onChange={(e) => setFormData({...formData, nineBoxScore: e.target.value})}
-            placeholder="24/25"
-          />
         </div>
 
         <div>
@@ -690,38 +842,67 @@ function EditSuccessorForm({ successor, onSave, onCancel }: any) {
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel} disabled={isLoading}>
           Cancelar
         </Button>
-        <Button className="bg-[#F39200] hover:bg-[#d97f00]" onClick={() => onSave(formData)}>
-          Salvar Alterações
+        <Button 
+          className="bg-[#F39200] hover:bg-[#d97f00]" 
+          onClick={handleSubmit}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            "Salvar Alterações"
+          )}
         </Button>
       </div>
     </div>
   );
 }
 
-// Componente: Formulário de Adicionar Plano
-function AddPlanForm({ positions, onSave, onCancel }: any) {
+// Componente: Formulário de Adicionar Sucessor
+function AddSuccessorForm({ planId, employees, onSave, onCancel, isLoading }: any) {
   const [formData, setFormData] = useState({
-    positionId: "",
-    lossRisk: "medio",
-    lossImpact: "medio",
+    planId: planId,
+    employeeId: "",
+    readinessLevel: "1_ano",
+    priority: 1,
+    performanceRating: "medio",
+    potentialRating: "medio",
     notes: "",
   });
+
+  const handleSubmit = () => {
+    if (!formData.employeeId) {
+      toast.error("Selecione um funcionário");
+      return;
+    }
+    if (!formData.readinessLevel) {
+      toast.error("Nível de prontidão é obrigatório");
+      return;
+    }
+    onSave({
+      ...formData,
+      employeeId: parseInt(formData.employeeId),
+    });
+  };
 
   return (
     <div className="space-y-4">
       <div>
-        <Label>Posição Crítica</Label>
-        <Select value={formData.positionId} onValueChange={(v) => setFormData({...formData, positionId: v})}>
+        <Label>Funcionário *</Label>
+        <Select value={formData.employeeId} onValueChange={(v) => setFormData({...formData, employeeId: v})}>
           <SelectTrigger>
-            <SelectValue placeholder="Selecione a posição" />
+            <SelectValue placeholder="Selecione o funcionário" />
           </SelectTrigger>
           <SelectContent>
-            {positions.map((pos: any) => (
-              <SelectItem key={pos.id} value={pos.id.toString()}>
-                {pos.name} - {pos.department}
+            {employees.map((emp: any) => (
+              <SelectItem key={emp.id} value={emp.id.toString()}>
+                {emp.name} - {emp.position?.title || "Sem cargo"}
               </SelectItem>
             ))}
           </SelectContent>
@@ -730,22 +911,174 @@ function AddPlanForm({ positions, onSave, onCancel }: any) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label>Risco de Perda</Label>
-          <Select value={formData.lossRisk} onValueChange={(v) => setFormData({...formData, lossRisk: v})}>
+          <Label>Nível de Prontidão *</Label>
+          <Select value={formData.readinessLevel} onValueChange={(v) => setFormData({...formData, readinessLevel: v})}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="baixo">Baixo</SelectItem>
-              <SelectItem value="medio">Médio</SelectItem>
-              <SelectItem value="alto">Alto</SelectItem>
+              <SelectItem value="imediato">Pronto</SelectItem>
+              <SelectItem value="1_ano">Pronto em até 12 meses</SelectItem>
+              <SelectItem value="2_3_anos">Pronto em até 24 meses</SelectItem>
+              <SelectItem value="mais_3_anos">Pronto em até 36 meses</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
-          <Label>Impacto da Perda</Label>
-          <Select value={formData.lossImpact} onValueChange={(v) => setFormData({...formData, lossImpact: v})}>
+          <Label>Prioridade</Label>
+          <Input 
+            type="number" 
+            min="1"
+            value={formData.priority} 
+            onChange={(e) => setFormData({...formData, priority: parseInt(e.target.value) || 1})}
+          />
+        </div>
+
+        <div>
+          <Label>Performance</Label>
+          <Select value={formData.performanceRating} onValueChange={(v) => setFormData({...formData, performanceRating: v})}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="baixo">Baixo</SelectItem>
+              <SelectItem value="medio">Médio</SelectItem>
+              <SelectItem value="alto">Alto</SelectItem>
+              <SelectItem value="excepcional">Excepcional</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Potencial</Label>
+          <Select value={formData.potentialRating} onValueChange={(v) => setFormData({...formData, potentialRating: v})}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="baixo">Baixo</SelectItem>
+              <SelectItem value="medio">Médio</SelectItem>
+              <SelectItem value="alto">Alto</SelectItem>
+              <SelectItem value="excepcional">Excepcional</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div>
+        <Label>Comentários</Label>
+        <Textarea 
+          value={formData.notes}
+          onChange={(e) => setFormData({...formData, notes: e.target.value})}
+          rows={4}
+          placeholder="Comentários sobre o sucessor..."
+        />
+      </div>
+
+      <div className="flex justify-end gap-3 pt-4">
+        <Button variant="outline" onClick={onCancel} disabled={isLoading}>
+          Cancelar
+        </Button>
+        <Button 
+          className="bg-[#F39200] hover:bg-[#d97f00]" 
+          onClick={handleSubmit}
+          disabled={isLoading || !formData.employeeId}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Adicionando...
+            </>
+          ) : (
+            "Adicionar Sucessor"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// Componente: Formulário de Adicionar Plano
+function AddPlanForm({ positions, employees, onSave, onCancel, isLoading }: any) {
+  const [formData, setFormData] = useState({
+    positionId: "",
+    currentHolderId: "",
+    riskLevel: "medio",
+    exitRisk: "medio",
+    isCritical: false,
+    notes: "",
+  });
+
+  const handleSubmit = () => {
+    if (!formData.positionId) {
+      toast.error("Selecione uma posição");
+      return;
+    }
+    onSave({
+      positionId: parseInt(formData.positionId),
+      currentHolderId: formData.currentHolderId ? parseInt(formData.currentHolderId) : undefined,
+      riskLevel: formData.riskLevel,
+      exitRisk: formData.exitRisk,
+      isCritical: formData.isCritical,
+      notes: formData.notes,
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label>Posição Crítica *</Label>
+        <Select value={formData.positionId} onValueChange={(v) => setFormData({...formData, positionId: v})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione a posição" />
+          </SelectTrigger>
+          <SelectContent>
+            {positions.map((pos: any) => (
+              <SelectItem key={pos.id} value={pos.id.toString()}>
+                {pos.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label>Titular Atual (Opcional)</Label>
+        <Select value={formData.currentHolderId} onValueChange={(v) => setFormData({...formData, currentHolderId: v})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o titular" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Nenhum (Vago)</SelectItem>
+            {employees.map((emp: any) => (
+              <SelectItem key={emp.id} value={emp.id.toString()}>
+                {emp.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label>Nível de Risco</Label>
+          <Select value={formData.riskLevel} onValueChange={(v) => setFormData({...formData, riskLevel: v})}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="baixo">Baixo</SelectItem>
+              <SelectItem value="medio">Médio</SelectItem>
+              <SelectItem value="alto">Alto</SelectItem>
+              <SelectItem value="critico">Crítico</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Risco de Saída</Label>
+          <Select value={formData.exitRisk} onValueChange={(v) => setFormData({...formData, exitRisk: v})}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -756,6 +1089,19 @@ function AddPlanForm({ positions, onSave, onCancel }: any) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input 
+          type="checkbox" 
+          id="isCritical"
+          checked={formData.isCritical}
+          onChange={(e) => setFormData({...formData, isCritical: e.target.checked})}
+          className="w-4 h-4"
+        />
+        <Label htmlFor="isCritical" className="cursor-pointer">
+          Marcar como posição crítica
+        </Label>
       </div>
 
       <div>
@@ -769,24 +1115,24 @@ function AddPlanForm({ positions, onSave, onCancel }: any) {
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel} disabled={isLoading}>
           Cancelar
         </Button>
         <Button 
           className="bg-[#F39200] hover:bg-[#d97f00]" 
-          onClick={() => onSave({
-            positionId: parseInt(formData.positionId),
-            lossRisk: formData.lossRisk,
-            lossImpact: formData.lossImpact,
-            notes: formData.notes,
-          })}
-          disabled={!formData.positionId}
+          onClick={handleSubmit}
+          disabled={isLoading || !formData.positionId}
         >
-          Criar Plano
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Criando...
+            </>
+          ) : (
+            "Criar Plano"
+          )}
         </Button>
       </div>
     </div>
   );
 }
-
-
