@@ -306,8 +306,66 @@ export default function SucessaoInteligente() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 text-muted-foreground">
-                    Matriz 9-Box será implementada com visualização interativa
+                  <div className="grid grid-cols-3 gap-2 p-4">
+                    {/* Nine Box Grid */}
+                    {[3, 2, 1].map((potencial) => (
+                      [1, 2, 3].map((performance) => {
+                        const candidatesInBox = successors.filter((s: any) => {
+                          const nb = nineBoxData?.find((n: any) => n.employeeId === s.id);
+                          return nb?.performance === performance && nb?.potential === potencial;
+                        });
+                        
+                        const boxColors: Record<string, string> = {
+                          '3-3': 'bg-green-100 border-green-500',
+                          '3-2': 'bg-green-50 border-green-400',
+                          '3-1': 'bg-yellow-50 border-yellow-400',
+                          '2-3': 'bg-blue-100 border-blue-500',
+                          '2-2': 'bg-blue-50 border-blue-400',
+                          '2-1': 'bg-yellow-100 border-yellow-500',
+                          '1-3': 'bg-orange-50 border-orange-400',
+                          '1-2': 'bg-orange-100 border-orange-500',
+                          '1-1': 'bg-red-100 border-red-500',
+                        };
+                        
+                        const boxKey = `${potencial}-${performance}`;
+                        const boxColor = boxColors[boxKey] || 'bg-gray-50 border-gray-300';
+                        
+                        return (
+                          <div
+                            key={boxKey}
+                            className={`border-2 rounded-lg p-3 min-h-[120px] ${boxColor}`}
+                          >
+                            <div className="text-xs font-semibold mb-2 text-gray-700">
+                              P:{performance} / Pot:{potencial}
+                            </div>
+                            <div className="space-y-1">
+                              {candidatesInBox.map((c: any) => (
+                                <div key={c.id} className="text-xs bg-white rounded px-2 py-1 shadow-sm">
+                                  {c.name}
+                                </div>
+                              ))}
+                              {candidatesInBox.length === 0 && (
+                                <div className="text-xs text-gray-400 italic">Vazio</div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
+                    ))}
+                  </div>
+                  <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-green-100 border-2 border-green-500 rounded"></div>
+                      <span>Alto Potencial</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-blue-100 border-2 border-blue-500 rounded"></div>
+                      <span>Médio Potencial</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-red-100 border-2 border-red-500 rounded"></div>
+                      <span>Baixo Potencial</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

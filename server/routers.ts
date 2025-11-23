@@ -2049,7 +2049,11 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     // Enviar convite para teste psicométrico por email
     sendTestInvite: protectedProcedure
       .input(z.object({
-        emails: z.array(z.string().email()),
+        emails: z.array(z.string().min(5).refine((email) => {
+          // Validação mais permissiva de email
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return emailRegex.test(email);
+        }, { message: "Email inválido" })),
         testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
       }))
       .mutation(async ({ input, ctx }) => {

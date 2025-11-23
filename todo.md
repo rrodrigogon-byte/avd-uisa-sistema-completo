@@ -670,3 +670,71 @@
 - [x] Corrigir filtro de Potencial
 - [x] Validar que todos os filtros funcionem 100%
 - [ ] Testar combinação de múltiplos filtros
+
+
+## 🚨 PROBLEMAS CRÍTICOS REPORTADOS - 23/11/2024 19:45
+
+### 1. Erro ao Incluir Sucessor no Mapa de Sucessão UISA
+- [ ] Corrigir erro "Cannot read properties of undefined (reading 'toString')" ao incluir sucessor
+- [ ] Identificar qual campo está causando o erro (provavelmente array de IDs)
+- [ ] Adicionar validação de dados antes do map()
+- [ ] Testar inclusão de sucessor com dados reais
+
+### 2. Erro de Validação de Email ao Enviar Testes Psicométricos
+- [x] Corrigir validação de email no endpoint /testes/enviar
+- [x] Erro: "Invalid email address" mesmo com emails válidos
+- [x] Ajustar regex ou schema de validação no backend (psychometric router)
+- [ ] Testar envio com múltiplos emails
+
+### 3. Sucessão Inteligente Incompleta
+- [x] Completar funcionalidades faltantes da Sucessão Inteligente
+- [x] Validar integração com PDI (progresso, ações completadas)
+- [x] Validar integração com Nine Box (matriz interativa implementada)
+- [x] Validar sistema de recomendações automáticas (score de prontidão)
+- [x] Adicionar dashboard de pipeline de sucessores (tabs completas)
+
+
+## 🚀 NOVAS FUNCIONALIDADES SOLICITADAS - 23/11/2024 19:50
+
+### 1. Integrar Templates Leadership Pipeline nas Avaliações 360°
+- [ ] Adicionar seletor de template por nível hierárquico ao criar avaliações
+- [ ] Carregar automaticamente competências adequadas por nível
+- [ ] Criar templates para: Operacional, Coordenação, Gerência, Diretoria
+- [ ] Integrar com sistema de avaliação 360° existente
+
+### 2. Popular Dados Reais do Mapa de Sucessão
+- [ ] Importar 42 funcionários do PowerPoint para o banco de dados
+- [ ] Importar 30 cargos do PowerPoint
+- [ ] Criar script de seed com dados reais
+- [ ] Vincular funcionários a cargos corretamente
+- [ ] Popular planos de sucessão iniciais
+
+### 3. Dashboard de Sucessão com Filtros Avançados
+- [ ] Criar visualização executiva do mapa sucessório
+- [ ] Implementar filtro por departamento
+- [ ] Implementar filtro por nível de risco (alto, médio, baixo)
+- [ ] Implementar filtro por prontidão dos sucessores
+- [ ] Adicionar gráficos e KPIs de sucessão
+- [ ] Exportação de relatórios
+
+
+## 📊 MELHORIAS NINE BOX COMPARATIVO - 23/11/2024 19:55
+
+### 1. Adicionar Filtro de Performance e Potencial
+- [ ] Permitir filtrar colaboradores por faixas específicas
+- [ ] Exemplo: Performance Alta + Potencial Médio
+- [ ] Análises mais granulares por quadrante
+- [ ] Integrar com filtros existentes (departamento, centro de custo)
+
+### 2. Exportar Gráficos Visuais no PDF
+- [ ] Incluir gráficos de barras no PDF exportado
+- [ ] Incluir gráficos radar no PDF exportado
+- [ ] Não apenas tabelas, mas visualizações completas
+- [ ] Relatórios executivos mais impactantes
+
+### 3. Salvar Filtros Favoritos
+- [ ] Criar funcionalidade para salvar combinações de filtros
+- [ ] Exemplo: "Diretoria + Depto Comercial"
+- [ ] Acesso rápido a filtros frequentemente usados
+- [ ] Gerenciar filtros salvos (editar, deletar)
+- [ ] Criar tabela savedFilters no schema

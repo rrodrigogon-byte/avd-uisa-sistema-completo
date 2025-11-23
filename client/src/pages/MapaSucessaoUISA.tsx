@@ -900,7 +900,7 @@ function AddSuccessorForm({ planId, employees, onSave, onCancel, isLoading }: an
             <SelectValue placeholder="Selecione o funcionário" />
           </SelectTrigger>
           <SelectContent>
-            {employees.map((emp: any) => (
+            {employees?.filter((emp: any) => emp?.id).map((emp: any) => (
               <SelectItem key={emp.id} value={emp.id.toString()}>
                 {emp.name} - {emp.position?.title || "Sem cargo"}
               </SelectItem>
@@ -1034,7 +1034,7 @@ function AddPlanForm({ positions, employees, onSave, onCancel, isLoading }: any)
             <SelectValue placeholder="Selecione a posição" />
           </SelectTrigger>
           <SelectContent>
-            {positions.map((pos: any) => (
+            {positions?.filter((pos: any) => pos?.id).map((pos: any) => (
               <SelectItem key={pos.id} value={pos.id.toString()}>
                 {pos.title}
               </SelectItem>
@@ -1051,7 +1051,7 @@ function AddPlanForm({ positions, employees, onSave, onCancel, isLoading }: any)
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">Nenhum (Vago)</SelectItem>
-            {employees.map((emp: any) => (
+            {employees?.filter((emp: any) => emp?.id).map((emp: any) => (
               <SelectItem key={emp.id} value={emp.id.toString()}>
                 {emp.name}
               </SelectItem>
