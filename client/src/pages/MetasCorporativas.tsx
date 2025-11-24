@@ -188,7 +188,7 @@ export default function MetasCorporativas() {
             Acompanhe o desempenho das metas organizacionais
           </p>
         </div>
-        <Button onClick={() => navigate("/metas-smart/criar?tipo=corporativa")}>
+        <Button onClick={() => navigate("/metas/criar?tipo=corporativa")}>
           <Plus className="h-4 w-4 mr-2" />
           Nova Meta Corporativa
         </Button>
