@@ -145,6 +145,7 @@ import NotificacoesConfig from "./pages/configuracoes/Notificacoes";
 import AnalyticsAvancadoPage from "./pages/analytics/AnalyticsAvancado";
 import ProgressoCiclos from "./pages/relatorios/ProgressoCiclos";
 import DashboardSucessaoFiltros from "./pages/sucessao/DashboardSucessaoFiltros";
+import DashboardTempoReal from "./pages/metas/DashboardTempoReal";
 import CalibrationMeetingsList from "./pages/calibracao/CalibrationMeetingsList";
 import CalibrationMeetingRoom from "./pages/calibracao/CalibrationMeetingRoom";
 import CiclosAtivos from "./pages/CiclosAtivos";
@@ -162,6 +163,7 @@ function Router() {
       <Route path={"/metas"} component={MetasSMART} />
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
       <Route path="/metas/corporativas" component={MetasCorporativas} />
+      <Route path="/metas/corporativas/dashboard-tempo-real" component={DashboardTempoReal} />
       <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} />
       <Route path="/metas/dashboard-ciclos" component={DashboardMetasCiclos} />
       <Route path={"/metas/:id"} component={DetalhesMeta} />

@@ -662,22 +662,9 @@ export const successionCandidates = mysqlTable("successionCandidates", {
   potentialRating: mysqlEnum("potentialRating", ["baixo", "medio", "alto", "excepcional"]),
   nineBoxPosition: varchar("nineBoxPosition", { length: 100 }), // Posição na matriz 9-box
   
-  // Integração com PDI
-  pdiPlanId: int("pdiPlanId"), // Plano de Desenvolvimento Individual vinculado
-  pdiProgress: int("pdiProgress").default(0), // Progresso do PDI (0-100%)
-  pdiCompletedActions: int("pdiCompletedActions").default(0), // Ações concluídas
-  pdiTotalActions: int("pdiTotalActions").default(0), // Total de ações
-  
-  // Score Unificado de Prontidão
-  readinessScore: int("readinessScore").default(0), // Score 0-100 calculado automaticamente
-  competencyGapScore: int("competencyGapScore").default(0), // Gap de competências (0-100)
-  lastScoreUpdate: datetime("lastScoreUpdate"), // Última atualização do score
-  
   // Análise e Desenvolvimento
   gapAnalysis: text("gapAnalysis"), // Análise de gaps (lacunas)
   developmentActions: text("developmentActions"), // Ações de desenvolvimento recomendadas
-  
-  developmentPlanId: int("developmentPlanId"), // PDI associado
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

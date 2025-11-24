@@ -118,7 +118,6 @@ export const successionRouter = router({
           employeeEmail: employees.email,
           readinessLevel: successionCandidates.readinessLevel,
           priority: successionCandidates.priority,
-          developmentPlanId: successionCandidates.developmentPlanId,
           notes: successionCandidates.notes,
           createdAt: successionCandidates.createdAt,
         })
@@ -223,7 +222,6 @@ export const successionRouter = router({
         // Análise e desenvolvimento
         gapAnalysis: z.string().optional(),
         developmentActions: z.string().optional(),
-        developmentPlanId: z.number().optional(),
         notes: z.string().optional(),
       })
     )
@@ -233,11 +231,15 @@ export const successionRouter = router({
 
       // Preparar dados com valores default para campos opcionais
       const candidateData = {
-        ...input,
+        planId: input.planId,
+        employeeId: input.employeeId,
+        readinessLevel: input.readinessLevel,
+        priority: input.priority,
+        performanceRating: input.performanceRating || null,
+        potentialRating: input.potentialRating || null,
+        nineBoxPosition: input.nineBoxPosition || null,
         gapAnalysis: input.gapAnalysis || null,
         developmentActions: input.developmentActions || null,
-        nineBoxPosition: input.nineBoxPosition || null,
-        developmentPlanId: input.developmentPlanId || null,
         notes: input.notes || null,
       };
 
@@ -281,7 +283,6 @@ export const successionRouter = router({
         // Análise e desenvolvimento
         gapAnalysis: z.string().optional(),
         developmentActions: z.string().optional(),
-        developmentPlanId: z.number().optional(),
         notes: z.string().optional(),
       })
     )
@@ -843,7 +844,6 @@ export const successionRouter = router({
           riskLevel: successionPlans.riskLevel,
           performanceRating: successionCandidates.performanceRating,
           potentialRating: successionCandidates.potentialRating,
-          readinessScore: successionCandidates.readinessScore,
         })
         .from(successionCandidates)
         .leftJoin(employees, eq(successionCandidates.employeeId, employees.id))

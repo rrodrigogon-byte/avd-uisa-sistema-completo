@@ -167,8 +167,9 @@ export async function sendPushNotificationToMultipleUsers(
  */
 export async function sendPushNotificationToAll(
   payload: PushNotificationPayload,
-  type: "pulse" | "cycle" | "goal" | "test" | "feedback" | "general" = "general"
+  type?: "pulse" | "cycle" | "goal" | "test" | "feedback" | "general"
 ): Promise<{ success: boolean; totalSent: number; totalFailed: number }> {
+  const notificationType = type || "general";
   try {
     const db = await getDb();
     if (!db) {
@@ -180,7 +181,7 @@ export async function sendPushNotificationToAll(
 
     const uniqueUserIds = Array.from(new Set(subscriptions.map((s) => s.userId)));
 
-    return await sendPushNotificationToMultipleUsers(uniqueUserIds, payload, type);
+    return await sendPushNotificationToMultipleUsers(uniqueUserIds, payload, notificationType);
   } catch (error) {
     console.error("[PushNotification] Erro ao enviar para todos:", error);
     return { success: false, totalSent: 0, totalFailed: 0 };

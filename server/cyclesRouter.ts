@@ -603,7 +603,7 @@ export const cyclesRouter = router({
               url: `/ciclos/${input.cycleId}/criar-metas`,
             },
           },
-          db
+          "cycle"
         );
       } catch (error) {
         console.error("Erro ao enviar notificações push:", error);

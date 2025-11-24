@@ -134,6 +134,19 @@
 
 ---
 
+## 🚨 CORREÇÕES URGENTES (24/11/2024 - 12:10)
+
+### Bugs Críticos Reportados pelo Usuário
+- [x] Corrigir aprovação de ciclos travando em /aprovacoes/ciclos-avaliacao (sistema fica pensando)
+- [x] Corrigir erro ao incluir sucessor (campos pdiPlanId, developmentPlanId NULL não permitido)
+
+### Implementações Solicitadas
+- [x] Criar 5 metas corporativas de exemplo para UISA 2025 (8 metas criadas)
+- [x] Configurar SMTP para ativar notificações automáticas (já existe em /admin/smtp)
+- [x] Implementar dashboard de acompanhamento em tempo real (/metas/corporativas/dashboard-tempo-real)
+
+---
+
 ## 📋 PENDÊNCIAS CONHECIDAS
 
 ### Bugs Menores
