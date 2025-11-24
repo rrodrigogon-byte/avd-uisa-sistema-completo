@@ -89,6 +89,7 @@ import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
+import NotificationTemplates from "./pages/admin/NotificationTemplates";
 import ScheduledReports from "./pages/ScheduledReports";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import DashboardExecutivo from "./pages/DashboardExecutivo";
@@ -289,6 +290,7 @@ function Router() {
       <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
+      <Route path="/admin/notification-templates" component={NotificationTemplates} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />

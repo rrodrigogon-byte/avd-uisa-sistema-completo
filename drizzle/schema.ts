@@ -2531,3 +2531,25 @@ export type InsertPerformanceEvaluationApproval = typeof performanceEvaluationAp
 
 // Re-export from schema-alerts.ts
 export * from "./schema-alerts";
+
+
+// Tabela de templates de notificações personalizadas
+export const notificationTemplates = mysqlTable("notificationTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  eventType: varchar("eventType", { length: 100 }).notNull(), // meta_vencida, avaliacao_pendente, etc
+  title: varchar("title", { length: 255 }).notNull(), // Suporta variáveis: {{nome}}, {{data}}
+  message: text("message").notNull(), // Suporta variáveis: {{nome}}, {{meta}}, {{prazo}}
+  link: varchar("link", { length: 500 }), // Link opcional
+  priority: mysqlEnum("priority", ["baixa", "media", "alta", "critica"]).notNull().default("media"),
+  active: mysqlEnum("active", ["yes", "no"]).notNull().default("yes"),
+  sendEmail: mysqlEnum("sendEmail", ["yes", "no"]).notNull().default("no"),
+  sendPush: mysqlEnum("sendPush", ["yes", "no"]).notNull().default("yes"),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NotificationTemplate = typeof notificationTemplates.$inferSelect;
+export type InsertNotificationTemplate = typeof notificationTemplates.$inferInsert;

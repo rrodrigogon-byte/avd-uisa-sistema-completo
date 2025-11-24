@@ -50,6 +50,7 @@ import { calibrationDirectorRouter } from "./routers/calibrationDirectorRouter";
 import { reportsRouter } from "./routers/reportsRouter";
 import { calibrationMeetingRouter } from "./calibrationMeetingRouter";
 import { performanceEvaluationCycleRouter } from "./performanceEvaluationCycleRouter";
+import { notificationTemplatesRouter } from "./notificationTemplatesRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2619,6 +2620,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Notificações
   notifications: notificationsRouter,
+
+  // Router de Templates de Notificações Personalizáveis
+  notificationTemplates: notificationTemplatesRouter,
 
   // Router de Pesquisas de Pulse
   pulse: pulseRouter,

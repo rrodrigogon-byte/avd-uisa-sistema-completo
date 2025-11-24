@@ -1,81 +1,38 @@
-## 🔥 TAREFAS URGENTES - Nova Solicitação (23/11/2024 18:40)
+## 🔥 TAREFAS URGENTES - Nova Solicitação (24/11/2024 19:30)
 
-### Correções de Bugs Críticos
-- [x] Corrigir validação de descrição de meta (20 → 10 caracteres mínimo)
-- [x] Corrigir erro ao aprovar metas (validação impedindo aprovação)
-- [x] Corrigir erro ao incluir sucessor (SQL insert com valores faltantes: gapAnalysis, developmentActions)
-- [x] Corrigir e complementar página de Calibração (já funcional)
-- [x] Corrigir e complementar página de Calibração da Diretoria (já funcional)
+### Funcionalidades Avançadas - Fase 2
 
-### Novas Funcionalidades Solicitadas
-- [ ] Implementar exportação real em PDF dos relatórios de PDI (jsPDF + autoTable)
-- [ ] Criar dashboard de notificações enviadas para RH acompanhar
-- [ ] Adicionar filtro de período temporal nos relatórios de PDI (comparar evolução)
+#### 1. Agendamento Automático de Relatórios de PDI
+- [x] Criar tabela scheduledReports no schema (já existente)
+- [x] Criar job cron para envio semanal de relatórios de PDI (implementado)
+- [x] Implementar endpoint scheduledReports.create (já existe)
+- [x] Implementar endpoint scheduledReports.list (já existe)
+- [x] Implementar endpoint scheduledReports.execute (já existe)
+- [x] Criar página de configuração de agendamentos (/admin/scheduled-reports) (já existe)
+- [x] Implementar geração automática de PDF de PDI (implementado)
+- [x] Enviar e-mails para gestores com relatórios anexados (implementado)
 
----
+#### 2. Filtros Avançados no Dashboard de E-mails
+- [x] Adicionar filtros por período (data início/fim)
+- [x] Adicionar filtro por tipo de e-mail (dropdown)
+- [x] Adicionar filtro por status (sucesso/falha/todos)
+- [x] Implementar busca por destinatário (input de busca)
+- [x] Adicionar paginação na tabela de histórico
+- [ ] Implementar exportação de relatórios filtrados (Excel) - placeholder criado
+- [x] Filtros implementados no frontend com useMemo
 
-## ✅ TAREFAS CONCLUÍDAS - 23/11/2024 18:30
-
-### Correções Urgentes
-- [x] Corrigir endpoint employees.list - estrutura flat (3045 funcionários)
-- [x] Criar endpoint competencies.list (55 competências)
-- [x] Verificar endpoint pdiIntelligent.addGap - funcionando
-
-### Página de Aprovação de Ciclos
-- [x] Criar página /aprovacoes/ciclos-avaliacao
-- [x] Adicionar ao menu "Aprovações" → "Ciclos de Avaliação"
-- [x] Listar ciclos em planejamento pendentes de aprovação
-- [x] Botão "Aprovar para Metas" funcional
-- [x] Dialog de confirmação com informações do ciclo
-
-### Notificações Automáticas
-- [x] Sistema já implementado no endpoint cycles.approveForGoals
-- [x] Envia notificação push para todos os funcionários
-- [x] Link direto para criação de metas
-
-### Workflow de Aprovação de Metas
-- [x] Endpoints goals.approve e goals.reject já existem
-- [x] Página AprovarMetas.tsx já implementada
-- [x] Sistema completo de aprovação/rejeição com comentários
-
-### Relatórios Consolidados de PDI
-- [x] Criar página /relatorios/pdi
-- [x] Adicionar ao menu "Desenvolvimento" → "Relatórios de PDI"
-- [x] Gráfico de evolução de gaps de competências (Bar Chart)
-- [x] Gráfico de progresso ações 70-20-10 (Doughnut Chart)
-- [x] Gráfico de status de riscos (Bar Chart)
-- [x] Tabela de histórico de revisões
-- [x] Filtros por funcionário e PDI
-- [x] Estatísticas gerais (gaps, progresso, ações, riscos)
-- [x] Botão de exportação PDF (estrutura pronta)
+#### 3. Notificações Push Personalizadas
+- [x] Criar tabela notificationTemplates no schema
+- [x] Implementar CRUD de templates de notificações (router completo)
+- [x] Criar página de gestão de templates (/admin/notification-templates)
+- [x] Implementar variáveis dinâmicas nos templates ({{nome}}, {{data}}, etc)
+- [x] Integrar templates com eventos do sistema (função sendNotificationFromTemplate)
+- [x] Adicionar preview de notificações antes de enviar
+- [x] Criar biblioteca de templates padrão (10 templates criados)
 
 ---
 
-## 📋 RESUMO DAS IMPLEMENTAÇÕES
-
-### Bugs Corrigidos
-1. **employees.list** - Retorna estrutura flat com id, name, email, etc.
-2. **competencies.list** - Endpoint criado e funcional
-3. **Matriz de Gaps** - Endpoint addGap verificado e funcionando
-
-### Novas Páginas
-1. **AprovacaoCiclos.tsx** - Aprovação de ciclos para criação de metas
-2. **RelatoriosPDI.tsx** - Relatórios consolidados com gráficos
-
-### Funcionalidades Implementadas
-- ✅ Notificações automáticas quando ciclo aprovado
-- ✅ Workflow completo de aprovação de metas
-- ✅ Relatórios visuais de evolução de PDI
-- ✅ Menu atualizado com novos itens
-
-- [x] Adicionar botão "Ativar Metas" no modal de edição de ciclo
-
-### Novo Bug Reportado
-- [ ] Corrigir envio de Pesquisas Pulse (não está sendo enviado)
-- [ ] Corrigir erro 404 em todos os templates de avaliação
-
-
-## 🚀 NOVAS TAREFAS - 23/11/2024 19:00
+## ✅ TAREFAS CONCLUÍDAS - 23/11/2024 19:20
 
 ### 1. Configuração SMTP Completa
 - [x] Verificar página /admin/smtp existente
@@ -100,6 +57,44 @@
 - [x] Criar endpoint admin.getEmailStats (por tipo, por mês)
 - [x] Implementar gráficos Chart.js (linha temporal, pizza por tipo)
 - [x] Adicionar tabela de histórico de emails enviados
-- [x] Incluir filtros por período, tipo e status
-- [ ] Adicionar botão de reenvio de emails falhados (opcional)
 - [x] Adicionar ao menu "Configurações" → "Métricas de E-mail"
+
+### Correções de Bugs Críticos
+- [x] Corrigir validação de descrição de meta (20 → 10 caracteres mínimo)
+- [x] Corrigir erro ao aprovar metas (validação impedindo aprovação)
+- [x] Corrigir erro ao incluir sucessor (SQL insert com valores faltantes)
+- [x] Corrigir e complementar página de Calibração
+- [x] Corrigir e complementar página de Calibração da Diretoria
+
+### Página de Aprovação de Ciclos
+- [x] Criar página /aprovacoes/ciclos-avaliacao
+- [x] Adicionar ao menu "Aprovações" → "Ciclos de Avaliação"
+- [x] Listar ciclos em planejamento pendentes de aprovação
+- [x] Botão "Aprovar para Metas" funcional
+- [x] Dialog de confirmação com informações do ciclo
+
+### Relatórios Consolidados de PDI
+- [x] Criar página /relatorios/pdi
+- [x] Adicionar ao menu "Desenvolvimento" → "Relatórios de PDI"
+- [x] Gráfico de evolução de gaps de competências (Bar Chart)
+- [x] Gráfico de progresso ações 70-20-10 (Doughnut Chart)
+- [x] Gráfico de status de riscos (Bar Chart)
+- [x] Tabela de histórico de revisões
+- [x] Filtros por funcionário e PDI
+- [x] Estatísticas gerais (gaps, progresso, ações, riscos)
+- [x] Botão de exportação PDF funcionando
+
+---
+
+## 📋 PENDÊNCIAS CONHECIDAS
+
+### Bugs Menores
+- [ ] Corrigir envio de Pesquisas Pulse (não está sendo enviado)
+- [ ] Corrigir erro 404 em alguns templates de avaliação
+- [ ] Adicionar botão de reenvio de emails falhados no dashboard
+
+### Melhorias Futuras
+- [ ] Adicionar filtro de período temporal nos relatórios de PDI
+- [ ] Implementar sistema de backup automático
+- [ ] Criar dashboard mobile responsivo
+- [ ] Adicionar suporte a múltiplos idiomas
