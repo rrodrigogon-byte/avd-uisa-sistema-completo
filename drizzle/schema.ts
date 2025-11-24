@@ -2540,3 +2540,75 @@ export const notificationTemplates = mysqlTable("notificationTemplates", {
 
 export type NotificationTemplate = typeof notificationTemplates.$inferSelect;
 export type InsertNotificationTemplate = typeof notificationTemplates.$inferInsert;
+
+
+// ============================================================================
+// TABELAS PARA CICLO 360° ENHANCED
+// ============================================================================
+
+export const evaluation360CycleWeights = mysqlTable("evaluation360CycleWeights", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  selfWeight: int("selfWeight").default(25).notNull(),
+  managerWeight: int("managerWeight").default(25).notNull(),
+  peersWeight: int("peersWeight").default(25).notNull(),
+  subordinatesWeight: int("subordinatesWeight").default(25).notNull(),
+  selfEvaluationDeadline: datetime("selfEvaluationDeadline"),
+  managerEvaluationDeadline: datetime("managerEvaluationDeadline"),
+  peersEvaluationDeadline: datetime("peersEvaluationDeadline"),
+  subordinatesEvaluationDeadline: datetime("subordinatesEvaluationDeadline"),
+  consensusDeadline: datetime("consensusDeadline"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Evaluation360CycleWeights = typeof evaluation360CycleWeights.$inferSelect;
+export type InsertEvaluation360CycleWeights = typeof evaluation360CycleWeights.$inferInsert;
+
+export const evaluation360CycleCompetencies = mysqlTable("evaluation360CycleCompetencies", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  competencyId: int("competencyId").notNull(),
+  weight: int("weight").default(1).notNull(),
+  minLevel: int("minLevel").default(1).notNull(),
+  maxLevel: int("maxLevel").default(5).notNull(),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Evaluation360CycleCompetency = typeof evaluation360CycleCompetencies.$inferSelect;
+export type InsertEvaluation360CycleCompetency = typeof evaluation360CycleCompetencies.$inferInsert;
+
+export const evaluation360CycleParticipants = mysqlTable("evaluation360CycleParticipants", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  participationType: mysqlEnum("participationType", ["evaluated", "evaluator", "both"]).default("evaluated").notNull(),
+  managerId: int("managerId"),
+  peerIds: text("peerIds"),
+  subordinateIds: text("subordinateIds"),
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "cancelled"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Evaluation360CycleParticipant = typeof evaluation360CycleParticipants.$inferSelect;
+export type InsertEvaluation360CycleParticipant = typeof evaluation360CycleParticipants.$inferInsert;
+
+export const evaluation360CycleConfig = mysqlTable("evaluation360CycleConfig", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  currentStep: int("currentStep").default(1).notNull(),
+  isCompleted: boolean("isCompleted").default(false).notNull(),
+  tempData: text("tempData"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Evaluation360CycleConfig = typeof evaluation360CycleConfig.$inferSelect;
+export type InsertEvaluation360CycleConfig = typeof evaluation360CycleConfig.$inferInsert;
+
+// ============================================================================
+// TABELAS PARA CICLO 360° ENHANCED
+// ============================================================================
