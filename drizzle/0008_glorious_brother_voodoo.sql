@@ -1,0 +1,1 @@
+ALTER TABLE `psychometricTests` MODIFY COLUMN `testType` enum('disc','bigfive','mbti','ie','vark') NOT NULL;
