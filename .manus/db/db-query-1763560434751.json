@@ -1,9 +1,0 @@
-{
-  "query": "UPDATE smartGoals SET status = 'approved', approvalStatus = 'approved' WHERE employeeId = (SELECT id FROM employees WHERE userId = 1 LIMIT 1) AND id IN (SELECT id FROM smartGoals ORDER BY id DESC LIMIT 5)",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute UPDATE smartGoals SET status = 'approved', approvalStatus = 'approved' WHERE employeeId = (SELECT id FROM employees WHERE userId = 1 LIMIT 1) AND id IN (SELECT id FROM smartGoals ORDER BY id DESC LIMIT 5)",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 60
-}

@@ -43,21 +43,15 @@
 }
 
 :root {
-  /* UISA Brand Colors */
-  --uisa-orange: oklch(0.68 0.18 50); /* #F39200 - Laranja principal */
-  --uisa-blue-dark: oklch(0.35 0.08 250); /* #1E3A5F - Azul navy */
-  --uisa-blue-light: oklch(0.65 0.12 240); /* #4A9FD8 - Azul claro */
-  --uisa-gray-dark: oklch(0.32 0.01 260); /* #3D4852 - Cinza escuro */
-  
-  --primary: var(--uisa-orange);
-  --primary-foreground: oklch(1 0 0);
-  --sidebar-primary: var(--uisa-blue-dark);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --chart-1: var(--uisa-blue-light);
-  --chart-2: var(--uisa-blue-dark);
-  --chart-3: var(--uisa-orange);
-  --chart-4: oklch(0.55 0.12 240);
-  --chart-5: oklch(0.45 0.08 250);
+  --primary: var(--color-blue-700);
+  --primary-foreground: var(--color-blue-50);
+  --sidebar-primary: var(--color-blue-600);
+  --sidebar-primary-foreground: var(--color-blue-50);
+  --chart-1: var(--color-blue-300);
+  --chart-2: var(--color-blue-500);
+  --chart-3: var(--color-blue-600);
+  --chart-4: var(--color-blue-700);
+  --chart-5: var(--color-blue-800);
   --radius: 0.65rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.235 0.015 65);
@@ -85,10 +79,10 @@
 }
 
 .dark {
-  --primary: var(--uisa-orange);
-  --primary-foreground: oklch(0.1 0 0);
-  --sidebar-primary: var(--uisa-blue-dark);
-  --sidebar-primary-foreground: oklch(1 0 0);
+  --primary: var(--color-blue-700);
+  --primary-foreground: var(--color-blue-50);
+  --sidebar-primary: var(--color-blue-500);
+  --sidebar-primary-foreground: var(--color-blue-50);
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.85 0.005 65);
   --card: oklch(0.21 0.006 285.885);
