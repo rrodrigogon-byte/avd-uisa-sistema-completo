@@ -1743,7 +1743,7 @@ export const goalsRouter = router({
         createdAt: smartGoals.createdAt,
       })
       .from(smartGoals)
-      .where(sql`${smartGoals.goalType} = 'corporate'`)
+      .where(eq(smartGoals.goalType, 'corporate'))
       .orderBy(desc(smartGoals.createdAt));
 
     return goals;

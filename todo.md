@@ -1,3 +1,24 @@
+## 🔥 TAREFAS URGENTES - Correções Críticas (24/11/2024 09:50)
+
+### Problema 1: Erro ao aprovar ciclo no 360° Enhanced
+- [x] Investigar erro "ciclo não encontrado" na página /360-enhanced
+- [x] Verificar endpoint de aprovação de ciclos
+- [x] Corrigir lógica de busca de ciclos (removido botão fora de contexto)
+- [x] Testar aprovação de ciclo
+
+### Problema 2: Tela em branco nas Metas Corporativas
+- [x] Investigar erro na página /metas/corporativas
+- [x] Verificar console do navegador para erros JavaScript
+- [x] Corrigir componente MetasCorporativas.tsx (adicionado DashboardLayout)
+- [x] Testar carregamento da página
+
+### Problema 3: Link de aprovação de ciclos ausente no menu
+- [x] Identificar página de aprovação de ciclos existente (AprovacaoCiclos.tsx)
+- [x] Verificar item no menu lateral (já existe em Aprovações > Ciclos de Avaliação)
+- [x] Confirmar rota /aprovacoes/ciclos-avaliacao
+
+---
+
 ## 🔥 TAREFAS URGENTES - Nova Solicitação (24/11/2024 19:30)
 
 ### Funcionalidades Avançadas - Fase 2

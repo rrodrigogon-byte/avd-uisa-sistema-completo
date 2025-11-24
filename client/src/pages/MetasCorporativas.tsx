@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -171,7 +172,8 @@ export default function MetasCorporativas() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <DashboardLayout>
+      <div className="container mx-auto py-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -395,6 +397,7 @@ export default function MetasCorporativas() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
