@@ -154,10 +154,16 @@ import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />          <Route path="/gestor" component={DashboardGestor} />
-          <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />
-      <Route path="/configuracoes/notificacoes" component={NotificacoesConfig} />      <Route path={"/metas"} component={MetasSMART} />
+      <Route path={"/"} component={Home} />
+      <Route path="/gestor" component={DashboardGestor} />
+      <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />
+      <Route path="/configuracoes/notificacoes" component={NotificacoesConfig} />
+      {/* Rotas de metas - específicas ANTES das parametrizadas */}
+      <Route path={"/metas"} component={MetasSMART} />
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
+      <Route path="/metas/corporativas" component={MetasCorporativas} />
+      <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} />
+      <Route path="/metas/dashboard-ciclos" component={DashboardMetasCiclos} />
       <Route path={"/metas/:id"} component={DetalhesMeta} />
       <Route path={"/metas/:id/editar"} component={EditarMeta} />
       <Route path="/metas/:id/progresso" component={AtualizarProgressoMeta} />
@@ -186,9 +192,6 @@ function Router() {
       {/* <Route path="/admin/import-uisa" component={ImportUISA} /> */}
       <Route path="/admin/gerenciar-senhas-lideres" component={GerenciarSenhasLideres} />
       <Route path="/admin/historico-senhas" component={HistoricoSenhas} />
-      <Route path="/metas/corporativas" component={MetasCorporativas} />
-      <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} />
-      <Route path="/metas/dashboard-ciclos" component={DashboardMetasCiclos} />
       {/* <Route path="/metas/corporativas/adesao" component={AdesaoMetasCorporativas} /> */}
       {/* <Route path="/aprovacoes/bonus-workflow/:id" component={BonusWorkflowApproval} /> */}
       {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}
