@@ -595,3 +595,138 @@ export async function export360PDF(avaliacao: any) {
     orientation: 'portrait'
   });
 }
+
+
+/**
+ * Exporta Relatório Consolidado de PDI para PDF (com gráficos)
+ * Captura gráficos Chart.js como imagens e inclui no PDF
+ */
+export async function exportPDIReportPDF(data: {
+  employeeName: string;
+  pdiId: number;
+  gaps: any[];
+  actions: any[];
+  revisions: any[];
+  risks: any[];
+  stats: {
+    totalGaps: number;
+    averageProgress: number;
+    totalActions: number;
+    completedActions: number;
+  };
+}) {
+  // Capturar gráficos como imagens
+  const captureChart = async (elementId: string): Promise<string> => {
+    const element = document.getElementById(elementId);
+    if (!element) return '';
+
+    try {
+      // Importar html2canvas dinamicamente
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('Erro ao capturar gráfico:', error);
+      return '';
+    }
+  };
+
+  // Capturar todos os gráficos
+  const gapsChartImage = await captureChart('gaps-chart');
+  const actionsChartImage = await captureChart('actions-chart');
+  const risksChartImage = await captureChart('risks-chart');
+
+  // Construir conteúdo HTML
+  const content = `
+    ${generateSectionHTML('Resumo Geral', `
+      ${generateInfoGridHTML([
+        { label: 'Colaborador', value: data.employeeName },
+        { label: 'Total de Gaps', value: data.stats.totalGaps.toString() },
+        { label: 'Progresso Médio', value: `${data.stats.averageProgress.toFixed(1)}%` },
+        { label: 'Total de Ações', value: data.stats.totalActions.toString() },
+        { label: 'Ações Concluídas', value: data.stats.completedActions.toString() },
+        { label: 'Taxa de Conclusão', value: data.stats.totalActions > 0 ? `${((data.stats.completedActions / data.stats.totalActions) * 100).toFixed(1)}%` : '0%' }
+      ])}
+    `)}
+
+    ${gapsChartImage ? generateSectionHTML('Evolução de Gaps de Competências', `
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="${gapsChartImage}" style="max-width: 100%; height: auto;" alt="Gráfico de Gaps" />
+      </div>
+    `) : ''}
+
+    ${data.gaps.length > 0 ? generateSectionHTML('Detalhamento de Gaps', `
+      ${generateTableHTML(
+        ['Competência', 'Nível Atual', 'Nível Alvo', 'Gap'],
+        data.gaps.map(gap => [
+          gap.competencyName || 'N/A',
+          gap.currentLevel?.toString() || '0',
+          gap.targetLevel?.toString() || '0',
+          (gap.gap || 0).toString()
+        ])
+      )}
+    `) : ''}
+
+    ${actionsChartImage ? generateSectionHTML('Progresso de Ações 70-20-10', `
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="${actionsChartImage}" style="max-width: 80%; height: auto;" alt="Gráfico de Ações" />
+      </div>
+    `) : ''}
+
+    ${data.actions.length > 0 ? generateSectionHTML('Ações de Desenvolvimento', `
+      ${generateTableHTML(
+        ['Tipo', 'Descrição', 'Status', 'Progresso'],
+        data.actions.map(action => [
+          action.type === '70' ? '70% Experiência' : action.type === '20' ? '20% Relacionamento' : '10% Educação',
+          action.description || 'N/A',
+          action.status === 'completed' ? generateBadgeHTML('Concluída', 'success') :
+          action.status === 'in_progress' ? generateBadgeHTML('Em Progresso', 'info') :
+          generateBadgeHTML('Pendente', 'warning'),
+          `${action.progress || 0}%`
+        ])
+      )}
+    `) : ''}
+
+    ${risksChartImage ? generateSectionHTML('Status de Riscos', `
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="${risksChartImage}" style="max-width: 100%; height: auto;" alt="Gráfico de Riscos" />
+      </div>
+    `) : ''}
+
+    ${data.risks && data.risks.length > 0 ? generateSectionHTML('Riscos Identificados', `
+      ${generateTableHTML(
+        ['Descrição', 'Severidade', 'Mitigação'],
+        data.risks.map(risk => [
+          risk.description || 'N/A',
+          risk.severity === 'high' ? generateBadgeHTML('Alto', 'danger') :
+          risk.severity === 'medium' ? generateBadgeHTML('Médio', 'warning') :
+          generateBadgeHTML('Baixo', 'info'),
+          risk.mitigation || 'N/A'
+        ])
+      )}
+    `) : ''}
+
+    ${data.revisions && data.revisions.length > 0 ? generateSectionHTML('Histórico de Revisões', `
+      ${generateTableHTML(
+        ['Data', 'Revisor', 'Feedback'],
+        data.revisions.map(rev => [
+          new Date(rev.revisionDate).toLocaleDateString('pt-BR'),
+          rev.revisedBy || 'N/A',
+          rev.feedback || 'Sem feedback'
+        ])
+      )}
+    `) : ''}
+  `;
+
+  await exportToPDF({
+    title: 'Relatório Consolidado de PDI',
+    subtitle: `${data.employeeName} - PDI #${data.pdiId}`,
+    content,
+    filename: `Relatorio_PDI_${data.employeeName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+    orientation: 'portrait'
+  });
+}

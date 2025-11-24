@@ -73,3 +73,33 @@
 ### Novo Bug Reportado
 - [ ] Corrigir envio de Pesquisas Pulse (não está sendo enviado)
 - [ ] Corrigir erro 404 em todos os templates de avaliação
+
+
+## 🚀 NOVAS TAREFAS - 23/11/2024 19:00
+
+### 1. Configuração SMTP Completa
+- [x] Verificar página /admin/smtp existente
+- [x] Implementar interface de configuração SMTP (host, port, user, password)
+- [x] Adicionar botão "Testar Conexão" com envio de email de teste
+- [x] Salvar configurações no banco de dados (systemSettings)
+- [x] Integrar com emailService para envio automático
+- [x] Documentar processo de configuração Gmail/Outlook
+
+### 2. Exportação PDF de Relatórios de PDI
+- [x] Instalar jsPDF e jspdf-autotable
+- [x] Criar função generatePDIPDF em /client/src/lib/pdfExport.ts
+- [x] Incluir gráficos de evolução de gaps (Chart.js → Canvas → PDF)
+- [x] Incluir tabela de ações 70-20-10 com progresso
+- [x] Incluir histórico de revisões e feedbacks
+- [x] Adicionar cabeçalho e rodapé profissional
+- [x] Integrar botão "Exportar PDF" na página RelatoriosPDI.tsx
+
+### 3. Dashboard de Notificações para RH
+- [x] Criar página /admin/email-metrics
+- [x] Criar endpoint admin.getEmailMetrics (total enviados, sucesso, falha)
+- [x] Criar endpoint admin.getEmailStats (por tipo, por mês)
+- [x] Implementar gráficos Chart.js (linha temporal, pizza por tipo)
+- [x] Adicionar tabela de histórico de emails enviados
+- [x] Incluir filtros por período, tipo e status
+- [ ] Adicionar botão de reenvio de emails falhados (opcional)
+- [x] Adicionar ao menu "Configurações" → "Métricas de E-mail"

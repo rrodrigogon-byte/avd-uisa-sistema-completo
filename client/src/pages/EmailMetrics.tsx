@@ -44,6 +44,9 @@ export default function EmailMetrics() {
   // Buscar estatísticas agregadas
   const { data: stats, isLoading } = trpc.admin.getEmailStats.useQuery();
 
+  // Buscar histórico de e-mails
+  const { data: emailHistory } = trpc.admin.getEmailHistory.useQuery();
+
   // Verificar se é admin
   if (user?.role !== "admin") {
     return (
@@ -336,6 +339,61 @@ export default function EmailMetrics() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Histórico de E-mails */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Histórico de E-mails</CardTitle>
+            <CardDescription>
+              Últimos 100 e-mails enviados pelo sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {emailHistory && emailHistory.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4 font-medium text-sm">Data/Hora</th>
+                      <th className="text-left py-3 px-4 font-medium text-sm">Destinatário</th>
+                      <th className="text-left py-3 px-4 font-medium text-sm">Assunto</th>
+                      <th className="text-left py-3 px-4 font-medium text-sm">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {emailHistory.map((email: any, index: number) => (
+                      <tr key={index} className="border-b hover:bg-muted/50">
+                        <td className="py-3 px-4 text-sm">
+                          {new Date(email.sentAt).toLocaleString('pt-BR')}
+                        </td>
+                        <td className="py-3 px-4 text-sm">{email.recipientEmail}</td>
+                        <td className="py-3 px-4 text-sm">{email.subject || 'Pesquisa Pulse'}</td>
+                        <td className="py-3 px-4 text-sm">
+                          {email.status === 'sent' ? (
+                            <span className="flex items-center gap-1 text-green-600">
+                              <CheckCircle2 className="h-4 w-4" />
+                              Enviado
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-red-600">
+                              <XCircle className="h-4 w-4" />
+                              Falhou
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <Mail className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Nenhum e-mail enviado ainda</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );

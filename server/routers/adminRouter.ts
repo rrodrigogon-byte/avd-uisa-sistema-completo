@@ -3,7 +3,7 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
 import { systemSettings, pulseSurveyEmailLogs } from "../../drizzle/schema";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, desc } from "drizzle-orm";
 import { sendEmail } from "../utils/emailService";
 
 /**
@@ -267,4 +267,33 @@ export const adminRouter = router({
         });
       }
     }),
+
+  /**
+   * Obter histórico de e-mails enviados
+   */
+  getEmailHistory: protectedProcedure.query(async ({ ctx }) => {
+    if (ctx.user.role !== 'admin') {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Apenas administradores podem acessar histórico de e-mails',
+      });
+    }
+
+    const db = await getDb();
+    if (!db) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Banco de dados não disponível',
+      });
+    }
+
+    // Buscar últimos 100 e-mails enviados
+    const history = await db
+      .select()
+      .from(pulseSurveyEmailLogs)
+      .orderBy(desc(pulseSurveyEmailLogs.sentAt))
+      .limit(100);
+
+    return history;
+  }),
 });

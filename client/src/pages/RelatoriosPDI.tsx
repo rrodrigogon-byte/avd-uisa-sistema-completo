@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { FileDown, TrendingUp, Target, AlertTriangle, Loader2, BarChart3 } from "lucide-react";
+import { exportPDIReportPDF } from "@/lib/pdfExport";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -135,8 +136,35 @@ export default function RelatoriosPDI() {
     ],
   };
 
-  const handleExportPDF = () => {
-    toast.info("Exportação de PDF em desenvolvimento");
+  const handleExportPDF = async () => {
+    if (!pdiDetails || !selectedPlan) {
+      toast.error("Selecione um PDI para exportar");
+      return;
+    }
+
+    try {
+      // Preparar dados para exportação
+      const exportData = {
+        employeeName: pdiDetails.employeeName || 'N/A',
+        pdiId: selectedPlan,
+        gaps: pdiDetails.gaps || [],
+        actions: pdiDetails.actions || [],
+        revisions: pdiDetails.revisions || [],
+        risks: pdiDetails.risks || [],
+        stats: {
+          totalGaps: pdiDetails.gaps?.length || 0,
+          averageProgress: pdiDetails.overallProgress || 0,
+          totalActions: pdiDetails.actions?.length || 0,
+          completedActions: pdiDetails.actions?.filter((a: any) => a.status === 'completed').length || 0,
+        },
+      };
+
+      await exportPDIReportPDF(exportData);
+      toast.success("PDF exportado com sucesso!");
+    } catch (error) {
+      console.error('Erro ao exportar PDF:', error);
+      toast.error("Erro ao exportar PDF. Tente novamente.");
+    }
   };
 
   return (
