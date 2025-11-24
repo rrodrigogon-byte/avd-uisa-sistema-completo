@@ -606,8 +606,67 @@ export const cyclesRouter = router({
           db
         );
       } catch (error) {
-        console.error("Erro ao enviar notificações:", error);
+        console.error("Erro ao enviar notificações push:", error);
         // Não falhar a aprovação se notificações falharem
+      }
+
+      // Enviar emails para todos os funcionários
+      try {
+        const allEmployees = await db
+          .select({
+            id: employees.id,
+            name: employees.name,
+            email: employees.email,
+          })
+          .from(employees)
+          .where(eq(employees.status, 'ativo'));
+
+        const { sendEmail } = await import("./emailService");
+        
+        for (const employee of allEmployees) {
+          if (employee.email) {
+            await sendEmail({
+              to: employee.email,
+              subject: `🎯 Ciclo ${cycle.name} Aprovado para Criação de Metas`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: #2563eb;">🎯 Ciclo Aprovado!</h2>
+                  
+                  <p>Olá, <strong>${employee.name}</strong>!</p>
+                  
+                  <p>O ciclo de avaliação <strong>${cycle.name}</strong> foi aprovado e agora você pode criar suas metas.</p>
+                  
+                  <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <h3 style="margin-top: 0; color: #1f2937;">Informações do Ciclo:</h3>
+                    <ul style="margin: 0; padding-left: 20px;">
+                      <li><strong>Nome:</strong> ${cycle.name}</li>
+                      <li><strong>Tipo:</strong> ${cycle.type}</li>
+                      <li><strong>Período:</strong> ${new Date(cycle.startDate).toLocaleDateString('pt-BR')} - ${new Date(cycle.endDate).toLocaleDateString('pt-BR')}</li>
+                    </ul>
+                  </div>
+                  
+                  <p><strong>Próximos passos:</strong></p>
+                  <ol>
+                    <li>Acesse o sistema de avaliação</li>
+                    <li>Vá para a seção de Metas</li>
+                    <li>Crie suas metas vinculadas a este ciclo</li>
+                    <li>Submeta para aprovação do seu gestor</li>
+                  </ol>
+                  
+                  <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px;">
+                    <p>Este é um email automático do Sistema AVD UISA. Não responda a este email.</p>
+                  </div>
+                </div>
+              `,
+              // type: "cycle", // Removido - não existe no EmailOptions
+            });
+          }
+        }
+        
+        console.log(`✅ Emails enviados para ${allEmployees.length} funcionários`);
+      } catch (error) {
+        console.error("Erro ao enviar emails:", error);
+        // Não falhar a aprovação se emails falharem
       }
 
       return { success: true };

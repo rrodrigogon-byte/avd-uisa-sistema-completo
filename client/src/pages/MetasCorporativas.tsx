@@ -28,8 +28,8 @@ export default function MetasCorporativas() {
 
   // Calcular KPIs
   const totalCorporateGoals = corporateGoals?.length || 0;
-  const activeGoals = corporateGoals?.filter(g => g.status === "em_andamento").length || 0;
-  const completedGoals = corporateGoals?.filter(g => g.status === "concluida").length || 0;
+  const activeGoals = corporateGoals?.filter(g => g.status === "in_progress" || g.status === "approved").length || 0;
+  const completedGoals = corporateGoals?.filter(g => g.status === "completed").length || 0;
   
   // Calcular funcionários impactados (todas as metas corporativas aplicam a todos)
   const { data: allEmployees } = trpc.employees.list.useQuery();
@@ -107,17 +107,17 @@ export default function MetasCorporativas() {
 
   // Dados para gráfico de pizza (status)
   const statusCounts = {
-    em_andamento: corporateGoals?.filter(g => g.status === "em_andamento").length || 0,
-    concluida: corporateGoals?.filter(g => g.status === "concluida").length || 0,
-    cancelada: corporateGoals?.filter(g => g.status === "cancelada").length || 0,
-    pendente: corporateGoals?.filter(g => g.status === "pendente").length || 0,
+    in_progress: corporateGoals?.filter(g => g.status === "in_progress" || g.status === "approved").length || 0,
+    completed: corporateGoals?.filter(g => g.status === "completed").length || 0,
+    cancelled: corporateGoals?.filter(g => g.status === "cancelled").length || 0,
+    pending: corporateGoals?.filter(g => g.status === "pending_approval" || g.status === "draft").length || 0,
   };
 
   const pieChartData = {
     labels: ["Em Andamento", "Concluída", "Cancelada", "Pendente"],
     datasets: [
       {
-        data: [statusCounts.em_andamento, statusCounts.concluida, statusCounts.cancelada, statusCounts.pendente],
+        data: [statusCounts.in_progress, statusCounts.completed, statusCounts.cancelled, statusCounts.pending],
         backgroundColor: [
           "rgba(59, 130, 246, 0.6)",
           "rgba(34, 197, 94, 0.6)",
@@ -151,10 +151,13 @@ export default function MetasCorporativas() {
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-      pendente: { label: "Pendente", variant: "outline" },
-      em_andamento: { label: "Em Andamento", variant: "default" },
-      concluida: { label: "Concluída", variant: "secondary" },
-      cancelada: { label: "Cancelada", variant: "destructive" },
+      draft: { label: "Rascunho", variant: "outline" },
+      pending_approval: { label: "Pendente", variant: "outline" },
+      approved: { label: "Aprovada", variant: "default" },
+      rejected: { label: "Rejeitada", variant: "destructive" },
+      in_progress: { label: "Em Andamento", variant: "default" },
+      completed: { label: "Concluída", variant: "secondary" },
+      cancelled: { label: "Cancelada", variant: "destructive" },
     };
     const config = statusMap[status] || { label: status, variant: "outline" };
     return <Badge variant={config.variant}>{config.label}</Badge>;
@@ -292,11 +295,13 @@ export default function MetasCorporativas() {
                   <SelectValue placeholder="Todas" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="financial">Financeira</SelectItem>
-                  <SelectItem value="behavioral">Comportamental</SelectItem>
-                  <SelectItem value="corporate">Corporativa</SelectItem>
-                  <SelectItem value="development">Desenvolvimento</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="draft">Rascunho</SelectItem>
+                  <SelectItem value="pending_approval">Pendente</SelectItem>
+                  <SelectItem value="approved">Aprovada</SelectItem>
+                  <SelectItem value="in_progress">Em Andamento</SelectItem>
+                  <SelectItem value="completed">Concluída</SelectItem>
+                  <SelectItem value="cancelled">Cancelada</SelectItem>
                 </SelectContent>
               </Select>
             </div>

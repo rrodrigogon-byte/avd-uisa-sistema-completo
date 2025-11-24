@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { CheckCircle2, Clock, Users, Calendar, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, Users, Calendar, AlertCircle, Loader2, HelpCircle, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -21,6 +21,20 @@ import { ptBR } from "date-fns/locale";
 export default function AprovacaoCiclos() {
   const [selectedCycle, setSelectedCycle] = useState<any>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Verificar se é o primeiro acesso
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('hasSeenCycleApprovalTutorial');
+    if (!hasSeenTutorial) {
+      setShowTutorial(true);
+    }
+  }, []);
+
+  const closeTutorial = () => {
+    localStorage.setItem('hasSeenCycleApprovalTutorial', 'true');
+    setShowTutorial(false);
+  };
 
   const utils = trpc.useUtils();
 
@@ -46,7 +60,7 @@ export default function AprovacaoCiclos() {
 
   // Filtrar ciclos
   const pendingCycles = cycles?.filter(
-    (c: any) => c.status === "planejamento" && !c.approvedForGoals
+    (c: any) => c.status === "planejado" && !c.approvedForGoals
   ) || [];
 
   const approvedCycles = cycles?.filter(
@@ -55,12 +69,12 @@ export default function AprovacaoCiclos() {
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
-      planejamento: { label: "Planejamento", variant: "secondary" },
+      planejado: { label: "Planejado", variant: "secondary" },
       ativo: { label: "Ativo", variant: "default" },
       concluido: { label: "Concluído", variant: "outline" },
       cancelado: { label: "Cancelado", variant: "destructive" },
     };
-    const config = variants[status] || variants.planejamento;
+    const config = variants[status] || variants.planejado;
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
@@ -68,12 +82,83 @@ export default function AprovacaoCiclos() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold">Aprovação de Ciclos</h1>
-          <p className="text-muted-foreground mt-2">
-            Aprove ciclos para permitir que funcionários criem suas metas
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Aprovação de Ciclos</h1>
+            <p className="text-muted-foreground mt-2">
+              Aprove ciclos para permitir que funcionários criem suas metas
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowTutorial(true)}
+          >
+            <HelpCircle className="h-4 w-4 mr-2" />
+            Ver Tutorial
+          </Button>
         </div>
+
+        {/* Tutorial de Primeiro Acesso */}
+        {showTutorial && (
+          <Card className="border-blue-500 bg-blue-50">
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="h-5 w-5 text-blue-600" />
+                  <CardTitle className="text-blue-900">Tutorial: Aprovação de Ciclos</CardTitle>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={closeTutorial}
+                  className="h-6 w-6 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 text-sm text-blue-900">
+                <div>
+                  <h4 className="font-semibold mb-2">O que é a Aprovação de Ciclos?</h4>
+                  <p className="text-blue-800">
+                    Esta página permite que gestores e RH aprovem ciclos de avaliação para que os funcionários possam criar suas metas vinculadas ao ciclo.
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-2">Como funciona?</h4>
+                  <ol className="list-decimal list-inside space-y-2 text-blue-800">
+                    <li>Ciclos em status "Planejado" aparecem na seção "Pendentes de Aprovação"</li>
+                    <li>Clique em "Aprovar para Metas" para liberar o ciclo</li>
+                    <li>Após aprovação, todos os funcionários serão notificados por email</li>
+                    <li>Os funcionários poderão criar metas vinculadas ao ciclo aprovado</li>
+                    <li>A aprovação não pode ser desfeita</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-2">Dicas importantes:</h4>
+                  <ul className="list-disc list-inside space-y-1 text-blue-800">
+                    <li>Verifique as datas de início e fim do ciclo antes de aprovar</li>
+                    <li>Certifique-se de que o ciclo está configurado corretamente</li>
+                    <li>Após a aprovação, monitore a criação de metas pelos funcionários</li>
+                  </ul>
+                </div>
+
+                <div className="pt-2 border-t border-blue-200">
+                  <Button
+                    onClick={closeTutorial}
+                    className="w-full"
+                  >
+                    Entendi, não mostrar novamente
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Estatísticas */}
         <div className="grid gap-4 md:grid-cols-3">

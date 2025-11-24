@@ -107,6 +107,19 @@
 
 ---
 
+## 🔥 TAREFAS URGENTES - Nova Solicitação (24/11/2024 19:45)
+
+### Correções Críticas
+- [x] Corrigir tela em branco na página de Metas Corporativas (/metas/corporativas) - ainda não funciona
+- [x] Corrigir ciclos não aparecendo na página de Aprovação de Ciclos (status ou query incorretos)
+
+### Melhorias Solicitadas
+- [x] Criar metas corporativas de exemplo para testes
+- [x] Implementar tutorial de primeiro acesso na aprovação de ciclos
+- [x] Implementar notificações por email quando ciclo for aprovado para metas
+
+---
+
 ## 📋 PENDÊNCIAS CONHECIDAS
 
 ### Bugs Menores
