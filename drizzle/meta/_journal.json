@@ -428,6 +428,20 @@
       "when": 1764012940747,
       "tag": "0060_faulty_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "5",
+      "when": 1764013507852,
+      "tag": "0061_sloppy_psynapse",
+      "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "5",
+      "when": 1764013568474,
+      "tag": "0062_wide_grey_gargoyle",
+      "breakpoints": true
     }
   ]
 }
