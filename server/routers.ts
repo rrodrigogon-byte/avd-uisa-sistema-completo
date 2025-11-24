@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
+import { performanceRouter } from "./routers/performanceRouter";
 import { 
   getCriticalAlerts, 
   markAlertAsRead, 
@@ -16,6 +17,7 @@ import {
 
 export const appRouter = router({
   system: systemRouter,
+  performance: performanceRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

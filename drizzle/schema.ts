@@ -92,3 +92,70 @@ export const goalMonitoringLogs = mysqlTable("goalMonitoringLogs", {
 
 export type GoalMonitoringLog = typeof goalMonitoringLogs.$inferSelect;
 export type InsertGoalMonitoringLog = typeof goalMonitoringLogs.$inferInsert;
+
+/**
+ * Tabela de Metas SMART
+ * Armazena metas dos colaboradores com validacao SMART
+ */
+export const smartGoals = mysqlTable("smartGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["financial", "behavioral", "corporate", "development"]).notNull(),
+  status: mysqlEnum("status", ["planejada", "em_andamento", "concluida", "cancelada"]).default("planejada"),
+  progress: decimal("progress", { precision: 5, scale: 2 }).default("0").notNull(),
+  targetValue: decimal("targetValue", { precision: 10, scale: 2 }),
+  currentValue: decimal("currentValue", { precision: 10, scale: 2 }).default("0").notNull(),
+  unit: varchar("unit", { length: 50 }),
+  weight: int("weight").default(1),
+  startDate: timestamp("startDate").defaultNow(),
+  endDate: timestamp("endDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SmartGoal = typeof smartGoals.$inferSelect;
+export type InsertSmartGoal = typeof smartGoals.$inferInsert;
+
+/**
+ * Tabela de Historico de Performance
+ * Rastreia evolucao de performance ao longo do tempo
+ */
+export const performanceHistory = mysqlTable("performanceHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  performanceScore: decimal("performanceScore", { precision: 5, scale: 2 }).default("0"),
+  goalsCompleted: int("goalsCompleted").default(0),
+  goalsTotal: int("goalsTotal").default(0),
+  alertsGenerated: int("alertsGenerated").default(0),
+  criticalGoals: int("criticalGoals").default(0),
+  recordedAt: timestamp("recordedAt").defaultNow(),
+});
+
+export type PerformanceHistory = typeof performanceHistory.$inferSelect;
+export type InsertPerformanceHistory = typeof performanceHistory.$inferInsert;
+
+/**
+ * Tabela de Configuracao de Email
+ * Armazena credenciais e configuracoes de SMTP
+ */
+export const emailConfig = mysqlTable("emailConfig", {
+  id: int("id").autoincrement().primaryKey(),
+  provider: mysqlEnum("provider", ["smtp", "sendgrid", "aws_ses"]).notNull(),
+  smtpHost: varchar("smtpHost", { length: 255 }),
+  smtpPort: int("smtpPort"),
+  smtpUser: varchar("smtpUser", { length: 255 }),
+  smtpPassword: varchar("smtpPassword", { length: 255 }),
+  sendgridApiKey: varchar("sendgridApiKey", { length: 255 }),
+  awsAccessKey: varchar("awsAccessKey", { length: 255 }),
+  awsSecretKey: varchar("awsSecretKey", { length: 255 }),
+  fromEmail: varchar("fromEmail", { length: 255 }).notNull(),
+  fromName: varchar("fromName", { length: 255 }),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailConfig = typeof emailConfig.$inferSelect;
+export type InsertEmailConfig = typeof emailConfig.$inferInsert;
