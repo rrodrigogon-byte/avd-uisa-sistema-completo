@@ -1,0 +1,22 @@
+{
+  "query": "SELECT category, COUNT(*) as total FROM competencies GROUP BY category",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT category, COUNT(*) as total FROM competencies GROUP BY category",
+  "rows": [
+    {
+      "category": "tecnica",
+      "total": "43"
+    },
+    {
+      "category": "comportamental",
+      "total": "8"
+    },
+    {
+      "category": "lideranca",
+      "total": "4"
+    }
+  ],
+  "messages": [],
+  "stdout": "category\ttotal\ntecnica\t43\ncomportamental\t8\nlideranca\t4\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, name, status, departmentId, positionId FROM employees LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, status, departmentId, positionId FROM employees LIMIT 10",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Ana Silva 1",
+      "status": "ativo",
+      "departmentId": "3",
+      "positionId": "3"
+    },
+    {
+      "id": "2",
+      "name": "Bruno Costa 2",
+      "status": "ativo",
+      "departmentId": "2",
+      "positionId": "8"
+    },
+    {
+      "id": "3",
+      "name": "Carla Santos 3",
+      "status": "ativo",
+      "departmentId": "5",
+      "positionId": "11"
+    },
+    {
+      "id": "4",
+      "name": "Daniel Oliveira 4",
+      "status": "ativo",
+      "departmentId": "1",
+      "positionId": "13"
+    },
+    {
+      "id": "5",
+      "name": "Elena Rodrigues 5",
+      "status": "ativo",
+      "departmentId": "6",
+      "positionId": "18"
+    },
+    {
+      "id": "6",
+      "name": "Felipe Almeida 6",
+      "status": "ativo",
+      "departmentId": "2",
+      "positionId": "8"
+    },
+    {
+      "id": "7",
+      "name": "Gabriela Lima 7",
+      "status": "ativo",
+      "departmentId": "1",
+      "positionId": "19"
+    },
+    {
+      "id": "8",
+      "name": "Henrique Martins 8",
+      "status": "ativo",
+      "departmentId": "1",
+      "positionId": "7"
+    },
+    {
+      "id": "9",
+      "name": "Isabela Ferreira 9",
+      "status": "ativo",
+      "departmentId": "5",
+      "positionId": "5"
+    },
+    {
+      "id": "10",
+      "name": "João Pereira 10",
+      "status": "ativo",
+      "departmentId": "5",
+      "positionId": "11"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tstatus\tdepartmentId\tpositionId\n1\tAna Silva 1\tativo\t3\t3\n2\tBruno Costa 2\tativo\t2\t8\n3\tCarla Santos 3\tativo\t5\t11\n4\tDaniel Oliveira 4\tativo\t1\t13\n5\tElena Rodrigues 5\tativo\t6\t18\n6\tFelipe Almeida 6\tativo\t2\t8\n7\tGabriela Lima 7\tativo\t1\t19\n8\tHenrique Martins 8\tativo\t1\t7\n9\tIsabela Ferreira 9\tativo\t5\t5\n10\tJoão Pereira 10\tativo\t5\t11\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

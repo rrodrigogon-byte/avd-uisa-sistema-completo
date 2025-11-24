@@ -21,15 +21,198 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import NotificationCenter from "./NotificationCenter";
+import { GlobalSearch, useGlobalSearchShortcut } from "./GlobalSearch";
+import { Breadcrumbs } from "./Breadcrumbs";
+import NotificationBell from "./NotificationBell";
+
+// Componente de seção com submenu
+function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
+  const [isOpen, setIsOpen] = useState(true);
+  
+  return (
+    <div className="space-y-1">
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          onClick={() => setIsOpen(!isOpen)}
+          className="h-10 transition-all font-medium"
+        >
+          <item.icon className="h-4 w-4" />
+          <span>{item.label}</span>
+          {isOpen ? <ChevronDown className="h-4 w-4 ml-auto" /> : <ChevronRight className="h-4 w-4 ml-auto" />}
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      {isOpen && (
+        <div className="ml-4 space-y-0.5">
+          {item.children.map((child: any) => {
+            const isActive = location === child.path;
+            return (
+              <SidebarMenuItem key={child.path}>
+                <SidebarMenuButton
+                  isActive={isActive}
+                  onClick={() => setLocation(child.path)}
+                  tooltip={child.label}
+                  className="h-9 transition-all font-normal text-sm"
+                >
+                  <child.icon className={`h-3.5 w-3.5 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+                  <span>{child.label}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
-  { icon: Users, label: "Page 2", path: "/some-path" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: BarChart, label: "Dashboard Executivo", path: "/dashboard-executivo" },
+  { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
+  {
+    icon: Target,
+    label: "Metas",
+    isSection: true,
+    children: [
+      { icon: Target, label: "Minhas Metas", path: "/metas" },
+      { icon: Building2, label: "Metas Corporativas", path: "/metas/corporativas" },
+      { icon: CheckCircle, label: "Adesão de Metas", path: "/metas/corporativas/adesao" },
+      { icon: GitBranch, label: "Metas em Cascata", path: "/metas-cascata" },
+    ],
+  },
+  {
+    icon: TrendingUp,
+    label: "Performance",
+    isSection: true,
+    children: [
+      { icon: Activity, label: "Performance Integrada", path: "/performance-integrada" },
+      { icon: RefreshCw, label: "Avaliação 360°", path: "/avaliacoes" },
+      { icon: Star, label: "360° Enhanced", path: "/360-enhanced" },
+      { icon: Settings, label: "Configurar Avaliações", path: "/avaliacoes/configurar" },
+      { icon: Calendar, label: "Ciclos Ativos", path: "/ciclos/ativos" },
+      { icon: Scale, label: "Calibração", path: "/calibracao" },
+      { icon: Scale, label: "Calibração Diretoria", path: "/admin/calibracao-diretoria" },
+      { icon: Grid3x3, label: "Nine Box", path: "/nine-box" },
+      { icon: BarChart3, label: "Nine Box Comparativo", path: "/nine-box-comparativo" },
+    ],
+  },
+  {
+    icon: GraduationCap,
+    label: "Desenvolvimento",
+    isSection: true,
+    children: [
+      { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
+      { icon: FileText, label: "Relatórios de PDI", path: "/relatorios/pdi" },
+      { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
+      { icon: GitBranch, label: "Mapa de Sucessão UISA", path: "/mapa-sucessao-uisa" },
+      { icon: TrendingUp, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
+      { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },
+      { icon: MessageSquare, label: "Feedback Contínuo", path: "/feedback" },
+      { icon: Trophy, label: "Conquistas e Badges", path: "/badges" },
+      { icon: BarChart3, label: "Pesquisas de Pulse", path: "/pesquisas-pulse" },
+    ],
+  },
+  {
+    icon: UsersRound,
+    label: "Gestão de Pessoas",
+    isSection: true,
+    children: [
+      { icon: Users, label: "Funcionários", path: "/funcionarios" },
+      { icon: Users, label: "Funcionários Ativos", path: "/funcionarios-ativos" },
+      { icon: Building2, label: "Departamentos", path: "/departamentos" },
+      { icon: DollarSign, label: "Centros de Custo", path: "/centros-custos" },
+      { icon: GitBranch, label: "Hierarquia Organizacional", path: "/admin/hierarquia" },
+      { icon: FileText, label: "Descrição de Cargos", path: "/descricao-cargos" },
+      { icon: FileText, label: "Descrição de Cargos UISA", path: "/descricao-cargos-uisa" },
+      { icon: Clock, label: "Minhas Atividades", path: "/minhas-atividades" },
+      { icon: Clock, label: "Importar Ponto", path: "/importacao-ponto" },
+      { icon: AlertTriangle, label: "Discrepâncias", path: "/discrepancias" },
+      { icon: AlertTriangle, label: "Alertas", path: "/alertas" },
+      { icon: BarChart3, label: "Relatórios de Produtividade", path: "/relatorios-produtividade" },
+      { icon: CheckCircle, label: "Validação por Líder", path: "/validacao-lider" },
+      { icon: AlertTriangle, label: "Análise de Gaps", path: "/analise-gaps" },
+      { icon: Upload, label: "Importação em Massa", path: "/importacao-descricoes" },
+    ],
+  },
+  {
+    icon: CheckSquare,
+    label: "Aprovações",
+    isSection: true,
+    children: [
+      { icon: BarChart, label: "Dashboard", path: "/aprovacoes/dashboard" },
+      { icon: Inbox, label: "Minhas Solicitações", path: "/aprovacoes/solicitacoes" },
+      { icon: Calendar, label: "Ciclos de Avaliação", path: "/aprovacoes/ciclos-avaliacao" },
+      { icon: CheckSquare, label: "PDIs Pendentes", path: "/aprovacoes/pdi" },
+      { icon: Users, label: "Avaliações Pendentes", path: "/aprovacoes/avaliacoes" },
+      { icon: Gift, label: "Bônus", path: "/aprovacoes/bonus" },
+      { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
+    ],
+  },
+  {
+    icon: DollarSign,
+    label: "Bônus",
+    isSection: true,
+    children: [
+      { icon: DollarSign, label: "Políticas", path: "/bonus" },
+      { icon: TrendingUp, label: "Previsão", path: "/previsao-bonus" },
+      { icon: CheckSquare, label: "Aprovação em Lote", path: "/aprovacoes/bonus-lote" },
+      { icon: Workflow, label: "Workflows de Bônus", path: "/admin/bonus-workflows" },
+      { icon: CheckCircle, label: "Compliance e SLA", path: "/compliance/bonus" },
+      { icon: FileSearch, label: "Auditoria", path: "/bonus/auditoria" },
+      { icon: FileText, label: "Relatórios", path: "/relatorios/bonus" },
+      { icon: Upload, label: "Exportar Folha", path: "/folha-pagamento/exportar" },
+    ],
+  },
+  { icon: HistoryIcon, label: "Histórico", path: "/historico" },
+  {
+    icon: FileText,
+    label: "Relatórios",
+    isSection: true,
+    children: [
+      { icon: FileText, label: "Relatórios Gerais", path: "/relatorios" },
+      { icon: Calendar, label: "Progresso de Ciclos", path: "/relatorios/ciclos" },
+      { icon: DollarSign, label: "Relatórios de Bônus", path: "/relatorios/bonus" },
+      { icon: BarChart3, label: "Relatórios Executivos", path: "/relatorios-executivos" },
+    ],
+  },
+  {
+    icon: BarChart3,
+    label: "Analytics",
+    isSection: true,
+    children: [
+      { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
+      { icon: TrendingUp, label: "Analytics Avançado", path: "/analytics/avancado" },
+      { icon: Scale, label: "Benchmarking", path: "/benchmarking" },
+      { icon: BarChart, label: "Comparativo de Testes", path: "/testes/comparativo" },
+    ],
+  },
+  {
+    icon: Settings,
+    label: "Configurações",
+    isSection: true,
+    children: [
+      { icon: Settings, label: "Gerais", path: "/configuracoes" },
+      { icon: Settings, label: "Notificações Push", path: "/configuracoes/notificacoes" },
+      { icon: Mail, label: "SMTP (Admin)", path: "/configuracoes/smtp" },
+      { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
+      { icon: Mail, label: "Dashboard de Emails", path: "/admin/emails" },
+      { icon: Calendar, label: "Relatórios Agendados", path: "/admin/scheduled-reports" },
+      { icon: BarChart3, label: "Report Builder", path: "/admin/report-builder" },
+      { icon: TrendingUp, label: "Analytics (Reports)", path: "/admin/report-analytics" },
+      { icon: Inbox, label: "Importar Dados UISA", path: "/admin/import-uisa" },
+      { icon: FileSearch, label: "Histórico de Alterações", path: "/admin/audit-log" },
+      { icon: FileSearch, label: "Histórico de Senhas", path: "/admin/historico-senhas" },
+      { icon: Users, label: "Gerenciar Senhas Líderes", path: "/admin/gerenciar-senhas-lideres" },
+      { icon: FileText, label: "Templates de Avaliação", path: "/admin/templates-avaliacao" },
+      { icon: Mail, label: "Notificações Analytics", path: "/admin/notificacoes-analytics" },
+    ],
+  },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -123,6 +306,10 @@ function DashboardLayoutContent({
   const sidebarRef = useRef<HTMLDivElement>(null);
   const activeMenuItem = menuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
+  const [searchOpen, setSearchOpen] = useState(false);
+  
+  // Ativar atalho de teclado Ctrl+K / Cmd+K
+  useGlobalSearchShortcut(() => setSearchOpen(true));
 
   useEffect(() => {
     if (isCollapsed) {
@@ -209,13 +396,16 @@ function DashboardLayoutContent({
 
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
-              {menuItems.map(item => {
+              {menuItems.map((item, idx) => {
+                if (item.isSection && item.children) {
+                  return <MenuSection key={idx} item={item} location={location} setLocation={setLocation} />;
+                }
                 const isActive = location === item.path;
                 return (
-                  <SidebarMenuItem key={item.path}>
+                  <SidebarMenuItem key={item.path || idx}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      onClick={() => setLocation(item.path)}
+                      onClick={() => item.path && setLocation(item.path)}
                       tooltip={item.label}
                       className={`h-10 transition-all font-normal`}
                     >
@@ -251,6 +441,13 @@ function DashboardLayoutContent({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem
+                  onClick={() => setLocation('/perfil')}
+                  className="cursor-pointer"
+                >
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  <span>Meu Perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
                   onClick={logout}
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
@@ -284,9 +481,48 @@ function DashboardLayoutContent({
                 </div>
               </div>
             </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSearchOpen(true)}
+                className="h-9 w-9"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+              <NotificationBell />
+              <NotificationCenter />
+            </div>
           </div>
         )}
-        <main className="flex-1 p-4">{children}</main>
+        {!isMobile && (
+          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
+              <h1 className="text-lg font-semibold">{activeMenuItem?.label ?? APP_TITLE}</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setSearchOpen(true)}
+                className="h-9 gap-2 px-3"
+              >
+                <Search className="h-4 w-4" />
+                <span className="text-sm text-muted-foreground">Buscar...</span>
+                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </Button>
+              <NotificationBell />
+              <NotificationCenter />
+            </div>
+          </div>
+        )}
+        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+        <main className="flex-1 p-4">
+          <Breadcrumbs />
+          {children}
+        </main>
       </SidebarInset>
     </>
   );

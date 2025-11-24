@@ -1,0 +1,18 @@
+{
+  "query": "SHOW COLUMNS FROM evaluationCycles WHERE Field = 'status'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SHOW COLUMNS FROM evaluationCycles WHERE Field = 'status'",
+  "rows": [
+    {
+      "Field": "status",
+      "Type": "enum('planejamento','em_andamento','concluido','cancelado')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "planejamento",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nstatus\tenum('planejamento','em_andamento','concluido','cancelado')\tNO\t\tplanejamento\t\n",
+  "stderr": "",
+  "execution_time_ms": 107
+}

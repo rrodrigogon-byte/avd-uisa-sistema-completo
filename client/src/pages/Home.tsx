@@ -1,157 +1,267 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
+import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, FileText, BarChart3, Bell } from "lucide-react";
-import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
-import { useLocation } from "wouter";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { BarChart3, Goal, Target, TrendingUp, Users, AlertCircle } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuth();
-  const [, navigate] = useLocation();
+  const { data: employee } = trpc.employees.getCurrent.useQuery();
+  const { data: stats } = trpc.dashboard.getStats.useQuery({});
+  const { data: goals } = trpc.goals.list.useQuery({});
+  const { data: pdis } = trpc.pdi.list.useQuery({});
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full">
-          <Card className="shadow-lg">
-            <CardHeader className="text-center">
-              <div className="flex justify-center mb-4">
-                {APP_LOGO && <img src={APP_LOGO} alt={APP_TITLE} className="h-12 w-12" />}
-              </div>
-              <CardTitle className="text-2xl">{APP_TITLE}</CardTitle>
-              <CardDescription>Sistema de Avaliação de Desempenho</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-6 text-center">
-                Gerencie metas SMART, monitore alertas críticos e exporte relatórios avançados.
-              </p>
-              <Button
-                onClick={() => window.location.href = getLoginUrl()}
-                size="lg"
-                className="w-full"
-              >
-                Entrar no Sistema
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  const activeGoals = goals?.filter(g => g.status === "em_andamento") || [];
+  const activePDIs = pdis?.filter(p => p.status === "em_andamento" || p.status === "aprovado") || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-6xl mx-auto px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {APP_LOGO && <img src={APP_LOGO} alt={APP_TITLE} className="h-8 w-8" />}
-              <h1 className="text-2xl font-bold text-gray-900">{APP_TITLE}</h1>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Bem-vindo,</p>
-              <p className="font-semibold text-gray-900">{user?.name || "Usuário"}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-8 py-12">
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Principal</h2>
-          <p className="text-gray-600">Acesse as funcionalidades do sistema de avaliação de desempenho</p>
+    <DashboardLayout>
+      <div className="space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Olá, {employee?.name || "Colaborador"}! 👋
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Acompanhe seu desempenho e desenvolvimento profissional
+          </p>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Card: Alertas de Metas Críticas */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/alertas")}>
+        {/* Stats Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Metas Ativas</CardTitle>
+              <Target className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.goalsCount || 0}</div>
+              <p className="text-xs text-muted-foreground">
+                {activeGoals.length} em andamento
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Avaliações</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.evaluationsCount || 0}</div>
+              <p className="text-xs text-muted-foreground">
+                Ciclo {stats?.cycle?.year || new Date().getFullYear()}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">PDI Ativos</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.pdisCount || 0}</div>
+              <p className="text-xs text-muted-foreground">
+                {activePDIs.length} em desenvolvimento
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Ciclo Atual</CardTitle>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.cycle?.year ?? "-"}</div>
+              <p className="text-xs text-muted-foreground">
+                {stats?.cycle?.name ?? "Nenhum ciclo ativo"}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Metas em Andamento */}
+          <Card>
             <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <AlertCircle className="w-6 h-6 text-red-600" />
-                </div>
-                <CardTitle>Alertas Críticos</CardTitle>
-              </div>
+              <CardTitle className="flex items-center gap-2">
+                <Goal className="h-5 w-5" />
+                Metas em Andamento
+              </CardTitle>
               <CardDescription>
-                Monitore metas com progresso baixo
+                Acompanhe o progresso das suas metas
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
-                Receba notificações em tempo real sobre metas críticas que precisam de atenção imediata.
-              </p>
-              <Button variant="outline" className="w-full">
-                Acessar Dashboard →
+              {activeGoals.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <AlertCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>Nenhuma meta em andamento</p>
+                  <Button variant="link" asChild className="mt-2">
+                    <Link href="/metas">Ver todas as metas</Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {activeGoals.slice(0, 3).map((goal) => (
+                    <div key={goal.id} className="space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium">{goal.title}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant={goal.linkedToPLR ? "default" : "secondary"} className="text-xs">
+                              {goal.linkedToPLR ? "PLR" : goal.linkedToBonus ? "Bônus" : "Regular"}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(goal.endDate).toLocaleDateString("pt-BR")}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-sm font-semibold">{goal.progress}%</span>
+                      </div>
+                      <Progress value={goal.progress} className="h-2" />
+                    </div>
+                  ))}
+                  {activeGoals.length > 3 && (
+                    <Button variant="link" asChild className="w-full">
+                      <Link href="/metas">Ver todas ({activeGoals.length})</Link>
+                    </Button>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* PDI em Desenvolvimento */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Plano de Desenvolvimento
+              </CardTitle>
+              <CardDescription>
+                Seu progresso no desenvolvimento profissional
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {activePDIs.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <AlertCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>Nenhum PDI ativo</p>
+                  <Button variant="link" asChild className="mt-2">
+                    <Link href="/pdi">Criar PDI</Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {activePDIs.slice(0, 2).map((pdi) => (
+                    <div key={pdi.id} className="space-y-2 p-4 border rounded-lg">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium">
+                            PDI {new Date(pdi.startDate).getFullYear()}
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {new Date(pdi.startDate).toLocaleDateString("pt-BR")} até{" "}
+                            {new Date(pdi.endDate).toLocaleDateString("pt-BR")}
+                          </p>
+                        </div>
+                        <Badge variant={pdi.status === "aprovado" ? "default" : "secondary"}>
+                          {pdi.status === "aprovado" ? "Aprovado" : "Em andamento"}
+                        </Badge>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Progresso geral</span>
+                          <span className="font-semibold">{pdi.overallProgress}%</span>
+                        </div>
+                        <Progress value={pdi.overallProgress} className="h-2" />
+                      </div>
+                    </div>
+                  ))}
+                  <Button variant="link" asChild className="w-full">
+                    <Link href="/pdi">Ver detalhes</Link>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Ações Rápidas</CardTitle>
+            <CardDescription>
+              Acesse rapidamente as principais funcionalidades
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Button variant="outline" asChild className="justify-start h-auto py-4">
+                <Link href="/metas">
+                  <div className="flex flex-col items-start gap-1 w-full">
+                    <div className="flex items-center gap-2">
+                      <Target className="h-4 w-4" />
+                      <span className="font-semibold">Metas</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Gerenciar metas
+                    </span>
+                  </div>
+                </Link>
               </Button>
-            </CardContent>
-          </Card>
 
-          {/* Card: Relatórios Agendados */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/relatorios")}>
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FileText className="w-6 h-6 text-blue-600" />
-                </div>
-                <CardTitle>Relatórios</CardTitle>
-              </div>
-              <CardDescription>
-                Gerencie relatórios agendados
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
-                Crie e agende relatórios em PDF, Excel ou CSV com envio automático para stakeholders.
-              </p>
-              <Button variant="outline" className="w-full">
-                Gerenciar Relatórios →
+              <Button variant="outline" asChild className="justify-start h-auto py-4">
+                <Link href="/avaliacoes">
+                  <div className="flex flex-col items-start gap-1 w-full">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      <span className="font-semibold">Avaliações</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Avaliação 360°
+                    </span>
+                  </div>
+                </Link>
               </Button>
-            </CardContent>
-          </Card>
 
-          {/* Card: Monitoramento de Metas */}
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <BarChart3 className="w-6 h-6 text-green-600" />
-                </div>
-                <CardTitle>Monitoramento</CardTitle>
-              </div>
-              <CardDescription>
-                Job cron de monitoramento ativo
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
-                Sistema executando monitoramento automático de metas críticas a cada hora.
-              </p>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-600 font-medium">Ativo</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              <Button variant="outline" asChild className="justify-start h-auto py-4">
+                <Link href="/pdi">
+                  <div className="flex flex-col items-start gap-1 w-full">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      <span className="font-semibold">PDI</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Desenvolvimento
+                    </span>
+                  </div>
+                </Link>
+              </Button>
 
-        {/* Info Section */}
-        <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="flex gap-4">
-            <Bell className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-            <div>
-              <h3 className="font-semibold text-blue-900 mb-2">Sobre as Funcionalidades</h3>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>✓ <strong>Job Cron:</strong> Executa a cada hora para monitorar metas críticas (progresso &lt; 20%)</li>
-                <li>✓ <strong>Dashboard de Alertas:</strong> Visualize, filtre e resolva alertas em tempo real</li>
-                <li>✓ <strong>Exportação Avançada:</strong> Exporte relatórios em PDF, Excel ou CSV com agendamento automático</li>
-              </ul>
+              <Button variant="outline" asChild className="justify-start h-auto py-4">
+                <Link href="/nine-box">
+                  <div className="flex flex-col items-start gap-1 w-full">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      <span className="font-semibold">9-Box</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Matriz de talentos
+                    </span>
+                  </div>
+                </Link>
+              </Button>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

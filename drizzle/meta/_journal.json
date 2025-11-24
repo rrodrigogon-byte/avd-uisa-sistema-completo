@@ -421,41 +421,6 @@
       "when": 1764005153004,
       "tag": "0059_opposite_phil_sheldon",
       "breakpoints": true
-    },
-    {
-      "idx": 60,
-      "version": "5",
-      "when": 1764012940747,
-      "tag": "0060_faulty_starbolt",
-      "breakpoints": true
-    },
-    {
-      "idx": 61,
-      "version": "5",
-      "when": 1764013507852,
-      "tag": "0061_sloppy_psynapse",
-      "breakpoints": true
-    },
-    {
-      "idx": 62,
-      "version": "5",
-      "when": 1764013568474,
-      "tag": "0062_wide_grey_gargoyle",
-      "breakpoints": true
-    },
-    {
-      "idx": 63,
-      "version": "5",
-      "when": 1764015263033,
-      "tag": "0063_supreme_mattie_franklin",
-      "breakpoints": true
-    },
-    {
-      "idx": 64,
-      "version": "5",
-      "when": 1764015553890,
-      "tag": "0064_dizzy_lyja",
-      "breakpoints": true
     }
   ]
 }

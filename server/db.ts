@@ -1,11 +1,25 @@
-import { eq, and, gte, lt, desc } from "drizzle-orm";
+import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, criticalGoalAlerts, CriticalGoalAlert, InsertCriticalGoalAlert, scheduledReports, ScheduledReport, InsertScheduledReport, reportExecutionLogs, InsertReportExecutionLog, goalMonitoringLogs, InsertGoalMonitoringLog } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import {
+  auditLogs,
+  departments,
+  developmentActions,
+  employeeCompetencies,
+  employees,
+  evaluationCycles,
+  goals,
+  InsertUser,
+  nineBoxPositions,
+  pdiItems,
+  pdiPlans,
+  performanceEvaluations,
+  positions,
+  users,
+} from "../drizzle/schema";
+import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
@@ -17,6 +31,10 @@ export async function getDb() {
   }
   return _db;
 }
+
+// ============================================================================
+// USUÁRIOS E AUTENTICAÇÃO
+// ============================================================================
 
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
@@ -56,8 +74,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = user.role;
       updateSet.role = user.role;
     } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
+      values.role = "admin";
+      updateSet.role = "admin";
     }
 
     if (!values.lastSignedIn) {
@@ -85,137 +103,426 @@ export async function getUserByOpenId(openId: string) {
   }
 
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// ============================================================================
+// COLABORADORES
+// ============================================================================
+
+export async function getAllEmployees() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const results = await db
+    .select({
+      id: employees.id,
+      name: employees.name,
+      email: employees.email,
+      departmentId: employees.departmentId,
+      departmentName: departments.name,
+      positionId: employees.positionId,
+      positionTitle: positions.title,
+      hireDate: employees.hireDate,
+      status: employees.status,
+    })
+    .from(employees)
+    .leftJoin(departments, eq(employees.departmentId, departments.id))
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(employees.status, "ativo"))
+    .orderBy(employees.name);
+
+  return results;
+}
+
+export async function getEmployeeById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select({
+      employee: employees,
+      department: departments,
+      position: positions,
+    })
+    .from(employees)
+    .leftJoin(departments, eq(employees.departmentId, departments.id))
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(employees.id, id))
+    .limit(1);
 
   return result.length > 0 ? result[0] : undefined;
 }
 
-// ============ CRITICAL GOAL ALERTS ============
-
-export async function createCriticalAlert(alert: InsertCriticalGoalAlert): Promise<CriticalGoalAlert> {
+export async function getEmployeeByUserId(userId: number) {
   const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  const result = await db.insert(criticalGoalAlerts).values(alert);
-  const inserted = await db.select().from(criticalGoalAlerts).where(eq(criticalGoalAlerts.id, Number(result[0].insertId))).limit(1);
-  return inserted[0];
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.userId, userId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
 }
 
-export async function getCriticalAlerts(userId: number, limit = 50) {
-  const db = await getDb();
-  if (!db) return [];
-  
-  return db.select()
-    .from(criticalGoalAlerts)
-    .where(eq(criticalGoalAlerts.userId, userId))
-    .orderBy(desc(criticalGoalAlerts.createdAt))
-    .limit(limit);
-}
 
-export async function markAlertAsRead(alertId: number) {
-  const db = await getDb();
-  if (!db) return;
-  
-  await db.update(criticalGoalAlerts)
-    .set({ isRead: 1 })
-    .where(eq(criticalGoalAlerts.id, alertId));
-}
 
-export async function resolveAlert(alertId: number, actionTaken: string) {
+/**
+ * Busca o salário e o ID do cargo do colaborador (em centavos)
+ * CRÍTICO para cálculo de bônus e produtividade
+ */
+export async function getEmployeeSalary(employeeId: number): Promise<{ salary: number | null; positionId: number | null; positionTitle: string | null } | undefined> {
   const db = await getDb();
-  if (!db) return;
-  
-  await db.update(criticalGoalAlerts)
-    .set({ 
-      actionTaken,
-      resolvedAt: new Date(),
-      isRead: 1
+  if (!db) return undefined;
+
+  const result = await db
+    .select({ 
+        salary: employees.salary, 
+        positionId: employees.positionId,
+        positionTitle: positions.title,
     })
-    .where(eq(criticalGoalAlerts.id, alertId));
+    .from(employees)
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(employees.id, employeeId))
+    .limit(1);
+
+  // Garante que o salário seja retornado como number (em centavos) ou null
+  return result.length > 0 ? {
+    salary: result[0].salary || null,
+    positionId: result[0].positionId || null,
+    positionTitle: result[0].positionTitle || null,
+  } : undefined;
 }
 
-// ============ SCHEDULED REPORTS ============
+// ============================================================================
+// METAS
+// ============================================================================
 
-export async function createScheduledReport(report: InsertScheduledReport): Promise<ScheduledReport> {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  const result = await db.insert(scheduledReports).values(report);
-  const inserted = await db.select().from(scheduledReports).where(eq(scheduledReports.id, Number(result[0].insertId))).limit(1);
-  return inserted[0];
-}
-
-export async function getScheduledReports(userId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  
-  return db.select()
-    .from(scheduledReports)
-    .where(eq(scheduledReports.userId, userId))
-    .orderBy(desc(scheduledReports.createdAt));
-}
-
-export async function getActiveScheduledReports() {
+export async function getGoalsByEmployee(employeeId: number, cycleId?: number) {
   const db = await getDb();
   if (!db) return [];
-  
-  return db.select()
-    .from(scheduledReports)
-    .where(eq(scheduledReports.isActive, 1));
+
+  const conditions = [eq(goals.employeeId, employeeId)];
+  if (cycleId) {
+    conditions.push(eq(goals.cycleId, cycleId));
+  }
+
+  return await db
+    .select()
+    .from(goals)
+    .where(and(...conditions))
+    .orderBy(desc(goals.createdAt));
 }
 
-export async function updateScheduledReport(reportId: number, updates: Partial<ScheduledReport>) {
+export async function getGoalById(id: number) {
   const db = await getDb();
-  if (!db) return;
-  
-  await db.update(scheduledReports)
-    .set(updates)
-    .where(eq(scheduledReports.id, reportId));
+  if (!db) return undefined;
+
+  const result = await db.select().from(goals).where(eq(goals.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
 }
 
-export async function deleteScheduledReport(reportId: number) {
-  const db = await getDb();
-  if (!db) return;
-  
-  await db.delete(scheduledReports).where(eq(scheduledReports.id, reportId));
-}
+// ============================================================================
+// AVALIAÇÕES 360°
+// ============================================================================
 
-// ============ REPORT EXECUTION LOGS ============
-
-export async function logReportExecution(log: InsertReportExecutionLog) {
-  const db = await getDb();
-  if (!db) return;
-  
-  await db.insert(reportExecutionLogs).values(log);
-}
-
-export async function getReportExecutionLogs(reportId: number, limit = 20) {
+export async function getEvaluationsByEmployee(employeeId: number, cycleId?: number) {
   const db = await getDb();
   if (!db) return [];
-  
-  return db.select()
-    .from(reportExecutionLogs)
-    .where(eq(reportExecutionLogs.reportId, reportId))
-    .orderBy(desc(reportExecutionLogs.executedAt))
-    .limit(limit);
+
+  const conditions = [eq(performanceEvaluations.employeeId, employeeId)];
+  if (cycleId) {
+    conditions.push(eq(performanceEvaluations.cycleId, cycleId));
+  }
+
+  return await db
+    .select()
+    .from(performanceEvaluations)
+    .where(and(...conditions))
+    .orderBy(desc(performanceEvaluations.createdAt));
 }
 
-// ============ GOAL MONITORING LOGS ============
+export async function getEvaluationById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
 
-export async function logGoalMonitoring(log: InsertGoalMonitoringLog) {
+  const result = await db
+    .select()
+    .from(performanceEvaluations)
+    .where(eq(performanceEvaluations.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// ============================================================================
+// PDI (Plano de Desenvolvimento Individual)
+// ============================================================================
+
+export async function getPDIsByEmployee(employeeId: number, cycleId?: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [eq(pdiPlans.employeeId, employeeId)];
+  if (cycleId) {
+    conditions.push(eq(pdiPlans.cycleId, cycleId));
+  }
+
+  return await db
+    .select()
+    .from(pdiPlans)
+    .where(and(...conditions))
+    .orderBy(desc(pdiPlans.createdAt));
+}
+
+export async function getPDIById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(pdiPlans)
+    .where(eq(pdiPlans.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getPDIItemsByPlan(planId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(pdiItems)
+    .where(eq(pdiItems.planId, planId))
+    .orderBy(pdiItems.startDate);
+}
+
+export async function getDevelopmentActions() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(developmentActions)
+    .where(eq(developmentActions.active, true))
+    .orderBy(developmentActions.title);
+}
+
+// ============================================================================
+// MATRIZ 9-BOX
+// ============================================================================
+
+export async function getNineBoxByCycle(cycleId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      nineBox: nineBoxPositions,
+      employee: employees,
+      position: positions,
+    })
+    .from(nineBoxPositions)
+    .leftJoin(employees, eq(nineBoxPositions.employeeId, employees.id))
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(nineBoxPositions.cycleId, cycleId))
+    .orderBy(desc(nineBoxPositions.performance), desc(nineBoxPositions.potential));
+}
+
+// ============================================================================
+// COMPETÊNCIAS
+// ============================================================================
+
+export async function getEmployeeCompetencies(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(employeeCompetencies)
+    .where(eq(employeeCompetencies.employeeId, employeeId))
+    .orderBy(desc(employeeCompetencies.evaluatedAt));
+}
+
+// ============================================================================
+// CICLOS DE AVALIAÇÃO
+// ============================================================================
+
+export async function getActiveCycle() {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const now = new Date();
+  const result = await db
+    .select()
+    .from(evaluationCycles)
+    .where(
+      and(
+        eq(evaluationCycles.status, "ativo"),
+        lte(evaluationCycles.startDate, now),
+        gte(evaluationCycles.endDate, now)
+      )
+    )
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllCycles() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(evaluationCycles)
+    .orderBy(desc(evaluationCycles.year), desc(evaluationCycles.startDate));
+}
+
+// ============================================================================
+// DEPARTAMENTOS E CARGOS
+// ============================================================================
+
+export async function getAllDepartments() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(departments)
+    .where(eq(departments.active, true))
+    .orderBy(departments.name);
+}
+
+export async function getAllPositions() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(positions)
+    .where(eq(positions.active, true))
+    .orderBy(positions.title);
+}
+
+// ============================================================================
+// AUDITORIA
+// ============================================================================
+
+export async function logAudit(
+  userId: number | undefined,
+  action: string,
+  entity: string,
+  entityId: number | undefined,
+  changes: any,
+  ipAddress?: string,
+  userAgent?: string
+) {
   const db = await getDb();
   if (!db) return;
-  
-  await db.insert(goalMonitoringLogs).values(log);
+
+  try {
+    await db.insert(auditLogs).values({
+      userId: userId || null,
+      action,
+      entity,
+      entityId: entityId || null,
+      changes: JSON.stringify(changes),
+      ipAddress: ipAddress || null,
+      userAgent: userAgent || null,
+    });
+  } catch (error) {
+    console.error("[Database] Failed to log audit:", error);
+  }
 }
 
-export async function getLatestMonitoringLog() {
+// ============================================================================
+// DASHBOARD - ESTATÍSTICAS
+// ============================================================================
+
+export async function getDashboardStats(employeeId: number, cycleId?: number) {
   const db = await getDb();
   if (!db) return null;
-  
-  const result = await db.select()
-    .from(goalMonitoringLogs)
-    .orderBy(desc(goalMonitoringLogs.executedAt))
+
+  const cycle = cycleId ? await db.select().from(evaluationCycles).where(eq(evaluationCycles.id, cycleId)).limit(1) : [];
+  const activeCycle = cycle.length > 0 ? cycle[0] : await getActiveCycle();
+
+  if (!activeCycle) return null;
+
+  // Contar metas
+  const goalsCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(goals)
+    .where(and(eq(goals.employeeId, employeeId), eq(goals.cycleId, activeCycle.id)));
+
+  // Contar PDIs
+  const pdisCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(pdiPlans)
+    .where(and(eq(pdiPlans.employeeId, employeeId), eq(pdiPlans.cycleId, activeCycle.id)));
+
+  // Contar avaliações
+  const evaluationsCount = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(performanceEvaluations)
+    .where(and(eq(performanceEvaluations.employeeId, employeeId), eq(performanceEvaluations.cycleId, activeCycle.id)));
+
+  return {
+    cycle: activeCycle,
+    goalsCount: goalsCount[0]?.count || 0,
+    pdisCount: pdisCount[0]?.count || 0,
+    evaluationsCount: evaluationsCount[0]?.count || 0,
+  };
+}
+
+/**
+ * Buscar employee vinculado a um usuário
+ */
+export async function getUserEmployee(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.userId, userId))
     .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// ============================================================================
+// COMPETÊNCIAS
+// ============================================================================
+
+export async function getAllCompetencies() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { competencies } = await import("../drizzle/schema");
   
-  return result.length > 0 ? result[0] : null;
+  return await db
+    .select()
+    .from(competencies)
+    .where(eq(competencies.active, true))
+    .orderBy(competencies.name);
 }
