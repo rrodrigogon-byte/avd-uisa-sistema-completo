@@ -159,3 +159,27 @@
 - [ ] Implementar sistema de backup automático
 - [ ] Criar dashboard mobile responsivo
 - [ ] Adicionar suporte a múltiplos idiomas
+
+
+---
+
+## 🎯 WIZARD 360° ENHANCED - Implementação Completa (24/11/2024)
+
+### Fase 1: Formulários das 4 Etapas
+- [x] Criar formulário CycleDataForm (Etapa 1: dados básicos do ciclo)
+- [x] Criar formulário WeightsConfiguration (Etapa 2: configuração de pesos)
+- [x] Criar formulário CompetenciesSelector (Etapa 3: seleção de competências)
+- [x] Criar formulário ParticipantsManager (Etapa 4: adicionar participantes)
+- [x] Integrar formulários no componente Evaluation360EnhancedWizard)
+
+### Fase 2: Integração com Sistema
+- [x] Adicionar rota /ciclos/360-enhanced/criar no App.tsx
+- [x] Adicionar botão "Criar Ciclo" na página 360° Enhanced
+- [x] Conectar wizard com endpoints tRPC existentes
+
+### Fase 3: Validação e Testes
+- [x] Criar testes vitest para endpoints do wizard (7 testes passando)
+- [x] Testar fluxo completo de criação de ciclo
+- [x] Validar navegação entre etapas (implementado com botões Próximo/Voltar)
+- [x] Servidor reiniciado e wizard funcionando corretamente
+

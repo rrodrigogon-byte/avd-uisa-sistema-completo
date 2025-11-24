@@ -52,7 +52,6 @@ import { calibrationMeetingRouter } from "./calibrationMeetingRouter";
 import { performanceEvaluationCycleRouter } from "./performanceEvaluationCycleRouter";
 import { notificationTemplatesRouter } from "./notificationTemplatesRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
-import { evaluation360CycleWeights, evaluation360CycleCompetencies, evaluation360CycleParticipants, evaluation360CycleConfig, competencies } from "../drizzle/schema";
 
 export const appRouter = router({
   system: systemRouter,
@@ -986,6 +985,29 @@ export const appRouter = router({
         return await db.getPDIItemsByPlan(input.planId);
       }),
 
+    // Listar PDIs de um colaborador especifico
+    listByEmployee: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const pdis = await database.select()
+          .from(pdiPlans)
+          .where(eq(pdiPlans.employeeId, input.employeeId))
+          .orderBy(desc(pdiPlans.createdAt));
+
+        return pdis.map(pdi => ({
+          id: pdi.id,
+          employeeId: pdi.employeeId,
+          status: pdi.status,
+          developmentGoals: pdi.developmentGoals,
+          actions: pdi.actions ? JSON.parse(pdi.actions as any) : [],
+          createdAt: pdi.createdAt,
+          updatedAt: pdi.updatedAt,
+        }));
+      }),
+
     // Buscar PDIs da equipe do gestor
     getTeamPDIs: protectedProcedure
       .input(z.object({ managerId: z.number() }))
@@ -1187,6 +1209,33 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    // Buscar posição Nine Box de um colaborador específico
+    getEmployeePosition: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return null;
+
+        const position = await database.select()
+          .from(nineBoxPositions)
+          .where(eq(nineBoxPositions.employeeId, input.employeeId))
+          .orderBy(desc(nineBoxPositions.calibratedAt))
+          .limit(1);
+
+        if (position.length === 0) return null;
+
+        const p = position[0];
+        return {
+          id: p.id,
+          employeeId: p.employeeId,
+          performance: p.performance,
+          potential: p.potential,
+          category: p.box,
+          calibratedAt: p.calibratedAt,
+          notes: p.notes,
+        };
+      }),
+
     updatePosition: protectedProcedure
       .input(z.object({
         id: z.number(),
@@ -1380,7 +1429,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   }),
 
   // ============================================================================
-  // APROVAÇÃO DE PDI
+  // APROVACAO DE PDI
   // ============================================================================
   pdiApproval: router({
     // Submeter PDI para aprovação
@@ -2599,317 +2648,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   nineBoxComparative: nineBoxRouter,
   
   // Router de Avaliação 360° com Fluxo Sequencial
-  evaluation360: router({
-    ...evaluation360Router._def.procedures,
-    
-    // ETAPA 1: Criar ciclo
-    createCycleStep1: protectedProcedure
-      .input(
-        z.object({
-          name: z.string().min(3),
-          year: z.number().min(2020).max(2100),
-          type: z.enum(["anual", "semestral", "trimestral"]),
-          startDate: z.date(),
-          endDate: z.date(),
-          description: z.string().optional(),
-        })
-      )
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
-
-        if (input.startDate >= input.endDate) {
-          throw new Error("Data de início deve ser anterior à data de fim");
-        }
-
-        const [result] = await database.insert(evaluationCycles).values({
-          name: input.name,
-          year: input.year,
-          type: input.type,
-          startDate: input.startDate,
-          endDate: input.endDate,
-          description: input.description,
-          status: "planejado",
-          active: false,
-        });
-
-        const cycleId = result.insertId;
-
-        await database.insert(evaluation360CycleConfig).values({
-          cycleId,
-          currentStep: 1,
-          isCompleted: false,
-        });
-
-        return {
-          success: true,
-          cycleId,
-          message: "Ciclo criado com sucesso. Prossiga para configurar os pesos.",
-        };
-      }),
-
-    // ETAPA 2: Configurar pesos
-    updateCycleWeights: protectedProcedure
-      .input(
-        z.object({
-          cycleId: z.number(),
-          selfWeight: z.number().min(0).max(100),
-          managerWeight: z.number().min(0).max(100),
-          peersWeight: z.number().min(0).max(100),
-          subordinatesWeight: z.number().min(0).max(100),
-          selfEvaluationDeadline: z.date().optional(),
-          managerEvaluationDeadline: z.date().optional(),
-          peersEvaluationDeadline: z.date().optional(),
-          subordinatesEvaluationDeadline: z.date().optional(),
-          consensusDeadline: z.date().optional(),
-        })
-      )
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
-
-        const totalWeight = input.selfWeight + input.managerWeight + input.peersWeight + input.subordinatesWeight;
-        if (totalWeight !== 100) {
-          throw new Error(`Soma dos pesos deve ser 100%. Atual: ${totalWeight}%`);
-        }
-
-        const existingWeights = await database
-          .select()
-          .from(evaluation360CycleWeights)
-          .where(eq(evaluation360CycleWeights.cycleId, input.cycleId))
-          .limit(1);
-
-        if (existingWeights.length > 0) {
-          await database
-            .update(evaluation360CycleWeights)
-            .set({
-              selfWeight: input.selfWeight,
-              managerWeight: input.managerWeight,
-              peersWeight: input.peersWeight,
-              subordinatesWeight: input.subordinatesWeight,
-              selfEvaluationDeadline: input.selfEvaluationDeadline,
-              managerEvaluationDeadline: input.managerEvaluationDeadline,
-              peersEvaluationDeadline: input.peersEvaluationDeadline,
-              subordinatesEvaluationDeadline: input.subordinatesEvaluationDeadline,
-              consensusDeadline: input.consensusDeadline,
-            })
-            .where(eq(evaluation360CycleWeights.cycleId, input.cycleId));
-        } else {
-          await database.insert(evaluation360CycleWeights).values({
-            cycleId: input.cycleId,
-            selfWeight: input.selfWeight,
-            managerWeight: input.managerWeight,
-            peersWeight: input.peersWeight,
-            subordinatesWeight: input.subordinatesWeight,
-            selfEvaluationDeadline: input.selfEvaluationDeadline,
-            managerEvaluationDeadline: input.managerEvaluationDeadline,
-            peersEvaluationDeadline: input.peersEvaluationDeadline,
-            subordinatesEvaluationDeadline: input.subordinatesEvaluationDeadline,
-            consensusDeadline: input.consensusDeadline,
-          });
-        }
-
-        await database
-          .update(evaluation360CycleConfig)
-          .set({ currentStep: 2 })
-          .where(eq(evaluation360CycleConfig.cycleId, input.cycleId));
-
-        return {
-          success: true,
-          message: "Pesos configurados com sucesso. Prossiga para selecionar competências.",
-        };
-      }),
-
-    // ETAPA 3: Adicionar competências
-    addCycleCompetencies: protectedProcedure
-      .input(
-        z.object({
-          cycleId: z.number(),
-          competencies: z.array(
-            z.object({
-              competencyId: z.number(),
-              weight: z.number().min(1),
-              minLevel: z.number().min(1).max(5),
-              maxLevel: z.number().min(1).max(5),
-              description: z.string().optional(),
-            })
-          ),
-        })
-      )
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
-
-        if (input.competencies.length === 0) {
-          throw new Error("Pelo menos uma competência deve ser selecionada");
-        }
-
-        await database.delete(evaluation360CycleCompetencies).where(eq(evaluation360CycleCompetencies.cycleId, input.cycleId));
-
-        for (const comp of input.competencies) {
-          await database.insert(evaluation360CycleCompetencies).values({
-            cycleId: input.cycleId,
-            competencyId: comp.competencyId,
-            weight: comp.weight,
-            minLevel: comp.minLevel,
-            maxLevel: comp.maxLevel,
-            description: comp.description,
-          });
-        }
-
-        await database
-          .update(evaluation360CycleConfig)
-          .set({ currentStep: 3 })
-          .where(eq(evaluation360CycleConfig.cycleId, input.cycleId));
-
-        return {
-          success: true,
-          message: `${input.competencies.length} competência(s) adicionada(s). Prossiga para adicionar participantes.`,
-        };
-      }),
-
-    // ETAPA 4: Adicionar participantes
-    addCycleParticipants: protectedProcedure
-      .input(
-        z.object({
-          cycleId: z.number(),
-          participants: z.array(
-            z.object({
-              employeeId: z.number(),
-              participationType: z.enum(["evaluated", "evaluator", "both"]),
-              managerId: z.number().optional(),
-              peerIds: z.array(z.number()).optional(),
-              subordinateIds: z.array(z.number()).optional(),
-            })
-          ),
-        })
-      )
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
-
-        if (input.participants.length === 0) {
-          throw new Error("Pelo menos um participante deve ser adicionado");
-        }
-
-        await database.delete(evaluation360CycleParticipants).where(eq(evaluation360CycleParticipants.cycleId, input.cycleId));
-
-        for (const participant of input.participants) {
-          await database.insert(evaluation360CycleParticipants).values({
-            cycleId: input.cycleId,
-            employeeId: participant.employeeId,
-            participationType: participant.participationType,
-            managerId: participant.managerId,
-            peerIds: participant.peerIds ? JSON.stringify(participant.peerIds) : null,
-            subordinateIds: participant.subordinateIds ? JSON.stringify(participant.subordinateIds) : null,
-            status: "pending",
-          });
-        }
-
-        await database
-          .update(evaluation360CycleConfig)
-          .set({ currentStep: 4 })
-          .where(eq(evaluation360CycleConfig.cycleId, input.cycleId));
-
-        return {
-          success: true,
-          message: `${input.participants.length} participante(s) adicionado(s). Pronto para finalizar o ciclo.`,
-        };
-      }),
-
-    // Finalizar criação
-    completeCycleCreation: protectedProcedure
-      .input(z.object({ cycleId: z.number() }))
-      .mutation(async ({ input, ctx }) => {
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
-
-        const weights = await database
-          .select()
-          .from(evaluation360CycleWeights)
-          .where(eq(evaluation360CycleWeights.cycleId, input.cycleId))
-          .limit(1);
-
-        const cycleCompetencies = await database
-          .select()
-          .from(evaluation360CycleCompetencies)
-          .where(eq(evaluation360CycleCompetencies.cycleId, input.cycleId))
-          .limit(1);
-
-        const cycleParticipants = await database
-          .select()
-          .from(evaluation360CycleParticipants)
-          .where(eq(evaluation360CycleParticipants.cycleId, input.cycleId))
-          .limit(1);
-
-        if (weights.length === 0 || cycleCompetencies.length === 0 || cycleParticipants.length === 0) {
-          throw new Error("Todas as etapas devem ser completadas antes de ativar o ciclo");
-        }
-
-        await database
-          .update(evaluationCycles)
-          .set({
-            status: "ativo",
-            active: true,
-          })
-          .where(eq(evaluationCycles.id, input.cycleId));
-
-        await database
-          .update(evaluation360CycleConfig)
-          .set({
-            currentStep: 4,
-            isCompleted: true,
-          })
-          .where(eq(evaluation360CycleConfig.cycleId, input.cycleId));
-
-        return {
-          success: true,
-          cycleId: input.cycleId,
-          message: "Ciclo 360° Enhanced criado e ativado com sucesso!",
-        };
-      }),
-
-    // Buscar dados do ciclo
-    getCycleData: protectedProcedure
-      .input(z.object({ cycleId: z.number() }))
-      .query(async ({ input }) => {
-        const database = await getDb();
-        if (!database) return null;
-
-        const cycle = await database.select().from(evaluationCycles).where(eq(evaluationCycles.id, input.cycleId)).limit(1);
-        if (cycle.length === 0) return null;
-
-        const weights = await database
-          .select()
-          .from(evaluation360CycleWeights)
-          .where(eq(evaluation360CycleWeights.cycleId, input.cycleId))
-          .limit(1);
-
-        const cycleCompetencies = await database
-          .select()
-          .from(evaluation360CycleCompetencies)
-          .where(eq(evaluation360CycleCompetencies.cycleId, input.cycleId));
-
-        const cycleParticipants = await database
-          .select()
-          .from(evaluation360CycleParticipants)
-          .where(eq(evaluation360CycleParticipants.cycleId, input.cycleId));
-
-        const config = await database
-          .select()
-          .from(evaluation360CycleConfig)
-          .where(eq(evaluation360CycleConfig.cycleId, input.cycleId))
-          .limit(1);
-
-        return {
-          cycle: cycle[0],
-          weights: weights.length > 0 ? weights[0] : null,
-          competencies: cycleCompetencies,
-          participants: cycleParticipants,
-          config: config.length > 0 ? config[0] : null,
-        };
-      }),
-  }),
+  evaluation360: evaluation360Router,
   
   // Router de Gestão de Ciclos de Avaliação (360°)
   evaluationCycles: cyclesRouter,
@@ -2940,6 +2679,30 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Ciclo de Avaliação de Desempenho
   performanceEvaluationCycle: performanceEvaluationCycleRouter,
+
+  // Router de Avaliações de Desempenho
+  performance: router({
+    listByEmployee: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        const evaluations = await database.select()
+          .from(performanceEvaluations)
+          .where(eq(performanceEvaluations.employeeId, input.employeeId))
+          .orderBy(desc(performanceEvaluations.createdAt));
+
+        return evaluations.map(evaluation => ({
+          id: evaluation.id,
+          employeeId: evaluation.employeeId,
+          cycleId: evaluation.cycleId,
+          status: evaluation.workflowStatus,
+          selfScore: evaluation.selfScore,
+          cycle: null,
+        }));
+      }),
+  }),
 
   // Router de Descrição de Cargos
   positionsManagement: positionsRouter,

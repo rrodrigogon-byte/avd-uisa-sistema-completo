@@ -476,4 +476,23 @@ export const performanceEvaluationCycleRouter = router({
 
       return { success: true };
     }),
+
+  listByEmployee: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const evaluations = await db
+        .select()
+        .from(performanceEvaluationCycles)
+        .orderBy(desc(performanceEvaluationCycles.createdAt));
+
+      return evaluations.map(evaluation => ({
+        id: evaluation.id,
+        cycle: evaluation,
+        status: evaluation.status,
+        selfScore: null,
+      }));
+    }),
 });

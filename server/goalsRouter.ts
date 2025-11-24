@@ -331,6 +331,32 @@ export const goalsRouter = router({
     }),
 
   /**
+   * Listar metas de um colaborador especifico
+   */
+  listByEmployee: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(eq(smartGoals.employeeId, input.employeeId))
+        .orderBy(desc(smartGoals.createdAt));
+
+      return goals.map(goal => ({
+        id: goal.id,
+        title: goal.title,
+        description: goal.description,
+        status: goal.status,
+        progress: goal.progress || 0,
+        deadline: goal.endDate,
+        createdAt: goal.createdAt,
+      }));
+    }),
+
+  /**
    * Buscar meta por ID com detalhes completos
    */
   getById: protectedProcedure

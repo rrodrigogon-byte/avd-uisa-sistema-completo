@@ -49,6 +49,7 @@ import ReportAnalytics from "./pages/ReportAnalytics";
 import SuccessionImport from "./pages/SuccessionImport";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
+import Evaluation360EnhancedWizard from "./components/Evaluation360EnhancedWizard";
 import Avaliacao360Autoavaliacao from "./pages/Avaliacao360Autoavaliacao";
 import Avaliacao360Gestor from "./pages/Avaliacao360Gestor";
 import Avaliacao360Consenso from "./pages/Avaliacao360Consenso";
@@ -256,6 +257,7 @@ function Router() {
       <Route path={"/admin/succession-import"} component={SuccessionImport} />
       <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
+      <Route path="/ciclos/360-enhanced/criar" component={Evaluation360EnhancedWizard} />
       <Route path="/testes-psicometricos" component={PsychometricTests} />
       <Route path="/teste-disc" component={TestDISC} />
       <Route path="/teste-bigfive" component={TestBigFive} />

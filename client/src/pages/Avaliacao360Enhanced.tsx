@@ -4,11 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { CheckCircle2, Clock, Users, Loader2, TrendingUp, AlertCircle, BarChart3, Download } from "lucide-react";
+import { CheckCircle2, Clock, Users, Loader2, TrendingUp, AlertCircle, BarChart3, Download, Plus } from "lucide-react";
 import { export360PDF } from "@/lib/pdfExport";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Radar } from "react-chartjs-2";
+import { useLocation } from "wouter";
 
 
 
@@ -35,6 +36,7 @@ type EvaluationDetails = {
 };
 
 export default function Avaliacao360Enhanced() {
+  const [, setLocation] = useLocation();
   const [selectedEvaluation, setSelectedEvaluation] = useState<number | null>(null);
 
   // Buscar lista de avaliações 360°
@@ -140,14 +142,20 @@ export default function Avaliacao360Enhanced() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-8 w-8" />
-            360° Enhanced
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Avaliação 360° aprimorada com múltiplos avaliadores e análise comparativa
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              <BarChart3 className="h-8 w-8" />
+              360° Enhanced
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Avaliação 360° aprimorada com múltiplos avaliadores e análise comparativa
+            </p>
+          </div>
+          <Button onClick={() => setLocation("/ciclos/360-enhanced/criar")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Criar Ciclo 360°
+          </Button>
         </div>
 
         {/* Estatísticas Gerais */}
