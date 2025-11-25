@@ -547,3 +547,17 @@
 - [x] Adicionados endpoints bulkImport e list ao jobDescriptionRouter
 - [x] Instalada biblioteca mammoth para processar documentos Word
 - [x] Implementada tabela de resultados de importação com status
+
+## 🔥 CORREÇÕES URGENTES - 25/11/2024 15:35 (✅ RESOLVIDO)
+
+### Erro 1: succession.addCandidate não encontrado
+- [x] Investigar onde está sendo chamado succession.addCandidate
+- [x] Verificar se deve ser succession.addSuccessor (endpoint correto já existe)
+- [x] Não há chamada no frontend - possível cache do navegador
+
+### Erro 2: Erro de renderização React na página /admin/hierarquia
+- [x] Investigar erro #31 do React (objetos sendo renderizados diretamente)
+- [x] Identificado: getDepartments retornava objetos completos ao invés de strings
+- [x] Corrigido: getDepartments agora retorna apenas nomes de departamentos
+- [x] Corrigido: HierarquiaOrganizacional.tsx trata position/department como objeto ou string
+- [x] Testado: Página funcionando perfeitamente

@@ -532,8 +532,9 @@ export const appRouter = router({
       const database = await getDb();
       if (!database) return [];
 
-      const allDepartments = await database.select().from(departments).where(eq(departments.active, true));
-      return allDepartments;
+      const allDepartments = await database.select({ name: departments.name }).from(departments).where(eq(departments.active, true));
+      // Retornar apenas os nomes únicos
+      return [...new Set(allDepartments.map(d => d.name).filter(Boolean))];
     }),
 
     getCostCenters: protectedProcedure.query(async () => {

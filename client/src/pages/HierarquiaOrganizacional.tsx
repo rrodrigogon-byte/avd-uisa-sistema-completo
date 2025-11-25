@@ -191,9 +191,9 @@ export default function HierarquiaOrganizacional() {
                   )}
                 </div>
                 <div className="flex items-center gap-3 text-xs text-gray-500">
-                  <span>{node.employee.position || "Sem cargo"}</span>
+                  <span>{typeof node.employee.position === 'object' ? (node.employee.position as any)?.title : node.employee.position || "Sem cargo"}</span>
                   <span>•</span>
-                  <span>{node.employee.department || "Sem departamento"}</span>
+                  <span>{typeof node.employee.department === 'object' ? (node.employee.department as any)?.name : node.employee.department || "Sem departamento"}</span>
                   {node.employee.costCenter && (
                     <>
                       <span>•</span>
@@ -251,17 +251,19 @@ export default function HierarquiaOrganizacional() {
   }
 
   const filteredEmployees = hierarchy?.filter((emp: any) => {
+    const positionStr = typeof emp.position === 'object' ? emp.position?.title : emp.position;
+    const departmentStr = typeof emp.department === 'object' ? emp.department?.name : emp.department;
     const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         emp.position?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         positionStr?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          emp.costCenter?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = selectedDepartment === "all" || emp.department === selectedDepartment;
+    const matchesDepartment = selectedDepartment === "all" || departmentStr === selectedDepartment;
     return matchesSearch && matchesDepartment;
   }) || [];
 
   const tree = buildTree(filteredEmployees);
   const totalEmployees = hierarchy?.length || 0;
   const totalManagers = hierarchy?.filter((e: any) => e.subordinateCount > 0).length || 0;
-  const totalDepartments = new Set(hierarchy?.map((e: any) => e.department).filter(Boolean)).size;
+  const totalDepartments = new Set(hierarchy?.map((e: any) => typeof e.department === 'object' ? e.department?.name : e.department).filter(Boolean)).size;
 
   return (
     <DashboardLayout>
@@ -346,7 +348,7 @@ export default function HierarquiaOrganizacional() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os departamentos</SelectItem>
-                  {departments?.map((dept: any) => (
+                  {departments?.map((dept: string) => (
                     <SelectItem key={dept} value={dept}>
                       {dept}
                     </SelectItem>
@@ -404,7 +406,7 @@ export default function HierarquiaOrganizacional() {
                     <SelectItem value="none">Nenhum (Nível mais alto)</SelectItem>
                     {managers?.filter((m: any) => m.id !== editingEmployee?.id).map((manager: any) => (
                       <SelectItem key={manager.id} value={manager.id.toString()}>
-                        {manager.name} - {manager.position || "Sem cargo"}
+                        {manager.name} - {typeof manager.position === 'object' ? manager.position?.title : manager.position || "Sem cargo"}
                       </SelectItem>
                     ))}
                   </SelectContent>
