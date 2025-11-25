@@ -1001,9 +1001,12 @@ export const appRouter = router({
         return pdis.map(pdi => ({
           id: pdi.id,
           employeeId: pdi.employeeId,
+          cycleId: pdi.cycleId,
+          targetPositionId: pdi.targetPositionId,
           status: pdi.status,
-          developmentGoals: pdi.developmentGoals,
-          actions: pdi.actions ? JSON.parse(pdi.actions as any) : [],
+          startDate: pdi.startDate,
+          endDate: pdi.endDate,
+          overallProgress: pdi.overallProgress,
           createdAt: pdi.createdAt,
           updatedAt: pdi.updatedAt,
         }));

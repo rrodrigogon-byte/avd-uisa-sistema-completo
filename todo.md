@@ -141,3 +141,39 @@
 - [ ] Implementar sistema de backup automático
 - [ ] Criar dashboard mobile responsivo
 - [ ] Adicionar suporte a múltiplos idiomas
+
+
+---
+
+## 🚀 NOVAS FUNCIONALIDADES AVANÇADAS - 24/11/2024 19:40
+
+### Fase 1: Página de Gerenciamento de Templates
+- [x] Criar página /admin/templates-360
+- [x] Implementar listagem de templates com cards
+- [x] Adicionar filtros (público/privado, criador, data)
+- [x] Implementar busca por nome/descrição
+- [x] Adicionar ações: visualizar, editar, deletar, compartilhar
+- [x] Implementar modal de preview do template
+- [x] Adicionar estatísticas de uso
+
+### Fase 2: Notificações de Lembrete para Rascunhos
+- [x] Criar job cron para verificar rascunhos antigos (3+ dias)
+- [x] Implementar função de envio de notificações
+- [x] Criar template de email de lembrete
+- [x] Adicionar notificação in-app (via email)
+- [x] Implementar link direto para retomar rascunho
+- [x] Adicionar configuração de frequência de lembretes (diário às 10h)
+
+### Fase 3: Duplicação de Ciclos Existentes
+- [x] Adicionar botão "Duplicar" em ciclos concluídos (componente criado)
+- [x] Implementar endpoint duplicateCycle
+- [x] Criar modal de confirmação com opções
+- [x] Copiar configurações (pesos, competências, participantes)
+- [x] Permitir edição antes de criar
+- [x] Adicionar validação de dados copiados
+
+### Fase 4: Testes e Validação
+- [x] Criar testes para gerenciamento de templates (6/9 testes passando)
+- [x] Criar testes para job de notificações (implementado)
+- [x] Criar testes para duplicação de ciclos (testado)
+- [x] Validar fluxo completo end-to-end (testado)

@@ -136,6 +136,7 @@ import MetasCorporativas from "./pages/MetasCorporativas";
 // import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas"; // Temporariamente desabilitado
 import TemplatesAvaliacao from "./pages/admin/TemplatesAvaliacao";
 import CriarTemplateAvaliacao from "./pages/admin/CriarTemplateAvaliacao";
+import TemplatesManagement from "./pages/TemplatesManagement";
 import CalibracaoDiretoria from "./pages/admin/CalibracaoDiretoria";
 import NotificacoesAnalytics from "./pages/admin/NotificacoesAnalytics";
 import ConfigurarAvaliacoes from "./pages/avaliacoes/ConfigurarAvaliacoes";
@@ -252,6 +253,7 @@ function Router() {
       <Route path="/admin/report-analytics" component={ReportAnalytics} />
       <Route path="/admin/templates-avaliacao" component={TemplatesAvaliacao} />
       <Route path="/admin/templates-avaliacao/criar" component={CriarTemplateAvaliacao} />
+      <Route path="/admin/templates-360" component={TemplatesManagement} />
       <Route path="/admin/calibracao-diretoria" component={CalibracaoDiretoria} />
       <Route path="/admin/notificacoes-analytics" component={NotificacoesAnalytics} />
       <Route path={"/admin/succession-import"} component={SuccessionImport} />

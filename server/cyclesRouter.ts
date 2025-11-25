@@ -171,7 +171,7 @@ export const cyclesRouter = router({
 
       await db
         .update(evaluationCycles)
-        .set({ status: "em_andamento" })
+        .set({ status: "ativo" })
         .where(eq(evaluationCycles.id, input.id));
 
       return { success: true };
@@ -688,5 +688,59 @@ export const cyclesRouter = router({
         .limit(1);
 
       return cycle?.approvedForGoals || false;
+    }),
+
+  /**
+   * Duplicar ciclo existente
+   * Copia configurações de um ciclo concluído para criar novo ciclo
+   */
+  duplicateCycle: protectedProcedure
+    .input(
+      z.object({
+        sourceCycleId: z.number(),
+        name: z.string().min(3),
+        year: z.number(),
+        startDate: z.string(),
+        endDate: z.string(),
+        type: z.enum(["anual", "semestral", "trimestral"]),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar ciclo original
+      const [sourceCycle] = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, input.sourceCycleId))
+        .limit(1);
+
+      if (!sourceCycle) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Ciclo original não encontrado" });
+      }
+
+      // Criar novo ciclo com dados copiados
+      const [result] = await db.insert(evaluationCycles).values({
+        name: input.name,
+        year: input.year,
+        type: input.type,
+        startDate: new Date(input.startDate),
+        endDate: new Date(input.endDate),
+        status: "planejado",
+        description: input.description || sourceCycle.description,
+        // Copiar prazos proporcionalmente (opcional)
+        selfEvaluationDeadline: sourceCycle.selfEvaluationDeadline,
+        managerEvaluationDeadline: sourceCycle.managerEvaluationDeadline,
+        consensusDeadline: sourceCycle.consensusDeadline,
+        active: true,
+        approvedForGoals: false,
+      });
+
+      return {
+        success: true,
+        newCycleId: Number(result.insertId),
+      };
     }),
 });

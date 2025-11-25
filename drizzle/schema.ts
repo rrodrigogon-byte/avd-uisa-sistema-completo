@@ -2679,3 +2679,25 @@ export const cycle360Templates = mysqlTable("cycle360Templates", {
 
 export type Cycle360Template = typeof cycle360Templates.$inferSelect;
 export type InsertCycle360Template = typeof cycle360Templates.$inferInsert;
+
+/**
+ * Rascunhos de Ciclos 360° (salvamento automático)
+ * Armazena progresso do wizard para recuperação posterior
+ */
+export const cycle360Drafts = mysqlTable("cycle360Drafts", {
+  id: int("id").autoincrement().primaryKey(),
+  draftKey: varchar("draftKey", { length: 100 }).notNull().unique(), // Chave única do rascunho
+  userId: int("userId").notNull(), // ID do usuário
+  userEmail: varchar("userEmail", { length: 320 }).notNull(),
+  userName: varchar("userName", { length: 200 }),
+  
+  // Dados do rascunho (JSON com todas as etapas)
+  draftData: text("draftData").notNull(), // JSON: { cycleData, weights, competencies, participants }
+  currentStep: int("currentStep").default(1).notNull(), // Etapa atual do wizard (1-5)
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Cycle360Draft = typeof cycle360Drafts.$inferSelect;
+export type InsertCycle360Draft = typeof cycle360Drafts.$inferInsert;

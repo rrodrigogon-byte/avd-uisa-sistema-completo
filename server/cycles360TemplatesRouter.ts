@@ -91,7 +91,7 @@ export const cycles360TemplatesRouter = router({
         });
       }
 
-      const result = await db.insert(cycle360Templates).values({
+      const [result] = await db.insert(cycle360Templates).values({
         name: input.name,
         description: input.description || null,
         createdBy: ctx.user.id,
