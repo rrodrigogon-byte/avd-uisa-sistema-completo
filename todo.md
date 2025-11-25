@@ -381,3 +381,12 @@
 - [x] Criar histórico de aprovações com timeline
 - [x] Criar jobDescriptionRouter completo com todos os endpoints
 - [x] Registrar router no appRouter
+
+
+---
+
+## 🔥 BUGS CRÍTICOS - CICLO 360° ENHANCED - 25/11/2024 15:50 (✅ RESOLVIDOS)
+
+- [x] Corrigir campo de busca de colaboradores não funcionando em /ciclos/360-enhanced/criar
+- [x] Corrigir erro 404 ao clicar em "Criar Ciclo"
+- [x] Corrigir notificações e emails não sendo enviados aos participantes

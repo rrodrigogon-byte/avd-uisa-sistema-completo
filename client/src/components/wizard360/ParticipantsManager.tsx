@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 export interface Participant {
   employeeId: number;
-  employeeName: string;
+  name: string;
   role: 'self' | 'peer' | 'subordinate' | 'manager';
 }
 
@@ -82,7 +82,7 @@ export default function ParticipantsManager({
 
     const newParticipant: Participant = {
       employeeId: employee.id,
-      employeeName: employee.name,
+      name: employee.name,
       role: selectedRole
     };
 
@@ -237,7 +237,7 @@ export default function ParticipantsManager({
                           key={participant.employeeId}
                           className="flex items-center justify-between p-3 rounded-lg border bg-card"
                         >
-                          <span className="font-medium">{participant.employeeName}</span>
+                          <span className="font-medium">{participant.name}</span>
                           <Button
                             type="button"
                             variant="ghost"

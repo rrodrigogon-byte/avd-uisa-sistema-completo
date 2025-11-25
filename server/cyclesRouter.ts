@@ -146,6 +146,7 @@ export const cyclesRouter = router({
       // Salvar participantes se fornecidos
       if (input.participants && input.participants.length > 0) {
         const { evaluation360CycleParticipants, notifications } = await import("../drizzle/schema");
+        
         for (const participant of input.participants) {
           await db.insert(evaluation360CycleParticipants).values({
             cycleId,
@@ -153,7 +154,15 @@ export const cyclesRouter = router({
             role: participant.role,
           });
 
-          // Enviar notificação para o participante
+          // Buscar dados do participante para enviar email
+          const [employeeData] = await db.select()
+            .from(employees)
+            .where(eq(employees.id, participant.employeeId))
+            .limit(1);
+
+          if (!employeeData) continue;
+
+          // Enviar notificação in-app para o participante
           try {
             await db.insert(notifications).values({
               userId: participant.employeeId,
@@ -165,6 +174,55 @@ export const cyclesRouter = router({
             });
           } catch (error) {
             console.error(`[Cycles] Erro ao enviar notificação para participante ${participant.employeeId}:`, error);
+          }
+
+          // Enviar email para o participante
+          if (employeeData.email) {
+            try {
+              const roleLabels: Record<string, string> = {
+                self: 'Autoavaliação',
+                peer: 'Par (Colega)',
+                subordinate: 'Subordinado',
+                manager: 'Gestor'
+              };
+
+              await sendEmail({
+                to: employeeData.email,
+                subject: `🎯 Novo Ciclo de Avaliação 360° - ${input.name}`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #2563eb;">🎯 Você foi adicionado a um ciclo de avaliação 360°</h2>
+                    <p>Olá <strong>${employeeData.name}</strong>,</p>
+                    <p>Você foi adicionado ao ciclo de avaliação <strong>"${input.name}"</strong> com o papel de <strong>${roleLabels[participant.role] || participant.role}</strong>.</p>
+                    
+                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                      <h3 style="margin-top: 0; color: #1f2937;">Informações do Ciclo:</h3>
+                      <ul style="list-style: none; padding: 0;">
+                        <li>📅 <strong>Início:</strong> ${new Date(input.startDate).toLocaleDateString('pt-BR')}</li>
+                        <li>📅 <strong>Término:</strong> ${new Date(input.endDate).toLocaleDateString('pt-BR')}</li>
+                        ${input.description ? `<li>📝 <strong>Descrição:</strong> ${input.description}</li>` : ''}
+                      </ul>
+                    </div>
+
+                    <p>Acesse o sistema para visualizar os detalhes e participar da avaliação.</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/360-enhanced" 
+                         style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                        Acessar Sistema
+                      </a>
+                    </div>
+
+                    <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
+                      Este é um email automático do Sistema AVD UISA. Por favor, não responda.
+                    </p>
+                  </div>
+                `,
+              });
+              console.log(`[Cycles] Email enviado para ${employeeData.email} (${employeeData.name})`);
+            } catch (emailError) {
+              console.error(`[Cycles] Erro ao enviar email para ${employeeData.email}:`, emailError);
+            }
           }
         }
       }

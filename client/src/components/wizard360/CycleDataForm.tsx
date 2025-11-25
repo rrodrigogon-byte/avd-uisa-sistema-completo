@@ -48,17 +48,13 @@ export default function CycleDataForm({ data, onChange, onNext }: CycleDataFormP
       return;
     }
     
-    if (!data.evaluationDeadline) {
-      alert("A data limite de avaliação é obrigatória");
-      return;
-    }
-    
     if (data.endDate <= data.startDate) {
       alert("A data de término deve ser posterior à data de início");
       return;
     }
     
-    if (data.evaluationDeadline <= data.endDate) {
+    // Validação opcional: se evaluationDeadline foi preenchido, deve ser posterior à data de término
+    if (data.evaluationDeadline && data.evaluationDeadline <= data.endDate) {
       alert("A data limite de avaliação deve ser posterior à data de término");
       return;
     }
@@ -156,7 +152,7 @@ export default function CycleDataForm({ data, onChange, onNext }: CycleDataFormP
           </div>
 
           <div>
-            <Label>Prazo para Avaliações *</Label>
+            <Label>Prazo para Avaliações (Opcional)</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button

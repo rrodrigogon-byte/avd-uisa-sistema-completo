@@ -150,7 +150,7 @@ export default function Evaluation360EnhancedWizard() {
     onSuccess: () => {
       clearDraft();
       toast.success("Ciclo 360° Enhanced criado com sucesso!");
-      setLocation("/ciclos/360-enhanced");
+      setLocation("/360-enhanced");
     },
     onError: (error) => {
       toast.error(`Erro ao criar ciclo: ${error.message}`);
