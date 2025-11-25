@@ -52,6 +52,7 @@ import { calibrationMeetingRouter } from "./calibrationMeetingRouter";
 import { performanceEvaluationCycleRouter } from "./performanceEvaluationCycleRouter";
 import { notificationTemplatesRouter } from "./notificationTemplatesRouter";
 import { cycles360TemplatesRouter } from "./cycles360TemplatesRouter";
+import { timeTrackingRouter } from "./routers/timeTrackingRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2658,8 +2659,11 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   evaluationCycles: cyclesRouter,
   cycles: cyclesRouter, // Alias para compatibilidade
   
-  // Router de Templates de Configuração 360°
+  // Router de   // Templates de Ciclos 360°
   cycles360Templates: cycles360TemplatesRouter,
+
+  // Rastreamento Automático de Tempo
+  timeTracking: timeTrackingRouter,
   
   reportBuilder: reportBuilderRouter,
   reportAnalytics: reportAnalyticsRouter,

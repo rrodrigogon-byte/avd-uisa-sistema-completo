@@ -241,4 +241,52 @@ export const cycles360TemplatesRouter = router({
 
       return { success: true };
     }),
+
+  /**
+   * Obter analytics de templates
+   */
+  getAnalytics: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const templates = await db.select().from(cycle360Templates);
+
+    // Calcular recomendações baseadas em padrões
+    const recommendations: string[] = [];
+
+    const publicTemplates = templates.filter(t => t.isPublic);
+    const privateTemplates = templates.filter(t => !t.isPublic);
+
+    if (publicTemplates.length > 0 && privateTemplates.length > publicTemplates.length) {
+      recommendations.push(
+        "Considere tornar mais templates públicos para aumentar a colaboração entre equipes"
+      );
+    }
+
+    const avgUsage = templates.length > 0 
+      ? templates.reduce((sum, t) => sum + (t.usageCount || 0), 0) / templates.length 
+      : 0;
+    const underusedTemplates = templates.filter(t => (t.usageCount || 0) < avgUsage * 0.5);
+
+    if (underusedTemplates.length > templates.length * 0.3 && templates.length > 0) {
+      recommendations.push(
+        "Mais de 30% dos templates estão subutilizados. Considere revisar ou arquivar templates pouco usados"
+      );
+    }
+
+    const mostUsed = templates.sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0))[0];
+    if (mostUsed && mostUsed.usageCount && mostUsed.usageCount > avgUsage * 2) {
+      recommendations.push(
+        `O template "${mostUsed.name}" é muito popular. Considere usá-lo como base para novos templates`
+      );
+    }
+
+    return {
+      recommendations,
+      totalTemplates: templates.length,
+      publicCount: publicTemplates.length,
+      privateCount: privateTemplates.length,
+      avgUsage,
+    };
+  }),
 });

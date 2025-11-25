@@ -2701,3 +2701,33 @@ export const cycle360Drafts = mysqlTable("cycle360Drafts", {
 
 export type Cycle360Draft = typeof cycle360Drafts.$inferSelect;
 export type InsertCycle360Draft = typeof cycle360Drafts.$inferInsert;
+
+
+// ============================================================================
+// TABELAS DE RASTREAMENTO AUTOMÁTICO DE TEMPO
+// ============================================================================
+
+/**
+ * Sessões de Rastreamento de Tempo
+ * Armazena sessões de trabalho com métricas de produtividade
+ */
+export const timeTrackingSessions = mysqlTable("timeTrackingSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // ID do usuário
+  
+  // Período da sessão
+  startTime: datetime("startTime").notNull(),
+  endTime: datetime("endTime").notNull(),
+  
+  // Métricas de tempo (em minutos)
+  activeMinutes: int("activeMinutes").notNull().default(0), // Tempo ativo trabalhando
+  idleMinutes: int("idleMinutes").notNull().default(0), // Tempo inativo/pausado
+  
+  // Score de produtividade (0-100)
+  productivityScore: int("productivityScore").notNull().default(0),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TimeTrackingSession = typeof timeTrackingSessions.$inferSelect;
+export type InsertTimeTrackingSession = typeof timeTrackingSessions.$inferInsert;

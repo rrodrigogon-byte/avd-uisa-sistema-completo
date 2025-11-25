@@ -102,6 +102,29 @@ export const notificationsRouter = router({
     return { success: true };
   }),
 
+  // Buscar notificações in-app (alias para compatibilidade com InAppNotifications)
+  getInApp: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
+
+    const result = await db
+      .select()
+      .from(notifications)
+      .where(eq(notifications.userId, ctx.user.id))
+      .orderBy(desc(notifications.createdAt))
+      .limit(50);
+
+    return result.map(n => ({
+      id: n.id.toString(),
+      type: n.type === 'draft_reminder' ? 'draft_reminder' as const : 'info' as const,
+      title: n.title,
+      message: n.message,
+      link: n.link || undefined,
+      createdAt: n.createdAt,
+      read: n.read
+    }));
+  }),
+
   // Deletar notificação
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))

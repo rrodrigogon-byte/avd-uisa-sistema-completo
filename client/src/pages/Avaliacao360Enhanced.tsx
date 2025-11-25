@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Radar } from "react-chartjs-2";
 import { useLocation } from "wouter";
+import { DuplicateCycleDialog } from "@/components/DuplicateCycleDialog";
+import { Copy } from "lucide-react";
 
 
 
@@ -338,6 +340,23 @@ export default function Avaliacao360Enhanced() {
                       >
                         {isSelected ? "Ocultar Detalhes" : "Ver Detalhes"}
                       </Button>
+                      {evaluation.status === "concluida" && (
+                        <DuplicateCycleDialog
+                          cycle={{
+                            id: evaluation.cycleId,
+                            name: `Ciclo #${evaluation.cycleId}`,
+                            startDate: new Date(),
+                            endDate: new Date(),
+                            description: `Duplicado do Ciclo #${evaluation.cycleId}`
+                          }}
+                          trigger={
+                            <Button variant="outline" size="sm">
+                              <Copy className="h-4 w-4 mr-2" />
+                              Duplicar Ciclo
+                            </Button>
+                          }
+                        />
+                      )}
                     </div>
 
                     {/* Detalhes Expandidos */}

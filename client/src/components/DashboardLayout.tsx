@@ -30,6 +30,7 @@ import NotificationCenter from "./NotificationCenter";
 import { GlobalSearch, useGlobalSearchShortcut } from "./GlobalSearch";
 import { Breadcrumbs } from "./Breadcrumbs";
 import NotificationBell from "./NotificationBell";
+import { InAppNotifications } from "./InAppNotifications";
 
 // Componente de seção com submenu
 function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
@@ -490,6 +491,7 @@ function DashboardLayoutContent({
               >
                 <Search className="h-4 w-4" />
               </Button>
+              <InAppNotifications />
               <NotificationBell />
               <NotificationCenter />
             </div>
@@ -513,6 +515,7 @@ function DashboardLayoutContent({
                   <span className="text-xs">⌘</span>K
                 </kbd>
               </Button>
+              <InAppNotifications />
               <NotificationBell />
               <NotificationCenter />
             </div>

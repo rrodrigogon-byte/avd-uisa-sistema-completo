@@ -17,6 +17,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import Home from "./pages/Home";
+import TemplatesAnalytics from "./pages/TemplatesAnalytics";
 import DashboardGestor from "./pages/DashboardGestor";
 import ConfiguracoesSMTP from "./pages/ConfiguracoesSMTP";
 import Metas from "./pages/Metas";
@@ -254,6 +255,7 @@ function Router() {
       <Route path="/admin/templates-avaliacao" component={TemplatesAvaliacao} />
       <Route path="/admin/templates-avaliacao/criar" component={CriarTemplateAvaliacao} />
       <Route path="/admin/templates-360" component={TemplatesManagement} />
+      <Route path="/admin/templates-360/analytics" component={TemplatesAnalytics} />
       <Route path="/admin/calibracao-diretoria" component={CalibracaoDiretoria} />
       <Route path="/admin/notificacoes-analytics" component={NotificacoesAnalytics} />
       <Route path={"/admin/succession-import"} component={SuccessionImport} />

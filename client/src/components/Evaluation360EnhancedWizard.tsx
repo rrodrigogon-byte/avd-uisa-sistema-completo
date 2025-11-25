@@ -146,7 +146,7 @@ export default function Evaluation360EnhancedWizard() {
     toast.info("Rascunho descartado");
   };
 
-  const createCycleMutation = trpc.cycles360Enhanced.create.useMutation({
+  const createCycleMutation = trpc.evaluationCycles.create.useMutation({
     onSuccess: () => {
       clearDraft();
       toast.success("Ciclo 360° Enhanced criado com sucesso!");

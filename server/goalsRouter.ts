@@ -116,7 +116,7 @@ export const goalsRouter = router({
     .input(
       z.object({
         title: z.string().min(5, "Título deve ter no mínimo 5 caracteres"),
-        description: z.string().min(10, "Descrição deve ter no mínimo 10 caracteres"),
+        description: z.string().min(5, "Descrição deve ter no mínimo 5 caracteres"),
         type: z.enum(["individual", "team", "organizational"]),
         goalType: z.enum(["individual", "corporate"]).default("individual"), // Nova: corporativa ou individual
         category: z.enum(["financial", "behavioral", "corporate", "development"]),

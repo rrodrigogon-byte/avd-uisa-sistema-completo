@@ -177,3 +177,38 @@
 - [x] Criar testes para job de notificações (implementado)
 - [x] Criar testes para duplicação de ciclos (testado)
 - [x] Validar fluxo completo end-to-end (testado)
+
+
+---
+
+## 🔧 CORREÇÕES E MELHORIAS - 25/11/2024
+
+### Erros Críticos a Corrigir
+- [x] Corrigir erro "No procedure found on path cycles360Enhanced.create"
+- [x] Reduzir validação de descrição de meta de 10 para 5 caracteres
+
+### Melhorias Solicitadas
+- [x] Adicionar botão "Duplicar" na listagem de ciclos concluídos
+- [ ] Implementar notificações in-app para rascunhos (complementar emails)
+- [ ] Criar dashboard de analytics de templates
+
+
+## 🆕 NOVAS FUNCIONALIDADES - 25/11/2024 (Tarde)
+
+### Descrição de Cargos - Padrão UISA/Wiabiliza
+- [ ] Reformular estrutura de descrição de cargos seguindo padrão do documento
+- [ ] Adicionar seções: Objetivo Principal, Áreas de Responsabilidades, Conhecimento Técnico
+- [ ] Adicionar seções: Competências/Habilidades, Qualificação Desejada, e-Social
+- [ ] Implementar fluxo de aprovação (Ocupante → Superior Imediato → Gerente RH)
+- [ ] Permitir complementos e revisões durante aprovação
+
+### Minhas Atividades - Registro Diário
+- [x] Criar página de registro de atividades diárias
+- [x] Interface simples para adicionar atividades continuamente
+- [x] Rastreamento automático de tempo de trabalho
+- [x] Coletor automático de atividades no computador
+- [x] Dashboard de produtividade pessoal
+
+### Melhorias Pendentes
+- [x] Finalizar integração de notificações in-app no DashboardLayout
+- [x] Criar dashboard de analytics de templates 360°
