@@ -29,9 +29,14 @@ export const jobDescriptionRouter = router({
       // TODO: Salvar descrição no banco de dados
       const descricaoId = 1; // Mock ID
 
-      // Enviar notificação para o superior
+      // Enviar notificação e email para o superior
       try {
-        const { notifications } = await import("../drizzle/schema");
+        const { notifications, employees } = await import("../drizzle/schema");
+        const { sendEmail } = await import("./emailService");
+        
+        // Buscar dados do superior
+        const superior = await db.select().from(employees).where(eq(employees.id, input.superiorId)).limit(1);
+        
         await db.insert(notifications).values({
           userId: input.superiorId,
           type: "job_description_approval",
@@ -41,7 +46,23 @@ export const jobDescriptionRouter = router({
           read: false,
         });
 
-        console.log(`[JobDescription] Notificação enviada para superior ID ${input.superiorId}`);
+        // Enviar email
+        if (superior.length > 0 && superior[0].email) {
+          await sendEmail({
+            to: superior[0].email,
+            subject: `📋 Nova Descrição de Cargo para Aprovação - ${input.cargo}`,
+            html: `
+              <h2>Nova Descrição de Cargo para Aprovação</h2>
+              <p>Olá ${superior[0].name},</p>
+              <p><strong>${ctx.user.name}</strong> submeteu a descrição do cargo <strong>"${input.cargo}"</strong> para sua aprovação.</p>
+              <p><strong>Descrição:</strong> ${input.descricao}</p>
+              <p>Por favor, acesse o sistema para revisar e aprovar.</p>
+              <p><a href="${process.env.VITE_APP_URL || "http://localhost:3000"}/descricao-cargos/aprovar-superior">Acessar Sistema</a></p>
+            `,
+          });
+        }
+
+        console.log(`[JobDescription] Notificação e email enviados para superior ID ${input.superiorId}`);
       } catch (error) {
         console.error("[JobDescription] Erro ao enviar notificação:", error);
       }
@@ -67,9 +88,10 @@ export const jobDescriptionRouter = router({
 
       // TODO: Atualizar status da descrição no banco
 
-      // Enviar notificação para o RH (todos os usuários com role 'admin')
+      // Enviar notificação e email para o RH
       try {
         const { notifications, users } = await import("../drizzle/schema");
+        const { sendEmail } = await import("./emailService");
         
         // Buscar todos os usuários do RH
         const rhUsers = await db.select().from(users).where(eq(users.role, "admin"));
@@ -83,9 +105,24 @@ export const jobDescriptionRouter = router({
             link: `/descricao-cargos/aprovar-rh`,
             read: false,
           });
+          
+          // Enviar email
+          if (rhUser.email) {
+            await sendEmail({
+              to: rhUser.email,
+              subject: `✅ Descrição de Cargo Aprovada pelo Superior - ${input.cargo}`,
+              html: `
+                <h2>Descrição de Cargo Aprovada pelo Superior</h2>
+                <p>Olá ${rhUser.name},</p>
+                <p>A descrição do cargo <strong>"${input.cargo}"</strong> foi aprovada pelo superior e aguarda sua aprovação final.</p>
+                <p>Por favor, acesse o sistema para revisar.</p>
+                <p><a href="${process.env.VITE_APP_URL || "http://localhost:3000"}/descricao-cargos/aprovar-rh">Acessar Sistema</a></p>
+              `,
+            });
+          }
         }
 
-        console.log(`[JobDescription] Notificações enviadas para ${rhUsers.length} usuários do RH`);
+        console.log(`[JobDescription] Notificações e emails enviados para ${rhUsers.length} usuários do RH`);
       } catch (error) {
         console.error("[JobDescription] Erro ao enviar notificações:", error);
       }
@@ -111,9 +148,13 @@ export const jobDescriptionRouter = router({
 
       // TODO: Atualizar status da descrição no banco
 
-      // Enviar notificação para o funcionário
+      // Enviar notificação e email para o funcionário
       try {
-        const { notifications } = await import("../drizzle/schema");
+        const { notifications, employees } = await import("../drizzle/schema");
+        const { sendEmail } = await import("./emailService");
+        
+        const employee = await db.select().from(employees).where(eq(employees.id, input.funcionarioId)).limit(1);
+        
         await db.insert(notifications).values({
           userId: input.funcionarioId,
           type: "job_description_rejection",
@@ -122,8 +163,23 @@ export const jobDescriptionRouter = router({
           link: `/descricao-cargos`,
           read: false,
         });
+        
+        // Enviar email
+        if (employee.length > 0 && employee[0].email) {
+          await sendEmail({
+            to: employee[0].email,
+            subject: `❌ Descrição de Cargo Rejeitada - ${input.cargo}`,
+            html: `
+              <h2>Descrição de Cargo Rejeitada</h2>
+              <p>Olá ${employee[0].name},</p>
+              <p>Sua descrição do cargo <strong>"${input.cargo}"</strong> foi rejeitada pelo superior.</p>
+              <p><strong>Motivo:</strong> ${input.comentario}</p>
+              <p>Por favor, revise e reenvie.</p>
+            `,
+          });
+        }
 
-        console.log(`[JobDescription] Notificação de rejeição enviada para funcionário ID ${input.funcionarioId}`);
+        console.log(`[JobDescription] Notificação e email de rejeição enviados para funcionário ID ${input.funcionarioId}`);
       } catch (error) {
         console.error("[JobDescription] Erro ao enviar notificação:", error);
       }
@@ -150,9 +206,13 @@ export const jobDescriptionRouter = router({
 
       // TODO: Atualizar status da descrição no banco para "aprovado"
 
-      // Enviar notificações para funcionário e superior
+      // Enviar notificações e emails para funcionário e superior
       try {
-        const { notifications } = await import("../drizzle/schema");
+        const { notifications, employees } = await import("../drizzle/schema");
+        const { sendEmail } = await import("./emailService");
+        
+        const employee = await db.select().from(employees).where(eq(employees.id, input.funcionarioId)).limit(1);
+        const superior = await db.select().from(employees).where(eq(employees.id, input.superiorId)).limit(1);
 
         // Notificar funcionário
         await db.insert(notifications).values({
@@ -163,6 +223,20 @@ export const jobDescriptionRouter = router({
           link: `/descricao-cargos`,
           read: false,
         });
+        
+        // Email para funcionário
+        if (employee.length > 0 && employee[0].email) {
+          await sendEmail({
+            to: employee[0].email,
+            subject: `🎉 Descrição de Cargo Aprovada - ${input.cargo}`,
+            html: `
+              <h2>Descrição de Cargo Aprovada!</h2>
+              <p>Olá ${employee[0].name},</p>
+              <p>Sua descrição do cargo <strong>"${input.cargo}"</strong> foi aprovada pelo RH e está oficialmente atualizada.</p>
+              <p>Parabéns!</p>
+            `,
+          });
+        }
 
         // Notificar superior
         await db.insert(notifications).values({
@@ -173,8 +247,21 @@ export const jobDescriptionRouter = router({
           link: `/descricao-cargos/aprovar-superior`,
           read: false,
         });
+        
+        // Email para superior
+        if (superior.length > 0 && superior[0].email) {
+          await sendEmail({
+            to: superior[0].email,
+            subject: `✅ Descrição de Cargo Aprovada pelo RH - ${input.cargo}`,
+            html: `
+              <h2>Descrição de Cargo Aprovada pelo RH</h2>
+              <p>Olá ${superior[0].name},</p>
+              <p>A descrição do cargo <strong>"${input.cargo}"</strong> foi aprovada pelo RH.</p>
+            `,
+          });
+        }
 
-        console.log(`[JobDescription] Notificações de aprovação final enviadas`);
+        console.log(`[JobDescription] Notificações e emails de aprovação final enviados`);
       } catch (error) {
         console.error("[JobDescription] Erro ao enviar notificações:", error);
       }

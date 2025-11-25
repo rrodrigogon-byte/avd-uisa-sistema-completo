@@ -434,3 +434,54 @@
 - [ ] Verificar dashboard de acompanhamento com dados reais
 - [ ] Testar job de lembretes em ambiente de desenvolvimento
 - [ ] Criar checkpoint final com todas as funcionalidades
+
+
+---
+
+## 🚀 NOVAS FUNCIONALIDADES AVANÇADAS - 25/11/2024 16:30
+
+### Dashboard de Acompanhamento RH
+- [x] Criar página /rh/acompanhamento-avaliacoes
+- [x] Implementar visão em tempo real de ciclos 360° ativos
+- [x] Adicionar métricas de conclusão por departamento
+- [x] Lista de avaliadores pendentes com ações de reenvio
+- [x] Gráficos de progresso por tipo de avaliador (autoavaliação, pares, superiores)
+- [x] Filtros por ciclo, departamento e status
+
+### Sistema de Lembretes Automáticos
+- [x] Criar job cron para lembretes de avaliações 360° pendentes
+- [x] Implementar emails escalonados (3 dias antes, 1 dia antes, no prazo)
+- [x] Template de email para lembretes
+- [x] Sistema de tracking de emails enviados
+- [x] Notificações in-app para avaliadores
+- [x] Dashboard de histórico de lembretes enviados
+
+### Relatórios Consolidados 360°
+- [ ] Criar página /relatorios/360-consolidado
+- [ ] Gráficos radar comparando autoavaliação vs gestores/pares
+- [ ] Evolução histórica de competências por ciclo
+- [ ] Exportação em PDF com gráficos radar
+- [ ] Filtros por ciclo, departamento e colaborador
+- [ ] Comparativo entre múltiplos ciclos
+
+### Pesquisa Pulse - Sistema Completo
+- [x] Implementar envio de emails para participantes da pesquisa
+- [x] Criar página pública de resposta de pesquisa (/pulse/responder/:token)
+- [x] Sistema de coleta de respostas anônimas
+- [x] Dashboard de resultados em tempo real
+- [x] Notificações de novas respostas para RH
+- [ ] Exportação de resultados em Excel
+- [ ] Gráficos de análise de sentimento
+
+#### Descrição de Cargos - Workflow Completo com Emails
+- [x] Implementar workflow de aprovação (Ocupante → Superior → RH)
+- [x] Email de notificação quando descrição é criada (para superior)
+- [x] Email quando superior aprova (para RH)
+- [x] Email quando RH aprova (para ocupante e superior)
+- [x] Email quando rejeitado (com motivo)
+- [x] Dashboard de aprovações pendentes
+- [ ] Histórico de versões da descrição (/descricao-cargos/aprovar-superior)
+- [ ] Página de aprovação para RH (/descricao-cargos/aprovar-rh)
+- [ ] Histórico de aprovações com timeline visual
+- [ ] Comentários e justificativas em rejeições
+- [ ] Botão de reenvio de email de notificação

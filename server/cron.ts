@@ -298,6 +298,7 @@ export const pulseSurveyEmailJob = cron.schedule('0 */8 * * *', async () => {
 
 // Importar job de lembretes de rascunhos
 import { startDraftRemindersJob } from './jobs/draftReminders';
+import { evaluationRemindersJob } from './jobs/evaluationReminders';
 
 // Iniciar todos os cron jobs
 export function startCronJobs() {
@@ -315,6 +316,8 @@ export function startCronJobs() {
   startNotificationCron();
   // Iniciar job de lembretes de rascunhos
   startDraftRemindersJob();
+  // Iniciar job de lembretes de avaliações 360°
+  evaluationRemindersJob.start();
   
   console.log('[Cron] Cron jobs iniciados com sucesso');
 }

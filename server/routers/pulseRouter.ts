@@ -194,6 +194,93 @@ export const pulseRouter = router({
         })
         .where(eq(pulseSurveys.id, input.surveyId));
 
+      // Enviar emails para participantes
+      try {
+        const { sendEmail } = await import("../emailService");
+        
+        // Buscar participantes baseado nos filtros da pesquisa
+        let targetEmployees: any[] = [];
+        
+        if (survey.targetEmails) {
+          // Se tem emails específicos, usar esses
+          const emails = JSON.parse(survey.targetEmails);
+          // Buscar funcionários por email
+          for (const email of emails) {
+            const emp = await db.select().from(employees).where(eq(employees.email, email)).limit(1);
+            if (emp.length > 0) targetEmployees.push(emp[0]);
+          }
+        } else {
+          // Caso contrário, buscar todos os funcionários ativos
+          targetEmployees = await db
+            .select()
+            .from(employees)
+            .where(eq(employees.status, "ativo"));
+        }
+
+        // Enviar email para cada participante
+        for (const employee of targetEmployees) {
+          if (!employee.email) continue;
+
+          const surveyUrl = `${process.env.VITE_APP_URL || "http://localhost:3000"}/pesquisas/pulse/responder/${survey.id}`;
+
+          await sendEmail({
+            to: employee.email,
+            subject: `📊 Nova Pesquisa Pulse: ${survey.title}`,
+            html: `
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <style>
+                  body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                  .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                  .header { background-color: #3b82f6; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                  .content { background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+                  .button { display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+                  .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #6b7280; }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h1>📊 Nova Pesquisa Pulse</h1>
+                  </div>
+                  <div class="content">
+                    <p>Olá <strong>${employee.name}</strong>,</p>
+                    
+                    <p>Uma nova pesquisa Pulse foi criada e sua opinião é muito importante para nós!</p>
+                    
+                    <h3>${survey.title}</h3>
+                    <p>${survey.question}</p>
+                    
+                    ${survey.description ? `<p><em>${survey.description}</em></p>` : ""}
+                    
+                    <p>Por favor, reserve alguns minutos para responder. Sua participação é anônima e confidencial.</p>
+                    
+                    <div style="text-align: center;">
+                      <a href="${surveyUrl}" class="button">
+                        Responder Pesquisa
+                      </a>
+                    </div>
+                    
+                    <p>Obrigado pela sua colaboração!</p>
+                    <p><em>Equipe de RH</em></p>
+                  </div>
+                  <div class="footer">
+                    <p>Este é um e-mail automático. Por favor, não responda.</p>
+                  </div>
+                </div>
+              </body>
+              </html>
+            `,
+          });
+        }
+
+        console.log(`[Pulse] Emails enviados para ${targetEmployees.length} participantes`);
+      } catch (error) {
+        console.error("[Pulse] Erro ao enviar emails:", error);
+        // Não falhar a ativação se emails falharem
+      }
+
       // Enviar notificação push para todos os usuários
       try {
         const { sendPushNotificationToAll } = await import("../utils/pushNotificationHelper");

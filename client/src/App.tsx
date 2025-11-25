@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
+import AcompanhamentoAvaliacoes from "@/pages/AcompanhamentoAvaliacoes";
 import CriarMetasCiclo from "@/pages/CriarMetasCiclo";
 import DashboardAprovacoesCiclos from "@/pages/DashboardAprovacoesCiclos";
 import DashboardMetasCiclos from "@/pages/DashboardMetasCiclos";
@@ -321,6 +322,7 @@ function Router() {
       <Route path="/aprovacoes/ciclos" component={DashboardAprovacoesCiclos} />
       <Route path="/aprovacoes/ciclos-avaliacao" component={AprovacaoCiclos} />
       <Route path="/relatorios/pdi" component={RelatoriosPDI} />
+      <Route path="/rh/acompanhamento-avaliacoes" component={AcompanhamentoAvaliacoes} />
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
