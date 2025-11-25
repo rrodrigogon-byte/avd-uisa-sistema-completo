@@ -94,6 +94,7 @@ import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
 import NotificationTemplates from "./pages/admin/NotificationTemplates";
+import Aprovadores from "./pages/admin/Aprovadores";
 import ScheduledReports from "./pages/ScheduledReports";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import DashboardExecutivo from "./pages/DashboardExecutivo";
@@ -311,6 +312,7 @@ function Router() {
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/notification-templates" component={NotificationTemplates} />
+      <Route path="/admin/aprovadores" component={Aprovadores} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />

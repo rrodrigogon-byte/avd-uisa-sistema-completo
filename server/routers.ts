@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -2704,6 +2704,136 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Atividades Manuais e Sugestões Inteligentes
   activities: activitiesRouter,
+  
+  // Regras de Aprovação
+  approvalRules: router({
+    list: protectedProcedure
+      .input(z.object({
+        ruleType: z.enum(["departamento", "centro_custo", "individual", "todos"]).optional(),
+        approvalContext: z.enum(["metas", "avaliacoes", "pdi", "descricao_cargo", "ciclo_360", "bonus", "promocao", "todos"]).optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+        
+        const conditions = [];
+        if (input.ruleType && input.ruleType !== "todos") {
+          conditions.push(eq(approvalRules.ruleType, input.ruleType));
+        }
+        if (input.approvalContext && input.approvalContext !== "todos") {
+          conditions.push(eq(approvalRules.approvalContext, input.approvalContext));
+        }
+        if (input.isActive !== undefined) {
+          conditions.push(eq(approvalRules.isActive, input.isActive));
+        }
+        
+        const rules = await database.select({
+          rule: approvalRules,
+          approver: employees,
+          department: departments,
+        })
+        .from(approvalRules)
+        .leftJoin(employees, eq(approvalRules.approverId, employees.id))
+        .leftJoin(departments, eq(approvalRules.departmentId, departments.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(approvalRules.createdAt));
+        
+        return rules.map(r => ({
+          ...r.rule,
+          approverName: r.approver?.name || "Desconhecido",
+          departmentName: r.department?.name,
+        }));
+      }),
+      
+    create: protectedProcedure
+      .input(z.object({
+        ruleType: z.enum(["departamento", "centro_custo", "individual"]),
+        approvalContext: z.enum(["metas", "avaliacoes", "pdi", "descricao_cargo", "ciclo_360", "bonus", "promocao", "todos"]),
+        departmentId: z.number().optional(),
+        costCenterId: z.number().optional(),
+        employeeId: z.number().optional(),
+        approverId: z.number(),
+        approverLevel: z.number().default(1),
+        requiresSequentialApproval: z.boolean().default(false),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+        
+        const currentEmployee = await database.select().from(employees).where(eq(employees.userId, ctx.user.id)).limit(1);
+        if (!currentEmployee[0]) throw new Error("Funcionário não encontrado");
+        
+        const newRule = {
+          ruleType: input.ruleType,
+          approvalContext: input.approvalContext,
+          departmentId: input.departmentId,
+          costCenterId: input.costCenterId,
+          employeeId: input.employeeId,
+          approverId: input.approverId,
+          approverLevel: input.approverLevel,
+          requiresSequentialApproval: input.requiresSequentialApproval,
+          isActive: true,
+          createdBy: currentEmployee[0].id,
+        };
+        
+        const result = await database.insert(approvalRules).values(newRule as any);
+        return { id: Number(result[0].insertId), ...newRule };
+      }),
+      
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+        
+        await database.delete(approvalRules).where(eq(approvalRules.id, input.id));
+        return { success: true };
+      }),
+      
+    getDepartments: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+      return database.select().from(departments).where(eq(departments.active, true)).orderBy(departments.name);
+    }),
+    
+    getCostCenters: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+      return database.select().from(costCenters).where(eq(costCenters.active, true)).orderBy(costCenters.name);
+    }),
+    
+    getEmployees: protectedProcedure
+      .input(z.object({ search: z.string().optional() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+        
+        const results = await database.select({
+          id: employees.id,
+          name: employees.name,
+          email: employees.email,
+          employeeCode: employees.employeeCode,
+          department: departments,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .where(eq(employees.active, true))
+        .orderBy(employees.name)
+        .limit(100);
+        
+        if (input.search) {
+          const searchLower = input.search.toLowerCase();
+          return results.filter(e => 
+            e.name.toLowerCase().includes(searchLower) ||
+            e.email.toLowerCase().includes(searchLower) ||
+            e.employeeCode.toLowerCase().includes(searchLower)
+          );
+        }
+        
+        return results;
+      }),
+  }),
   
   // Metas de Produtividade
   productivityGoals: productivityGoalsRouter,

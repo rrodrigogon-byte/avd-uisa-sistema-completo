@@ -243,6 +243,7 @@ export const employees = mysqlTable("employees", {
   positionId: int("positionId").notNull(),
   managerId: int("managerId"), // Gestor direto
   costCenter: varchar("costCenter", { length: 100 }), // Centro de custos
+  active: boolean("active").default(true).notNull(), // Status ativo/inativo
   
   // Informações financeiras e hierárquicas
   salary: int("salary"), // Salário em centavos (ex: 500000 = R$ 5.000,00)
@@ -2702,6 +2703,70 @@ export const cycle360Drafts = mysqlTable("cycle360Drafts", {
 export type Cycle360Draft = typeof cycle360Drafts.$inferSelect;
 export type InsertCycle360Draft = typeof cycle360Drafts.$inferInsert;
 
+
+// ============================================================================
+// TABELAS DE REGRAS DE APROVAÇÃO
+// ============================================================================
+
+/**
+ * Regras de Aprovação - Define quem aprova o quê
+ * Permite vinculação por departamento, centro de custo ou funcionário individual
+ */
+export const approvalRules = mysqlTable("approvalRules", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Tipo de regra
+  ruleType: mysqlEnum("ruleType", ["departamento", "centro_custo", "individual"]).notNull(),
+  
+  // Contexto da regra (o que está sendo aprovado)
+  approvalContext: mysqlEnum("approvalContext", [
+    "metas",
+    "avaliacoes",
+    "pdi",
+    "descricao_cargo",
+    "ciclo_360",
+    "bonus",
+    "promocao",
+    "todos"
+  ]).default("todos").notNull(),
+  
+  // Vinculação (apenas um será preenchido)
+  departmentId: int("departmentId"), // Para regras por departamento
+  costCenterId: int("costCenterId"), // Para regras por centro de custo
+  employeeId: int("employeeId"), // Para regras individuais
+  
+  // Aprovador
+  approverId: int("approverId").notNull(), // ID do funcionário aprovador
+  approverLevel: int("approverLevel").default(1).notNull(), // Nível hierárquico (1, 2, 3...)
+  
+  // Configurações
+  requiresSequentialApproval: boolean("requiresSequentialApproval").default(false).notNull(), // Aprovação sequencial ou paralela
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApprovalRule = typeof approvalRules.$inferSelect;
+export type InsertApprovalRule = typeof approvalRules.$inferInsert;
+
+/**
+ * Histórico de Alterações de Regras de Aprovação
+ */
+export const approvalRuleHistory = mysqlTable("approvalRuleHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  ruleId: int("ruleId").notNull(),
+  action: mysqlEnum("action", ["criado", "atualizado", "desativado", "excluido"]).notNull(),
+  previousData: text("previousData"), // JSON com dados anteriores
+  newData: text("newData"), // JSON com novos dados
+  changedBy: int("changedBy").notNull(),
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+});
+
+export type ApprovalRuleHistory = typeof approvalRuleHistory.$inferSelect;
+export type InsertApprovalRuleHistory = typeof approvalRuleHistory.$inferInsert;
 
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";

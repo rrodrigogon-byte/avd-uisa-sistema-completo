@@ -561,3 +561,26 @@
 - [x] Corrigido: getDepartments agora retorna apenas nomes de departamentos
 - [x] Corrigido: HierarquiaOrganizacional.tsx trata position/department como objeto ou string
 - [x] Testado: Página funcionando perfeitamente
+
+
+---
+
+## 🎯 GESTÃO DE APROVADORES - 25/11/2024 16:00
+
+### Sistema de Vinculação de Aprovadores
+- [x] Criar schema de banco de dados (approvalRules)
+- [x] Implementar backend tRPC (approvalRulesRouter)
+- [x] Criar página de gestão (/admin/aprovadores)
+- [x] Interface de cadastro com 3 tipos (departamento, centro de custo, individual)
+- [x] Sistema de busca e filtros
+- [x] Validações de conflito de regras
+- [x] Testes de funcionalidade
+- [x] Checkpoint final
+
+### Funcionalidades
+- [x] Vincular aprovador por departamento (todos do dept)
+- [x] Vincular aprovador por centro de custo (todos do CC)
+- [x] Vincular aprovador individual (1 funcionário específico)
+- [x] Hierarquia de aprovadores (nível 1, 2, 3)
+- [ ] Histórico de alterações
+- [ ] Exportação de relatório de aprovadores
