@@ -2778,17 +2778,115 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         };
         
         const result = await database.insert(approvalRules).values(newRule as any);
-        return { id: Number(result[0].insertId), ...newRule };
+        const ruleId = Number(result[0].insertId);
+        
+        // Registrar histórico de criação
+        await database.insert(approvalRuleHistory).values({
+          ruleId,
+          action: "criado",
+          newData: JSON.stringify(newRule),
+          changedBy: currentEmployee[0].id,
+        } as any);
+        
+        return { id: ruleId, ...newRule };
+      }),
+      
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        ruleType: z.enum(["departamento", "centro_custo", "individual"]).optional(),
+        approvalContext: z.enum(["metas", "avaliacoes", "pdi", "descricao_cargo", "ciclo_360", "bonus", "promocao", "todos"]).optional(),
+        departmentId: z.number().optional(),
+        costCenterId: z.number().optional(),
+        employeeId: z.number().optional(),
+        approverId: z.number().optional(),
+        approverLevel: z.number().optional(),
+        requiresSequentialApproval: z.boolean().optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+        
+        const currentEmployee = await database.select().from(employees).where(eq(employees.userId, ctx.user.id)).limit(1);
+        if (!currentEmployee[0]) throw new Error("Funcionário não encontrado");
+        
+        // Buscar dados anteriores
+        const previousRule = await database.select().from(approvalRules).where(eq(approvalRules.id, input.id)).limit(1);
+        if (!previousRule[0]) throw new Error("Regra não encontrada");
+        
+        const { id, ...updateData } = input;
+        
+        // Atualizar regra
+        await database.update(approvalRules)
+          .set(updateData as any)
+          .where(eq(approvalRules.id, input.id));
+        
+        // Registrar histórico de atualização
+        await database.insert(approvalRuleHistory).values({
+          ruleId: input.id,
+          action: "atualizado",
+          previousData: JSON.stringify(previousRule[0]),
+          newData: JSON.stringify({ ...previousRule[0], ...updateData }),
+          changedBy: currentEmployee[0].id,
+        } as any);
+        
+        return { success: true };
       }),
       
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const database = await getDb();
         if (!database) throw new Error("Database not available");
         
+        const currentEmployee = await database.select().from(employees).where(eq(employees.userId, ctx.user.id)).limit(1);
+        if (!currentEmployee[0]) throw new Error("Funcionário não encontrado");
+        
+        // Buscar dados antes de excluir
+        const ruleToDelete = await database.select().from(approvalRules).where(eq(approvalRules.id, input.id)).limit(1);
+        if (!ruleToDelete[0]) throw new Error("Regra não encontrada");
+        
+        // Registrar histórico de exclusão
+        await database.insert(approvalRuleHistory).values({
+          ruleId: input.id,
+          action: "excluido",
+          previousData: JSON.stringify(ruleToDelete[0]),
+          changedBy: currentEmployee[0].id,
+        } as any);
+        
+        // Excluir regra
         await database.delete(approvalRules).where(eq(approvalRules.id, input.id));
         return { success: true };
+      }),
+      
+    getHistory: protectedProcedure
+      .input(z.object({ ruleId: z.number().optional() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+        
+        const query = database.select({
+          history: approvalRuleHistory,
+          changedByEmployee: employees,
+        })
+        .from(approvalRuleHistory)
+        .leftJoin(employees, eq(approvalRuleHistory.changedBy, employees.id))
+        .orderBy(desc(approvalRuleHistory.changedAt));
+        
+        if (input.ruleId) {
+          const results = await query.where(eq(approvalRuleHistory.ruleId, input.ruleId));
+          return results.map(r => ({
+            ...r.history,
+            changedByName: r.changedByEmployee?.name || "Desconhecido",
+          }));
+        }
+        
+        const results = await query.limit(100);
+        return results.map(r => ({
+          ...r.history,
+          changedByName: r.changedByEmployee?.name || "Desconhecido",
+        }));
       }),
       
     getDepartments: protectedProcedure.query(async () => {
@@ -2832,6 +2930,71 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         }
         
         return results;
+      }),
+      
+    checkConflicts: protectedProcedure
+      .input(z.object({
+        ruleType: z.enum(["departamento", "centro_custo", "individual"]),
+        approvalContext: z.enum(["metas", "avaliacoes", "pdi", "descricao_cargo", "ciclo_360", "bonus", "promocao", "todos"]),
+        departmentId: z.number().optional(),
+        costCenterId: z.number().optional(),
+        employeeId: z.number().optional(),
+        excludeRuleId: z.number().optional(), // Para excluir a própria regra ao editar
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return { hasConflict: false, conflicts: [] };
+        
+        // Buscar regras ativas que possam conflitar
+        const conditions = [
+          eq(approvalRules.isActive, true),
+          eq(approvalRules.ruleType, input.ruleType),
+        ];
+        
+        // Adicionar condição de contexto ("todos" conflita com tudo)
+        if (input.approvalContext !== "todos") {
+          conditions.push(
+            or(
+              eq(approvalRules.approvalContext, input.approvalContext),
+              eq(approvalRules.approvalContext, "todos")
+            )!
+          );
+        }
+        
+        // Adicionar condição de vinculação
+        if (input.ruleType === "departamento" && input.departmentId) {
+          conditions.push(eq(approvalRules.departmentId, input.departmentId));
+        } else if (input.ruleType === "centro_custo" && input.costCenterId) {
+          conditions.push(eq(approvalRules.costCenterId, input.costCenterId));
+        } else if (input.ruleType === "individual" && input.employeeId) {
+          conditions.push(eq(approvalRules.employeeId, input.employeeId));
+        }
+        
+        const conflictingRules = await database.select({
+          rule: approvalRules,
+          approver: employees,
+        })
+        .from(approvalRules)
+        .leftJoin(employees, eq(approvalRules.approverId, employees.id))
+        .where(and(...conditions));
+        
+        // Filtrar regra atual se estiver editando
+        const conflicts = conflictingRules
+          .filter(r => !input.excludeRuleId || r.rule.id !== input.excludeRuleId)
+          .map(r => ({
+            ...r.rule,
+            approverName: r.approver?.name || "Desconhecido",
+          }));
+        
+        return {
+          hasConflict: conflicts.length > 0,
+          conflicts,
+          suggestions: conflicts.length > 0 ? [
+            "Considere desativar as regras conflitantes antes de criar esta nova regra.",
+            "Você pode ajustar o nível hierárquico (approverLevel) para criar uma cadeia de aprovação.",
+            "Se necessário, altere o contexto da aprovação para ser mais específico.",
+          ] : [],
+        };
       }),
   }),
   

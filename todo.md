@@ -584,3 +584,33 @@
 - [x] Hierarquia de aprovadores (nível 1, 2, 3)
 - [ ] Histórico de alterações
 - [ ] Exportação de relatório de aprovadores
+
+
+---
+
+## 🔧 MELHORIAS GESTÃO DE APROVADORES - 25/11/2024 16:00
+
+### Fase 1: Menu Lateral
+- [x] Adicionar item "Gestão de Aprovadores" no DashboardLayout
+- [x] Posicionar na seção "Configurações"
+- [x] Ícone apropriado (UserCheck ou Shield)
+
+### Fase 2: Histórico de Alterações
+- [x] Adicionar campos de auditoria na tabela approvalRules (createdBy, updatedBy, deletedBy, timestamps)
+- [x] Criar tabela approvalRulesHistory para histórico completo
+- [x] Implementar endpoint getHistory no approvalRulesRouter
+- [x] Criar componente HistoricoAprovadores.tsx
+- [x] Modal de visualização de histórico com timeline
+- [x] Registrar automaticamente criação/edição/exclusão
+
+### Fase 3: Validação de Conflitos
+- [x] Implementar lógica de detecção de conflitos (múltiplas regras para mesmo contexto)
+- [x] Alertas visuais no formulário quando detectar conflito
+- [x] Sugestões de resolução de conflitos
+- [x] Testes de validação de conflitos
+
+### Fase 4: Testes e Checkpoint
+- [x] Testar navegação do menu
+- [x] Testar histórico de alterações
+- [x] Testar validação de conflitos
+- [x] Criar checkpoint final

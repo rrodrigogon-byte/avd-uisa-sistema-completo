@@ -48,6 +48,7 @@ import TestesResultadosRH from "./pages/TestesResultadosRH";
 import NineBoxComparativo from "./pages/NineBoxComparativo";
 import ReportBuilder from "./pages/ReportBuilder";
 import ReportAnalytics from "./pages/ReportAnalytics";
+import GestaoAprovadores from "./pages/GestaoAprovadores";
 import SuccessionImport from "./pages/SuccessionImport";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
@@ -320,6 +321,7 @@ function Router() {
       <Route path="/analytics/avancado" component={AnalyticsAvancadoPage} />
       <Route path="/avaliar-360/:id" component={Avaliar360} />
       <Route path="/admin/audit-log" component={AuditTrail} />
+      <Route path="/admin/gestao-aprovadores" component={GestaoAprovadores} />
       <Route path="/admin/analytics" component={Analytics} />
       <Route path="/feedback" component={Feedbacks} />
       <Route path="/ciclos/:cycleId/criar-metas" component={CriarMetasCiclo} />
