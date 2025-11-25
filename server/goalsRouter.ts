@@ -339,21 +339,49 @@ export const goalsRouter = router({
       const db = await getDb();
       if (!db) return [];
 
-      const goals = await db
+      // Buscar metas SMART
+      const smartGoalsData = await db
         .select()
         .from(smartGoals)
         .where(eq(smartGoals.employeeId, input.employeeId))
         .orderBy(desc(smartGoals.createdAt));
 
-      return goals.map(goal => ({
-        id: goal.id,
-        title: goal.title,
-        description: goal.description,
-        status: goal.status,
-        progress: goal.progress || 0,
-        deadline: goal.endDate,
-        createdAt: goal.createdAt,
-      }));
+      // Buscar metas antigas (tabela goals)
+      const { goals: goalsTable } = await import("../drizzle/schema");
+      const oldGoals = await db
+        .select()
+        .from(goalsTable)
+        .where(eq(goalsTable.employeeId, input.employeeId))
+        .orderBy(desc(goalsTable.createdAt));
+
+      // Combinar e formatar ambas
+      const allGoals = [
+        ...smartGoalsData.map(goal => ({
+          id: goal.id,
+          title: goal.title,
+          description: goal.description,
+          status: goal.status,
+          progress: goal.progress || 0,
+          deadline: goal.endDate,
+          createdAt: goal.createdAt,
+          source: 'smart' as const,
+        })),
+        ...oldGoals.map(goal => ({
+          id: goal.id,
+          title: goal.title,
+          description: goal.description,
+          status: goal.status,
+          progress: goal.progress || 0,
+          deadline: goal.endDate,
+          createdAt: goal.createdAt,
+          source: 'legacy' as const,
+        })),
+      ];
+
+      // Ordenar por data de criação (mais recente primeiro)
+      return allGoals.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     }),
 
   /**

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, ArrowLeft, Mail, Phone, Calendar, Briefcase, Target, FileText, TrendingUp, Award } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import TestesResultados from "@/components/TestesResultados";
+import HistoricoFuncionario from "@/components/HistoricoFuncionario";
 
 /**
  * Página de Perfil do Funcionário
@@ -423,29 +425,12 @@ export default function PerfilFuncionario() {
 
           {/* Tab: Testes Psicométricos */}
           <TabsContent value="tests" className="space-y-4">
-            <Card className="p-12">
-              <div className="text-center text-gray-500">
-                <Award className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <p className="mb-4">Enviar testes psicométricos para compor o perfil do colaborador</p>
-                <Button 
-                  onClick={() => navigate(`/testes-psicometricos/enviar?employeeId=${employeeId}`)}
-                  className="bg-[#F39200] hover:bg-[#d97f00]"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Enviar Testes
-                </Button>
-              </div>
-            </Card>
+            <TestesResultados employeeId={employeeId} />
           </TabsContent>
 
           {/* Tab: Histórico */}
           <TabsContent value="history" className="space-y-4">
-            <Card className="p-12">
-              <div className="text-center text-gray-500">
-                <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <p>Histórico completo será exibido aqui</p>
-              </div>
-            </Card>
+            <HistoricoFuncionario employeeId={employeeId} />
           </TabsContent>
         </Tabs>
       </div>

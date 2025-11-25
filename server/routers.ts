@@ -1060,8 +1060,16 @@ export const appRouter = router({
         cycleId: z.number(),
         employeeId: z.number(),
         targetPositionId: z.number().optional(),
-        startDate: z.date(),
-        endDate: z.date(),
+        startDate: z.string(),
+        endDate: z.string(),
+        objectives: z.string().optional(),
+        actions: z.array(z.object({
+          title: z.string(),
+          description: z.string(),
+          category: z.enum(["70_pratica", "20_mentoria", "10_curso"]),
+          duration: z.string().optional(),
+          deadline: z.string().optional(),
+        })).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const database = await getDb();
@@ -1072,13 +1080,36 @@ export const appRouter = router({
           });
         }
 
+        // Criar PDI
         const [result] = await database.insert(pdiPlans).values({
-          ...input,
+          cycleId: input.cycleId,
+          employeeId: input.employeeId,
+          targetPositionId: input.targetPositionId || null,
+          startDate: new Date(input.startDate),
+          endDate: new Date(input.endDate),
           status: "rascunho",
           overallProgress: 0,
         });
 
         const pdiId = Number(result.insertId);
+
+        // Adicionar itens (ações) se fornecidos
+        if (input.actions && input.actions.length > 0) {
+          const { pdiItems } = await import("../drizzle/schema");
+          for (const action of input.actions) {
+            await database.insert(pdiItems).values({
+              planId: pdiId,
+              competencyId: 1, // Competência genérica (ajustar conforme necessário)
+              title: action.title,
+              description: action.description,
+              category: action.category,
+              duration: action.duration ? parseInt(action.duration) : null,
+              deadline: action.deadline ? new Date(action.deadline) : null,
+              status: "pendente",
+              progress: 0,
+            });
+          }
+        }
 
         await db.logAudit(
           ctx.user!.id,

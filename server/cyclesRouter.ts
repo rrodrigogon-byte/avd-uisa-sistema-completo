@@ -40,7 +40,7 @@ export const cyclesRouter = router({
     }),
 
   /**
-   * Criar novo ciclo
+   * Criar novo ciclo 360° Enhanced (wizard completo)
    */
   create: protectedProcedure
     .input(
@@ -48,13 +48,26 @@ export const cyclesRouter = router({
         name: z.string(),
         startDate: z.string(), // ISO date string
         endDate: z.string(),
+        evaluationDeadline: z.string().optional(),
         selfEvaluationDeadline: z.string().optional(),
         managerEvaluationDeadline: z.string().optional(),
         consensusDeadline: z.string().optional(),
         description: z.string().optional(),
+        // Pesos do 360°
+        selfWeight: z.number().optional(),
+        peerWeight: z.number().optional(),
+        subordinateWeight: z.number().optional(),
+        managerWeight: z.number().optional(),
+        // Competências
+        competencyIds: z.array(z.number()).optional(),
+        // Participantes
+        participants: z.array(z.object({
+          employeeId: z.number(),
+          role: z.string(),
+        })).optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -73,7 +86,7 @@ export const cyclesRouter = router({
       const consensusDeadline = parseDate(input.consensusDeadline);
       const description = input.description && input.description.trim() !== '' ? input.description : null;
 
-      const result = await db.insert(evaluationCycles).values({
+      const [result] = await db.insert(evaluationCycles).values({
         name: input.name,
         year: year,
         type: "anual",
@@ -86,18 +99,70 @@ export const cyclesRouter = router({
         status: "planejado",
       });
 
+      const cycleId = Number(result.insertId);
+
+      // Salvar pesos do 360° se fornecidos
+      if (input.selfWeight !== undefined || input.managerWeight !== undefined) {
+        const { evaluation360CycleWeights } = await import("../drizzle/schema");
+        await db.insert(evaluation360CycleWeights).values({
+          cycleId,
+          selfWeight: input.selfWeight || 25,
+          managerWeight: input.managerWeight || 25,
+          peersWeight: input.peerWeight || 25,
+          subordinatesWeight: input.subordinateWeight || 25,
+        });
+      }
+
+      // Salvar competências se fornecidas
+      if (input.competencyIds && input.competencyIds.length > 0) {
+        const { evaluation360CycleCompetencies } = await import("../drizzle/schema");
+        for (const competencyId of input.competencyIds) {
+          await db.insert(evaluation360CycleCompetencies).values({
+            cycleId,
+            competencyId,
+            requiredLevel: 3,
+          });
+        }
+      }
+
+      // Salvar participantes se fornecidos
+      if (input.participants && input.participants.length > 0) {
+        const { evaluation360CycleParticipants, notifications } = await import("../drizzle/schema");
+        for (const participant of input.participants) {
+          await db.insert(evaluation360CycleParticipants).values({
+            cycleId,
+            employeeId: participant.employeeId,
+            role: participant.role,
+          });
+
+          // Enviar notificação para o participante
+          try {
+            await db.insert(notifications).values({
+              userId: participant.employeeId,
+              type: "evaluation_360",
+              title: "🎯 Você foi adicionado a um ciclo de avaliação 360°",
+              message: `Você foi adicionado ao ciclo "${input.name}" como ${participant.role}. Acesse para mais detalhes.`,
+              link: `/360-enhanced`,
+              read: false,
+            });
+          } catch (error) {
+            console.error(`[Cycles] Erro ao enviar notificação para participante ${participant.employeeId}:`, error);
+          }
+        }
+      }
+
       // Enviar notificação push para todos os usuários sobre novo ciclo
       try {
         const { sendPushNotificationToAll } = await import("./utils/pushNotificationHelper");
         await sendPushNotificationToAll(
           {
-            title: "🎯 Novo Ciclo de Avaliação Criado",
+            title: "🎯 Novo Ciclo de Avaliação 360° Criado",
             body: `${input.name} - Período: ${new Date(input.startDate).toLocaleDateString("pt-BR")} a ${new Date(input.endDate).toLocaleDateString("pt-BR")}`,
             icon: "/icon-192x192.png",
             data: {
               type: "evaluation_cycle",
-              cycleId: 0, // ID será gerado pelo auto-increment
-              url: "/ciclos-avaliacao",
+              cycleId,
+              url: "/360-enhanced",
             },
             actions: [
               {
@@ -114,7 +179,7 @@ export const cyclesRouter = router({
         // Não falhar a criação se notificações falharem
       }
 
-      return { id: 0, success: true }; // ID será gerado pelo auto-increment
+      return { id: cycleId, success: true };
     }),
 
   /**

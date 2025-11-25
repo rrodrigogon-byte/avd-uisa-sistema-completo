@@ -241,3 +241,101 @@
 ### Melhorias Pendentes
 - [x] Finalizar integração de notificações in-app no DashboardLayout
 - [x] Criar dashboard de analytics de templates 360°
+
+
+---
+
+## 🔥 ERRO CRÍTICO - CICLO 360° ENHANCED - 25/11/2024 12:10 (URGENTE)
+- [x] Corrigir erro 404 ao confirmar criação de ciclo 360° Enhanced
+- [x] Verificar rota /ciclos/360-enhanced/criar
+- [x] Validar endpoint cycles360Enhanced.create
+- [x] Garantir envio de notificações para avaliadores após criação
+- [ ] Testar fluxo completo de criação de ciclo 360°
+
+## 🚨 CORREÇÕES URGENTES - 25/11/2024 11:40 (PRIORIDADE MÁXIMA)
+
+### Bug 1: Grid de Metas no Perfil do Funcionário
+- [x] Investigar por que metas criadas não aparecem em /funcionarios/:id
+- [x] Verificar endpoint de listagem de metas por funcionário
+- [x] Corrigir query SQL ou filtro de metas (busca em smartGoals + goals)
+- [ ] Testar criação e visualização de meta
+
+### Bug 2: Inclusão de PDI Completo
+- [x] Adicionar botão "Incluir PDI" na aba PDI do perfil
+- [x] Criar formulário completo de criação de PDI
+- [x] Implementar todos os campos necessários (objetivos, ações, prazos)
+- [x] Integrar com endpoint de criação de PDI
+
+### Bug 3: Erros nos Testes Psicométricos
+- [x] Identificar erros específicos nos testes
+- [x] Criar componente TestesResultados para exibir resultados
+- [x] Integrar com endpoint psychometricTests.getEmployeeResults
+- [ ] Testar fluxo completo de cada teste
+
+### Bug 4: Histórico Completo Não Aparece
+- [x] Verificar aba "Histórico" no perfil do funcionário
+- [x] Criar componente HistoricoFuncionario com timeline
+- [x] Combinar dados de avaliações, metas e PDI
+- [x] Garantir que todos os dados históricos sejam exibidos
+
+---
+
+## 🎯 IMPLEMENTAÇÕES DE PRODUTIVIDADE - Fase 2
+
+### Frontend de Sugestões Inteligentes
+- [ ] Criar componente SugestoesInteligentes.tsx
+- [ ] Exibir sugestões baseadas em padrões de tempo
+- [ ] Botão "Aceitar Sugestão" para converter em atividade
+- [ ] Integrar com activityRouter.getSuggestions
+
+### Frontend de Atividades Manuais
+- [ ] Criar componente RegistroAtividades.tsx
+- [ ] Formulário de criação de atividade (título, descrição, categoria, duração)
+- [ ] Listagem de atividades com filtros
+- [ ] Integrar com activityRouter.create e activityRouter.list
+
+### Dashboard de Metas de Produtividade
+- [ ] Criar página /produtividade/metas
+- [ ] Dashboard para gestores com KPIs da equipe
+- [ ] Gráficos de progresso de metas
+- [ ] Alertas visuais para funcionários abaixo da meta
+- [ ] Integrar com productivityGoalsRouter
+
+---
+
+## 📊 DASHBOARDS DE RELATÓRIOS - Fase 3
+
+### Relatórios Semanais/Mensais
+- [ ] Criar página /produtividade/relatorios
+- [ ] Gráfico de evolução semanal (Chart.js Line)
+- [ ] Gráfico de evolução mensal (Chart.js Bar)
+- [ ] Distribuição por categoria (Chart.js Pie)
+- [ ] Comparativo entre funcionários/departamentos
+
+### Exportação de Relatórios
+- [ ] Implementar exportação em PDF (jsPDF)
+- [ ] Implementar exportação em Excel (ExcelJS)
+- [ ] Incluir gráficos nos relatórios exportados
+- [ ] Adicionar filtros de período e departamento
+
+---
+
+## 📋 WORKFLOW DE DESCRIÇÃO DE CARGOS - Fase 4
+
+### Páginas de Aprovação
+- [ ] Criar página /descricao-cargos/aprovar-superior
+- [ ] Criar página /descricao-cargos/aprovar-rh
+- [ ] Implementar botões Aprovar/Rejeitar/Solicitar Alterações
+- [ ] Campo de comentários em cada aprovação
+
+### Sistema de Notificações
+- [ ] Notificar superior quando descrição for criada
+- [ ] Notificar RH quando superior aprovar
+- [ ] Notificar ocupante quando aprovação for concluída
+- [ ] Notificar ocupante quando for rejeitada
+
+### Histórico de Aprovações
+- [ ] Criar timeline visual de aprovações
+- [ ] Exibir comentários de cada aprovador
+- [ ] Mostrar datas e status de cada etapa
+- [ ] Permitir download da descrição aprovada em PDF
