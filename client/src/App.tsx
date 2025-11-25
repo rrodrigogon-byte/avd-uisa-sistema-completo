@@ -87,6 +87,7 @@ import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
 import EnviarTestes from "./pages/EnviarTestes";
+import ImportadorDescricoesCargo from "./pages/ImportadorDescricoesCargo";
 import Notificacoes from "./pages/Notificacoes";
 import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
@@ -279,6 +280,7 @@ function Router() {
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
+      <Route path="/descricao-cargos/importar" component={ImportadorDescricoesCargo} />
       <Route path="/descricao-cargos" component={DescricaoCargos} />
       <Route path="/descricao-cargos-uisa" component={DescricaoCargosUISA} />
       <Route path="/descricao-cargos-uisa/criar" component={CriarDescricaoCargo} />

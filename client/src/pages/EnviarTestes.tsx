@@ -107,8 +107,8 @@ export default function EnviarTestes() {
       return;
     }
 
-    const deptEmployees = employees?.filter(e => e.employee.departmentId === departmentId && e.employee.status === 'ativo') || [];
-    const emails = deptEmployees.map(e => e.employee.email).filter(Boolean) as string[];
+    const deptEmployees = employees?.filter(e => e.departmentId === departmentId && e.status === 'ativo') || [];
+    const emails = deptEmployees.map(e => e.email).filter(Boolean) as string[];
 
     if (emails.length === 0) {
       toast.error("Nenhum funcionário ativo com email neste departamento");
@@ -131,7 +131,7 @@ export default function EnviarTestes() {
   };
 
   const selectAllEmployees = () => {
-    const allEmails = employees?.filter(e => e.employee.status === 'ativo' && e.employee.email).map(e => e.employee.email) as string[];
+    const allEmails = employees?.filter(e => e.status === 'ativo' && e.email).map(e => e.email) as string[];
     setSelectedEmails(allEmails || []);
   };
 
@@ -276,21 +276,21 @@ export default function EnviarTestes() {
                 ) : (
                   <div className="border rounded-lg max-h-96 overflow-y-auto">
                     <div className="divide-y">
-                      {employees?.filter(e => e.employee.status === 'ativo' && e.employee.email).map(employee => (
+                      {employees?.filter(e => e.status === 'ativo' && e.email).map(employee => (
                         <div
-                          key={employee.employee.id}
+                          key={employee.id}
                           className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer"
-                          onClick={() => toggleEmployeeSelection(employee.employee.email!)}
+                          onClick={() => toggleEmployeeSelection(employee.email!)}
                         >
                           <Checkbox
-                            checked={selectedEmails.includes(employee.employee.email!)}
-                            onCheckedChange={() => toggleEmployeeSelection(employee.employee.email!)}
+                            checked={selectedEmails.includes(employee.email!)}
+                            onCheckedChange={() => toggleEmployeeSelection(employee.email!)}
                           />
                           <div className="flex-1">
-                            <div className="font-medium">{employee.employee.name}</div>
-                            <div className="text-sm text-muted-foreground">{employee.employee.email}</div>
+                            <div className="font-medium">{employee.name}</div>
+                            <div className="text-sm text-muted-foreground">{employee.email}</div>
                           </div>
-                          <Badge variant="outline">{employee.position?.title}</Badge>
+                          <Badge variant="outline">{employee.positionTitle}</Badge>
                         </div>
                       ))}
                     </div>
@@ -336,7 +336,7 @@ export default function EnviarTestes() {
                   <div className="space-y-3">
                     {departments?.map(dept => {
                       const deptEmployees = employees?.filter(
-                        e => e.employee.departmentId === dept.id && e.employee.status === 'ativo' && e.employee.email
+                        e => e.departmentId === dept.id && e.status === 'ativo' && e.email
                       ) || [];
                       return (
                         <Card key={dept.id} className="border-gray-200">
@@ -391,13 +391,13 @@ export default function EnviarTestes() {
                       return;
                     }
                     const diretoriaEmployees = employees?.filter(
-                      e => e.employee.status === 'ativo' && 
-                           e.employee.email && 
-                           (e.position?.title.toLowerCase().includes('diretor') || 
-                            e.position?.title.toLowerCase().includes('ceo') ||
-                            e.position?.title.toLowerCase().includes('presidente'))
+                      e => e.status === 'ativo' && 
+                           e.email && 
+                           (e.positionTitle?.toLowerCase().includes('diretor') || 
+                            e.positionTitle?.toLowerCase().includes('ceo') ||
+                            e.positionTitle?.toLowerCase().includes('presidente'))
                     ) || [];
-                    const emails = diretoriaEmployees.map(e => e.employee.email).filter(Boolean) as string[];
+                    const emails = diretoriaEmployees.map(e => e.email).filter(Boolean) as string[];
                     
                     if (emails.length === 0) {
                       toast.error("Nenhum membro da diretoria encontrado");
@@ -450,7 +450,7 @@ export default function EnviarTestes() {
                   <div className="space-y-3">
                     {costCenters?.map((cc: any) => {
                       const ccEmployees = employees?.filter(
-                        e => e.employee.costCenter === cc.code && e.employee.status === 'ativo' && e.employee.email
+                        e => e.costCenter === cc.code && e.status === 'ativo' && e.email
                       ) || [];
                       return (
                         <Card key={cc.id} className="border-gray-200">

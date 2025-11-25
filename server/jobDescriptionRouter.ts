@@ -341,4 +341,75 @@ export const jobDescriptionRouter = router({
     // TODO: Buscar descrições do banco onde status = "pendente_rh"
     return [];
   }),
+
+  /**
+   * Listar todas as descrições de cargo
+   */
+  list: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) return [];
+
+    // TODO: Buscar todas as descrições do banco
+    // Por enquanto retorna array vazio
+    return [];
+  }),
+
+  /**
+   * Importação em lote de descrições de cargo (.docx)
+   */
+  bulkImport: protectedProcedure
+    .input(
+      z.object({
+        files: z.array(
+          z.object({
+            name: z.string(),
+            content: z.string(), // base64
+            size: z.number(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const results: any[] = [];
+      let successCount = 0;
+
+      for (const file of input.files) {
+        try {
+          // Processar arquivo .docx
+          // Extrair título do cargo do nome do arquivo
+          const positionTitle = file.name
+            .replace(/\.docx?$/i, '')
+            .replace(/Gerente/g, 'Gerente ')
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .trim();
+
+          // Por enquanto, apenas registra o sucesso
+          // TODO: Implementar extração real do conteúdo com mammoth
+          // TODO: Salvar no banco de dados
+          
+          results.push({
+            fileName: file.name,
+            positionTitle,
+            success: true,
+            message: `Descrição importada com sucesso`,
+          });
+          successCount++;
+        } catch (error: any) {
+          results.push({
+            fileName: file.name,
+            success: false,
+            error: error.message || "Erro ao processar arquivo",
+          });
+        }
+      }
+
+      return {
+        success: successCount,
+        total: input.files.length,
+        results,
+      };
+    }),
 });

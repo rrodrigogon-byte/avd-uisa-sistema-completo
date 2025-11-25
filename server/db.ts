@@ -141,6 +141,7 @@ export async function getAllEmployees() {
       positionTitle: positions.title,
       hireDate: employees.hireDate,
       status: employees.status,
+      costCenter: employees.costCenter,
     })
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
