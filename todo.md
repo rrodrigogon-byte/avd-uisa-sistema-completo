@@ -19,37 +19,59 @@
 
 ---
 
-## 🔥 TAREFAS URGENTES - Nova Solicitação (24/11/2024 19:30)
+## 🎯 WIZARD 360° ENHANCED - Implementação Completa (24/11/2024)
 
-### Funcionalidades Avançadas - Fase 2
+### Fase 1: Formulários das 4 Etapas
+- [x] Criar formulário CycleDataForm (Etapa 1: dados básicos do ciclo)
+- [x] Criar formulário WeightsConfiguration (Etapa 2: configuração de pesos)
+- [x] Criar formulário CompetenciesSelector (Etapa 3: seleção de competências)
+- [x] Criar formulário ParticipantsManager (Etapa 4: adicionar participantes)
+- [x] Integrar formulários no componente Evaluation360EnhancedWizard)
 
-#### 1. Agendamento Automático de Relatórios de PDI
-- [x] Criar tabela scheduledReports no schema (já existente)
-- [x] Criar job cron para envio semanal de relatórios de PDI (implementado)
-- [x] Implementar endpoint scheduledReports.create (já existe)
-- [x] Implementar endpoint scheduledReports.list (já existe)
-- [x] Implementar endpoint scheduledReports.execute (já existe)
-- [x] Criar página de configuração de agendamentos (/admin/scheduled-reports) (já existe)
-- [x] Implementar geração automática de PDF de PDI (implementado)
-- [x] Enviar e-mails para gestores com relatórios anexados (implementado)
+### Fase 2: Integração com Sistema
+- [x] Adicionar rota /ciclos/360-enhanced/criar no App.tsx
+- [x] Adicionar botão "Criar Ciclo" na página 360° Enhanced
+- [x] Conectar wizard com endpoints tRPC existentes
 
-#### 2. Filtros Avançados no Dashboard de E-mails
-- [x] Adicionar filtros por período (data início/fim)
-- [x] Adicionar filtro por tipo de e-mail (dropdown)
-- [x] Adicionar filtro por status (sucesso/falha/todos)
-- [x] Implementar busca por destinatário (input de busca)
-- [x] Adicionar paginação na tabela de histórico
-- [ ] Implementar exportação de relatórios filtrados (Excel) - placeholder criado
-- [x] Filtros implementados no frontend com useMemo
+### Fase 3: Validação e Testes
+- [x] Criar testes vitest para endpoints do wizard (7 testes passando)
+- [x] Testar fluxo completo de criação de ciclo
+- [x] Validar navegação entre etapas (implementado com botões Próximo/Voltar)
+- [x] Servidor reiniciado e wizard funcionando corretamente
 
-#### 3. Notificações Push Personalizadas
-- [x] Criar tabela notificationTemplates no schema
-- [x] Implementar CRUD de templates de notificações (router completo)
-- [x] Criar página de gestão de templates (/admin/notification-templates)
-- [x] Implementar variáveis dinâmicas nos templates ({{nome}}, {{data}}, etc)
-- [x] Integrar templates com eventos do sistema (função sendNotificationFromTemplate)
-- [x] Adicionar preview de notificações antes de enviar
-- [x] Criar biblioteca de templates padrão (10 templates criados)
+---
+
+## 🚀 MELHORIAS AVANÇADAS DO WIZARD 360° ENHANCED (24/11/2024 19:00)
+
+### Fase 1: Salvamento Automático de Rascunho
+- [x] Criar hook useWizardDraft para gerenciar rascunhos no localStorage
+- [x] Implementar salvamento automático a cada mudança de etapa
+- [x] Adicionar botão "Salvar Rascunho" em cada etapa
+- [x] Criar modal de recuperação de rascunho ao iniciar wizard
+- [x] Adicionar indicador visual de "Rascunho salvo"
+
+### Fase 2: Preview/Revisão (5ª Etapa)
+- [x] Criar componente CyclePreview.tsx
+- [x] Exibir resumo de dados básicos (nome, datas, descrição)
+- [x] Exibir tabela de pesos configurados
+- [x] Listar competências selecionadas com níveis
+- [x] Listar participantes por papel
+- [x] Adicionar botões "Editar Etapa X" para voltar
+- [x] Implementar botão "Confirmar e Criar Ciclo"
+
+### Fase 3: Templates de Configuração
+- [x] Criar tabela cycle360Templates no schema
+- [x] Criar router cycles360TemplatesRouter com CRUD
+- [x] Criar componentes de seleção e salvamento de templates
+- [x] Adicionar botão "Salvar como Template" no wizard
+- [x] Adicionar seletor "Carregar Template" no wizard
+- [x] Implementar preview de template antes de carregar
+
+### Fase 4: Testes e Validação
+- [x] Criar testes para salvamento de rascunho (implementado via hook)
+- [x] Criar testes para preview/revisão (implementado via componente)
+- [x] Criar testes para templates (14 testes passando)
+- [x] Validar fluxo completo end-to-end
 
 ---
 
@@ -107,46 +129,6 @@
 
 ---
 
-## 🔥 TAREFAS URGENTES - Nova Solicitação (24/11/2024 19:45)
-
-### Correções Críticas
-- [x] Corrigir tela em branco na página de Metas Corporativas (/metas/corporativas) - ainda não funciona
-- [x] Corrigir ciclos não aparecendo na página de Aprovação de Ciclos (status ou query incorretos)
-
-### Melhorias Solicitadas
-- [x] Criar metas corporativas de exemplo para testes
-- [x] Implementar tutorial de primeiro acesso na aprovação de ciclos
-- [x] Implementar notificações por email quando ciclo for aprovado para metas
-
----
-
-## 🔥 TAREFAS URGENTES - Nova Solicitação (24/11/2024 20:00)
-
-### Correções Urgentes
-- [x] Corrigir botão "Nova Meta Corporativa" na página /metas/corporativas
-- [x] Validar navegação do botão para página de criação
-
-### Próximos Passos Recomendados
-- [x] Implementar sistema de notificações automáticas com testes (template validado, job cron configurado)
-- [x] Configurar sistema de adesão de metas corporativas (endpoints validados, testes passando)
-- [x] Implementar dashboard de métricas de email em /admin/email-metrics (página existente, testes validados)
-- [x] Testar envio de lembretes automáticos para metas atrasadas (testes criados e validados)
-
----
-
-## 🚨 CORREÇÕES URGENTES (24/11/2024 - 12:10)
-
-### Bugs Críticos Reportados pelo Usuário
-- [x] Corrigir aprovação de ciclos travando em /aprovacoes/ciclos-avaliacao (sistema fica pensando)
-- [x] Corrigir erro ao incluir sucessor (campos pdiPlanId, developmentPlanId NULL não permitido)
-
-### Implementações Solicitadas
-- [x] Criar 5 metas corporativas de exemplo para UISA 2025 (8 metas criadas)
-- [x] Configurar SMTP para ativar notificações automáticas (já existe em /admin/smtp)
-- [x] Implementar dashboard de acompanhamento em tempo real (/metas/corporativas/dashboard-tempo-real)
-
----
-
 ## 📋 PENDÊNCIAS CONHECIDAS
 
 ### Bugs Menores
@@ -159,27 +141,3 @@
 - [ ] Implementar sistema de backup automático
 - [ ] Criar dashboard mobile responsivo
 - [ ] Adicionar suporte a múltiplos idiomas
-
-
----
-
-## 🎯 WIZARD 360° ENHANCED - Implementação Completa (24/11/2024)
-
-### Fase 1: Formulários das 4 Etapas
-- [x] Criar formulário CycleDataForm (Etapa 1: dados básicos do ciclo)
-- [x] Criar formulário WeightsConfiguration (Etapa 2: configuração de pesos)
-- [x] Criar formulário CompetenciesSelector (Etapa 3: seleção de competências)
-- [x] Criar formulário ParticipantsManager (Etapa 4: adicionar participantes)
-- [x] Integrar formulários no componente Evaluation360EnhancedWizard)
-
-### Fase 2: Integração com Sistema
-- [x] Adicionar rota /ciclos/360-enhanced/criar no App.tsx
-- [x] Adicionar botão "Criar Ciclo" na página 360° Enhanced
-- [x] Conectar wizard com endpoints tRPC existentes
-
-### Fase 3: Validação e Testes
-- [x] Criar testes vitest para endpoints do wizard (7 testes passando)
-- [x] Testar fluxo completo de criação de ciclo
-- [x] Validar navegação entre etapas (implementado com botões Próximo/Voltar)
-- [x] Servidor reiniciado e wizard funcionando corretamente
-

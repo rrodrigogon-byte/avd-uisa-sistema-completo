@@ -501,7 +501,7 @@ export const cyclesRouter = router({
 
       await db
         .update(evaluationCycles)
-        .set({ status: "em_andamento" })
+        .set({ status: sql`'em_andamento'` })
         .where(eq(evaluationCycles.id, input.cycleId));
 
       return { success: true };

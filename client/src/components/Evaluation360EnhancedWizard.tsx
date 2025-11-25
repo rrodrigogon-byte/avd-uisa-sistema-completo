@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, Save, FileText } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
@@ -9,19 +10,31 @@ import CycleDataForm, { CycleData } from "./wizard360/CycleDataForm";
 import WeightsConfiguration, { WeightsData } from "./wizard360/WeightsConfiguration";
 import CompetenciesSelector, { CompetenciesData } from "./wizard360/CompetenciesSelector";
 import ParticipantsManager, { ParticipantsData } from "./wizard360/ParticipantsManager";
+import CyclePreview from "./wizard360/CyclePreview";
+import { useWizardDraft } from "@/hooks/useWizardDraft";
+import { DraftRecoveryDialog } from "./wizard/DraftRecoveryDialog";
+import { TemplateSelector } from "./wizard360/TemplateSelector";
+import { SaveTemplateDialog } from "./wizard360/SaveTemplateDialog";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-type WizardStep = 1 | 2 | 3 | 4;
+type WizardStep = 1 | 2 | 3 | 4 | 5;
 
 const steps = [
   { number: 1, title: "Dados do Ciclo", description: "Informações básicas" },
   { number: 2, title: "Pesos", description: "Configurar pesos das avaliações" },
   { number: 3, title: "Competências", description: "Selecionar competências" },
-  { number: 4, title: "Participantes", description: "Adicionar avaliadores" }
+  { number: 4, title: "Participantes", description: "Adicionar avaliadores" },
+  { number: 5, title: "Revisão", description: "Confirmar e criar ciclo" }
 ];
 
 export default function Evaluation360EnhancedWizard() {
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState<WizardStep>(1);
+  const [showDraftDialog, setShowDraftDialog] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [showSaveTemplate, setShowSaveTemplate] = useState(false);
+  const { draft, hasDraft, lastSaved, saveDraft, clearDraft, restoreDraft } = useWizardDraft();
   
   // Estado de cada etapa
   const [cycleData, setCycleData] = useState<CycleData>({
@@ -47,8 +60,95 @@ export default function Evaluation360EnhancedWizard() {
     participants: []
   });
 
+  // Verificar rascunho ao montar
+  useEffect(() => {
+    if (hasDraft) {
+      setShowDraftDialog(true);
+    }
+  }, [hasDraft]);
+
+  // Salvar automaticamente ao mudar de etapa
+  useEffect(() => {
+    if (currentStep > 1) {
+      handleSaveDraft(false);
+    }
+  }, [currentStep]);
+
+  const handleSaveDraft = (showToast = true) => {
+    const success = saveDraft({
+      step: currentStep,
+      cycleData: {
+        name: cycleData.name,
+        description: cycleData.description,
+        startDate: cycleData.startDate?.toISOString() || '',
+        endDate: cycleData.endDate?.toISOString() || '',
+      },
+      weights: {
+        autoAvaliacaoWeight: weightsData.selfWeight,
+        avaliacaoGerenteWeight: weightsData.managerWeight,
+        avaliacaoPares: weightsData.peerWeight,
+        avaliacaoSubordinados: weightsData.subordinateWeight,
+      },
+      competencies: competenciesData.selectedCompetencies.map(id => ({
+        id,
+        name: '',
+        description: '',
+        requiredLevel: 3,
+      })),
+      participants: participantsData.participants.map(p => ({
+        employeeId: p.employeeId,
+        role: p.role,
+        name: p.name,
+      })),
+      savedAt: new Date().toISOString(),
+    });
+
+    if (success && showToast) {
+      toast.success("Rascunho salvo com sucesso!");
+    }
+  };
+
+  const handleRestoreDraft = () => {
+    const restored = restoreDraft();
+    if (restored) {
+      setCurrentStep(restored.step as WizardStep);
+      setCycleData({
+        name: restored.cycleData.name,
+        description: restored.cycleData.description,
+        startDate: restored.cycleData.startDate ? new Date(restored.cycleData.startDate) : undefined,
+        endDate: restored.cycleData.endDate ? new Date(restored.cycleData.endDate) : undefined,
+        evaluationDeadline: undefined,
+      });
+      setWeightsData({
+        selfWeight: restored.weights.autoAvaliacaoWeight,
+        managerWeight: restored.weights.avaliacaoGerenteWeight,
+        peerWeight: restored.weights.avaliacaoPares,
+        subordinateWeight: restored.weights.avaliacaoSubordinados,
+      });
+      setCompetenciesData({
+        selectedCompetencies: restored.competencies.map(c => c.id),
+      });
+      setParticipantsData({
+        participants: restored.participants.map(p => ({
+          employeeId: p.employeeId,
+          role: p.role,
+          name: p.name,
+        })),
+      });
+      toast.success("Rascunho restaurado!");
+    }
+    setShowDraftDialog(false);
+  };
+
+  const handleDiscardDraft = () => {
+    clearDraft();
+    setShowDraftDialog(false);
+    toast.info("Rascunho descartado");
+  };
+
   const createCycleMutation = trpc.cycles360Enhanced.create.useMutation({
     onSuccess: () => {
+      clearDraft();
       toast.success("Ciclo 360° Enhanced criado com sucesso!");
       setLocation("/ciclos/360-enhanced");
     },
@@ -92,6 +192,14 @@ export default function Evaluation360EnhancedWizard() {
         </p>
       </div>
 
+      {/* Draft Recovery Dialog */}
+      <DraftRecoveryDialog
+        open={showDraftDialog}
+        onRestore={handleRestoreDraft}
+        onDiscard={handleDiscardDraft}
+        lastSaved={lastSaved}
+      />
+
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
@@ -105,8 +213,73 @@ export default function Evaluation360EnhancedWizard() {
         <Progress value={progress} className="h-2" />
       </div>
 
+      {/* Template Selector Dialog */}
+      <TemplateSelector
+        open={showTemplateSelector}
+        onClose={() => setShowTemplateSelector(false)}
+        onSelect={(template) => {
+          setWeightsData({
+            selfWeight: template.selfWeight,
+            peerWeight: template.peerWeight,
+            subordinateWeight: template.subordinateWeight,
+            managerWeight: template.managerWeight,
+          });
+          setCompetenciesData({
+            selectedCompetencies: template.competencyIds,
+          });
+        }}
+      />
+
+      {/* Save Template Dialog */}
+      <SaveTemplateDialog
+        open={showSaveTemplate}
+        onClose={() => setShowSaveTemplate(false)}
+        weights={weightsData}
+        competencyIds={competenciesData.selectedCompetencies}
+      />
+
+      {/* Action Buttons */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowTemplateSelector(true)}
+            className="gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Carregar Template
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleSaveDraft(true)}
+            className="gap-2"
+          >
+            <Save className="h-4 w-4" />
+            Salvar Rascunho
+          </Button>
+          {(currentStep === 3 || currentStep === 4 || currentStep === 5) && competenciesData.selectedCompetencies.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowSaveTemplate(true)}
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" />
+              Salvar como Template
+            </Button>
+          )}
+        </div>
+        {lastSaved && (
+          <span className="text-xs text-muted-foreground">
+            Salvo {formatDistanceToNow(lastSaved, { addSuffix: true, locale: ptBR })}
+          </span>
+        )}
+      </div>
+
       {/* Steps Indicator */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-5 gap-4 mb-8">
         {steps.map((step) => {
           const isCompleted = step.number < currentStep;
           const isCurrent = step.number === currentStep;
@@ -184,6 +357,19 @@ export default function Evaluation360EnhancedWizard() {
               data={participantsData}
               onChange={setParticipantsData}
               onBack={() => setCurrentStep(3)}
+              onSubmit={() => setCurrentStep(5)}
+              isSubmitting={false}
+            />
+          )}
+
+          {currentStep === 5 && (
+            <CyclePreview
+              cycleData={cycleData}
+              weightsData={weightsData}
+              competenciesData={competenciesData}
+              participantsData={participantsData}
+              onEditStep={(step) => setCurrentStep(step)}
+              onBack={() => setCurrentStep(4)}
               onSubmit={handleFinalSubmit}
               isSubmitting={createCycleMutation.isPending}
             />

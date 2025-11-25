@@ -2641,3 +2641,41 @@ export const evaluation360CycleConfig = mysqlTable("evaluation360CycleConfig", {
 
 export type Evaluation360CycleConfig = typeof evaluation360CycleConfig.$inferSelect;
 export type InsertEvaluation360CycleConfig = typeof evaluation360CycleConfig.$inferInsert;
+
+
+// ============================================================================
+// TEMPLATES DE CONFIGURAÇÃO 360° ENHANCED
+// ============================================================================
+
+/**
+ * Templates de Configuração de Ciclos 360°
+ * Permite salvar e reutilizar configurações de pesos e competências
+ */
+export const cycle360Templates = mysqlTable("cycle360Templates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  
+  // Criador do template
+  createdBy: int("createdBy").notNull(), // ID do usuário
+  creatorName: varchar("creatorName", { length: 200 }),
+  
+  // Configuração de pesos
+  selfWeight: int("selfWeight").notNull().default(20),
+  peerWeight: int("peerWeight").notNull().default(30),
+  subordinateWeight: int("subordinateWeight").notNull().default(20),
+  managerWeight: int("managerWeight").notNull().default(30),
+  
+  // Competências (JSON array de IDs)
+  competencyIds: text("competencyIds").notNull(), // JSON: [1, 2, 3, ...]
+  
+  // Metadados
+  isPublic: boolean("isPublic").default(false).notNull(), // Se outros usuários podem usar
+  usageCount: int("usageCount").default(0).notNull(), // Quantas vezes foi usado
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Cycle360Template = typeof cycle360Templates.$inferSelect;
+export type InsertCycle360Template = typeof cycle360Templates.$inferInsert;
