@@ -614,3 +614,65 @@
 - [x] Testar histórico de alterações
 - [x] Testar validação de conflitos
 - [x] Criar checkpoint final
+
+
+---
+
+## 🚀 MELHORIAS AVANÇADAS - GESTÃO DE APROVADORES E DESCRIÇÕES DE CARGOS - 25/11/2024 16:30
+
+### Fase 1: Formulário de Criação/Edição de Regras
+- [x] Criar modal completo de criação/edição (CreateEditRuleModal.tsx)
+- [x] Implementar validação em tempo real de conflitos
+- [x] Adicionar feedback visual de conflitos detectados
+- [x] Implementar sugestões automáticas de resolução
+- [x] Adicionar botão de edição em cada regra da tabela
+- [ ] Testar criação e edição de regras
+
+### Fase 2: Notificações por Email
+- [x] Criar templates de email para criação de regra
+- [x] Criar templates de email para edição de regra
+- [x] Criar templates de email para exclusão de regra
+- [x] Implementar envio automático no endpoint create
+- [x] Implementar envio automático no endpoint update
+- [x] Implementar envio automático no endpoint delete
+- [ ] Testar envio de emails
+
+### Fase 3: Dashboard de Aprovações
+- [x] Criar página DashboardAprovacoes.tsx
+- [x] Implementar KPIs (total, pendentes, aprovadas, rejeitadas, tempo médio)
+- [x] Criar gráfico de aprovações por aprovador (barras)
+- [x] Criar gráfico de tempo médio de resposta (linha)
+- [x] Criar gráfico de gargalos no fluxo (tabela com badges)
+- [x] Adicionar filtros por período e contexto
+- [x] Adicionar rota no App.tsx
+- [x] Criar router approvalsStatsRouter com endpoints de estatísticas
+
+### Fase 4: Fluxo de Aprovação de Descrições de Cargos
+- [x] Adicionar campo costCenterApproverId na tabela jobDescriptions
+- [x] Adicionar campo salaryLeaderId na tabela jobDescriptions
+- [x] Atualizar schema jobDescriptionApprovals com novos níveis
+- [x] Implementar endpoint submitForApproval com novo fluxo (5 níveis)
+- [x] Implementar lógica de aprovação unificada (approve endpoint)
+- [x] Adicionar campos de data de aprovação (costCenterApprovedAt, salaryLeaderApprovedAt)
+- [x] Atualizar notificações automáticas para cada etapa do fluxo
+- [ ] Criar página de aprovação para aprovador de CC
+- [ ] Criar página de aprovação para líder de C&S
+- [ ] Integrar com página "Minhas Aprovações"
+
+### Fase 5: Flag de Líder de Cargos e Salários
+- [x] Adicionar campo isSalaryLead (boolean) na tabela users
+- [x] Atualizar schema de users
+- [x] Criar interface de gerenciamento em /admin/usuarios
+- [x] Adicionar toggle para marcar/desmarcar líder C&S
+- [x] Implementar filtro para listar apenas líderes C&S
+- [x] Criar endpoints updateSalaryLeadFlag e listSalaryLeads
+- [x] Adicionar estatísticas (total usuários, líderes C&S, gestores)
+- [x] Adicionar rota /admin/usuarios no App.tsx
+
+### Fase 6: Testes e Checkpoint
+- [ ] Testar formulário de criação/edição
+- [ ] Testar notificações por email
+- [ ] Testar dashboard de aprovações
+- [ ] Testar fluxo completo de aprovação de descrições
+- [ ] Testar flag de líder C&S
+- [ ] Criar checkpoint final

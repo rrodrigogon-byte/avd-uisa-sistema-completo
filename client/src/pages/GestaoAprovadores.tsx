@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { Plus, Trash2, Edit, History, AlertTriangle } from "lucide-react";
+import CreateEditRuleModal from "@/components/CreateEditRuleModal";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -40,6 +41,7 @@ export default function GestaoAprovadores() {
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
   const [selectedRuleId, setSelectedRuleId] = useState<number | null>(null);
   const [editingRule, setEditingRule] = useState<any>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   // Filtros
   const [filterRuleType, setFilterRuleType] = useState<string>("todos");
@@ -82,6 +84,16 @@ export default function GestaoAprovadores() {
   const handleViewHistory = (ruleId: number) => {
     setSelectedRuleId(ruleId);
     setShowHistoryDialog(true);
+  };
+
+  const handleEdit = (rule: any) => {
+    setEditingRule(rule);
+    setShowEditDialog(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setShowEditDialog(false);
+    setEditingRule(null);
   };
 
   const getContextLabel = (context: string) => {
@@ -298,7 +310,16 @@ export default function GestaoAprovadores() {
                           <Button
                             variant="ghost"
                             size="sm"
+                            onClick={() => handleEdit(rule)}
+                            title="Editar regra"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleViewHistory(rule.id)}
+                            title="Ver histórico"
                           >
                             <History className="h-4 w-4" />
                           </Button>
@@ -306,6 +327,7 @@ export default function GestaoAprovadores() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDelete(rule.id)}
+                            title="Excluir regra"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -318,6 +340,19 @@ export default function GestaoAprovadores() {
             )}
           </CardContent>
         </Card>
+
+        {/* Modal de Criação/Edição */}
+        <CreateEditRuleModal
+          open={showCreateDialog || showEditDialog}
+          onOpenChange={(open) => {
+            if (!open) {
+              setShowCreateDialog(false);
+              handleCloseEditDialog();
+            }
+          }}
+          editingRule={editingRule}
+          onSuccess={refetch}
+        />
 
         {/* Dialog de Histórico */}
         <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>

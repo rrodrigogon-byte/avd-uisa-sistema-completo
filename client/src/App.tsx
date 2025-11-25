@@ -49,6 +49,8 @@ import NineBoxComparativo from "./pages/NineBoxComparativo";
 import ReportBuilder from "./pages/ReportBuilder";
 import ReportAnalytics from "./pages/ReportAnalytics";
 import GestaoAprovadores from "./pages/GestaoAprovadores";
+import DashboardAprovacoes from "./pages/DashboardAprovacoes";
+import GerenciarUsuarios from "./pages/GerenciarUsuarios";
 import SuccessionImport from "./pages/SuccessionImport";
 import PerformanceIntegrada from "./pages/PerformanceIntegrada";
 import Avaliacao360Enhanced from "./pages/Avaliacao360Enhanced";
@@ -313,7 +315,9 @@ function Router() {
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/notification-templates" component={NotificationTemplates} />
-      <Route path="/admin/aprovadores" component={Aprovadores} />
+      <Route path="/admin/aprovadores" component={GestaoAprovadores} />
+      <Route path="/admin/dashboard-aprovacoes" component={DashboardAprovacoes} />
+      <Route path="/admin/usuarios" component={GerenciarUsuarios} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />

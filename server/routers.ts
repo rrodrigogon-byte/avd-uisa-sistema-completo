@@ -41,6 +41,7 @@ import { alertsRouter } from "./routers/alertsRouter";
 import { timeClockRouter } from "./routers/timeClockRouter";
 import { activitiesRouter } from "./routers/activitiesRouter";
 import { productivityGoalsRouter } from "./routers/productivityGoalsRouter";
+import { approvalsStatsRouter } from "./routers/approvalsStatsRouter";
 import { organizationRouter } from "./routers/organizationRouter";
 import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { uisaImportRouter } from "./routers/uisaImportRouter";
@@ -226,6 +227,42 @@ export const appRouter = router({
       }
       const employee = await db.getEmployeeByUserId(ctx.user.id);
       return employee || null;
+    }),
+
+    // Atualizar flag de Líder de Cargos e Salários
+    updateSalaryLeadFlag: protectedProcedure
+      .input(z.object({
+        userId: z.number(),
+        isSalaryLead: z.boolean(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database
+          .update(users)
+          .set({ isSalaryLead: input.isSalaryLead })
+          .where(eq(users.id, input.userId));
+
+        return { success: true };
+      }),
+
+    // Listar líderes de cargos e salários
+    listSalaryLeads: protectedProcedure.query(async () => {
+      const database = await getDb();
+      if (!database) return [];
+
+      const salaryLeads = await database
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+        })
+        .from(users)
+        .where(eq(users.isSalaryLead, true));
+
+      return salaryLeads;
     }),
 
     // Buscar equipe direta do gestor
@@ -2705,6 +2742,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // Atividades Manuais e Sugestões Inteligentes
   activities: activitiesRouter,
   
+  // Estatísticas de Aprovações
+  approvalsStats: approvalsStatsRouter,
+  
   // Regras de Aprovação
   approvalRules: router({
     list: protectedProcedure
@@ -2776,8 +2816,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           isActive: true,
           createdBy: currentEmployee[0].id,
         };
-        
-        const result = await database.insert(approvalRules).values(newRule as any);
+              const result = await database.insert(approvalRules).values(newRule as any);
         const ruleId = Number(result[0].insertId);
         
         // Registrar histórico de criação
@@ -2788,7 +2827,50 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           changedBy: currentEmployee[0].id,
         } as any);
         
-        return { id: ruleId, ...newRule };
+        // Enviar email para o aprovador
+        try {
+          const approver = await database.select().from(employees).where(eq(employees.id, input.approverId)).limit(1);
+          if (approver[0] && approver[0].email) {
+            const { ruleCreatedTemplate } = await import('./emailTemplates/approvalRuleTemplates');
+            
+            // Buscar nome da vinculação
+            let departmentName, costCenterName, employeeName;
+            if (input.departmentId) {
+              const dept = await database.select().from(departments).where(eq(departments.id, input.departmentId)).limit(1);
+              departmentName = dept[0]?.name;
+            }
+            if (input.costCenterId) {
+              const cc = await database.select().from(costCenters).where(eq(costCenters.id, input.costCenterId)).limit(1);
+              costCenterName = cc[0] ? `${cc[0].code} - ${cc[0].name}` : undefined;
+            }
+            if (input.employeeId) {
+              const emp = await database.select().from(employees).where(eq(employees.id, input.employeeId)).limit(1);
+              employeeName = emp[0]?.name;
+            }
+            
+            const template = ruleCreatedTemplate({
+              approverName: approver[0].name,
+              ruleType: input.ruleType,
+              approvalContext: input.approvalContext,
+              departmentName,
+              costCenterName,
+              employeeName,
+              approverLevel: input.approverLevel,
+              createdByName: currentEmployee[0].name,
+            });
+            
+            await sendEmail({
+              to: approver[0].email,
+              subject: template.subject,
+              html: template.html,
+            });
+          }
+        } catch (emailError) {
+          console.error('[approvalRules.create] Erro ao enviar email:', emailError);
+          // Não falhar a operação se o email falhar
+        }
+        
+        return { success: true, id: ruleId };
       }),
       
     update: protectedProcedure
@@ -2831,6 +2913,49 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           changedBy: currentEmployee[0].id,
         } as any);
         
+        // Enviar email para o aprovador
+        try {
+          const approver = await database.select().from(employees).where(eq(employees.id, input.approverId)).limit(1);
+          if (approver[0] && approver[0].email) {
+            const { ruleUpdatedTemplate } = await import('./emailTemplates/approvalRuleTemplates');
+            
+            // Buscar nome da vinculação
+            let departmentName, costCenterName, employeeName;
+            if (input.departmentId) {
+              const dept = await database.select().from(departments).where(eq(departments.id, input.departmentId)).limit(1);
+              departmentName = dept[0]?.name;
+            }
+            if (input.costCenterId) {
+              const cc = await database.select().from(costCenters).where(eq(costCenters.id, input.costCenterId)).limit(1);
+              costCenterName = cc[0] ? `${cc[0].code} - ${cc[0].name}` : undefined;
+            }
+            if (input.employeeId) {
+              const emp = await database.select().from(employees).where(eq(employees.id, input.employeeId)).limit(1);
+              employeeName = emp[0]?.name;
+            }
+            
+            const template = ruleUpdatedTemplate({
+              approverName: approver[0].name,
+              ruleType: input.ruleType,
+              approvalContext: input.approvalContext,
+              departmentName,
+              costCenterName,
+              employeeName,
+              approverLevel: input.approverLevel,
+              createdByName: currentEmployee[0].name,
+            });
+            
+            await sendEmail({
+              to: approver[0].email,
+              subject: template.subject,
+              html: template.html,
+            });
+          }
+        } catch (emailError) {
+          console.error('[approvalRules.update] Erro ao enviar email:', emailError);
+          // Não falhar a operação se o email falhar
+        }
+        
         return { success: true };
       }),
       
@@ -2854,6 +2979,49 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           previousData: JSON.stringify(ruleToDelete[0]),
           changedBy: currentEmployee[0].id,
         } as any);
+        
+        // Enviar email para o aprovador antes de excluir
+        try {
+          const approver = await database.select().from(employees).where(eq(employees.id, ruleToDelete[0].approverId)).limit(1);
+          if (approver[0] && approver[0].email) {
+            const { ruleDeletedTemplate } = await import('./emailTemplates/approvalRuleTemplates');
+            
+            // Buscar nome da vinculação
+            let departmentName, costCenterName, employeeName;
+            if (ruleToDelete[0].departmentId) {
+              const dept = await database.select().from(departments).where(eq(departments.id, ruleToDelete[0].departmentId)).limit(1);
+              departmentName = dept[0]?.name;
+            }
+            if (ruleToDelete[0].costCenterId) {
+              const cc = await database.select().from(costCenters).where(eq(costCenters.id, ruleToDelete[0].costCenterId)).limit(1);
+              costCenterName = cc[0] ? `${cc[0].code} - ${cc[0].name}` : undefined;
+            }
+            if (ruleToDelete[0].employeeId) {
+              const emp = await database.select().from(employees).where(eq(employees.id, ruleToDelete[0].employeeId)).limit(1);
+              employeeName = emp[0]?.name;
+            }
+            
+            const template = ruleDeletedTemplate({
+              approverName: approver[0].name,
+              ruleType: ruleToDelete[0].ruleType,
+              approvalContext: ruleToDelete[0].approvalContext,
+              departmentName,
+              costCenterName,
+              employeeName,
+              approverLevel: ruleToDelete[0].approverLevel,
+              createdByName: currentEmployee[0].name,
+            });
+            
+            await sendEmail({
+              to: approver[0].email,
+              subject: template.subject,
+              html: template.html,
+            });
+          }
+        } catch (emailError) {
+          console.error('[approvalRules.delete] Erro ao enviar email:', emailError);
+          // Não falhar a operação se o email falhar
+        }
         
         // Excluir regra
         await database.delete(approvalRules).where(eq(approvalRules.id, input.id));

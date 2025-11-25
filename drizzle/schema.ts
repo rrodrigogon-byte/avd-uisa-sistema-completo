@@ -30,6 +30,10 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["admin", "rh", "gestor", "colaborador"]).default("colaborador").notNull(),
+  
+  // Flag de Líder de Cargos e Salários
+  isSalaryLead: boolean("isSalaryLead").default(false).notNull(),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -2019,6 +2023,12 @@ export const jobDescriptions = mysqlTable("jobDescriptions", {
   
   // Status e Workflow
   status: mysqlEnum("status", ["draft", "pending_occupant", "pending_manager", "pending_hr", "approved", "rejected"]).default("draft").notNull(),
+  
+  // Aprovadores Adicionais (Centro de Custo + Líder C&S)
+  costCenterApproverId: int("costCenterApproverId"), // Aprovador do Centro de Custo
+  salaryLeaderId: int("salaryLeaderId"), // Líder de Cargos e Salários
+  costCenterApprovedAt: datetime("costCenterApprovedAt"), // Data de aprovação do aprovador CC
+  salaryLeaderApprovedAt: datetime("salaryLeaderApprovedAt"), // Data de aprovação do líder C&S
   
   // Auditoria
   createdById: int("createdById").notNull(),
