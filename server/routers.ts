@@ -48,6 +48,8 @@ import { uisaImportRouter } from "./routers/uisaImportRouter";
 import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
 import { pushNotificationsRouter } from "./routers/pushNotificationsRouter";
+import { auditRouter } from "./routers/auditRouter";
+import { searchRouter } from "./routers/searchRouter";
 import { advancedAnalyticsRouter } from "./advancedAnalyticsRouter";
 import { evaluationTemplatesRouter } from "./routers/evaluationTemplatesRouter";
 import { calibrationDirectorRouter } from "./routers/calibrationDirectorRouter";
@@ -63,6 +65,8 @@ import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 export const appRouter = router({
   system: systemRouter,
   admin: adminRouter,
+  audit: auditRouter,
+  search: searchRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
