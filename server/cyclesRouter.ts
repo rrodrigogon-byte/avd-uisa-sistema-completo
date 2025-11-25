@@ -71,6 +71,24 @@ export const cyclesRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
+      // Validações
+      if (input.selfWeight !== undefined && input.managerWeight !== undefined) {
+        const totalWeight = (input.selfWeight || 0) + (input.managerWeight || 0) + (input.peerWeight || 0) + (input.subordinateWeight || 0);
+        if (totalWeight !== 100) {
+          throw new TRPCError({ 
+            code: "BAD_REQUEST", 
+            message: `A soma dos pesos deve ser 100%. Soma atual: ${totalWeight}%` 
+          });
+        }
+      }
+
+      if (input.competencyIds && input.competencyIds.length === 0) {
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "Pelo menos uma competência deve ser selecionada" 
+        });
+      }
+
       // Extrair ano da data de início
       const year = new Date(input.startDate).getFullYear();
 
@@ -179,7 +197,14 @@ export const cyclesRouter = router({
         // Não falhar a criação se notificações falharem
       }
 
-      return { id: cycleId, success: true };
+      // Buscar ciclo criado para retornar completo
+      const [createdCycle] = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, cycleId))
+        .limit(1);
+
+      return createdCycle;
     }),
 
   /**

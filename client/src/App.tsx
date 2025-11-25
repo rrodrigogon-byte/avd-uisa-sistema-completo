@@ -99,6 +99,9 @@ import Avaliar360 from "./pages/Avaliar360";
 import MetasSMART from "./pages/MetasSMART";
 import CriarMetaSMART from "./pages/CriarMetaSMART";
 import CriarPDI from "./pages/CriarPDI";
+import DashboardProdutividade from "./pages/DashboardProdutividade";
+import AprovarDescricaoSuperior from "./pages/AprovarDescricaoSuperior";
+import AprovarDescricaoRH from "./pages/AprovarDescricaoRH";
 import DetalhesMeta from "./pages/DetalhesMeta";
 import EditarMeta from "./pages/EditarMeta";
 import AtualizarProgressoMeta from "./pages/AtualizarProgressoMeta";
@@ -218,9 +221,10 @@ function Router() {
       <Route path="/ciclos-avaliacao" component={CiclosAvaliacao} />
       <Route path="/ciclos-avaliacao/gerenciar" component={GerenciarCiclosAvaliacao} />
       <Route path="/ciclos/ativos" component={CiclosAtivos} />
-      <Route path={"/pdi"} component={PDI} />
-      <Route path="/pdi/criar" component={CriarPDI} />
-      <Route path={"/nine-box"} component={NineBox} />
+      <Route path={"/pdi"} component={PDI} />      <Route path={"/pdi/criar"} component={CriarPDI} />
+      <Route path={"/produtividade/dashboard"} component={DashboardProdutividade} />
+      <Route path={"/descricao-cargos/aprovar-superior"} component={AprovarDescricaoSuperior} />
+      <Route path={"/descricao-cargos/aprovar-rh"} component={AprovarDescricaoRH} />      <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />
       <Route path="/relatorios/ciclos" component={ProgressoCiclos} />
       <Route path="/calibracao" component={Calibracao} />

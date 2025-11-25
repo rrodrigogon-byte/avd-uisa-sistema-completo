@@ -23,6 +23,7 @@ import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
 import { goalsRouter } from "./goalsRouter";
 import { goalsCascadeRouter } from "./goalsCascadeRouter";
 import { cyclesRouter } from "./cyclesRouter";
+import { jobDescriptionRouter } from "./jobDescriptionRouter";
 import { bonusRouter } from "./routers/bonusRouter";
 import { bonusWorkflowRouter } from "./routers/bonusWorkflowRouter";
 import { calibrationRouter } from "./calibrationRouter";
@@ -2690,6 +2691,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Gestão de Ciclos de Avaliação (360°)
   evaluationCycles: cyclesRouter,
+  jobDescription: jobDescriptionRouter,
   cycles: cyclesRouter, // Alias para compatibilidade
   
   // Router de   // Templates de Ciclos 360°
