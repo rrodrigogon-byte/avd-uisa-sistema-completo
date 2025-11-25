@@ -38,6 +38,8 @@ import { productivityRouter } from "./routers/productivityRouter";
 import { importRouter } from "./routers/importRouter";
 import { alertsRouter } from "./routers/alertsRouter";
 import { timeClockRouter } from "./routers/timeClockRouter";
+import { activitiesRouter } from "./routers/activitiesRouter";
+import { productivityGoalsRouter } from "./routers/productivityGoalsRouter";
 import { organizationRouter } from "./routers/organizationRouter";
 import { goalApprovalsRouter } from "./goalApprovalsRouter";
 import { uisaImportRouter } from "./routers/uisaImportRouter";
@@ -1429,7 +1431,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         const content = response.choices[0].message.content;
         const result = typeof content === "string" ? JSON.parse(content) : content;
         
-        return result.actions;
+        return (result as { actions: any[] }).actions;
       }),
   }),
 
@@ -2664,6 +2666,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Rastreamento Automático de Tempo
   timeTracking: timeTrackingRouter,
+  
+  // Atividades Manuais e Sugestões Inteligentes
+  activities: activitiesRouter,
+  
+  // Metas de Produtividade
+  productivityGoals: productivityGoalsRouter,
   
   reportBuilder: reportBuilderRouter,
   reportAnalytics: reportAnalyticsRouter,

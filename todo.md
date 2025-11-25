@@ -19,6 +19,35 @@
 
 ---
 
+## 🎯 NOVAS IMPLEMENTAÇÕES - 25/11/2024 10:20
+
+### Integração Rastreamento Automático + Manual
+- [x] Criar algoritmo de sugestões baseado em tempo rastreado
+- [x] Implementar componente de sugestões inteligentes (backend)
+- [x] Adicionar botão "Aceitar Sugestão" para converter em atividade manual (backend)
+- [x] Sistema de aprendizado de padrões de atividades
+
+### Relatórios de Produtividade
+- [ ] Dashboard semanal com gráficos de evolução
+- [ ] Dashboard mensal com comparativos
+- [ ] Gráfico de horas ativas por dia
+- [ ] Gráfico de distribuição de atividades por categoria
+- [ ] Exportação de relatórios em PDF/Excel
+
+### Metas de Produtividade para Gestores
+- [x] Interface para gestores definirem metas de horas ativas (backend)
+- [x] Dashboard de acompanhamento de equipe (backend)
+- [x] Alertas para funcionários abaixo da meta (backend)
+- [x] Relatório consolidado de produtividade da equipe (backend)
+
+### Workflow Descrição de Cargos
+- [ ] Implementar página de aprovação para superiores
+- [ ] Implementar página de aprovação para RH
+- [ ] Sistema de notificações de aprovação pendente
+- [ ] Histórico completo de aprovações
+
+---
+
 ## 🎯 WIZARD 360° ENHANCED - Implementação Completa (24/11/2024)
 
 ### Fase 1: Formulários das 4 Etapas
@@ -189,8 +218,8 @@
 
 ### Melhorias Solicitadas
 - [x] Adicionar botão "Duplicar" na listagem de ciclos concluídos
-- [ ] Implementar notificações in-app para rascunhos (complementar emails)
-- [ ] Criar dashboard de analytics de templates
+- [x] Implementar notificações in-app para rascunhos (complementar emails)
+- [x] Criar dashboard de analytics de templates
 
 
 ## 🆕 NOVAS FUNCIONALIDADES - 25/11/2024 (Tarde)

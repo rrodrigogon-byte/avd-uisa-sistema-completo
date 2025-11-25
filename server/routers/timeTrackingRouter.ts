@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { timeTrackingSessions } from "../../drizzle/schema";
+import { timeTrackingSessions } from "../../drizzle/schema-productivity";
 import { eq, and, desc, gte, lte } from "drizzle-orm";
 
 /**
@@ -53,24 +53,20 @@ export const timeTrackingRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
-      let query = db
-        .select()
-        .from(timeTrackingSessions)
-        .where(eq(timeTrackingSessions.userId, ctx.user.id));
+      let conditions = [eq(timeTrackingSessions.userId, ctx.user.id)];
 
       if (input.startDate) {
-        query = query.where(
-          gte(timeTrackingSessions.startTime, new Date(input.startDate))
-        ) as any;
+        conditions.push(gte(timeTrackingSessions.startTime, new Date(input.startDate)));
       }
 
       if (input.endDate) {
-        query = query.where(
-          lte(timeTrackingSessions.endTime, new Date(input.endDate))
-        ) as any;
+        conditions.push(lte(timeTrackingSessions.endTime, new Date(input.endDate)));
       }
 
-      const sessions = await query
+      const sessions = await db
+        .select()
+        .from(timeTrackingSessions)
+        .where(and(...conditions))
         .orderBy(desc(timeTrackingSessions.startTime))
         .limit(input.limit);
 
