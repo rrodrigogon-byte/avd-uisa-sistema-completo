@@ -11,6 +11,7 @@ import { trpc } from "@/lib/trpc";
 import { MessageSquare, ThumbsUp, AlertCircle, TrendingUp, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 
 export default function Feedbacks() {
   const { user } = useAuth();
@@ -29,7 +30,12 @@ export default function Feedbacks() {
     isPrivate: false,
   });
 
-  const { data: employees } = trpc.employees.list.useQuery();
+  const {
+    searchTerm: employeeSearch,
+    setSearchTerm: setEmployeeSearch,
+    employees,
+    isLoading: loadingEmployees
+  } = useEmployeeSearch();
   const { data: feedbacks, refetch } = trpc.feedback.list.useQuery({
     employeeId: selectedEmployee,
     type: filterType,
@@ -125,20 +131,30 @@ export default function Feedbacks() {
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="employeeId">Colaborador *</Label>
+                  <Label htmlFor="employeeId">Funcionário *</Label>
+                  <Input
+                    placeholder="Digite o nome do funcionário..."
+                    value={employeeSearch}
+                    onChange={(e) => setEmployeeSearch(e.target.value)}
+                    className="mb-2"
+                  />
                   <Select
                     value={formData.employeeId}
                     onValueChange={(value) => setFormData({ ...formData, employeeId: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione um colaborador" />
+                      <SelectValue placeholder="Selecione o funcionário" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.map((item) => (
-                        <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
-                          {item.employee.name}
-                        </SelectItem>
-                      ))}
+                      {loadingEmployees ? (
+                        <SelectItem value="loading" disabled>Carregando...</SelectItem>
+                      ) : (
+                        employees?.map((emp) => (
+                          <SelectItem key={emp.id} value={emp.id.toString()}>
+                            {emp.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

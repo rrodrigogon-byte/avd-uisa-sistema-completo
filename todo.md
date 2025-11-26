@@ -1,6 +1,6 @@
 # Sistema AVD UISA - Gestão de Tarefas
 
-**Última atualização:** 26/11/2025 13:17
+**Última atualização:** 26/11/2025 15:50
 
 ## 📊 Resumo Executivo
 
@@ -26,20 +26,32 @@
 - [ ] Validar fluxo completo de envio e recebimento de testes
 - [x] Corrigir busca de funcionários em PDI Inteligente (/pdi-inteligente/novo) - hook useEmployeeSearch criado
 - [ ] Aplicar useEmployeeSearch nos 20 componentes restantes que usam employees.list
-- [ ] Corrigir seleção de funcionários em Mapa de Sucessão
+  - [x] MapaSucessaoUISA.tsx - refatorado com busca
+  - [x] EnviarTestes.tsx - refatorado com busca
+  - [x] Feedbacks.tsx - refatorado com busca
+  - [x] ConfiguracaoWorkflowsBonus.tsx - refatorado com busca
+  - [x] ParticipantsManager.tsx (wizard360) - refatorado com busca
+  - [ ] MapaSucessaoCompleto.tsx
+  - [ ] DashboardAprovacoesCiclos.tsx
+  - [ ] PrevisaoBonus.tsx
+  - [ ] MovimentacaoNineBox.tsx
+  - [ ] PDIWizard.tsx (componente)
+  - [ ] PactSection.tsx (componente)
+  - [ ] CyclePreview.tsx (componente)
+  - [ ] Outros componentes identificados
 - [x] Endpoint employees.list funcionando corretamente com parâmetro search
 - [x] Criado hook reutilizável useEmployeeSearch com debounce
-- [ ] Investigar endpoint de centros de custos
-- [ ] Verificar se tabela costCenters existe e tem dados
-- [ ] Corrigir carregamento em todos os formulários que usam centros de custos
-- [ ] Implementar página completa /aprovacoes/workflows
-- [ ] Criar interface de configuração de workflows
-- [ ] Permitir definir etapas, aprovadores e condições
-- [ ] Salvar configurações no banco de dados
-- [ ] Corrigir página /admin/hierarquia
-- [ ] Implementar visualização de organograma
-- [ ] Permitir edição de hierarquia (drag-and-drop ou formulário)
-- [ ] Integrar com dados de funcionários e departamentos
+- [x] Investigar endpoint de centros de custos - corrigido para usar tabela costCenters
+- [x] Verificar se tabela costCenters existe e tem dados - tabela existe no schema
+- [x] Corrigir carregamento em todos os formulários que usam centros de custos - endpoint corrigido
+- [x] Implementar página completa /aprovacoes/workflows - já implementada e funcional
+- [x] Criar interface de configuração de workflows - interface completa com criação e configuração
+- [x] Permitir definir etapas, aprovadores e condições - funcionalidade implementada
+- [x] Salvar configurações no banco de dados - integrado com tRPC backend
+- [x] Corrigir página /admin/hierarquia - já implementada e funcional
+- [x] Implementar visualização de organograma - árvore hierárquica implementada
+- [x] Permitir edição de hierarquia (drag-and-drop ou formulário) - edição via formulário
+- [x] Integrar com dados de funcionários e departamentos - totalmente integrado
 
 ### 🎯 Avaliações 360° Enhanced (12 itens)
 

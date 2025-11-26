@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Users, TrendingUp, AlertTriangle, Plus, Edit, Eye, Download, Trash2, FileText } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 
@@ -91,7 +92,12 @@ export default function MapaSucessaoUISA() {
 
   // Queries
   const { data: plansRaw, isLoading, refetch } = trpc.succession.list.useQuery();
-  const { data: employees } = trpc.employees.list.useQuery();
+  const {
+    searchTerm: employeeSearch,
+    setSearchTerm: setEmployeeSearch,
+    employees,
+    isLoading: loadingEmployees
+  } = useEmployeeSearch();
   const { data: positions } = trpc.positions.list.useQuery();
 
   // Mutations
@@ -461,6 +467,9 @@ export default function MapaSucessaoUISA() {
             <AddSuccessorForm 
               planId={selectedPlan.id}
               employees={employees || []}
+              employeeSearch={employeeSearch}
+              setEmployeeSearch={setEmployeeSearch}
+              loadingEmployees={loadingEmployees}
               onSave={(data) => addSuccessorMutation.mutate(data)}
               onCancel={() => setShowAddSuccessorModal(false)}
               isLoading={addSuccessorMutation.isPending}
@@ -865,7 +874,7 @@ function EditSuccessorForm({ successor, onSave, onCancel, isLoading }: any) {
 }
 
 // Componente: Formulário de Adicionar Sucessor
-function AddSuccessorForm({ planId, employees, onSave, onCancel, isLoading }: any) {
+function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch, loadingEmployees, onSave, onCancel, isLoading }: any) {
   const [formData, setFormData] = useState({
     planId: planId,
     employeeId: "",
@@ -902,16 +911,26 @@ function AddSuccessorForm({ planId, employees, onSave, onCancel, isLoading }: an
     <div className="space-y-4">
       <div>
         <Label>Funcionário *</Label>
+        <Input
+          placeholder="Digite o nome do funcionário..."
+          value={employeeSearch}
+          onChange={(e) => setEmployeeSearch(e.target.value)}
+          className="mb-2"
+        />
         <Select value={formData.employeeId} onValueChange={(v) => setFormData({...formData, employeeId: v})}>
           <SelectTrigger>
             <SelectValue placeholder="Selecione o funcionário" />
           </SelectTrigger>
           <SelectContent>
-            {employees?.filter((emp: any) => emp?.id).map((emp: any) => (
-              <SelectItem key={emp.id} value={emp.id.toString()}>
-                {emp.name} - {emp.position?.title || "Sem cargo"}
-              </SelectItem>
-            ))}
+            {loadingEmployees ? (
+              <SelectItem value="loading" disabled>Carregando...</SelectItem>
+            ) : (
+              employees?.filter((emp: any) => emp?.id).map((emp: any) => (
+                <SelectItem key={emp.id} value={emp.id.toString()}>
+                  {emp.name} - {emp.position?.title || "Sem cargo"}
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
       </div>

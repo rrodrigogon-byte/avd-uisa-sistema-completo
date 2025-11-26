@@ -31,6 +31,7 @@ import {
   ArrowRight,
   Settings,
 } from "lucide-react";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 
 /**
  * Página de Configuração de Workflows de Bônus
@@ -50,7 +51,12 @@ export default function ConfiguracaoWorkflowsBonus() {
   const { data: workflows, refetch } = trpc.bonus.listWorkflows.useQuery();
 
   // Buscar funcionários para seleção de aprovadores
-  const { data: employees } = trpc.employees.list.useQuery();
+  const {
+    searchTerm: employeeSearch,
+    setSearchTerm: setEmployeeSearch,
+    employees,
+    isLoading: loadingEmployees
+  } = useEmployeeSearch();
 
   // Mutations
   const createWorkflowMutation = trpc.bonus.createWorkflow.useMutation({
@@ -93,7 +99,7 @@ export default function ConfiguracaoWorkflowsBonus() {
       return;
     }
 
-    const employee = employees?.find((e) => e.employee.id === selectedEmployee);
+    const employee = employees?.find((e) => e.id === selectedEmployee);
     if (!employee) return;
 
     setSelectedApprovers([
@@ -101,7 +107,7 @@ export default function ConfiguracaoWorkflowsBonus() {
       {
         level: currentLevel,
         approverId: selectedEmployee,
-        approverName: employee.employee.name,
+        approverName: employee.name,
         role: selectedRole,
       },
     ]);
@@ -203,6 +209,14 @@ export default function ConfiguracaoWorkflowsBonus() {
                   <CardTitle className="text-lg">Adicionar Aprovador - Nível {currentLevel}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Buscar Aprovador</Label>
+                    <Input
+                      placeholder="Digite o nome do funcionário..."
+                      value={employeeSearch}
+                      onChange={(e) => setEmployeeSearch(e.target.value)}
+                    />
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label>Aprovador</Label>
@@ -214,11 +228,15 @@ export default function ConfiguracaoWorkflowsBonus() {
                           <SelectValue placeholder="Selecione..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {employees?.map((emp) => (
-                            <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
-                              {emp.employee.name}
-                            </SelectItem>
-                          ))}
+                          {loadingEmployees ? (
+                            <SelectItem value="loading" disabled>Carregando...</SelectItem>
+                          ) : (
+                            employees?.map((emp) => (
+                              <SelectItem key={emp.id} value={emp.id.toString()}>
+                                {emp.name}
+                              </SelectItem>
+                            ))
+                          )}
                         </SelectContent>
                       </Select>
                     </div>

@@ -3347,24 +3347,88 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Centros de Custos
   costCenters: router({
-    // Listar todos os centros de custos únicos
+    // Listar todos os centros de custos ativos
     list: publicProcedure.query(async () => {
       const database = await getDb();
       if (!database) return [];
 
-      // Buscar valores únicos de costCenter da tabela employees
-      const result = await database.selectDistinct({ costCenter: employees.costCenter })
-        .from(employees)
-        .where(sql`${employees.costCenter} IS NOT NULL AND ${employees.costCenter} != ''`)
-        .orderBy(employees.costCenter);
+      // Buscar centros de custos da tabela costCenters
+      const result = await database.select()
+        .from(costCenters)
+        .where(eq(costCenters.active, true))
+        .orderBy(costCenters.name);
 
-      // Transformar em formato {id, code, name}
-      return result.map((r, index) => ({
-        id: index + 1,
-        code: r.costCenter || '',
-        name: r.costCenter || '',
-      }));
+      return result;
     }),
+
+    // Criar novo centro de custos
+    create: protectedProcedure
+      .input(z.object({
+        code: z.string(),
+        name: z.string(),
+        description: z.string().optional(),
+        departmentId: z.number().optional(),
+        budget: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const [result] = await database.insert(costCenters).values({
+          code: input.code,
+          name: input.name,
+          description: input.description,
+          departmentId: input.departmentId,
+          budget: input.budget?.toString(),
+          active: true,
+        });
+
+        return { id: result.insertId, ...input };
+      }),
+
+    // Atualizar centro de custos
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        code: z.string().optional(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        departmentId: z.number().optional(),
+        budget: z.number().optional(),
+        active: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const updateData: any = {};
+        if (input.code !== undefined) updateData.code = input.code;
+        if (input.name !== undefined) updateData.name = input.name;
+        if (input.description !== undefined) updateData.description = input.description;
+        if (input.departmentId !== undefined) updateData.departmentId = input.departmentId;
+        if (input.budget !== undefined) updateData.budget = input.budget.toString();
+        if (input.active !== undefined) updateData.active = input.active;
+
+        await database.update(costCenters)
+          .set(updateData)
+          .where(eq(costCenters.id, input.id));
+
+        return { success: true };
+      }),
+
+    // Deletar (desativar) centro de custos
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(costCenters)
+          .set({ active: false })
+          .where(eq(costCenters.id, input.id));
+
+        return { success: true };
+      }),
   }),
 
   // ============================================================================

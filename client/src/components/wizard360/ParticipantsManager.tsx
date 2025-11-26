@@ -8,6 +8,7 @@ import { Search, UserPlus, Trash2, Users } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 
 export interface Participant {
   employeeId: number;
@@ -48,28 +49,21 @@ export default function ParticipantsManager({
   onSubmit,
   isSubmitting 
 }: ParticipantsManagerProps) {
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<Participant['role']>('peer');
 
-  const { data: employees, isLoading } = trpc.employees.list.useQuery();
-
-  const filteredEmployees = useMemo(() => {
-    if (!employees) return [];
-    if (!searchTerm.trim()) return employees;
-    
-    const term = searchTerm.toLowerCase();
-    return employees.filter(item => 
-      item.employee.name.toLowerCase().includes(term) || 
-      item.employee.email?.toLowerCase().includes(term) ||
-      item.position?.title?.toLowerCase().includes(term)
-    );
-  }, [employees, searchTerm]);
+  const {
+    searchTerm,
+    setSearchTerm,
+    employees,
+    isLoading
+  } = useEmployeeSearch();
 
   const availableEmployees = useMemo(() => {
+    if (!employees) return [];
     const participantIds = new Set(data.participants.map(p => p.employeeId));
-    return filteredEmployees.filter(item => !participantIds.has(item.employee.id));
-  }, [filteredEmployees, data.participants]);
+    return employees.filter(emp => !participantIds.has(emp.id));
+  }, [employees, data.participants]);
 
   const handleAddParticipant = () => {
     if (!selectedEmployeeId) {
@@ -77,12 +71,12 @@ export default function ParticipantsManager({
       return;
     }
 
-    const employeeData = employees?.find(e => e.employee.id === parseInt(selectedEmployeeId));
+    const employeeData = employees?.find(e => e.id === parseInt(selectedEmployeeId));
     if (!employeeData) return;
 
     const newParticipant: Participant = {
-      employeeId: employeeData.employee.id,
-      name: employeeData.employee.name,
+      employeeId: employeeData.id,
+      name: employeeData.name,
       role: selectedRole
     };
 
@@ -91,7 +85,7 @@ export default function ParticipantsManager({
     });
 
     setSelectedEmployeeId("");
-    toast.success(`${employee.name} adicionado como ${roleLabels[selectedRole]}`);
+    toast.success(`${employeeData.name} adicionado como ${roleLabels[selectedRole]}`);
   };
 
   const handleRemoveParticipant = (employeeId: number) => {
@@ -169,9 +163,9 @@ export default function ParticipantsManager({
                   <SelectValue placeholder="Selecione um colaborador" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableEmployees.map(item => (
-                    <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
-                      {item.employee.name} {item.position?.title && `- ${item.position.title}`}
+                  {availableEmployees.map(emp => (
+                    <SelectItem key={emp.id} value={emp.id.toString()}>
+                      {emp.name} {emp.positionTitle && `- ${emp.positionTitle}`}
                     </SelectItem>
                   ))}
                 </SelectContent>

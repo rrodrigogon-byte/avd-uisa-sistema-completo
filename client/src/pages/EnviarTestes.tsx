@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, Mail, Send, Users, Building2, CheckCircle2, XCircle, Brain } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 
 /**
  * Página de Envio de Testes Psicométricos
@@ -38,8 +39,13 @@ export default function EnviarTestes() {
   const [sendingDepartment, setSendingDepartment] = useState(false);
   const [results, setResults] = useState<any[]>([]);
 
-  // Buscar funcionários
-  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery();
+  // Buscar funcionários com search otimizado
+  const {
+    searchTerm: employeeSearch,
+    setSearchTerm: setEmployeeSearch,
+    employees,
+    isLoading: loadingEmployees
+  } = useEmployeeSearch();
 
   // Buscar departamentos
   const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery();
@@ -249,6 +255,15 @@ export default function EnviarTestes() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="employee-search">Buscar Funcionário</Label>
+                  <Input
+                    id="employee-search"
+                    placeholder="Digite o nome do funcionário..."
+                    value={employeeSearch}
+                    onChange={(e) => setEmployeeSearch(e.target.value)}
+                  />
+                </div>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
