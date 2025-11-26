@@ -988,3 +988,36 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Otimizar queries com índices de banco de dados - 8 índices principais aplicados
 - [ ] Implementar error boundaries em páginas principais
 - [x] Corrigir erro "No procedure found on path evaluationCycles.create"
+
+
+## 🚨 ERROS CRÍTICOS IDENTIFICADOS EM 26/11 - CORREÇÃO URGENTE
+
+### Erros TypeScript no servidor (server/routers.ts)
+- [x] Corrigir linha 2963: approvalContext pode ser undefined - adicionar validação
+- [x] Corrigir linha 2967: approverLevel pode ser undefined - adicionar validação
+- [x] Reduzir erros TypeScript de 372 para 366 (progresso contínuo)
+- [ ] Corrigir 366 erros TypeScript restantes no projeto
+
+### Erros em componentes frontend
+- [x] Corrigir ParticipantsManager.tsx linha 74,166: parâmetros 'emp' e 'e' sem tipo
+- [x] Corrigir TemplateSelector.tsx linha 35: acesso a propriedade '0' em array possivelmente undefined
+- [x] Corrigir usePushNotifications.ts linhas 184,187,189: argumentos e propriedades faltando
+- [x] Corrigir AcompanharCicloAvaliacao.tsx: procedures getParticipation, getEvidences, submitEvidence não existem
+- [x] Corrigir AderirCicloAvaliacao.tsx: procedures getParticipation, joinCycle não existem
+- [x] Corrigir AderirCicloAvaliacao.tsx linha 145-146: propriedade goalSubmissionDeadline não existe
+- [x] Corrigir AprovacaoBonus.tsx linha 74: faltam parâmetros paymentDate e comments
+
+### Procedures tRPC faltando
+- [x] Implementar cycle360.getParticipation
+- [x] Implementar cycle360.getEvidences
+- [x] Implementar cycle360.submitEvidence
+- [x] Implementar cycle360.joinCycle
+
+### Correções de schema
+- [x] Adicionar campo goalSubmissionDeadline na tabela de ciclos
+- [x] Validar campos obrigatórios em approvalRules (approvalContext, approverLevel)
+- [x] Adicionar campos currentValue e submittedAt em performanceEvaluationEvidences
+- [x] Corrigir submitEvidence para usar schema correto (participantId)
+- [x] Corrigir getEvidences para buscar por participantId
+- [x] Corrigir hook useEmployeeSearch (search/setSearch)
+- [x] Corrigir tipos em ParticipantsManager.tsx e CyclePreview.tsx

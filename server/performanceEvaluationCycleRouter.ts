@@ -495,4 +495,165 @@ export const performanceEvaluationCycleRouter = router({
         selfScore: null,
       }));
     }),
+
+  /**
+   * Obter participação do usuário logado em um ciclo
+   */
+  getParticipation: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      const [participation] = await db
+        .select()
+        .from(performanceEvaluationParticipants)
+        .where(
+          and(
+            eq(performanceEvaluationParticipants.cycleId, input.cycleId),
+            eq(performanceEvaluationParticipants.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!participation) return null;
+
+      return {
+        ...participation,
+        individualGoals: participation.individualGoals ? JSON.parse(participation.individualGoals) : [],
+      };
+    }),
+
+  /**
+   * Obter evidências do usuário logado em um ciclo
+   */
+  getEvidences: protectedProcedure
+    .input(z.object({ cycleId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Buscar participação do usuário no ciclo
+      const [participation] = await db
+        .select()
+        .from(performanceEvaluationParticipants)
+        .where(
+          and(
+            eq(performanceEvaluationParticipants.cycleId, input.cycleId),
+            eq(performanceEvaluationParticipants.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!participation) return [];
+
+      const evidences = await db
+        .select()
+        .from(performanceEvaluationEvidences)
+        .where(eq(performanceEvaluationEvidences.participantId, participation.id))
+        .orderBy(desc(performanceEvaluationEvidences.createdAt));
+
+      return evidences;
+    }),
+
+  /**
+   * Submeter evidência
+   */
+  submitEvidence: protectedProcedure
+    .input(z.object({
+      cycleId: z.number(),
+      goalId: z.number(),
+      description: z.string(),
+      attachmentUrl: z.string().optional(),
+      currentValue: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar participação do usuário no ciclo
+      const [participation] = await db
+        .select()
+        .from(performanceEvaluationParticipants)
+        .where(
+          and(
+            eq(performanceEvaluationParticipants.cycleId, input.cycleId),
+            eq(performanceEvaluationParticipants.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!participation) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Participação não encontrada" });
+      }
+
+      await db.insert(performanceEvaluationEvidences).values({
+        participantId: participation.id,
+        goalType: "individual",
+        goalIndex: input.goalId,
+        title: input.description.substring(0, 255),
+        description: input.description,
+        evidenceType: input.attachmentUrl ? "link" : "texto",
+        linkUrl: input.attachmentUrl,
+        currentValue: input.currentValue,
+        uploadedBy: ctx.user.id,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Aderir ao ciclo (alias para adhereToCycle)
+   */
+  joinCycle: protectedProcedure
+    .input(z.object({
+      cycleId: z.number(),
+      individualGoals: z.array(z.object({
+        title: z.string(),
+        description: z.string().optional(),
+        targetValue: z.string(),
+        weight: z.number(),
+      })),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar dados do funcionário
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, ctx.user.id))
+        .limit(1);
+
+      if (!employee) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Funcionário não encontrado" });
+      }
+
+      // Verificar se já aderiu
+      const [existing] = await db
+        .select()
+        .from(performanceEvaluationParticipants)
+        .where(
+          and(
+            eq(performanceEvaluationParticipants.cycleId, input.cycleId),
+            eq(performanceEvaluationParticipants.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (existing) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Você já aderiu a este ciclo" });
+      }
+
+      await db.insert(performanceEvaluationParticipants).values({
+        cycleId: input.cycleId,
+        employeeId: ctx.user.id,
+        managerId: employee.managerId || null,
+        individualGoals: JSON.stringify(input.individualGoals),
+        status: "aguardando_aprovacao_gestor",
+      });
+
+      return { success: true };
+    }),
 });

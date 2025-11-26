@@ -40,8 +40,8 @@ export default function CyclePreview({
     competenciesData.selectedCompetencies.includes(c.id)
   ) || [];
 
-  const participantsWithNames = participantsData.participants.map(p => {
-    const employee = employees?.find(e => e.id === p.employeeId);
+  const participantsWithNames = participantsData.participants.map((p: { employeeId: number; role: string }) => {
+    const employee = employees?.find((e: { id: number; name: string }) => e.id === p.employeeId);
     return {
       ...p,
       name: employee?.name || `Funcionário #${p.employeeId}`

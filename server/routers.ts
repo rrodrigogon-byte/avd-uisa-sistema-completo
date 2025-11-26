@@ -2960,11 +2960,11 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             const template = ruleUpdatedTemplate({
               approverName: approver[0].name,
               ruleType: input.ruleType,
-              approvalContext: input.approvalContext,
+              approvalContext: input.approvalContext || 'todos',
               departmentName,
               costCenterName,
               employeeName,
-              approverLevel: input.approverLevel,
+              approverLevel: input.approverLevel || 1,
               createdByName: currentEmployee[0].name,
             });
             

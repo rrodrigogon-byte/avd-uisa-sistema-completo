@@ -2417,6 +2417,7 @@ export const performanceEvaluationCycles = mysqlTable("performanceEvaluationCycl
   trackingStartDate: date("trackingStartDate"), // Início do acompanhamento
   trackingEndDate: date("trackingEndDate"), // Fim do acompanhamento
   evaluationDeadline: date("evaluationDeadline"), // Prazo para avaliação final
+  goalSubmissionDeadline: date("goalSubmissionDeadline"), // Prazo para submissão de metas
   
   // Metas corporativas do ciclo (JSON array de IDs)
   corporateGoalIds: text("corporateGoalIds"), // JSON: [1, 2, 3]
@@ -2498,6 +2499,8 @@ export const performanceEvaluationEvidences = mysqlTable("performanceEvaluationE
   
   // Progresso
   progressPercentage: int("progressPercentage").default(0), // 0-100
+  currentValue: varchar("currentValue", { length: 255 }), // Valor atual da meta
+  submittedAt: timestamp("submittedAt").defaultNow(), // Data de submissão
   
   // Auditoria
   uploadedBy: int("uploadedBy").notNull(),

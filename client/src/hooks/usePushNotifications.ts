@@ -184,9 +184,9 @@ export function usePushNotifications() {
       const result = await testNotificationMutation.mutateAsync();
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || `${result.successCount} notificações enviadas`);
       } else {
-        toast.error(result.message);
+        toast.error(result.message || "Erro ao enviar notificação");
       }
     } catch (error: any) {
       console.error("Erro ao enviar notificação de teste:", error);

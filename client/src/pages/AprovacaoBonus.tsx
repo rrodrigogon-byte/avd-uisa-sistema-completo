@@ -71,7 +71,7 @@ export default function AprovacaoBonus() {
   };
 
   const handleMarkAsPaid = (calculationId: number) => {
-    markAsPaidMutation.mutate({ calculationId });
+    markAsPaidMutation.mutate({ id: calculationId });
   };
 
   const getStatusBadge = (status: string) => {

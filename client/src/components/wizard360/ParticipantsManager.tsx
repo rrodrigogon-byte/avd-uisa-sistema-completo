@@ -53,8 +53,8 @@ export default function ParticipantsManager({
   const [selectedRole, setSelectedRole] = useState<Participant['role']>('peer');
 
   const {
-    searchTerm,
-    setSearchTerm,
+    search,
+    setSearch,
     employees,
     isLoading
   } = useEmployeeSearch();
@@ -62,7 +62,7 @@ export default function ParticipantsManager({
   const availableEmployees = useMemo(() => {
     if (!employees) return [];
     const participantIds = new Set(data.participants.map(p => p.employeeId));
-    return employees.filter(emp => !participantIds.has(emp.id));
+    return employees.filter((emp: { id: number }) => !participantIds.has(emp.id));
   }, [employees, data.participants]);
 
   const handleAddParticipant = () => {
@@ -71,7 +71,7 @@ export default function ParticipantsManager({
       return;
     }
 
-    const employeeData = employees?.find(e => e.id === parseInt(selectedEmployeeId));
+    const employeeData = employees?.find((e: { id: number }) => e.id === parseInt(selectedEmployeeId));
     if (!employeeData) return;
 
     const newParticipant: Participant = {
@@ -163,7 +163,7 @@ export default function ParticipantsManager({
                   <SelectValue placeholder="Selecione um colaborador" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableEmployees.map(emp => (
+                  {availableEmployees.map((emp: { id: number; name: string; positionTitle?: string | null }) => (
                     <SelectItem key={emp.id} value={emp.id.toString()}>
                       {emp.name} {emp.positionTitle && `- ${emp.positionTitle}`}
                     </SelectItem>

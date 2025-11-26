@@ -32,7 +32,7 @@ export function TemplateSelector({ open, onClose, onSelect }: TemplateSelectorPr
 
   const incrementUsageMutation = trpc.cycles360Templates.incrementUsage.useMutation();
 
-  const handleSelectTemplate = (template: typeof templates[0]) => {
+  const handleSelectTemplate = (template: NonNullable<typeof templates>[0]) => {
     onSelect({
       selfWeight: template.selfWeight,
       peerWeight: template.peerWeight,
