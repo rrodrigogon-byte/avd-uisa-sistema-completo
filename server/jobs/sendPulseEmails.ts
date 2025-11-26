@@ -1,5 +1,5 @@
 import { getDb } from "../db";
-import { pulseSurveys, pulseSurveyEmailLogs, employees } from "../../drizzle/schema";
+import { pulseSurveys, pulseSurveyEmailLogs, employees, systemSettings } from "../../drizzle/schema";
 import { eq, and, lt, or, isNull, sql } from "drizzle-orm";
 import { emailService } from "../utils/emailService";
 
@@ -18,7 +18,7 @@ export async function sendPulseEmailsJob() {
   
   // Verificar se SMTP está configurado antes de tentar enviar
   try {
-    const testConfig = await db.select().from(require('../../drizzle/schema').systemSettings).where(require('drizzle-orm').eq(require('../../drizzle/schema').systemSettings.settingKey, 'smtp_config')).limit(1);
+    const testConfig = await db.select().from(systemSettings).where(eq(systemSettings.settingKey, 'smtp_config')).limit(1);
     if (testConfig.length === 0) {
       console.warn("[Pulse Job] ⚠️  SMTP não configurado. Configure em /admin/smtp para enviar emails.");
       return;

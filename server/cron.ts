@@ -365,7 +365,16 @@ export const scheduledReportsJob = cron.schedule('0 * * * *', async () => {
       const startTime = Date.now();
       
       try {
-        const recipients = JSON.parse(report.recipients);
+        // Tratar recipients que podem ser string ou JSON
+        let recipients: string[];
+        try {
+          recipients = typeof report.recipients === 'string' 
+            ? JSON.parse(report.recipients) 
+            : report.recipients;
+        } catch (parseError) {
+          // Se falhar o parse, tentar usar como array com um único email
+          recipients = [report.recipients];
+        }
         
         // TODO: Implementar geração real do relatório baseado em report.reportType
         // Por enquanto, apenas registrar execução

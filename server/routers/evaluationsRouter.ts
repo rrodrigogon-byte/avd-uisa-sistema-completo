@@ -12,6 +12,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "../db";
+import { evaluationInstances, evaluationComments } from "../../drizzle/schema";
 
 /**
  * Router para Sistema de Avaliações de Desempenho (Item 2)
@@ -140,7 +141,6 @@ export const evaluationsRouter = router({
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
       const { getDb } = await import("../db");
-      const { evaluationInstances } = await import("../../drizzle/schema-evaluations");
 
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -215,7 +215,6 @@ export const evaluationsRouter = router({
     .mutation(async ({ input, ctx }) => {
       // Verificar se o usuário é o avaliador
       const { getDb } = await import("../db");
-      const { evaluationInstances } = await import("../../drizzle/schema-evaluations");
 
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -365,7 +364,6 @@ export const evaluationsRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const { getDb } = await import("../db");
-      const { evaluationComments } = await import("../../drizzle/schema-evaluations");
 
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
