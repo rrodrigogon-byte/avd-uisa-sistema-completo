@@ -1,4 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
+import { SessionTimeout } from "@/components/SessionTimeout";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import AcompanhamentoAvaliacoes from "@/pages/AcompanhamentoAvaliacoes";
@@ -13,6 +15,7 @@ import Departamentos from "./pages/Departamentos";
 import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
 import ImportacaoPonto from "@/pages/ImportacaoPonto";
+import SecurityDashboard from "@/pages/SecurityDashboard";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -314,6 +317,7 @@ function Router() {
       <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
+      <Route path="/admin/seguranca" component={SecurityDashboard} />
       <Route path="/admin/notification-templates" component={NotificationTemplates} />
       <Route path="/admin/aprovadores" component={GestaoAprovadores} />
       <Route path="/admin/dashboard-aprovacoes" component={DashboardAprovacoes} />
@@ -350,6 +354,8 @@ function App() {
         <NotificationProvider>
           <TooltipProvider>
             <Toaster />
+            <SessionTimeout />
+            <OnboardingTour />
             <Router />
           </TooltipProvider>
         </NotificationProvider>

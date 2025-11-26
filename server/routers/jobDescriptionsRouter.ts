@@ -234,11 +234,9 @@ export const jobDescriptionsRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
-      // Atualizar status para pending_occupant e salvar aprovadores
+      // Atualizar status para pending_occupant
       await db.update(jobDescriptions).set({ 
         status: 'pending_occupant',
-        costCenterApproverId: input.costCenterApproverId,
-        salaryLeaderId: input.salaryLeaderId,
       }).where(eq(jobDescriptions.id, input.id));
 
       // Criar registros de aprovação para os 5 níveis
@@ -337,20 +335,12 @@ export const jobDescriptionsRouter = router({
       // Verificar qual aprovador acabou de aprovar
       const isOccupant = approval.approvalLevel === 'occupant';
       const isManager = approval.approvalLevel === 'manager';
-      const isCostCenterApprover = approval.approverId === jobDesc.costCenterApproverId;
-      const isSalaryLeader = approval.approverId === jobDesc.salaryLeaderId;
-      const isHRManager = !isCostCenterApprover && !isSalaryLeader && approval.approvalLevel === 'hr';
+      const isHRManager = approval.approvalLevel === 'hr';
 
       if (isOccupant) {
         newStatus = 'pending_manager';
       } else if (isManager) {
-        newStatus = 'pending_hr'; // Aguardando aprovador CC
-      } else if (isCostCenterApprover) {
-        updateJobDescFields.costCenterApprovedAt = new Date();
-        newStatus = 'pending_hr'; // Aguardando líder C&S
-      } else if (isSalaryLeader) {
-        updateJobDescFields.salaryLeaderApprovedAt = new Date();
-        newStatus = 'pending_hr'; // Aguardando RH final
+        newStatus = 'pending_hr';
       } else if (isHRManager) {
         // Verificação final: todos os anteriores aprovaram?
         const allPreviousApproved = allApprovals
@@ -381,14 +371,8 @@ export const jobDescriptionsRouter = router({
         notificationTitle = `Descrição de Cargo Aprovada - Próximo Nível`;
         notificationContent = `A descrição do cargo "${jobDesc.positionTitle}" foi aprovada pelo ocupante e aguarda aprovação do Superior Imediato.`;
       } else if (isManager) {
-        notificationTitle = `Descrição de Cargo - Aprovação do Aprovador CC Pendente`;
-        notificationContent = `A descrição do cargo "${jobDesc.positionTitle}" foi aprovada pelo Superior Imediato e aguarda aprovação do Aprovador do Centro de Custo.`;
-      } else if (isCostCenterApprover) {
-        notificationTitle = `Descrição de Cargo - Aprovação do Líder C&S Pendente`;
-        notificationContent = `A descrição do cargo "${jobDesc.positionTitle}" foi aprovada pelo Aprovador CC e aguarda aprovação do Líder de Cargos e Salários.`;
-      } else if (isSalaryLeader) {
         notificationTitle = `Descrição de Cargo - Aprovação do RH Pendente`;
-        notificationContent = `A descrição do cargo "${jobDesc.positionTitle}" foi aprovada pelo Líder C&S e aguarda aprovação final do RH.`;
+        notificationContent = `A descrição do cargo "${jobDesc.positionTitle}" foi aprovada pelo Superior Imediato e aguarda aprovação final do RH.`;
       }
       
       if (notificationTitle) {

@@ -28,6 +28,7 @@ import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 import NotificationCenter from "./NotificationCenter";
 import { GlobalSearch, useGlobalSearchShortcut } from "./GlobalSearch";
+import { useDashboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { Breadcrumbs } from "./Breadcrumbs";
 import NotificationBell from "./NotificationBell";
 import { InAppNotifications } from "./InAppNotifications";
@@ -232,6 +233,12 @@ export default function DashboardLayout({
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
   const { loading, user } = useAuth();
+  const [, setLocation] = useLocation();
+  
+  // Atalhos de teclado
+  useDashboardShortcuts({
+    onHome: () => setLocation('/'),
+  });
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());

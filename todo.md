@@ -996,3 +996,50 @@ todo.md
 - [ ] Chatbot com IA para suporte
 - [ ] Sistema de recomendações inteligentes
 
+
+
+---
+
+## 🎨 MELHORIAS DE UX - 25/11/2024 16:30
+
+### Componentes de UX Avançados
+- [x] Criar componente SessionTimeout para controle de sessão inativa
+- [x] Integrar SessionTimeout no App.tsx
+- [x] Criar hook useKeyboardShortcuts para atalhos de teclado
+- [x] Integrar useKeyboardShortcuts no DashboardLayout
+- [x] Criar componente OnboardingTour para novos usuários
+- [x] Ativar OnboardingTour no primeiro acesso do usuário
+- [x] Configurar tempo de timeout de sessão (30 minutos padrão)
+- [x] Adicionar modal de aviso antes do logout automático
+
+### Dashboard de Segurança
+- [x] Criar página SecurityDashboard em /admin/seguranca
+- [x] Adicionar rota /admin/seguranca no App.tsx
+- [x] Implementar visualização de logs de atividades suspeitas
+- [x] Criar gráficos de tentativas de login falhadas
+- [x] Criar gráfico de acessos por horário
+- [x] Configurar sistema de alertas por email para atividades suspeitas
+- [x] Criar procedimento tRPC para detectar atividades suspeitas
+- [x] Implementar envio de email de alerta para administradores
+- [x] Adicionar filtros de período e tipo de atividade
+- [x] Criar tabela de logs com paginação
+
+### Otimização de Banco de Dados
+- [x] Criar índices na tabela activityLogs (userId, createdAt, activityType)
+- [x] Criar índices na tabela employees (name, email, departmentId, status)
+- [x] Criar índice composto em activityLogs (userId, createdAt)
+- [x] Criar índice composto em activityLogs (activityType, createdAt)
+- [x] Criar índice composto em employees (name, email)
+- [ ] Testar performance das queries após índices
+- [ ] Documentar melhorias de performance
+- [ ] Executar EXPLAIN nas queries principais
+- [ ] Validar tempo de resposta das buscas globais
+
+### Testes e Validação
+- [ ] Testar SessionTimeout com diferentes tempos de inatividade
+- [ ] Testar atalhos de teclado no DashboardLayout (Ctrl+K para busca, etc)
+- [ ] Testar OnboardingTour para novo usuário
+- [ ] Testar Dashboard de Segurança com dados reais
+- [ ] Verificar envio de alertas por email
+- [ ] Validar performance das queries otimizadas
+- [ ] Criar testes vitest para componentes de UX

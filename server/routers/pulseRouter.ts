@@ -203,7 +203,7 @@ export const pulseRouter = router({
         
         if (survey.targetEmails) {
           // Se tem emails específicos, usar esses
-          const emails = JSON.parse(survey.targetEmails);
+          const emails = typeof survey.targetEmails === 'string' ? JSON.parse(survey.targetEmails) : survey.targetEmails;
           // Buscar funcionários por email
           for (const email of emails) {
             const emp = await db.select().from(employees).where(eq(employees.email, email)).limit(1);
