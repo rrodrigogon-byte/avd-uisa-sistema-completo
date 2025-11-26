@@ -48,6 +48,9 @@ import { uisaImportRouter } from "./routers/uisaImportRouter";
 import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
 import { pushNotificationsRouter } from "./routers/pushNotificationsRouter";
+import { employeesRouter } from "./routers/employeesRouter";
+import { evaluationsRouter } from "./routers/evaluationsRouter";
+import { performanceReportsRouter } from "./routers/performanceReportsRouter";
 import { auditRouter } from "./routers/auditRouter";
 import { searchRouter } from "./routers/searchRouter";
 import { advancedAnalyticsRouter } from "./advancedAnalyticsRouter";
@@ -2698,6 +2701,19 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Notificações Push
   pushNotifications: pushNotificationsRouter,
+
+  // ============================================================================
+  // NOVOS ROUTERS - ITENS 1-3
+  // ============================================================================
+
+  // Router de Gestão de Funcionários (Item 1)
+  employees: employeesRouter,
+
+  // Router de Avaliações de Desempenho (Item 2)
+  evaluations: evaluationsRouter,
+
+  // Router de Relatórios de Desempenho (Item 3)
+  performanceReports: performanceReportsRouter,
 
   // Router de Templates de Avaliação Customizados
   evaluationTemplates: evaluationTemplatesRouter,

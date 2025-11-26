@@ -1043,3 +1043,58 @@ todo.md
 - [ ] Verificar envio de alertas por email
 - [ ] Validar performance das queries otimizadas
 - [ ] Criar testes vitest para componentes de UX
+
+
+---
+
+## 🆕 NOVAS FUNCIONALIDADES - ITENS 1-3 E MELHORIAS ADICIONAIS - 25/11/2024
+
+### Item 1: Gestão Completa de Usuários (Admin)
+- [x] Estender schema de usuários (departamento, cargo, data de admissão, status)
+- [x] CRUD completo de usuários com validações (backend)
+- [ ] Interface de listagem com filtros avançados (departamento, cargo, status)
+- [ ] Formulário de cadastro/edição com todos os campos
+- [x] Funcionalidade de desativar/reativar usuários (backend)
+- [x] Importação em lote de usuários via CSV/Excel (backend estruturado)
+- [x] Exportação de lista de usuários (backend)
+- [x] Histórico de alterações de usuários (backend)
+
+### Item 2: Sistema Completo de Avaliações de Desempenho
+- [x] Schema para templates de avaliação personalizáveis
+- [x] Schema para critérios de avaliação (competências, metas, comportamentos)
+- [x] Schema para respostas e pontuações
+- [x] Criação de templates de avaliação com critérios customizáveis (backend)
+- [x] Gestão de critérios (criar, editar, categorizar) (backend)
+- [x] Fluxo completo: criação → atribuição → preenchimento → finalização (backend)
+- [ ] Interface para avaliador preencher avaliações
+- [ ] Interface para avaliado visualizar suas avaliações
+- [ ] Sistema de notificações para prazos
+- [x] Autoavaliação (opcional por template) (backend)
+- [x] Avaliação 360 graus integrada (superior, pares, subordinados) (backend)
+- [x] Comentários e feedbacks em cada critério (backend)
+- [x] Aprovação de avaliações por RH/Gestor (backend)
+
+### Item 3: Relatórios e Dashboard Avançados
+- [x] Dashboard principal com KPIs (avaliações pendentes, concluídas, médias gerais) (backend)
+- [x] Gráficos de desempenho por departamento (bar chart) (backend)
+- [x] Gráficos de evolução individual ao longo do tempo (line chart) (backend)
+- [x] Relatório individual detalhado com histórico completo (backend)
+- [x] Relatório consolidado por departamento (backend)
+- [x] Comparativo de desempenho entre períodos (backend)
+- [x] Ranking de desempenho (com controle de privacidade) (backend)
+- [x] Exportação de relatórios em PDF (backend estruturado)
+- [x] Exportação de dados em Excel/CSV (backend estruturado)
+- [x] Filtros avançados (período, departamento, cargo, avaliador) (backend)
+
+### Melhorias Adicionais
+- [ ] Sistema de comentários e feedbacks nas avaliações
+- [ ] Histórico completo de alterações (audit log)
+- [ ] Configurações do sistema (períodos de avaliação, pesos de critérios)
+- [ ] Lembretes automáticos por email para avaliações pendentes
+- [ ] Dashboard de produtividade para gestores
+- [ ] Integração com sistema de metas existente
+- [ ] Validação de dados com Zod em todos os endpoints
+- [ ] Testes unitários para procedures críticas
+- [ ] Documentação de uso do sistema
+- [ ] Responsividade mobile completa
+- [ ] Acessibilidade (ARIA labels, keyboard navigation)

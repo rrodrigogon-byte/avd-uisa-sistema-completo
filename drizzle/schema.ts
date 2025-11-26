@@ -2778,6 +2778,310 @@ export const approvalRuleHistory = mysqlTable("approvalRuleHistory", {
 export type ApprovalRuleHistory = typeof approvalRuleHistory.$inferSelect;
 export type InsertApprovalRuleHistory = typeof approvalRuleHistory.$inferInsert;
 
+// ============================================================================
+// TABELAS PARA GESTÃO COMPLETA DE USUÁRIOS (ITEM 1)
+// ============================================================================
+
+/**
+ * Employee Import History - Histórico de importações em lote
+ */
+export const employeeImportHistory = mysqlTable("employeeImportHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileUrl: varchar("fileUrl", { length: 512 }),
+  totalRecords: int("totalRecords").notNull(),
+  successCount: int("successCount").default(0).notNull(),
+  errorCount: int("errorCount").default(0).notNull(),
+  errors: text("errors"), // JSON com erros detalhados
+  status: mysqlEnum("status", ["processando", "concluido", "erro"]).default("processando").notNull(),
+  importedBy: int("importedBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmployeeImportHistory = typeof employeeImportHistory.$inferSelect;
+export type InsertEmployeeImportHistory = typeof employeeImportHistory.$inferInsert;
+
+/**
+ * Employee Audit Log - Log de alterações de funcionários
+ */
+export const employeeAuditLog = mysqlTable("employeeAuditLog", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  action: mysqlEnum("action", ["criado", "atualizado", "desativado", "reativado", "excluido"]).notNull(),
+  fieldChanged: varchar("fieldChanged", { length: 100 }), // Campo alterado
+  oldValue: text("oldValue"), // Valor anterior
+  newValue: text("newValue"), // Novo valor
+  changedBy: int("changedBy").notNull(),
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+});
+
+export type EmployeeAuditLog = typeof employeeAuditLog.$inferSelect;
+export type InsertEmployeeAuditLog = typeof employeeAuditLog.$inferInsert;
+
+// ============================================================================
+// TABELAS PARA SISTEMA DE AVALIAÇÕES (ITEM 2)
+// ============================================================================
+
+/**
+ * Evaluation Criteria - Critérios de avaliação detalhados
+ */
+export const evaluationCriteria = mysqlTable("evaluationCriteria", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["competencia", "meta", "comportamento", "resultado"]).notNull(),
+  weight: int("weight").default(1).notNull(), // Peso no cálculo final
+  minScore: int("minScore").default(1).notNull(),
+  maxScore: int("maxScore").default(5).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvaluationCriteria = typeof evaluationCriteria.$inferSelect;
+export type InsertEvaluationCriteria = typeof evaluationCriteria.$inferInsert;
+
+/**
+ * Template Criteria - Relacionamento entre templates e critérios
+ */
+export const templateCriteria = mysqlTable("templateCriteria", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull(),
+  criteriaId: int("criteriaId").notNull(),
+  weight: int("weight").default(1).notNull(), // Peso específico neste template
+  isRequired: boolean("isRequired").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TemplateCriteria = typeof templateCriteria.$inferSelect;
+export type InsertTemplateCriteria = typeof templateCriteria.$inferInsert;
+
+/**
+ * Evaluation Instances - Instâncias de avaliações criadas
+ */
+export const evaluationInstances = mysqlTable("evaluationInstances", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull(),
+  employeeId: int("employeeId").notNull(), // Avaliado
+  evaluatorId: int("evaluatorId").notNull(), // Avaliador
+  cycleId: int("cycleId"), // Ciclo de avaliação (se aplicável)
+  
+  // Tipo de avaliação
+  evaluationType: mysqlEnum("evaluationType", ["autoavaliacao", "superior", "par", "subordinado", "cliente"]).notNull(),
+  
+  // Status e prazos
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluida", "aprovada", "rejeitada"]).default("pendente").notNull(),
+  dueDate: datetime("dueDate"),
+  startedAt: datetime("startedAt"),
+  completedAt: datetime("completedAt"),
+  approvedAt: datetime("approvedAt"),
+  approvedBy: int("approvedBy"),
+  
+  // Pontuação
+  totalScore: int("totalScore"), // Pontuação total calculada
+  maxPossibleScore: int("maxPossibleScore"),
+  finalRating: mysqlEnum("finalRating", ["insatisfatorio", "abaixo_expectativas", "atende_expectativas", "supera_expectativas", "excepcional"]),
+  
+  // Comentários gerais
+  generalComments: text("generalComments"),
+  strengths: text("strengths"), // Pontos fortes
+  improvements: text("improvements"), // Pontos de melhoria
+  
+  // Notificações
+  notificationSent: boolean("notificationSent").default(false).notNull(),
+  remindersSent: int("remindersSent").default(0).notNull(),
+  
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvaluationInstance = typeof evaluationInstances.$inferSelect;
+export type InsertEvaluationInstance = typeof evaluationInstances.$inferInsert;
+
+/**
+ * Evaluation Criteria Responses - Respostas detalhadas por critério
+ */
+export const evaluationCriteriaResponses = mysqlTable("evaluationCriteriaResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  instanceId: int("instanceId").notNull(),
+  criteriaId: int("criteriaId").notNull(),
+  score: int("score").notNull(),
+  comments: text("comments"),
+  evidences: text("evidences"), // JSON com evidências/exemplos
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvaluationCriteriaResponse = typeof evaluationCriteriaResponses.$inferSelect;
+export type InsertEvaluationCriteriaResponse = typeof evaluationCriteriaResponses.$inferInsert;
+
+/**
+ * Evaluation Comments - Sistema de comentários nas avaliações
+ */
+export const evaluationComments = mysqlTable("evaluationComments", {
+  id: int("id").autoincrement().primaryKey(),
+  instanceId: int("instanceId").notNull(),
+  criteriaId: int("criteriaId"), // Null = comentário geral
+  authorId: int("authorId").notNull(),
+  comment: text("comment").notNull(),
+  isPrivate: boolean("isPrivate").default(false).notNull(), // Visível apenas para RH/Gestor
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvaluationComment = typeof evaluationComments.$inferSelect;
+export type InsertEvaluationComment = typeof evaluationComments.$inferInsert;
+
+// ============================================================================
+// TABELAS PARA RELATÓRIOS E DASHBOARD (ITEM 3)
+// ============================================================================
+
+/**
+ * Performance Metrics - Métricas agregadas de desempenho
+ */
+export const performanceMetrics = mysqlTable("performanceMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Dimensões
+  employeeId: int("employeeId"),
+  departmentId: int("departmentId"),
+  positionId: int("positionId"),
+  periodYear: int("periodYear").notNull(),
+  periodMonth: int("periodMonth"), // Null para métricas anuais
+  
+  // Métricas de avaliação
+  totalEvaluations: int("totalEvaluations").default(0).notNull(),
+  completedEvaluations: int("completedEvaluations").default(0).notNull(),
+  pendingEvaluations: int("pendingEvaluations").default(0).notNull(),
+  averageScore: int("averageScore"), // Média * 100 para armazenar como int
+  averageRating: mysqlEnum("averageRating", ["insatisfatorio", "abaixo_expectativas", "atende_expectativas", "supera_expectativas", "excepcional"]),
+  
+  // Métricas de metas
+  totalGoals: int("totalGoals").default(0).notNull(),
+  completedGoals: int("completedGoals").default(0).notNull(),
+  goalCompletionRate: int("goalCompletionRate"), // Percentual * 100
+  
+  // Métricas de competências
+  averageCompetencyScore: int("averageCompetencyScore"),
+  topCompetency: varchar("topCompetency", { length: 200 }),
+  improvementArea: varchar("improvementArea", { length: 200 }),
+  
+  // Metadados
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PerformanceMetric = typeof performanceMetrics.$inferSelect;
+export type InsertPerformanceMetric = typeof performanceMetrics.$inferInsert;
+
+/**
+ * Performance History - Histórico de evolução de desempenho
+ */
+export const performanceHistory = mysqlTable("performanceHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  evaluationId: int("evaluationId").notNull(),
+  score: int("score").notNull(),
+  rating: mysqlEnum("rating", ["insatisfatorio", "abaixo_expectativas", "atende_expectativas", "supera_expectativas", "excepcional"]).notNull(),
+  evaluationDate: datetime("evaluationDate").notNull(),
+  evaluationType: varchar("evaluationType", { length: 50 }).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PerformanceHistory = typeof performanceHistory.$inferSelect;
+export type InsertPerformanceHistory = typeof performanceHistory.$inferInsert;
+
+/**
+ * Department Performance Summary - Resumo de desempenho por departamento
+ */
+export const departmentPerformanceSummary = mysqlTable("departmentPerformanceSummary", {
+  id: int("id").autoincrement().primaryKey(),
+  departmentId: int("departmentId").notNull(),
+  periodYear: int("periodYear").notNull(),
+  periodQuarter: int("periodQuarter"), // 1-4 ou null para anual
+  
+  // Métricas agregadas
+  totalEmployees: int("totalEmployees").notNull(),
+  evaluatedEmployees: int("evaluatedEmployees").notNull(),
+  averageScore: int("averageScore"),
+  topPerformerCount: int("topPerformerCount").default(0).notNull(),
+  lowPerformerCount: int("lowPerformerCount").default(0).notNull(),
+  
+  // Distribuição de ratings
+  ratingDistribution: text("ratingDistribution"), // JSON com contagem por rating
+  
+  // Comparação com período anterior
+  scoreChange: int("scoreChange"), // Variação percentual * 100
+  trend: mysqlEnum("trend", ["melhorando", "estavel", "declinando"]),
+  
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DepartmentPerformanceSummary = typeof departmentPerformanceSummary.$inferSelect;
+export type InsertDepartmentPerformanceSummary = typeof departmentPerformanceSummary.$inferInsert;
+
+/**
+ * Report Templates - Templates de relatórios customizáveis
+ */
+export const reportTemplates = mysqlTable("reportTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  reportType: mysqlEnum("reportType", ["individual", "departamento", "consolidado", "comparativo", "ranking"]).notNull(),
+  
+  // Configuração do relatório (JSON)
+  config: text("config"), // Campos, filtros, ordenação, etc.
+  
+  // Permissões
+  isPublic: boolean("isPublic").default(false).notNull(),
+  allowedRoles: text("allowedRoles"), // JSON array de roles
+  
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReportTemplate = typeof reportTemplates.$inferSelect;
+export type InsertReportTemplate = typeof reportTemplates.$inferInsert;
+
+/**
+ * Generated Reports - Relatórios gerados e armazenados
+ */
+export const generatedReports = mysqlTable("generatedReports", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId"),
+  title: varchar("title", { length: 255 }).notNull(),
+  reportType: varchar("reportType", { length: 50 }).notNull(),
+  
+  // Filtros aplicados
+  filters: text("filters"), // JSON com filtros usados
+  
+  // Arquivo gerado
+  fileUrl: varchar("fileUrl", { length: 512 }),
+  fileFormat: mysqlEnum("fileFormat", ["pdf", "excel", "csv"]).notNull(),
+  fileSize: int("fileSize"), // Tamanho em bytes
+  
+  // Status
+  status: mysqlEnum("status", ["gerando", "concluido", "erro"]).default("gerando").notNull(),
+  errorMessage: text("errorMessage"),
+  
+  generatedBy: int("generatedBy").notNull(),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  expiresAt: datetime("expiresAt"), // Data de expiração do arquivo
+});
+
+export type GeneratedReport = typeof generatedReports.$inferSelect;
+export type InsertGeneratedReport = typeof generatedReports.$inferInsert;
+
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";
 

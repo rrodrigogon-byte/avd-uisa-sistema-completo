@@ -527,3 +527,403 @@ export async function getAllCompetencies() {
     .where(eq(competencies.active, true))
     .orderBy(competencies.name);
 }
+
+
+// ============================================================================
+// GESTÃO DE USUÁRIOS - ITEM 1
+// ============================================================================
+
+/**
+ * Listar todos os funcionários com filtros
+ */
+export async function listEmployees(filters?: {
+  departmentId?: number;
+  positionId?: number;
+  status?: string;
+  search?: string;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let query = db.select().from(employees);
+
+  if (filters?.departmentId) {
+    query = query.where(eq(employees.departmentId, filters.departmentId)) as any;
+  }
+  if (filters?.positionId) {
+    query = query.where(eq(employees.positionId, filters.positionId)) as any;
+  }
+  if (filters?.status) {
+    query = query.where(eq(employees.status, filters.status as any)) as any;
+  }
+
+  const results = await query;
+
+  // Filtro de busca por nome ou email (feito em memória)
+  if (filters?.search) {
+    const searchLower = filters.search.toLowerCase();
+    return results.filter(
+      (emp) =>
+        emp.name.toLowerCase().includes(searchLower) ||
+        emp.email.toLowerCase().includes(searchLower)
+    );
+  }
+
+  return results;
+}
+
+/**
+ * Criar ou atualizar funcionário
+ */
+export async function upsertEmployee(employeeData: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { InsertEmployee } = await import("../drizzle/schema");
+
+  if (employeeData.id) {
+    // Atualizar
+    await db
+      .update(employees)
+      .set({ ...employeeData, updatedAt: new Date() })
+      .where(eq(employees.id, employeeData.id));
+    return employeeData.id;
+  } else {
+    // Criar
+    const result = await db.insert(employees).values(employeeData);
+    return result[0].insertId;
+  }
+}
+
+/**
+ * Desativar funcionário
+ */
+export async function deactivateEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(employees)
+    .set({ active: false, status: "desligado", updatedAt: new Date() })
+    .where(eq(employees.id, employeeId));
+}
+
+/**
+ * Reativar funcionário
+ */
+export async function reactivateEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(employees)
+    .set({ active: true, status: "ativo", updatedAt: new Date() })
+    .where(eq(employees.id, employeeId));
+}
+
+/**
+ * Registrar log de auditoria de funcionário
+ */
+export async function logEmployeeAudit(auditData: {
+  employeeId: number;
+  action: string;
+  fieldChanged?: string;
+  oldValue?: string;
+  newValue?: string;
+  changedBy: number;
+  ipAddress?: string;
+  userAgent?: string;
+}) {
+  const db = await getDb();
+  if (!db) return;
+
+  const { employeeAuditLog } = await import("../drizzle/schema");
+
+  await db.insert(employeeAuditLog).values({
+    ...auditData,
+    changedAt: new Date(),
+  });
+}
+
+/**
+ * Obter histórico de auditoria de um funcionário
+ */
+export async function getEmployeeAuditLog(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { employeeAuditLog } = await import("../drizzle/schema");
+
+  return await db
+    .select()
+    .from(employeeAuditLog)
+    .where(eq(employeeAuditLog.employeeId, employeeId))
+    .orderBy(desc(employeeAuditLog.changedAt));
+}
+
+// ============================================================================
+// SISTEMA DE AVALIAÇÕES - ITEM 2
+// ============================================================================
+
+/**
+ * Listar critérios de avaliação ativos
+ */
+export async function listEvaluationCriteria(category?: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { evaluationCriteria } = await import("../drizzle/schema");
+
+  let query = db
+    .select()
+    .from(evaluationCriteria)
+    .where(eq(evaluationCriteria.isActive, true));
+
+  if (category) {
+    query = query.where(eq(evaluationCriteria.category, category as any)) as any;
+  }
+
+  return await query.orderBy(evaluationCriteria.displayOrder);
+}
+
+/**
+ * Criar critério de avaliação
+ */
+export async function createEvaluationCriteria(criteriaData: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { evaluationCriteria } = await import("../drizzle/schema");
+
+  const result = await db.insert(evaluationCriteria).values(criteriaData);
+  return result[0].insertId;
+}
+
+/**
+ * Criar instância de avaliação
+ */
+export async function createEvaluationInstance(instanceData: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { evaluationInstances } = await import("../drizzle/schema");
+
+  const result = await db.insert(evaluationInstances).values({
+    ...instanceData,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  return result[0].insertId;
+}
+
+/**
+ * Listar avaliações de um funcionário
+ */
+export async function getEmployeeEvaluations(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { evaluationInstances } = await import("../drizzle/schema");
+
+  return await db
+    .select()
+    .from(evaluationInstances)
+    .where(eq(evaluationInstances.employeeId, employeeId))
+    .orderBy(desc(evaluationInstances.createdAt));
+}
+
+/**
+ * Atualizar status de avaliação
+ */
+export async function updateEvaluationStatus(
+  instanceId: number,
+  status: string,
+  additionalData?: any
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { evaluationInstances } = await import("../drizzle/schema");
+
+  await db
+    .update(evaluationInstances)
+    .set({
+      status: status as any,
+      ...additionalData,
+      updatedAt: new Date(),
+    })
+    .where(eq(evaluationInstances.id, instanceId));
+}
+
+/**
+ * Salvar resposta de critério
+ */
+export async function saveEvaluationResponse(responseData: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { evaluationCriteriaResponses } = await import("../drizzle/schema");
+
+  const result = await db.insert(evaluationCriteriaResponses).values({
+    ...responseData,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  return result[0].insertId;
+}
+
+/**
+ * Obter respostas de uma avaliação
+ */
+export async function getEvaluationResponses(instanceId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { evaluationCriteriaResponses } = await import("../drizzle/schema");
+
+  return await db
+    .select()
+    .from(evaluationCriteriaResponses)
+    .where(eq(evaluationCriteriaResponses.instanceId, instanceId));
+}
+
+// ============================================================================
+// RELATÓRIOS E MÉTRICAS - ITEM 3
+// ============================================================================
+
+/**
+ * Obter métricas de desempenho
+ */
+export async function getPerformanceMetrics(filters: {
+  employeeId?: number;
+  departmentId?: number;
+  periodYear: number;
+  periodMonth?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { performanceMetrics } = await import("../drizzle/schema");
+
+  let query = db
+    .select()
+    .from(performanceMetrics)
+    .where(eq(performanceMetrics.periodYear, filters.periodYear));
+
+  if (filters.employeeId) {
+    query = query.where(eq(performanceMetrics.employeeId, filters.employeeId)) as any;
+  }
+  if (filters.departmentId) {
+    query = query.where(eq(performanceMetrics.departmentId, filters.departmentId)) as any;
+  }
+  if (filters.periodMonth) {
+    query = query.where(eq(performanceMetrics.periodMonth, filters.periodMonth)) as any;
+  }
+
+  return await query;
+}
+
+/**
+ * Obter histórico de desempenho de um funcionário
+ */
+export async function getPerformanceHistory(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { performanceHistory } = await import("../drizzle/schema");
+
+  return await db
+    .select()
+    .from(performanceHistory)
+    .where(eq(performanceHistory.employeeId, employeeId))
+    .orderBy(desc(performanceHistory.evaluationDate));
+}
+
+/**
+ * Obter resumo de desempenho por departamento
+ */
+export async function getDepartmentPerformanceSummary(
+  departmentId: number,
+  periodYear: number,
+  periodQuarter?: number
+) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const { departmentPerformanceSummary } = await import("../drizzle/schema");
+
+  let query = db
+    .select()
+    .from(departmentPerformanceSummary)
+    .where(
+      and(
+        eq(departmentPerformanceSummary.departmentId, departmentId),
+        eq(departmentPerformanceSummary.periodYear, periodYear)
+      )
+    );
+
+  if (periodQuarter) {
+    query = query.where(
+      eq(departmentPerformanceSummary.periodQuarter, periodQuarter)
+    ) as any;
+  }
+
+  const results = await query.limit(1);
+  return results.length > 0 ? results[0] : null;
+}
+
+/**
+ * Calcular e salvar métricas de desempenho
+ */
+export async function calculatePerformanceMetrics(
+  employeeId: number,
+  periodYear: number,
+  periodMonth?: number
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { performanceMetrics, evaluationInstances } = await import("../drizzle/schema");
+
+  // Buscar avaliações do período
+  const evaluations = await db
+    .select()
+    .from(evaluationInstances)
+    .where(
+      and(
+        eq(evaluationInstances.employeeId, employeeId),
+        eq(evaluationInstances.status, "concluida")
+      )
+    );
+
+  // Calcular métricas
+  const totalEvaluations = evaluations.length;
+  const completedEvaluations = evaluations.filter(
+    (e) => e.status === "concluida"
+  ).length;
+  const pendingEvaluations = evaluations.filter(
+    (e) => e.status === "pendente"
+  ).length;
+
+  const scores = evaluations
+    .filter((e) => e.totalScore !== null)
+    .map((e) => e.totalScore!);
+  const averageScore =
+    scores.length > 0
+      ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100)
+      : null;
+
+  // Salvar métricas
+  await db.insert(performanceMetrics).values({
+    employeeId,
+    periodYear,
+    periodMonth: periodMonth || null,
+    totalEvaluations,
+    completedEvaluations,
+    pendingEvaluations,
+    averageScore,
+    calculatedAt: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+}
