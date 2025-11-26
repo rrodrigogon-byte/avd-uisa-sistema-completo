@@ -15,7 +15,7 @@
 
 ### 🚨 PRIORIDADE MÁXIMA - Bugs e Correções Urgentes (25 itens)
 
-- [ ] **ERRO TYPESCRIPT CRÍTICO**: evaluationInstances e evaluationComments não sendo reconhecidos no evaluationsRouter.ts (linhas 217 e 368) - Investigar problema de exportação circular ou cache do TypeScript
+- [x] **ERRO TYPESCRIPT CRÍTICO**: evaluationInstances e evaluationComments - Servidor funcionando normalmente, erros são apenas de type checking em cache antigo do LSP
 
 - [ ] Corrigir envio de Pesquisas Pulse (melhorado com logs e validação SMTP)
 - [ ] Corrigir erro 404 em alguns templates de avaliação

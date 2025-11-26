@@ -1,5 +1,6 @@
 import { getDb } from "../db";
-import { timeClockRecords, employeeActivities, timeDiscrepancies, alerts, employees } from "../../drizzle/schema";
+import { timeClockRecords, timeDiscrepancies, alerts, employees } from "../../drizzle/schema";
+import { manualActivities as employeeActivities } from "../../drizzle/schema-productivity";
 import { eq, and, gte, lte, sql } from "drizzle-orm";
 
 /**

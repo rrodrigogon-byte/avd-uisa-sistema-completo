@@ -929,3 +929,50 @@ export async function calculatePerformanceMetrics(
     updatedAt: new Date(),
   });
 }
+
+
+// ============================================================================
+// HELPERS PARA EVALUATION INSTANCES E COMMENTS
+// ============================================================================
+
+/**
+ * Buscar instância de avaliação por ID
+ */
+export async function getEvaluationInstanceById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Import direto aqui para evitar problemas circulares
+  const { evaluationInstances } = await import("../drizzle/schema");
+  
+  const instances = await db
+    .select()
+    .from(evaluationInstances)
+    .where(eq(evaluationInstances.id, id))
+    .limit(1);
+
+  return instances.length > 0 ? instances[0] : null;
+}
+
+/**
+ * Adicionar comentário em avaliação
+ */
+export async function addEvaluationComment(data: {
+  instanceId: number;
+  criteriaId?: number;
+  authorId: number;
+  comment: string;
+  isPrivate: boolean;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { evaluationComments } = await import("../drizzle/schema");
+  
+  const result = await db.insert(evaluationComments).values({
+    ...data,
+    criteriaId: data.criteriaId || null,
+  });
+
+  return { id: result[0].insertId, success: true };
+}

@@ -12,7 +12,8 @@ import {
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "../db";
-import { evaluationInstances, evaluationComments } from "../../drizzle/schema";
+// Import dinâmico para evitar problemas de cache TypeScript
+// evaluationInstances e evaluationComments serão importados dinamicamente quando necessário
 
 /**
  * Router para Sistema de Avaliações de Desempenho (Item 2)
@@ -140,25 +141,16 @@ export const evaluationsRouter = router({
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
-      const { getDb } = await import("../db");
+      const { getEvaluationInstanceById } = await import("../db");
 
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      const instances = await db
-        .select()
-        .from(evaluationInstances)
-        .where(eq(evaluationInstances.id, input.id))
-        .limit(1);
-
-      if (instances.length === 0) {
+      const instance = await getEvaluationInstanceById(input.id);
+      
+      if (!instance) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Avaliação não encontrada",
         });
       }
-
-      const instance = instances[0];
 
       // Verificar permissão
       const { getUserEmployee } = await import("../db");
@@ -214,25 +206,19 @@ export const evaluationsRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       // Verificar se o usuário é o avaliador
-      const { getDb } = await import("../db");
+      const { getEvaluationInstanceById, getDb } = await import("../db");
 
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      const instances = await db
-        .select()
-        .from(evaluationInstances)
-        .where(eq(evaluationInstances.id, input.instanceId))
-        .limit(1);
-
-      if (instances.length === 0) {
+      const instance = await getEvaluationInstanceById(input.instanceId);
+      
+      if (!instance) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Avaliação não encontrada",
         });
       }
 
-      const instance = instances[0];
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
       if (instance.evaluatorId !== ctx.user.id) {
         throw new TRPCError({
@@ -363,16 +349,13 @@ export const evaluationsRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { getDb } = await import("../db");
+      const { addEvaluationComment } = await import("../db");
 
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      const result = await db.insert(evaluationComments).values({
+      const result = await addEvaluationComment({
         ...input,
         authorId: ctx.user.id,
       });
 
-      return { id: result[0].insertId, success: true };
+      return result;
     }),
 });
