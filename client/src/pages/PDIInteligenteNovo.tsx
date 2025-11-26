@@ -31,6 +31,7 @@ import { Link } from "wouter";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import RecommendationsSection from "@/components/RecommendationsSection";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 
 /**
  * Página de Criação de PDI Inteligente
@@ -55,8 +56,10 @@ export default function PDIInteligenteNovo() {
   const [objectives, setObjectives] = useState("");
   const [duration, setDuration] = useState("24");
 
+  // Employee search with debounce
+  const { employees, isLoading: employeesLoading, search: employeeSearch, setSearch: setEmployeeSearch } = useEmployeeSearch("", 300, { status: "ativo" });
+
   // Queries
-  const { data: employees, isLoading: employeesLoading } = trpc.employees.list.useQuery();
   const { data: positions, isLoading: positionsLoading } = trpc.positions.list.useQuery();
 
   // Mutations
@@ -108,7 +111,7 @@ export default function PDIInteligenteNovo() {
     });
   };
 
-  const selectedEmployee = employees?.find((e: any) => e.employee.id === selectedEmployeeId)?.employee;
+  const selectedEmployee = employees?.find((e: any) => e?.employee?.id === selectedEmployeeId)?.employee;
 
   return (
     <DashboardLayout>
@@ -175,10 +178,15 @@ export default function PDIInteligenteNovo() {
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput placeholder="Buscar colaborador..." />
+                      <CommandInput 
+                        placeholder="Buscar colaborador..." 
+                        value={employeeSearch}
+                        onValueChange={setEmployeeSearch}
+                      />
                       <CommandEmpty>Nenhum colaborador encontrado.</CommandEmpty>
                       <CommandGroup className="max-h-64 overflow-auto">
                         {employees?.map((item: any) => {
+                          if (!item?.employee) return null;
                           const employee = item.employee;
                           return (
                           <CommandItem

@@ -59,16 +59,16 @@ export default function ParticipantsManager({
     if (!searchTerm.trim()) return employees;
     
     const term = searchTerm.toLowerCase();
-    return employees.filter(emp => 
-      emp.name.toLowerCase().includes(term) || 
-      emp.email?.toLowerCase().includes(term) ||
-      emp.position?.toLowerCase().includes(term)
+    return employees.filter(item => 
+      item.employee.name.toLowerCase().includes(term) || 
+      item.employee.email?.toLowerCase().includes(term) ||
+      item.position?.title?.toLowerCase().includes(term)
     );
   }, [employees, searchTerm]);
 
   const availableEmployees = useMemo(() => {
     const participantIds = new Set(data.participants.map(p => p.employeeId));
-    return filteredEmployees.filter(emp => !participantIds.has(emp.id));
+    return filteredEmployees.filter(item => !participantIds.has(item.employee.id));
   }, [filteredEmployees, data.participants]);
 
   const handleAddParticipant = () => {
@@ -77,12 +77,12 @@ export default function ParticipantsManager({
       return;
     }
 
-    const employee = employees?.find(e => e.id === parseInt(selectedEmployeeId));
-    if (!employee) return;
+    const employeeData = employees?.find(e => e.employee.id === parseInt(selectedEmployeeId));
+    if (!employeeData) return;
 
     const newParticipant: Participant = {
-      employeeId: employee.id,
-      name: employee.name,
+      employeeId: employeeData.employee.id,
+      name: employeeData.employee.name,
       role: selectedRole
     };
 
@@ -169,9 +169,9 @@ export default function ParticipantsManager({
                   <SelectValue placeholder="Selecione um colaborador" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableEmployees.map(emp => (
-                    <SelectItem key={emp.id} value={emp.id.toString()}>
-                      {emp.name} {emp.position && `- ${emp.position}`}
+                  {availableEmployees.map(item => (
+                    <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
+                      {item.employee.name} {item.position?.title && `- ${item.position.title}`}
                     </SelectItem>
                   ))}
                 </SelectContent>

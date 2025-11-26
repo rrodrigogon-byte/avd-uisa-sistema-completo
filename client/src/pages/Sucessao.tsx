@@ -247,7 +247,7 @@ export default function Sucessao() {
     if (!selectedPlan) return;
 
     const position = positions?.find(p => p.id === selectedPlan.positionId);
-    const currentHolder = employees?.find(e => e.id === selectedPlan.currentHolderId);
+    const currentHolder = employees?.find(e => e.employee.id === selectedPlan.currentHolderId)?.employee;
     const candidates = selectedPlan.candidates || [];
 
     // Gerar conteúdo HTML
@@ -270,7 +270,7 @@ export default function Sucessao() {
           ? generateTableHTML(
               ["Nome", "Prontidão", "Potencial", "Prioridade"],
               candidates.map((c: any) => {
-                const emp = employees?.find(e => e.id === c.candidateId);
+                const emp = employees?.find(e => e.employee.id === c.candidateId)?.employee;
                 return [
                   emp?.name || "N/A",
                   c.readiness || "N/A",
@@ -398,9 +398,9 @@ export default function Sucessao() {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        {employees?.filter(e => e?.id).map((emp) => (
-                          <SelectItem key={emp.id} value={emp.id.toString()}>
-                            {emp.name}
+                        {employees?.filter(e => e?.employee?.id).map((item) => (
+                          <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
+                            {item.employee.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -990,9 +990,9 @@ export default function Sucessao() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.filter(e => e?.id).map((emp) => (
-                        <SelectItem key={emp.id} value={emp.id.toString()}>
-                          {emp.name}
+                      {employees?.filter(e => e?.employee?.id).map((item) => (
+                        <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
+                          {item.employee.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

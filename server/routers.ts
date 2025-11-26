@@ -193,7 +193,10 @@ export const appRouter = router({
   employees: router({
     list: protectedProcedure.query(async () => {
       try {
+        console.log('[employees.list] Starting query...');
         const result = await db.getAllEmployees();
+        console.log('[employees.list] Result count:', result?.length || 0);
+        console.log('[employees.list] First item:', result?.[0]);
         return result || [];
       } catch (error) {
         console.error('[employees.list] Error:', error);

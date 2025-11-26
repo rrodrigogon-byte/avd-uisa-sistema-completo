@@ -78,8 +78,9 @@ async function sendCustomEmail(to: string, subject: string, html: string): Promi
   const transporter = await createTransporter();
   
   if (!transporter) {
-    console.warn("[EmailService] SMTP não configurado");
-    return false;
+    const errorMsg = "[EmailService] SMTP não configurado. Configure em /admin/smtp";
+    console.error(errorMsg);
+    throw new Error(errorMsg);
   }
 
   try {

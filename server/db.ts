@@ -132,16 +132,9 @@ export async function getAllEmployees() {
 
   const results = await db
     .select({
-      id: employees.id,
-      name: employees.name,
-      email: employees.email,
-      departmentId: employees.departmentId,
-      departmentName: departments.name,
-      positionId: employees.positionId,
-      positionTitle: positions.title,
-      hireDate: employees.hireDate,
-      status: employees.status,
-      costCenter: employees.costCenter,
+      employee: employees,
+      department: departments,
+      position: positions,
     })
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
@@ -545,16 +538,25 @@ export async function listEmployees(filters?: {
   const db = await getDb();
   if (!db) return [];
 
-  let query = db.select().from(employees);
+  let query = db
+    .select({
+      employee: employees,
+      department: departments,
+      position: positions,
+    })
+    .from(employees)
+    .leftJoin(departments, eq(employees.departmentId, departments.id))
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(employees.status, "ativo")) as any;
 
   if (filters?.departmentId) {
-    query = query.where(eq(employees.departmentId, filters.departmentId)) as any;
+    query = query.where(eq(employees.departmentId, filters.departmentId));
   }
   if (filters?.positionId) {
-    query = query.where(eq(employees.positionId, filters.positionId)) as any;
+    query = query.where(eq(employees.positionId, filters.positionId));
   }
   if (filters?.status) {
-    query = query.where(eq(employees.status, filters.status as any)) as any;
+    query = query.where(eq(employees.status, filters.status as any));
   }
 
   const results = await query;
@@ -563,9 +565,9 @@ export async function listEmployees(filters?: {
   if (filters?.search) {
     const searchLower = filters.search.toLowerCase();
     return results.filter(
-      (emp) =>
-        emp.name.toLowerCase().includes(searchLower) ||
-        emp.email.toLowerCase().includes(searchLower)
+      (item: any) =>
+        item.employee.name.toLowerCase().includes(searchLower) ||
+        item.employee.email.toLowerCase().includes(searchLower)
     );
   }
 

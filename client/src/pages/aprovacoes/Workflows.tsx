@@ -37,6 +37,9 @@ import { trpc } from "@/lib/trpc";
 
 export default function Workflows() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<any>(null);
+  const [workflowSteps, setWorkflowSteps] = useState<any[]>([]);
   const [newWorkflow, setNewWorkflow] = useState({
     name: "",
     description: "",
@@ -214,7 +217,11 @@ export default function Workflows() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => toast.info(`Configuração de workflow "${workflow.name}" em desenvolvimento`)}
+                    onClick={() => {
+                      setSelectedWorkflow(workflow);
+                      setWorkflowSteps(workflow.steps || []);
+                      setIsConfigDialogOpen(true);
+                    }}
                   >
                     Configurar Workflow
                   </Button>

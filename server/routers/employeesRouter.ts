@@ -24,10 +24,10 @@ export const employeesRouter = router({
         positionId: z.number().optional(),
         status: z.enum(["ativo", "afastado", "desligado"]).optional(),
         search: z.string().optional(),
-      })
+      }).optional()
     )
     .query(async ({ input }) => {
-      return await listEmployees(input);
+      return await listEmployees(input || {});
     }),
 
   /**
@@ -39,6 +39,32 @@ export const employeesRouter = router({
       const { getEmployeeById } = await import("../db");
       return await getEmployeeById(input.id);
     }),
+
+  /**
+   * Obter funcionário por User ID
+   */
+  getByUserId: protectedProcedure
+    .input(z.object({ userId: z.number() }))
+    .query(async ({ input }) => {
+      const { getEmployeeByUserId } = await import("../db");
+      const employee = await getEmployeeByUserId(input.userId);
+      return employee || null;
+    }),
+
+  /**
+   * Obter funcionário do usuário logado
+   */
+  getCurrent: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.user) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Usuário não autenticado",
+      });
+    }
+    const { getEmployeeByUserId } = await import("../db");
+    const employee = await getEmployeeByUserId(ctx.user.id);
+    return employee || null;
+  }),
 
   /**
    * Criar funcionário
@@ -273,4 +299,12 @@ export const employeesRouter = router({
         count: employees.length,
       };
     }),
+
+  /**
+   * Obter lista de departamentos
+   */
+  getDepartments: protectedProcedure.query(async () => {
+    const { getAllDepartments } = await import("../db");
+    return await getAllDepartments();
+  }),
 });

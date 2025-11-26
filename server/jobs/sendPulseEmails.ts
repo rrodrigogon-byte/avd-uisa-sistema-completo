@@ -15,6 +15,18 @@ export async function sendPulseEmailsJob() {
     console.error("[Pulse Job] Database not available");
     return;
   }
+  
+  // Verificar se SMTP está configurado antes de tentar enviar
+  try {
+    const testConfig = await db.select().from(require('../../drizzle/schema').systemSettings).where(require('drizzle-orm').eq(require('../../drizzle/schema').systemSettings.settingKey, 'smtp_config')).limit(1);
+    if (testConfig.length === 0) {
+      console.warn("[Pulse Job] ⚠️  SMTP não configurado. Configure em /admin/smtp para enviar emails.");
+      return;
+    }
+  } catch (err) {
+    console.error("[Pulse Job] Erro ao verificar configuração SMTP:", err);
+    return;
+  }
 
   try {
     const now = new Date();
@@ -35,11 +47,16 @@ export async function sendPulseEmailsJob() {
 
     console.log(`[Pulse Job] ${activeSurveys.length} pesquisas ativas encontradas`);
 
+    if (activeSurveys.length === 0) {
+      console.log("[Pulse Job] Nenhuma pesquisa ativa para enviar emails.");
+      return;
+    }
+
     for (const survey of activeSurveys) {
       await sendSurveyEmails(survey);
     }
 
-    console.log("[Pulse Job] Envio de e-mails concluído");
+    console.log("[Pulse Job] ✅ Envio de e-mails concluído com sucesso");
   } catch (error) {
     console.error("[Pulse Job] Erro ao enviar e-mails:", error);
   }
