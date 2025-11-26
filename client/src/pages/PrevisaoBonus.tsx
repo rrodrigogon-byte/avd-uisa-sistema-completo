@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +44,7 @@ export default function PrevisaoBonus() {
   const [goalCompletionRate, setGoalCompletionRate] = useState<number>(75);
 
   // Buscar dados
-  const { data: employees } = trpc.employees.list.useQuery();
+  const { employees } = useEmployeeSearch();
   const { data: policies } = trpc.bonus.list.useQuery({ active: true });
   const { data: monthlyTrends } = trpc.bonus.getMonthlyTrends.useQuery({ months: 6 });
 

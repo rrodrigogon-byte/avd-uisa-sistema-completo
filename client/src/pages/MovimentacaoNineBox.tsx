@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,7 +47,7 @@ export default function MovimentacaoNineBox() {
   const utils = trpc.useUtils();
 
   // Queries
-  const { data: employees } = trpc.employees.list.useQuery();
+  const { employees } = useEmployeeSearch();
   // TODO: Implementar endpoint getMatrix no nineBoxRouter
   const { data: nineBoxData } = trpc.nineBox.getByCycle.useQuery({ cycleId: 1 });
 

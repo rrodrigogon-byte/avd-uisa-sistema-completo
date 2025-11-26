@@ -15,6 +15,8 @@
 
 ### 🚨 PRIORIDADE MÁXIMA - Bugs e Correções Urgentes (25 itens)
 
+- [ ] **ERRO TYPESCRIPT CRÍTICO**: evaluationInstances e evaluationComments não sendo reconhecidos no evaluationsRouter.ts (linhas 217 e 368) - Investigar problema de exportação circular ou cache do TypeScript
+
 - [ ] Corrigir envio de Pesquisas Pulse (melhorado com logs e validação SMTP)
 - [ ] Corrigir erro 404 em alguns templates de avaliação
 - [ ] Adicionar botão de reenvio de emails falhados no dashboard
@@ -31,10 +33,10 @@
   - [x] Feedbacks.tsx - refatorado com busca
   - [x] ConfiguracaoWorkflowsBonus.tsx - refatorado com busca
   - [x] ParticipantsManager.tsx (wizard360) - refatorado com busca
-  - [ ] MapaSucessaoCompleto.tsx
-  - [ ] DashboardAprovacoesCiclos.tsx
-  - [ ] PrevisaoBonus.tsx
-  - [ ] MovimentacaoNineBox.tsx
+  - [x] MapaSucessaoCompleto.tsx - refatorado com busca
+  - [x] DashboardAprovacoesCiclos.tsx - refatorado com busca
+  - [x] PrevisaoBonus.tsx - refatorado com busca
+  - [x] MovimentacaoNineBox.tsx - refatorado com busca
   - [ ] PDIWizard.tsx (componente)
   - [ ] PactSection.tsx (componente)
   - [ ] CyclePreview.tsx (componente)

@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Users, TrendingUp, AlertTriangle, Plus, Download, Info } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 
 /**
  * Mapa de Sucessão Completo
@@ -46,7 +47,7 @@ export default function MapaSucessaoCompleto() {
 
   // Queries
   const { data: plansRaw, isLoading, refetch } = trpc.succession.list.useQuery();
-  const { data: employees } = trpc.employees.list.useQuery();
+  const { employees, isLoading: loadingEmployees, search: employeeSearch, setSearch: setEmployeeSearch } = useEmployeeSearch();
   
   // Mutation para adicionar sucessor
   const addSuccessorMutation = trpc.succession.addSuccessor.useMutation({

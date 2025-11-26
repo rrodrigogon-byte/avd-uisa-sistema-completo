@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { toast } from "sonner";
 import { Loader2, CheckCircle2, Clock, Users, Target, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
@@ -16,7 +17,7 @@ import { Link } from "wouter";
  */
 export default function DashboardAprovacoesCiclos() {
   const { data: cycles, isLoading: loadingCycles } = trpc.cycles.list.useQuery();
-  const { data: employees } = trpc.employees.list.useQuery();
+  const { employees } = useEmployeeSearch();
   const utils = trpc.useUtils();
 
   const approveMutation = trpc.cycles.approveForGoals.useMutation({
