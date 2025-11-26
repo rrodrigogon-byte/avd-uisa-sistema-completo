@@ -11,6 +11,63 @@ import { eq, and, sql, inArray } from "drizzle-orm";
 import { sendEmail } from "../emailService";
 
 export const evaluationCyclesRouter = router({
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1, "Nome é obrigatório"),
+        year: z.number().int().min(2020).max(2100),
+        type: z.enum(["anual", "semestral", "trimestral"]),
+        startDate: z.date(),
+        endDate: z.date(),
+        description: z.string().optional(),
+        selfEvaluationDeadline: z.date().optional(),
+        managerEvaluationDeadline: z.date().optional(),
+        consensusDeadline: z.date().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Validar que endDate é posterior a startDate
+      if (input.endDate <= input.startDate) {
+        throw new Error("Data de término deve ser posterior à data de início");
+      }
+
+      const result = await db.insert(evaluationCycles).values({
+        name: input.name,
+        year: input.year,
+        type: input.type,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        description: input.description || null,
+        selfEvaluationDeadline: input.selfEvaluationDeadline || null,
+        managerEvaluationDeadline: input.managerEvaluationDeadline || null,
+        consensusDeadline: input.consensusDeadline || null,
+        status: "planejado",
+        active: true,
+      });
+
+      const cycleId = Number(result[0].insertId);
+
+      return {
+        success: true,
+        id: cycleId,
+      };
+    }),
+
+  list: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
+
+    const cycles = await db
+      .select()
+      .from(evaluationCycles)
+      .orderBy(sql`${evaluationCycles.createdAt} DESC`);
+
+    return cycles;
+  }),
+
   listActive: protectedProcedure.query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");

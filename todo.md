@@ -987,3 +987,4 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Implementar debouncing em campos de busca restantes - hook useDebounce criado
 - [x] Otimizar queries com índices de banco de dados - 8 índices principais aplicados
 - [ ] Implementar error boundaries em páginas principais
+- [x] Corrigir erro "No procedure found on path evaluationCycles.create"
