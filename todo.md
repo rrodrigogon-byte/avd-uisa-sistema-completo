@@ -1081,3 +1081,29 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [ ] Corrigir erros TypeScript restantes (aproximadamente 370 erros)
 - [ ] Atualizar testes unitários para usar novos campos
 - [ ] Atualizar componentes frontend para exibir valores em reais (dividir por 100)
+
+
+## ✅ TAREFAS CONCLUÍDAS NESTA SESSÃO (28/11/2025)
+
+### Bugs Críticos Corrigidos
+- [x] Corrigir job de envio de Pesquisas Pulse com validação SMTP
+- [x] Corrigir todas as referências de bonusAmount para bonusAmountCents no bonusRouter
+- [x] Melhorar logs e tratamento de erros no emailService
+
+### Dashboard de Relatórios Implementado
+- [x] Criar página /relatorios/dashboard com gráficos interativos
+- [x] Implementar gráfico de desempenho por departamento (Bar Chart)
+- [x] Implementar gráfico de evolução de metas por mês (Line/Bar Chart)
+- [x] Implementar gráfico de distribuição por status (Pie Chart)
+- [x] Adicionar cards de estatísticas gerais
+- [x] Implementar tabs para diferentes visualizações (Metas, Departamentos, PDIs, Avaliações)
+- [x] Adicionar filtros de período e departamento
+- [x] Preparar botões de exportação (PDF/Excel)
+
+### Melhorias de UX Implementadas
+- [x] Melhorar filtros na página de Funcionários
+- [x] Adicionar filtro por status (ativo, inativo, afastado, férias)
+- [x] Adicionar filtro por cargo
+- [x] Melhorar busca para incluir CPF
+- [x] Reorganizar layout de filtros em grid responsivo
+- [x] Componente GlobalSearch já existe e funcional

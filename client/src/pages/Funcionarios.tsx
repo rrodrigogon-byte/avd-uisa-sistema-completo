@@ -20,6 +20,8 @@ import { Loader2, Plus, Search, Pencil, Trash2, Download, Upload, Users } from "
 export default function Funcionarios() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [selectedCargo, setSelectedCargo] = useState<string>("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
@@ -87,9 +89,12 @@ export default function Funcionarios() {
   const filteredEmployees = employees?.filter((emp) => {
     const matchesSearch = emp.employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.employee.cpf?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.employee.employeeCode.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDepartment = selectedDepartment === "all" || emp.employee.departmentId === parseInt(selectedDepartment);
-    return matchesSearch && matchesDepartment;
+    const matchesStatus = selectedStatus === "all" || emp.employee.status === selectedStatus;
+    const matchesCargo = selectedCargo === "all" || emp.employee.positionTitle?.toLowerCase().includes(selectedCargo.toLowerCase());
+    return matchesSearch && matchesDepartment && matchesStatus && matchesCargo;
   });
 
   const handleEdit = (employee: any) => {
@@ -140,12 +145,12 @@ export default function Funcionarios() {
         {/* Filtros */}
         <Card>
           <CardContent className="pt-6">
-            <div className="flex gap-4">
-              <div className="flex-1">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="lg:col-span-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Buscar por nome, e-mail ou matrícula..."
+                    placeholder="Buscar por nome, e-mail, CPF ou matrícula..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -153,8 +158,8 @@ export default function Funcionarios() {
                 </div>
               </div>
               <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                <SelectTrigger className="w-[250px]">
-                  <SelectValue placeholder="Filtrar por departamento" />
+                <SelectTrigger>
+                  <SelectValue placeholder="Departamento" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os departamentos</SelectItem>
@@ -165,6 +170,25 @@ export default function Funcionarios() {
                   ))}
                 </SelectContent>
               </Select>
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os status</SelectItem>
+                  <SelectItem value="ativo">Ativo</SelectItem>
+                  <SelectItem value="inativo">Inativo</SelectItem>
+                  <SelectItem value="afastado">Afastado</SelectItem>
+                  <SelectItem value="ferias">Férias</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="mt-4">
+              <Input
+                placeholder="Filtrar por cargo..."
+                value={selectedCargo}
+                onChange={(e) => setSelectedCargo(e.target.value)}
+              />
             </div>
           </CardContent>
         </Card>

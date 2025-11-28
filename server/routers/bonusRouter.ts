@@ -341,7 +341,7 @@ export const bonusRouter = router({
           await db.insert(notifications).values({
             userId: employee[0].userId,
             title: "Bônus Aprovado! 🎉",
-            message: `Seu bônus de R$ ${Number(calculation[0].bonusAmount).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} foi aprovado e será processado em breve.`,
+            message: `Seu bônus de R$ ${(Number(calculation[0].bonusAmountCents) / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2 })} foi aprovado e será processado em breve.`,
             type: "success",
             link: "/bonus",
           });
@@ -443,7 +443,7 @@ export const bonusRouter = router({
       const calculations = await db
         .select({
           referenceMonth: bonusCalculations.referenceMonth,
-          bonusAmount: bonusCalculations.bonusAmount,
+          bonusAmountCents: bonusCalculations.bonusAmountCents,
           status: bonusCalculations.status,
         })
         .from(bonusCalculations);
@@ -456,10 +456,10 @@ export const bonusRouter = router({
         if (!monthlyData[month]) {
           monthlyData[month] = { total: 0, count: 0, paid: 0 };
         }
-        monthlyData[month].total += Number(calc.bonusAmount || 0);
+        monthlyData[month].total += Number(calc.bonusAmountCents || 0) / 100;
         monthlyData[month].count += 1;
         if (calc.status === "pago") {
-          monthlyData[month].paid += Number(calc.bonusAmount || 0);
+          monthlyData[month].paid += Number(calc.bonusAmountCents || 0) / 100;
         }
       });
 
@@ -490,7 +490,7 @@ export const bonusRouter = router({
       const results = await db
         .select({
           departmentId: employees.departmentId,
-          bonusAmount: bonusCalculations.bonusAmount,
+          bonusAmountCents: bonusCalculations.bonusAmountCents,
         })
         .from(bonusCalculations)
         .leftJoin(employees, eq(bonusCalculations.employeeId, employees.id))
@@ -504,7 +504,7 @@ export const bonusRouter = router({
         if (!deptData[deptId]) {
           deptData[deptId] = { total: 0, count: 0 };
         }
-        deptData[deptId].total += Number(row.bonusAmount || 0);
+        deptData[deptId].total += Number(row.bonusAmountCents || 0) / 100;
         deptData[deptId].count += 1;
       });
 
@@ -569,7 +569,7 @@ export const bonusRouter = router({
             await db.insert(notifications).values({
               userId: calc[0].employeeId,
               title: "Bônus Aprovado",
-              message: `Seu bônus de R$ ${(Number(calc[0].bonusAmount) / 100).toFixed(2)} foi aprovado! ${input.comment ? `Comentário: ${input.comment}` : ""}`,
+              message: `Seu bônus de R$ ${(Number(calc[0].bonusAmountCents) / 100).toFixed(2)} foi aprovado! ${input.comment ? `Comentário: ${input.comment}` : ""}`,
               type: "success",
               read: false,
             });
@@ -632,7 +632,7 @@ export const bonusRouter = router({
             await db.insert(notifications).values({
               userId: calc[0].employeeId,
               title: "Bônus Rejeitado",
-              message: `Seu bônus de R$ ${(Number(calc[0].bonusAmount) / 100).toFixed(2)} foi rejeitado. Motivo: ${input.reason}`,
+              message: `Seu bônus de R$ ${(Number(calc[0].bonusAmountCents) / 100).toFixed(2)} foi rejeitado. Motivo: ${input.reason}`,
               type: "warning",
               read: false,
             });

@@ -165,7 +165,11 @@ async function sendSurveyEmails(survey: any) {
         </div>
       `;
       
-      await emailService.sendCustomEmail(employee.email, `📊 ${survey.title}`, emailHtml);
+      const emailSent = await emailService.sendCustomEmail(employee.email, `📊 ${survey.title}`, emailHtml);
+      
+      if (!emailSent) {
+        throw new Error("Falha ao enviar email via SMTP");
+      }
 
       // Registrar sucesso
       await db.insert(pulseSurveyEmailLogs).values({
@@ -176,6 +180,13 @@ async function sendSurveyEmails(survey: any) {
         attemptCount: 1,
         lastAttemptAt: new Date(),
         sentAt: new Date(),
+      }).onDuplicateKeyUpdate({
+        set: {
+          status: "sent",
+          attemptCount: sql`${pulseSurveyEmailLogs.attemptCount} + 1`,
+          lastAttemptAt: new Date(),
+          sentAt: new Date(),
+        },
       });
 
       successCount++;
@@ -190,6 +201,13 @@ async function sendSurveyEmails(survey: any) {
         attemptCount: 1,
         lastAttemptAt: new Date(),
         errorMessage: error.message || "Erro desconhecido",
+      }).onDuplicateKeyUpdate({
+        set: {
+          status: "failed",
+          attemptCount: sql`${pulseSurveyEmailLogs.attemptCount} + 1`,
+          lastAttemptAt: new Date(),
+          errorMessage: error.message || "Erro desconhecido",
+        },
       });
 
       failCount++;

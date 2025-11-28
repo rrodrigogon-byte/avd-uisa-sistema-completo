@@ -2959,7 +2959,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             
             const template = ruleUpdatedTemplate({
               approverName: approver[0].name,
-              ruleType: input.ruleType,
+              ruleType: input.ruleType || 'todos',
               approvalContext: input.approvalContext || 'todos',
               departmentName: departmentName || undefined,
               costCenterName: costCenterName || undefined,
