@@ -874,7 +874,7 @@ export const pdiIntelligentRouter = router({
         reviewDate: z.string(),
         reviewerId: z.number(),
         reviewerRole: z.enum(["dgc", "mentor", "sponsor"]),
-        readinessIndex: z.number().min(1).max(5),
+        readinessIndexTimes10: z.number().min(10).max(50), // 1.0 a 5.0 * 10
         keyPoints: z.string(),
         strengths: z.string().optional(),
         improvements: z.string().optional(),
@@ -890,7 +890,7 @@ export const pdiIntelligentRouter = router({
         reviewDate: new Date(input.reviewDate),
         reviewerId: input.reviewerId,
         reviewerRole: input.reviewerRole,
-        readinessIndex: input.readinessIndex.toString(),
+        readinessIndexTimes10: input.readinessIndexTimes10,
         keyPoints: input.keyPoints,
         strengths: input.strengths,
         improvements: input.improvements,
@@ -913,7 +913,7 @@ export const pdiIntelligentRouter = router({
         .select({
           id: pdiGovernanceReviews.id,
           reviewDate: pdiGovernanceReviews.reviewDate,
-          readinessIndex: pdiGovernanceReviews.readinessIndex,
+          readinessIndexTimes10: pdiGovernanceReviews.readinessIndexTimes10,
           keyPoints: pdiGovernanceReviews.keyPoints,
           strengths: pdiGovernanceReviews.strengths,
           improvements: pdiGovernanceReviews.improvements,
@@ -941,7 +941,7 @@ export const pdiIntelligentRouter = router({
       const evolution = await db
         .select({
           reviewDate: pdiGovernanceReviews.reviewDate,
-          readinessIndex: pdiGovernanceReviews.readinessIndex,
+          readinessIndexTimes10: pdiGovernanceReviews.readinessIndexTimes10,
         })
         .from(pdiGovernanceReviews)
         .where(eq(pdiGovernanceReviews.planId, input.planId))

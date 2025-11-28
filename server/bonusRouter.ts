@@ -351,7 +351,7 @@ export const bonusRouter = router({
         employeeId: z.number(),
         cycleId: z.number(),
         workflowId: z.number(),
-        eligibleAmount: z.number(),
+        eligibleAmountCents: z.number(),
         extraBonusPercentage: z.number().min(0).max(100).default(0),
       })
     )
@@ -360,16 +360,16 @@ export const bonusRouter = router({
       if (!db) throw new Error("Database not available");
 
       // Calcular valor final
-      const extraAmount = input.eligibleAmount * (input.extraBonusPercentage / 100);
-      const finalAmount = input.eligibleAmount + extraAmount;
+      const extraAmountCents = Math.round(input.eligibleAmountCents * input.extraBonusPercentage / 100);
+      const finalAmountCents = input.eligibleAmountCents + extraAmountCents;
 
       const result = await db.insert(bonusApprovals).values({
         cycleId: input.cycleId,
         employeeId: input.employeeId,
         workflowId: input.workflowId,
-        eligibleAmount: input.eligibleAmount.toString(),
-        extraBonusPercentage: input.extraBonusPercentage.toString(),
-        finalAmount: finalAmount.toString(),
+        eligibleAmountCents: input.eligibleAmountCents,
+        extraBonusPercentage: input.extraBonusPercentage,
+        finalAmountCents: finalAmountCents,
         currentLevel: 1,
         status: "pending",
       });
@@ -515,9 +515,9 @@ export const bonusRouter = router({
           id: bonusApprovals.id,
           cycleId: bonusApprovals.cycleId,
           employeeId: bonusApprovals.employeeId,
-          eligibleAmount: bonusApprovals.eligibleAmount,
+          eligibleAmountCents: bonusApprovals.eligibleAmountCents,
           extraBonusPercentage: bonusApprovals.extraBonusPercentage,
-          finalAmount: bonusApprovals.finalAmount,
+          finalAmountCents: bonusApprovals.finalAmountCents,
           status: bonusApprovals.status,
           cycleName: evaluationCycles.name,
           employeeName: employees.name,
@@ -568,9 +568,9 @@ export const bonusRouter = router({
         employeeId: data.employeeId,
         positionName: "Cargo",
         departmentName: "Departamento",
-        eligibleAmount: parseFloat(data.eligibleAmount),
-        extraBonusPercentage: parseFloat(data.extraBonusPercentage || "0"),
-        finalAmount: parseFloat(data.finalAmount),
+        eligibleAmountCents: data.eligibleAmountCents,
+        extraBonusPercentage: data.extraBonusPercentage,
+        finalAmountCents: data.finalAmountCents,
         approvalHistory,
         generatedAt: new Date().toLocaleString("pt-BR"),
       });
@@ -639,9 +639,9 @@ export const bonusRouter = router({
         cycleName: evaluationCycles.name,
         employeeId: bonusApprovals.employeeId,
         employeeName: employees.name,
-        eligibleAmount: bonusApprovals.eligibleAmount,
+        eligibleAmountCents: bonusApprovals.eligibleAmountCents,
         extraBonusPercentage: bonusApprovals.extraBonusPercentage,
-        finalAmount: bonusApprovals.finalAmount,
+        finalAmountCents: bonusApprovals.finalAmountCents,
         currentLevel: bonusApprovals.currentLevel,
         status: bonusApprovals.status,
         createdAt: bonusApprovals.createdAt,
@@ -695,8 +695,8 @@ export const bonusRouter = router({
           employeeId: bonusApprovals.employeeId,
           employeeName: employees.name,
           departmentId: employees.departmentId,
-          eligibleAmount: bonusApprovals.eligibleAmount,
-          finalAmount: bonusApprovals.finalAmount,
+          eligibleAmountCents: bonusApprovals.eligibleAmountCents,
+          finalAmountCents: bonusApprovals.finalAmountCents,
           status: bonusApprovals.status,
         })
         .from(bonusApprovals)
@@ -711,8 +711,8 @@ export const bonusRouter = router({
       let rejectedCount = 0;
 
       approvals.forEach((approval) => {
-        totalEligible += parseFloat(approval.eligibleAmount);
-        totalFinal += parseFloat(approval.finalAmount);
+        totalEligible += approval.eligibleAmountCents / 100;
+        totalFinal += approval.finalAmountCents / 100;
 
         if (approval.status === "pending") pendingCount++;
         else if (approval.status === "approved") approvedCount++;

@@ -57,7 +57,7 @@ export default function AcompanharCicloAvaliacao() {
 
     submitEvidenceMutation.mutate({
       cycleId,
-      goalIndex: selectedGoalIndex,
+      goalId: selectedGoalIndex,
       description: evidenceForm.description,
       attachmentUrl: evidenceForm.attachmentUrl || undefined,
       currentValue: evidenceForm.currentValue,
@@ -131,12 +131,12 @@ export default function AcompanharCicloAvaliacao() {
         <CardContent className="space-y-2">
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>Enviado em: {new Date(participation.submittedAt || "").toLocaleDateString("pt-BR")}</span>
+            <span>Enviado em: {new Date(participation.adhesionDate || "").toLocaleDateString("pt-BR")}</span>
           </div>
-          {participation.managerApprovedAt && (
+          {participation.managerApprovalDate && (
             <div className="flex items-center gap-2 text-sm">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>Aprovado em: {new Date(participation.managerApprovedAt).toLocaleDateString("pt-BR")}</span>
+              <span>Aprovado em: {new Date(participation.managerApprovalDate).toLocaleDateString("pt-BR")}</span>
             </div>
           )}
           {participation.managerComments && (
@@ -213,16 +213,16 @@ export default function AcompanharCicloAvaliacao() {
                                 <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                                   <span className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
-                                    {new Date(evidence.submittedAt).toLocaleDateString("pt-BR")}
+                                    {evidence.createdAt ? new Date(evidence.createdAt).toLocaleDateString("pt-BR") : "N/A"}
                                   </span>
                                   <span className="flex items-center gap-1">
                                     <TrendingUp className="h-3 w-3" />
                                     Valor: {evidence.currentValue}
                                   </span>
                                 </div>
-                                {evidence.attachmentUrl && (
+                                {(evidence.linkUrl || evidence.fileUrl) && (
                                   <a
-                                    href={evidence.attachmentUrl}
+                                    href={evidence.linkUrl || evidence.fileUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"

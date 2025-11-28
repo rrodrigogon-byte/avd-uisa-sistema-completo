@@ -74,7 +74,7 @@ export const smartGoalDueDateReminderJob = cron.schedule('0 9 * * *', async () =
           employeeName: goal.employees.name,
           goalTitle: goal.smartGoals.title,
           dueDate: goal.smartGoals.endDate.toLocaleDateString('pt-BR'),
-          progress: parseFloat(goal.smartGoals.currentValue || "0") || 0,
+          progress: (goal.smartGoals.currentValueCents || 0) / 100, // Converter centavos para reais
         });
       }
     }
@@ -118,7 +118,7 @@ export const smartGoalNoProgressAlertJob = cron.schedule('0 10 * * *', async () 
           employeeName: goal.employees.name,
           goalTitle: goal.smartGoals.title,
           dueDate: goal.smartGoals.endDate.toLocaleDateString('pt-BR'),
-          progress: parseFloat(goal.smartGoals.currentValue || "0") || 0,
+          progress: (goal.smartGoals.currentValueCents || 0) / 100, // Converter centavos para reais
         });
       }
     }

@@ -2710,10 +2710,10 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // ============================================================================
 
   // Router de Gestão de Funcionários (Item 1)
-  employees: employeesRouter,
+  // employees: employeesRouter, // REMOVIDO - já existe inline acima
 
   // Router de Avaliações de Desempenho (Item 2)
-  evaluations: evaluationsRouter,
+  // evaluations: evaluationsRouter, // REMOVIDO - já existe inline acima
 
   // Router de Relatórios de Desempenho (Item 3)
   performanceReports: performanceReportsRouter,
@@ -2961,9 +2961,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
               approverName: approver[0].name,
               ruleType: input.ruleType,
               approvalContext: input.approvalContext || 'todos',
-              departmentName,
-              costCenterName,
-              employeeName,
+              departmentName: departmentName || undefined,
+              costCenterName: costCenterName || undefined,
+              employeeName: employeeName || undefined,
               approverLevel: input.approverLevel || 1,
               createdByName: currentEmployee[0].name,
             });
@@ -3368,7 +3368,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         name: z.string(),
         description: z.string().optional(),
         departmentId: z.number().optional(),
-        budget: z.number().optional(),
+        budgetCents: z.number().optional(), // Orçamento em centavos
       }))
       .mutation(async ({ input }) => {
         const database = await getDb();
@@ -3379,7 +3379,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           name: input.name,
           description: input.description,
           departmentId: input.departmentId,
-          budget: input.budget?.toString(),
+          budgetCents: input.budgetCents,
           active: true,
         });
 
@@ -3394,7 +3394,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         name: z.string().optional(),
         description: z.string().optional(),
         departmentId: z.number().optional(),
-        budget: z.number().optional(),
+        budgetCents: z.number().optional(), // Orçamento em centavos
         active: z.boolean().optional(),
       }))
       .mutation(async ({ input }) => {
@@ -3406,7 +3406,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         if (input.name !== undefined) updateData.name = input.name;
         if (input.description !== undefined) updateData.description = input.description;
         if (input.departmentId !== undefined) updateData.departmentId = input.departmentId;
-        if (input.budget !== undefined) updateData.budget = input.budget.toString();
+        if (input.budgetCents !== undefined) updateData.budgetCents = input.budgetCents;
         if (input.active !== undefined) updateData.active = input.active;
 
         await database.update(costCenters)

@@ -565,7 +565,7 @@ export const performanceEvaluationCycleRouter = router({
       goalId: z.number(),
       description: z.string(),
       attachmentUrl: z.string().optional(),
-      currentValue: z.string().optional(),
+      currentValueCents: z.number().optional(), // Valor em centavos
     }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
@@ -595,7 +595,7 @@ export const performanceEvaluationCycleRouter = router({
         description: input.description,
         evidenceType: input.attachmentUrl ? "link" : "texto",
         linkUrl: input.attachmentUrl,
-        currentValue: input.currentValue,
+        currentValueCents: input.currentValueCents,
         uploadedBy: ctx.user.id,
       });
 
@@ -611,7 +611,7 @@ export const performanceEvaluationCycleRouter = router({
       individualGoals: z.array(z.object({
         title: z.string(),
         description: z.string().optional(),
-        targetValue: z.string(),
+        targetValueCents: z.number(), // Valor em centavos
         weight: z.number(),
       })),
     }))

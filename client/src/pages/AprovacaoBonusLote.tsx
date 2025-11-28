@@ -311,8 +311,8 @@ export default function AprovacaoBonusLote() {
                 <TableHead className="w-12">
                   <Checkbox
                     checked={
-                      filteredCalculations?.length > 0 &&
-                      selectedIds.length === filteredCalculations?.length
+                      (filteredCalculations?.length ?? 0) > 0 &&
+                      selectedIds.length === (filteredCalculations?.length ?? 0)
                     }
                     onCheckedChange={handleToggleAll}
                   />

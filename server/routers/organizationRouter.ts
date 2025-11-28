@@ -217,7 +217,7 @@ export const organizationRouter = router({
         code: z.string().min(1, "Código é obrigatório"),
         description: z.string().optional(),
         departmentId: z.number().optional(),
-        budget: z.number().optional(),
+        budgetCents: z.number().optional(), // Orçamento em centavos
         active: z.boolean().default(true),
       }))
       .mutation(async ({ input }) => {
@@ -229,7 +229,7 @@ export const organizationRouter = router({
           code: input.code,
           description: input.description || null,
           departmentId: input.departmentId || null,
-          budget: input.budget ? input.budget.toString() : null,
+          budgetCents: input.budgetCents || null,
           active: input.active,
         });
 
@@ -246,7 +246,7 @@ export const organizationRouter = router({
         code: z.string().min(1, "Código é obrigatório"),
         description: z.string().optional(),
         departmentId: z.number().optional(),
-        budget: z.number().optional(),
+        budgetCents: z.number().optional(), // Orçamento em centavos
         active: z.boolean(),
       }))
       .mutation(async ({ input }) => {
@@ -260,7 +260,7 @@ export const organizationRouter = router({
             code: input.code,
             description: input.description || null,
             departmentId: input.departmentId || null,
-            budget: input.budget ? input.budget.toString() : null,
+            budgetCents: input.budgetCents || null,
             active: input.active,
             updatedAt: new Date(),
           })

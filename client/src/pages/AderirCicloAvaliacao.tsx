@@ -59,7 +59,12 @@ export default function AderirCicloAvaliacao() {
 
     joinCycleMutation.mutate({
       cycleId,
-      individualGoals: JSON.stringify(individualGoals),
+      individualGoals: individualGoals.map(g => ({
+        title: g.title,
+        description: g.description || "",
+        targetValue: g.targetValue,
+        weight: 1 // peso padrão
+      })),
     });
   };
 

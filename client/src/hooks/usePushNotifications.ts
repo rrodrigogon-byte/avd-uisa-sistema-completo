@@ -181,12 +181,15 @@ export function usePushNotifications() {
     }
 
     try {
-      const result = await testNotificationMutation.mutateAsync();
+      const result = await testNotificationMutation.mutateAsync({
+        title: "Notificação de Teste",
+        message: "Esta é uma notificação de teste do sistema AVD UISA"
+      });
 
       if (result.success) {
-        toast.success(result.message || `${result.successCount} notificações enviadas`);
+        toast.success(`${result.count} notificação(ões) enviada(s) com sucesso`);
       } else {
-        toast.error(result.message || "Erro ao enviar notificação");
+        toast.error("Erro ao enviar notificação");
       }
     } catch (error: any) {
       console.error("Erro ao enviar notificação de teste:", error);

@@ -3,7 +3,6 @@ import {
   boolean,
   date,
   datetime,
-  decimal,
   int,
   json,
   mysqlEnum,
@@ -77,9 +76,9 @@ export const bonusPolicies = mysqlTable("bonusPolicies", {
   departmentId: int("departmentId"), // Departamento específico ou null
   
   // Multiplicadores
-  salaryMultiplier: decimal("salaryMultiplier", { precision: 5, scale: 2 }).notNull(), // Ex: 1.5 = 150% do salário
-  minMultiplier: decimal("minMultiplier", { precision: 5, scale: 2 }).default("0.5"), // Mínimo
-  maxMultiplier: decimal("maxMultiplier", { precision: 5, scale: 2 }).default("2.0"), // Máximo
+  salaryMultiplierPercent: int("salaryMultiplierPercent").notNull(), // Ex: 150 = 150% do salário
+  minMultiplierPercent: int("minMultiplierPercent").default(50), // Mínimo 50%
+  maxMultiplierPercent: int("maxMultiplierPercent").default(200), // Máximo 200%
   
   // Critérios de Elegibilidade
   minPerformanceRating: mysqlEnum("minPerformanceRating", ["abaixo_expectativas", "atende_expectativas", "supera_expectativas", "excepcional"]).default("atende_expectativas"),
@@ -113,9 +112,9 @@ export const bonusCalculations = mysqlTable("bonusCalculations", {
   employeeId: int("employeeId").notNull(),
   
   // Valores Calculados
-  baseSalary: decimal("baseSalary", { precision: 10, scale: 2 }).notNull(),
-  appliedMultiplier: decimal("appliedMultiplier", { precision: 5, scale: 2 }).notNull(),
-  bonusAmount: decimal("bonusAmount", { precision: 10, scale: 2 }).notNull(),
+  baseSalaryCents: int("baseSalaryCents").notNull(), // Salário base em centavos
+  appliedMultiplierPercent: int("appliedMultiplierPercent").notNull(), // Multiplicador em %
+  bonusAmountCents: int("bonusAmountCents").notNull(), // Valor do bônus em centavos
   
   // Justificativa
   performanceScore: int("performanceScore"), // 0-100
@@ -207,7 +206,7 @@ export const costCenters = mysqlTable("costCenters", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   departmentId: int("departmentId"), // Departamento vinculado
-  budget: decimal("budget", { precision: 15, scale: 2 }), // Orçamento
+  budgetCents: int("budgetCents"), // Orçamento em centavos
   active: boolean("active").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -1282,8 +1281,8 @@ export const smartGoals = mysqlTable("smartGoals", {
   
   // Métricas
   measurementUnit: varchar("measurementUnit", { length: 50 }), // Ex: "R$", "%", "unidades"
-  targetValue: decimal("targetValue", { precision: 10, scale: 2 }), // Valor alvo
-  currentValue: decimal("currentValue", { precision: 10, scale: 2 }).default("0"), // Valor atual
+  targetValueCents: int("targetValueCents"), // Valor alvo em centavos
+  currentValueCents: int("currentValueCents").default(0), // Valor atual em centavos
   weight: int("weight").default(10).notNull(), // Peso da meta (para cálculo de bônus)
   
   // Datas
@@ -1292,8 +1291,8 @@ export const smartGoals = mysqlTable("smartGoals", {
   
   // Bônus financeiro
   bonusEligible: boolean("bonusEligible").default(false).notNull(), // Elegível para bônus?
-  bonusPercentage: decimal("bonusPercentage", { precision: 5, scale: 2 }), // % de bônus se atingir
-  bonusAmount: decimal("bonusAmount", { precision: 10, scale: 2 }), // Valor fixo de bônus
+  bonusPercentage: int("bonusPercentage"), // % de bônus se atingir (0-100)
+  bonusAmountCents: int("bonusAmountCents"), // Valor fixo de bônus em centavos
   
   // Status e aprovação
   status: mysqlEnum("status", ["draft", "pending_approval", "approved", "rejected", "in_progress", "completed", "cancelled"]).default("draft").notNull(),
@@ -1418,8 +1417,8 @@ export const bonusConfigs = mysqlTable("bonusConfigs", {
   positionName: varchar("positionName", { length: 255 }).notNull(),
   
   // Configuração de bônus
-  baseSalaryMultiplier: decimal("baseSalaryMultiplier", { precision: 5, scale: 2 }).default("0").notNull(), // Ex: 1.5 = 1.5 salários
-  extraBonusPercentage: decimal("extraBonusPercentage", { precision: 5, scale: 2 }).default("0").notNull(), // % adicional
+  baseSalaryMultiplierPercent: int("baseSalaryMultiplierPercent").default(0).notNull(), // Ex: 150 = 1.5 salários
+  extraBonusPercentage: int("extraBonusPercentage").default(0).notNull(), // % adicional (0-100)
   
   // Metadados
   isActive: boolean("isActive").default(true).notNull(),
@@ -1469,9 +1468,9 @@ export const bonusApprovals = mysqlTable("bonusApprovals", {
   workflowId: int("workflowId").notNull(),
   
   // Valores de bônus
-  eligibleAmount: decimal("eligibleAmount", { precision: 10, scale: 2 }).notNull(), // Valor elegível baseado em metas
-  extraBonusPercentage: decimal("extraBonusPercentage", { precision: 5, scale: 2 }).default("0"), // Bônus extra do RH
-  finalAmount: decimal("finalAmount", { precision: 10, scale: 2 }).notNull(), // Valor final aprovado
+  eligibleAmountCents: int("eligibleAmountCents").notNull(), // Valor elegível em centavos
+  extraBonusPercentage: int("extraBonusPercentage").default(0), // Bônus extra do RH (0-100)
+  finalAmountCents: int("finalAmountCents").notNull(), // Valor final aprovado em centavos
   
   // Status do workflow
   currentLevel: int("currentLevel").default(1).notNull(), // Nível atual de aprovação (1-5)
@@ -1880,7 +1879,7 @@ export const pdiGovernanceReviews = mysqlTable("pdiGovernanceReviews", {
   reviewerRole: mysqlEnum("reviewerRole", ["dgc", "mentor", "sponsor"]).notNull(),
   
   // Índice de Prontidão para Sucessão (IPS)
-  readinessIndex: decimal("readinessIndex", { precision: 3, scale: 1 }).notNull(), // 1.0 a 5.0
+  readinessIndexTimes10: int("readinessIndexTimes10").notNull(), // 10 a 50 (1.0 a 5.0 * 10)
   
   // Feedback
   keyPoints: text("keyPoints").notNull(), // Pontos-chave da reunião

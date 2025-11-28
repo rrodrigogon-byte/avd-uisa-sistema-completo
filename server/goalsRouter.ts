@@ -30,7 +30,7 @@ export const goalsRouter = router({
         title: z.string(),
         description: z.string(),
         measurementUnit: z.string().optional(),
-        targetValue: z.number().optional(),
+        targetValueCents: z.number().optional(), // Valor em centavos
         startDate: z.string(),
         endDate: z.string(),
       })
@@ -63,7 +63,7 @@ export const goalsRouter = router({
       }
 
       // M - Mensurável: tem unidade de medida e valor alvo
-      if (input.measurementUnit && input.targetValue !== undefined) {
+      if (input.measurementUnit && input.targetValueCents !== undefined) {
         validation.isMeasurable = true;
         validation.score += 20;
       } else {
@@ -73,7 +73,7 @@ export const goalsRouter = router({
       }
 
       // A - Atingível: valor alvo razoável (heurística simples)
-      if (input.targetValue && input.targetValue > 0 && input.targetValue < 1000000) {
+      if (input.targetValueCents && input.targetValueCents > 0 && input.targetValueCents < 100000000) {
         validation.isAchievable = true;
         validation.score += 20;
       } else {
@@ -121,13 +121,13 @@ export const goalsRouter = router({
         goalType: z.enum(["individual", "corporate"]).default("individual"), // Nova: corporativa ou individual
         category: z.enum(["financial", "behavioral", "corporate", "development"]),
         measurementUnit: z.string().optional(),
-        targetValue: z.number().optional(),
+        targetValueCents: z.number().optional(), // Valor em centavos
         weight: z.number().min(1).max(100).default(10),
         startDate: z.string(),
         endDate: z.string(),
         bonusEligible: z.boolean().default(false),
         bonusPercentage: z.number().optional(),
-        bonusAmount: z.number().optional(),
+        bonusAmountCents: z.number().optional(), // Valor em centavos
         pdiPlanId: z.number().optional(),
         cycleId: z.number(),
         targetEmployeeId: z.number().optional(), // Permitir vincular a outro profissional
@@ -204,8 +204,8 @@ export const goalsRouter = router({
       // Validar critérios SMART automaticamente
       const validation = {
         isSpecific: input.title.length >= 10 && input.description.length >= 10 && /\b(aumentar|reduzir|melhorar|implementar|criar|desenvolver)\b/i.test(input.description),
-        isMeasurable: !!(input.measurementUnit && input.targetValue !== undefined),
-        isAchievable: !!(input.targetValue && input.targetValue > 0 && input.targetValue < 1000000),
+        isMeasurable: !!(input.measurementUnit && input.targetValueCents !== undefined),
+        isAchievable: !!(input.targetValueCents && input.targetValueCents > 0 && input.targetValueCents < 100000000),
         isRelevant: /\b(impacto|resultado|benefício|objetivo|estratégia|crescimento|melhoria)\b/i.test(input.description),
         isTimeBound: (() => {
           const start = new Date(input.startDate);
@@ -229,13 +229,13 @@ export const goalsRouter = router({
         goalType: input.goalType,
         category: input.category,
         measurementUnit: input.measurementUnit,
-        targetValue: input.targetValue?.toString(),
+        targetValueCents: input.targetValueCents,
         weight: input.weight,
         startDate: new Date(input.startDate),
         endDate: new Date(input.endDate),
         bonusEligible: input.bonusEligible,
-        bonusPercentage: input.bonusPercentage?.toString(),
-        bonusAmount: input.bonusAmount?.toString(),
+        bonusPercentage: input.bonusPercentage,
+        bonusAmountCents: input.bonusAmountCents,
         isSpecific: validation.isSpecific,
         isMeasurable: validation.isMeasurable,
         isAchievable: validation.isAchievable,
@@ -480,7 +480,7 @@ export const goalsRouter = router({
     .input(
       z.object({
         goalId: z.number(),
-        currentValue: z.number().optional(),
+        currentValueCents: z.number().optional(), // Valor em centavos
         progress: z.number().min(0).max(100),
         comment: z.string().optional(),
       })
@@ -522,9 +522,9 @@ export const goalsRouter = router({
         completedAt: input.progress === 100 ? new Date() : undefined,
       };
       
-      // Adicionar currentValue apenas se fornecido
-      if (input.currentValue !== undefined) {
-        updateData.currentValue = input.currentValue.toString();
+      // Adicionar currentValueCents apenas se fornecido
+      if (input.currentValueCents !== undefined) {
+        updateData.currentValueCents = input.currentValueCents;
       }
 
       await db
@@ -812,9 +812,9 @@ export const goalsRouter = router({
         const progress = goal.progress || 0;
         let bonus = 0;
 
-        if (goal.bonusAmount) {
-          // Bônus fixo proporcional ao progresso
-          bonus = (parseFloat(goal.bonusAmount) * progress) / 100;
+        if (goal.bonusAmountCents) {
+          // Bônus fixo proporcional ao progresso (em centavos)
+          bonus = (goal.bonusAmountCents / 100 * progress) / 100;
         } else if (goal.bonusPercentage) {
           // Bônus percentual (precisa do salário base)
           // TODO: Buscar salário do colaborador
@@ -930,8 +930,8 @@ export const goalsRouter = router({
       // Calcular bônus potencial
       const bonusGoals = goals.filter((g) => g.bonusEligible);
       const potentialBonus = bonusGoals.reduce((sum, goal) => {
-        if (goal.bonusAmount) {
-          return sum + parseFloat(goal.bonusAmount);
+        if (goal.bonusAmountCents) {
+          return sum + (goal.bonusAmountCents / 100);
         }
         return sum;
       }, 0);
@@ -972,13 +972,13 @@ export const goalsRouter = router({
         type: z.enum(["individual", "team", "organizational"]).optional(),
         category: z.enum(["financial", "behavioral", "corporate", "development"]).optional(),
         measurementUnit: z.string().optional(),
-        targetValue: z.number().optional(),
+        targetValueCents: z.number().optional(), // Valor em centavos
         weight: z.number().optional(),
         startDate: z.string().optional(),
         endDate: z.string().optional(),
         bonusEligible: z.boolean().optional(),
         bonusPercentage: z.number().optional(),
-        bonusAmount: z.number().optional(),
+        bonusAmountCents: z.number().optional(), // Valor em centavos
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -1012,13 +1012,13 @@ export const goalsRouter = router({
       if (input.type !== undefined) updateData.type = input.type;
       if (input.category !== undefined) updateData.category = input.category;
       if (input.measurementUnit !== undefined) updateData.measurementUnit = input.measurementUnit;
-      if (input.targetValue !== undefined) updateData.targetValue = input.targetValue.toString();
+      if (input.targetValueCents !== undefined) updateData.targetValueCents = input.targetValueCents;
       if (input.weight !== undefined) updateData.weight = input.weight;
       if (input.startDate !== undefined) updateData.startDate = new Date(input.startDate);
       if (input.endDate !== undefined) updateData.endDate = new Date(input.endDate);
       if (input.bonusEligible !== undefined) updateData.bonusEligible = input.bonusEligible;
-      if (input.bonusPercentage !== undefined) updateData.bonusPercentage = input.bonusPercentage.toString();
-      if (input.bonusAmount !== undefined) updateData.bonusAmount = input.bonusAmount.toString();
+      if (input.bonusPercentage !== undefined) updateData.bonusPercentage = input.bonusPercentage;
+      if (input.bonusAmountCents !== undefined) updateData.bonusAmountCents = input.bonusAmountCents;
 
       await db
         .update(smartGoals)
@@ -1211,7 +1211,7 @@ export const goalsRouter = router({
       const bonusDetails = [];
 
       for (const goal of goals) {
-        const bonusAmount = goal.bonusAmount ? parseFloat(goal.bonusAmount) : 0;
+        const bonusAmount = goal.bonusAmountCents ? (goal.bonusAmountCents / 100) : 0;
         const bonusPercentage = goal.bonusPercentage
           ? parseFloat(goal.bonusPercentage)
           : 0;
@@ -1260,7 +1260,7 @@ export const goalsRouter = router({
           employeeId: smartGoals.employeeId,
           employeeName: employees.name,
           departmentId: employees.departmentId,
-          bonusAmount: smartGoals.bonusAmount,
+          bonusAmountCents: smartGoals.bonusAmountCents,
           bonusPercentage: smartGoals.bonusPercentage,
           progress: smartGoals.progress,
           weight: smartGoals.weight,
@@ -1294,7 +1294,7 @@ export const goalsRouter = router({
         }
 
         const empData = bonusByEmployee.get(empId);
-        const bonusAmount = goal.bonusAmount ? parseFloat(goal.bonusAmount) : 0;
+        const bonusAmount = goal.bonusAmountCents ? (goal.bonusAmountCents / 100) : 0;
         const bonusPercentage = goal.bonusPercentage
           ? parseFloat(goal.bonusPercentage)
           : 0;

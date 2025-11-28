@@ -53,7 +53,7 @@ export const payrollRouter = router({
           .where(inArray(bonusCalculations.id, input.bonusIds));
 
         // Calcular total
-        const totalAmount = bonuses.reduce((sum, b) => sum + Number(b.bonusAmount), 0);
+        const totalAmount = bonuses.reduce((sum, b) => sum + (b.bonusAmountCents / 100), 0);
 
         return {
           success: true,

@@ -1021,3 +1021,63 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Corrigir getEvidences para buscar por participantId
 - [x] Corrigir hook useEmployeeSearch (search/setSearch)
 - [x] Corrigir tipos em ParticipantsManager.tsx e CyclePreview.tsx
+
+
+---
+
+## 🐛 ERROS TYPESCRIPT CRÍTICOS IDENTIFICADOS (26/11/2025 22:24)
+
+### Erros de Schema e Banco de Dados
+
+- [ ] Adicionar propriedade `submittedAt` na tabela `cycleParticipants`
+- [ ] Padronizar nome de campo: `managerApprovalDate` vs `managerApprovedAt` em `cycleParticipants`
+- [ ] Adicionar propriedade `attachmentUrl` na tabela `goalEvidences`
+
+### Erros de Tipo no Backend (server/routers.ts)
+
+- [ ] Corrigir erro de inferência de tipo em `eq(employees.id)` - problema com Drizzle ORM
+- [x] Corrigir tipo `string | undefined` na linha 2962 do routers.ts
+- [x] Remover routers duplicados (employees, evaluations)
+
+### Erros em Componentes Frontend
+
+- [x] Corrigir variável não declarada `searchTerm` em `ParticipantsManager.tsx:152`
+- [x] Corrigir `setSearchTerm` não encontrado em `ParticipantsManager.tsx:153` (deve ser `setSearch`)
+- [x] Corrigir propriedade `goalIndex` em `AcompanharCicloAvaliacao.tsx:60` (deve ser `goalId`)
+- [x] Corrigir acesso a `submittedAt` em `AcompanharCicloAvaliacao.tsx:134`
+- [x] Corrigir acesso a `managerApprovedAt` em `AcompanharCicloAvaliacao.tsx:136,139`
+- [x] Corrigir tipo Date | null em `AcompanharCicloAvaliacao.tsx:216`
+- [x] Corrigir acesso a `attachmentUrl` em `AcompanharCicloAvaliacao.tsx:223,225`
+- [x] Corrigir objeto literal com `cycleId` extra em `AderirCicloAvaliacao.tsx:21`
+- [x] Corrigir tipo string vs array em `AderirCicloAvaliacao.tsx:62`
+- [x] Corrigir tipo array vs string em `AderirCicloAvaliacao.tsx:118`
+- [x] Corrigir objeto literal com `id` extra em `AprovacaoBonus.tsx:74`
+- [x] Adicionar verificação de undefined em `AprovacaoBonusLote.tsx:314`
+
+### Erros em Hooks
+
+- [x] Corrigir chamada de função sem argumentos em `usePushNotifications.ts:184`
+- [x] Corrigir acesso a propriedade `message` em `usePushNotifications.ts:187,189`
+- [x] Corrigir acesso a propriedade `successCount` em `usePushNotifications.ts:187`
+
+### Erro de Tipo em Análise de Sucessão
+
+- [ ] Corrigir tipo `never[]` para propriedade `existing` em análise de sucessão
+
+## 🔧 Correções TypeScript - Schema Decimal para Int (26/11/2025)
+
+- [x] Converter todos os campos `decimal` para `int` no schema (centavos/percentuais)
+- [x] Atualizar bonusRouter para usar `*Cents` e `*Percent`
+- [x] Atualizar goalsRouter para usar `targetValueCents`, `currentValueCents`, `bonusAmountCents`
+- [x] Atualizar pdiIntelligentRouter para usar `readinessIndexTimes10`
+- [x] Atualizar routers.ts para usar `budgetCents` em costCenters
+- [x] Atualizar organizationRouter para usar `budgetCents`
+- [x] Atualizar payrollRouter para usar `bonusAmountCents`
+- [x] Atualizar goalsCascadeRouter para usar `targetValueCents` e `currentValueCents`
+- [x] Atualizar performanceEvaluationCycleRouter para usar `*Cents`
+- [x] Atualizar cron.ts para usar `currentValueCents`
+- [x] Corrigir ParticipantsManager para acessar `employee.id` e `employee.name`
+- [ ] Executar migração do banco de dados (pendente confirmações interativas)
+- [ ] Corrigir erros TypeScript restantes (aproximadamente 370 erros)
+- [ ] Atualizar testes unitários para usar novos campos
+- [ ] Atualizar componentes frontend para exibir valores em reais (dividir por 100)

@@ -66,9 +66,9 @@ export const bonusRouter = router({
         departmentId: z.number().optional(),
         name: z.string(),
         description: z.string().optional(),
-        salaryMultiplier: z.number().min(0).max(10),
-        minMultiplier: z.number().min(0).max(10).optional(),
-        maxMultiplier: z.number().min(0).max(10).optional(),
+        salaryMultiplierPercent: z.number().min(0).max(1000), // 0-1000%
+        minMultiplierPercent: z.number().min(0).max(1000).optional(),
+        maxMultiplierPercent: z.number().min(0).max(1000).optional(),
         minTenureMonths: z.number().min(0).default(6),
         minGoalCompletionRate: z.number().min(0).max(100).default(70),
         requiresGoalCompletion: z.boolean().default(true),
@@ -83,9 +83,6 @@ export const bonusRouter = router({
 
       const result = await db.insert(bonusPolicies).values({
         ...input,
-        salaryMultiplier: input.salaryMultiplier.toString(),
-        minMultiplier: input.minMultiplier?.toString(),
-        maxMultiplier: input.maxMultiplier?.toString(),
         createdBy: ctx.user.id,
       });
 
@@ -103,9 +100,9 @@ export const bonusRouter = router({
         departmentId: z.number().optional(),
         name: z.string().optional(),
         description: z.string().optional(),
-        salaryMultiplier: z.number().min(0).max(10).optional(),
-        minMultiplier: z.number().min(0).max(10).optional(),
-        maxMultiplier: z.number().min(0).max(10).optional(),
+        salaryMultiplierPercent: z.number().min(0).max(1000).optional(),
+        minMultiplierPercent: z.number().min(0).max(1000).optional(),
+        maxMultiplierPercent: z.number().min(0).max(1000).optional(),
         minTenureMonths: z.number().min(0).optional(),
         minGoalCompletionRate: z.number().min(0).max(100).optional(),
         requiresGoalCompletion: z.boolean().optional(),
@@ -118,15 +115,12 @@ export const bonusRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
-      const { id, salaryMultiplier, minMultiplier, maxMultiplier, ...updateData } = input;
+      const { id, ...updateData } = input;
 
       await db
         .update(bonusPolicies)
         .set({
           ...updateData,
-          ...(salaryMultiplier && { salaryMultiplier: salaryMultiplier.toString() }),
-          ...(minMultiplier && { minMultiplier: minMultiplier.toString() }),
-          ...(maxMultiplier && { maxMultiplier: maxMultiplier.toString() }),
         })
         .where(eq(bonusPolicies.id, id));
 
@@ -222,7 +216,7 @@ export const bonusRouter = router({
 
       // Calcular valor do bônus
       const bonusAmount = isEligible && meetsGoalRequirement
-        ? salary * Number(policy[0].salaryMultiplier)
+        ? Math.round(salary * policy[0].salaryMultiplierPercent / 100)
         : 0;
 
       // Salvar cálculo
@@ -233,9 +227,9 @@ export const bonusRouter = router({
       const calculationResult = await db.insert(bonusCalculations).values({
         employeeId: input.employeeId,
         policyId: input.policyId,
-        baseSalary: salary.toString(),
-        appliedMultiplier: policy[0].salaryMultiplier.toString(),
-        bonusAmount: bonusAmount.toString(),
+        baseSalaryCents: Math.round(salary * 100),
+        appliedMultiplierPercent: policy[0].salaryMultiplierPercent,
+        bonusAmountCents: Math.round(bonusAmount * 100),
         goalCompletionRate: Math.round(goalCompletionRate),
         performanceScore: 0, // TODO: integrar com avaliações
         status: "calculado",

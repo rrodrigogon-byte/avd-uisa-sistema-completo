@@ -62,7 +62,7 @@ export default function ParticipantsManager({
   const availableEmployees = useMemo(() => {
     if (!employees) return [];
     const participantIds = new Set(data.participants.map(p => p.employeeId));
-    return employees.filter((emp: { id: number }) => !participantIds.has(emp.id));
+    return employees.filter(emp => !participantIds.has(emp.employee.id));
   }, [employees, data.participants]);
 
   const handleAddParticipant = () => {
@@ -71,12 +71,12 @@ export default function ParticipantsManager({
       return;
     }
 
-    const employeeData = employees?.find((e: { id: number }) => e.id === parseInt(selectedEmployeeId));
+    const employeeData = employees?.find(e => e.employee.id === parseInt(selectedEmployeeId));
     if (!employeeData) return;
 
     const newParticipant: Participant = {
-      employeeId: employeeData.id,
-      name: employeeData.name,
+      employeeId: employeeData.employee.id,
+      name: employeeData.employee.name,
       role: selectedRole
     };
 
@@ -85,7 +85,7 @@ export default function ParticipantsManager({
     });
 
     setSelectedEmployeeId("");
-    toast.success(`${employeeData.name} adicionado como ${roleLabels[selectedRole]}`);
+    toast.success(`${employeeData.employee.name} adicionado como ${roleLabels[selectedRole]}`);
   };
 
   const handleRemoveParticipant = (employeeId: number) => {
@@ -105,8 +105,7 @@ export default function ParticipantsManager({
 
     const hasSelf = data.participants.some(p => p.role === 'self');
     if (!hasSelf) {
-      toast.error("É necessário incluir pelo menos um participante com autoavaliação");
-      return;
+      toast.warning("É recomendado incluir pelo menos um participante com autoavaliação");
     }
 
     onSubmit();
@@ -149,8 +148,8 @@ export default function ParticipantsManager({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar colaboradores..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
             />
           </div>
@@ -163,9 +162,9 @@ export default function ParticipantsManager({
                   <SelectValue placeholder="Selecione um colaborador" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableEmployees.map((emp: { id: number; name: string; positionTitle?: string | null }) => (
-                    <SelectItem key={emp.id} value={emp.id.toString()}>
-                      {emp.name} {emp.positionTitle && `- ${emp.positionTitle}`}
+                  {availableEmployees.map((emp) => (
+                    <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
+                      {emp.employee.name} {emp.position?.title && `- ${emp.position.title}`}
                     </SelectItem>
                   ))}
                 </SelectContent>
