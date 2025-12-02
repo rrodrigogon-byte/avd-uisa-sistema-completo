@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { toast } from "sonner";
 import { Pencil, Save, X } from "lucide-react";
 
@@ -21,7 +22,7 @@ export default function PactSection({ pdiId, details }: PactSectionProps) {
   });
 
   const utils = trpc.useUtils();
-  const { data: employees } = trpc.employees.list.useQuery();
+  const { employees } = useEmployeeSearch("");
   
   const updatePactMutation = trpc.pdiIntelligent.updatePact.useMutation({
     onSuccess: () => {

@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { ArrowLeft, ArrowRight, CheckCircle2, Lightbulb, Loader2, Sparkles, Target } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,8 +23,8 @@ export default function PDIWizard({ onComplete, onCancel }: PDIWizardProps) {
   const [selectedActions, setSelectedActions] = useState<any[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Extract positions from employees data
-  const { data: employeesData } = trpc.employees.list.useQuery();
+  // Use employee search hook for better performance
+  const { employees: employeesData } = useEmployeeSearch("");
   const positions = employeesData?.reduce((acc: any[], emp) => {
     if (emp.position && !acc.find(p => p.id === emp.position!.id)) {
       acc.push(emp.position);

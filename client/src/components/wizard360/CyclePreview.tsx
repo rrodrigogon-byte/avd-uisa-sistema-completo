@@ -11,6 +11,7 @@ import { WeightsData } from "./WeightsConfiguration";
 import { CompetenciesData } from "./CompetenciesSelector";
 import { ParticipantsData } from "./ParticipantsManager";
 import { trpc } from "@/lib/trpc";
+import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 
 interface CyclePreviewProps {
   cycleData: CycleData;
@@ -34,7 +35,7 @@ export default function CyclePreview({
   isSubmitting
 }: CyclePreviewProps) {
   const { data: competencies } = trpc.competencies.list.useQuery();
-  const { data: employees } = trpc.employees.list.useQuery();
+  const { employees } = useEmployeeSearch("");
 
   const selectedCompetenciesDetails = competencies?.filter(c => 
     competenciesData.selectedCompetencies.includes(c.id)

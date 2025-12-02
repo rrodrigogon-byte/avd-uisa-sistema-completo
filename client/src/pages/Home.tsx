@@ -9,9 +9,20 @@ import { Link } from "wouter";
 
 export default function Home() {
   const { data: employee } = trpc.employees.getCurrent.useQuery();
-  const { data: stats } = trpc.dashboard.getStats.useQuery({});
-  const { data: goals } = trpc.goals.list.useQuery({});
-  const { data: pdis } = trpc.pdi.list.useQuery({});
+  const { data: stats } = trpc.dashboard.getStats.useQuery({}, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const { data: goals, error: goalsError } = trpc.goals.list.useQuery({}, {
+    enabled: !!employee,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const { data: pdis, error: pdisError } = trpc.pdi.list.useQuery({}, {
+    enabled: !!employee,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   const activeGoals = goals?.filter(g => g.status === "em_andamento") || [];
   const activePDIs = pdis?.filter(p => p.status === "em_andamento" || p.status === "aprovado") || [];
