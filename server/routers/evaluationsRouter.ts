@@ -337,6 +337,143 @@ export const evaluationsRouter = router({
     }),
 
   /**
+   * Obter dados consolidados para relatório 360°
+   */
+  get360Consolidated: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number(),
+        employeeId: z.number().optional(),
+        departmentId: z.number().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Import dinâmico das tabelas
+      const { evaluationInstances, evaluationCriteriaResponses, evaluationCriteria, employees } = await import("../../drizzle/schema");
+      const { and, eq, sql, inArray } = await import("drizzle-orm");
+
+      // Construir filtros
+      const filters = [eq(evaluationInstances.cycleId, input.cycleId)];
+      
+      if (input.employeeId) {
+        filters.push(eq(evaluationInstances.employeeId, input.employeeId));
+      }
+      
+      if (input.departmentId) {
+        // Buscar funcionários do departamento
+        const deptEmployees = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.departmentId, input.departmentId));
+        
+        const employeeIds = deptEmployees.map(e => e.id);
+        if (employeeIds.length > 0) {
+          filters.push(inArray(evaluationInstances.employeeId, employeeIds));
+        }
+      }
+
+      // Buscar avaliações do ciclo
+      const instances = await db
+        .select()
+        .from(evaluationInstances)
+        .where(and(...filters));
+
+      if (instances.length === 0) {
+        return {
+          competencies: [],
+          averages: { self: 0, manager: 0, peers: 0 },
+        };
+      }
+
+      // Buscar todas as respostas
+      const instanceIds = instances.map(i => i.id);
+      const responses = await db
+        .select({
+          instanceId: evaluationCriteriaResponses.instanceId,
+          criteriaId: evaluationCriteriaResponses.criteriaId,
+          score: evaluationCriteriaResponses.score,
+        })
+        .from(evaluationCriteriaResponses)
+        .where(inArray(evaluationCriteriaResponses.instanceId, instanceIds))
+        .then(rows => rows.filter(r => r.score !== null && r.criteriaId !== null));
+
+      // Buscar critérios
+      const criteria = await db.select().from(evaluationCriteria);
+
+      // Agrupar por tipo de avaliador
+      const competenciesMap = new Map<number, {
+        name: string;
+        selfScores: number[];
+        managerScores: number[];
+        peersScores: number[];
+      }>();
+
+      // Inicializar mapa de competências
+      criteria.forEach(c => {
+        competenciesMap.set(c.id, {
+          name: c.name,
+          selfScores: [],
+          managerScores: [],
+          peersScores: [],
+        });
+      });
+
+      // Classificar respostas por tipo de avaliador
+      instances.forEach(instance => {
+        const instanceResponses = responses.filter(r => r.instanceId === instance.id);
+        
+        instanceResponses.forEach(response => {
+          const comp = competenciesMap.get(response.criteriaId);
+          if (!comp) return;
+
+          // Determinar tipo de avaliador baseado no tipo de avaliação
+          // Assumindo que temos um campo evaluationType no instance
+          const evaluationType = (instance as any).evaluationType || 'self';
+          
+          // Garantir que score não é null antes de adicionar
+          if (response.score === null) return;
+          
+          if (evaluationType === 'self') {
+            comp.selfScores.push(response.score);
+          } else if (evaluationType === 'manager') {
+            comp.managerScores.push(response.score);
+          } else if (evaluationType === 'peer') {
+            comp.peersScores.push(response.score);
+          }
+        });
+      });
+
+      // Calcular médias
+      const competencies = Array.from(competenciesMap.values()).map(comp => ({
+        name: comp.name,
+        selfScore: comp.selfScores.length > 0
+          ? comp.selfScores.reduce((a, b) => a + b, 0) / comp.selfScores.length
+          : 0,
+        managerScore: comp.managerScores.length > 0
+          ? comp.managerScores.reduce((a, b) => a + b, 0) / comp.managerScores.length
+          : 0,
+        peersScore: comp.peersScores.length > 0
+          ? comp.peersScores.reduce((a, b) => a + b, 0) / comp.peersScores.length
+          : 0,
+      }));
+
+      // Calcular médias gerais
+      const averages = {
+        self: competencies.reduce((sum, c) => sum + c.selfScore, 0) / competencies.length || 0,
+        manager: competencies.reduce((sum, c) => sum + c.managerScore, 0) / competencies.length || 0,
+        peers: competencies.reduce((sum, c) => sum + c.peersScore, 0) / competencies.length || 0,
+      };
+
+      return {
+        competencies,
+        averages,
+      };
+    }),
+
+  /**
    * Adicionar comentário em avaliação
    */
   addComment: protectedProcedure

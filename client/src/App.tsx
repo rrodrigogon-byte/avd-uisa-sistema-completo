@@ -98,6 +98,7 @@ import Notificacoes from "./pages/Notificacoes";
 import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import DashboardRelatorios from "./pages/DashboardRelatorios";
+import Relatorio360Consolidado from "./pages/Relatorio360Consolidado";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
 import NotificationTemplates from "./pages/admin/NotificationTemplates";
@@ -237,6 +238,7 @@ function Router() {
       <Route path={"/descricao-cargos/aprovar-rh"} component={AprovarDescricaoRH} />      <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />
       <Route path={'/relatorios/dashboard'} component={DashboardRelatorios} />
+      <Route path={'/relatorios/360-consolidado'} component={Relatorio360Consolidado} />
       <Route path="/relatorios/ciclos" component={ProgressoCiclos} />
       <Route path="/calibracao" component={Calibracao} />
       <Route path="/calibracao/reunioes" component={CalibrationMeetingsList} />

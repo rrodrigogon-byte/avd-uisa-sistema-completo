@@ -60,11 +60,11 @@
 - [ ] Implementar visão geral de todos os ciclos ativos
 - [ ] Implementar filtros (ciclo, departamento, período)
 - [ ] Testar fluxo completo end-to-end do ciclo 360°
-- [ ] Criar página /relatorios/360-consolidado
-- [ ] Gráficos radar comparando autoavaliação vs gestores/pares
+- [x] Criar página /relatorios/360-consolidado
+- [x] Gráficos radar comparando autoavaliação vs gestores/pares
 - [ ] Evolução histórica de competências por ciclo
 - [ ] Exportação em PDF com gráficos radar
-- [ ] Filtros por ciclo, departamento e colaborador
+- [x] Filtros por ciclo, departamento e colaborador
 - [ ] Comparativo entre múltiplos ciclos
 - [ ] Configurações do sistema (períodos de avaliação, pesos de critérios)
 - [ ] Implementar criação de templates de avaliação customizáveis
@@ -223,7 +223,7 @@
 - [ ] Criar página /avaliacoes/atribuir para atribuir avaliações
 - [ ] Implementar página /avaliacoes/preencher para avaliadores
 - [ ] Criar página /avaliacoes/resultados para visualizar resultados
-- [ ] Instalar e configurar Chart.js
+- [x] Instalar e configurar Chart.js
 - [ ] Implementar ranking de funcionários (Horizontal Bar Chart)
 
 ### ⚡ Performance e Otimização (5 itens)
@@ -1144,3 +1144,22 @@ Com base nas tarefas pendentes, recomenda-se focar em:
   - Impacto: Apenas type checking - sistema funciona normalmente em runtime
   - Arquivos afetados: advancedAnalyticsRouter.ts, badgesRouter.ts, bonusRouter.ts, calibrationRouter.ts, e outros 18 arquivos
   - Solução: Refatorar joins para usar sintaxe correta do Drizzle ORM
+
+
+---
+
+## 🔧 SESSÃO ATUAL DE IMPLEMENTAÇÃO (04/12/2025)
+
+### Tarefas em Andamento
+- [ ] Adicionar variável de ambiente VITE_APP_URL para URLs de email
+- [ ] Melhorar tratamento de erros no envio de Pesquisas Pulse
+- [x] Criar página de relatório 360° consolidado (/relatorios/360-consolidado)
+- [x] Implementar gráficos radar para comparação de competências
+- [x] Implementar gráficos de análise de gaps entre avaliações
+- [x] Adicionar filtros por ciclo, departamento e colaborador
+- [x] Instalar e configurar Chart.js para visualizações
+- [x] Criar procedure tRPC get360Consolidated
+- [ ] Adicionar exportação de relatórios em PDF (estrutura preparada)
+- [ ] Testar fluxo completo de criação e envio de metas
+- [ ] Validar dashboard de aprovações com dados reais
+- [ ] Implementar filtros avançados em relatórios

@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getUserByOpenId } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -1000,6 +1000,134 @@ export const appRouter = router({
           employee: employeesData.find(e => e.id === evaluation.employeeId),
           cycle: cyclesData.find((c: any) => c.id === evaluation.cycleId),
         }));
+      }),
+
+    // Relatório 360° Consolidado
+    get360Consolidated: protectedProcedure
+      .input(z.object({
+        cycleId: z.number(),
+        employeeId: z.number().optional(),
+        departmentId: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        // Construir filtros
+        const filters = [eq(evaluationInstances.cycleId, input.cycleId)];
+        
+        if (input.employeeId) {
+          filters.push(eq(evaluationInstances.employeeId, input.employeeId));
+        }
+        
+        if (input.departmentId) {
+          // Buscar funcionários do departamento
+          const deptEmployees = await database
+            .select({ id: employees.id })
+            .from(employees)
+            .where(eq(employees.departmentId, input.departmentId));
+          
+          const employeeIds = deptEmployees.map(e => e.id);
+          if (employeeIds.length > 0) {
+            filters.push(inArray(evaluationInstances.employeeId, employeeIds));
+          }
+        }
+
+        // Buscar avaliações do ciclo
+        const instances = await database
+          .select()
+          .from(evaluationInstances)
+          .where(and(...filters));
+
+        if (instances.length === 0) {
+          return {
+            competencies: [],
+            averages: { self: 0, manager: 0, peers: 0 },
+          };
+        }
+
+        // Buscar todas as respostas
+        const instanceIds = instances.map(i => i.id);
+        const responses = await database
+          .select({
+            instanceId: evaluationCriteriaResponses.instanceId,
+            criteriaId: evaluationCriteriaResponses.criteriaId,
+            score: evaluationCriteriaResponses.score,
+          })
+          .from(evaluationCriteriaResponses)
+          .where(inArray(evaluationCriteriaResponses.instanceId, instanceIds))
+          .then(rows => rows.filter(r => r.score !== null && r.criteriaId !== null));
+
+        // Buscar critérios
+        const criteria = await database.select().from(evaluationCriteria);
+
+        // Agrupar por tipo de avaliador
+        const competenciesMap = new Map<number, {
+          name: string;
+          selfScores: number[];
+          managerScores: number[];
+          peersScores: number[];
+        }>();
+
+        // Inicializar mapa de competências
+        criteria.forEach(c => {
+          competenciesMap.set(c.id, {
+            name: c.name,
+            selfScores: [],
+            managerScores: [],
+            peersScores: [],
+          });
+        });
+
+        // Classificar respostas por tipo de avaliador
+        instances.forEach(instance => {
+          const instanceResponses = responses.filter(r => r.instanceId === instance.id);
+          
+          instanceResponses.forEach(response => {
+            const comp = competenciesMap.get(response.criteriaId);
+            if (!comp) return;
+
+            // Determinar tipo de avaliador baseado no tipo de avaliação
+            const evaluationType = (instance as any).evaluationType || 'self';
+            
+            // Garantir que score não é null antes de adicionar
+            if (response.score === null) return;
+            
+            if (evaluationType === 'self') {
+              comp.selfScores.push(response.score);
+            } else if (evaluationType === 'manager') {
+              comp.managerScores.push(response.score);
+            } else if (evaluationType === 'peer') {
+              comp.peersScores.push(response.score);
+            }
+          });
+        });
+
+        // Calcular médias
+        const competencies = Array.from(competenciesMap.values()).map(comp => ({
+          name: comp.name,
+          selfScore: comp.selfScores.length > 0
+            ? comp.selfScores.reduce((a, b) => a + b, 0) / comp.selfScores.length
+            : 0,
+          managerScore: comp.managerScores.length > 0
+            ? comp.managerScores.reduce((a, b) => a + b, 0) / comp.managerScores.length
+            : 0,
+          peersScore: comp.peersScores.length > 0
+            ? comp.peersScores.reduce((a, b) => a + b, 0) / comp.peersScores.length
+            : 0,
+        }));
+
+        // Calcular médias gerais
+        const averages = {
+          self: competencies.reduce((sum, c) => sum + c.selfScore, 0) / competencies.length || 0,
+          manager: competencies.reduce((sum, c) => sum + c.managerScore, 0) / competencies.length || 0,
+          peers: competencies.reduce((sum, c) => sum + c.peersScore, 0) / competencies.length || 0,
+        };
+
+        return {
+          competencies,
+          averages,
+        };
       }),
   }),
 
