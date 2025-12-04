@@ -44,10 +44,12 @@ export function useEmployeeSearch(
   }, [search, debounceMs]);
 
   // Query com busca e filtros
-  const { data: employees, isLoading } = trpc.employees.list.useQuery({
-    search: debouncedSearch || undefined,
-    ...filters,
-  });
+  const { data: employees, isLoading } = trpc.employees.list.useQuery(
+    debouncedSearch || filters ? {
+      search: debouncedSearch || undefined,
+      ...filters,
+    } : undefined
+  );
 
   return {
     employees,

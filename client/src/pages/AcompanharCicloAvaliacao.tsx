@@ -60,7 +60,7 @@ export default function AcompanharCicloAvaliacao() {
       goalId: selectedGoalIndex,
       description: evidenceForm.description,
       attachmentUrl: evidenceForm.attachmentUrl || undefined,
-      currentValue: evidenceForm.currentValue,
+      currentValueCents: evidenceForm.currentValue ? Math.round(parseFloat(evidenceForm.currentValue) * 100) : undefined,
     });
   };
 
@@ -222,7 +222,7 @@ export default function AcompanharCicloAvaliacao() {
                                 </div>
                                 {(evidence.linkUrl || evidence.fileUrl) && (
                                   <a
-                                    href={evidence.linkUrl || evidence.fileUrl}
+                                    href={(evidence.linkUrl || evidence.fileUrl) || undefined}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"

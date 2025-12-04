@@ -63,6 +63,7 @@ import { notificationTemplatesRouter } from "./notificationTemplatesRouter";
 import { cycles360TemplatesRouter } from "./cycles360TemplatesRouter";
 import { timeTrackingRouter } from "./routers/timeTrackingRouter";
 import { evaluationCyclesRouter } from "./routers/evaluationCyclesRouter";
+import { emailFailuresRouter } from "./routers/emailFailuresRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -3342,6 +3343,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Pesquisas de Pulse
   pulse: pulseRouter,
+
+  // Router de Gerenciamento de Emails Falhados
+  emailFailures: emailFailuresRouter,
 
   // Router de Ciclo de Avaliação de Desempenho
   performanceEvaluationCycle: performanceEvaluationCycleRouter,

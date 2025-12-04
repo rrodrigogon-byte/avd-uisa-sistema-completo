@@ -1229,3 +1229,51 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [ ] Otimizar performance de queries (adicionar índices)
 - [ ] Revisar e melhorar mensagens de erro
 - [ ] Adicionar documentação inline e comentários
+
+### 🔧 Correções TypeScript Recentes (Fase 1 - 04/12/2025)
+
+- [x] Corrigir procedures em AprovacaoGeralCiclo.tsx (listParticipants, listEvidences, finalApproval)
+- [x] Corrigir procedures em AprovarMetasGestor.tsx (listParticipants com filtro)
+- [x] Corrigir tipo de input em useEmployeeSearch.ts
+- [x] Corrigir campo currentValue para currentValueCents em AcompanharCicloAvaliacao.tsx
+- [x] Corrigir tipo null para undefined em links de evidências
+- [x] Corrigir AderirCicloAvaliacao.tsx (getCycleById, targetValueCents, corporateGoalIds)
+- [x] Corrigir AprovacaoBonus.tsx (calculationId, paymentDate)
+- [x] Corrigir destructuring de useEmployeeSearch em EnviarTestes.tsx
+- [x] Corrigir acesso a propriedades de employee em EnviarTestes.tsx (employee.status, employee.email)
+- [ ] Corrigir erros restantes em CalibrationMeetingRoom.tsx (25 erros)
+- [ ] Corrigir erros restantes em SucessaoInteligente.tsx (16 erros)
+- [ ] Corrigir erros restantes em Metas.tsx (15 erros)
+- [ ] Corrigir erros restantes em GerenciarUsuarios.tsx (15 erros)
+
+### ✅ Melhorias Implementadas - Pesquisas Pulse (04/12/2025)
+
+- [x] Adicionar logs detalhados de envio de emails (sucesso/falha individual)
+- [x] Implementar contadores de emails enviados e falhados
+- [x] Adicionar lista de emails que falharam no envio
+- [x] Implementar validação de configuração SMTP antes de enviar
+- [x] Adicionar mensagens de erro claras quando SMTP não está configurado
+- [x] Melhorar tratamento de exceções no envio de emails
+
+### ✅ Correção de Erro 404 em Templates de Avaliação (04/12/2025)
+
+- [x] Criar página VisualizarTemplateAvaliacao.tsx para visualizar templates
+- [x] Criar página EditarTemplateAvaliacao.tsx para editar templates
+- [x] Adicionar imports das novas páginas no App.tsx
+- [x] Adicionar rotas /admin/templates-avaliacao/:id (visualização)
+- [x] Adicionar rotas /admin/templates-avaliacao/:id/editar (edição)
+- [x] Corrigir links quebrados na página de listagem de templates
+
+### ✅ Botão de Reenvio de Emails Falhados (04/12/2025)
+
+- [x] Criar emailFailuresRouter com procedures para listar e reenviar emails
+- [x] Implementar listFailedEmails para buscar emails falhados
+- [x] Implementar getFailureStats para estatísticas de envio
+- [x] Implementar resendEmail para reenvio individual
+- [x] Implementar resendBatch para reenvio em lote
+- [x] Criar página EmailsFalhados.tsx com interface completa
+- [x] Adicionar tabela com filtros e busca
+- [x] Adicionar seleção múltipla para reenvio em lote
+- [x] Adicionar estatísticas de emails (total, falhados, taxa de sucesso)
+- [x] Registrar emailFailuresRouter no routers.ts
+- [x] Adicionar rota /admin/emails-falhados no App.tsx

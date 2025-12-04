@@ -17,7 +17,7 @@ export default function AprovarMetasGestor() {
   const [approvalType, setApprovalType] = useState<"approve" | "reject">("approve");
   const [comments, setComments] = useState("");
 
-  const { data: pendingApprovals, isLoading, refetch } = trpc.performanceEvaluationCycle.getPendingManagerApprovals.useQuery();
+  const { data: pendingApprovals, isLoading, refetch } = trpc.performanceEvaluationCycle.listParticipants.useQuery({ cycleId: 0, status: "aguardando_aprovacao_gestor" });
 
   const approveMutation = trpc.performanceEvaluationCycle.approveGoals.useMutation({
     onSuccess: () => {
@@ -31,7 +31,7 @@ export default function AprovarMetasGestor() {
     },
   });
 
-  const rejectMutation = trpc.performanceEvaluationCycle.rejectGoals.useMutation({
+  const rejectMutation = trpc.performanceEvaluationCycle.approveGoals.useMutation({
     onSuccess: () => {
       toast.success("Metas rejeitadas. Funcionário será notificado.");
       setShowApprovalDialog(false);
@@ -61,6 +61,7 @@ export default function AprovarMetasGestor() {
     if (approvalType === "approve") {
       approveMutation.mutate({
         participantId: selectedParticipant.id,
+        action: "aprovado",
         comments,
       });
     } else {
@@ -70,7 +71,8 @@ export default function AprovarMetasGestor() {
       }
       rejectMutation.mutate({
         participantId: selectedParticipant.id,
-        reason: comments,
+        action: "rejeitado",
+        comments: comments,
       });
     }
   };

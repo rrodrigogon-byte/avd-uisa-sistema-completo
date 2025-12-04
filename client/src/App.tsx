@@ -152,9 +152,12 @@ import MetasCorporativas from "./pages/MetasCorporativas";
 // import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas"; // Temporariamente desabilitado
 import TemplatesAvaliacao from "./pages/admin/TemplatesAvaliacao";
 import CriarTemplateAvaliacao from "./pages/admin/CriarTemplateAvaliacao";
+import VisualizarTemplateAvaliacao from "./pages/admin/VisualizarTemplateAvaliacao";
+import EditarTemplateAvaliacao from "./pages/admin/EditarTemplateAvaliacao";
 import TemplatesManagement from "./pages/TemplatesManagement";
 import CalibracaoDiretoria from "./pages/admin/CalibracaoDiretoria";
 import NotificacoesAnalytics from "./pages/admin/NotificacoesAnalytics";
+import EmailsFalhados from "./pages/admin/EmailsFalhados";
 import ConfigurarAvaliacoes from "./pages/avaliacoes/ConfigurarAvaliacoes";
 // import BonusWorkflowApproval from "@/pages/aprovacoes/BonusWorkflowApproval"; // Temporariamente desabilitado
 // import BonusCompliance from "./pages/compliance/BonusCompliance"; // Temporariamente desabilitado
@@ -273,10 +276,13 @@ function Router() {
       <Route path="/admin/report-analytics" component={ReportAnalytics} />
       <Route path="/admin/templates-avaliacao" component={TemplatesAvaliacao} />
       <Route path="/admin/templates-avaliacao/criar" component={CriarTemplateAvaliacao} />
+      <Route path="/admin/templates-avaliacao/:id" component={VisualizarTemplateAvaliacao} />
+      <Route path="/admin/templates-avaliacao/:id/editar" component={EditarTemplateAvaliacao} />
       <Route path="/admin/templates-360" component={TemplatesManagement} />
       <Route path="/admin/templates-360/analytics" component={TemplatesAnalytics} />
       <Route path="/admin/calibracao-diretoria" component={CalibracaoDiretoria} />
       <Route path="/admin/notificacoes-analytics" component={NotificacoesAnalytics} />
+      <Route path="/admin/emails-falhados" component={EmailsFalhados} />
       <Route path={"/admin/succession-import"} component={SuccessionImport} />
       <Route path="/performance-integrada" component={PerformanceIntegrada} />
       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />

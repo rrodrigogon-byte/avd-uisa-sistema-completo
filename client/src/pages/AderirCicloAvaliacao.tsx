@@ -18,7 +18,7 @@ export default function AderirCicloAvaliacao() {
   const [, setLocation] = useLocation();
   const cycleId = params?.id ? parseInt(params.id) : 0;
 
-  const { data: cycle, isLoading: cycleLoading } = trpc.performanceEvaluationCycle.getCycleById.useQuery({ cycleId });
+  const { data: cycle, isLoading: cycleLoading } = trpc.performanceEvaluationCycle.getCycleById.useQuery({ id: cycleId });
   const { data: participation } = trpc.performanceEvaluationCycle.getParticipation.useQuery({ cycleId });
 
   const [individualGoals, setIndividualGoals] = useState<Array<{ title: string; description: string; targetValue: string; unit: string }>>([
@@ -61,8 +61,8 @@ export default function AderirCicloAvaliacao() {
       cycleId,
       individualGoals: individualGoals.map(g => ({
         title: g.title,
-        description: g.description || "",
-        targetValue: g.targetValue,
+        description: g.description || undefined,
+        targetValueCents: Math.round(parseFloat(g.targetValue) * 100),
         weight: 1 // peso padrão
       })),
     });
@@ -120,7 +120,7 @@ export default function AderirCicloAvaliacao() {
     );
   }
 
-  const corporateGoals = cycle.corporateGoals ? JSON.parse(cycle.corporateGoals) : [];
+  const corporateGoals = cycle.corporateGoalIds ? (typeof cycle.corporateGoalIds === 'string' ? JSON.parse(cycle.corporateGoalIds) : cycle.corporateGoalIds) : [];
 
   return (
     <div className="container mx-auto py-6 space-y-6">

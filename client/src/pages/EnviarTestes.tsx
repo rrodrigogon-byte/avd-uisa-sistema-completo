@@ -41,8 +41,8 @@ export default function EnviarTestes() {
 
   // Buscar funcionários com search otimizado
   const {
-    searchTerm: employeeSearch,
-    setSearchTerm: setEmployeeSearch,
+    search: employeeSearch,
+    setSearch: setEmployeeSearch,
     employees,
     isLoading: loadingEmployees
   } = useEmployeeSearch();
@@ -113,8 +113,8 @@ export default function EnviarTestes() {
       return;
     }
 
-    const deptEmployees = employees?.filter(e => e.departmentId === departmentId && e.status === 'ativo') || [];
-    const emails = deptEmployees.map(e => e.email).filter(Boolean) as string[];
+    const deptEmployees = employees?.filter(e => e.employee.departmentId === departmentId && e.employee.status === 'ativo') || [];
+    const emails = deptEmployees.map(e => e.employee.email).filter(Boolean) as string[];
 
     if (emails.length === 0) {
       toast.error("Nenhum funcionário ativo com email neste departamento");
@@ -137,7 +137,7 @@ export default function EnviarTestes() {
   };
 
   const selectAllEmployees = () => {
-    const allEmails = employees?.filter(e => e.status === 'ativo' && e.email).map(e => e.email) as string[];
+    const allEmails = employees?.filter(e => e.employee.status === 'ativo' && e.employee.email).map(e => e.employee.email) as string[];
     setSelectedEmails(allEmails || []);
   };
 
@@ -291,21 +291,21 @@ export default function EnviarTestes() {
                 ) : (
                   <div className="border rounded-lg max-h-96 overflow-y-auto">
                     <div className="divide-y">
-                      {employees?.filter(e => e.status === 'ativo' && e.email).map(employee => (
+                      {employees?.filter(e => e.employee.status === 'ativo' && e.employee.email).map(item => (
                         <div
-                          key={employee.id}
+                          key={item.employee.id}
                           className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer"
-                          onClick={() => toggleEmployeeSelection(employee.email!)}
+                          onClick={() => toggleEmployeeSelection(item.employee.email!)}
                         >
                           <Checkbox
-                            checked={selectedEmails.includes(employee.email!)}
-                            onCheckedChange={() => toggleEmployeeSelection(employee.email!)}
+                            checked={selectedEmails.includes(item.employee.email!)}
+                            onCheckedChange={() => toggleEmployeeSelection(item.employee.email!)}
                           />
                           <div className="flex-1">
-                            <div className="font-medium">{employee.name}</div>
-                            <div className="text-sm text-muted-foreground">{employee.email}</div>
+                            <div className="font-medium">{item.employee.name}</div>
+                            <div className="text-sm text-muted-foreground">{item.employee.email}</div>
                           </div>
-                          <Badge variant="outline">{employee.positionTitle}</Badge>
+                          <Badge variant="outline">{item.position?.title}</Badge>
                         </div>
                       ))}
                     </div>

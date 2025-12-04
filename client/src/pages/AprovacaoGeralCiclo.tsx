@@ -22,17 +22,17 @@ export default function AprovacaoGeralCiclo() {
     comments: "",
   });
 
-  const { data: cycles } = trpc.performanceEvaluationCycle.listCycles.useQuery();
-  const { data: participants, refetch } = trpc.performanceEvaluationCycle.getParticipantsByCycle.useQuery(
+  const { data: cycles } = trpc.performanceEvaluationCycle.listCycles.useQuery({});
+  const { data: participants, refetch } = trpc.performanceEvaluationCycle.listParticipants.useQuery(
     { cycleId: selectedCycleId || 0 },
     { enabled: !!selectedCycleId }
   );
-  const { data: evidences } = trpc.performanceEvaluationCycle.getEvidencesByParticipant.useQuery(
+  const { data: evidences } = trpc.performanceEvaluationCycle.listEvidences.useQuery(
     { participantId: selectedParticipant?.id || 0 },
     { enabled: !!selectedParticipant }
   );
 
-  const finalApproveMutation = trpc.performanceEvaluationCycle.finalApprove.useMutation({
+  const finalApproveMutation = trpc.performanceEvaluationCycle.finalApproval.useMutation({
     onSuccess: () => {
       toast.success("Avaliação aprovada com sucesso!");
       setShowApprovalDialog(false);

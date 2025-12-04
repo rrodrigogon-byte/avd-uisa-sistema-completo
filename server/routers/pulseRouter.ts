@@ -218,14 +218,22 @@ export const pulseRouter = router({
         }
 
         // Enviar email para cada participante
+        let emailsSent = 0;
+        let emailsFailed = 0;
+        const failedEmails: string[] = [];
+
         for (const employee of targetEmployees) {
-          if (!employee.email) continue;
+          if (!employee.email) {
+            console.warn(`[Pulse] Funcionário ${employee.name} sem email cadastrado`);
+            continue;
+          }
 
           const surveyUrl = `${process.env.VITE_APP_URL || "http://localhost:3000"}/pesquisas/pulse/responder/${survey.id}`;
 
-          await sendEmail({
-            to: employee.email,
-            subject: `📊 Nova Pesquisa Pulse: ${survey.title}`,
+          try {
+            const sent = await sendEmail({
+              to: employee.email,
+              subject: `📊 Nova Pesquisa Pulse: ${survey.title}`,
             html: `
               <!DOCTYPE html>
               <html>
@@ -272,10 +280,27 @@ export const pulseRouter = router({
               </body>
               </html>
             `,
-          });
+            });
+            
+            if (sent) {
+              emailsSent++;
+              console.log(`[Pulse] Email enviado com sucesso para ${employee.email}`);
+            } else {
+              emailsFailed++;
+              failedEmails.push(employee.email);
+              console.warn(`[Pulse] Falha ao enviar email para ${employee.email}`);
+            }
+          } catch (emailError) {
+            emailsFailed++;
+            failedEmails.push(employee.email);
+            console.error(`[Pulse] Erro ao enviar email para ${employee.email}:`, emailError);
+          }
         }
 
-        console.log(`[Pulse] Emails enviados para ${targetEmployees.length} participantes`);
+        console.log(`[Pulse] Resumo de envio: ${emailsSent} enviados, ${emailsFailed} falharam`);
+        if (failedEmails.length > 0) {
+          console.warn(`[Pulse] Emails que falharam:`, failedEmails);
+        }
       } catch (error) {
         console.error("[Pulse] Erro ao enviar emails:", error);
         // Não falhar a ativação se emails falharem
@@ -541,6 +566,29 @@ export const pulseRouter = router({
       }
 
       console.log(`[Pulse] Enviando para ${targetEmployees.length} colaboradores`);
+
+      // Validar configuração SMTP antes de enviar
+      const { systemSettings } = await import("../../drizzle/schema");
+      const smtpSettings = await db
+        .select()
+        .from(systemSettings)
+        .where(eq(systemSettings.settingKey, "smtp_config"))
+        .limit(1);
+
+      if (smtpSettings.length === 0) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Configuração SMTP não encontrada. Configure o SMTP em Configurações > SMTP antes de enviar pesquisas.",
+        });
+      }
+
+      const smtpConfig = JSON.parse(smtpSettings[0].settingValue || "{}");
+      if (!smtpConfig.host || !smtpConfig.port || !smtpConfig.user || !smtpConfig.password) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Configuração SMTP incompleta. Verifique as configurações em Configurações > SMTP.",
+        });
+      }
 
       // Implementar envio de e-mail real usando emailService
       const { emailService } = await import("../utils/emailService");
