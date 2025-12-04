@@ -591,44 +591,95 @@ export const pulseRouter = router({
       }
 
       // Implementar envio de e-mail real usando emailService
-      const { emailService } = await import("../utils/emailService");
+      const { sendEmail } = await import("../utils/emailService");
       let successCount = 0;
       let failCount = 0;
+      const failedEmails: string[] = [];
+
+      console.log(`[Pulse] Iniciando envio para ${targetEmployees.length} colaboradores`);
 
       for (const employee of targetEmployees) {
-        if (!employee.email) continue;
-
-        const surveyLink = `${process.env.VITE_APP_URL || 'http://localhost:3000'}/pesquisa/${survey.id}`;
+        if (!employee.email) {
+          console.warn(`[Pulse] Funcionário ${employee.name} sem email`);
+          continue;
+        }
         
-        const emailSent = await emailService.sendCustomEmail(
-          employee.email,
-          `Pesquisa: ${survey.title}`,
-          `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #F39200;">Nova Pesquisa Pulse</h2>
-              <p>Olá, ${employee.name}!</p>
-              <p>Você foi convidado(a) a participar da seguinte pesquisa:</p>
-              <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="margin-top: 0;">${survey.title}</h3>
-                <p>${survey.question}</p>
-              </div>
-              <p>Sua opinião é muito importante para nós!</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${surveyLink}" style="background: #F39200; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Responder Pesquisa</a>
-              </div>
-              <p style="color: #666; font-size: 12px;">Este é um email automático do Sistema AVD UISA.</p>
-            </div>
-          `
-        );
+        const surveyLink = `${process.env.VITE_APP_URL || 'http://localhost:3000'}/pesquisas-pulse/responder/${survey.id}`;
+        
+        try {
+          const emailSent = await sendEmail({
+            to: employee.email,
+            subject: `📊 Pesquisa Pulse: ${survey.title}`,
+            html: `
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <style>
+                  body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                  .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                  .header { background-color: #F39200; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                  .content { background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+                  .button { display: inline-block; background-color: #F39200; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+                  .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #6b7280; }
+                  .question-box { background: #fff; padding: 20px; border-left: 4px solid #F39200; margin: 20px 0; }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h1>📊 Nova Pesquisa Pulse</h1>
+                  </div>
+                  <div class="content">
+                    <p>Olá <strong>${employee.name}</strong>,</p>
+                    
+                    <p>Uma nova pesquisa Pulse foi criada e sua opinião é muito importante para nós!</p>
+                    
+                    <div class="question-box">
+                      <h3 style="margin-top: 0; color: #F39200;">${survey.title}</h3>
+                      <p style="font-size: 16px;"><strong>${survey.question}</strong></p>
+                      ${survey.description ? `<p style="color: #666;"><em>${survey.description}</em></p>` : ""}
+                    </div>
+                    
+                    <p>Por favor, reserve alguns minutos para responder. Sua participação é anônima e confidencial.</p>
+                    
+                    <div style="text-align: center;">
+                      <a href="${surveyLink}" class="button">
+                        Responder Pesquisa Agora
+                      </a>
+                    </div>
+                    
+                    <p>Obrigado pela sua colaboração!</p>
+                    <p><em>Equipe de RH - Sistema AVD UISA</em></p>
+                  </div>
+                  <div class="footer">
+                    <p>Este é um e-mail automático. Por favor, não responda.</p>
+                    <p>Link direto: <a href="${surveyLink}">${surveyLink}</a></p>
+                  </div>
+                </div>
+              </body>
+              </html>
+            `,
+          });
 
-        if (emailSent) {
-          successCount++;
-        } else {
+          if (emailSent) {
+            successCount++;
+            console.log(`[Pulse] ✓ Email enviado para ${employee.email}`);
+          } else {
+            failCount++;
+            failedEmails.push(employee.email);
+            console.warn(`[Pulse] ✗ Falha ao enviar para ${employee.email}`);
+          }
+        } catch (error) {
           failCount++;
+          failedEmails.push(employee.email);
+          console.error(`[Pulse] ✗ Erro ao enviar para ${employee.email}:`, error);
         }
       }
 
-      console.log(`[Pulse] Enviados: ${successCount}, Falhas: ${failCount}`);
+      console.log(`[Pulse] Resumo de envio: ${successCount} enviados, ${failCount} falharam`);
+      if (failedEmails.length > 0) {
+        console.warn(`[Pulse] Emails que falharam:`, failedEmails);
+      }
 
       // Ativar pesquisa automaticamente após envio
       await db
@@ -641,9 +692,10 @@ export const pulseRouter = router({
 
       return {
         success: true,
-        message: `Convites enviados: ${successCount} sucesso, ${failCount} falhas`,
+        message: `Convites enviados: ${successCount} sucesso, ${failCount} falhas${failedEmails.length > 0 ? '. Verifique os logs para detalhes.' : ''}`,
         sentCount: successCount,
         failedCount: failCount,
+        failedEmails: failedEmails.length > 0 ? failedEmails : undefined,
       };
     }),
 

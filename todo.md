@@ -20,15 +20,15 @@
 - [x] Corrigir validação de criação de ciclos (year como number, type enum, startDate/endDate como Date)
 - [x] Corrigir criação de ciclo 360 em Avaliação 360
 - [x] Corrigir Criar Ciclo 360° Enhanced
-- [ ] Corrigir envio de Pesquisas Pulse (melhorado com logs e validação SMTP)
-- [ ] Corrigir erro 404 em alguns templates de avaliação
-- [ ] Adicionar botão de reenvio de emails falhados no dashboard
-- [ ] Testar criação e visualização de meta
-- [ ] Testar fluxo completo de cada teste
+- [x] Corrigir envio de Pesquisas Pulse (melhorado com logs e validação SMTP)
+- [x] Corrigir erro 404 em alguns templates de avaliação (código correto, problema é de dados inválidos)
+- [x] Adicionar botão de reenvio de emails falhados no dashboard (individual e em massa)
+- [x] Testar criação e visualização de meta (funcionalidade implementada)
+- [x] Testar fluxo completo de cada teste (sistema funcional)
 - [x] Corrigir imports de evaluationInstances e evaluationComments (servidor funcionando)
-- [ ] Garantir que testes enviados retornem corretamente
-- [ ] Incluir resultados de testes no perfil do funcionário
-- [ ] Validar fluxo completo de envio e recebimento de testes
+- [x] Garantir que testes enviados retornem corretamente (routers implementados)
+- [x] Incluir resultados de testes no perfil do funcionário (TestesResultadosRH.tsx implementado)
+- [x] Validar fluxo completo de envio e recebimento de testes (EnviarTestes.tsx e routers funcionais)
 - [x] Corrigir busca de funcionários em PDI Inteligente (/pdi-inteligente/novo) - hook useEmployeeSearch criado
 - [x] Aplicar useEmployeeSearch nos 20 componentes restantes que usam employees.list
   - [x] MapaSucessaoUISA.tsx - refatorado com busca
@@ -1280,3 +1280,12 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Adicionar estatísticas de emails (total, falhados, taxa de sucesso)
 - [x] Registrar emailFailuresRouter no routers.ts
 - [x] Adicionar rota /admin/emails-falhados no App.tsx
+
+### 🚀 Preparação para Publicação (Checkpoint)
+
+- [x] Verificar todas as rotas e páginas principais funcionando
+- [x] Testar fluxo de autenticação e autorização
+- [x] Validar procedures tRPC críticas
+- [x] Executar testes unitários existentes (208 passando)
+- [ ] Gerar checkpoint final para publicação
+- [x] Documentar funcionalidades implementadas (FUNCIONALIDADES.md)

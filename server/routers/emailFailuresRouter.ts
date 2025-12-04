@@ -176,6 +176,90 @@ export const emailFailuresRouter = router({
     }),
 
   /**
+   * Reenviar todos os emails falhados
+   */
+  resendAllFailed: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      // Apenas admin e RH podem reenviar emails
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores e RH podem reenviar emails",
+        });
+      }
+
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar todos os emails falhados (limitar a 100 para evitar sobrecarga)
+      const failedEmails = await db
+        .select()
+        .from(emailMetrics)
+        .where(eq(emailMetrics.success, false))
+        .orderBy(desc(emailMetrics.sentAt))
+        .limit(100);
+
+      if (failedEmails.length === 0) {
+        return {
+          successCount: 0,
+          failedCount: 0,
+          total: 0,
+          message: "Não há emails falhados para reenviar.",
+        };
+      }
+
+      console.log(`[EmailFailures] Reenviando ${failedEmails.length} emails falhados...`);
+
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const failedEmail of failedEmails) {
+        try {
+          const startTime = Date.now();
+          const html = await recreateEmailHTML(failedEmail.type, failedEmail.subject || "", failedEmail.toEmail);
+          
+          const success = await sendEmail({
+            to: failedEmail.toEmail,
+            subject: failedEmail.subject || "Notificação do Sistema AVD UISA",
+            html,
+          });
+
+          const deliveryTime = Date.now() - startTime;
+
+          await db.insert(emailMetrics).values({
+            type: failedEmail.type,
+            toEmail: failedEmail.toEmail,
+            subject: failedEmail.subject,
+            success,
+            deliveryTime,
+            error: success ? null : "Falha no reenvio",
+            attempts: (failedEmail.attempts || 1) + 1,
+          });
+
+          if (success) {
+            successCount++;
+            console.log(`[EmailFailures] ✓ Reenviado para ${failedEmail.toEmail}`);
+          } else {
+            failCount++;
+            console.warn(`[EmailFailures] ✗ Falha ao reenviar para ${failedEmail.toEmail}`);
+          }
+        } catch (e: any) {
+          failCount++;
+          console.error(`[EmailFailures] ✗ Erro ao reenviar para ${failedEmail.toEmail}:`, e.message);
+        }
+      }
+
+      console.log(`[EmailFailures] Resumo: ${successCount} enviados, ${failCount} falharam`);
+
+      return {
+        successCount,
+        failedCount: failCount,
+        total: failedEmails.length,
+        message: `${successCount} email(s) reenviado(s) com sucesso${failCount > 0 ? `, ${failCount} falharam` : ''}.`,
+      };
+    }),
+
+  /**
    * Reenviar múltiplos emails em lote
    */
   resendBatch: protectedProcedure

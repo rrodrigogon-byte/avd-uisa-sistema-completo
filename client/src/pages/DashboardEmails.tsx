@@ -34,9 +34,33 @@ export default function DashboardEmails() {
     },
   });
 
+  const resendAllFailedMutation = trpc.emails.resendAllFailed.useMutation({
+    onSuccess: (data) => {
+      toast.success(`${data.successCount} email(s) reenviado(s) com sucesso!`);
+      if (data.failedCount > 0) {
+        toast.warning(`${data.failedCount} email(s) falharam novamente.`);
+      }
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(`Erro ao reenviar emails: ${error.message}`);
+    },
+  });
+
   const handleResend = (emailId: number) => {
     if (confirm("Deseja realmente reenviar este email?")) {
       resendEmailMutation.mutate({ emailId });
+    }
+  };
+
+  const handleResendAllFailed = () => {
+    const failedCount = emailMetrics?.failed || 0;
+    if (failedCount === 0) {
+      toast.info("Não há emails falhados para reenviar.");
+      return;
+    }
+    if (confirm(`Deseja realmente reenviar todos os ${failedCount} emails falhados?`)) {
+      resendAllFailedMutation.mutate();
     }
   };
 
@@ -87,10 +111,21 @@ export default function DashboardEmails() {
               Monitore e gerencie todos os emails enviados pelo sistema
             </p>
           </div>
-          <Button onClick={() => refetch()} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Atualizar
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleResendAllFailed} 
+              variant="destructive" 
+              size="sm"
+              disabled={resendAllFailedMutation.isPending || (emailMetrics?.failed || 0) === 0}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${resendAllFailedMutation.isPending ? 'animate-spin' : ''}`} />
+              Reenviar Falhados ({emailMetrics?.failed || 0})
+            </Button>
+            <Button onClick={() => refetch()} variant="outline" size="sm">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Atualizar
+            </Button>
+          </div>
         </div>
 
         {/* KPIs */}

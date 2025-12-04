@@ -3471,9 +3471,126 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           });
         }
 
-        // TODO: Implementar lógica de reenvio usando emailService
-        // Por enquanto, apenas retornar sucesso
-        return { success: true, message: "Email reenviado com sucesso" };
+        const email = originalEmail[0];
+
+        // Reenviar usando emailService
+        try {
+          const success = await sendEmail({
+            to: email.toEmail,
+            subject: email.subject || "Notificação do Sistema AVD UISA",
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #F39200;">Notificação do Sistema</h2>
+                <p>Esta é uma notificação do Sistema AVD UISA.</p>
+                <p>Tipo: <strong>${email.type}</strong></p>
+                <p>Por favor, acesse o sistema para mais detalhes.</p>
+              </div>
+            `,
+          });
+
+          if (success) {
+            // Registrar novo envio
+            await database.insert(emailMetrics).values({
+              type: email.type,
+              toEmail: email.toEmail,
+              subject: email.subject,
+              success: true,
+              deliveryTime: 0,
+              attempts: (email.attempts || 1) + 1,
+            });
+          }
+
+          return { success, message: success ? "Email reenviado com sucesso" : "Falha ao reenviar email" };
+        } catch (error: any) {
+          console.error("[Emails] Erro ao reenviar:", error);
+          return { success: false, message: `Erro: ${error.message}` };
+        }
+      }),
+
+    // Reenviar todos os emails falhados
+    resendAllFailed: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Acesso negado",
+          });
+        }
+
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Banco de dados indisponível",
+          });
+        }
+
+        // Buscar todos os emails falhados (limitar a 100)
+        const failedEmails = await database.select()
+          .from(emailMetrics)
+          .where(eq(emailMetrics.success, false))
+          .orderBy(desc(emailMetrics.sentAt))
+          .limit(100);
+
+        if (failedEmails.length === 0) {
+          return {
+            successCount: 0,
+            failedCount: 0,
+            total: 0,
+            message: "Não há emails falhados para reenviar.",
+          };
+        }
+
+        console.log(`[Emails] Reenviando ${failedEmails.length} emails falhados...`);
+
+        let successCount = 0;
+        let failedCount = 0;
+
+        for (const email of failedEmails) {
+          try {
+            const success = await sendEmail({
+              to: email.toEmail,
+              subject: email.subject || "Notificação do Sistema AVD UISA",
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                  <h2 style="color: #F39200;">Notificação do Sistema</h2>
+                  <p>Esta é uma notificação do Sistema AVD UISA.</p>
+                  <p>Tipo: <strong>${email.type}</strong></p>
+                  <p>Por favor, acesse o sistema para mais detalhes.</p>
+                </div>
+              `,
+            });
+
+            if (success) {
+              successCount++;
+              // Registrar novo envio
+              await database.insert(emailMetrics).values({
+                type: email.type,
+                toEmail: email.toEmail,
+                subject: email.subject,
+                success: true,
+                deliveryTime: 0,
+                attempts: (email.attempts || 1) + 1,
+              });
+              console.log(`[Emails] ✓ Reenviado para ${email.toEmail}`);
+            } else {
+              failedCount++;
+              console.warn(`[Emails] ✗ Falha ao reenviar para ${email.toEmail}`);
+            }
+          } catch (error: any) {
+            failedCount++;
+            console.error(`[Emails] ✗ Erro ao reenviar para ${email.toEmail}:`, error.message);
+          }
+        }
+
+        console.log(`[Emails] Resumo: ${successCount} enviados, ${failedCount} falharam`);
+
+        return {
+          successCount,
+          failedCount,
+          total: failedEmails.length,
+          message: `${successCount} email(s) reenviado(s) com sucesso${failedCount > 0 ? `, ${failedCount} falharam` : ''}.`,
+        };
       }),
   }),
 
