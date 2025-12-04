@@ -69,17 +69,33 @@ export default function CriarCicloAvaliacao() {
       return;
     }
 
+    // Extrair year e determinar period baseado nas datas
+    const startDate = new Date(formData.startDate);
+    const endDate = new Date(formData.endDate);
+    const year = startDate.getFullYear();
+    
+    // Calcular diferença em meses para determinar o tipo de ciclo
+    const monthsDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+    let period: "anual" | "semestral" | "trimestral" = "anual";
+    if (monthsDiff <= 4) {
+      period = "trimestral";
+    } else if (monthsDiff <= 7) {
+      period = "semestral";
+    }
+
     createCycleMutation.mutate({
       name: formData.name,
       description: formData.description,
-      startDate: new Date(formData.startDate),
-      endDate: new Date(formData.endDate),
-      goalSubmissionDeadline: formData.goalSubmissionDeadline ? new Date(formData.goalSubmissionDeadline) : undefined,
-      managerApprovalDeadline: formData.managerApprovalDeadline ? new Date(formData.managerApprovalDeadline) : undefined,
-      evidenceSubmissionDeadline: formData.evidenceSubmissionDeadline ? new Date(formData.evidenceSubmissionDeadline) : undefined,
-      evaluationDeadline: formData.evaluationDeadline ? new Date(formData.evaluationDeadline) : undefined,
-      finalApprovalDeadline: formData.finalApprovalDeadline ? new Date(formData.finalApprovalDeadline) : undefined,
-      corporateGoals: JSON.stringify(corporateGoals),
+      year: year,
+      period: period,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      adhesionDeadline: formData.goalSubmissionDeadline || formData.startDate,
+      managerApprovalDeadline: formData.managerApprovalDeadline || formData.endDate,
+      trackingStartDate: formData.evidenceSubmissionDeadline,
+      trackingEndDate: formData.evaluationDeadline,
+      evaluationDeadline: formData.finalApprovalDeadline,
+      corporateGoalIds: [], // TODO: Implementar seleção de metas corporativas existentes
     });
   };
 

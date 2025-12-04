@@ -15,40 +15,57 @@ export const evaluationCyclesRouter = router({
     .input(
       z.object({
         name: z.string().min(1, "Nome é obrigatório"),
-        year: z.number().int().min(2020).max(2100),
-        type: z.enum(["anual", "semestral", "trimestral"]),
-        startDate: z.date(),
-        endDate: z.date(),
+        year: z.number().int().min(2020).max(2100).optional(),
+        type: z.enum(["anual", "semestral", "trimestral"]).optional(),
+        startDate: z.string().or(z.date()),
+        endDate: z.string().or(z.date()),
         description: z.string().optional(),
-        selfEvaluationDeadline: z.date().optional(),
-        managerEvaluationDeadline: z.date().optional(),
-        consensusDeadline: z.date().optional(),
+        selfEvaluationDeadline: z.string().or(z.date()).optional(),
+        managerEvaluationDeadline: z.string().or(z.date()).optional(),
+        consensusDeadline: z.string().or(z.date()).optional(),
       })
     )
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
+      // Converter strings para Date
+      const startDate = typeof input.startDate === 'string' ? new Date(input.startDate) : input.startDate;
+      const endDate = typeof input.endDate === 'string' ? new Date(input.endDate) : input.endDate;
+      const selfEvaluationDeadline = input.selfEvaluationDeadline 
+        ? (typeof input.selfEvaluationDeadline === 'string' ? new Date(input.selfEvaluationDeadline) : input.selfEvaluationDeadline)
+        : null;
+      const managerEvaluationDeadline = input.managerEvaluationDeadline
+        ? (typeof input.managerEvaluationDeadline === 'string' ? new Date(input.managerEvaluationDeadline) : input.managerEvaluationDeadline)
+        : null;
+      const consensusDeadline = input.consensusDeadline
+        ? (typeof input.consensusDeadline === 'string' ? new Date(input.consensusDeadline) : input.consensusDeadline)
+        : null;
+
+      // Extrair year e type se não fornecidos
+      const year = input.year ?? startDate.getFullYear();
+      const type = input.type ?? "anual";
+
       // Validar que endDate é posterior a startDate
-      if (input.endDate <= input.startDate) {
+      if (endDate <= startDate) {
         throw new Error("Data de término deve ser posterior à data de início");
       }
 
-      const result = await db.insert(evaluationCycles).values({
+      const [result] = await db.insert(evaluationCycles).values({
         name: input.name,
-        year: input.year,
-        type: input.type,
-        startDate: input.startDate,
-        endDate: input.endDate,
+        year: year,
+        type: type,
+        startDate: startDate,
+        endDate: endDate,
         description: input.description || null,
-        selfEvaluationDeadline: input.selfEvaluationDeadline || null,
-        managerEvaluationDeadline: input.managerEvaluationDeadline || null,
-        consensusDeadline: input.consensusDeadline || null,
+        selfEvaluationDeadline: selfEvaluationDeadline,
+        managerEvaluationDeadline: managerEvaluationDeadline,
+        consensusDeadline: consensusDeadline,
         status: "planejado",
         active: true,
       });
 
-      const cycleId = Number(result[0].insertId);
+      const cycleId = Number(result.insertId);
 
       return {
         success: true,

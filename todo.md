@@ -17,6 +17,9 @@
 
 - [x] **ERRO TYPESCRIPT CRÍTICO**: evaluationInstances e evaluationComments - Servidor funcionando normalmente, erros são apenas de type checking em cache antigo do LSP
 
+- [x] Corrigir validação de criação de ciclos (year como number, type enum, startDate/endDate como Date)
+- [x] Corrigir criação de ciclo 360 em Avaliação 360
+- [x] Corrigir Criar Ciclo 360° Enhanced
 - [ ] Corrigir envio de Pesquisas Pulse (melhorado com logs e validação SMTP)
 - [ ] Corrigir erro 404 em alguns templates de avaliação
 - [ ] Adicionar botão de reenvio de emails falhados no dashboard
