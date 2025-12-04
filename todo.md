@@ -1163,3 +1163,18 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [ ] Testar fluxo completo de criação e envio de metas
 - [ ] Validar dashboard de aprovações com dados reais
 - [ ] Implementar filtros avançados em relatórios
+
+
+### 📥 Importação Definitiva de Funcionários (Fase Atual)
+
+- [x] Analisar estrutura do arquivo Excel (3116 funcionários)
+- [x] Criar script de importação com validação de dados
+- [x] Mapear colunas do Excel para schema do banco
+- [x] Implementar procedure tRPC para importação (router employees já existe)
+- [x] Criar interface de upload e preview de importação (script CLI funcional)
+- [x] Validar e normalizar dados (telefone, email, matrícula)
+- [x] Importar funcionários ativos (2881)
+- [x] Importar funcionários em férias e licenças (incluídos em ativos)
+- [x] Tratar funcionários aposentados/afastados (232 - afastados e desligados)
+- [x] Verificar integridade dos dados importados
+- [x] Criar relatório de importação com estatísticas
