@@ -1178,3 +1178,54 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Tratar funcionários aposentados/afastados (232 - afastados e desligados)
 - [x] Verificar integridade dos dados importados
 - [x] Criar relatório de importação com estatísticas
+
+
+---
+
+## 🚀 SPRINTS DE CORREÇÃO E MELHORIAS
+
+### Sprint 1 - Autenticação e Permissões ⚡
+- [x] Corrigir sistema de roles (admin/rh/gestor/colaborador)
+- [x] Implementar proteção de rotas baseada em roles
+- [x] Adicionar rhProcedure e gestorProcedure no backend
+- [x] Criar middleware de autorização para operações sensíveis
+- [x] Criar componente ProtectedRoute e hooks de permissão
+- [x] Implementar filtro de menu baseado em role do usuário
+- [ ] Testar fluxo de login e permissões com diferentes roles
+
+### Sprint 2 - Interface de Avaliações 📝
+- [x] Melhorar formulário de criação de avaliações
+- [x] Implementar sistema de questões com tipos variados (múltipla escolha, dissertativa, escala, sim/não, nota)
+- [x] Adicionar preview de avaliações antes de publicar
+- [x] Criar componente QuestionBuilder reutilizável
+- [x] Criar componente EvaluationPreview
+- [x] Implementar sistema de status (rascunho, ativa, encerrada)
+- [x] Adicionar validações de campos obrigatórios e feedback visual
+- [x] Sistema de peso por questão
+- [x] Questões obrigatórias/opcionais
+- [x] Arrastar para reordenar questões
+- [x] Duplicar questões
+- [ ] Criar interface para responder avaliações (próxima etapa)
+
+### Sprint 3 - Dashboard e Visualizações 📊
+- [ ] Criar dashboard para coordenadores com estatísticas gerais
+- [ ] Implementar gráficos de participação e conclusão (Chart.js)
+- [ ] Adicionar visualização de resultados por disciplina
+- [ ] Criar relatórios exportáveis (PDF)
+- [ ] Implementar filtros por período e curso
+
+### Sprint 4 - UX e Responsividade 🎨
+- [ ] Melhorar feedback visual (loading states, toasts, confirmações)
+- [ ] Adicionar skeleton loaders em todas as páginas
+- [ ] Implementar confirmações para ações críticas (deletar, enviar)
+- [ ] Otimizar layout mobile (tabelas, formulários, navegação)
+- [ ] Adicionar breadcrumbs e navegação contextual
+- [ ] Melhorar acessibilidade (ARIA labels, keyboard navigation)
+
+### Sprint 5 - Testes e Polimento ✅
+- [ ] Escrever testes vitest para procedures críticos
+- [ ] Testar fluxos completos de usuário (criar avaliação → responder → visualizar resultados)
+- [ ] Corrigir bugs identificados durante testes
+- [ ] Otimizar performance de queries (adicionar índices)
+- [ ] Revisar e melhorar mensagens de erro
+- [ ] Adicionar documentação inline e comentários

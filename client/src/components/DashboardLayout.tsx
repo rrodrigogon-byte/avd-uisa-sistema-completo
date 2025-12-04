@@ -32,6 +32,7 @@ import { useDashboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { Breadcrumbs } from "./Breadcrumbs";
 import NotificationBell from "./NotificationBell";
 import { InAppNotifications } from "./InAppNotifications";
+import { filterMenuItems } from "@/lib/menuPermissions";
 
 // Componente de seção com submenu
 function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
@@ -313,7 +314,11 @@ function DashboardLayoutContent({
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const activeMenuItem = menuItems.find(item => item.path === location);
+  
+  // Filtrar itens de menu baseado no role do usuário
+  const filteredMenuItems = user ? filterMenuItems(menuItems, user.role as any) : [];
+  
+  const activeMenuItem = filteredMenuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
   const [searchOpen, setSearchOpen] = useState(false);
   
@@ -405,7 +410,7 @@ function DashboardLayoutContent({
 
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
-              {menuItems.map((item, idx) => {
+              {filteredMenuItems.map((item, idx) => {
                 if (item.isSection && item.children) {
                   return <MenuSection key={idx} item={item} location={location} setLocation={setLocation} />;
                 }
