@@ -64,6 +64,8 @@ import { cycles360TemplatesRouter } from "./cycles360TemplatesRouter";
 import { timeTrackingRouter } from "./routers/timeTrackingRouter";
 import { evaluationCyclesRouter } from "./routers/evaluationCyclesRouter";
 import { emailFailuresRouter } from "./routers/emailFailuresRouter";
+import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
+import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -2879,6 +2881,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Avaliação 360° com Fluxo Sequencial
   evaluation360: evaluation360Router,
+  
+  // Router de Avaliação 360° Enhanced (Wizard de 4 etapas)
+  evaluation360Enhanced: evaluation360EnhancedRouter,
+  
+  // Router de Visão Geral de Ciclos 360°
+  cycles360Overview: cycles360OverviewRouter,
   
   // Router de Gestão de Ciclos de Avaliação (360°)
   evaluationCycles: evaluationCyclesRouter,

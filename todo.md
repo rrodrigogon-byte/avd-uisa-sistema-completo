@@ -60,18 +60,18 @@
 
 ### 🎯 Avaliações 360° Enhanced (12 itens)
 
-- [ ] Implementar visão geral de todos os ciclos ativos
-- [ ] Implementar filtros (ciclo, departamento, período)
+- [x] Implementar visão geral de todos os ciclos ativos
+- [x] Implementar filtros (ciclo, departamento, período)
 - [ ] Testar fluxo completo end-to-end do ciclo 360°
 - [x] Criar página /relatorios/360-consolidado
 - [x] Gráficos radar comparando autoavaliação vs gestores/pares
-- [ ] Evolução histórica de competências por ciclo
+- [x] Evolução histórica de competências por ciclo (endpoint implementado)
 - [ ] Exportação em PDF com gráficos radar
 - [x] Filtros por ciclo, departamento e colaborador
-- [ ] Comparativo entre múltiplos ciclos
+- [x] Comparativo entre múltiplos ciclos (endpoint implementado)
 - [ ] Configurações do sistema (períodos de avaliação, pesos de critérios)
 - [ ] Implementar criação de templates de avaliação customizáveis
-- [ ] Adicionar filtros de período, departamento e tipo de avaliação
+- [x] Adicionar filtros de período, departamento e tipo de avaliação
 
 ### 📋 Descrição de Cargos e Aprovações (23 itens)
 
@@ -1287,5 +1287,28 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Testar fluxo de autenticação e autorização
 - [x] Validar procedures tRPC críticas
 - [x] Executar testes unitários existentes (208 passando)
-- [ ] Gerar checkpoint final para publicação
+- [x] Gerar checkpoint final para publicação (v2.0 - c8eab930)
 - [x] Documentar funcionalidades implementadas (FUNCIONALIDADES.md)
+
+
+## ✅ TAREFAS CONCLUÍDAS NESTA SESSÃO (04/12/2025)
+
+### 🎯 Avaliações 360° Enhanced - Novos Recursos
+
+- [x] Criar router cycles360OverviewRouter com endpoints para visão geral
+- [x] Implementar endpoint listCycles com filtros avançados (status, ano, departamento, período, tipo)
+- [x] Implementar endpoint getCycleDetails para detalhes completos de um ciclo
+- [x] Implementar endpoint getOverallStats para estatísticas gerais
+- [x] Implementar endpoint getCompetencyEvolution para evolução histórica de competências
+- [x] Implementar endpoint compareCycles para comparar até 5 ciclos
+- [x] Registrar novos routers no appRouter (evaluation360Enhanced e cycles360Overview)
+- [x] Criar página Ciclos360VisaoGeral.tsx com listagem e filtros
+- [x] Criar página Ciclos360Detalhes.tsx com tabs (Pesos, Competências, Participantes, Configuração)
+- [x] Implementar gráfico radar para visualização de pesos
+- [x] Implementar cards de estatísticas gerais (total de ciclos, ativos, participantes, taxa de conclusão)
+- [x] Implementar filtros por status, ano e tipo de ciclo
+- [x] Implementar visualização de progresso com barras de progresso
+- [x] Implementar visualização de prazos de avaliação
+- [x] Implementar visualização de competências com detalhes (peso, níveis)
+- [x] Implementar listagem de participantes com status
+- [x] Implementar visualização do wizard de configuração (4 etapas)

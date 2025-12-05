@@ -99,6 +99,8 @@ import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import DashboardRelatorios from "./pages/DashboardRelatorios";
 import Relatorio360Consolidado from "./pages/Relatorio360Consolidado";
+import Ciclos360VisaoGeral from "./pages/Ciclos360VisaoGeral";
+import Ciclos360Detalhes from "./pages/Ciclos360Detalhes";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
 import NotificationTemplates from "./pages/admin/NotificationTemplates";
@@ -285,8 +287,10 @@ function Router() {
       <Route path="/admin/emails-falhados" component={EmailsFalhados} />
       <Route path={"/admin/succession-import"} component={SuccessionImport} />
       <Route path="/performance-integrada" component={PerformanceIntegrada} />
-      <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
-      <Route path="/ciclos/360-enhanced/criar" component={Evaluation360EnhancedWizard} />
+       <Route path="/360-enhanced" component={Avaliacao360Enhanced} />
+       <Route path="/ciclos/360-enhanced/criar" component={Evaluation360EnhancedWizard} />
+       <Route path="/ciclos-360/visao-geral" component={Ciclos360VisaoGeral} />
+       <Route path="/ciclos-360/detalhes/:id" component={Ciclos360Detalhes} />
       <Route path="/testes-psicometricos" component={PsychometricTests} />
       <Route path="/teste-disc" component={TestDISC} />
       <Route path="/teste-bigfive" component={TestBigFive} />
