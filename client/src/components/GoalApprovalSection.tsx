@@ -41,7 +41,7 @@ export default function GoalApprovalSection({
     onSuccess: () => {
       toast.success("Meta aprovada com sucesso!");
       utils.goalApprovals.list.invalidate({ goalId });
-      utils.smartGoals.getById.invalidate({ goalId });
+      utils.goals.getById.invalidate({ id: goalId });
       setComments("");
     },
     onError: (error) => {
@@ -53,7 +53,7 @@ export default function GoalApprovalSection({
     onSuccess: () => {
       toast.success("Meta rejeitada");
       utils.goalApprovals.list.invalidate({ goalId });
-      utils.smartGoals.getById.invalidate({ goalId });
+      utils.goals.getById.invalidate({ id: goalId });
       setComments("");
       setShowRejectForm(false);
     },

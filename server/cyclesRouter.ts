@@ -855,6 +855,8 @@ export const cyclesRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+      // Debug log
+      console.log('[duplicateCycle] Input recebido:', JSON.stringify(input, null, 2));
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -867,6 +869,15 @@ export const cyclesRouter = router({
 
       if (!sourceCycle) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Ciclo original não encontrado" });
+      }
+
+      // Validar e normalizar o tipo
+      const validTypes = ["anual", "semestral", "trimestral"] as const;
+      if (!validTypes.includes(input.type as any)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Tipo inválido: ${input.type}. Valores aceitos: ${validTypes.join(", ")}`,
+        });
       }
 
       // Criar novo ciclo com dados copiados

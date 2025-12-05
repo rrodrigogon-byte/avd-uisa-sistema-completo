@@ -12,6 +12,8 @@ import { ptBR } from "date-fns/locale";
 export interface CycleData {
   name: string;
   description: string;
+  year: number;
+  type: "anual" | "semestral" | "trimestral";
   startDate: Date | undefined;
   endDate: Date | undefined;
   evaluationDeadline: Date | undefined;
@@ -74,6 +76,35 @@ export default function CycleDataForm({ data, onChange, onNext }: CycleDataFormP
             placeholder="Ex: Avaliação 360° - 1º Semestre 2025"
             className="mt-1.5"
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="year">Ano *</Label>
+            <Input
+              id="year"
+              type="number"
+              value={data.year}
+              onChange={(e) => onChange({ ...data, year: parseInt(e.target.value) || new Date().getFullYear() })}
+              min={2020}
+              max={2100}
+              className="mt-1.5"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="type">Tipo *</Label>
+            <select
+              id="type"
+              value={data.type}
+              onChange={(e) => onChange({ ...data, type: e.target.value as "anual" | "semestral" | "trimestral" })}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1.5"
+            >
+              <option value="anual">Anual</option>
+              <option value="semestral">Semestral</option>
+              <option value="trimestral">Trimestral</option>
+            </select>
+          </div>
         </div>
 
         <div>

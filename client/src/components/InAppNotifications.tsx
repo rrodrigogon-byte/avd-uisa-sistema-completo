@@ -23,7 +23,7 @@ interface InAppNotification {
   id: string;
   type: NotificationType;
   title: string;
-  message: string;
+  message: string | null;
   link?: string;
   createdAt: Date;
   read: boolean;
@@ -65,7 +65,7 @@ export function InAppNotifications() {
 
   const handleNotificationClick = (notification: InAppNotification) => {
     if (!notification.read) {
-      markAsReadMutation.mutate({ notificationId: notification.id });
+      markAsReadMutation.mutate({ id: parseInt(notification.id) });
     }
     
     if (notification.link) {

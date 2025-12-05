@@ -40,6 +40,8 @@ export default function Evaluation360EnhancedWizard() {
   const [cycleData, setCycleData] = useState<CycleData>({
     name: "",
     description: "",
+    year: new Date().getFullYear(),
+    type: "anual",
     startDate: undefined,
     endDate: undefined,
     evaluationDeadline: undefined
@@ -80,6 +82,8 @@ export default function Evaluation360EnhancedWizard() {
       cycleData: {
         name: cycleData.name,
         description: cycleData.description,
+        year: cycleData.year,
+        type: cycleData.type,
         startDate: cycleData.startDate?.toISOString() || '',
         endDate: cycleData.endDate?.toISOString() || '',
       },
@@ -115,6 +119,8 @@ export default function Evaluation360EnhancedWizard() {
       setCycleData({
         name: restored.cycleData.name,
         description: restored.cycleData.description,
+        year: restored.cycleData.year || new Date().getFullYear(),
+        type: restored.cycleData.type || "anual",
         startDate: restored.cycleData.startDate ? new Date(restored.cycleData.startDate) : undefined,
         endDate: restored.cycleData.endDate ? new Date(restored.cycleData.endDate) : undefined,
         evaluationDeadline: undefined,
@@ -166,6 +172,8 @@ export default function Evaluation360EnhancedWizard() {
     createCycleMutation.mutate({
       name: cycleData.name,
       description: cycleData.description,
+      year: cycleData.year,
+      type: cycleData.type,
       startDate: cycleData.startDate.toISOString(),
       endDate: cycleData.endDate.toISOString(),
       evaluationDeadline: cycleData.evaluationDeadline.toISOString(),

@@ -18,12 +18,14 @@ import io, { Socket } from "socket.io-client";
 
 interface Notification {
   id: number;
+  userId: number;
   type: string;
   title: string;
-  message: string;
-  isRead: boolean;
+  message: string | null;
+  link: string | null;
+  read: boolean;
+  readAt: Date | null;
   createdAt: Date;
-  link?: string;
 }
 
 export default function NotificationBell() {
@@ -72,7 +74,7 @@ export default function NotificationBell() {
   // Atualizar contador de não lidas
   useEffect(() => {
     if (notifications) {
-      const count = (notifications as Notification[]).filter((n) => !n.read).length;
+      const count = notifications.filter((n) => !n.read).length;
       setUnreadCount(count);
     }
   }, [notifications]);

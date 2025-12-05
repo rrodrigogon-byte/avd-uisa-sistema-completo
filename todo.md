@@ -1312,3 +1312,4 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Implementar visualização de competências com detalhes (peso, níveis)
 - [x] Implementar listagem de participantes com status
 - [x] Implementar visualização do wizard de configuração (4 etapas)
+- [x] Corrigir erro de validação ao duplicar ciclo no módulo Avaliação 360° Enhanced
