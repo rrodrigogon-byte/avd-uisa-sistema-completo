@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
+import { invokeLLM } from "./_core/llm";
 import {
   competencies,
   employees,
@@ -573,13 +574,32 @@ export const pdiIntelligentRouter = router({
     }),
 
   /**
-   * Gerar sugestões automáticas de ações 70-20-10 baseadas nos gaps
+   * Gerar sugestões automáticas de ações 70-20-10 baseadas nos gaps com IA
    */
   generateActionSuggestions: protectedProcedure
     .input(z.object({ planId: z.number() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar informações do PDI
+      const [pdiPlan] = await db
+        .select({
+          plan: pdiPlans,
+          employee: employees,
+          targetPosition: positions,
+          details: pdiIntelligentDetails,
+        })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .leftJoin(positions, eq(pdiPlans.targetPositionId, positions.id))
+        .leftJoin(pdiIntelligentDetails, eq(pdiIntelligentDetails.planId, pdiPlans.id))
+        .where(eq(pdiPlans.id, input.planId))
+        .limit(1);
+
+      if (!pdiPlan) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "PDI não encontrado" });
+      }
 
       // Buscar gaps do PDI
       const gaps = await db
@@ -591,38 +611,192 @@ export const pdiIntelligentRouter = router({
         .leftJoin(competencies, eq(pdiCompetencyGaps.competencyId, competencies.id))
         .where(eq(pdiCompetencyGaps.planId, input.planId));
 
-      // Gerar sugestões baseadas nos gaps
-      const suggestions = {
-        pratica_70: gaps.slice(0, 3).map((g, i) => ({
-          title: `Projeto prático: ${g.competency?.name || 'Competência'}`,
-          description: `Liderar projeto que desenvolva ${g.competency?.name?.toLowerCase()} através de aplicação prática no dia a dia`,
-          axis: "70_pratica" as const,
-          developmentArea: g.competency?.name || "Competência",
-          successMetric: `Aumentar nível de ${g.gap.currentLevel} para ${g.gap.targetLevel}`,
-          evidenceRequired: "Resultados mensuráveis do projeto + feedback de stakeholders",
-          dueDate: new Date(Date.now() + (6 + i * 3) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        })),
-        experiencia_20: gaps.slice(0, 2).map((g, i) => ({
-          title: `Mentoria/Job Rotation: ${g.competency?.name || 'Competência'}`,
-          description: `Participar de programa de mentoria ou rotação de função para desenvolver ${g.competency?.name?.toLowerCase()}`,
-          axis: "20_experiencia" as const,
-          developmentArea: g.competency?.name || "Competência",
-          successMetric: `Experiência documentada em ${g.competency?.name}`,
-          evidenceRequired: "Relatório de aprendizados + avaliação do mentor",
-          dueDate: new Date(Date.now() + (9 + i * 4) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        })),
-        educacao_10: gaps.slice(0, 2).map((g, i) => ({
-          title: `Formação: ${g.competency?.name || 'Competência'}`,
-          description: `Curso ou certificação em ${g.competency?.name?.toLowerCase()}`,
-          axis: "10_educacao" as const,
-          developmentArea: g.competency?.name || "Competência",
-          successMetric: "Certificado de conclusão + aplicação prática",
-          evidenceRequired: "Certificado + apresentação de aprendizados",
-          dueDate: new Date(Date.now() + (3 + i * 2) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        })),
-      };
+      if (gaps.length === 0) {
+        // Retornar sugestões vazias se não houver gaps
+        return {
+          pratica_70: [],
+          experiencia_20: [],
+          educacao_10: [],
+        };
+      }
 
-      return suggestions;
+      // Preparar contexto para IA
+      const gapsContext = gaps.map(g => ({
+        competencia: g.competency?.name || "Competência",
+        nivelAtual: g.gap.currentLevel,
+        nivelAlvo: g.gap.targetLevel,
+        gap: g.gap.gap,
+        prioridade: g.gap.priority,
+      }));
+
+      const prompt = `Você é um especialista em desenvolvimento de pessoas e planos de desenvolvimento individual (PDI).
+
+Contexto:
+- Colaborador: ${pdiPlan.employee?.name || "N/A"}
+- Cargo atual: ${pdiPlan.employee?.position || "N/A"}
+- Cargo alvo: ${pdiPlan.targetPosition?.title || "N/A"}
+- Contexto estratégico: ${pdiPlan.details?.strategicContext || "Desenvolvimento para posição de liderança"}
+- Duração do PDI: ${pdiPlan.details?.durationMonths || 24} meses
+
+Gaps de competências identificados:
+${JSON.stringify(gapsContext, null, 2)}
+
+Gere sugestões de ações de desenvolvimento seguindo o modelo 70-20-10:
+- 70% Prática (experiências no trabalho, projetos, desafios)
+- 20% Experiência (mentoria, coaching, job rotation, networking)
+- 10% Educação (cursos, certificações, leituras)
+
+Para cada categoria, crie 2-3 ações ESPECÍFICAS, PRÁTICAS e MENSURÁVEIS que:
+1. Sejam adequadas ao contexto da pessoa e da organização
+2. Abordem os gaps identificados (priorizando os de maior prioridade)
+3. Tenham métricas de sucesso claras
+4. Incluam evidências necessárias para comprovar o desenvolvimento
+5. Tenham prazos realistas distribuídos ao longo do período do PDI
+
+Retorne um JSON no formato:
+{
+  "pratica_70": [
+    {
+      "title": "Título da ação",
+      "description": "Descrição detalhada e específica",
+      "developmentArea": "Competência que desenvolve",
+      "successMetric": "Métrica de sucesso mensurável",
+      "evidenceRequired": "Evidências necessárias",
+      "dueDate": "YYYY-MM-DD"
+    }
+  ],
+  "experiencia_20": [...],
+  "educacao_10": [...]
+}`;
+
+      try {
+        // Chamar IA para gerar sugestões
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "Você é um especialista em desenvolvimento de pessoas. Retorne apenas JSON válido, sem markdown ou texto adicional.",
+            },
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "pdi_suggestions",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  pratica_70: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        description: { type: "string" },
+                        developmentArea: { type: "string" },
+                        successMetric: { type: "string" },
+                        evidenceRequired: { type: "string" },
+                        dueDate: { type: "string" },
+                      },
+                      required: ["title", "description", "developmentArea", "successMetric", "evidenceRequired", "dueDate"],
+                      additionalProperties: false,
+                    },
+                  },
+                  experiencia_20: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        description: { type: "string" },
+                        developmentArea: { type: "string" },
+                        successMetric: { type: "string" },
+                        evidenceRequired: { type: "string" },
+                        dueDate: { type: "string" },
+                      },
+                      required: ["title", "description", "developmentArea", "successMetric", "evidenceRequired", "dueDate"],
+                      additionalProperties: false,
+                    },
+                  },
+                  educacao_10: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        description: { type: "string" },
+                        developmentArea: { type: "string" },
+                        successMetric: { type: "string" },
+                        evidenceRequired: { type: "string" },
+                        dueDate: { type: "string" },
+                      },
+                      required: ["title", "description", "developmentArea", "successMetric", "evidenceRequired", "dueDate"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["pratica_70", "experiencia_20", "educacao_10"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        const content = response.choices[0]?.message?.content;
+        if (!content) {
+          throw new Error("IA não retornou conteúdo");
+        }
+
+        const aiSuggestions = JSON.parse(content);
+
+        // Adicionar axis a cada sugestão
+        const suggestions = {
+          pratica_70: aiSuggestions.pratica_70.map((s: any) => ({ ...s, axis: "70_pratica" as const })),
+          experiencia_20: aiSuggestions.experiencia_20.map((s: any) => ({ ...s, axis: "20_experiencia" as const })),
+          educacao_10: aiSuggestions.educacao_10.map((s: any) => ({ ...s, axis: "10_educacao" as const })),
+        };
+
+        return suggestions;
+      } catch (error) {
+        console.error("Erro ao gerar sugestões com IA:", error);
+        
+        // Fallback: gerar sugestões estáticas se IA falhar
+        const suggestions = {
+          pratica_70: gaps.slice(0, 3).map((g, i) => ({
+            title: `Projeto prático: ${g.competency?.name || 'Competência'}`,
+            description: `Liderar projeto que desenvolva ${g.competency?.name?.toLowerCase()} através de aplicação prática no dia a dia`,
+            axis: "70_pratica" as const,
+            developmentArea: g.competency?.name || "Competência",
+            successMetric: `Aumentar nível de ${g.gap.currentLevel} para ${g.gap.targetLevel}`,
+            evidenceRequired: "Resultados mensuráveis do projeto + feedback de stakeholders",
+            dueDate: new Date(Date.now() + (6 + i * 3) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          })),
+          experiencia_20: gaps.slice(0, 2).map((g, i) => ({
+            title: `Mentoria/Job Rotation: ${g.competency?.name || 'Competência'}`,
+            description: `Participar de programa de mentoria ou rotação de função para desenvolver ${g.competency?.name?.toLowerCase()}`,
+            axis: "20_experiencia" as const,
+            developmentArea: g.competency?.name || "Competência",
+            successMetric: `Experiência documentada em ${g.competency?.name}`,
+            evidenceRequired: "Relatório de aprendizados + avaliação do mentor",
+            dueDate: new Date(Date.now() + (9 + i * 4) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          })),
+          educacao_10: gaps.slice(0, 2).map((g, i) => ({
+            title: `Formação: ${g.competency?.name || 'Competência'}`,
+            description: `Curso ou certificação em ${g.competency?.name?.toLowerCase()}`,
+            axis: "10_educacao" as const,
+            developmentArea: g.competency?.name || "Competência",
+            successMetric: "Certificado de conclusão + aplicação prática",
+            evidenceRequired: "Certificado + apresentação de aprendizados",
+            dueDate: new Date(Date.now() + (3 + i * 2) * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          })),
+        };
+
+        return suggestions;
+      }
     }),
 
   /**

@@ -95,29 +95,33 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
 }
 
 const menuItems = [
+  // 📊 Visão Geral
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: BarChart, label: "Dashboard Executivo", path: "/dashboard-executivo" },
-  { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
+  
+  // 🎯 Gestão de Performance
   {
-    icon: Target,
-    label: "Metas",
+    icon: TrendingUp,
+    label: "Performance",
     isSection: true,
     children: [
+      { icon: Activity, label: "Visão Integrada", path: "/performance-integrada" },
       { icon: Target, label: "Minhas Metas", path: "/metas" },
       { icon: Building2, label: "Metas Corporativas", path: "/metas/corporativas" },
       { icon: CheckCircle, label: "Adesão de Metas", path: "/metas/corporativas/adesao" },
       { icon: GitBranch, label: "Metas em Cascata", path: "/metas-cascata" },
     ],
   },
+  
+  // 🔄 Avaliações 360°
   {
-    icon: TrendingUp,
-    label: "Performance",
+    icon: RefreshCw,
+    label: "Avaliações 360°",
     isSection: true,
     children: [
-      { icon: Activity, label: "Performance Integrada", path: "/performance-integrada" },
-      { icon: RefreshCw, label: "Avaliação 360°", path: "/avaliacoes" },
       { icon: Star, label: "360° Enhanced", path: "/360-enhanced" },
-      { icon: Settings, label: "Configurar Avaliações", path: "/avaliacoes/configurar" },
+      { icon: RefreshCw, label: "Avaliações", path: "/avaliacoes" },
+      { icon: Settings, label: "Configurar", path: "/avaliacoes/configurar" },
       { icon: Calendar, label: "Ciclos Ativos", path: "/ciclos/ativos" },
       { icon: Scale, label: "Calibração", path: "/calibracao" },
       { icon: Scale, label: "Calibração Diretoria", path: "/admin/calibracao-diretoria" },
@@ -125,6 +129,8 @@ const menuItems = [
       { icon: BarChart3, label: "Nine Box Comparativo", path: "/nine-box-comparativo" },
     ],
   },
+  
+  // 🎓 Desenvolvimento e Sucessão
   {
     icon: GraduationCap,
     label: "Desenvolvimento",
@@ -133,17 +139,20 @@ const menuItems = [
       { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
       { icon: FileText, label: "Relatórios de PDI", path: "/relatorios/pdi" },
       { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
-      { icon: GitBranch, label: "Mapa de Sucessão UISA", path: "/mapa-sucessao-uisa" },
+      { icon: GitBranch, label: "Sucessão UISA", path: "/mapa-sucessao-uisa" },
       { icon: TrendingUp, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
       { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },
+      { icon: BarChart, label: "Comparativo de Testes", path: "/testes/comparativo" },
       { icon: MessageSquare, label: "Feedback Contínuo", path: "/feedback" },
       { icon: Trophy, label: "Conquistas e Badges", path: "/badges" },
-      { icon: BarChart3, label: "Pesquisas de Pulse", path: "/pesquisas-pulse" },
+      { icon: BarChart3, label: "Pesquisas Pulse", path: "/pesquisas-pulse" },
     ],
   },
+  
+  // 👥 Gestão de Pessoas
   {
     icon: UsersRound,
-    label: "Gestão de Pessoas",
+    label: "Pessoas",
     isSection: true,
     children: [
       { icon: Users, label: "Funcionários", path: "/funcionarios" },
@@ -151,17 +160,28 @@ const menuItems = [
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
       { icon: DollarSign, label: "Centros de Custo", path: "/centros-custos" },
       { icon: FileText, label: "Descrição de Cargos", path: "/descricao-cargos" },
-      { icon: FileText, label: "Descrição de Cargos UISA", path: "/descricao-cargos-uisa" },
-      { icon: Clock, label: "Minhas Atividades", path: "/minhas-atividades" },
-      { icon: Clock, label: "Importar Ponto", path: "/importacao-ponto" },
-      { icon: AlertTriangle, label: "Discrepâncias", path: "/discrepancias" },
-      { icon: AlertTriangle, label: "Alertas", path: "/alertas" },
-      { icon: BarChart3, label: "Relatórios de Produtividade", path: "/relatorios-produtividade" },
-      { icon: CheckCircle, label: "Validação por Líder", path: "/validacao-lider" },
-      { icon: AlertTriangle, label: "Análise de Gaps", path: "/analise-gaps" },
+      { icon: FileText, label: "Descrição UISA", path: "/descricao-cargos-uisa" },
       { icon: Upload, label: "Importação em Massa", path: "/importacao-descricoes" },
     ],
   },
+  
+  // ⏰ Gestão de Tempo
+  {
+    icon: Clock,
+    label: "Gestão de Tempo",
+    isSection: true,
+    children: [
+      { icon: Clock, label: "Minhas Atividades", path: "/minhas-atividades" },
+      { icon: Upload, label: "Importar Ponto", path: "/importacao-ponto" },
+      { icon: AlertTriangle, label: "Discrepâncias", path: "/discrepancias" },
+      { icon: CheckCircle, label: "Validação por Líder", path: "/validacao-lider" },
+      { icon: BarChart3, label: "Relatórios", path: "/relatorios-produtividade" },
+      { icon: AlertTriangle, label: "Alertas", path: "/alertas" },
+      { icon: AlertTriangle, label: "Análise de Gaps", path: "/analise-gaps" },
+    ],
+  },
+  
+  // ✅ Aprovações
   {
     icon: CheckSquare,
     label: "Aprovações",
@@ -176,6 +196,8 @@ const menuItems = [
       { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
     ],
   },
+  
+  // 💰 Bônus e Remuneração
   {
     icon: DollarSign,
     label: "Bônus",
@@ -184,25 +206,15 @@ const menuItems = [
       { icon: DollarSign, label: "Políticas", path: "/bonus" },
       { icon: TrendingUp, label: "Previsão", path: "/previsao-bonus" },
       { icon: CheckSquare, label: "Aprovação em Lote", path: "/aprovacoes/bonus-lote" },
-      { icon: Workflow, label: "Workflows de Bônus", path: "/admin/bonus-workflows" },
+      { icon: Workflow, label: "Workflows", path: "/admin/bonus-workflows" },
       { icon: CheckCircle, label: "Compliance e SLA", path: "/compliance/bonus" },
       { icon: FileSearch, label: "Auditoria", path: "/bonus/auditoria" },
       { icon: FileText, label: "Relatórios", path: "/relatorios/bonus" },
       { icon: Upload, label: "Exportar Folha", path: "/folha-pagamento/exportar" },
     ],
   },
-  { icon: HistoryIcon, label: "Histórico", path: "/historico" },
-  {
-    icon: FileText,
-    label: "Relatórios",
-    isSection: true,
-    children: [
-      { icon: FileText, label: "Relatórios Gerais", path: "/relatorios" },
-      { icon: Calendar, label: "Progresso de Ciclos", path: "/relatorios/ciclos" },
-      { icon: DollarSign, label: "Relatórios de Bônus", path: "/relatorios/bonus" },
-      { icon: BarChart3, label: "Relatórios Executivos", path: "/relatorios-executivos" },
-    ],
-  },
+  
+  // 📊 Analytics e Relatórios
   {
     icon: BarChart3,
     label: "Analytics",
@@ -211,9 +223,16 @@ const menuItems = [
       { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
       { icon: TrendingUp, label: "Analytics Avançado", path: "/analytics/avancado" },
       { icon: Scale, label: "Benchmarking", path: "/benchmarking" },
-      { icon: BarChart, label: "Comparativo de Testes", path: "/testes/comparativo" },
+      { icon: FileText, label: "Relatórios Gerais", path: "/relatorios" },
+      { icon: Calendar, label: "Progresso de Ciclos", path: "/relatorios/ciclos" },
+      { icon: BarChart3, label: "Relatórios Executivos", path: "/relatorios-executivos" },
     ],
   },
+  
+  // 📜 Histórico
+  { icon: HistoryIcon, label: "Histórico", path: "/historico" },
+  
+  // 🔧 Administração
   {
     icon: UserIcon,
     label: "Administração",
@@ -231,6 +250,8 @@ const menuItems = [
       { icon: Inbox, label: "Importar Dados UISA", path: "/admin/import-uisa" },
     ],
   },
+  
+  // ⚙️ Configurações
   {
     icon: Settings,
     label: "Configurações",

@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Lightbulb, Plus, Pencil, Check } from "lucide-react";
+import { Lightbulb, Plus, Pencil, Check, Loader2, Sparkles } from "lucide-react";
 
 interface ActionSuggestionsSectionProps {
   pdiId: number | null;
@@ -35,11 +35,20 @@ export default function ActionSuggestionsSection({ pdiId }: ActionSuggestionsSec
     },
   });
 
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const handleGenerateSuggestions = async () => {
-    const result = await refetchSuggestions();
-    if (result.data) {
-      setSuggestions(result.data);
-      toast.success("Sugestões geradas com sucesso!");
+    setIsGenerating(true);
+    try {
+      const result = await refetchSuggestions();
+      if (result.data) {
+        setSuggestions(result.data);
+        toast.success("✨ Sugestões inteligentes geradas com IA!");
+      }
+    } catch (error) {
+      toast.error("Erro ao gerar sugestões. Tente novamente.");
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -186,22 +195,47 @@ export default function ActionSuggestionsSection({ pdiId }: ActionSuggestionsSec
   return (
     <div className="space-y-4">
       {!suggestions ? (
-        <div className="text-center py-8">
-          <Lightbulb className="h-12 w-12 mx-auto text-green-600 mb-4" />
-          <p className="text-muted-foreground mb-4">
-            Gere sugestões automáticas de ações 70-20-10 baseadas nos gaps de competências identificados
+        <div className="text-center py-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-green-100 to-blue-100 mb-4">
+            <Sparkles className="h-8 w-8 text-green-600" />
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Sugestões Inteligentes com IA</h3>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+            Gere sugestões personalizadas de ações de desenvolvimento seguindo o modelo 70-20-10, baseadas nos gaps de competências identificados
           </p>
-          <Button onClick={handleGenerateSuggestions}>
-            <Lightbulb className="h-4 w-4 mr-2" />
-            Gerar Sugestões
+          <Button onClick={handleGenerateSuggestions} disabled={isGenerating} size="lg">
+            {isGenerating ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Gerando sugestões...
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4 mr-2" />
+                Gerar Sugestões com IA
+              </>
+            )}
           </Button>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="flex justify-end">
-            <Button onClick={handleGenerateSuggestions} variant="outline" size="sm">
-              <Lightbulb className="h-4 w-4 mr-2" />
-              Gerar Novamente
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Sparkles className="h-4 w-4 text-green-600" />
+              <span>Sugestões geradas com IA</span>
+            </div>
+            <Button onClick={handleGenerateSuggestions} variant="outline" size="sm" disabled={isGenerating}>
+              {isGenerating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Gerando...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Gerar Novamente
+                </>
+              )}
             </Button>
           </div>
 

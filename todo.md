@@ -1368,3 +1368,34 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Adicionar validação de permissões (apenas admin e RH)
 - [x] Implementar listagem de usuários com estatísticas
 - [x] Adicionar badges de perfil e status
+
+
+---
+
+## 🔧 MELHORIAS SOLICITADAS - 06/12/2025 15:50
+
+### PDIs Inteligentes - Correções e Melhorias
+- [x] Corrigir geração de PDIs inteligentes com IA (revisar prompt e lógica)
+- [x] Melhorar análise de gaps de competências no PDI
+- [x] Otimizar sugestões de ações de desenvolvimento
+- [x] Adicionar recomendações personalizadas baseadas no perfil do funcionário
+- [x] Integrar histórico de avaliações na geração do PDI
+
+### Menu de Navegação - Reorganização
+- [x] Reorganizar estrutura do menu lateral (agrupar funcionalidades relacionadas)
+- [x] Melhorar ícones do menu (mais intuitivos e consistentes)
+- [x] Adicionar submenu colasável para seções com muitos itens
+- [x] Implementar destaque visual para página ativa
+- [ ] Adicionar contador de notificações/pendências nos itens do menu
+- [x] Melhorar responsividade do menu em telas menores
+
+### Configurações de Email
+- [x] Validar configurações de email já implementadas
+- [x] Testar envio de emails em diferentes cenários
+- [x] Adicionar retry automático para emails falhados
+- [x] Implementar fila de emails para envios em massa
+
+### Testes
+- [x] Criar teste unitário para PDI Inteligente
+- [x] Validar todos os procedimentos do router de PDI
+- [x] Garantir que geração de sugestões com IA está funcional
