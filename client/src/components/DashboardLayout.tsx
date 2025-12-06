@@ -38,39 +38,58 @@ import { filterMenuItems } from "@/lib/menuPermissions";
 // Componente de seção com submenu
 function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
   const [isOpen, setIsOpen] = useState(true);
+  const hasActiveChild = item.children?.some((child: any) => location === child.path);
   
   return (
     <div className="space-y-1">
       <SidebarMenuItem>
         <SidebarMenuButton
           onClick={() => setIsOpen(!isOpen)}
-          className="h-10 transition-all font-medium"
+          className={`h-10 transition-all duration-200 font-medium group hover:bg-accent/50 ${
+            hasActiveChild ? 'bg-accent/30 text-primary' : ''
+          }`}
         >
-          <item.icon className="h-4 w-4" />
-          <span>{item.label}</span>
-          {isOpen ? <ChevronDown className="h-4 w-4 ml-auto" /> : <ChevronRight className="h-4 w-4 ml-auto" />}
+          <item.icon className={`h-4 w-4 transition-colors ${
+            hasActiveChild ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+          }`} />
+          <span className="transition-colors">{item.label}</span>
+          {isOpen ? 
+            <ChevronDown className="h-4 w-4 ml-auto transition-transform duration-200" /> : 
+            <ChevronRight className="h-4 w-4 ml-auto transition-transform duration-200" />
+          }
         </SidebarMenuButton>
       </SidebarMenuItem>
-      {isOpen && (
-        <div className="ml-4 space-y-0.5">
-          {item.children.map((child: any) => {
-            const isActive = location === child.path;
-            return (
-              <SidebarMenuItem key={child.path}>
-                <SidebarMenuButton
-                  isActive={isActive}
-                  onClick={() => setLocation(child.path)}
-                  tooltip={child.label}
-                  className="h-9 transition-all font-normal text-sm"
-                >
-                  <child.icon className={`h-3.5 w-3.5 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
-                  <span>{child.label}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </div>
-      )}
+      <div className={`ml-4 space-y-0.5 overflow-hidden transition-all duration-300 ease-in-out ${
+        isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        {item.children.map((child: any) => {
+          const isActive = location === child.path;
+          return (
+            <SidebarMenuItem key={child.path}>
+              <SidebarMenuButton
+                isActive={isActive}
+                onClick={() => setLocation(child.path)}
+                tooltip={child.label}
+                className={`h-9 transition-all duration-200 font-normal text-sm group relative ${
+                  isActive 
+                    ? 'bg-primary/10 text-primary font-medium border-l-2 border-primary' 
+                    : 'hover:bg-accent/50 hover:translate-x-1'
+                }`}
+              >
+                <child.icon className={`h-3.5 w-3.5 transition-all duration-200 ${
+                  isActive 
+                    ? 'text-primary scale-110' 
+                    : 'text-muted-foreground group-hover:text-foreground group-hover:scale-105'
+                }`} />
+                <span className="transition-all duration-200">{child.label}</span>
+                {isActive && (
+                  <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                )}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -422,12 +441,23 @@ function DashboardLayoutContent({
                       isActive={isActive}
                       onClick={() => item.path && setLocation(item.path)}
                       tooltip={item.label}
-                      className={`h-10 transition-all font-normal`}
+                      className={`h-10 transition-all duration-200 font-normal group relative ${
+                        isActive 
+                          ? 'bg-primary/10 text-primary font-medium border-l-2 border-primary' 
+                          : 'hover:bg-accent/50 hover:translate-x-1'
+                      }`}
                     >
                       <item.icon
-                        className={`h-4 w-4 ${isActive ? "text-primary" : ""}`}
+                        className={`h-4 w-4 transition-all duration-200 ${
+                          isActive 
+                            ? 'text-primary scale-110' 
+                            : 'text-muted-foreground group-hover:text-foreground group-hover:scale-105'
+                        }`}
                       />
-                      <span>{item.label}</span>
+                      <span className="transition-all duration-200">{item.label}</span>
+                      {isActive && (
+                        <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
