@@ -1323,3 +1323,48 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Adicionar feedback visual ao hover e interações
 - [x] Implementar transições suaves entre seções
 - [x] Otimizar menu para mobile com melhor usabilidade
+
+
+### 👥 Gestão de Usuários - Líderes e Administradores (Novo)
+
+- [ ] Atualizar schema de usuários com campo role expandido (admin, líder, colaborador)
+- [ ] Criar procedures tRPC para gerenciamento de usuários por administradores
+- [ ] Implementar listagem de usuários com filtros por role
+- [ ] Criar formulário de cadastro/edição de usuários com seleção de role
+- [ ] Implementar página /admin/usuarios para gestão completa de usuários
+- [ ] Adicionar validação de permissões (apenas admin pode criar/editar usuários)
+- [ ] Implementar ativação/desativação de usuários
+- [ ] Criar interface para visualizar histórico de ações dos usuários
+
+
+### 🚀 Implementação Imediata - Usuários e Sistema de Credenciais
+
+- [ ] Corrigir erro de duplicação de getUserById no db.ts
+- [ ] Criar usuários líderes: Lucas dos Passos Silva, Marcio Bortolloto, Ede Ogusuku
+- [ ] Criar administradores: Rodrigo Ribeiro Gonçalves (Diretor), Andre Sbardelline (Gerente RH), Caroline Mendes (Coordenadora RH)
+- [ ] Implementar sistema de geração de senhas temporárias
+- [ ] Criar script de seed para popular usuários iniciais
+- [ ] Melhorar menu de navegação com estrutura hierárquica
+- [ ] Implementar sistema de envio de emails com credenciais
+- [ ] Criar template de email com link de acesso e credenciais
+- [ ] Enviar emails para todos os usuários criados
+
+
+### ✅ Usuários Criados com Sucesso
+
+- [x] Criar usuários líderes: Lucas dos Passos Silva (já existia), Marcio Bortolloto, Ede Ogusuku
+- [x] Criar administradores: Rodrigo Ribeiro Gonçalves (já existia), Andre Sbardelline (Gerente RH), Caroline Mendes (Coordenadora RH)
+- [x] Implementar sistema de geração de senhas temporárias
+- [x] Criar script de seed para popular usuários iniciais
+
+
+### ✅ Tarefas Concluídas Recentemente
+
+- [x] Melhorar menu de navegação com seção de Administração
+- [x] Implementar sistema de envio de emails com credenciais (script criado)
+- [x] Criar template de email com link de acesso e credenciais
+- [x] Criar router tRPC para gestão de usuários
+- [x] Criar página /admin/usuarios para gestão completa de usuários
+- [x] Adicionar validação de permissões (apenas admin e RH)
+- [x] Implementar listagem de usuários com estatísticas
+- [x] Adicionar badges de perfil e status

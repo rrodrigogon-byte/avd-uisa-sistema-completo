@@ -976,3 +976,75 @@ export async function addEvaluationComment(data: {
 
   return { id: result[0].insertId, success: true };
 }
+
+
+// ============================================================================
+// GESTÃO DE USUÁRIOS (ADMIN)
+// ============================================================================
+
+export async function getAllUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  try {
+    return await db.select().from(users).orderBy(users.createdAt);
+  } catch (error) {
+    console.error("[Database] Failed to get all users:", error);
+    return [];
+  }
+}
+
+export async function updateUserRole(userId: number, role: "admin" | "rh" | "gestor" | "colaborador") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    await db.update(users).set({ role }).where(eq(users.id, userId));
+  } catch (error) {
+    console.error("[Database] Failed to update user role:", error);
+    throw error;
+  }
+}
+
+export async function updateUserSalaryLead(userId: number, isSalaryLead: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    await db.update(users).set({ isSalaryLead }).where(eq(users.id, userId));
+  } catch (error) {
+    console.error("[Database] Failed to update salary lead status:", error);
+    throw error;
+  }
+}
+
+export async function getUsersByRole(role: "admin" | "rh" | "gestor" | "colaborador") {
+  const db = await getDb();
+  if (!db) return [];
+  
+  try {
+    return await db.select().from(users).where(eq(users.role, role)).orderBy(users.name);
+  } catch (error) {
+    console.error("[Database] Failed to get users by role:", error);
+    return [];
+  }
+}
+
+export async function searchUsers(searchTerm: string) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  try {
+    const searchPattern = `%${searchTerm}%`;
+    return await db
+      .select()
+      .from(users)
+      .where(
+        sql`${users.name} LIKE ${searchPattern} OR ${users.email} LIKE ${searchPattern}`
+      )
+      .orderBy(users.name);
+  } catch (error) {
+    console.error("[Database] Failed to search users:", error);
+    return [];
+  }
+}
