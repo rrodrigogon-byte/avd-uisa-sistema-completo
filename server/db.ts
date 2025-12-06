@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lte, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   auditLogs,
@@ -538,7 +538,37 @@ export async function listEmployees(filters?: {
   const db = await getDb();
   if (!db) return [];
 
-  let query = db
+  // Construir condições WHERE
+  const conditions = [];
+  
+  // Status padrão: ativo
+  if (filters?.status) {
+    conditions.push(eq(employees.status, filters.status as any));
+  } else {
+    conditions.push(eq(employees.status, "ativo"));
+  }
+
+  // Filtros adicionais
+  if (filters?.departmentId) {
+    conditions.push(eq(employees.departmentId, filters.departmentId));
+  }
+  if (filters?.positionId) {
+    conditions.push(eq(employees.positionId, filters.positionId));
+  }
+
+  // Busca por nome ou email (SQL LIKE para performance)
+  if (filters?.search && filters.search.trim()) {
+    const searchPattern = `%${filters.search.trim()}%`;
+    conditions.push(
+      or(
+        sql`${employees.name} LIKE ${searchPattern}`,
+        sql`${employees.email} LIKE ${searchPattern}`
+      )
+    );
+  }
+
+  // Executar query com todas as condições
+  const results = await db
     .select({
       employee: employees,
       department: departments,
@@ -547,29 +577,8 @@ export async function listEmployees(filters?: {
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(positions, eq(employees.positionId, positions.id))
-    .where(eq(employees.status, "ativo")) as any;
-
-  if (filters?.departmentId) {
-    query = query.where(eq(employees.departmentId, filters.departmentId));
-  }
-  if (filters?.positionId) {
-    query = query.where(eq(employees.positionId, filters.positionId));
-  }
-  if (filters?.status) {
-    query = query.where(eq(employees.status, filters.status as any));
-  }
-
-  const results = await query;
-
-  // Filtro de busca por nome ou email (feito em memória)
-  if (filters?.search) {
-    const searchLower = filters.search.toLowerCase();
-    return results.filter(
-      (item: any) =>
-        item.employee.name.toLowerCase().includes(searchLower) ||
-        item.employee.email.toLowerCase().includes(searchLower)
-    );
-  }
+    .where(and(...conditions))
+    .limit(100); // Limitar a 100 resultados para performance
 
   return results;
 }
