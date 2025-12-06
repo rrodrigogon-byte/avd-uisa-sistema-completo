@@ -28,6 +28,7 @@ import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 import NotificationCenter from "./NotificationCenter";
 import { GlobalSearch, useGlobalSearchShortcut } from "./GlobalSearch";
+import { ShortcutsHelp } from "./ShortcutsHelp";
 import { useDashboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { Breadcrumbs } from "./Breadcrumbs";
 import NotificationBell from "./NotificationBell";
@@ -535,6 +536,7 @@ function DashboardLayoutContent({
           </div>
         )}
         <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+        <ShortcutsHelp />
         <main className="flex-1 p-4">
           <Breadcrumbs />
           {children}

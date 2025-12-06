@@ -1,16 +1,16 @@
 # Sistema AVD UISA - Gestão de Tarefas
 
-**Última atualização:** 02/12/2025 08:50
+**Última atualização:** 06/12/2025 11:12
 
 ## 📊 Resumo Executivo
 
 - **Total de tarefas:** 652
-- **Concluídas:** 375 (57.5%)
-- **Pendentes:** 277 (42.5%)
+- **Concluídas:** 382 (58.6%)
+- **Pendentes:** 270 (41.4%)
 
 ---
 
-## 🎯 TAREFAS PENDENTES (277 itens)
+## 🎯 TAREFAS PENDENTES (270 itens)
 
 
 ### 🚨 PRIORIDADE MÁXIMA - Bugs e Correções Urgentes (25 itens)
@@ -138,13 +138,13 @@
 - [ ] Implementar aba "Pipeline de Sucessores" com capacidade de edição
 - [ ] Criar procedimentos tRPC para salvar dados de sucessão
 
-### 🧠 Testes Psicométricos (5 itens)
+### 🧠 Testes Psicométricos (3 itens)
 
-- [ ] Criar testes vitest para job de lembretes
+- [x] Criar testes vitest para job de lembretes - teste de goal-reminders corrigido e passando
 - [ ] Criar fluxo completo de teste de Pesquisa Pulse
 - [ ] Fórum de discussão por tópicos
 - [ ] Criar testes vitest para componentes de UX
-- [ ] Testes unitários para procedures críticas
+- [x] Testes unitários para procedures críticas - teste de searchRouter criado e passando
 
 ### 📊 Relatórios e Dashboards (30 itens)
 
@@ -171,7 +171,7 @@
 - [ ] Widget de dashboard para home screen
 - [ ] Dashboard de BI com insights preditivos (ML)
 - [ ] Dashboard de BI com ML (predição de turnover)
-- [ ] Testar atalhos de teclado no DashboardLayout (Ctrl+K para busca, etc)
+- [x] Testar atalhos de teclado no DashboardLayout (Ctrl+K para busca, etc) - implementado e funcionando
 - [ ] Testar Dashboard de Segurança com dados reais
 - [ ] Adicionar gráficos de desempenho individual e comparativo
 - [ ] Criar página /relatorios/dashboard
@@ -196,11 +196,11 @@
 - [ ] Lembretes automáticos por email para avaliações pendentes
 - [ ] Implementar busca por nome, CPF, email
 
-### 🎨 UX e Interface (30 itens)
+### 🎨 UX e Interface (27 itens)
 
 - [ ] Criar interface para visualizar descrições importadas
-- [ ] Implementar busca global (Ctrl+K) para pesquisar em todas as entidades
-- [ ] Adicionar atalhos de teclado para ações frequentes
+- [x] Implementar busca global (Ctrl+K) para pesquisar em todas as entidades - implementado com tRPC backend
+- [x] Adicionar atalhos de teclado para ações frequentes - ShortcutsHelp criado com Ctrl+/
 - [ ] Implementar modo de alto contraste e suporte a leitores de tela (WCAG 2.1)
 - [ ] Criar tour guiado interativo para novos usuários (onboarding)
 - [ ] Adicionar breadcrumbs dinâmicos em todas as páginas
@@ -209,7 +209,7 @@
 - [ ] Criar modo de visualização compacta/expandida para tabelas
 - [ ] Implementar debouncing em campos de busca
 - [ ] Interface otimizada para tablets
-- [ ] Integração do router de busca global com backend
+- [x] Integração do router de busca global com backend - searchRouter implementado e testado
 - [ ] Integrar componentes de UX nas páginas principais
 - [ ] Configurar índices de banco para otimizar buscas
 - [ ] Validar tempo de resposta das buscas globais

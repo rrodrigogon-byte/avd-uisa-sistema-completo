@@ -29,7 +29,7 @@ describe('Sistema de Lembretes de Metas Atrasadas', () => {
       .select({
         id: goals.id,
         title: goals.title,
-        deadline: goals.deadline,
+        endDate: goals.endDate,
         progress: goals.progress,
         status: goals.status,
         employeeId: goals.employeeId,
@@ -38,11 +38,11 @@ describe('Sistema de Lembretes de Metas Atrasadas', () => {
       .from(goals)
       .where(
         and(
-          lt(goals.deadline, today),
+          lt(goals.endDate, today),
           or(
-            eq(goals.status, 'in_progress'),
-            eq(goals.status, 'approved'),
-            eq(goals.status, 'pending_approval')
+            eq(goals.status, 'em_andamento'),
+            eq(goals.status, 'aprovada'),
+            eq(goals.status, 'pendente_aprovacao')
           )
         )
       );
@@ -54,12 +54,12 @@ describe('Sistema de Lembretes de Metas Atrasadas', () => {
       
       for (const goal of overdueGoals) {
         const daysOverdue = Math.floor(
-          (today.getTime() - new Date(goal.deadline).getTime()) / (1000 * 60 * 60 * 24)
+          (today.getTime() - new Date(goal.endDate).getTime()) / (1000 * 60 * 60 * 24)
         );
         
         console.log(`\n   📌 Meta: "${goal.title}"`);
         console.log(`      - ID: ${goal.id}`);
-        console.log(`      - Prazo: ${new Date(goal.deadline).toLocaleDateString('pt-BR')}`);
+        console.log(`      - Prazo: ${new Date(goal.endDate).toLocaleDateString('pt-BR')}`);
         console.log(`      - Atrasada há: ${daysOverdue} dias`);
         console.log(`      - Progresso: ${goal.progress}%`);
         console.log(`      - Status: ${goal.status}`);
@@ -166,16 +166,16 @@ describe('Sistema de Lembretes de Metas Atrasadas', () => {
         id: goals.id,
         title: goals.title,
         employeeId: goals.employeeId,
-        deadline: goals.deadline,
+        endDate: goals.endDate,
         progress: goals.progress,
       })
       .from(goals)
       .where(
         and(
-          lt(goals.deadline, today),
+          lt(goals.endDate, today),
           or(
-            eq(goals.status, 'in_progress'),
-            eq(goals.status, 'approved')
+            eq(goals.status, 'em_andamento'),
+            eq(goals.status, 'aprovada')
           )
         )
       );
@@ -199,7 +199,7 @@ describe('Sistema de Lembretes de Metas Atrasadas', () => {
       if (!employee || !employee.email) continue;
       
       const daysOverdue = Math.floor(
-        (today.getTime() - new Date(goal.deadline).getTime()) / (1000 * 60 * 60 * 24)
+        (today.getTime() - new Date(goal.endDate).getTime()) / (1000 * 60 * 60 * 24)
       );
       
       reminders.push({
@@ -208,7 +208,7 @@ describe('Sistema de Lembretes de Metas Atrasadas', () => {
         employeeEmail: employee.email,
         goalId: goal.id,
         goalTitle: goal.title,
-        deadline: goal.deadline,
+        deadline: goal.endDate,
         daysOverdue,
         progress: goal.progress,
       });
