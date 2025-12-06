@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,8 +17,40 @@ export default function AprovarDescricaoSuperior() {
   const [acao, setAcao] = useState<"aprovar" | "rejeitar">("aprovar");
   const [comentario, setComentario] = useState("");
 
-  // Mock data - substituir por endpoint real
-  const descricoesPendentes = [
+  // Buscar descrições pendentes de aprovação do superior
+  const { data: pendingDescriptions, isLoading, refetch } = trpc.jobDescriptions.list.useQuery(
+    { status: "pending_manager" },
+    { enabled: !!user }
+  );
+
+  // Mutations para aprovar/rejeitar
+  const approveMutation = trpc.jobDescriptions.approve.useMutation({
+    onSuccess: () => {
+      toast.success("Descrição de cargo aprovada com sucesso!");
+      setModalAberto(false);
+      setComentario("");
+      setDescricaoSelecionada(null);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao aprovar: ${error.message}`);
+    },
+  });
+
+  const rejectMutation = trpc.jobDescriptions.reject.useMutation({
+    onSuccess: () => {
+      toast.success("Descrição de cargo rejeitada");
+      setModalAberto(false);
+      setComentario("");
+      setDescricaoSelecionada(null);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao rejeitar: ${error.message}`);
+    },
+  });
+
+  const descricoesPendentesMock = [
     {
       id: 1,
       cargo: "Analista de Sistemas Sênior",
@@ -59,6 +92,9 @@ export default function AprovarDescricaoSuperior() {
       ],
     },
   ];
+  
+  // Usar dados reais se disponível, senão mock
+  const descricoesPendentes = pendingDescriptions || descricoesPendentesMock;
 
   const abrirModal = (descricao: any, tipo: "aprovar" | "rejeitar") => {
     setDescricaoSelecionada(descricao);
@@ -70,20 +106,35 @@ export default function AprovarDescricaoSuperior() {
   const confirmarAcao = () => {
     if (!descricaoSelecionada) return;
 
-    // TODO: Chamar endpoint real
-    toast.success(
-      acao === "aprovar"
-        ? `Descrição de cargo aprovada com sucesso!`
-        : `Descrição de cargo rejeitada. O funcionário será notificado.`
-    );
-
-    setModalAberto(false);
-    setDescricaoSelecionada(null);
-    setComentario("");
+    if (acao === "aprovar") {
+      approveMutation.mutate({
+        approvalId: descricaoSelecionada.id,
+        comments: comentario || undefined,
+      });
+    } else {
+      if (!comentario.trim()) {
+        toast.error("Por favor, forneça um comentário explicando a rejeição");
+        return;
+      }
+      rejectMutation.mutate({
+        approvalId: descricaoSelecionada.id,
+        comments: comentario,
+      });
+    }
   };
 
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <Clock className="animate-spin h-8 w-8 text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <DashboardLayout>
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
@@ -262,6 +313,6 @@ export default function AprovarDescricaoSuperior() {
           </DialogContent>
         </Dialog>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

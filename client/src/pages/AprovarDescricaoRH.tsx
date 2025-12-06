@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,46 +18,38 @@ export default function AprovarDescricaoRH() {
   const [acao, setAcao] = useState<"aprovar" | "rejeitar">("aprovar");
   const [comentario, setComentario] = useState("");
 
-  // Mock data - substituir por endpoint real
-  const descricoesAprovadas = [
-    {
-      id: 1,
-      cargo: "Analista de Sistemas Sênior",
-      funcionario: "João Silva",
-      departamento: "TI",
-      superior: "Carlos Mendes",
-      dataSubmissao: "2024-11-20",
-      dataAprovacaoSuperior: "2024-11-23",
-      comentarioSuperior: "Descrição bem detalhada e alinhada com as responsabilidades atuais.",
-      descricao: "Responsável por desenvolver e manter sistemas corporativos, realizar análise de requisitos e propor soluções tecnológicas.",
-      responsabilidades: [
-        "Desenvolver aplicações web e mobile",
-        "Realizar code reviews",
-        "Mentoria de desenvolvedores júnior",
-        "Participar de reuniões de planejamento",
-      ],
-      competencias: [
-        "React, Node.js, TypeScript",
-        "Arquitetura de Software",
-        "Metodologias Ágeis",
-        "Liderança Técnica",
-      ],
-      historico: [
-        {
-          data: "2024-11-20",
-          acao: "Submetido",
-          responsavel: "João Silva",
-          comentario: "Descrição inicial criada pelo funcionário",
-        },
-        {
-          data: "2024-11-23",
-          acao: "Aprovado pelo Superior",
-          responsavel: "Carlos Mendes",
-          comentario: "Descrição bem detalhada e alinhada com as responsabilidades atuais.",
-        },
-      ],
+  // Buscar descrições pendentes de aprovação do RH
+  const { data: pendingDescriptions, isLoading, refetch } = trpc.jobDescriptions.list.useQuery(
+    { status: "pending_hr" },
+    { enabled: !!user }
+  );
+
+  // Mutations para aprovar/rejeitar
+  const approveMutation = trpc.jobDescriptions.approve.useMutation({
+    onSuccess: () => {
+      toast.success("Descrição de cargo aprovada com sucesso!");
+      setModalAberto(false);
+      setComentario("");
+      setDescricaoSelecionada(null);
+      refetch();
     },
-  ];
+    onError: (error) => {
+      toast.error(`Erro ao aprovar: ${error.message}`);
+    },
+  });
+
+  const rejectMutation = trpc.jobDescriptions.reject.useMutation({
+    onSuccess: () => {
+      toast.success("Descrição de cargo rejeitada");
+      setModalAberto(false);
+      setComentario("");
+      setDescricaoSelecionada(null);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao rejeitar: ${error.message}`);
+    },
+  });
 
   const abrirModal = (descricao: any, tipo: "aprovar" | "rejeitar") => {
     setDescricaoSelecionada(descricao);
@@ -73,20 +66,35 @@ export default function AprovarDescricaoRH() {
   const confirmarAcao = () => {
     if (!descricaoSelecionada) return;
 
-    // TODO: Chamar endpoint real
-    toast.success(
-      acao === "aprovar"
-        ? `Descrição de cargo aprovada! O cargo foi oficialmente atualizado.`
-        : `Descrição de cargo rejeitada. Será retornada para revisão.`
-    );
-
-    setModalAberto(false);
-    setDescricaoSelecionada(null);
-    setComentario("");
+    if (acao === "aprovar") {
+      approveMutation.mutate({
+        approvalId: descricaoSelecionada.id,
+        comments: comentario || undefined,
+      });
+    } else {
+      if (!comentario.trim()) {
+        toast.error("Por favor, forneça um comentário explicando a rejeição");
+        return;
+      }
+      rejectMutation.mutate({
+        approvalId: descricaoSelecionada.id,
+        comments: comentario,
+      });
+    }
   };
 
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <Clock className="animate-spin h-8 w-8 text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <DashboardLayout>
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
@@ -358,6 +366,6 @@ export default function AprovarDescricaoRH() {
           </DialogContent>
         </Dialog>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

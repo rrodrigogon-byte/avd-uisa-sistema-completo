@@ -1448,3 +1448,35 @@ Com base nas tarefas pendentes, recomenda-se focar em:
   - [x] Validação de Domínio (@uisa.com.br)
   - [x] Workflow de Aprovações (sequência self → manager → completed)
   - [x] Relatórios e Dashboards (taxa de conclusão, média de scores)
+
+
+### 🎯 SESSÃO ATUAL - Melhorias Prioritárias (Em Desenvolvimento)
+
+- [ ] Implementar página /relatorios/dashboard com gráficos interativos
+- [ ] Adicionar gráfico de desempenho por departamento (Bar Chart)
+- [ ] Adicionar gráfico de evolução individual (Line Chart)
+- [ ] Implementar exportação de relatórios em PDF
+- [ ] Criar página /descricao-cargos/aprovar-superior
+- [ ] Criar página /descricao-cargos/aprovar-rh
+- [ ] Implementar workflow de aprovação completo
+- [ ] Adicionar notificações de aprovação pendente
+
+
+### ✅ SESSÃO CONCLUÍDA - Integração de Páginas de Aprovação
+
+- [x] Integrar página AprovarDescricaoSuperior com backend tRPC
+- [x] Integrar página AprovarDescricaoRH com backend tRPC
+- [x] Adicionar DashboardLayout nas páginas de aprovação
+- [x] Implementar mutations para aprovar/rejeitar descrições
+- [x] Adicionar loading states e tratamento de erros
+- [x] Substituir dados mock por dados reais do backend
+
+
+### ✅ Exportação de Relatórios em PDF
+
+- [x] Instalar bibliotecas jsPDF e html2canvas
+- [x] Criar utilitário de exportação PDF (já existia)
+- [x] Integrar exportação PDF no Dashboard de Relatórios
+- [x] Adicionar botão de exportação com feedback visual
+- [x] Implementar captura de tela do dashboard
+- [x] Adicionar cabeçalho e rodapé personalizados UISA

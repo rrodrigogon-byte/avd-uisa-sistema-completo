@@ -113,8 +113,21 @@ export default function DashboardRelatorios() {
   ].filter(item => item.value > 0);
 
   // Exportar relatório
-  const handleExportPDF = () => {
-    toast.info("Funcionalidade de exportação em desenvolvimento");
+  const handleExportPDF = async () => {
+    try {
+      const { exportToPDF } = await import("@/lib/exportPDF");
+      await exportToPDF({
+        filename: `relatorio-dashboard-${selectedPeriod}-${new Date().toISOString().split("T")[0]}.pdf`,
+        title: "Dashboard de Relatórios",
+        subtitle: `Período: ${selectedPeriod}${selectedDepartment !== "all" ? ` | Departamento: ${departments?.find(d => d.id.toString() === selectedDepartment)?.name}` : ""}`,
+        elementId: "dashboard-relatorios-content",
+        orientation: "landscape",
+      });
+      toast.success("Relatório exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      toast.error("Erro ao exportar relatório");
+    }
   };
 
   const handleExportExcel = () => {
@@ -123,7 +136,7 @@ export default function DashboardRelatorios() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6" id="dashboard-relatorios-content">
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
