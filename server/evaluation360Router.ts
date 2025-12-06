@@ -115,17 +115,22 @@ export const evaluation360Router = router({
       }
 
       if (managerData && managerData.email) {
-        // Enviar email para o gestor
-        await sendEmail({
+        // Enviar email para o gestor usando helper com CC
+        const { sendEmailWithCC, createAvaliacaoAtribuidaEmail } = await import('./utils/emailWithCC');
+        
+        const emailHtml = createAvaliacaoAtribuidaEmail({
+          employeeName: managerData.name,
+          evaluatedName: employee.name,
+          evaluationType: 'Avaliação de Gestor',
+          cycleName: 'Avaliação 360°',
+          deadline: 'A definir',
+          evaluationUrl: `${process.env.VITE_OAUTH_PORTAL_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/avaliacoes/gestor/${input.evaluationId}`
+        });
+        
+        await sendEmailWithCC({
           to: managerData.email,
           subject: `Avaliação 360° - Aguardando sua avaliação de ${employee.name}`,
-          html: `
-            <h2>Avaliação 360° - Próxima Etapa</h2>
-            <p>Olá ${managerData.name},</p>
-            <p>A autoavaliação de <strong>${employee.name}</strong> foi concluída.</p>
-            <p>Agora é sua vez de avaliar o colaborador.</p>
-            <p><a href="${process.env.VITE_OAUTH_PORTAL_URL}/avaliacoes/gestor/${input.evaluationId}">Clique aqui para fazer a avaliação</a></p>
-          `,
+          html: emailHtml
         });
       }
 
@@ -383,18 +388,24 @@ export const evaluation360Router = router({
         .limit(1);
 
       if (employee.length > 0 && employee[0].email) {
-        // Enviar email para o colaborador
-        await sendEmail({
+        // Enviar email para o colaborador usando helper com CC
+        const { sendEmailWithCC, createAvaliacaoConcluidaEmail } = await import('./utils/emailWithCC');
+        
+        const emailHtml = createAvaliacaoConcluidaEmail({
+          employeeName: employee[0].name,
+          evaluatedName: employee[0].name,
+          evaluationType: 'Avaliação 360°',
+          cycleName: 'Avaliação 360°',
+          completedDate: new Date().toLocaleDateString('pt-BR'),
+          resultUrl: `${process.env.VITE_OAUTH_PORTAL_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/avaliacoes`
+        });
+        
+        await sendEmailWithCC({
           to: employee[0].email,
           subject: "Avaliação 360° Concluída",
-          html: `
-            <h2>Avaliação 360° Concluída</h2>
-            <p>Olá ${employee[0].name},</p>
-            <p>Sua avaliação 360° foi concluída com sucesso.</p>
-            <p>Nota final: <strong>${input.finalScore}</strong></p>
-            <p><a href="${process.env.VITE_OAUTH_PORTAL_URL}/avaliacoes">Ver detalhes da avaliação</a></p>
-          `,
+          html: emailHtml
         });
+        console.log(`[Evaluation360] Email de conclusão enviado para ${employee[0].email} com cópia para rodrigo.goncalves@uisa.com.br`);
       }
 
       return { success: true, nextStep: "completed" };
@@ -453,19 +464,69 @@ export const evaluation360Router = router({
         .limit(1);
 
       if (employee.length > 0 && employee[0].email) {
-        // Enviar email para o colaborador
-        await sendEmail({
+        // Enviar email para o colaborador usando helper com CC
+        const { sendEmailWithCC } = await import('./utils/emailWithCC');
+        
+        await sendEmailWithCC({
           to: employee[0].email,
-          subject: "Avaliação 360° Rejeitada",
+          subject: "Avaliação 360 Graus Rejeitada",
           html: `
-            <h2>Avaliação 360° Rejeitada</h2>
-            <p>Olá ${employee[0].name},</p>
-            <p>Sua avaliação 360° foi rejeitada pelo líder.</p>
-            <p><strong>Motivo:</strong> ${input.reason}</p>
-            <p>A avaliação retornou para a etapa anterior. Por favor, revise e reenvie.</p>
-            <p><a href="${process.env.VITE_OAUTH_PORTAL_URL}/avaliacoes">Ver detalhes da avaliação</a></p>
-          `,
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #dc3545; margin: 0; font-size: 28px;">❌ Avaliação Rejeitada</h1>
+    </div>
+    
+    <p style="font-size: 16px; color: #333333; margin-bottom: 20px;">
+      Olá, <strong>${employee[0].name}</strong>!
+    </p>
+    
+    <div style="background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 20px; margin-bottom: 25px;">
+      <p style="color: #721c24; font-size: 15px; line-height: 1.6; margin-bottom: 15px;">
+        Sua avaliação 360 graus foi rejeitada pelo líder.
+      </p>
+      
+      <div style="margin-top: 20px;">
+        <p style="margin: 5px 0; color: #721c24;">
+          <strong>📝 Motivo:</strong> ${input.reason}
+        </p>
+      </div>
+    </div>
+    
+    <p style="font-size: 15px; color: #666666; margin-bottom: 20px;">
+      A avaliação retornou para a etapa anterior. Por favor, revise e reenvie.
+    </p>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.VITE_OAUTH_PORTAL_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/avaliacoes" 
+         style="display: inline-block; background-color: #dc3545; color: #ffffff; text-decoration: none; padding: 15px 40px; border-radius: 5px; font-size: 16px; font-weight: bold;">
+        Ver Detalhes
+      </a>
+    </div>
+    
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
+      <p style="color: #999999; font-size: 13px; margin: 5px 0;">
+        Este é um email automático do Sistema AVD UISA
+      </p>
+      <p style="color: #999999; font-size: 13px; margin: 5px 0;">
+        Por favor, não responda a este email
+      </p>
+      <p style="color: #999999; font-size: 13px; margin: 5px 0;">
+        ${new Date().toLocaleDateString('pt-BR')}
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+          `
         });
+        console.log(`[Evaluation360] Email de rejeição enviado para ${employee[0].email} com cópia para rodrigo.goncalves@uisa.com.br`);
       }
 
       return { success: true, nextStep: "pending_manager" };

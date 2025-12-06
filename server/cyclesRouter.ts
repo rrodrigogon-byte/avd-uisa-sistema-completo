@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { z } from "zod";
-import { evaluationCycles, performanceEvaluations, smartGoals, pdiPlans, employees } from "../drizzle/schema";
+import { evaluationCycles, performanceEvaluations, smartGoals, pdiPlans, employees, notifications, evaluation360CycleParticipants } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 
@@ -186,38 +186,21 @@ export const cyclesRouter = router({
                 manager: 'Gestor'
               };
 
-              await sendEmail({
+              const { sendEmailWithCC, createNovoCicloEmail } = await import('./utils/emailWithCC');
+              
+              const emailHtml = createNovoCicloEmail({
+                employeeName: employeeData.name,
+                cycleName: input.name,
+                cycleDescription: input.description || `Você foi adicionado como ${roleLabels[participant.role] || participant.role}`,
+                startDate: new Date(input.startDate).toLocaleDateString('pt-BR'),
+                endDate: new Date(input.endDate).toLocaleDateString('pt-BR'),
+                dashboardUrl: `${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/360-enhanced`
+              });
+              
+              await sendEmailWithCC({
                 to: employeeData.email,
                 subject: `🎯 Novo Ciclo de Avaliação 360° - ${input.name}`,
-                html: `
-                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #2563eb;">🎯 Você foi adicionado a um ciclo de avaliação 360°</h2>
-                    <p>Olá <strong>${employeeData.name}</strong>,</p>
-                    <p>Você foi adicionado ao ciclo de avaliação <strong>"${input.name}"</strong> com o papel de <strong>${roleLabels[participant.role] || participant.role}</strong>.</p>
-                    
-                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                      <h3 style="margin-top: 0; color: #1f2937;">Informações do Ciclo:</h3>
-                      <ul style="list-style: none; padding: 0;">
-                        <li>📅 <strong>Início:</strong> ${new Date(input.startDate).toLocaleDateString('pt-BR')}</li>
-                        <li>📅 <strong>Término:</strong> ${new Date(input.endDate).toLocaleDateString('pt-BR')}</li>
-                        ${input.description ? `<li>📝 <strong>Descrição:</strong> ${input.description}</li>` : ''}
-                      </ul>
-                    </div>
-
-                    <p>Acesse o sistema para visualizar os detalhes e participar da avaliação.</p>
-                    
-                    <div style="text-align: center; margin: 30px 0;">
-                      <a href="${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/360-enhanced" 
-                         style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                        Acessar Sistema
-                      </a>
-                    </div>
-
-                    <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
-                      Este é um email automático do Sistema AVD UISA. Por favor, não responda.
-                    </p>
-                  </div>
-                `,
+                html: emailHtml
               });
               console.log(`[Cycles] Email enviado para ${employeeData.email} (${employeeData.name})`);
             } catch (emailError) {
@@ -769,44 +752,23 @@ export const cyclesRouter = router({
           .from(employees)
           .where(eq(employees.status, 'ativo'));
 
-        const { sendEmail } = await import("./emailService");
+        const { sendEmailWithCC, createNovoCicloEmail } = await import('./utils/emailWithCC');
         
         for (const employee of allEmployees) {
           if (employee.email) {
-            await sendEmail({
+            const emailHtml = createNovoCicloEmail({
+              employeeName: employee.name,
+              cycleName: cycle.name,
+              cycleDescription: `O ciclo foi aprovado e agora você pode criar suas metas. Acesse o sistema e vá para a seção de Metas para criar suas metas vinculadas a este ciclo.`,
+              startDate: new Date(cycle.startDate).toLocaleDateString('pt-BR'),
+              endDate: new Date(cycle.endDate).toLocaleDateString('pt-BR'),
+              dashboardUrl: `${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/metas`
+            });
+            
+            await sendEmailWithCC({
               to: employee.email,
               subject: `🎯 Ciclo ${cycle.name} Aprovado para Criação de Metas`,
-              html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                  <h2 style="color: #2563eb;">🎯 Ciclo Aprovado!</h2>
-                  
-                  <p>Olá, <strong>${employee.name}</strong>!</p>
-                  
-                  <p>O ciclo de avaliação <strong>${cycle.name}</strong> foi aprovado e agora você pode criar suas metas.</p>
-                  
-                  <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="margin-top: 0; color: #1f2937;">Informações do Ciclo:</h3>
-                    <ul style="margin: 0; padding-left: 20px;">
-                      <li><strong>Nome:</strong> ${cycle.name}</li>
-                      <li><strong>Tipo:</strong> ${cycle.type}</li>
-                      <li><strong>Período:</strong> ${new Date(cycle.startDate).toLocaleDateString('pt-BR')} - ${new Date(cycle.endDate).toLocaleDateString('pt-BR')}</li>
-                    </ul>
-                  </div>
-                  
-                  <p><strong>Próximos passos:</strong></p>
-                  <ol>
-                    <li>Acesse o sistema de avaliação</li>
-                    <li>Vá para a seção de Metas</li>
-                    <li>Crie suas metas vinculadas a este ciclo</li>
-                    <li>Submeta para aprovação do seu gestor</li>
-                  </ol>
-                  
-                  <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px;">
-                    <p>Este é um email automático do Sistema AVD UISA. Não responda a este email.</p>
-                  </div>
-                </div>
-              `,
-              // type: "cycle", // Removido - não existe no EmailOptions
+              html: emailHtml
             });
           }
         }

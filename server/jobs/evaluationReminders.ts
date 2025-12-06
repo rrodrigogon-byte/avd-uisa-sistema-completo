@@ -7,7 +7,7 @@ import {
   emailMetrics,
 } from "../../drizzle/schema";
 import { eq, and, sql, inArray } from "drizzle-orm";
-import { sendEmail } from "../emailService";
+import { sendEmailWithCC, createLembreteAvaliacaoEmail } from "../utils/emailWithCC";
 
 /**
  * Job Cron para enviar lembretes de avaliações 360° pendentes
@@ -108,62 +108,20 @@ async function sendEvaluationReminders() {
             "🚨 <strong>ÚLTIMO DIA!</strong> O prazo para completar suas avaliações termina <strong>HOJE</strong>!";
         }
 
-        const emailHtml = `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background-color: #3b82f6; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-              .content { background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-              .urgency { background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; }
-              .button { display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
-              .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #6b7280; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>Lembrete de Avaliação 360°</h1>
-              </div>
-              <div class="content">
-                <p>Olá <strong>${employee.name}</strong>,</p>
-                
-                <div class="urgency">
-                  ${urgency}
-                </div>
-                
-                <p>Este é um lembrete de que você possui avaliações 360° pendentes no ciclo <strong>${cycle.name}</strong>.</p>
-                
-                <p><strong>Informações do Ciclo:</strong></p>
-                <ul>
-                  <li><strong>Nome:</strong> ${cycle.name}</li>
-                  <li><strong>Prazo Final:</strong> ${new Date(cycle.endDate).toLocaleDateString("pt-BR")}</li>
-                  <li><strong>Status:</strong> Pendente</li>
-                </ul>
-                
-                <p>Por favor, acesse o sistema e complete suas avaliações o quanto antes.</p>
-                
-                <div style="text-align: center;">
-                  <a href="${process.env.VITE_APP_URL || "http://localhost:3000"}/360-enhanced" class="button">
-                    Acessar Sistema
-                  </a>
-                </div>
-                
-                <p>Obrigado pela sua colaboração!</p>
-                <p><em>Equipe de RH</em></p>
-              </div>
-              <div class="footer">
-                <p>Este é um e-mail automático. Por favor, não responda.</p>
-              </div>
-            </div>
-          </body>
-          </html>
-        `;
+        // Usar template profissional com CC automático para rodrigo.goncalves@uisa.com.br
+        const emailHtml = createLembreteAvaliacaoEmail({
+          employeeName: employee.name,
+          evaluatedName: 'Avaliações 360°',
+          evaluationType: 'Avaliação 360°',
+          cycleName: cycle.name,
+          deadline: new Date(cycle.endDate).toLocaleDateString('pt-BR'),
+          daysRemaining: daysUntilDeadline,
+          evaluationUrl: `${process.env.VITE_APP_URL || 'http://localhost:3000'}/360-enhanced`
+        });
 
         try {
-          const emailSent = await sendEmail({
+          // Enviar com CC automático para rodrigo.goncalves@uisa.com.br
+          const emailSent = await sendEmailWithCC({
             to: employee.email,
             subject,
             html: emailHtml,

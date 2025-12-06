@@ -1480,3 +1480,17 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Adicionar botão de exportação com feedback visual
 - [x] Implementar captura de tela do dashboard
 - [x] Adicionar cabeçalho e rodapé personalizados UISA
+
+
+### 📧 Sistema de Email Completo - NOVA PRIORIDADE (10 itens)
+
+- [x] Implementar helper de envio de email com CC automático para rodrigo.goncalves@uisa.com.br
+- [x] Criar templates de email HTML profissionais
+- [x] Implementar envio de email ao criar novo ciclo de avaliação
+- [x] Implementar envio de email ao atribuir avaliação a avaliador
+- [x] Implementar envio de email de lembrete de avaliação pendente
+- [x] Implementar envio de email ao concluir avaliação
+- [ ] Implementar envio de email ao aprovar/rejeitar descrição de cargo
+- [ ] Implementar envio de email de convite para Pesquisa Pulse
+- [ ] Implementar envio de email de resultado de teste psicométrico
+- [ ] Testar todos os fluxos de email end-to-end
