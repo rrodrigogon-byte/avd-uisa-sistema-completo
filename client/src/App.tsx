@@ -98,6 +98,11 @@ import Notificacoes from "./pages/Notificacoes";
 import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import DashboardRelatorios from "./pages/DashboardRelatorios";
+import CiclosAVD from "./pages/avd/CiclosAVD";
+import MinhasAvaliacoes from "./pages/avd/MinhasAvaliacoes";
+import FormularioAvaliacao from "./pages/avd/FormularioAvaliacao";
+import DashboardAVD from "./pages/avd/DashboardAVD";
+import RelatorioCompliance from "./pages/avd/RelatorioCompliance";
 import Relatorio360Consolidado from "./pages/Relatorio360Consolidado";
 import Ciclos360VisaoGeral from "./pages/Ciclos360VisaoGeral";
 import Ciclos360Detalhes from "./pages/Ciclos360Detalhes";
@@ -352,6 +357,12 @@ function Router() {
       <Route path="/aprovacoes/ciclos-avaliacao" component={AprovacaoCiclos} />
       <Route path="/relatorios/pdi" component={RelatoriosPDI} />
       <Route path="/rh/acompanhamento-avaliacoes" component={AcompanhamentoAvaliacoes} />
+      {/* Rotas AVD UISA */}
+      <Route path="/avd/ciclos" component={CiclosAVD} />
+      <Route path="/avd/minhas-avaliacoes" component={MinhasAvaliacoes} />
+      <Route path="/avd/avaliar/:id" component={FormularioAvaliacao} />
+      <Route path="/avd/dashboard" component={DashboardAVD} />
+      <Route path="/avd/compliance" component={RelatorioCompliance} />
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />

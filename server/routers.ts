@@ -67,6 +67,7 @@ import { emailFailuresRouter } from "./routers/emailFailuresRouter";
 import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
 import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
+import { avdUisaRouter } from "./avdUisaRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -75,6 +76,7 @@ export const appRouter = router({
   audit: auditRouter,
   search: searchRouter,
   users: usersRouter,
+  avdUisa: avdUisaRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

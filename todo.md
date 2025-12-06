@@ -1399,3 +1399,52 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Criar teste unitário para PDI Inteligente
 - [x] Validar todos os procedimentos do router de PDI
 - [x] Garantir que geração de sugestões com IA está funcional
+
+
+### 🆕 Sistema AVD UISA - Funcionalidades Confirmadas (Nova Implementação)
+
+#### Configurações Base
+- [ ] Validação de domínio @uisa.com.br para todos os usuários
+- [ ] Configuração de período de avaliação anual
+- [ ] Estrutura hierárquica: Reitoria → Pró-Reitorias → Diretorias → Coordenações → Setores
+
+#### Workflow de Aprovações e Pendências
+- [ ] Sistema de aprovações hierárquicas
+- [ ] Dashboard de pendências por usuário
+- [ ] Notificações automáticas de pendências
+- [ ] Escalação automática de aprovações
+- [ ] Histórico completo de aprovações com timeline
+
+#### Interface de Avaliação
+- [ ] Formulário de autoavaliação
+- [ ] Formulário de avaliação de subordinados
+- [ ] Salvamento automático (rascunho)
+- [ ] Validação de campos obrigatórios
+- [ ] Confirmação de submissão
+
+#### Dashboards e Relatórios
+- [ ] Dashboard executivo com KPIs gerais
+- [ ] Dashboard por unidade organizacional
+- [ ] Gráficos de evolução temporal
+- [ ] Comparativos entre unidades
+- [ ] Relatório de compliance (taxa de conclusão)
+- [ ] Exportação de relatórios em PDF
+
+- [x] Router AVD UISA criado com procedures de ciclos, avaliações, questões e relatórios
+- [x] Integração do avdUisaRouter no appRouter principal
+
+- [x] Página CiclosAVD.tsx - Gestão de ciclos de avaliação
+- [x] Página MinhasAvaliacoes.tsx - Lista de avaliações pendentes
+- [x] Página FormularioAvaliacao.tsx - Formulário de preenchimento de avaliações
+- [x] Página DashboardAVD.tsx - Dashboard executivo com KPIs
+- [x] Página RelatorioCompliance.tsx - Relatório de pendências e compliance
+
+- [x] Rotas AVD adicionadas ao App.tsx (/avd/ciclos, /avd/minhas-avaliacoes, /avd/avaliar/:id, /avd/dashboard, /avd/compliance)
+
+- [x] Testes vitest criados e validados (11 testes passando)
+  - [x] Gestão de Ciclos (criar, listar, ativar)
+  - [x] Questões de Avaliação (criar escala, listar ativas)
+  - [x] Avaliações (criar, listar pendentes)
+  - [x] Validação de Domínio (@uisa.com.br)
+  - [x] Workflow de Aprovações (sequência self → manager → completed)
+  - [x] Relatórios e Dashboards (taxa de conclusão, média de scores)
