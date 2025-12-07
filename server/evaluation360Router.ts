@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { eq, and, sql } from "drizzle-orm";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { notifyEvaluation360Completed } from "./adminRhEmailService";
 import {
   performanceEvaluations,
   evaluationResponses,
@@ -406,6 +407,17 @@ export const evaluation360Router = router({
           html: emailHtml
         });
         console.log(`[Evaluation360] Email de conclusão enviado para ${employee[0].email} com cópia para rodrigo.goncalves@uisa.com.br`);
+        
+        // Notificar Admin e RH sobre conclusão da avaliação 360°
+        try {
+          await notifyEvaluation360Completed(
+            employee[0].name,
+            'Avaliação 360° - Consenso',
+            input.finalScore
+          );
+        } catch (error) {
+          console.error('[Evaluation360Router] Failed to send admin/rh notification:', error);
+        }
       }
 
       return { success: true, nextStep: "completed" };

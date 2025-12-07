@@ -911,6 +911,12 @@ export const appRouter = router({
           });
         }
 
+        // Buscar posição anterior para comparação
+        const [oldPosition] = await database.select()
+          .from(nineBoxPositions)
+          .where(eq(nineBoxPositions.id, input.id))
+          .limit(1);
+
         const box = `${input.performance}_${input.potential}`;
         
         await database.update(nineBoxPositions)
@@ -931,6 +937,33 @@ export const appRouter = router({
           ctx.req.ip,
           ctx.req.headers["user-agent"]
         );
+
+        // Notificar Admin e RH sobre mudança na Nine Box
+        if (oldPosition && (oldPosition.performance !== input.performance || oldPosition.potential !== input.potential)) {
+          try {
+            const { notifyNineBoxChange } = await import('./adminRhEmailService');
+            const [employee] = await database.select()
+              .from(employees)
+              .where(eq(employees.id, oldPosition.employeeId))
+              .limit(1);
+            
+            if (employee) {
+              const performanceLabels = { 1: 'Baixo', 2: 'Médio', 3: 'Alto' };
+              const potentialLabels = { 1: 'Baixo', 2: 'Médio', 3: 'Alto' };
+              
+              const oldPos = `${performanceLabels[oldPosition.performance as 1 | 2 | 3]} Desempenho / ${potentialLabels[oldPosition.potential as 1 | 2 | 3]} Potencial`;
+              const newPos = `${performanceLabels[input.performance as 1 | 2 | 3]} Desempenho / ${potentialLabels[input.potential as 1 | 2 | 3]} Potencial`;
+              
+              await notifyNineBoxChange(
+                employee.name,
+                oldPos,
+                newPos
+              );
+            }
+          } catch (error) {
+            console.error('[RoutersNineBox] Failed to send email notification:', error);
+          }
+        }
 
         return { success: true };
       }),

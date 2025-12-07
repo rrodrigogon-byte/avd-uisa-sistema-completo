@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { z } from "zod";
+import { notifySmartGoalActivity } from "./adminRhEmailService";
 import {
   goalApprovals,
   goalComments,
@@ -246,6 +247,25 @@ export const goalsRouter = router({
         approvalStatus: input.goalType === "corporate" ? "approved" : "not_submitted",
         createdBy: ctx.user.id,
       });
+
+      // Notificar Admin e RH sobre nova meta criada
+      try {
+        const targetEmployee = await db.select()
+          .from(employees)
+          .where(eq(employees.id, targetEmployeeId))
+          .limit(1);
+        
+        if (targetEmployee.length > 0) {
+          await notifySmartGoalActivity(
+            'criada',
+            input.title,
+            targetEmployee[0].name,
+            input.goalType === "corporate" ? "approved" : "draft"
+          );
+        }
+      } catch (error) {
+        console.error('[GoalsRouter] Failed to send email notification:', error);
+      }
 
       return { goalId: result.insertId, validation };
     }),
@@ -539,6 +559,32 @@ export const goalsRouter = router({
           authorId: employee.id, // Usar employee.id em vez de ctx.user.id
           comment: input.comment,
         });
+      }
+
+      // Notificar Admin e RH sobre atualização de meta
+      try {
+        const [goal] = await db.select()
+          .from(smartGoals)
+          .where(eq(smartGoals.id, input.goalId))
+          .limit(1);
+        
+        if (goal) {
+          const [targetEmployee] = await db.select()
+            .from(employees)
+            .where(eq(employees.id, goal.employeeId))
+            .limit(1);
+          
+          if (targetEmployee) {
+            await notifySmartGoalActivity(
+              'atualizada',
+              goal.title,
+              targetEmployee.name,
+              updateData.status
+            );
+          }
+        }
+      } catch (error) {
+        console.error('[GoalsRouter] Failed to send email notification:', error);
       }
 
       return { success: true };

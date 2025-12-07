@@ -279,3 +279,28 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 
 - [x] Criar testes vitest para validar serviço de notificações por email
 - [x] Validar envio de emails para Admin e RH (11 testes passaram com sucesso)
+
+
+## 🔄 CONTINUAÇÃO DAS TAREFAS (07/12/2025 - Continuação)
+
+### Emails Adicionais para Admin e RH
+- [x] Email quando avaliação 360° é concluída
+- [x] Email quando meta SMART é criada ou atualizada
+- [x] Email quando PDI é criado ou concluído
+- [x] Email quando há mudanças na Nine Box
+- [x] Email de resumo diário de atividades do sistema
+- [ ] Email de alertas de segurança (já existe função, precisa integrar)
+- [ ] Dashboard de emails enviados para Admin/RH (opcional)
+
+### Melhorias no Menu de Navegação
+- [ ] Adicionar ícones mais intuitivos para cada seção
+- [ ] Adicionar badges de notificação no menu
+- [ ] Implementar menu responsivo para mobile
+
+- [x] Integrar notificação de meta SMART criada no goalsRouter
+- [x] Integrar notificação de meta SMART atualizada no goalsRouter
+- [x] Integrar notificação de PDI criado no pdiIntelligentRouter
+- [x] Integrar notificação de PDI concluído no pdiIntelligentRouter
+- [x] Integrar notificação de avaliação 360° concluída no evaluation360Router
+- [x] Integrar notificação de mudança na Nine Box no routers.ts
+- [x] Criar job cron de resumo diário de atividades no cron.ts

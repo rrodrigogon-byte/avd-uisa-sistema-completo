@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
+import { notifyPdiActivity } from "./adminRhEmailService";
 import {
   competencies,
   employees,
@@ -141,6 +142,30 @@ export const pdiIntelligentRouter = router({
 
       if (gaps.length > 0) {
         await db.insert(pdiCompetencyGaps).values(gaps);
+      }
+
+      // Notificar Admin e RH sobre novo PDI criado
+      try {
+        const [employee] = await db.select()
+          .from(employees)
+          .where(eq(employees.id, input.employeeId))
+          .limit(1);
+        
+        const [targetPosition] = await db.select()
+          .from(positions)
+          .where(eq(positions.id, input.targetPositionId))
+          .limit(1);
+        
+        if (employee && targetPosition) {
+          await notifyPdiActivity(
+            'criado',
+            employee.name,
+            `PDI para ${targetPosition.title}`,
+            0
+          );
+        }
+      } catch (error) {
+        console.error('[PdiIntelligentRouter] Failed to send email notification:', error);
       }
 
       return {
@@ -488,6 +513,39 @@ export const pdiIntelligentRouter = router({
       }
 
       await db.update(pdiPlans).set(updates).where(eq(pdiPlans.id, input.id));
+
+      // Notificar Admin e RH quando PDI for concluído
+      if (input.status === "concluido") {
+        try {
+          const [plan] = await db.select()
+            .from(pdiPlans)
+            .where(eq(pdiPlans.id, input.id))
+            .limit(1);
+          
+          if (plan) {
+            const [employee] = await db.select()
+              .from(employees)
+              .where(eq(employees.id, plan.employeeId))
+              .limit(1);
+            
+            const [targetPosition] = await db.select()
+              .from(positions)
+              .where(eq(positions.id, plan.targetPositionId))
+              .limit(1);
+            
+            if (employee && targetPosition) {
+              await notifyPdiActivity(
+                'concluído',
+                employee.name,
+                `PDI para ${targetPosition.title}`,
+                100
+              );
+            }
+          }
+        } catch (error) {
+          console.error('[PdiIntelligentRouter] Failed to send email notification:', error);
+        }
+      }
 
       return { success: true };
     }),

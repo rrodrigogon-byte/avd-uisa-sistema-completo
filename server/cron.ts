@@ -6,9 +6,10 @@ import { sendPulseEmailsJob } from './jobs/sendPulseEmails';
 import { sendConsensusReminders } from './jobs/consensusReminders';
 import { sendCorporateGoalsReminders } from './jobs/corporateGoalsReminders';
 import { calculateAllScores } from './jobs/calculateScores';
-import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals } from '../drizzle/schema';
-import { eq, and, lt, gte } from 'drizzle-orm';
+import { goals, performanceEvaluations, pdiItems, employees, pdiPlans, smartGoals, users } from '../drizzle/schema';
+import { eq, and, lt, gte, sql } from 'drizzle-orm';
 import { emailService } from './utils/emailService';
+import { notifyDailySummary } from './adminRhEmailService';
 
 /**
  * Cron Jobs para Lembretes Automáticos
@@ -513,3 +514,85 @@ function calculateNextExecution(
 
   return next;
 }
+
+// Resumo diário de atividades para Admin e RH (executa diariamente às 18h)
+export const dailySummaryJob = cron.schedule('0 18 * * *', async () => {
+  console.log('[Cron] Executando job de resumo diário...');
+  
+  const db = await getDb();
+  if (!db) {
+    console.error('[Cron] Database not available');
+    return;
+  }
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Contar novos usuários criados hoje
+    const [newUsersResult] = await db.select({ count: sql<number>`COUNT(*)` })
+      .from(users)
+      .where(and(
+        gte(users.createdAt, today),
+        lt(users.createdAt, tomorrow)
+      ));
+    const newUsers = newUsersResult?.count || 0;
+
+    // Contar novos funcionários criados hoje
+    const [newEmployeesResult] = await db.select({ count: sql<number>`COUNT(*)` })
+      .from(employees)
+      .where(and(
+        gte(employees.createdAt, today),
+        lt(employees.createdAt, tomorrow)
+      ));
+    const newEmployees = newEmployeesResult?.count || 0;
+
+    // Contar avaliações concluídas hoje
+    const [completedEvalsResult] = await db.select({ count: sql<number>`COUNT(*)` })
+      .from(performanceEvaluations)
+      .where(and(
+        gte(performanceEvaluations.completedAt, today),
+        lt(performanceEvaluations.completedAt, tomorrow)
+      ));
+    const completedEvaluations = completedEvalsResult?.count || 0;
+
+    // Contar metas criadas hoje
+    const [newGoalsResult] = await db.select({ count: sql<number>`COUNT(*)` })
+      .from(smartGoals)
+      .where(and(
+        gte(smartGoals.createdAt, today),
+        lt(smartGoals.createdAt, tomorrow)
+      ));
+    const newGoals = newGoalsResult?.count || 0;
+
+    // Contar PDIs concluídos hoje
+    const [completedPdisResult] = await db.select({ count: sql<number>`COUNT(*)` })
+      .from(pdiPlans)
+      .where(and(
+        gte(pdiPlans.completedAt, today),
+        lt(pdiPlans.completedAt, tomorrow)
+      ));
+    const completedPdis = completedPdisResult?.count || 0;
+
+    // Enviar resumo diário
+    await notifyDailySummary({
+      newUsers,
+      newEmployees,
+      completedEvaluations,
+      newGoals,
+      completedPdis,
+    });
+
+    console.log('[Cron] Resumo diário enviado com sucesso:', {
+      newUsers,
+      newEmployees,
+      completedEvaluations,
+      newGoals,
+      completedPdis,
+    });
+  } catch (error) {
+    console.error('[Cron] Erro ao processar resumo diário:', error);
+  }
+});

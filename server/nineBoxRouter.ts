@@ -201,12 +201,12 @@ export const nineBoxRouter = router({
       .select({
         id: positions.id,
         title: positions.title,
-        employeeCount: sql<number>`COUNT(${employees.id})`,
+        employeeCount: sql<number>`COUNT(DISTINCT employees.id)`,
       })
       .from(positions)
       .leftJoin(employees, eq(positions.id, employees.positionId))
       .groupBy(positions.id, positions.title)
-      .having(sql`COUNT(${employees.id}) > 0`)
+      .having(sql`COUNT(DISTINCT employees.id) > 0`)
       .orderBy(positions.title);
 
     return positionsWithCount;
