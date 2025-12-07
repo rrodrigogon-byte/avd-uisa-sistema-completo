@@ -260,9 +260,9 @@ export default function RisksSection({ pdiId }: RisksSectionProps) {
           </Dialog>
         </div>
 
-        {risksData?.existing && risksData.existing.length > 0 ? (
+        {risksData && 'existing' in risksData && risksData.existing && risksData.existing.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {risksData.existing.map((risk: any) => (
+            {risksData && 'existing' in risksData && risksData.existing.map((risk: any) => (
               <Card key={risk.id}>
                 <CardHeader>
                   <CardTitle className="text-base">{getTypeLabel(risk.type)}</CardTitle>
