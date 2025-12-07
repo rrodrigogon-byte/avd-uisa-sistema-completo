@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GitBranch, Clock, CheckCircle, XCircle, ArrowRight, Plus } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { GitBranch, Clock, CheckCircle, XCircle, ArrowRight, Plus, Trash2, Users, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 /**
  * Workflows
@@ -35,6 +37,16 @@ import { trpc } from "@/lib/trpc";
  * - Fluxos configuráveis
  */
 
+// Tipo para alçada de aprovação
+interface ApprovalLevel {
+  order: number;
+  name: string;
+  approverIds: number[];
+  approverNames: string[];
+  slaInDays: number;
+  isParallel: boolean;
+}
+
 export default function Workflows() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false);
@@ -45,9 +57,33 @@ export default function Workflows() {
     description: "",
     type: "",
   });
+  
+  // Estados para configuração de alçadas
+  const [approvalLevels, setApprovalLevels] = useState<ApprovalLevel[]>([]);
+  const [currentLevelName, setCurrentLevelName] = useState("");
+  const [currentLevelSLA, setCurrentLevelSLA] = useState(3);
+  const [currentLevelIsParallel, setCurrentLevelIsParallel] = useState(false);
+  const [selectedApprovers, setSelectedApprovers] = useState<number[]>([]);
+  const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
 
   // Buscar workflows do backend
   const { data: backendWorkflows, refetch } = trpc.workflows.list.useQuery();
+  
+  // Buscar funcionários para seleção de aprovadores
+  const { data: employees } = trpc.employees.list.useQuery();
+  
+  // Mutation para atualizar workflow
+  const updateWorkflowMutation = trpc.workflows.update.useMutation({
+    onSuccess: () => {
+      toast.success("Workflow configurado com sucesso!");
+      setIsConfigDialogOpen(false);
+      resetConfigForm();
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao configurar workflow: ${error.message}`);
+    },
+  });
 
   // Mutation para criar workflow
   const createWorkflowMutation = trpc.workflows.create.useMutation({
@@ -61,6 +97,126 @@ export default function Workflows() {
       toast.error(`Erro ao criar workflow: ${error.message}`);
     },
   });
+  
+  // Resetar formulário de configuração
+  const resetConfigForm = () => {
+    setApprovalLevels([]);
+    setCurrentLevelName("");
+    setCurrentLevelSLA(3);
+    setCurrentLevelIsParallel(false);
+    setSelectedApprovers([]);
+    setEmployeeSearchTerm("");
+  };
+  
+  // Carregar alçadas quando abrir o dialog de configuração
+  useEffect(() => {
+    if (isConfigDialogOpen && selectedWorkflow) {
+      try {
+        const steps = selectedWorkflow.steps || [];
+        if (Array.isArray(steps) && steps.length > 0) {
+          // Converter steps para approval levels
+          const levels: ApprovalLevel[] = steps.map((step: any, index: number) => ({
+            order: index + 1,
+            name: step.name || `Alçada ${index + 1}`,
+            approverIds: step.approverIds || [],
+            approverNames: step.approverNames || [],
+            slaInDays: step.slaInDays || 3,
+            isParallel: step.isParallel || false,
+          }));
+          setApprovalLevels(levels);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar alçadas:", error);
+      }
+    }
+  }, [isConfigDialogOpen, selectedWorkflow]);
+  
+  // Adicionar nova alçada
+  const handleAddLevel = () => {
+    if (approvalLevels.length >= 5) {
+      toast.error("Máximo de 5 alçadas permitidas");
+      return;
+    }
+    
+    if (!currentLevelName.trim()) {
+      toast.error("Digite um nome para a alçada");
+      return;
+    }
+    
+    if (selectedApprovers.length === 0) {
+      toast.error("Selecione pelo menos um aprovador");
+      return;
+    }
+    
+    const approverNames = employees
+      ?.filter(e => selectedApprovers.includes(e.id))
+      .map(e => e.name) || [];
+    
+    const newLevel: ApprovalLevel = {
+      order: approvalLevels.length + 1,
+      name: currentLevelName,
+      approverIds: selectedApprovers,
+      approverNames,
+      slaInDays: currentLevelSLA,
+      isParallel: currentLevelIsParallel,
+    };
+    
+    setApprovalLevels([...approvalLevels, newLevel]);
+    setCurrentLevelName("");
+    setCurrentLevelSLA(3);
+    setCurrentLevelIsParallel(false);
+    setSelectedApprovers([]);
+    toast.success("Alçada adicionada com sucesso");
+  };
+  
+  // Remover alçada
+  const handleRemoveLevel = (order: number) => {
+    const filtered = approvalLevels.filter(l => l.order !== order);
+    // Reordenar
+    const reordered = filtered.map((l, index) => ({ ...l, order: index + 1 }));
+    setApprovalLevels(reordered);
+    toast.success("Alçada removida");
+  };
+  
+  // Salvar configuração do workflow
+  const handleSaveWorkflowConfig = () => {
+    if (approvalLevels.length < 2) {
+      toast.error("Configure pelo menos 2 alçadas de aprovação");
+      return;
+    }
+    
+    if (approvalLevels.length > 5) {
+      toast.error("Máximo de 5 alçadas permitidas");
+      return;
+    }
+    
+    // Converter approval levels para steps
+    const steps = approvalLevels.map(level => ({
+      order: level.order,
+      name: level.name,
+      approverIds: level.approverIds,
+      approverNames: level.approverNames,
+      slaInDays: level.slaInDays,
+      isParallel: level.isParallel,
+    }));
+    
+    updateWorkflowMutation.mutate({
+      id: selectedWorkflow.id,
+      steps: JSON.stringify(steps),
+    });
+  };
+  
+  // Calcular tempo médio total
+  const calculateTotalSLA = () => {
+    if (approvalLevels.length === 0) return 0;
+    return approvalLevels.reduce((sum, level) => sum + level.slaInDays, 0);
+  };
+  
+  // Filtrar funcionários por busca
+  const filteredEmployees = employees?.filter(e => 
+    e.name.toLowerCase().includes(employeeSearchTerm.toLowerCase()) ||
+    e.email?.toLowerCase().includes(employeeSearchTerm.toLowerCase())
+  ) || [];
 
   // Mock data para demonstração
   const mockWorkflows = [
@@ -231,6 +387,210 @@ export default function Workflows() {
           ))}
         </div>
 
+        {/* Dialog de Configuração de Workflow */}
+        <Dialog open={isConfigDialogOpen} onOpenChange={setIsConfigDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Configurar Workflow: {selectedWorkflow?.name}</DialogTitle>
+              <DialogDescription>
+                Configure as alçadas de aprovação (mínimo 2, máximo 5 alçadas)
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Alçadas Configuradas */}
+              {approvalLevels.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold">Alçadas Configuradas ({approvalLevels.length}/5)</Label>
+                    <Badge variant="outline" className="text-sm">
+                      Tempo Total: {calculateTotalSLA()} dias
+                    </Badge>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {approvalLevels.map((level, index) => (
+                      <div key={level.order} className="flex items-start gap-3 p-4 border rounded-lg bg-muted/50">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
+                          {level.order}
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold">{level.name}</p>
+                            {level.isParallel && (
+                              <Badge variant="secondary" className="text-xs">Paralela</Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            <Users className="inline h-3 w-3 mr-1" />
+                            {level.approverNames.join(", ")}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            <Clock className="inline h-3 w-3 mr-1" />
+                            SLA: {level.slaInDays} {level.slaInDays === 1 ? 'dia' : 'dias'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveLevel(level.order)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                        {index < approvalLevels.length - 1 && (
+                          <ArrowRight className="flex-shrink-0 h-5 w-5 text-muted-foreground" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Validação de alçadas */}
+              {approvalLevels.length < 2 && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Configure pelo menos 2 alçadas de aprovação para ativar o workflow.
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              {approvalLevels.length >= 5 && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Limite máximo de 5 alçadas atingido. Remova uma alçada para adicionar outra.
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              <Separator />
+              
+              {/* Adicionar Nova Alçada */}
+              {approvalLevels.length < 5 && (
+                <div className="space-y-4 p-4 border rounded-lg bg-background">
+                  <Label className="text-base font-semibold">
+                    Adicionar Nova Alçada ({approvalLevels.length + 1}/5)
+                  </Label>
+                  
+                  {/* Nome da Alçada */}
+                  <div className="space-y-2">
+                    <Label htmlFor="level-name">Nome da Alçada *</Label>
+                    <Input
+                      id="level-name"
+                      placeholder="Ex: Aprovação do Gestor Direto"
+                      value={currentLevelName}
+                      onChange={(e) => setCurrentLevelName(e.target.value)}
+                    />
+                  </div>
+                  
+                  {/* Seleção de Aprovadores */}
+                  <div className="space-y-2">
+                    <Label>Aprovadores *</Label>
+                    <Input
+                      placeholder="Buscar funcionário..."
+                      value={employeeSearchTerm}
+                      onChange={(e) => setEmployeeSearchTerm(e.target.value)}
+                    />
+                    <div className="max-h-48 overflow-y-auto border rounded-md p-2 space-y-1">
+                      {filteredEmployees.slice(0, 10).map((employee) => (
+                        <div
+                          key={employee.id}
+                          className="flex items-center gap-2 p-2 hover:bg-muted rounded cursor-pointer"
+                          onClick={() => {
+                            if (selectedApprovers.includes(employee.id)) {
+                              setSelectedApprovers(selectedApprovers.filter(id => id !== employee.id));
+                            } else {
+                              setSelectedApprovers([...selectedApprovers, employee.id]);
+                            }
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedApprovers.includes(employee.id)}
+                            onChange={() => {}}
+                            className="rounded"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{employee.name}</p>
+                            <p className="text-xs text-muted-foreground">{employee.email}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {filteredEmployees.length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center py-4">
+                          Nenhum funcionário encontrado
+                        </p>
+                      )}
+                    </div>
+                    {selectedApprovers.length > 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        {selectedApprovers.length} aprovador(es) selecionado(s)
+                      </p>
+                    )}
+                  </div>
+                  
+                  {/* SLA */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="level-sla">Prazo (SLA) em dias *</Label>
+                      <Input
+                        id="level-sla"
+                        type="number"
+                        min="1"
+                        max="30"
+                        value={currentLevelSLA}
+                        onChange={(e) => setCurrentLevelSLA(parseInt(e.target.value) || 3)}
+                      />
+                    </div>
+                    
+                    {/* Tipo de Aprovação */}
+                    <div className="space-y-2">
+                      <Label htmlFor="level-type">Tipo de Aprovação</Label>
+                      <Select
+                        value={currentLevelIsParallel ? "parallel" : "sequential"}
+                        onValueChange={(value) => setCurrentLevelIsParallel(value === "parallel")}
+                      >
+                        <SelectTrigger id="level-type">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sequential">Sequencial (um por vez)</SelectItem>
+                          <SelectItem value="parallel">Paralela (todos juntos)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <Button onClick={handleAddLevel} className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Alçada
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsConfigDialogOpen(false);
+                  resetConfigForm();
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSaveWorkflowConfig}
+                disabled={approvalLevels.length < 2 || approvalLevels.length > 5 || updateWorkflowMutation.isPending}
+              >
+                Salvar Configuração
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
         {/* Dialog de Criação de Workflow */}
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogContent className="max-w-2xl">

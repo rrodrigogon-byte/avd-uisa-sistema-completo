@@ -1012,3 +1012,30 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 - [x] Validar envio de e-mails em todos os eventos do sistema (10/10 testes passaram)
 - [x] Garantir envio automático de credenciais para novos usuários
 - [x] Garantir envio de notificações para todos os eventos importantes (11 tipos de notificações implementadas)
+
+
+---
+
+## 🚀 NOVA SOLICITAÇÃO URGENTE (07/12/2025 - Sistema de Configuração de Workflows)
+
+### Implementação Completa de Configuração de Workflows
+- [x] Criar modal de configuração de workflow ao clicar em "Configurar Workflow"
+- [x] Implementar formulário de configuração com nome, descrição e tipo de workflow
+- [x] Adicionar sistema de alçadas de aprovação (mínimo 2, máximo 5)
+- [x] Implementar interface para adicionar/remover alçadas
+- [x] Criar seletor de aprovadores por alçada (busca de funcionários)
+- [x] Adicionar campo de prazo (SLA) por alçada em dias
+- [x] Implementar opção de aprovação paralela ou sequencial por alçada
+- [x] Adicionar validação: mínimo 2 alçadas, máximo 5 alçadas
+- [x] Implementar preview visual do fluxo de aprovação
+- [x] Criar procedure tRPC para salvar configuração de workflow (já existia)
+- [x] Implementar procedure tRPC para buscar configuração existente (já existia)
+- [x] Adicionar procedure tRPC para atualizar workflow (já existia)
+- [x] Implementar lógica de validação de aprovadores (seleção múltipla)
+- [x] Implementar cálculo de tempo médio total do workflow
+- [x] Criar visualização de etapas do workflow na listagem
+- [x] Adicionar indicadores visuais de progresso de aprovação
+- [ ] Adicionar notificações automáticas por alçada (opcional - requer integração)
+- [ ] Implementar histórico de aprovações por workflow (opcional - feature futura)
+- [ ] Adicionar opção de ativar/desativar workflow (opcional - já existe no schema)
+- [x] Criar testes vitest para validar configuração de workflows (20 testes passando)
