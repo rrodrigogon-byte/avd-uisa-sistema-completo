@@ -16,6 +16,7 @@ import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
 import ImportacaoPonto from "@/pages/ImportacaoPonto";
 import SecurityDashboard from "@/pages/SecurityDashboard";
+import AdminBroadcastEmail from "@/pages/AdminBroadcastEmail";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -340,6 +341,7 @@ function Router() {
       <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/emails-admin-rh" component={AdminRhEmailDashboard} />
+      <Route path="/admin/enviar-email-admins" component={AdminBroadcastEmail} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/seguranca" component={SecurityDashboard} />
       <Route path="/admin/notification-templates" component={NotificationTemplates} />
