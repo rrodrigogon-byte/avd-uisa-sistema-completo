@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -156,6 +156,7 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: Users, label: "Funcionários", path: "/funcionarios" },
+      { icon: Edit3, label: "Gerenciar Funcionários", path: "/funcionarios/gerenciar" },
       { icon: UserCheck, label: "Funcionários Ativos", path: "/funcionarios-ativos" },
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
       { icon: Briefcase, label: "Centros de Custo", path: "/centros-custos" },

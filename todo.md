@@ -1508,3 +1508,91 @@ Com base nas tarefas pendentes, recomenda-se focar em:
 - [x] Melhorar estados de loading e feedback de ações
 - [x] Otimizar cores e contraste para melhor legibilidade
 - [x] Adicionar indicadores visuais de progresso em formulários
+
+
+---
+
+## 🆕 NOVAS MELHORIAS - Funcionários e UX (Dezembro 2025)
+
+### Funcionalidades de Funcionários - CRUD Completo
+- [ ] Criar schema completo de funcionários no banco (nome, CPF, email, cargo, departamento, data admissão, status, etc)
+- [ ] Implementar procedure tRPC employees.list com paginação e busca
+- [ ] Implementar procedure tRPC employees.getById
+- [ ] Implementar procedure tRPC employees.create com validações
+- [ ] Implementar procedure tRPC employees.update com validações
+- [ ] Implementar procedure tRPC employees.delete (soft delete)
+- [ ] Criar página /funcionarios/listar com tabela completa
+- [ ] Criar página /funcionarios/novo com formulário de cadastro
+- [ ] Criar página /funcionarios/editar/:id com formulário de edição
+- [ ] Implementar modal de confirmação de exclusão
+- [ ] Adicionar validações de CPF, email e campos obrigatórios
+- [ ] Implementar busca em tempo real na listagem
+- [ ] Adicionar filtros por departamento, cargo e status
+- [ ] Implementar paginação na listagem
+- [ ] Adicionar ações em massa (exportar, inativar múltiplos)
+
+### Melhorias de Menu e Navegação
+- [ ] Refatorar DashboardLayout com menu lateral aprimorado
+- [ ] Adicionar ícones lucide-react em todos os itens do menu
+- [ ] Implementar indicador visual de página ativa no menu
+- [ ] Criar submenu expansível para módulos com múltiplas páginas
+- [ ] Adicionar breadcrumbs em todas as páginas
+- [ ] Implementar navegação por teclado no menu (Tab, Enter, Esc)
+- [ ] Adicionar tooltip com descrição em cada item do menu
+
+### Melhorias de UX e Interface
+- [ ] Implementar loading states com skeleton em todas as tabelas
+- [ ] Adicionar toasts de feedback para todas as ações (sucesso/erro/info)
+- [ ] Implementar estados vazios com ilustrações e CTAs claros
+- [ ] Adicionar debounce (300ms) em todos os campos de busca
+- [ ] Implementar confirmações visuais para ações destrutivas
+- [ ] Adicionar animações suaves de transição entre páginas
+- [ ] Implementar modo de visualização compacta/expandida nas tabelas
+- [ ] Adicionar tooltips contextuais em campos complexos
+- [ ] Implementar suporte a atalhos de teclado (Ctrl+S para salvar, Esc para cancelar)
+- [ ] Adicionar indicadores de progresso em formulários longos
+
+### Correções e Validações
+- [ ] Corrigir todos os erros de TypeScript no projeto
+- [ ] Validar todas as rotas tRPC com dados reais
+- [ ] Testar fluxo completo de CRUD de funcionários
+- [ ] Verificar responsividade mobile em todas as páginas
+- [ ] Adicionar tratamento de erros em todas as procedures
+- [ ] Implementar validação de dados no frontend e backend
+- [ ] Testar cenários de erro (rede, servidor, validação)
+- [ ] Verificar acessibilidade (ARIA labels, keyboard navigation)
+
+
+---
+
+## ✅ CONCLUÍDO - Dezembro 2025
+
+### Funcionalidades de Funcionários - CRUD Completo
+- [x] Schema completo de funcionários já existe no banco
+- [x] Procedure tRPC employees.list implementado
+- [x] Procedure tRPC employees.getById implementado
+- [x] Procedure tRPC employees.create implementado
+- [x] Procedure tRPC employees.update implementado
+- [x] Procedure tRPC employees.deactivate implementado (soft delete)
+- [x] Página /funcionarios/gerenciar criada com tabela completa
+- [x] Formulário de cadastro de funcionário implementado
+- [x] Formulário de edição de funcionário implementado
+- [x] Modal de confirmação de exclusão implementado
+- [x] Validações de campos obrigatórios implementadas
+- [x] Busca em tempo real na listagem implementada
+- [x] Filtros por departamento e status implementados
+- [x] Loading states com skeleton implementados
+- [x] Toasts de feedback implementados
+
+### Melhorias de Menu e Navegação
+- [x] Item "Gerenciar Funcionários" adicionado ao menu
+- [x] Ícone Edit3 atribuído ao item de menu
+- [x] Rota /funcionarios/gerenciar registrada no App.tsx
+
+### Testes e Validações
+- [x] Teste vitest do employeesRouter criado (14 testes)
+- [x] Todos os testes passaram com sucesso
+- [x] Validação de permissões (admin, RH, colaborador)
+- [x] Validação de estrutura de dados
+- [x] Validação de filtros e busca
+- [x] Validação de integração com departamentos e cargos

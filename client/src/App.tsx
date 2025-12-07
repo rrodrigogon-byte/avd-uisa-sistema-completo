@@ -35,6 +35,7 @@ import Perfil from "./pages/Perfil";
 import History from "./pages/History";
 import Funcionarios from "./pages/Funcionarios";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
+import FuncionariosGerenciar from "./pages/FuncionariosGerenciar";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
 import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
 import BonusAprovacoes from "./pages/aprovacoes/Bonus";
@@ -258,6 +259,7 @@ function Router() {
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
       <Route path="/funcionarios" component={Funcionarios} />
+      <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
       <Route path="/funcionarios/:id" component={PerfilFuncionario} />
       <Route path="/funcionarios-ativos" component={FuncionariosAtivos} />
       <Route path="/departamentos" component={Departamentos} />
