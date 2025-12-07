@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -14,8 +15,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Crown, Users } from "lucide-react";
-import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -23,11 +30,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Search, Crown, Users, Edit, Eye, Mail, Activity, Calendar, LogIn } from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function GerenciarUsuarios() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<string>("todos");
   const [filterSalaryLead, setFilterSalaryLead] = useState<string>("todos");
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showViewDialog, setShowViewDialog] = useState(false);
+  const [showCredentialsDialog, setShowCredentialsDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  // Form state para edição
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    email: "",
+    role: "colaborador" as const,
+  });
 
   // Queries
   const { data: allUsers = [], isLoading, refetch } = trpc.employees.list.useQuery();
@@ -41,6 +63,27 @@ export default function GerenciarUsuarios() {
     },
     onError: (error) => {
       toast.error(`Erro ao atualizar: ${error.message}`);
+    },
+  });
+
+  const updateUserMutation = trpc.employees.updateUser.useMutation({
+    onSuccess: () => {
+      toast.success("Usuário atualizado com sucesso!");
+      setShowEditDialog(false);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao atualizar usuário: ${error.message}`);
+    },
+  });
+
+  const sendCredentialsMutation = trpc.employees.sendCredentials.useMutation({
+    onSuccess: () => {
+      toast.success("Credenciais enviadas com sucesso!");
+      setShowCredentialsDialog(false);
+    },
+    onError: (error) => {
+      toast.error(`Erro ao enviar credenciais: ${error.message}`);
     },
   });
 
@@ -65,6 +108,45 @@ export default function GerenciarUsuarios() {
       userId,
       isSalaryLead: !currentValue,
     });
+  };
+
+  const handleEditUser = () => {
+    if (!selectedUser) return;
+
+    updateUserMutation.mutate({
+      id: selectedUser.id,
+      name: editFormData.name,
+      email: editFormData.email,
+      role: editFormData.role,
+    });
+  };
+
+  const handleSendCredentials = () => {
+    if (!selectedUser) return;
+
+    sendCredentialsMutation.mutate({
+      userId: selectedUser.id,
+    });
+  };
+
+  const openEditDialog = (user: any) => {
+    setSelectedUser(user);
+    setEditFormData({
+      name: user.name,
+      email: user.email || "",
+      role: user.role,
+    });
+    setShowEditDialog(true);
+  };
+
+  const openViewDialog = (user: any) => {
+    setSelectedUser(user);
+    setShowViewDialog(true);
+  };
+
+  const openCredentialsDialog = (user: any) => {
+    setSelectedUser(user);
+    setShowCredentialsDialog(true);
   };
 
   const getRoleBadge = (role: string) => {
@@ -212,6 +294,7 @@ export default function GerenciarUsuarios() {
                       <TableHead>Email</TableHead>
                       <TableHead>Perfil</TableHead>
                       <TableHead className="text-center">Líder C&S</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -232,6 +315,34 @@ export default function GerenciarUsuarios() {
                             {user.isSalaryLead && (
                               <Crown className="h-4 w-4 text-yellow-500" />
                             )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openViewDialog(user)}
+                              title="Visualizar"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditDialog(user)}
+                              title="Editar"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openCredentialsDialog(user)}
+                              title="Enviar Credenciais"
+                            >
+                              <Mail className="h-4 w-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -276,6 +387,211 @@ export default function GerenciarUsuarios() {
             </CardContent>
           </Card>
         )}
+
+        {/* Dialog de Visualização */}
+        <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Detalhes do Usuário</DialogTitle>
+              <DialogDescription>
+                Informações completas de {selectedUser?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-muted-foreground">Nome Completo</Label>
+                  <p className="font-medium mt-1">{selectedUser?.name}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Email</Label>
+                  <p className="font-medium mt-1">{selectedUser?.email || "—"}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Perfil</Label>
+                  <div className="mt-1">{selectedUser && getRoleBadge(selectedUser.role)}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Método de Login</Label>
+                  <p className="font-medium mt-1">{selectedUser?.loginMethod || "—"}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Líder C&S</Label>
+                  <p className="font-medium mt-1">
+                    {selectedUser?.isSalaryLead ? (
+                      <Badge variant="default" className="gap-1">
+                        <Crown className="h-3 w-3" /> Sim
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline">Não</Badge>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Cargo</Label>
+                  <p className="font-medium mt-1">{selectedUser?.position || "—"}</p>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  Informações de Acesso
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-muted-foreground flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      Criado em
+                    </Label>
+                    <p className="font-medium mt-1">
+                      {selectedUser?.createdAt
+                        ? format(new Date(selectedUser.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+                        : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground flex items-center gap-1">
+                      <LogIn className="h-3 w-3" />
+                      Último Login
+                    </Label>
+                    <p className="font-medium mt-1">
+                      {selectedUser?.lastSignedIn
+                        ? format(new Date(selectedUser.lastSignedIn), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+                        : "—"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {selectedUser?.department && (
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold mb-3">Informações Organizacionais</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-muted-foreground">Departamento</Label>
+                      <p className="font-medium mt-1">{selectedUser.department}</p>
+                    </div>
+                    {selectedUser.costCenter && (
+                      <div>
+                        <Label className="text-muted-foreground">Centro de Custo</Label>
+                        <p className="font-medium mt-1">{selectedUser.costCenter}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowViewDialog(false)}>
+                Fechar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog de Edição */}
+        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar Usuário</DialogTitle>
+              <DialogDescription>
+                Atualize as informações de {selectedUser?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Nome Completo *</Label>
+                <Input
+                  id="edit-name"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email *</Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-role">Perfil *</Label>
+                <Select
+                  value={editFormData.role}
+                  onValueChange={(value: any) => setEditFormData({ ...editFormData, role: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="rh">RH</SelectItem>
+                    <SelectItem value="gestor">Gestor</SelectItem>
+                    <SelectItem value="colaborador">Colaborador</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleEditUser} disabled={updateUserMutation.isPending}>
+                {updateUserMutation.isPending ? "Salvando..." : "Salvar Alterações"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog de Envio de Credenciais */}
+        <Dialog open={showCredentialsDialog} onOpenChange={setShowCredentialsDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Enviar Credenciais</DialogTitle>
+              <DialogDescription>
+                Enviar credenciais de acesso para {selectedUser?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="bg-muted p-4 rounded-lg space-y-2">
+                <p className="text-sm">
+                  <strong>Usuário:</strong> {selectedUser?.name}
+                </p>
+                <p className="text-sm">
+                  <strong>Email:</strong> {selectedUser?.email || "Não cadastrado"}
+                </p>
+                <p className="text-sm text-muted-foreground mt-4">
+                  Um email será enviado com as credenciais de acesso ao sistema AVD UISA.
+                  O usuário receberá instruções para realizar o primeiro login.
+                </p>
+              </div>
+
+              {!selectedUser?.email && (
+                <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                    ⚠️ Este usuário não possui email cadastrado. Não será possível enviar as credenciais.
+                  </p>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowCredentialsDialog(false)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSendCredentials}
+                disabled={sendCredentialsMutation.isPending || !selectedUser?.email}
+              >
+                {sendCredentialsMutation.isPending ? "Enviando..." : "Enviar Credenciais"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

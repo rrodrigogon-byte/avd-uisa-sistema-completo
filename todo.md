@@ -698,67 +698,67 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 ## 🎯 FASE 1: Completar Funcionalidades de Gerenciamento (NOVA SOLICITAÇÃO - 07/12/2025)
 
 ### 1.1 Gerenciamento de Usuários - Envio de Credenciais
-- [ ] Implementar botão "Enviar Credenciais" na tabela de usuários
-- [ ] Criar modal de confirmação de envio de credenciais
-- [ ] Implementar procedure tRPC para envio de credenciais por email
-- [ ] Criar template de email com credenciais de acesso
-- [ ] Adicionar validação de configuração SMTP antes do envio
-- [ ] Implementar log de envio de credenciais
-- [ ] Testar envio de credenciais com diferentes configurações SMTP
-- [ ] Validar recebimento e formato do email
+- [x] Implementar botão "Enviar Credenciais" na tabela de usuários
+- [x] Criar modal de confirmação de envio de credenciais
+- [x] Implementar procedure tRPC para envio de credenciais por email
+- [x] Criar template de email com credenciais de acesso
+- [x] Adicionar validação de configuração SMTP antes do envio
+- [x] Implementar log de envio de credenciais
+- [x] Testar envio de credenciais com diferentes configurações SMTP
+- [x] Validar recebimento e formato do email
 
 ### 1.2 Gerenciamento de Usuários - Edição
-- [ ] Adicionar botão "Editar" na tabela de usuários
-- [ ] Criar modal de edição de usuário
-- [ ] Implementar formulário de edição com validação
-- [ ] Adicionar campos: nome, email, role, status
-- [ ] Implementar procedure tRPC para atualização de usuário
-- [ ] Adicionar validação de permissões (apenas admin pode editar)
-- [ ] Implementar feedback visual de sucesso/erro
-- [ ] Testar edição de diferentes campos
-- [ ] Validar persistência de dados após edição
+- [x] Adicionar botão "Editar" na tabela de usuários
+- [x] Criar modal de edição de usuário
+- [x] Implementar formulário de edição com validação
+- [x] Adicionar campos: nome, email, role, status
+- [x] Implementar procedure tRPC para atualização de usuário
+- [x] Adicionar validação de permissões (apenas admin pode editar)
+- [x] Implementar feedback visual de sucesso/erro
+- [x] Testar edição de diferentes campos
+- [x] Validar persistência de dados após edição
 
 ### 1.3 Gerenciamento de Usuários - Visualização Completa
-- [ ] Adicionar botão "Visualizar" na tabela de usuários
-- [ ] Criar modal de visualização detalhada de usuário
-- [ ] Exibir informações completas: dados pessoais, role, status, datas
-- [ ] Adicionar histórico de atividades do usuário
-- [ ] Exibir logs de login e ações importantes
-- [ ] Adicionar estatísticas de uso do sistema
-- [ ] Implementar visualização de permissões e acessos
-- [ ] Testar visualização com diferentes perfis de usuário
+- [x] Adicionar botão "Visualizar" na tabela de usuários
+- [x] Criar modal de visualização detalhada de usuário
+- [x] Exibir informações completas: dados pessoais, role, status, datas
+- [x] Adicionar histórico de atividades do usuário
+- [x] Exibir logs de login e ações importantes
+- [x] Adicionar estatísticas de uso do sistema
+- [x] Implementar visualização de permissões e acessos
+- [x] Testar visualização com diferentes perfis de usuário
 
 ### 1.4 Gerenciamento de Senhas de Líderes - Estrutura de Dados
-- [ ] Criar tabela leaderPasswords no schema.ts
-- [ ] Definir campos: id, leaderId, systemName, username, password, url, notes, createdAt, updatedAt
-- [ ] Adicionar criptografia para campo password
-- [ ] Implementar relação com tabela employees
-- [ ] Executar migração do banco de dados (pnpm db:push)
-- [ ] Criar tipos TypeScript para LeaderPassword
+- [x] Criar tabela leaderPasswords no schema.ts
+- [x] Definir campos: id, leaderId, systemName, username, password, url, notes, createdAt, updatedAt
+- [x] Adicionar criptografia para campo password
+- [x] Implementar relação com tabela employees
+- [x] Executar migração do banco de dados (pnpm db:push)
+- [x] Criar tipos TypeScript para LeaderPassword
 
 ### 1.5 Gerenciamento de Senhas de Líderes - Backend
-- [ ] Criar helpers de banco de dados em server/db.ts
-- [ ] Implementar função de criptografia/descriptografia de senhas
-- [ ] Criar procedure tRPC para listar senhas de líderes
-- [ ] Criar procedure tRPC para criar nova senha
-- [ ] Criar procedure tRPC para atualizar senha
-- [ ] Criar procedure tRPC para deletar senha
-- [ ] Criar procedure tRPC para visualizar senha (com descriptografia)
-- [ ] Adicionar validação de permissões (apenas admin)
-- [ ] Implementar auditoria de acessos a senhas
+- [x] Criar helpers de banco de dados em server/db.ts
+- [x] Implementar função de criptografia/descriptografia de senhas
+- [x] Criar procedure tRPC para listar senhas de líderes
+- [x] Criar procedure tRPC para criar nova senha
+- [x] Criar procedure tRPC para atualizar senha
+- [x] Criar procedure tRPC para deletar senha
+- [x] Criar procedure tRPC para visualizar senha (com descriptografia)
+- [x] Adicionar validação de permissões (apenas admin)
+- [x] Implementar auditoria de acessos a senhas
 
 ### 1.6 Gerenciamento de Senhas de Líderes - Frontend
-- [ ] Criar página LeaderPasswords.tsx
-- [ ] Implementar tabela de listagem de senhas
-- [ ] Adicionar botão "Nova Senha" com modal
-- [ ] Implementar formulário de criação de senha
-- [ ] Adicionar botão "Editar" com modal de edição
-- [ ] Implementar botão "Visualizar" com modal detalhado
-- [ ] Adicionar botão "Deletar" com confirmação
-- [ ] Implementar busca e filtros na tabela
-- [ ] Adicionar indicador visual de senha forte/fraca
-- [ ] Implementar botão "Copiar Senha" com feedback
-- [ ] Adicionar exportação de senhas (com confirmação de segurança)
+- [x] Criar página LeaderPasswords.tsx
+- [x] Implementar tabela de listagem de senhas
+- [x] Adicionar botão "Nova Senha" com modal
+- [x] Implementar formulário de criação de senha
+- [x] Adicionar botão "Editar" com modal de edição
+- [x] Implementar botão "Visualizar" com modal detalhado
+- [x] Adicionar botão "Deletar" com confirmação
+- [x] Implementar busca e filtros na tabela
+- [x] Adicionar indicador visual de senha forte/fraca
+- [x] Implementar botão "Copiar Senha" com feedback
+- [x] Adicionar exportação de senhas (com confirmação de segurança)
 
 ### 1.7 Testes e Validação Fase 1
 - [ ] Criar testes vitest para envio de credenciais
