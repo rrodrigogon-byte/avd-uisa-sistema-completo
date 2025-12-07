@@ -71,6 +71,7 @@ import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
 import { leaderPasswordsRouter } from "./routers/leaderPasswordsRouter";
 import { avdUisaRouter } from "./avdUisaRouter";
+import { aiAnalyticsRouter } from "./routers/aiAnalyticsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -81,6 +82,7 @@ export const appRouter = router({
   users: usersRouter,
   leaderPasswords: leaderPasswordsRouter,
   avdUisa: avdUisaRouter,
+  aiAnalytics: aiAnalyticsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

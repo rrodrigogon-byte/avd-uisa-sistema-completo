@@ -3133,3 +3133,9 @@ export const leaderPasswordAccessLogs = mysqlTable("leaderPasswordAccessLogs", {
 export type LeaderPasswordAccessLog = typeof leaderPasswordAccessLogs.$inferSelect;
 export type InsertLeaderPasswordAccessLog = typeof leaderPasswordAccessLogs.$inferInsert;
 
+
+// ============================================================================
+// ANÁLISE PREDITIVA COM IA E MACHINE LEARNING
+// ============================================================================
+
+export * from "./schema-ai-analytics";

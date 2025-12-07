@@ -98,6 +98,10 @@ import EnviarTestes from "./pages/EnviarTestes";
 import ImportadorDescricoesCargo from "./pages/ImportadorDescricoesCargo";
 import Notificacoes from "./pages/Notificacoes";
 import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
+import AIDashboard from "./pages/AIDashboard";
+import TurnoverAnalysis from "./pages/TurnoverAnalysis";
+import PerformancePrediction from "./pages/PerformancePrediction";
+import DevelopmentRecommendations from "./pages/DevelopmentRecommendations";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import DashboardRelatorios from "./pages/DashboardRelatorios";
 import CiclosAVD from "./pages/avd/CiclosAVD";
@@ -244,6 +248,12 @@ function Router() {
       <Route path="/benchmarking" component={BenchmarkingMercado} />
       <Route path="/metas-cascata" component={MetasCascata} />
       <Route path="/dashboard-executivo" component={DashboardExecutivoConsolidado} />
+      
+      {/* Inteligência Artificial */}
+      <Route path="/ia/dashboard" component={AIDashboard} />
+      <Route path="/ia/turnover" component={TurnoverAnalysis} />
+      <Route path="/ia/performance" component={PerformancePrediction} />
+      <Route path="/ia/desenvolvimento" component={DevelopmentRecommendations} />
       <Route path="/ciclos-avaliacao" component={CiclosAvaliacao} />
       <Route path="/ciclos-avaliacao/gerenciar" component={GerenciarCiclosAvaliacao} />
       <Route path="/ciclos/ativos" component={CiclosAtivos} />
