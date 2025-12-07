@@ -1007,3 +1007,8 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 ## 🐛 Bugs Reportados
 
 - [x] Botão "Novo Usuário" em Admin não funciona - corrigir funcionalidade
+- [x] Sistema de envio de e-mails não está funcionando - corrigir definitivamente
+- [x] Configurar credenciais SMTP do Gmail (avd@uisa.com.br)
+- [x] Validar envio de e-mails em todos os eventos do sistema (10/10 testes passaram)
+- [x] Garantir envio automático de credenciais para novos usuários
+- [x] Garantir envio de notificações para todos os eventos importantes (11 tipos de notificações implementadas)
