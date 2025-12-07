@@ -49,6 +49,7 @@ import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
 import { pushNotificationsRouter } from "./routers/pushNotificationsRouter";
 import { employeesRouter } from "./routers/employeesRouter";
+import { employeeProfileRouter } from "./routers/employeeProfileRouter";
 import { evaluationsRouter } from "./routers/evaluationsRouter";
 import { performanceReportsRouter } from "./routers/performanceReportsRouter";
 import { auditRouter } from "./routers/auditRouter";
@@ -198,6 +199,7 @@ export const appRouter = router({
   // COLABORADORES - Usando router moderno com suporte a search
   // ============================================================================
   employees: employeesRouter,
+  employeeProfile: employeeProfileRouter,
 
   // ============================================================================
   // METAS (movido para goalsRouter.ts)

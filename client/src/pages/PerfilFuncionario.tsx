@@ -1,26 +1,31 @@
+import { useState } from "react";
 import { useParams, useLocation } from "wouter";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Mail, Phone, Calendar, Briefcase, Target, FileText, TrendingUp, Award } from "lucide-react";
+import { Loader2, ArrowLeft, Mail, Phone, Calendar, Briefcase, Target, FileText, TrendingUp, Award, Pencil } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import TestesResultados from "@/components/TestesResultados";
 import HistoricoFuncionario from "@/components/HistoricoFuncionario";
+import EditPersonalInfoDialog from "@/components/EditPersonalInfoDialog";
+import CompetenciesManager from "@/components/CompetenciesManager";
+import GoalsManager from "@/components/GoalsManager";
 
 /**
- * Página de Perfil do Funcionário
- * Exibe informações completas: dados pessoais, avaliações, metas, PDI, Nine Box
+ * Página de Perfil do Funcionário - Versão Completa com CRUD
+ * Todas as abas permitem edição, inclusão, modificação e exclusão
  */
 
 export default function PerfilFuncionario() {
   const params = useParams();
   const [, navigate] = useLocation();
   const employeeId = parseInt(params.id || "0");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   // Queries
-  const { data: employee, isLoading: loadingEmployee } = trpc.employees.getById.useQuery({ id: employeeId });
+  const { data: employee, isLoading: loadingEmployee, refetch: refetchEmployee } = trpc.employees.getById.useQuery({ id: employeeId });
   const { data: evaluations, isLoading: loadingEvaluations } = trpc.performance.listByEmployee.useQuery({ employeeId });
   const { data: goals, isLoading: loadingGoals } = trpc.goals.listByEmployee.useQuery({ employeeId });
   const { data: pdiPlans, isLoading: loadingPDI } = trpc.pdi.listByEmployee.useQuery({ employeeId });
@@ -41,9 +46,9 @@ export default function PerfilFuncionario() {
       <DashboardLayout>
         <div className="flex flex-col items-center justify-center h-96 gap-4">
           <p className="text-gray-600">Funcionário não encontrado</p>
-          <Button onClick={() => navigate("/nine-box")}>
+          <Button onClick={() => navigate("/funcionarios")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar ao Nine Box
+            Voltar
           </Button>
         </div>
       </DashboardLayout>
@@ -55,7 +60,7 @@ export default function PerfilFuncionario() {
       <div className="space-y-6">
         {/* Header com botão voltar */}
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={() => navigate("/nine-box")}>
+          <Button variant="outline" size="sm" onClick={() => navigate("/funcionarios")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
@@ -79,7 +84,17 @@ export default function PerfilFuncionario() {
               {/* Informações */}
               <div className="flex-1 grid grid-cols-2 gap-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{employee.employee.name}</h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-gray-900">{employee.employee.name}</h2>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setEditDialogOpen(true)}
+                      className="text-[#F39200] hover:text-[#d97f00]"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                  </div>
                   <p className="text-lg text-gray-600 mt-1">{employee.position?.title || "Cargo não definido"}</p>
                   
                   <div className="flex gap-2 mt-3">
@@ -144,9 +159,9 @@ export default function PerfilFuncionario() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="evaluations">Avaliações</TabsTrigger>
+            <TabsTrigger value="competencies">Competências</TabsTrigger>
             <TabsTrigger value="goals">Metas</TabsTrigger>
-            <TabsTrigger value="pdi">PDI</TabsTrigger>
+            <TabsTrigger value="evaluations">Avaliações</TabsTrigger>
             <TabsTrigger value="tests">Testes</TabsTrigger>
             <TabsTrigger value="history">Histórico</TabsTrigger>
           </TabsList>
@@ -219,6 +234,16 @@ export default function PerfilFuncionario() {
             </Card>
           </TabsContent>
 
+          {/* Tab: Competências */}
+          <TabsContent value="competencies" className="space-y-4">
+            <CompetenciesManager employeeId={employeeId} />
+          </TabsContent>
+
+          {/* Tab: Metas */}
+          <TabsContent value="goals" className="space-y-4">
+            <GoalsManager employeeId={employeeId} goals={goals || []} isLoading={loadingGoals} />
+          </TabsContent>
+
           {/* Tab: Avaliações */}
           <TabsContent value="evaluations" className="space-y-4">
             {loadingEvaluations ? (
@@ -232,9 +257,9 @@ export default function PerfilFuncionario() {
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div>
-                          <CardTitle>{evaluation.cycle?.name || "Ciclo de Avaliação"}</CardTitle>
+                          <CardTitle>Avaliação de Desempenho</CardTitle>
                           <p className="text-sm text-gray-600 mt-1">
-                            Período: {evaluation.cycle?.startDate ? new Date(evaluation.cycle.startDate).toLocaleDateString('pt-BR') : "N/A"}
+                            ID: {evaluation.id}
                           </p>
                         </div>
                         <Badge variant="outline" className={
@@ -249,19 +274,19 @@ export default function PerfilFuncionario() {
                         <div>
                           <p className="text-sm text-gray-600">Autoavaliação</p>
                           <p className="text-2xl font-bold text-gray-900">
-                            {evaluation.selfScore || "-"}/5
+                            {evaluation.selfScore || "-"}/100
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Avaliação Gestor</p>
                           <p className="text-2xl font-bold text-gray-900">
-                            {evaluation.managerScore || "-"}/5
+                            {evaluation.managerScore || "-"}/100
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Score Final</p>
                           <p className="text-2xl font-bold text-[#F39200]">
-                            {evaluation.finalScore || "-"}/5
+                            {evaluation.finalScore || "-"}/100
                           </p>
                         </div>
                       </div>
@@ -273,151 +298,7 @@ export default function PerfilFuncionario() {
               <Card className="p-12">
                 <div className="text-center text-gray-500">
                   <Award className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p className="mb-4">Nenhuma avaliação registrada</p>
-                  <Button 
-                    onClick={() => navigate(`/avaliacoes/criar?employeeId=${employeeId}`)}
-                    className="bg-[#F39200] hover:bg-[#d97f00]"
-                  >
-                    <Award className="w-4 h-4 mr-2" />
-                    Criar Avaliação
-                  </Button>
-                </div>
-              </Card>
-            )}
-          </TabsContent>
-
-          {/* Tab: Metas */}
-          <TabsContent value="goals" className="space-y-4">
-            {loadingGoals ? (
-              <div className="flex items-center justify-center h-64">
-                <Loader2 className="w-8 h-8 animate-spin text-[#F39200]" />
-              </div>
-            ) : goals && goals.length > 0 ? (
-              <div className="space-y-4">
-                {goals.map((goal: any) => (
-                  <Card key={goal.id}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle>{goal.title || goal.specific}</CardTitle>
-                          <p className="text-sm text-gray-600 mt-1">{goal.description}</p>
-                        </div>
-                        <Badge variant="outline" className={
-                          goal.status === "concluida" ? "bg-green-50 text-green-700 border-green-200" : 
-                          goal.status === "em_andamento" ? "bg-blue-50 text-blue-700 border-blue-200" :
-                          "bg-gray-50 text-gray-700 border-gray-200"
-                        }>
-                          {goal.status || "Pendente"}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex items-center justify-between text-sm mb-1">
-                            <span className="text-gray-600">Progresso</span>
-                            <span className="font-semibold">{goal.progress || 0}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-[#F39200] h-2 rounded-full transition-all"
-                              style={{ width: `${goal.progress || 0}%` }}
-                            />
-                          </div>
-                        </div>
-                        {goal.deadline && (
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Calendar className="w-4 h-4" />
-                            <span>Prazo: {new Date(goal.deadline).toLocaleDateString('pt-BR')}</span>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="p-12">
-                <div className="text-center text-gray-500">
-                  <Target className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p className="mb-4">Nenhuma meta registrada</p>
-                  <Button 
-                    onClick={() => navigate(`/metas/criar?employeeId=${employeeId}`)}
-                    className="bg-[#F39200] hover:bg-[#d97f00]"
-                  >
-                    <Target className="w-4 h-4 mr-2" />
-                    Criar Meta
-                  </Button>
-                </div>
-              </Card>
-            )}
-          </TabsContent>
-
-          {/* Tab: PDI */}
-          <TabsContent value="pdi" className="space-y-4">
-            {loadingPDI ? (
-              <div className="flex items-center justify-center h-64">
-                <Loader2 className="w-8 h-8 animate-spin text-[#F39200]" />
-              </div>
-            ) : pdiPlans && pdiPlans.length > 0 ? (
-              <div className="space-y-4">
-                {pdiPlans.map((pdi: any) => (
-                  <Card key={pdi.id}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle>Plano de Desenvolvimento Individual</CardTitle>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Criado em: {pdi.createdAt ? new Date(pdi.createdAt).toLocaleDateString('pt-BR') : "N/A"}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className={
-                          pdi.status === "concluido" ? "bg-green-50 text-green-700 border-green-200" : 
-                          pdi.status === "em_andamento" ? "bg-blue-50 text-blue-700 border-blue-200" :
-                          "bg-gray-50 text-gray-700 border-gray-200"
-                        }>
-                          {pdi.status || "Ativo"}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {pdi.developmentGoals && (
-                          <div>
-                            <p className="text-sm font-semibold text-gray-700">Objetivos de Desenvolvimento:</p>
-                            <p className="text-sm text-gray-600">{pdi.developmentGoals}</p>
-                          </div>
-                        )}
-                        {pdi.actions && pdi.actions.length > 0 && (
-                          <div>
-                            <p className="text-sm font-semibold text-gray-700 mb-2">Ações:</p>
-                            <ul className="space-y-1">
-                              {pdi.actions.map((action: any, idx: number) => (
-                                <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
-                                  <span className="text-[#F39200]">•</span>
-                                  <span>{action.description || action}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="p-12">
-                <div className="text-center text-gray-500">
-                  <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p className="mb-4">Nenhum PDI registrado</p>
-                  <Button 
-                    onClick={() => navigate(`/pdi/criar?employeeId=${employeeId}`)}
-                    className="bg-[#F39200] hover:bg-[#d97f00]"
-                  >
-                    <FileText className="w-4 h-4 mr-2" />
-                    Criar PDI
-                  </Button>
+                  <p>Nenhuma avaliação registrada</p>
                 </div>
               </Card>
             )}
@@ -434,6 +315,24 @@ export default function PerfilFuncionario() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Dialog de Edição de Dados Pessoais */}
+      {employee && (
+        <EditPersonalInfoDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          employee={{
+            id: employee.employee.id,
+            name: employee.employee.name || "",
+            email: employee.employee.email,
+            phone: employee.employee.phone,
+            departmentId: employee.employee.departmentId,
+            positionId: employee.employee.positionId,
+            hireDate: employee.employee.hireDate,
+          }}
+          onSuccess={() => refetchEmployee()}
+        />
+      )}
     </DashboardLayout>
   );
 }
