@@ -65,6 +65,7 @@ import { cycles360TemplatesRouter } from "./cycles360TemplatesRouter";
 import { timeTrackingRouter } from "./routers/timeTrackingRouter";
 import { evaluationCyclesRouter } from "./routers/evaluationCyclesRouter";
 import { emailFailuresRouter } from "./routers/emailFailuresRouter";
+import { adminRhEmailDashboardRouter } from "./routers/adminRhEmailDashboardRouter";
 import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
 import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
@@ -2827,6 +2828,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Gerenciamento de Emails Falhados
   emailFailures: emailFailuresRouter,
+
+  // Router de Dashboard de Emails Admin/RH
+  adminRhEmailDashboard: adminRhEmailDashboardRouter,
 
   // Router de Ciclo de Avaliação de Desempenho
   performanceEvaluationCycle: performanceEvaluationCycleRouter,

@@ -253,6 +253,7 @@ const menuItems = [
       { icon: Shield, label: "Histórico de Senhas", path: "/admin/historico-senhas" },
       { icon: UserCog, label: "Gerenciar Senhas Líderes", path: "/admin/gerenciar-senhas-lideres" },
       { icon: Mail, label: "Dashboard de Emails", path: "/admin/emails" },
+      { icon: Mail, label: "Emails Admin/RH", path: "/admin/emails-admin-rh" },
       { icon: LineChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
       { icon: Upload, label: "Importar Dados UISA", path: "/admin/import-uisa" },
     ],

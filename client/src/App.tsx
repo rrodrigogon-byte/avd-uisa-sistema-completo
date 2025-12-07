@@ -109,6 +109,7 @@ import Ciclos360VisaoGeral from "./pages/Ciclos360VisaoGeral";
 import Ciclos360Detalhes from "./pages/Ciclos360Detalhes";
 import AdminSmtp from "./pages/AdminSmtp";
 import EmailMetrics from "./pages/EmailMetrics";
+import AdminRhEmailDashboard from "./pages/AdminRhEmailDashboard";
 import NotificationTemplates from "./pages/admin/NotificationTemplates";
 import Aprovadores from "./pages/admin/Aprovadores";
 import ScheduledReports from "./pages/ScheduledReports";
@@ -338,6 +339,7 @@ function Router() {
       <Route path="/admin/hierarquia" component={HierarquiaOrganizacional} />
       <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />
       <Route path="/admin/emails" component={DashboardEmails} />
+      <Route path="/admin/emails-admin-rh" component={AdminRhEmailDashboard} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/seguranca" component={SecurityDashboard} />
       <Route path="/admin/notification-templates" component={NotificationTemplates} />
