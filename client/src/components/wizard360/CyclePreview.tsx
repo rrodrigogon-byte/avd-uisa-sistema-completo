@@ -42,10 +42,10 @@ export default function CyclePreview({
   ) || [];
 
   const participantsWithNames = participantsData.participants.map((p: { employeeId: number; role: string }) => {
-    const employee = employees?.find((e) => e.employee.id === p.employeeId);
+    const employee = employees?.find((e: { id: number; name: string }) => e.id === p.employeeId);
     return {
       ...p,
-      name: employee?.employee.name || `Funcionário #${p.employeeId}`
+      name: employee?.name || `Funcionário #${p.employeeId}`
     };
   });
 

@@ -16,7 +16,6 @@ import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
 import ImportacaoPonto from "@/pages/ImportacaoPonto";
 import SecurityDashboard from "@/pages/SecurityDashboard";
-import AdminBroadcastEmail from "@/pages/AdminBroadcastEmail";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -98,10 +97,6 @@ import EnviarTestes from "./pages/EnviarTestes";
 import ImportadorDescricoesCargo from "./pages/ImportadorDescricoesCargo";
 import Notificacoes from "./pages/Notificacoes";
 import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
-import AIDashboard from "./pages/AIDashboard";
-import TurnoverAnalysis from "./pages/TurnoverAnalysis";
-import PerformancePrediction from "./pages/PerformancePrediction";
-import DevelopmentRecommendations from "./pages/DevelopmentRecommendations";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import DashboardRelatorios from "./pages/DashboardRelatorios";
 import CiclosAVD from "./pages/avd/CiclosAVD";
@@ -163,7 +158,6 @@ import DashboardEmails from "./pages/DashboardEmails";
 import GerenciarSenhasLideres from "./pages/admin/GerenciarSenhasLideres";
 import HistoricoSenhas from "./pages/admin/HistoricoSenhas";
 import GestaoUsuarios from "./pages/admin/GestaoUsuarios";
-import LeaderPasswords from "./pages/admin/LeaderPasswords";
 import MetasCorporativas from "./pages/MetasCorporativas";
 // import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas"; // Temporariamente desabilitado
 import TemplatesAvaliacao from "./pages/admin/TemplatesAvaliacao";
@@ -248,12 +242,6 @@ function Router() {
       <Route path="/benchmarking" component={BenchmarkingMercado} />
       <Route path="/metas-cascata" component={MetasCascata} />
       <Route path="/dashboard-executivo" component={DashboardExecutivoConsolidado} />
-      
-      {/* Inteligência Artificial */}
-      <Route path="/ia/dashboard" component={AIDashboard} />
-      <Route path="/ia/turnover" component={TurnoverAnalysis} />
-      <Route path="/ia/performance" component={PerformancePrediction} />
-      <Route path="/ia/desenvolvimento" component={DevelopmentRecommendations} />
       <Route path="/ciclos-avaliacao" component={CiclosAvaliacao} />
       <Route path="/ciclos-avaliacao/gerenciar" component={GerenciarCiclosAvaliacao} />
       <Route path="/ciclos/ativos" component={CiclosAtivos} />
@@ -352,14 +340,12 @@ function Router() {
       <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/emails-admin-rh" component={AdminRhEmailDashboard} />
-      <Route path="/admin/enviar-email-admins" component={AdminBroadcastEmail} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
       <Route path="/admin/seguranca" component={SecurityDashboard} />
       <Route path="/admin/notification-templates" component={NotificationTemplates} />
       <Route path="/admin/aprovadores" component={GestaoAprovadores} />
       <Route path="/admin/dashboard-aprovacoes" component={DashboardAprovacoes} />
       <Route path="/admin/usuarios" component={GestaoUsuarios} />
-          <Route path="/admin/senhas-lideres" component={LeaderPasswords} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />

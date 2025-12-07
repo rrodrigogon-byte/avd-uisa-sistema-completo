@@ -5,7 +5,6 @@ import { getDb } from "../db";
 import { systemSettings, pulseSurveyEmailLogs } from "../../drizzle/schema";
 import { eq, sql, desc } from "drizzle-orm";
 import { sendEmail } from "../utils/emailService";
-import { sendEmailToAllAdmins, createAdminBroadcastTemplate, createAdminBroadcastTextTemplate } from "../adminBroadcastEmailService";
 
 /**
  * Router de Administração
@@ -296,103 +295,5 @@ export const adminRouter = router({
       .limit(100);
 
     return history;
-  }),
-
-  /**
-   * Enviar email para todos os administradores
-   */
-  sendBroadcastToAdmins: protectedProcedure
-    .input(
-      z.object({
-        subject: z.string().min(1, 'Assunto é obrigatório'),
-        title: z.string().min(1, 'Título é obrigatório'),
-        message: z.string().min(1, 'Mensagem é obrigatória'),
-        actionUrl: z.string().optional(),
-        actionText: z.string().optional(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      if (ctx.user.role !== 'admin') {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'Apenas administradores podem enviar emails em massa',
-        });
-      }
-
-      try {
-        const htmlContent = createAdminBroadcastTemplate({
-          title: input.title,
-          message: input.message,
-          actionUrl: input.actionUrl,
-          actionText: input.actionText,
-        });
-
-        const textContent = createAdminBroadcastTextTemplate({
-          title: input.title,
-          message: input.message,
-          actionUrl: input.actionUrl,
-        });
-
-        const result = await sendEmailToAllAdmins({
-          subject: input.subject,
-          htmlContent,
-          textContent,
-        });
-
-        if (!result.success) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: `Falha ao enviar emails: ${result.errors.map(e => e.error).join(', ')}`,
-          });
-        }
-
-        return {
-          success: true,
-          totalAdmins: result.totalAdmins,
-          sentCount: result.sentCount,
-          failedCount: result.failedCount,
-          errors: result.errors,
-        };
-      } catch (error: any) {
-        console.error('[Admin] Erro ao enviar broadcast:', error);
-        
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `Erro ao enviar emails: ${error.message || 'Erro desconhecido'}`,
-        });
-      }
-    }),
-
-  /**
-   * Obter lista de administradores
-   */
-  getAdminList: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user.role !== 'admin') {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Apenas administradores podem acessar lista de admins',
-      });
-    }
-
-    const db = await getDb();
-    if (!db) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Banco de dados não disponível',
-      });
-    }
-
-    const { users } = await import('../../drizzle/schema');
-    const admins = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        lastSignedIn: users.lastSignedIn,
-      })
-      .from(users)
-      .where(eq(users.role, 'admin'));
-
-    return admins;
   }),
 });

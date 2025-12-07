@@ -98,22 +98,26 @@ export function OnboardingTour() {
       let top = 0;
       let left = 0;
 
+      const cardWidth = 320; // largura do card em pixels
+      const cardHeight = 200; // altura aproximada do card
+      const margin = 20; // margem de segurança
+
       switch (placement) {
         case "bottom":
-          top = rect.bottom + 10;
-          left = rect.left + rect.width / 2;
+          top = rect.bottom + margin;
+          left = Math.max(margin, Math.min(window.innerWidth - cardWidth - margin, rect.left + rect.width / 2 - cardWidth / 2));
           break;
         case "top":
-          top = rect.top - 10;
-          left = rect.left + rect.width / 2;
+          top = Math.max(margin, rect.top - cardHeight - margin);
+          left = Math.max(margin, Math.min(window.innerWidth - cardWidth - margin, rect.left + rect.width / 2 - cardWidth / 2));
           break;
         case "right":
-          top = rect.top + rect.height / 2;
-          left = rect.right + 10;
+          top = Math.max(margin, Math.min(window.innerHeight - cardHeight - margin, rect.top + rect.height / 2 - cardHeight / 2));
+          left = Math.min(window.innerWidth - cardWidth - margin, rect.right + margin);
           break;
         case "left":
-          top = rect.top + rect.height / 2;
-          left = rect.left - 10;
+          top = Math.max(margin, Math.min(window.innerHeight - cardHeight - margin, rect.top + rect.height / 2 - cardHeight / 2));
+          left = Math.max(margin, rect.left - cardWidth - margin);
           break;
       }
 
@@ -172,17 +176,27 @@ export function OnboardingTour() {
 
       {/* Card do tour */}
       <Card
-        className="fixed z-[9999] w-80 shadow-lg"
+        className="fixed z-[9999] w-80 shadow-2xl border-2 border-primary/20"
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
-          transform: "translate(-50%, 0)",
         }}
       >
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-3 bg-primary/5">
           <div className="flex items-start justify-between">
-            <CardTitle className="text-lg">{step.title}</CardTitle>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleSkip}>
+            <div>
+              <CardTitle className="text-lg font-bold">{step.title}</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">
+                {currentStep + 1} de {tourSteps.length}
+              </p>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" 
+              onClick={handleSkip}
+              title="Pular tour"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -190,10 +204,15 @@ export function OnboardingTour() {
         <CardContent className="pb-3">
           <p className="text-sm text-muted-foreground">{step.content}</p>
         </CardContent>
-        <CardFooter className="flex items-center justify-between">
-          <div className="text-xs text-muted-foreground">
-            {currentStep + 1} de {tourSteps.length}
-          </div>
+        <CardFooter className="flex items-center justify-between pt-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleSkip}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            Pular tour
+          </Button>
           <div className="flex gap-2">
             {currentStep > 0 && (
               <Button variant="outline" size="sm" onClick={handlePrevious}>
@@ -220,8 +239,18 @@ export function OnboardingTour() {
         .tour-highlight {
           position: relative;
           z-index: 9999;
-          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5), 0 0 0 9999px rgba(0, 0, 0, 0.5);
-          border-radius: 4px;
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4);
+          border-radius: 8px;
+          animation: tour-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes tour-pulse {
+          0%, 100% {
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6);
+          }
         }
       `}</style>
     </>

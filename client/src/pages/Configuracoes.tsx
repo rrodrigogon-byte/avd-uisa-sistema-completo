@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Settings, Database, Mail, Building2, Award, Calendar } from "lucide-react";
+import { Settings, Database, Mail, Building2, Award, Calendar, RotateCcw } from "lucide-react";
+import { RestartTourButton } from "@/components/OnboardingTour";
 
 export default function Configuracoes() {
   const [emailEnabled, setEmailEnabled] = useState(true);
@@ -99,6 +100,17 @@ export default function Configuracoes() {
                   <Label htmlFor="support-email">E-mail de Suporte</Label>
                   <Input id="support-email" type="email" defaultValue="suporte@uisa.com.br" />
                 </div>
+                
+                <div className="pt-4 border-t">
+                  <div className="space-y-2">
+                    <Label>Tour de Boas-Vindas</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Reinicie o tour guiado para conhecer novamente as funcionalidades do sistema.
+                    </p>
+                    <RestartTourButton />
+                  </div>
+                </div>
+                
                 <Button onClick={handleSaveGeneral}>Salvar Configurações</Button>
               </CardContent>
             </Card>

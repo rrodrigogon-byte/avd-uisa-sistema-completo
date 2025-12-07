@@ -15,10 +15,6 @@ import {
   performanceEvaluations,
   positions,
   users,
-  leaderPasswords,
-  leaderPasswordAccessLogs,
-  InsertLeaderPassword,
-  InsertLeaderPasswordAccessLog,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1031,32 +1027,6 @@ export async function updateUserSalaryLead(userId: number, isSalaryLead: boolean
   }
 }
 
-export async function updateUser(
-  userId: number,
-  data: {
-    name?: string;
-    email?: string;
-    role?: "admin" | "rh" | "gestor" | "colaborador";
-  }
-) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  try {
-    const updateData: any = {};
-    if (data.name !== undefined) updateData.name = data.name;
-    if (data.email !== undefined) updateData.email = data.email;
-    if (data.role !== undefined) updateData.role = data.role;
-    
-    if (Object.keys(updateData).length > 0) {
-      await db.update(users).set(updateData).where(eq(users.id, userId));
-    }
-  } catch (error) {
-    console.error("[Database] Failed to update user:", error);
-    throw error;
-  }
-}
-
 export async function getUsersByRole(role: "admin" | "rh" | "gestor" | "colaborador") {
   const db = await getDb();
   if (!db) return [];
@@ -1084,161 +1054,6 @@ export async function searchUsers(searchTerm: string) {
       .orderBy(users.name);
   } catch (error) {
     console.error("[Database] Failed to search users:", error);
-    return [];
-  }
-}
-
-export async function createUser(data: {
-  name: string;
-  email: string;
-  role: "admin" | "rh" | "gestor" | "colaborador";
-  openId?: string;
-}) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  try {
-    // Gerar um openId temporário se não fornecido
-    const openId = data.openId || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    const result = await db.insert(users).values({
-      openId,
-      name: data.name,
-      email: data.email,
-      role: data.role,
-      loginMethod: "oauth",
-      lastSignedIn: new Date(),
-    });
-    
-    // Retornar o usuário criado
-    const insertId = Number(result.insertId);
-    const newUser = await getUserById(insertId);
-    
-    if (!newUser) {
-      throw new Error("Failed to retrieve created user");
-    }
-    
-    return newUser;
-  } catch (error) {
-    console.error("[Database] Failed to create user:", error);
-    throw error;
-  }
-}
-
-
-// ============================================================================
-// SENHAS DE LÍDERES
-// ============================================================================
-
-export async function getAllLeaderPasswords() {
-  const db = await getDb();
-  if (!db) return [];
-  
-  try {
-    return await db.select().from(leaderPasswords).where(eq(leaderPasswords.isActive, true));
-  } catch (error) {
-    console.error("[Database] Failed to get leader passwords:", error);
-    return [];
-  }
-}
-
-export async function getLeaderPasswordById(id: number) {
-  const db = await getDb();
-  if (!db) return undefined;
-  
-  try {
-    const result = await db.select().from(leaderPasswords).where(eq(leaderPasswords.id, id)).limit(1);
-    return result.length > 0 ? result[0] : undefined;
-  } catch (error) {
-    console.error("[Database] Failed to get leader password:", error);
-    return undefined;
-  }
-}
-
-export async function getLeaderPasswordsByLeaderId(leaderId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  
-  try {
-    return await db
-      .select()
-      .from(leaderPasswords)
-      .where(
-        and(
-          eq(leaderPasswords.leaderId, leaderId),
-          eq(leaderPasswords.isActive, true)
-        )
-      );
-  } catch (error) {
-    console.error("[Database] Failed to get leader passwords by leader:", error);
-    return [];
-  }
-}
-
-export async function createLeaderPassword(data: InsertLeaderPassword) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  try {
-    const result = await db.insert(leaderPasswords).values(data);
-    return result.insertId;
-  } catch (error) {
-    console.error("[Database] Failed to create leader password:", error);
-    throw error;
-  }
-}
-
-export async function updateLeaderPassword(
-  id: number,
-  data: Partial<InsertLeaderPassword>
-) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  try {
-    await db.update(leaderPasswords).set(data).where(eq(leaderPasswords.id, id));
-  } catch (error) {
-    console.error("[Database] Failed to update leader password:", error);
-    throw error;
-  }
-}
-
-export async function deleteLeaderPassword(id: number) {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
-  
-  try {
-    // Soft delete
-    await db.update(leaderPasswords).set({ isActive: false }).where(eq(leaderPasswords.id, id));
-  } catch (error) {
-    console.error("[Database] Failed to delete leader password:", error);
-    throw error;
-  }
-}
-
-export async function logLeaderPasswordAccess(data: InsertLeaderPasswordAccessLog) {
-  const db = await getDb();
-  if (!db) return;
-  
-  try {
-    await db.insert(leaderPasswordAccessLogs).values(data);
-  } catch (error) {
-    console.error("[Database] Failed to log password access:", error);
-  }
-}
-
-export async function getLeaderPasswordAccessLogs(passwordId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  
-  try {
-    return await db
-      .select()
-      .from(leaderPasswordAccessLogs)
-      .where(eq(leaderPasswordAccessLogs.passwordId, passwordId))
-      .orderBy(desc(leaderPasswordAccessLogs.accessedAt));
-  } catch (error) {
-    console.error("[Database] Failed to get password access logs:", error);
     return [];
   }
 }
