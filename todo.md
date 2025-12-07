@@ -1003,3 +1003,7 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 - [x] Adicionar indicador visual de senha forte/fraca
 - [x] Implementar botão "Copiar Senha" com feedback
 - [ ] Adicionar exportação de senhas (com confirmação de segurança) (próximo)
+
+## 🐛 Bugs Reportados
+
+- [x] Botão "Novo Usuário" em Admin não funciona - corrigir funcionalidade

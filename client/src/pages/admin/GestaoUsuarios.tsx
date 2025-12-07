@@ -49,12 +49,19 @@ export default function GestaoUsuarios() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [sendCredentialsDialogOpen, setSendCredentialsDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   
   // Estados para edição
   const [editName, setEditName] = useState("");
   const [editEmail, setEditEmail] = useState("");
   const [editRole, setEditRole] = useState<"admin" | "rh" | "gestor" | "colaborador">("colaborador");
+  
+  // Estados para criação
+  const [createName, setCreateName] = useState("");
+  const [createEmail, setCreateEmail] = useState("");
+  const [createRole, setCreateRole] = useState<"admin" | "rh" | "gestor" | "colaborador">("colaborador");
+  const [createPassword, setCreatePassword] = useState("");
   
   // Mutations
   const sendCredentialsMutation = trpc.users.sendCredentials.useMutation({
@@ -79,6 +86,25 @@ export default function GestaoUsuarios() {
     },
     onError: (error) => {
       toast.error("Erro ao atualizar usuário", {
+        description: error.message,
+      });
+    },
+  });
+  
+  const createUserMutation = trpc.users.create.useMutation({
+    onSuccess: () => {
+      toast.success("Usuário criado com sucesso!", {
+        description: "Um email com as credenciais foi enviado ao usuário.",
+      });
+      setCreateDialogOpen(false);
+      setCreateName("");
+      setCreateEmail("");
+      setCreateRole("colaborador");
+      setCreatePassword("");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error("Erro ao criar usuário", {
         description: error.message,
       });
     },
@@ -171,6 +197,25 @@ export default function GestaoUsuarios() {
       role: editRole,
     });
   };
+  
+  const handleCreate = () => {
+    if (!createName || !createEmail) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+    
+    if (!createEmail.includes("@")) {
+      toast.error("Email inválido");
+      return;
+    }
+    
+    createUserMutation.mutate({
+      name: createName,
+      email: createEmail,
+      role: createRole,
+      password: createPassword || undefined,
+    });
+  };
 
   return (
     <DashboardLayout>
@@ -182,7 +227,7 @@ export default function GestaoUsuarios() {
               Gerencie usuários, permissões e acessos ao sistema
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setCreateDialogOpen(true)}>
             <Users className="h-4 w-4 mr-2" />
             Novo Usuário
           </Button>
@@ -514,6 +559,94 @@ export default function GestaoUsuarios() {
           </div>
           <DialogFooter>
             <Button onClick={() => setViewDialogOpen(false)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Dialog de Criação */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Criar Novo Usuário</DialogTitle>
+            <DialogDescription>
+              Preencha os dados do novo usuário. Um email com as credenciais será enviado automaticamente.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="create-name">Nome Completo *</Label>
+              <Input
+                id="create-name"
+                value={createName}
+                onChange={(e) => setCreateName(e.target.value)}
+                placeholder="Nome do usuário"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-email">Email *</Label>
+              <Input
+                id="create-email"
+                type="email"
+                value={createEmail}
+                onChange={(e) => setCreateEmail(e.target.value)}
+                placeholder="email@exemplo.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-role">Perfil *</Label>
+              <Select value={createRole} onValueChange={(value: any) => setCreateRole(value)}>
+                <SelectTrigger id="create-role">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="colaborador">Colaborador</SelectItem>
+                  <SelectItem value="gestor">Gestor</SelectItem>
+                  <SelectItem value="rh">RH</SelectItem>
+                  <SelectItem value="admin">Administrador</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-password">Senha Temporária (opcional)</Label>
+              <Input
+                id="create-password"
+                type="password"
+                value={createPassword}
+                onChange={(e) => setCreatePassword(e.target.value)}
+                placeholder="Deixe vazio para gerar automaticamente"
+              />
+              <p className="text-xs text-muted-foreground">
+                Se não informada, uma senha aleatória será gerada e enviada por email.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCreateDialogOpen(false);
+                setCreateName("");
+                setCreateEmail("");
+                setCreateRole("colaborador");
+                setCreatePassword("");
+              }}
+              disabled={createUserMutation.isPending}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCreate}
+              disabled={createUserMutation.isPending}
+            >
+              {createUserMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Criando...
+                </>
+              ) : (
+                "Criar Usuário"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

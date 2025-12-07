@@ -1088,6 +1088,43 @@ export async function searchUsers(searchTerm: string) {
   }
 }
 
+export async function createUser(data: {
+  name: string;
+  email: string;
+  role: "admin" | "rh" | "gestor" | "colaborador";
+  openId?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    // Gerar um openId temporário se não fornecido
+    const openId = data.openId || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const result = await db.insert(users).values({
+      openId,
+      name: data.name,
+      email: data.email,
+      role: data.role,
+      loginMethod: "oauth",
+      lastSignedIn: new Date(),
+    });
+    
+    // Retornar o usuário criado
+    const insertId = Number(result.insertId);
+    const newUser = await getUserById(insertId);
+    
+    if (!newUser) {
+      throw new Error("Failed to retrieve created user");
+    }
+    
+    return newUser;
+  } catch (error) {
+    console.error("[Database] Failed to create user:", error);
+    throw error;
+  }
+}
+
 
 // ============================================================================
 // SENHAS DE LÍDERES
