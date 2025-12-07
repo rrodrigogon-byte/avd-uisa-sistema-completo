@@ -159,6 +159,7 @@ import DashboardEmails from "./pages/DashboardEmails";
 import GerenciarSenhasLideres from "./pages/admin/GerenciarSenhasLideres";
 import HistoricoSenhas from "./pages/admin/HistoricoSenhas";
 import GestaoUsuarios from "./pages/admin/GestaoUsuarios";
+import LeaderPasswords from "./pages/admin/LeaderPasswords";
 import MetasCorporativas from "./pages/MetasCorporativas";
 // import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas"; // Temporariamente desabilitado
 import TemplatesAvaliacao from "./pages/admin/TemplatesAvaliacao";
@@ -348,6 +349,7 @@ function Router() {
       <Route path="/admin/aprovadores" component={GestaoAprovadores} />
       <Route path="/admin/dashboard-aprovacoes" component={DashboardAprovacoes} />
       <Route path="/admin/usuarios" component={GestaoUsuarios} />
+          <Route path="/admin/senhas-lideres" component={LeaderPasswords} />
       <Route path="/admin/scheduled-reports" component={ScheduledReports} />
       <Route path="/executive-dashboard" component={ExecutiveDashboard} />
       <Route path="/dashboard-executivo" component={DashboardExecutivo} />

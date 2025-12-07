@@ -3,6 +3,8 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "../db";
 import { notifyNewUser } from "../adminRhEmailService";
+import { sendEmail } from "../_core/email";
+import { ENV } from "../_core/env";
 
 /**
  * Router para gestão de usuários
@@ -111,6 +113,123 @@ export const usersRouter = router({
     )
     .mutation(async ({ input }) => {
       await db.updateUserSalaryLead(input.userId, input.isSalaryLead);
+      return { success: true };
+    }),
+
+  /**
+   * Enviar credenciais de acesso por email
+   */
+  sendCredentials: adminOrRHProcedure
+    .input(z.object({ userId: z.number() }))
+    .mutation(async ({ input }) => {
+      const user = await db.getUserById(input.userId);
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Usuário não encontrado",
+        });
+      }
+
+      if (!user.email) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Usuário não possui email cadastrado",
+        });
+      }
+
+      const loginUrl = ENV.viteOauthPortalUrl || "https://avduisa-sys-vd5bj8to.manus.space";
+
+      const emailHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .info-box { background: white; padding: 15px; border-left: 4px solid #667eea; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎉 Bem-vindo ao Sistema AVD UISA</h1>
+            </div>
+            <div class="content">
+              <p>Olá <strong>${user.name || "Usuário"}</strong>,</p>
+              
+              <p>Suas credenciais de acesso ao Sistema AVD UISA foram configuradas com sucesso!</p>
+              
+              <div class="info-box">
+                <p><strong>📧 Email:</strong> ${user.email}</p>
+                <p><strong>👤 Perfil:</strong> ${user.role === "admin" ? "Administrador" : user.role === "rh" ? "RH" : user.role === "gestor" ? "Gestor" : "Colaborador"}</p>
+              </div>
+              
+              <p>Para acessar o sistema, clique no botão abaixo:</p>
+              
+              <div style="text-align: center;">
+                <a href="${loginUrl}" class="button">Acessar Sistema</a>
+              </div>
+              
+              <p><strong>Instruções de acesso:</strong></p>
+              <ol>
+                <li>Clique no botão "Acessar Sistema" acima</li>
+                <li>Faça login com sua conta institucional</li>
+                <li>Você será redirecionado automaticamente para o dashboard</li>
+              </ol>
+              
+              <p>Se tiver qualquer dúvida, entre em contato com o departamento de RH.</p>
+              
+              <p>Atenciosamente,<br><strong>Equipe AVD UISA</strong></p>
+            </div>
+            <div class="footer">
+              <p>Este é um email automático. Por favor, não responda.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      await sendEmail({
+        to: user.email,
+        subject: "🎉 Suas credenciais de acesso ao Sistema AVD UISA",
+        html: emailHtml,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Atualizar dados do usuário
+   */
+  update: adminOrRHProcedure
+    .input(
+      z.object({
+        userId: z.number(),
+        name: z.string().optional(),
+        email: z.string().email().optional(),
+        role: z.enum(["admin", "rh", "gestor", "colaborador"]).optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const user = await db.getUserById(input.userId);
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Usuário não encontrado",
+        });
+      }
+
+      await db.updateUser(input.userId, {
+        name: input.name,
+        email: input.email,
+        role: input.role,
+      });
+
       return { success: true };
     }),
 

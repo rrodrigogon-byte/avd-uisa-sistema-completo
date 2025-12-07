@@ -3087,3 +3087,49 @@ export type InsertGeneratedReport = typeof generatedReports.$inferInsert;
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";
 
+// ============================================================================
+// TABELAS DE GERENCIAMENTO DE SENHAS DE LÍDERES
+// ============================================================================
+
+/**
+ * Leader Passwords - Gerenciamento de senhas de líderes
+ * Armazena senhas de sistemas externos para líderes de forma segura
+ */
+export const leaderPasswords = mysqlTable("leaderPasswords", {
+  id: int("id").autoincrement().primaryKey(),
+  leaderId: int("leaderId").notNull(), // ID do funcionário líder
+  systemName: varchar("systemName", { length: 255 }).notNull(), // Nome do sistema (ex: "TOTVS", "SAP", "Portal RH")
+  username: varchar("username", { length: 255 }).notNull(), // Usuário/login
+  encryptedPassword: text("encryptedPassword").notNull(), // Senha criptografada
+  url: varchar("url", { length: 512 }), // URL do sistema
+  notes: text("notes"), // Observações adicionais
+  category: mysqlEnum("category", ["sistema_rh", "sistema_financeiro", "sistema_operacional", "portal_web", "outro"]).default("outro").notNull(),
+  lastAccessedAt: datetime("lastAccessedAt"), // Último acesso à senha
+  lastAccessedBy: int("lastAccessedBy"), // Quem acessou por último
+  expiresAt: datetime("expiresAt"), // Data de expiração da senha
+  isActive: boolean("isActive").default(true).notNull(),
+  createdBy: int("createdBy").notNull(), // Quem criou o registro
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LeaderPassword = typeof leaderPasswords.$inferSelect;
+export type InsertLeaderPassword = typeof leaderPasswords.$inferInsert;
+
+/**
+ * Leader Password Access Logs - Auditoria de acessos às senhas
+ * Registra todos os acessos às senhas para auditoria
+ */
+export const leaderPasswordAccessLogs = mysqlTable("leaderPasswordAccessLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  passwordId: int("passwordId").notNull(), // ID da senha acessada
+  accessedBy: int("accessedBy").notNull(), // Quem acessou
+  action: mysqlEnum("action", ["view", "copy", "edit", "delete"]).notNull(), // Tipo de ação
+  ipAddress: varchar("ipAddress", { length: 45 }), // IP de origem
+  userAgent: text("userAgent"), // User agent do navegador
+  accessedAt: timestamp("accessedAt").defaultNow().notNull(),
+});
+
+export type LeaderPasswordAccessLog = typeof leaderPasswordAccessLogs.$inferSelect;
+export type InsertLeaderPasswordAccessLog = typeof leaderPasswordAccessLogs.$inferInsert;
+
