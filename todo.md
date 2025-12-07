@@ -1154,3 +1154,127 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 - [ ] Criar integração com plataformas de recrutamento
 - [ ] Implementar exportação para Power BI
 - [ ] Desenvolver API GraphQL para consultas flexíveis
+
+
+---
+
+## 🎯 PROGRESSO - PDI INTELIGENTE E WORKFLOWS (07/12/2025)
+
+### Fase 1: Estrutura de Dados ✅ CONCLUÍDA
+- [x] Expandir schema com 6 novas tabelas para PDI Inteligente
+- [x] Criar tabela pdiDiagnosticSurveys (pesquisas 360° para diagnóstico)
+- [x] Criar tabela pdiDiagnosticResponses (respostas por competência)
+- [x] Criar tabela pdiProgressEvidences (evidências de progresso)
+- [x] Criar tabela pdiRiskMitigations (planos de mitigação de riscos)
+- [x] Criar tabela pdiCheckIns (check-ins periódicos)
+- [x] Criar tabela pdiMilestones (marcos e celebrações)
+- [x] Aplicar migrations ao banco de dados
+- [x] Validar estrutura de workflows existente (já completa)
+
+### Fase 2: Backend PDI com 5 Abas ✅ CONCLUÍDA
+- [x] Expandir pdiIntelligentRouter com 14 novas procedures
+- [x] Implementar router tRPC para Aba 1: Diagnóstico de Competências (3 procedures)
+  - [x] sendDiagnosticSurveys - Enviar pesquisas 360°
+  - [x] submitDiagnosticResponse - Submeter respostas
+  - [x] getDiagnosticResults - Resultados consolidados
+- [x] Implementar router tRPC para Aba 2: Matriz de Gaps (já existia)
+  - [x] addGap, updateGap - CRUD de gaps
+- [x] Implementar router tRPC para Aba 3: Plano 70-20-10 (já existia)
+  - [x] addAction, updateActionStatus, getActions - CRUD de ações
+  - [x] generateActionSuggestions - Sugestões com LLM
+- [x] Implementar router tRPC para Aba 4: Progressão (4 procedures)
+  - [x] addProgressEvidence - Adicionar evidência
+  - [x] validateEvidence - Validar evidência
+  - [x] addCheckIn - Check-in periódico
+  - [x] getProgressTimeline - Timeline completa
+- [x] Implementar router tRPC para Aba 5: Riscos (7 procedures)
+  - [x] addRiskMitigation - Plano de mitigação
+  - [x] updateMitigationStatus - Atualizar status
+  - [x] getRiskMitigations - Listar mitigações
+  - [x] addMilestone - Adicionar marco
+  - [x] celebrateMilestone - Celebrar conquista
+  - [x] getMilestones - Listar marcos
+- [x] Integrar LLM para sugestões inteligentes (já existia)
+
+### Fase 3: Backend Workflows (PULADA - JÁ EXISTE)
+- [x] Sistema de workflows já está completo e funcional
+- [x] Tabelas: workflows, workflowInstances, workflowStepApprovals
+- [x] Suporta todos os tipos de aprovação solicitados
+
+### Fase 4: Testes e Validação ✅ CONCLUÍDA
+- [x] Criar suite de testes vitest para PDI Inteligente
+- [x] Testar Aba 1: Diagnóstico de Competências (3 testes)
+- [x] Testar Aba 2: Matriz de Gaps (1 teste)
+- [x] Testar Aba 3: Plano 70-20-10 (2 testes)
+- [x] Testar Aba 4: Progressão (3 testes)
+- [x] Testar Aba 5: Riscos e Mitigações (4 testes)
+- [x] Testar validações gerais e integração (2 testes)
+- [x] Todos os 15 testes passaram com sucesso
+
+## 🎉 RESUMO DA IMPLEMENTAÇÃO
+
+### O que foi implementado:
+
+**1. Estrutura de Dados (6 novas tabelas)**
+- ✅ pdiDiagnosticSurveys - Pesquisas 360° para diagnóstico
+- ✅ pdiDiagnosticResponses - Respostas das pesquisas
+- ✅ pdiProgressEvidences - Evidências de progresso
+- ✅ pdiRiskMitigations - Mitigações de riscos
+- ✅ pdiCheckIns - Check-ins periódicos
+- ✅ pdiMilestones - Marcos e celebrações
+
+**2. Backend (14 novas procedures tRPC)**
+
+**Aba 1: Diagnóstico de Competências**
+- ✅ sendDiagnosticSurveys - Enviar pesquisas 360°
+- ✅ submitDiagnosticResponse - Submeter respostas
+- ✅ getDiagnosticResults - Resultados consolidados com radar chart
+
+**Aba 2: Matriz de Gaps** (já existia)
+- ✅ addGap - Adicionar gap manualmente
+- ✅ updateGap - Atualizar gap
+- ✅ Identificação automática de gaps no create
+
+**Aba 3: Plano 70-20-10** (já existia)
+- ✅ addAction - Adicionar ação de desenvolvimento
+- ✅ updateActionStatus - Atualizar status e progresso
+- ✅ getActions - Listar ações
+- ✅ generateActionSuggestions - Sugestões com LLM
+
+**Aba 4: Progressão**
+- ✅ addProgressEvidence - Adicionar evidência (certificado, documento, link, etc)
+- ✅ validateEvidence - Validar evidência
+- ✅ addCheckIn - Check-in periódico (mensal/trimestral)
+- ✅ getProgressTimeline - Timeline completa de progresso
+
+**Aba 5: Riscos** (expandida)
+- ✅ addRisk - Adicionar risco (já existia)
+- ✅ updateRisk - Atualizar risco (já existia)
+- ✅ addRiskMitigation - Plano de mitigação (preventiva/corretiva)
+- ✅ updateMitigationStatus - Atualizar status de mitigação
+- ✅ getRiskMitigations - Listar mitigações
+- ✅ addMilestone - Adicionar marco
+- ✅ celebrateMilestone - Celebrar conquista
+- ✅ getMilestones - Listar marcos
+
+**3. Testes**
+- ✅ 15 testes vitest cobrindo todas as 5 abas
+- ✅ Validação de estruturas de dados
+- ✅ Validação de fluxos completos
+- ✅ Validação de integração entre abas
+
+**4. Sistema de Workflows** (já existia - validado)
+- ✅ Workflows genéricos configuráveis
+- ✅ Suporte a todos os tipos de aprovação
+- ✅ Workflow de PDI, Metas, Avaliações, Bônus, etc
+
+### Total de procedures no pdiIntelligentRouter:
+**36 procedures** (22 existentes + 14 novas)
+
+### Próximos passos (opcional - interface):
+Para completar a implementação, seria necessário:
+- Criar interface com abas para o PDI Inteligente
+- Implementar gráficos radar para diagnóstico
+- Criar timeline visual de progressão
+- Implementar matriz de riscos visual
+- Adicionar celebrações de marcos

@@ -3135,6 +3135,288 @@ export type InsertLeaderPasswordAccessLog = typeof leaderPasswordAccessLogs.$inf
 
 
 // ============================================================================
+// PDI INTELIGENTE - TABELAS ADICIONAIS PARA 5 ABAS
+// ============================================================================
+
+/**
+ * Pesquisas de Diagnóstico de Competências para PDI
+ * Pesquisas 360° específicas para diagnóstico do PDI
+ */
+export const pdiDiagnosticSurveys = mysqlTable("pdiDiagnosticSurveys", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  surveyType: mysqlEnum("surveyType", ["autoavaliacao", "superior", "pares", "subordinados"]).notNull(),
+  respondentId: int("respondentId").notNull(), // ID do respondente
+  
+  // Status
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluida"]).default("pendente").notNull(),
+  sentAt: datetime("sentAt"),
+  completedAt: datetime("completedAt"),
+  
+  // Lembrete
+  reminderSentAt: datetime("reminderSentAt"),
+  reminderCount: int("reminderCount").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiDiagnosticSurvey = typeof pdiDiagnosticSurveys.$inferSelect;
+export type InsertPdiDiagnosticSurvey = typeof pdiDiagnosticSurveys.$inferInsert;
+
+/**
+ * Respostas do Diagnóstico de Competências
+ * Avaliações de competências por perspectiva (auto, superior, pares, subordinados)
+ */
+export const pdiDiagnosticResponses = mysqlTable("pdiDiagnosticResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  surveyId: int("surveyId").notNull(),
+  competencyId: int("competencyId").notNull(),
+  
+  // Avaliação (escala 1-5)
+  score: int("score").notNull(),
+  comments: text("comments"),
+  
+  // Exemplos comportamentais
+  behavioralExamples: text("behavioralExamples"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PdiDiagnosticResponse = typeof pdiDiagnosticResponses.$inferSelect;
+export type InsertPdiDiagnosticResponse = typeof pdiDiagnosticResponses.$inferInsert;
+
+/**
+ * Evidências de Progresso do PDI
+ * Anexos, certificados, links e comprovações de conclusão de ações
+ */
+export const pdiProgressEvidences = mysqlTable("pdiProgressEvidences", {
+  id: int("id").autoincrement().primaryKey(),
+  itemId: int("itemId").notNull(), // Relaciona com pdiItems
+  
+  // Tipo de evidência
+  evidenceType: mysqlEnum("evidenceType", [
+    "certificado",
+    "documento",
+    "link_projeto",
+    "depoimento",
+    "foto",
+    "video",
+    "outro"
+  ]).notNull(),
+  
+  // Conteúdo
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  fileUrl: varchar("fileUrl", { length: 512 }), // URL do arquivo no S3
+  externalUrl: varchar("externalUrl", { length: 512 }), // Link externo (GitHub, etc)
+  
+  // Metadados
+  uploadedBy: int("uploadedBy").notNull(),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  
+  // Validação
+  isValidated: boolean("isValidated").default(false).notNull(),
+  validatedBy: int("validatedBy"),
+  validatedAt: datetime("validatedAt"),
+  validationComments: text("validationComments"),
+});
+
+export type PdiProgressEvidence = typeof pdiProgressEvidences.$inferSelect;
+export type InsertPdiProgressEvidence = typeof pdiProgressEvidences.$inferInsert;
+
+/**
+ * Planos de Mitigação de Riscos do PDI
+ * Ações preventivas e corretivas para riscos identificados
+ */
+export const pdiRiskMitigations = mysqlTable("pdiRiskMitigations", {
+  id: int("id").autoincrement().primaryKey(),
+  riskId: int("riskId").notNull(), // Relaciona com pdiRisks
+  
+  // Tipo de mitigação
+  mitigationType: mysqlEnum("mitigationType", ["preventiva", "corretiva"]).notNull(),
+  
+  // Plano de ação
+  actionDescription: text("actionDescription").notNull(),
+  responsibleId: int("responsibleId").notNull(), // Responsável pela ação
+  dueDate: datetime("dueDate").notNull(),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "planejada",
+    "em_andamento",
+    "concluida",
+    "cancelada"
+  ]).default("planejada").notNull(),
+  
+  // Progresso
+  progress: int("progress").default(0).notNull(), // 0-100
+  completedAt: datetime("completedAt"),
+  
+  // Efetividade
+  effectiveness: mysqlEnum("effectiveness", [
+    "nao_avaliada",
+    "baixa",
+    "media",
+    "alta"
+  ]).default("nao_avaliada").notNull(),
+  effectivenessNotes: text("effectivenessNotes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiRiskMitigation = typeof pdiRiskMitigations.$inferSelect;
+export type InsertPdiRiskMitigation = typeof pdiRiskMitigations.$inferInsert;
+
+/**
+ * Check-ins Periódicos do PDI
+ * Acompanhamento regular do progresso (mensal/trimestral)
+ */
+export const pdiCheckIns = mysqlTable("pdiCheckIns", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  
+  // Data e tipo
+  checkInDate: datetime("checkInDate").notNull(),
+  checkInType: mysqlEnum("checkInType", ["mensal", "trimestral", "semestral", "ad_hoc"]).notNull(),
+  
+  // Participantes
+  conductedBy: int("conductedBy").notNull(), // Quem conduziu (gestor, RH, sponsor)
+  participantIds: text("participantIds"), // JSON array de IDs dos participantes
+  
+  // Avaliação geral
+  overallProgress: int("overallProgress").notNull(), // 0-100
+  onTrack: boolean("onTrack").default(true).notNull(),
+  
+  // Feedback estruturado
+  accomplishments: text("accomplishments"), // Realizações desde último check-in
+  challenges: text("challenges"), // Desafios enfrentados
+  nextSteps: text("nextSteps"), // Próximos passos acordados
+  supportNeeded: text("supportNeeded"), // Suporte necessário
+  
+  // Ajustes no plano
+  planAdjustments: text("planAdjustments"), // Ajustes feitos no PDI
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PdiCheckIn = typeof pdiCheckIns.$inferSelect;
+export type InsertPdiCheckIn = typeof pdiCheckIns.$inferInsert;
+
+/**
+ * Marcos de Celebração do PDI
+ * Conquistas e marcos importantes alcançados
+ */
+export const pdiMilestones = mysqlTable("pdiMilestones", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  
+  // Informações do marco
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  milestoneType: mysqlEnum("milestoneType", [
+    "competencia_desenvolvida",
+    "certificacao_obtida",
+    "projeto_concluido",
+    "promocao",
+    "reconhecimento",
+    "outro"
+  ]).notNull(),
+  
+  // Data e status
+  targetDate: datetime("targetDate"),
+  achievedDate: datetime("achievedDate"),
+  status: mysqlEnum("status", [
+    "planejado",
+    "em_andamento",
+    "alcancado",
+    "nao_alcancado"
+  ]).default("planejado").notNull(),
+  
+  // Impacto
+  impactDescription: text("impactDescription"),
+  
+  // Celebração
+  wasCelebrated: boolean("wasCelebrated").default(false).notNull(),
+  celebrationNotes: text("celebrationNotes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiMilestone = typeof pdiMilestones.$inferSelect;
+export type InsertPdiMilestone = typeof pdiMilestones.$inferInsert;
+
+// Relações para novas tabelas PDI
+export const pdiDiagnosticSurveysRelations = relations(pdiDiagnosticSurveys, ({ one, many }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiDiagnosticSurveys.planId],
+    references: [pdiPlans.id],
+  }),
+  respondent: one(employees, {
+    fields: [pdiDiagnosticSurveys.respondentId],
+    references: [employees.id],
+  }),
+  responses: many(pdiDiagnosticResponses),
+}));
+
+export const pdiDiagnosticResponsesRelations = relations(pdiDiagnosticResponses, ({ one }) => ({
+  survey: one(pdiDiagnosticSurveys, {
+    fields: [pdiDiagnosticResponses.surveyId],
+    references: [pdiDiagnosticSurveys.id],
+  }),
+  competency: one(competencies, {
+    fields: [pdiDiagnosticResponses.competencyId],
+    references: [competencies.id],
+  }),
+}));
+
+export const pdiProgressEvidencesRelations = relations(pdiProgressEvidences, ({ one }) => ({
+  item: one(pdiItems, {
+    fields: [pdiProgressEvidences.itemId],
+    references: [pdiItems.id],
+  }),
+  uploader: one(employees, {
+    fields: [pdiProgressEvidences.uploadedBy],
+    references: [employees.id],
+  }),
+  validator: one(employees, {
+    fields: [pdiProgressEvidences.validatedBy],
+    references: [employees.id],
+  }),
+}));
+
+export const pdiRiskMitigationsRelations = relations(pdiRiskMitigations, ({ one }) => ({
+  risk: one(pdiRisks, {
+    fields: [pdiRiskMitigations.riskId],
+    references: [pdiRisks.id],
+  }),
+  responsible: one(employees, {
+    fields: [pdiRiskMitigations.responsibleId],
+    references: [employees.id],
+  }),
+}));
+
+export const pdiCheckInsRelations = relations(pdiCheckIns, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiCheckIns.planId],
+    references: [pdiPlans.id],
+  }),
+  conductor: one(employees, {
+    fields: [pdiCheckIns.conductedBy],
+    references: [employees.id],
+  }),
+}));
+
+export const pdiMilestonesRelations = relations(pdiMilestones, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiMilestones.planId],
+    references: [pdiPlans.id],
+  }),
+}));
+
+// ============================================================================
 // ANÁLISE PREDITIVA COM IA E MACHINE LEARNING
 // ============================================================================
 
