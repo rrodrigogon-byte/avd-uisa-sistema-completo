@@ -167,18 +167,18 @@ export default function AtualizarProgressoMeta() {
             </div>
             <Progress value={progressPercentage} className="h-3" />
 
-            {goal.measurementUnit && goal.targetValue && (
+            {goal.measurementUnit && goal.targetValueCents && (
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-700 mb-1">Valor Atual</p>
                   <p className="text-2xl font-bold text-blue-900">
-                    {goal.currentValue || 0} {goal.measurementUnit}
+                    {((goal.currentValueCents || 0) / 100).toFixed(2)} {goal.measurementUnit}
                   </p>
                 </div>
                 <div className="p-4 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-700 mb-1">Valor Alvo</p>
                   <p className="text-2xl font-bold text-green-900">
-                    {goal.targetValue} {goal.measurementUnit}
+                    {(goal.targetValueCents / 100).toFixed(2)} {goal.measurementUnit}
                   </p>
                 </div>
               </div>
@@ -225,13 +225,13 @@ export default function AtualizarProgressoMeta() {
                     id="currentValue"
                     type="number"
                     step="0.01"
-                    placeholder={`Ex: ${goal.targetValue || 100}`}
+                    placeholder={`Ex: ${goal.targetValueCents ? (goal.targetValueCents / 100).toFixed(2) : 100}`}
                     value={currentValue}
                     onChange={(e) => setCurrentValue(e.target.value)}
                     className="mt-1"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Atual: {goal.currentValue || 0} / Meta: {goal.targetValue}
+                    Atual: {((goal.currentValueCents || 0) / 100).toFixed(2)} / Meta: {goal.targetValueCents ? (goal.targetValueCents / 100).toFixed(2) : 0}
                   </p>
                 </div>
               )}
