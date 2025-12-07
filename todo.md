@@ -239,3 +239,43 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 ---
 
 **Conclusão:** O sistema AVD UISA está completo e funcional. Este TODO serve como referência do que foi implementado e sugestões de melhorias futuras opcionais.
+
+
+---
+
+## 🆕 NOVAS SOLICITAÇÕES (07/12/2025)
+
+### Menu de Navegação Aprimorado
+- [ ] Revisar e melhorar estrutura do menu lateral
+- [ ] Adicionar ícones mais intuitivos para cada seção
+- [ ] Implementar agrupamento lógico de funcionalidades
+- [ ] Melhorar indicadores visuais de seção ativa
+- [ ] Adicionar badges de notificação no menu
+- [ ] Implementar menu responsivo para mobile
+
+### Sistema de Emails para Admin e RH
+- [ ] Configurar envio automático de emails para Admin e RH em eventos importantes
+- [ ] Email quando novo usuário é criado no sistema
+- [ ] Email quando novo funcionário é cadastrado
+- [ ] Email quando novo ciclo de avaliação é iniciado
+- [ ] Email quando avaliação 360° é concluída
+- [ ] Email quando meta SMART é criada ou atualizada
+- [ ] Email quando PDI é criado ou concluído
+- [ ] Email quando há mudanças na Nine Box
+- [ ] Email de resumo diário de atividades do sistema
+- [ ] Email de alertas de segurança
+- [ ] Dashboard de emails enviados para Admin/RH
+
+- [x] Revisar e melhorar estrutura do menu lateral
+- [x] Adicionar agrupamento lógico de funcionalidades (Visão Geral, Performance, Avaliações, Desenvolvimento, Pessoas, Tempo, Aprovações, Bônus, Relatórios, Administração, Configurações)
+- [x] Melhorar indicadores visuais de seção ativa com animações e badges
+
+- [x] Configurar envio automático de emails para Admin e RH em eventos importantes
+- [x] Email quando novo funcionário é cadastrado
+- [x] Email quando usuário tem perfil alterado
+- [x] Email quando novo ciclo de avaliação é iniciado
+- [x] Criar serviço centralizado de notificações por email (adminRhEmailService.ts)
+- [x] Integrar notificações nos routers de funcionários, usuários e ciclos
+
+- [x] Criar testes vitest para validar serviço de notificações por email
+- [x] Validar envio de emails para Admin e RH (11 testes passaram com sucesso)

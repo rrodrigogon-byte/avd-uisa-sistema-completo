@@ -95,9 +95,18 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
 }
 
 const menuItems = [
-  // 📊 Visão Geral
-  { icon: LayoutDashboard, label: "Dashboard Principal", path: "/" },
-  { icon: Gauge, label: "Dashboard Executivo", path: "/dashboard-executivo" },
+  // 📊 VISÃO GERAL
+  {
+    icon: LayoutDashboard,
+    label: "Visão Geral",
+    isSection: true,
+    children: [
+      { icon: LayoutDashboard, label: "Dashboard Principal", path: "/" },
+      { icon: Gauge, label: "Dashboard Executivo", path: "/dashboard-executivo" },
+      { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
+      { icon: TrendingUp, label: "Analytics Avançado", path: "/analytics/avancado" },
+    ],
+  },
   
   // 🎯 Gestão de Performance
   {
@@ -130,14 +139,13 @@ const menuItems = [
     ],
   },
   
-  // 🎓 Desenvolvimento e Sucessão
+  // 🎓 DESENVOLVIMENTO E SUCESSÃO
   {
-    icon: BookOpen,
+    icon: GraduationCap,
     label: "Desenvolvimento",
     isSection: true,
     children: [
       { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
-      { icon: FileText, label: "Relatórios de PDI", path: "/relatorios/pdi" },
       { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
       { icon: TrendingUp, label: "Sucessão UISA", path: "/mapa-sucessao-uisa" },
       { icon: LineChart, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
@@ -215,23 +223,21 @@ const menuItems = [
     ],
   },
   
-  // 📊 Analytics e Relatórios
+  // 📊 RELATÓRIOS E ANÁLISES
   {
-    icon: BarChart3,
-    label: "Analytics",
+    icon: FileText,
+    label: "Relatórios",
     isSection: true,
     children: [
-      { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
-      { icon: TrendingUp, label: "Analytics Avançado", path: "/analytics/avancado" },
       { icon: Scale, label: "Benchmarking", path: "/benchmarking" },
       { icon: FileText, label: "Relatórios Gerais", path: "/relatorios" },
       { icon: Calendar, label: "Progresso de Ciclos", path: "/relatorios/ciclos" },
       { icon: BarChart3, label: "Relatórios Executivos", path: "/relatorios-executivos" },
+      { icon: FileText, label: "Relatórios de PDI", path: "/relatorios/pdi" },
+      { icon: FileText, label: "Relatórios de Bônus", path: "/relatorios/bonus" },
+      { icon: HistoryIcon, label: "Histórico", path: "/historico" },
     ],
   },
-  
-  // 📜 Histórico
-  { icon: HistoryIcon, label: "Histórico", path: "/historico" },
   
   // 🔧 Administração
   {

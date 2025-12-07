@@ -2,6 +2,7 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "../db";
+import { notifyNewUser } from "../adminRhEmailService";
 
 /**
  * Router para gestão de usuários
@@ -80,6 +81,21 @@ export const usersRouter = router({
     )
     .mutation(async ({ input }) => {
       await db.updateUserRole(input.userId, input.role);
+      
+      // Enviar notificação para Admin e RH sobre mudança de perfil
+      try {
+        const user = await db.getUserById(input.userId);
+        if (user && user.email) {
+          await notifyNewUser(
+            user.name || "N/A",
+            user.email,
+            input.role
+          );
+        }
+      } catch (error) {
+        console.error('[UsersRouter] Failed to send email notification:', error);
+      }
+      
       return { success: true };
     }),
 

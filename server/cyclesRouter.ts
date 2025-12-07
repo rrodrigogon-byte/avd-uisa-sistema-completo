@@ -4,6 +4,7 @@ import { z } from "zod";
 import { evaluationCycles, performanceEvaluations, smartGoals, pdiPlans, employees, notifications, evaluation360CycleParticipants } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
+import { notifyNewEvaluationCycle } from "./adminRhEmailService";
 
 /**
  * Router de Gestão de Ciclos de Avaliação
@@ -236,6 +237,19 @@ export const cyclesRouter = router({
       } catch (error) {
         console.error("[Cycles] Erro ao enviar notificações push:", error);
         // Não falhar a criação se notificações falharem
+      }
+
+      // Enviar notificação para Admin e RH sobre novo ciclo
+      try {
+        const participantsCount = input.participants?.length || 0;
+        await notifyNewEvaluationCycle(
+          input.name,
+          new Date(input.startDate),
+          new Date(input.endDate),
+          participantsCount
+        );
+      } catch (error) {
+        console.error('[CyclesRouter] Failed to send email notification:', error);
       }
 
       // Buscar ciclo criado para retornar completo

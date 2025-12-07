@@ -9,6 +9,7 @@ import {
   getEmployeeAuditLog,
 } from "../db";
 import { TRPCError } from "@trpc/server";
+import { notifyNewEmployee } from "../adminRhEmailService";
 
 /**
  * Router para Gestão Completa de Funcionários (Item 1)
@@ -107,6 +108,26 @@ export const employeesRouter = router({
         action: "criado",
         changedBy: ctx.user.id,
       });
+
+      // Enviar notificação para Admin e RH
+      try {
+        const { getDb } = await import("../db");
+        const { departments } = await import("../../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        const database = await getDb();
+        let departmentName = "N/A";
+        if (database) {
+          const [dept] = await database.select().from(departments).where(eq(departments.id, input.departmentId)).limit(1);
+          departmentName = dept?.name || "N/A";
+        }
+        await notifyNewEmployee(
+          input.name,
+          input.employeeCode,
+          departmentName
+        );
+      } catch (error) {
+        console.error('[EmployeesRouter] Failed to send email notification:', error);
+      }
 
       return { id: employeeId, success: true };
     }),

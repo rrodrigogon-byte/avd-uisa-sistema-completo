@@ -226,7 +226,7 @@ export const nineBoxRouter = router({
       })
       .from(employees)
       .leftJoin(positions, eq(employees.positionId, positions.id))
-      .innerJoin(sql`${employees} as subordinates`, sql`subordinates.managerId = ${employees.id}`)
+      .innerJoin(sql`(SELECT * FROM ${employees._.name}) as subordinates`, sql`subordinates.managerId = ${employees.id}`)
       .groupBy(employees.id, employees.name, positions.title)
       .having(sql`COUNT(DISTINCT subordinates.id) > 0`)
       .orderBy(employees.name);
