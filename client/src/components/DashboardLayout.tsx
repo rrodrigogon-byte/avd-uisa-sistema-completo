@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -45,12 +45,12 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
       <SidebarMenuItem>
         <SidebarMenuButton
           onClick={() => setIsOpen(!isOpen)}
-          className={`h-10 transition-all duration-200 font-medium group hover:bg-accent/50 ${
-            hasActiveChild ? 'bg-accent/30 text-primary' : ''
+          className={`h-11 transition-all duration-200 font-semibold group hover:bg-accent/60 rounded-lg ${
+            hasActiveChild ? 'bg-accent/40 text-primary shadow-sm' : ''
           }`}
         >
-          <item.icon className={`h-4 w-4 transition-colors ${
-            hasActiveChild ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+          <item.icon className={`h-5 w-5 transition-all duration-200 ${
+            hasActiveChild ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground group-hover:scale-105'
           }`} />
           <span className="transition-colors">{item.label}</span>
           {isOpen ? 
@@ -70,16 +70,16 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
                 isActive={isActive}
                 onClick={() => setLocation(child.path)}
                 tooltip={child.label}
-                className={`h-9 transition-all duration-200 font-normal text-sm group relative ${
+                className={`h-10 transition-all duration-200 font-normal text-sm group relative rounded-md ${
                   isActive 
-                    ? 'bg-primary/10 text-primary font-medium border-l-2 border-primary' 
-                    : 'hover:bg-accent/50 hover:translate-x-1'
+                    ? 'bg-primary/15 text-primary font-semibold border-l-3 border-primary shadow-sm' 
+                    : 'hover:bg-accent/60 hover:translate-x-1.5 hover:shadow-sm'
                 }`}
               >
-                <child.icon className={`h-3.5 w-3.5 transition-all duration-200 ${
+                <child.icon className={`h-4 w-4 transition-all duration-200 ${
                   isActive 
-                    ? 'text-primary scale-110' 
-                    : 'text-muted-foreground group-hover:text-foreground group-hover:scale-105'
+                    ? 'text-primary scale-115' 
+                    : 'text-muted-foreground group-hover:text-foreground group-hover:scale-110'
                 }`} />
                 <span className="transition-all duration-200">{child.label}</span>
                 {isActive && (
@@ -96,12 +96,12 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
 
 const menuItems = [
   // 📊 Visão Geral
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: BarChart, label: "Dashboard Executivo", path: "/dashboard-executivo" },
+  { icon: LayoutDashboard, label: "Dashboard Principal", path: "/" },
+  { icon: Gauge, label: "Dashboard Executivo", path: "/dashboard-executivo" },
   
   // 🎯 Gestão de Performance
   {
-    icon: TrendingUp,
+    icon: Zap,
     label: "Performance",
     isSection: true,
     children: [
@@ -115,37 +115,37 @@ const menuItems = [
   
   // 🔄 Avaliações 360°
   {
-    icon: RefreshCw,
+    icon: Award,
     label: "Avaliações 360°",
     isSection: true,
     children: [
       { icon: Star, label: "360° Enhanced", path: "/360-enhanced" },
-      { icon: RefreshCw, label: "Avaliações", path: "/avaliacoes" },
+      { icon: ClipboardList, label: "Avaliações", path: "/avaliacoes" },
       { icon: Settings, label: "Configurar", path: "/avaliacoes/configurar" },
       { icon: Calendar, label: "Ciclos Ativos", path: "/ciclos/ativos" },
       { icon: Scale, label: "Calibração", path: "/calibracao" },
-      { icon: Scale, label: "Calibração Diretoria", path: "/admin/calibracao-diretoria" },
+      { icon: Shield, label: "Calibração Diretoria", path: "/admin/calibracao-diretoria" },
       { icon: Grid3x3, label: "Nine Box", path: "/nine-box" },
-      { icon: BarChart3, label: "Nine Box Comparativo", path: "/nine-box-comparativo" },
+      { icon: PieChart, label: "Nine Box Comparativo", path: "/nine-box-comparativo" },
     ],
   },
   
   // 🎓 Desenvolvimento e Sucessão
   {
-    icon: GraduationCap,
+    icon: BookOpen,
     label: "Desenvolvimento",
     isSection: true,
     children: [
       { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
       { icon: FileText, label: "Relatórios de PDI", path: "/relatorios/pdi" },
       { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
-      { icon: GitBranch, label: "Sucessão UISA", path: "/mapa-sucessao-uisa" },
-      { icon: TrendingUp, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
+      { icon: TrendingUp, label: "Sucessão UISA", path: "/mapa-sucessao-uisa" },
+      { icon: LineChart, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
       { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },
-      { icon: BarChart, label: "Comparativo de Testes", path: "/testes/comparativo" },
+      { icon: PieChart, label: "Comparativo de Testes", path: "/testes/comparativo" },
       { icon: MessageSquare, label: "Feedback Contínuo", path: "/feedback" },
       { icon: Trophy, label: "Conquistas e Badges", path: "/badges" },
-      { icon: BarChart3, label: "Pesquisas Pulse", path: "/pesquisas-pulse" },
+      { icon: Activity, label: "Pesquisas Pulse", path: "/pesquisas-pulse" },
     ],
   },
   
@@ -156,10 +156,10 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: Users, label: "Funcionários", path: "/funcionarios" },
-      { icon: Users, label: "Funcionários Ativos", path: "/funcionarios-ativos" },
+      { icon: UserCheck, label: "Funcionários Ativos", path: "/funcionarios-ativos" },
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
-      { icon: DollarSign, label: "Centros de Custo", path: "/centros-custos" },
-      { icon: FileText, label: "Descrição de Cargos", path: "/descricao-cargos" },
+      { icon: Briefcase, label: "Centros de Custo", path: "/centros-custos" },
+      { icon: ClipboardList, label: "Descrição de Cargos", path: "/descricao-cargos" },
       { icon: FileText, label: "Descrição UISA", path: "/descricao-cargos-uisa" },
       { icon: Upload, label: "Importação em Massa", path: "/importacao-descricoes" },
     ],
@@ -167,7 +167,7 @@ const menuItems = [
   
   // ⏰ Gestão de Tempo
   {
-    icon: Clock,
+    icon: Timer,
     label: "Gestão de Tempo",
     isSection: true,
     children: [
@@ -175,9 +175,9 @@ const menuItems = [
       { icon: Upload, label: "Importar Ponto", path: "/importacao-ponto" },
       { icon: AlertTriangle, label: "Discrepâncias", path: "/discrepancias" },
       { icon: CheckCircle, label: "Validação por Líder", path: "/validacao-lider" },
-      { icon: BarChart3, label: "Relatórios", path: "/relatorios-produtividade" },
+      { icon: BarChart, label: "Relatórios", path: "/relatorios-produtividade" },
       { icon: AlertTriangle, label: "Alertas", path: "/alertas" },
-      { icon: AlertTriangle, label: "Análise de Gaps", path: "/analise-gaps" },
+      { icon: FileSearch, label: "Análise de Gaps", path: "/analise-gaps" },
     ],
   },
   
@@ -234,7 +234,7 @@ const menuItems = [
   
   // 🔧 Administração
   {
-    icon: UserIcon,
+    icon: UserCog,
     label: "Administração",
     isSection: true,
     requiredRole: ["admin", "rh"],
@@ -243,11 +243,11 @@ const menuItems = [
       { icon: UserCheck, label: "Gestão de Aprovadores", path: "/admin/gestao-aprovadores" },
       { icon: GitBranch, label: "Hierarquia Organizacional", path: "/admin/hierarquia" },
       { icon: FileSearch, label: "Histórico de Alterações", path: "/admin/audit-log" },
-      { icon: FileSearch, label: "Histórico de Senhas", path: "/admin/historico-senhas" },
-      { icon: Users, label: "Gerenciar Senhas Líderes", path: "/admin/gerenciar-senhas-lideres" },
+      { icon: Shield, label: "Histórico de Senhas", path: "/admin/historico-senhas" },
+      { icon: UserCog, label: "Gerenciar Senhas Líderes", path: "/admin/gerenciar-senhas-lideres" },
       { icon: Mail, label: "Dashboard de Emails", path: "/admin/emails" },
-      { icon: BarChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
-      { icon: Inbox, label: "Importar Dados UISA", path: "/admin/import-uisa" },
+      { icon: LineChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
+      { icon: Upload, label: "Importar Dados UISA", path: "/admin/import-uisa" },
     ],
   },
   

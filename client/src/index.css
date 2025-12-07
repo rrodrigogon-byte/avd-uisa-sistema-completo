@@ -197,25 +197,63 @@
 
   /* Melhorias de UX para scroll e interações */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-muted/20;
+    @apply bg-muted/20 rounded-lg;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30 rounded-md;
-    transition: background-color 0.2s;
+    @apply bg-muted-foreground/30 rounded-lg;
+    transition: background-color 0.3s ease;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    @apply bg-muted-foreground/60;
   }
 
   /* Melhor foco para acessibilidade */
   *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+    transition: box-shadow 0.2s ease;
+  }
+
+  /* Transições suaves globais */
+  button, a, input, select, textarea {
+    transition: all 0.2s ease;
+  }
+
+  /* Feedback visual em botões */
+  button:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* Animação de entrada suave */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* Melhor contraste para textos */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground;
+    font-weight: 600;
+  }
+
+  /* Espaçamento consistente */
+  p + p {
+    margin-top: 1rem;
   }
 }
