@@ -9,8 +9,169 @@ import {
 } from "../../drizzle/schema";
 import { eq, and, sql, inArray } from "drizzle-orm";
 import { sendEmail } from "../emailService";
+import bcrypt from "bcryptjs";
 
 export const evaluationCyclesRouter = router({
+  // Enviar e-mails com credenciais para administradores e líderes de RH
+  sendCredentialsEmail: protectedProcedure
+    .input(
+      z.object({
+        testEmails: z.array(z.string().email()).optional(), // Emails de teste
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Verificar se o usuário é admin
+      if (ctx.user.role !== "admin") {
+        throw new Error("Apenas administradores podem enviar credenciais");
+      }
+
+      try {
+        // Buscar todos os funcionários que são admin ou rh
+        const adminAndHrEmployees = await db
+          .select({
+            id: employees.id,
+            name: employees.name,
+            email: employees.email,
+            employeeCode: employees.employeeCode,
+          })
+          .from(employees)
+          .where(
+            and(
+              eq(employees.active, true),
+              sql`${employees.id} IN (
+                SELECT e.id FROM employees e
+                INNER JOIN users u ON e.userId = u.id
+                WHERE u.role IN ('admin', 'rh')
+              )`
+            )
+          );
+
+        // Se houver emails de teste, usar apenas esses
+        const targetEmails = input.testEmails && input.testEmails.length > 0
+          ? input.testEmails
+          : adminAndHrEmployees.map(emp => emp.email);
+
+        // Gerar senha temporária e enviar para cada funcionário
+        const results = [];
+        for (const employee of adminAndHrEmployees) {
+          // Gerar senha temporária (8 caracteres aleatórios)
+          const tempPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8).toUpperCase();
+          const passwordHash = await bcrypt.hash(tempPassword, 10);
+
+          // Atualizar senha no banco
+          await db
+            .update(employees)
+            .set({ passwordHash })
+            .where(eq(employees.id, employee.id));
+
+          // Determinar se deve enviar para este funcionário
+          const shouldSend = input.testEmails && input.testEmails.length > 0
+            ? input.testEmails.includes(employee.email)
+            : true;
+
+          if (shouldSend) {
+            // Enviar e-mail com credenciais
+            try {
+              await sendEmail({
+                to: employee.email,
+                subject: "Credenciais de Acesso - Sistema AVD UISA",
+                html: `
+                  <!DOCTYPE html>
+                  <html>
+                  <head>
+                    <style>
+                      body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                      .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                      .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                      .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+                      .credentials { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+                      .credential-item { margin: 10px 0; }
+                      .credential-label { font-weight: bold; color: #667eea; }
+                      .credential-value { font-family: 'Courier New', monospace; background: #f0f0f0; padding: 8px 12px; border-radius: 4px; display: inline-block; margin-top: 5px; }
+                      .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+                      .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="container">
+                      <div class="header">
+                        <h1>🔐 Credenciais de Acesso</h1>
+                        <p>Sistema AVD UISA - Avaliação de Desempenho</p>
+                      </div>
+                      <div class="content">
+                        <p>Olá <strong>${employee.name}</strong>,</p>
+                        <p>Suas credenciais de acesso ao Sistema AVD UISA foram geradas com sucesso:</p>
+                        
+                        <div class="credentials">
+                          <div class="credential-item">
+                            <div class="credential-label">👤 Usuário:</div>
+                            <div class="credential-value">${employee.employeeCode}</div>
+                          </div>
+                          <div class="credential-item">
+                            <div class="credential-label">🔑 Senha Temporária:</div>
+                            <div class="credential-value">${tempPassword}</div>
+                          </div>
+                        </div>
+
+                        <div class="warning">
+                          <strong>⚠️ Importante:</strong>
+                          <ul>
+                            <li>Esta é uma senha temporária gerada automaticamente</li>
+                            <li>Recomendamos que você altere sua senha no primeiro acesso</li>
+                            <li>Não compartilhe suas credenciais com outras pessoas</li>
+                            <li>Guarde esta senha em local seguro</li>
+                          </ul>
+                        </div>
+
+                        <p>Para acessar o sistema, utilize o código de funcionário como usuário e a senha temporária fornecida acima.</p>
+                        
+                        <p>Em caso de dúvidas, entre em contato com o departamento de RH.</p>
+                      </div>
+                      <div class="footer">
+                        <p>Este é um e-mail automático. Por favor, não responda.</p>
+                        <p>&copy; ${new Date().getFullYear()} UISA - Todos os direitos reservados</p>
+                      </div>
+                    </div>
+                  </body>
+                  </html>
+                `,
+              });
+
+              results.push({
+                email: employee.email,
+                name: employee.name,
+                success: true,
+              });
+            } catch (emailError) {
+              console.error(`Erro ao enviar e-mail para ${employee.email}:`, emailError);
+              results.push({
+                email: employee.email,
+                name: employee.name,
+                success: false,
+                error: emailError instanceof Error ? emailError.message : "Erro desconhecido",
+              });
+            }
+          }
+        }
+
+        const successCount = results.filter(r => r.success).length;
+        const failCount = results.filter(r => !r.success).length;
+
+        return {
+          success: true,
+          message: `E-mails enviados: ${successCount} sucesso, ${failCount} falhas`,
+          results,
+          totalProcessed: adminAndHrEmployees.length,
+          totalSent: results.length,
+        };
+      } catch (error) {
+        console.error("Erro ao enviar credenciais:", error);
+        throw new Error(error instanceof Error ? error.message : "Erro ao enviar credenciais");
+      }
+    }),
   create: protectedProcedure
     .input(
       z.object({

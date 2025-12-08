@@ -78,7 +78,9 @@ export default function GestaoUsuarios() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isSendCredentialsDialogOpen, setIsSendCredentialsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [sendingCredentialsUserId, setSendingCredentialsUserId] = useState<number | null>(null);
 
   const createUserMutation = trpc.users.create.useMutation({
     onSuccess: () => {
@@ -120,6 +122,21 @@ export default function GestaoUsuarios() {
       toast.error("Erro ao deletar usuário", {
         description: error.message,
       });
+    },
+  });
+
+  const sendCredentialsMutation = trpc.users.sendIndividualCredentials.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "Credenciais enviadas com sucesso!");
+      setIsSendCredentialsDialogOpen(false);
+      setSelectedUser(null);
+      setSendingCredentialsUserId(null);
+    },
+    onError: (error) => {
+      toast.error("Erro ao enviar credenciais", {
+        description: error.message,
+      });
+      setSendingCredentialsUserId(null);
     },
   });
 
@@ -358,6 +375,18 @@ export default function GestaoUsuarios() {
                             <Button
                               variant="ghost"
                               size="sm"
+                              onClick={() => {
+                                setSelectedUser(u);
+                                setIsSendCredentialsDialogOpen(true);
+                              }}
+                              disabled={sendingCredentialsUserId === u.id}
+                              title="Enviar credenciais por e-mail"
+                            >
+                              <Mail className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => openEditDialog(u)}
                             >
                               <Edit className="h-4 w-4" />
@@ -577,6 +606,53 @@ export default function GestaoUsuarios() {
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Dialog de Enviar Credenciais */}
+      <AlertDialog open={isSendCredentialsDialogOpen} onOpenChange={setIsSendCredentialsDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Enviar Credenciais por E-mail</AlertDialogTitle>
+            <AlertDialogDescription>
+              <div className="space-y-4">
+                <p>
+                  Deseja enviar as credenciais de acesso para <strong>{selectedUser?.name}</strong>?
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 mb-2">📧 O que será enviado:</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• E-mail: <strong>{selectedUser?.email}</strong></li>
+                    <li>• Usuário (login)</li>
+                    <li>• Senha temporária gerada automaticamente</li>
+                    <li>• Instruções de acesso ao sistema</li>
+                  </ul>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <h4 className="font-medium text-amber-900 mb-2">⚠️ Atenção:</h4>
+                  <ul className="text-sm text-amber-800 space-y-1">
+                    <li>• Uma nova senha será gerada</li>
+                    <li>• A senha antiga será substituída</li>
+                    <li>• O usuário receberá o e-mail imediatamente</li>
+                  </ul>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (selectedUser) {
+                  setSendingCredentialsUserId(selectedUser.id);
+                  sendCredentialsMutation.mutate({ userId: selectedUser.id });
+                }
+              }}
+              disabled={sendCredentialsMutation.isPending}
+            >
+              {sendCredentialsMutation.isPending ? "Enviando..." : "Enviar Credenciais"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Dialog de Confirmar Exclusão */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

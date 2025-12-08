@@ -619,3 +619,43 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 - [x] Feedback visual em botões (scale on active)
 - [x] Scrollbar customizada com estilo UISA
 - [x] Transições suaves em todos os elementos interativos
+
+
+## 🔧 CORREÇÕES E MELHORIAS (08/12/2025 - 15:50)
+
+- [x] Restaurar botão "Enviar E-mails" na página de Avaliação de Desempenho
+- [x] Implementar envio de e-mails com credenciais (usuário e senha) para administradores e líderes de RH
+- [x] Configurar envio de teste para rodrigo.goncalves@uisa.com.br e andre.sbardelline@uisa.com.br
+- [x] Implementar item 1 solicitado (Botão Enviar Individual)
+- [ ] Implementar item 2 solicitado (Sistema de Testes Psicométricos Completo)
+
+## 🔧 IMPLEMENTAÇÕES ESPECÍFICAS (08/12/2025 - 15:55)
+
+### Item 1: Botão de Envio Individual na Gestão de Usuários
+- [x] Adicionar botão "Enviar" ao lado do botão "Editar" na tabela de usuários
+- [x] Implementar envio individual de credenciais por usuário
+- [x] Criar modal de confirmação antes do envio
+- [x] Exibir feedback de sucesso/erro após envio
+
+### Item 2: Sistema de Testes Psicométricos Completo
+- [ ] Garantir funcionamento 100% do envio individual de testes
+- [ ] Garantir funcionamento 100% do envio em massa de testes
+- [ ] Implementar envio de link de acesso por e-mail
+- [ ] Criar página de resposta de testes acessível via link
+- [ ] Implementar recebimento e consolidação de resultados
+- [ ] Armazenar descritivos completos (não apenas pontuação)
+- [ ] Integrar resultados em Sucessões
+- [ ] Integrar resultados em PDI
+- [ ] Integrar resultados em PDI Inteligente
+- [ ] Integrar resultados em demais módulos relevantes
+
+
+## ✅ CONCLUÍDO (08/12/2025 - 16:10)
+
+### Item 1: Botão de Envio Individual - IMPLEMENTADO
+- [x] Adicionar botão "Enviar" ao lado do botão "Editar" na tabela de usuários
+- [x] Implementar envio individual de credenciais por usuário
+- [x] Criar modal de confirmação antes do envio
+- [x] Exibir feedback de sucesso/erro após envio
+- [x] Criar procedure sendIndividualCredentials no usersRouter
+- [x] Integrar com sistema de e-mail existente

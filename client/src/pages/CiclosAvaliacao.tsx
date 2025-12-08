@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
-import { Calendar, CheckCircle2, Clock, Loader2, Pause, Play, Plus, Trash2, XCircle } from "lucide-react";
+import { Calendar, CheckCircle2, Clock, Loader2, Mail, Pause, Play, Plus, Trash2, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -17,6 +17,8 @@ import { toast } from "sonner";
  */
 export default function CiclosAvaliacao() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isSendingCredentials, setIsSendingCredentials] = useState(false);
+  const [showCredentialsDialog, setShowCredentialsDialog] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     year: new Date().getFullYear(),
@@ -91,6 +93,31 @@ export default function CiclosAvaliacao() {
     },
   });
 
+  const sendCredentialsMutation = trpc.evaluationCycles.sendCredentialsEmail.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "E-mails enviados com sucesso!");
+      setIsSendingCredentials(false);
+      setShowCredentialsDialog(false);
+    },
+    onError: (error) => {
+      toast.error(`Erro ao enviar e-mails: ${error.message}`);
+      setIsSendingCredentials(false);
+    },
+  });
+
+  const handleSendCredentials = (testMode: boolean = false) => {
+    setIsSendingCredentials(true);
+    if (testMode) {
+      // Enviar apenas para emails de teste
+      sendCredentialsMutation.mutate({
+        testEmails: ["rodrigo.goncalves@uisa.com.br", "andre.sbardelline@uisa.com.br"],
+      });
+    } else {
+      // Enviar para todos os admins e líderes de RH
+      sendCredentialsMutation.mutate({});
+    }
+  };
+
   const handleCreate = () => {
     createMutation.mutate(formData);
   };
@@ -149,13 +176,23 @@ export default function CiclosAvaliacao() {
           </p>
         </div>
 
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="lg">
-              <Plus className="h-5 w-5 mr-2" />
-              Novo Ciclo
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-3">
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => setShowCredentialsDialog(true)}
+          >
+            <Mail className="h-5 w-5 mr-2" />
+            Enviar Credenciais
+          </Button>
+          
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg">
+                <Plus className="h-5 w-5 mr-2" />
+                Novo Ciclo
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Criar Novo Ciclo de Avaliação</DialogTitle>
@@ -284,7 +321,8 @@ export default function CiclosAvaliacao() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {/* Lista de Ciclos */}
@@ -444,6 +482,81 @@ export default function CiclosAvaliacao() {
           </Card>
         ))}
       </div>
+
+      {/* Dialog de Envio de Credenciais */}
+      <Dialog open={showCredentialsDialog} onOpenChange={setShowCredentialsDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Enviar Credenciais por E-mail</DialogTitle>
+            <DialogDescription>
+              Envie credenciais de acesso (usuário e senha) para administradores e líderes de RH
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">📧 O que será enviado?</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Código de funcionário (usuário)</li>
+                <li>• Senha temporária gerada automaticamente</li>
+                <li>• Instruções de acesso ao sistema</li>
+              </ul>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h4 className="font-medium text-amber-900 mb-2">⚠️ Atenção</h4>
+              <ul className="text-sm text-amber-800 space-y-1">
+                <li>• Novas senhas serão geradas para todos</li>
+                <li>• Senhas antigas serão substituídas</li>
+                <li>• E-mails serão enviados apenas para usuários ativos</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => handleSendCredentials(true)}
+                disabled={isSendingCredentials}
+              >
+                {isSendingCredentials ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="h-4 w-4 mr-2" />
+                    Envio Teste
+                  </>
+                )}
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={() => handleSendCredentials(false)}
+                disabled={isSendingCredentials}
+              >
+                {isSendingCredentials ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="h-4 w-4 mr-2" />
+                    Enviar para Todos
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <p className="text-xs text-muted-foreground text-center">
+              <strong>Envio Teste:</strong> rodrigo.goncalves@uisa.com.br, andre.sbardelline@uisa.com.br<br />
+              <strong>Enviar para Todos:</strong> Todos os administradores e líderes de RH
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
