@@ -15,6 +15,9 @@ import {
   performanceEvaluations,
   positions,
   users,
+  pendencias,
+  type InsertPendencia,
+  type Pendencia,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1055,5 +1058,146 @@ export async function searchUsers(searchTerm: string) {
   } catch (error) {
     console.error("[Database] Failed to search users:", error);
     return [];
+  }
+}
+
+// ============================================================================
+// PENDÊNCIAS
+// ============================================================================
+
+export async function getAllPendencias(filters?: {
+  status?: string;
+  prioridade?: string;
+  responsavelId?: number;
+  categoria?: string;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  try {
+    let query = db.select().from(pendencias);
+    
+    const conditions = [];
+    if (filters?.status) {
+      conditions.push(sql`${pendencias.status} = ${filters.status}`);
+    }
+    if (filters?.prioridade) {
+      conditions.push(sql`${pendencias.prioridade} = ${filters.prioridade}`);
+    }
+    if (filters?.responsavelId) {
+      conditions.push(sql`${pendencias.responsavelId} = ${filters.responsavelId}`);
+    }
+    if (filters?.categoria) {
+      conditions.push(sql`${pendencias.categoria} = ${filters.categoria}`);
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(sql.join(conditions, sql` AND `)) as any;
+    }
+    
+    return await query.orderBy(sql`${pendencias.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get pendencias:", error);
+    return [];
+  }
+}
+
+export async function getPendenciaById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  try {
+    const result = await db
+      .select()
+      .from(pendencias)
+      .where(sql`${pendencias.id} = ${id}`)
+      .limit(1);
+    return result[0];
+  } catch (error) {
+    console.error("[Database] Failed to get pendencia:", error);
+    return undefined;
+  }
+}
+
+export async function createPendencia(data: InsertPendencia) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    const result = await db.insert(pendencias).values(data);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create pendencia:", error);
+    throw error;
+  }
+}
+
+export async function updatePendencia(id: number, data: Partial<InsertPendencia>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    await db
+      .update(pendencias)
+      .set(data)
+      .where(sql`${pendencias.id} = ${id}`);
+    return await getPendenciaById(id);
+  } catch (error) {
+    console.error("[Database] Failed to update pendencia:", error);
+    throw error;
+  }
+}
+
+export async function deletePendencia(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    await db.delete(pendencias).where(sql`${pendencias.id} = ${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Failed to delete pendencia:", error);
+    throw error;
+  }
+}
+
+export async function getPendenciasByResponsavel(responsavelId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  try {
+    return await db
+      .select()
+      .from(pendencias)
+      .where(sql`${pendencias.responsavelId} = ${responsavelId}`)
+      .orderBy(sql`${pendencias.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get pendencias by responsavel:", error);
+    return [];
+  }
+}
+
+export async function countPendenciasByStatus(responsavelId?: number) {
+  const db = await getDb();
+  if (!db) return { pendente: 0, em_andamento: 0, concluida: 0, cancelada: 0 };
+  
+  try {
+    let query = db.select().from(pendencias);
+    
+    if (responsavelId) {
+      query = query.where(sql`${pendencias.responsavelId} = ${responsavelId}`) as any;
+    }
+    
+    const results = await query;
+    
+    return {
+      pendente: results.filter(p => p.status === 'pendente').length,
+      em_andamento: results.filter(p => p.status === 'em_andamento').length,
+      concluida: results.filter(p => p.status === 'concluida').length,
+      cancelada: results.filter(p => p.status === 'cancelada').length,
+    };
+  } catch (error) {
+    console.error("[Database] Failed to count pendencias:", error);
+    return { pendente: 0, em_andamento: 0, concluida: 0, cancelada: 0 };
   }
 }

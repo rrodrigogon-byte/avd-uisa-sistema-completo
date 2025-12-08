@@ -3084,6 +3084,56 @@ export const generatedReports = mysqlTable("generatedReports", {
 export type GeneratedReport = typeof generatedReports.$inferSelect;
 export type InsertGeneratedReport = typeof generatedReports.$inferInsert;
 
+// ============================================================================
+// TABELA DE PENDÊNCIAS
+// ============================================================================
+
+/**
+ * Pendências - Sistema de gerenciamento de tarefas e pendências
+ */
+export const pendencias = mysqlTable("pendencias", {
+  id: int("id").autoincrement().primaryKey(),
+  titulo: varchar("titulo", { length: 255 }).notNull(),
+  descricao: text("descricao"),
+  
+  // Status e Prioridade
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluida", "cancelada"]).default("pendente").notNull(),
+  prioridade: mysqlEnum("prioridade", ["baixa", "media", "alta", "urgente"]).default("media").notNull(),
+  
+  // Responsável e Criador
+  responsavelId: int("responsavelId").notNull(), // ID do funcionário responsável
+  criadoPorId: int("criadoPorId").notNull(), // ID do usuário que criou
+  
+  // Datas
+  dataVencimento: datetime("dataVencimento"),
+  dataInicio: datetime("dataInicio"),
+  dataConclusao: datetime("dataConclusao"),
+  
+  // Categoria e Tags
+  categoria: varchar("categoria", { length: 100 }), // Ex: "Avaliação", "Meta", "PDI", etc
+  tags: text("tags"), // JSON array de tags
+  
+  // Relacionamentos opcionais
+  avaliacaoId: int("avaliacaoId"), // Relacionado a uma avaliação
+  metaId: int("metaId"), // Relacionado a uma meta
+  pdiId: int("pdiId"), // Relacionado a um PDI
+  funcionarioId: int("funcionarioId"), // Relacionado a um funcionário específico
+  
+  // Progresso
+  progresso: int("progresso").default(0), // 0-100%
+  
+  // Observações e anexos
+  observacoes: text("observacoes"),
+  anexos: text("anexos"), // JSON array de URLs de anexos
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Pendencia = typeof pendencias.$inferSelect;
+export type InsertPendencia = typeof pendencias.$inferInsert;
+
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";
 

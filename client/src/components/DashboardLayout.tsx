@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3 } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -34,9 +34,10 @@ import { Breadcrumbs } from "./Breadcrumbs";
 import NotificationBell from "./NotificationBell";
 import { InAppNotifications } from "./InAppNotifications";
 import { filterMenuItems } from "@/lib/menuPermissions";
+import { trpc } from "@/lib/trpc";
 
 // Componente de seção com submenu
-function MenuSection({ item, location, setLocation }: { item: any; location: string; setLocation: (path: string) => void }) {
+function MenuSection({ item, location, setLocation, badgeCounts }: { item: any; location: string; setLocation: (path: string) => void; badgeCounts?: Record<string, number> }) {
   const [isOpen, setIsOpen] = useState(true);
   const hasActiveChild = item.children?.some((child: any) => location === child.path);
   
@@ -82,6 +83,11 @@ function MenuSection({ item, location, setLocation }: { item: any; location: str
                     : 'text-muted-foreground group-hover:text-foreground group-hover:scale-110'
                 }`} />
                 <span className="transition-all duration-200">{child.label}</span>
+                {child.badge && badgeCounts && badgeCounts[child.badge] > 0 && (
+                  <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-medium text-primary-foreground">
+                    {badgeCounts[child.badge]}
+                  </span>
+                )}
                 {isActive && (
                   <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 )}
@@ -187,6 +193,19 @@ const menuItems = [
       { icon: BarChart, label: "Relatórios", path: "/relatorios-produtividade" },
       { icon: AlertTriangle, label: "Alertas", path: "/alertas" },
       { icon: FileSearch, label: "Análise de Gaps", path: "/analise-gaps" },
+    ],
+  },
+  
+  // 📋 Pendências
+  {
+    icon: ListTodo,
+    label: "Pendências",
+    isSection: true,
+    children: [
+      { icon: ListTodo, label: "Minhas Pendências", path: "/pendencias", badge: "pendencias" },
+      { icon: Clock, label: "Pendentes", path: "/pendencias?status=pendente" },
+      { icon: AlertCircle, label: "Em Andamento", path: "/pendencias?status=em_andamento" },
+      { icon: CheckCircle, label: "Concluídas", path: "/pendencias?status=concluida" },
     ],
   },
   
@@ -373,6 +392,16 @@ function DashboardLayoutContent({
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   
+  // Buscar contagem de pendências para badges
+  const { data: pendenciasStats } = trpc.pendencias.countByStatus.useQuery(undefined, {
+    refetchInterval: 30000, // Atualizar a cada 30 segundos
+  });
+  
+  // Calcular badges
+  const badgeCounts = {
+    pendencias: (pendenciasStats?.pendente || 0) + (pendenciasStats?.em_andamento || 0),
+  };
+  
   // Filtrar itens de menu baseado no role do usuário
   const filteredMenuItems = user ? filterMenuItems(menuItems, user.role as any) : [];
   
@@ -470,7 +499,7 @@ function DashboardLayoutContent({
             <SidebarMenu className="px-2 py-1">
               {filteredMenuItems.map((item, idx) => {
                 if (item.isSection && item.children) {
-                  return <MenuSection key={idx} item={item} location={location} setLocation={setLocation} />;
+                  return <MenuSection key={idx} item={item} location={location} setLocation={setLocation} badgeCounts={badgeCounts} />;
                 }
                 const isActive = location === item.path;
                 return (

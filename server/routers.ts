@@ -70,6 +70,7 @@ import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
 import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
 import { avdUisaRouter } from "./avdUisaRouter";
+import { pendenciasRouter } from "./routers/pendenciasRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -79,6 +80,7 @@ export const appRouter = router({
   search: searchRouter,
   users: usersRouter,
   avdUisa: avdUisaRouter,
+  pendencias: pendenciasRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

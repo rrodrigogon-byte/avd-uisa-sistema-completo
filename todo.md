@@ -347,3 +347,30 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 - [x] Testar navegação entre passos do tour
 - [x] Testar funcionalidade de pular tour
 - [x] Validar posicionamento em diferentes elementos
+
+
+## 📋 SISTEMA DE PENDÊNCIAS (07/12/2025)
+
+### Schema e Backend
+- [x] Criar tabela de pendências no schema.ts
+- [x] Adicionar helpers de banco de dados para pendências
+- [x] Implementar procedures tRPC para CRUD de pendências
+- [x] Adicionar sistema de status (pendente, em andamento, concluída)
+- [x] Implementar priorização (baixa, média, alta, urgente)
+- [x] Adicionar filtros e busca de pendências
+
+### Interface de Usuário
+- [x] Criar página de listagem de pendências
+- [x] Implementar formulário de criação de pendências
+- [x] Adicionar funcionalidade de edição de pendências
+- [x] Implementar exclusão de pendências com confirmação
+- [x] Adicionar filtros por status e prioridade
+- [x] Implementar busca de pendências
+- [x] Adicionar badges de contagem no menu
+
+### Melhorias no Menu
+- [x] Adicionar item "Pendências" no menu principal
+- [x] Implementar badge com contador de pendências ativas
+- [x] Adicionar ícone apropriado para pendências
+- [x] Melhorar transições e animações do menu
+- [x] Adicionar submenu para filtros rápidos de pendências

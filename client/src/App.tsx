@@ -11,6 +11,7 @@ import AprovacaoCiclos from "@/pages/AprovacaoCiclos";
 import RelatoriosPDI from "@/pages/RelatoriosPDI";
 import Alertas from "@/pages/Alertas";
 import Discrepancias from "./pages/Discrepancias";
+import Pendencias from "./pages/Pendencias";
 import Departamentos from "./pages/Departamentos";
 import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
@@ -319,6 +320,7 @@ function Router() {
       <Route path="/relatorios-produtividade" component={RelatoriosProdutividade} />
       <Route path="/alertas" component={Alertas} />
       <Route path="/discrepancias" component={Discrepancias} />
+      <Route path="/pendencias" component={Pendencias} />
       <Route path="/departamentos" component={Departamentos} />
       <Route path="/centros-custos" component={CentrosCustos} />
       <Route path="/sucessao-inteligente" component={SucessaoInteligente} />
