@@ -268,3 +268,35 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Testar fluxo completo de criação de sucessor
 - [x] Testar fluxo completo de edição de sucessor
 - [x] Testar fluxo completo de exclusão de sucessor
+
+
+## 🚨 CORREÇÕES URGENTES (08/12/2025)
+
+### Testes Psicométricos - Envio de Email
+- [x] Corrigir envio de email nos Testes Psicométricos
+- [x] Validar que emails estão sendo enviados corretamente
+- [x] Testar fluxo completo de envio de testes por email
+
+### Completar Todos os Testes Psicométricos
+- [x] Revisar e completar 100% do teste DISC
+- [x] Revisar e completar 100% do teste Big Five
+- [x] Revisar e completar 100% do teste MBTI
+- [x] Revisar e completar 100% do teste de Inteligência Emocional
+- [x] Revisar e completar 100% do teste de Estilos de Liderança
+- [x] Revisar e completar 100% do teste VARK
+- [x] Revisar e completar 100% do teste de Âncoras de Carreira
+- [x] Garantir que todos os testes estão funcionais e em sucessão
+- [x] Validar cálculos de pontuação de todos os testes
+- [x] Validar geração de relatórios de todos os testes
+
+### Sucessão UISA - Funcionalidades Faltantes
+- [x] Liberar botão "Editar" na Sucessão UISA
+- [x] Liberar lista de funcionários na Sucessão UISA
+- [x] Validar fluxo completo de edição na Sucessão UISA
+- [x] Testar todas as funcionalidades da Sucessão UISA
+
+### Sucessão - Funcionalidades Faltantes
+- [x] Liberar botão "Editar" na Sucessão
+- [x] Liberar lista de funcionários na Sucessão
+- [x] Validar fluxo completo de edição na Sucessão
+- [x] Testar todas as funcionalidades da Sucessão

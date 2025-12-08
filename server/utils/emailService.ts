@@ -80,7 +80,7 @@ async function sendCustomEmail(to: string, subject: string, html: string): Promi
   if (!transporter) {
     const errorMsg = "[EmailService] SMTP não configurado. Configure em /admin/smtp";
     console.error(errorMsg);
-    throw new Error(errorMsg);
+    return false; // Retorna false ao invés de lançar exceção
   }
 
   try {
