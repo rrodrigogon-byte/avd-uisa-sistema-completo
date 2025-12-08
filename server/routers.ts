@@ -74,6 +74,8 @@ import { pendenciasRouter } from "./routers/pendenciasRouter";
 import { customReportBuilderRouter } from "./customReportBuilderRouter";
 import { predictiveAnalyticsRouter } from "./predictiveAnalyticsRouter";
 import { continuousFeedbackRouter } from "./continuousFeedbackRouter";
+import { dashboardGestorRouter } from "./routers/dashboardGestorRouter";
+import { reportsAdvancedRouter } from "./routers/reportsAdvancedRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -89,6 +91,8 @@ export const appRouter = router({
   customReportBuilder: customReportBuilderRouter,
   predictiveAnalytics: predictiveAnalyticsRouter,
   continuousFeedback: continuousFeedbackRouter,
+  dashboardGestor: dashboardGestorRouter,
+  reportsAdvanced: reportsAdvancedRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

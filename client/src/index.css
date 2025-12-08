@@ -246,6 +246,20 @@
     animation: fadeIn 0.3s ease-out;
   }
 
+  /* Animação shimmer para skeleton loaders */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+  }
+
   /* Melhor contraste para textos */
   h1, h2, h3, h4, h5, h6 {
     @apply text-foreground;
