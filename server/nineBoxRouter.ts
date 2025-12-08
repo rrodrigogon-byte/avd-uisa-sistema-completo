@@ -92,7 +92,7 @@ export const nineBoxRouter = router({
         .from(nineBoxPositions)
         .innerJoin(employees, eq(nineBoxPositions.employeeId, employees.id))
         .leftJoin(positions, eq(employees.positionId, positions.id))
-        .leftJoin(departments, eq(employees.departmentId, employees.id))
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
         .where(
           and(
             input.departmentId ? eq(employees.departmentId, input.departmentId) : undefined,

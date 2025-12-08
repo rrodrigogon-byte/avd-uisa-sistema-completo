@@ -398,3 +398,32 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 - [x] Adicionar exportação em múltiplos formatos (PDF, Excel, CSV)
 - [x] Implementar agendamento de relatórios
 - [x] Criar templates de relatórios predefinidos
+
+
+## 🔴 BUGS CRÍTICOS (08/12/2025)
+
+### Gestão de Usuários Admin
+- [ ] Funcionalidade de criação de novos usuários admin parou de funcionar
+- [ ] Investigar erros de TypeScript no código
+- [ ] Corrigir problemas no backend (routers e db helpers)
+- [ ] Corrigir problemas no frontend (formulários e validações)
+- [ ] Testar fluxo completo de CRUD de usuários
+- [ ] Validar permissões e controle de acesso
+- [ ] Garantir que todos os tipos de usuário funcionem (admin, RH, gestor, colaborador)
+
+
+## ✅ CORREÇÕES REALIZADAS (08/12/2025)
+
+### Gestão de Usuários Admin - CORRIGIDO
+- [x] Corrigido erro de join incorreto no nineBoxRouter (departments usando employees.id)
+- [x] Adicionado procedure `create` no usersRouter para criar novos usuários
+- [x] Adicionado procedure `update` no usersRouter para editar usuários
+- [x] Adicionado procedure `delete` no usersRouter para excluir usuários
+- [x] Implementado dialog completo de criação de usuários no frontend
+- [x] Implementado dialog completo de edição de usuários no frontend
+- [x] Implementado dialog de confirmação de exclusão de usuários
+- [x] Adicionada validação de email único
+- [x] Adicionada proteção para não permitir usuário deletar a si mesmo
+- [x] Integrado sistema de notificações por email para Admin/RH
+- [x] Implementado formulários com validação Zod e React Hook Form
+- [x] Adicionados botões de ação (Editar, Excluir) na tabela de usuários

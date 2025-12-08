@@ -10,6 +10,32 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
   Table,
   TableBody,
   TableCell,
@@ -17,15 +43,132 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { trpc } from "@/lib/trpc";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Mail, Shield, User, Users } from "lucide-react";
+import { Edit, Mail, Shield, Trash2, User, UserPlus, Users } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const userSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
+  role: z.enum(["admin", "rh", "gestor", "colaborador"]),
+  isSalaryLead: z.boolean().optional().default(false),
+});
+
+type UserFormData = z.infer<typeof userSchema>;
 
 export default function GestaoUsuarios() {
   const { user, loading: authLoading } = useAuth();
   const { data: users, isLoading, refetch } = trpc.users.list.useQuery();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  const createUserMutation = trpc.users.create.useMutation({
+    onSuccess: () => {
+      toast.success("Usuário criado com sucesso!");
+      setIsCreateDialogOpen(false);
+      refetch();
+      createForm.reset();
+    },
+    onError: (error) => {
+      toast.error("Erro ao criar usuário", {
+        description: error.message,
+      });
+    },
+  });
+
+  const updateUserMutation = trpc.users.update.useMutation({
+    onSuccess: () => {
+      toast.success("Usuário atualizado com sucesso!");
+      setIsEditDialogOpen(false);
+      setSelectedUser(null);
+      refetch();
+      editForm.reset();
+    },
+    onError: (error) => {
+      toast.error("Erro ao atualizar usuário", {
+        description: error.message,
+      });
+    },
+  });
+
+  const deleteUserMutation = trpc.users.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Usuário deletado com sucesso!");
+      setIsDeleteDialogOpen(false);
+      setSelectedUser(null);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error("Erro ao deletar usuário", {
+        description: error.message,
+      });
+    },
+  });
+
+  const createForm = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      role: "colaborador",
+      isSalaryLead: false,
+    },
+  });
+
+  const editForm = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+  });
+
+  const handleCreateUser = (data: UserFormData) => {
+    createUserMutation.mutate(data);
+  };
+
+  const handleEditUser = (data: UserFormData) => {
+    if (!selectedUser) return;
+    updateUserMutation.mutate({
+      userId: selectedUser.id,
+      ...data,
+    });
+  };
+
+  const handleDeleteUser = () => {
+    if (!selectedUser) return;
+    deleteUserMutation.mutate({ userId: selectedUser.id });
+  };
+
+  const openEditDialog = (userToEdit: any) => {
+    setSelectedUser(userToEdit);
+    editForm.reset({
+      name: userToEdit.name || "",
+      email: userToEdit.email || "",
+      role: userToEdit.role,
+      isSalaryLead: userToEdit.isSalaryLead || false,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const openDeleteDialog = (userToDelete: any) => {
+    setSelectedUser(userToDelete);
+    setIsDeleteDialogOpen(true);
+  };
 
   if (authLoading) {
     return (
@@ -82,12 +225,6 @@ export default function GestaoUsuarios() {
     }
   };
 
-  const handleSendCredentials = (userEmail: string) => {
-    toast.info("Funcionalidade em desenvolvimento", {
-      description: "O envio de credenciais será implementado em breve.",
-    });
-  };
-
   return (
     <DashboardLayout>
       <div className="container py-8 space-y-6">
@@ -98,8 +235,8 @@ export default function GestaoUsuarios() {
               Gerencie usuários, permissões e acessos ao sistema
             </p>
           </div>
-          <Button>
-            <Users className="h-4 w-4 mr-2" />
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />
             Novo Usuário
           </Button>
         </div>
@@ -217,14 +354,23 @@ export default function GestaoUsuarios() {
                           })}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleSendCredentials(u.email || "")}
-                          >
-                            <Mail className="h-4 w-4 mr-2" />
-                            Enviar Credenciais
-                          </Button>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditDialog(u)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openDeleteDialog(u)}
+                              disabled={u.id === user.id}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -235,6 +381,224 @@ export default function GestaoUsuarios() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialog de Criar Usuário */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Novo Usuário</DialogTitle>
+            <DialogDescription>
+              Preencha os dados para criar um novo usuário no sistema
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...createForm}>
+            <form onSubmit={createForm.handleSubmit(handleCreateUser)} className="space-y-4">
+              <FormField
+                control={createForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome Completo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="João da Silva" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={createForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="joao@empresa.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={createForm.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Perfil</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o perfil" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="colaborador">Colaborador</SelectItem>
+                        <SelectItem value="gestor">Gestor</SelectItem>
+                        <SelectItem value="rh">RH</SelectItem>
+                        <SelectItem value="admin">Administrador</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={createForm.control}
+                name="isSalaryLead"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Líder de Cargos e Salários</FormLabel>
+                      <FormDescription>
+                        Usuário terá permissões especiais para gestão de cargos e salários
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={createUserMutation.isPending}>
+                  {createUserMutation.isPending ? "Criando..." : "Criar Usuário"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Editar Usuário */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Editar Usuário</DialogTitle>
+            <DialogDescription>
+              Atualize os dados do usuário
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...editForm}>
+            <form onSubmit={editForm.handleSubmit(handleEditUser)} className="space-y-4">
+              <FormField
+                control={editForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome Completo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="João da Silva" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="joao@empresa.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Perfil</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o perfil" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="colaborador">Colaborador</SelectItem>
+                        <SelectItem value="gestor">Gestor</SelectItem>
+                        <SelectItem value="rh">RH</SelectItem>
+                        <SelectItem value="admin">Administrador</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="isSalaryLead"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Líder de Cargos e Salários</FormLabel>
+                      <FormDescription>
+                        Usuário terá permissões especiais para gestão de cargos e salários
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={updateUserMutation.isPending}>
+                  {updateUserMutation.isPending ? "Salvando..." : "Salvar Alterações"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Confirmar Exclusão */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o usuário <strong>{selectedUser?.name}</strong>?
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteUserMutation.isPending ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 }
