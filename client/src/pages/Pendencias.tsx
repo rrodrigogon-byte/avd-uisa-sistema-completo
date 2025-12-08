@@ -489,11 +489,11 @@ export default function Pendencias() {
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees?.map((emp) => (
+                    {employees?.map((emp) => emp.id ? (
                       <SelectItem key={emp.id} value={emp.id.toString()}>
                         {emp.name}
                       </SelectItem>
-                    ))}
+                    ) : null)}
                   </SelectContent>
                 </Select>
               </div>
@@ -580,16 +580,16 @@ export default function Pendencias() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-responsavelId">Responsável *</Label>
-                  <Select name="responsavelId" defaultValue={selectedPendencia.responsavelId.toString()} required>
+                  <Select name="responsavelId" defaultValue={selectedPendencia.responsavelId ? selectedPendencia.responsavelId.toString() : ""} required>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.map((emp) => (
+                      {employees?.map((emp) => emp.id ? (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.name}
                         </SelectItem>
-                      ))}
+                      ) : null)}
                     </SelectContent>
                   </Select>
                 </div>

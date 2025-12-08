@@ -300,3 +300,9 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Liberar lista de funcionários na Sucessão
 - [x] Validar fluxo completo de edição na Sucessão
 - [x] Testar todas as funcionalidades da Sucessão
+
+
+## 🐛 BUGS REPORTADOS
+
+- [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página de Pendências ao editar (linha 583 - responsavelId pode ser null/undefined)
+- [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página Pendências ao acessar /pendencias?status=em_andamento
