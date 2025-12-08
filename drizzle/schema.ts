@@ -3136,4 +3136,3 @@ export type InsertPendencia = typeof pendencias.$inferInsert;
 
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";
-

@@ -427,3 +427,45 @@ Se houver necessidade de melhorias ou novas funcionalidades, aqui estão algumas
 - [x] Integrado sistema de notificações por email para Admin/RH
 - [x] Implementado formulários com validação Zod e React Hook Form
 - [x] Adicionados botões de ação (Editar, Excluir) na tabela de usuários
+
+
+---
+
+## 🚀 PRÓXIMOS TRÊS PASSOS (08/12/2025)
+
+### Passo 1: Implementar Sistema de Relatórios Personalizados
+- [x] Criar router de relatórios personalizados (customReportBuilderRouter)
+- [x] Adicionar seleção de campos e métricas personalizadas
+- [x] Implementar filtros avançados (datas, departamentos, cargos)
+- [x] Adicionar visualizações customizáveis (tabelas, gráficos)
+- [x] Implementar salvamento de templates de relatórios
+- [x] Adicionar exportação em múltiplos formatos (PDF, Excel, CSV)
+- [x] Criar interface de construtor de relatórios (frontend - /relatorios/personalizados)
+- [x] Registrar rotas no App.tsx
+- [ ] Criar testes para validar geração de relatórios
+
+### Passo 2: Implementar Dashboard de Análise Preditiva
+- [x] Criar router de análise preditiva (predictiveAnalyticsRouter)
+- [x] Criar modelos de predição de turnover
+- [x] Implementar análise de tendências de performance
+- [x] Adicionar predição de necessidades de treinamento
+- [x] Implementar análise de prontidão para promoção
+- [x] Implementar cálculo de score de engajamento
+- [x] Implementar alertas proativos baseados em predições
+- [x] Adicionar explicações de predições (interpretabilidade)
+- [x] Criar visualizações de insights preditivos (frontend - /analytics/preditiva)
+- [x] Registrar rotas no App.tsx
+- [ ] Criar testes para validar modelos preditivos
+
+### Passo 3: Implementar Sistema de Feedback 360° Contínuo
+- [x] Criar router de feedback contínuo (continuousFeedbackRouter)
+- [x] Implementar sistema de solicitação de feedback ad-hoc
+- [x] Implementar sistema de feedback anônimo opcional
+- [x] Adicionar templates de feedback por competência
+- [x] Criar dashboard de feedback recebido/dado
+- [x] Implementar notificações de solicitação de feedback
+- [x] Adicionar análise de sentimento em feedbacks
+- [x] Criar relatórios de evolução de feedback ao longo do tempo
+- [x] Criar interface de solicitação de feedback ad-hoc (frontend - /feedback/continuo)
+- [x] Registrar rotas no App.tsx
+- [ ] Criar testes para validar fluxo de feedback

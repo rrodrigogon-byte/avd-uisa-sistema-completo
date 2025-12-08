@@ -71,6 +71,9 @@ import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
 import { avdUisaRouter } from "./avdUisaRouter";
 import { pendenciasRouter } from "./routers/pendenciasRouter";
+import { customReportBuilderRouter } from "./customReportBuilderRouter";
+import { predictiveAnalyticsRouter } from "./predictiveAnalyticsRouter";
+import { continuousFeedbackRouter } from "./continuousFeedbackRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -81,6 +84,11 @@ export const appRouter = router({
   users: usersRouter,
   avdUisa: avdUisaRouter,
   pendencias: pendenciasRouter,
+  
+  // Novos routers - Três próximos passos
+  customReportBuilder: customReportBuilderRouter,
+  predictiveAnalytics: predictiveAnalyticsRouter,
+  continuousFeedback: continuousFeedbackRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

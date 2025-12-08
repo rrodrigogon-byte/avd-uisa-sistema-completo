@@ -12,6 +12,9 @@ import RelatoriosPDI from "@/pages/RelatoriosPDI";
 import Alertas from "@/pages/Alertas";
 import Discrepancias from "./pages/Discrepancias";
 import Pendencias from "./pages/Pendencias";
+import CustomReportBuilder from "./pages/CustomReportBuilder";
+import PredictiveAnalytics from "./pages/PredictiveAnalytics";
+import ContinuousFeedback from "./pages/ContinuousFeedback";
 import Departamentos from "./pages/Departamentos";
 import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
@@ -371,6 +374,12 @@ function Router() {
       <Route path="/avd/avaliar/:id" component={FormularioAvaliacao} />
       <Route path="/avd/dashboard" component={DashboardAVD} />
       <Route path="/avd/compliance" component={RelatorioCompliance} />
+      
+      {/* Novos módulos - Três próximos passos */}
+      <Route path="/relatorios/personalizados" component={CustomReportBuilder} />
+      <Route path="/analytics/preditiva" component={PredictiveAnalytics} />
+      <Route path="/feedback/continuo" component={ContinuousFeedback} />
+      
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
