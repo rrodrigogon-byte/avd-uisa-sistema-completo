@@ -3227,5 +3227,288 @@ export const pendencias = mysqlTable("pendencias", {
 export type Pendencia = typeof pendencias.$inferSelect;
 export type InsertPendencia = typeof pendencias.$inferInsert;
 
+// ============================================================================
+// TABELAS DE TESTES GERIÁTRICOS
+// ============================================================================
+
+/**
+ * Pacientes - Cadastro de pacientes para testes geriátricos
+ */
+export const geriatricPatients = mysqlTable("geriatricPatients", {
+  id: int("id").autoincrement().primaryKey(),
+  nome: varchar("nome", { length: 255 }).notNull(),
+  dataNascimento: date("dataNascimento").notNull(),
+  cpf: varchar("cpf", { length: 14 }).unique(),
+  rg: varchar("rg", { length: 20 }),
+  sexo: mysqlEnum("sexo", ["masculino", "feminino", "outro"]),
+  
+  // Contato
+  telefone: varchar("telefone", { length: 20 }),
+  email: varchar("email", { length: 320 }),
+  endereco: text("endereco"),
+  
+  // Informações médicas
+  escolaridade: mysqlEnum("escolaridade", ["analfabeto", "fundamental_incompleto", "fundamental_completo", "medio_incompleto", "medio_completo", "superior_incompleto", "superior_completo", "pos_graduacao"]),
+  historicoMedico: text("historicoMedico"),
+  medicamentosEmUso: text("medicamentosEmUso"),
+  
+  // Responsável
+  nomeResponsavel: varchar("nomeResponsavel", { length: 255 }),
+  telefoneResponsavel: varchar("telefoneResponsavel", { length: 20 }),
+  parentescoResponsavel: varchar("parentescoResponsavel", { length: 100 }),
+  
+  // Status
+  ativo: boolean("ativo").default(true).notNull(),
+  observacoes: text("observacoes"),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GeriatricPatient = typeof geriatricPatients.$inferSelect;
+export type InsertGeriatricPatient = typeof geriatricPatients.$inferInsert;
+
+/**
+ * Teste de Katz - Avaliação de Atividades Básicas de Vida Diária (AVD)
+ */
+export const katzTests = mysqlTable("katzTests", {
+  id: int("id").autoincrement().primaryKey(),
+  pacienteId: int("pacienteId").notNull(),
+  dataAvaliacao: datetime("dataAvaliacao").notNull(),
+  
+  // 6 atividades (0 = dependente, 1 = independente)
+  banho: int("banho").notNull(), // 0 ou 1
+  vestir: int("vestir").notNull(),
+  higienePessoal: int("higienePessoal").notNull(),
+  transferencia: int("transferencia").notNull(),
+  continencia: int("continencia").notNull(),
+  alimentacao: int("alimentacao").notNull(),
+  
+  // Pontuação total (0-6)
+  pontuacaoTotal: int("pontuacaoTotal").notNull(),
+  
+  // Classificação
+  classificacao: mysqlEnum("classificacao", ["independente", "dependencia_parcial", "dependencia_total"]).notNull(),
+  
+  // Observações
+  observacoes: text("observacoes"),
+  
+  // Metadados
+  avaliadorId: int("avaliadorId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type KatzTest = typeof katzTests.$inferSelect;
+export type InsertKatzTest = typeof katzTests.$inferInsert;
+
+/**
+ * Teste de Lawton - Avaliação de Atividades Instrumentais de Vida Diária (AIVD)
+ */
+export const lawtonTests = mysqlTable("lawtonTests", {
+  id: int("id").autoincrement().primaryKey(),
+  pacienteId: int("pacienteId").notNull(),
+  dataAvaliacao: datetime("dataAvaliacao").notNull(),
+  
+  // 8 atividades (0 = dependente, 1 = independente)
+  usarTelefone: int("usarTelefone").notNull(),
+  fazerCompras: int("fazerCompras").notNull(),
+  prepararRefeicoes: int("prepararRefeicoes").notNull(),
+  cuidarCasa: int("cuidarCasa").notNull(),
+  lavarRoupa: int("lavarRoupa").notNull(),
+  usarTransporte: int("usarTransporte").notNull(),
+  controlarMedicacao: int("controlarMedicacao").notNull(),
+  controlarFinancas: int("controlarFinancas").notNull(),
+  
+  // Pontuação total (0-8)
+  pontuacaoTotal: int("pontuacaoTotal").notNull(),
+  
+  // Classificação
+  classificacao: mysqlEnum("classificacao", ["independente", "dependencia_parcial", "dependencia_total"]).notNull(),
+  
+  // Observações
+  observacoes: text("observacoes"),
+  
+  // Metadados
+  avaliadorId: int("avaliadorId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LawtonTest = typeof lawtonTests.$inferSelect;
+export type InsertLawtonTest = typeof lawtonTests.$inferInsert;
+
+/**
+ * Minimental - Avaliação Cognitiva (MEEM)
+ */
+export const miniMentalTests = mysqlTable("miniMentalTests", {
+  id: int("id").autoincrement().primaryKey(),
+  pacienteId: int("pacienteId").notNull(),
+  dataAvaliacao: datetime("dataAvaliacao").notNull(),
+  
+  // Orientação Temporal (5 pontos)
+  orientacaoTemporal: int("orientacaoTemporal").notNull(),
+  
+  // Orientação Espacial (5 pontos)
+  orientacaoEspacial: int("orientacaoEspacial").notNull(),
+  
+  // Memória Imediata (3 pontos)
+  memoriaImediata: int("memoriaImediata").notNull(),
+  
+  // Atenção e Cálculo (5 pontos)
+  atencaoCalculo: int("atencaoCalculo").notNull(),
+  
+  // Evocação (3 pontos)
+  evocacao: int("evocacao").notNull(),
+  
+  // Linguagem (8 pontos)
+  linguagem: int("linguagem").notNull(),
+  
+  // Praxia Construtiva (1 ponto)
+  praxiaConstrutiva: int("praxiaConstrutiva").notNull(),
+  
+  // Pontuação total (0-30)
+  pontuacaoTotal: int("pontuacaoTotal").notNull(),
+  
+  // Classificação ajustada por escolaridade
+  classificacao: mysqlEnum("classificacao", ["normal", "comprometimento_leve", "comprometimento_moderado", "comprometimento_grave"]).notNull(),
+  
+  // Observações
+  observacoes: text("observacoes"),
+  
+  // Metadados
+  avaliadorId: int("avaliadorId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MiniMentalTest = typeof miniMentalTests.$inferSelect;
+export type InsertMiniMentalTest = typeof miniMentalTests.$inferInsert;
+
+/**
+ * Escala de Depressão Geriátrica (GDS-15)
+ */
+export const gdsTests = mysqlTable("gdsTests", {
+  id: int("id").autoincrement().primaryKey(),
+  pacienteId: int("pacienteId").notNull(),
+  dataAvaliacao: datetime("dataAvaliacao").notNull(),
+  
+  // 15 perguntas (0 = não, 1 = sim) - algumas invertidas
+  q1_satisfeitoVida: int("q1_satisfeitoVida").notNull(),
+  q2_abandonouAtividades: int("q2_abandonouAtividades").notNull(),
+  q3_vidaVazia: int("q3_vidaVazia").notNull(),
+  q4_aborrece: int("q4_aborrece").notNull(),
+  q5_bomHumor: int("q5_bomHumor").notNull(),
+  q6_medoCoisaRuim: int("q6_medoCoisaRuim").notNull(),
+  q7_felizMaiorTempo: int("q7_felizMaiorTempo").notNull(),
+  q8_desamparado: int("q8_desamparado").notNull(),
+  q9_prefereFicarCasa: int("q9_prefereFicarCasa").notNull(),
+  q10_problemasMemoria: int("q10_problemasMemoria").notNull(),
+  q11_bomEstarVivo: int("q11_bomEstarVivo").notNull(),
+  q12_inutil: int("q12_inutil").notNull(),
+  q13_cheioEnergia: int("q13_cheioEnergia").notNull(),
+  q14_situacaoSemEsperanca: int("q14_situacaoSemEsperanca").notNull(),
+  q15_outrosMelhorSituacao: int("q15_outrosMelhorSituacao").notNull(),
+  
+  // Pontuação total (0-15)
+  pontuacaoTotal: int("pontuacaoTotal").notNull(),
+  
+  // Classificação
+  classificacao: mysqlEnum("classificacao", ["normal", "depressao_leve", "depressao_grave"]).notNull(),
+  
+  // Observações
+  observacoes: text("observacoes"),
+  
+  // Metadados
+  avaliadorId: int("avaliadorId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GDSTest = typeof gdsTests.$inferSelect;
+export type InsertGDSTest = typeof gdsTests.$inferInsert;
+
+/**
+ * Teste do Relógio
+ */
+export const clockTests = mysqlTable("clockTests", {
+  id: int("id").autoincrement().primaryKey(),
+  pacienteId: int("pacienteId").notNull(),
+  dataAvaliacao: datetime("dataAvaliacao").notNull(),
+  
+  // URL da imagem do desenho do relógio
+  imagemUrl: varchar("imagemUrl", { length: 512 }),
+  
+  // Pontuação (0-10 pontos)
+  // Critérios: círculo, números, ponteiros, hora correta
+  pontuacaoCirculo: int("pontuacaoCirculo").notNull(), // 0-2
+  pontuacaoNumeros: int("pontuacaoNumeros").notNull(), // 0-4
+  pontuacaoPonteiros: int("pontuacaoPonteiros").notNull(), // 0-4
+  
+  // Pontuação total (0-10)
+  pontuacaoTotal: int("pontuacaoTotal").notNull(),
+  
+  // Classificação
+  classificacao: mysqlEnum("classificacao", ["normal", "comprometimento_leve", "comprometimento_moderado", "comprometimento_grave"]).notNull(),
+  
+  // Observações
+  observacoes: text("observacoes"),
+  
+  // Metadados
+  avaliadorId: int("avaliadorId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ClockTest = typeof clockTests.$inferSelect;
+export type InsertClockTest = typeof clockTests.$inferInsert;
+
+/**
+ * Fila de E-mails - Sistema robusto de envio com retry
+ */
+export const emailQueue = mysqlTable("emailQueue", {
+  id: int("id").autoincrement().primaryKey(),
+  destinatario: varchar("destinatario", { length: 320 }).notNull(),
+  assunto: varchar("assunto", { length: 500 }).notNull(),
+  corpo: text("corpo").notNull(),
+  tipoEmail: varchar("tipoEmail", { length: 100 }).notNull(),
+  prioridade: mysqlEnum("prioridade", ["baixa", "normal", "alta", "urgente"]).default("normal").notNull(),
+  status: mysqlEnum("status", ["pendente", "enviando", "enviado", "falhou", "cancelado"]).default("pendente").notNull(),
+  tentativas: int("tentativas").default(0).notNull(),
+  maxTentativas: int("maxTentativas").default(3).notNull(),
+  proximaTentativa: datetime("proximaTentativa"),
+  erroMensagem: text("erroMensagem"),
+  metadados: text("metadados"),
+  enviadoEm: datetime("enviadoEm"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailQueue = typeof emailQueue.$inferSelect;
+export type InsertEmailQueue = typeof emailQueue.$inferInsert;
+
+/**
+ * Logs de E-mails - Histórico detalhado de todos os envios
+ */
+export const emailLogs = mysqlTable("emailLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  emailQueueId: int("emailQueueId"),
+  destinatario: varchar("destinatario", { length: 320 }).notNull(),
+  assunto: varchar("assunto", { length: 500 }).notNull(),
+  tipoEmail: varchar("tipoEmail", { length: 100 }).notNull(),
+  status: mysqlEnum("status", ["sucesso", "falha", "bounce", "spam"]).notNull(),
+  tentativa: int("tentativa").notNull(),
+  erroMensagem: text("erroMensagem"),
+  tempoResposta: int("tempoResposta"),
+  smtpResponse: text("smtpResponse"),
+  metadados: text("metadados"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmailLog = typeof emailLogs.$inferSelect;
+export type InsertEmailLog = typeof emailLogs.$inferInsert;
+
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";

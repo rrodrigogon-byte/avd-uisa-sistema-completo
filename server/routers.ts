@@ -77,6 +77,7 @@ import { continuousFeedbackRouter } from "./continuousFeedbackRouter";
 import { dashboardGestorRouter } from "./routers/dashboardGestorRouter";
 import { reportsAdvancedRouter } from "./routers/reportsAdvancedRouter";
 import { psychometricTestsRouter } from "./routers/psychometricTestsRouter";
+import { geriatricRouter } from "./routers/geriatricRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
@@ -95,6 +96,7 @@ export const appRouter = router({
   dashboardGestor: dashboardGestorRouter,
   reportsAdvanced: reportsAdvancedRouter,
   psychometricTests: psychometricTestsRouter,
+  geriatric: geriatricRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

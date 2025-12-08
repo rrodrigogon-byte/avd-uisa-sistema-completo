@@ -118,3 +118,118 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Configurar senha de app do Gmail corretamente
 - [x] Testar envio de emails com nova configuração
 - [x] Validar que emails estão sendo enviados com sucesso
+
+
+## 🆕 NOVOS MÓDULOS - TESTES GERIÁTRICOS
+
+### Infraestrutura para Testes Geriátricos
+- [x] Criar tabelas no schema para testes geriátricos
+- [x] Implementar helpers de banco de dados (db.ts)
+- [x] Criar procedures tRPC (routers.ts)
+
+### Teste de Katz (AVD Básicas)
+- [ ] Página de aplicação do teste de Katz
+- [ ] Formulário com 6 atividades (banho, vestir, higiene, transferência, continência, alimentação)
+- [ ] Cálculo automático de pontuação (0-6 pontos)
+- [ ] Salvamento de resultados no banco
+- [ ] Visualização de histórico por paciente
+
+### Teste de Lawton (AVD Instrumentais)
+- [ ] Página de aplicação do teste de Lawton
+- [ ] Formulário com 8 atividades (telefone, compras, preparo de alimentos, tarefas domésticas, lavanderia, transporte, medicação, finanças)
+- [ ] Cálculo automático de pontuação (0-8 pontos)
+- [ ] Salvamento de resultados no banco
+- [ ] Visualização de histórico por paciente
+
+### Minimental (Avaliação Cognitiva)
+- [ ] Página de aplicação do Minimental
+- [ ] Formulário com 11 categorias (orientação temporal, espacial, memória, atenção, linguagem, praxia)
+- [ ] Cálculo automático de pontuação (0-30 pontos)
+- [ ] Salvamento de resultados no banco
+- [ ] Visualização de histórico por paciente
+
+### Escala de Depressão Geriátrica (GDS-15)
+- [ ] Página de aplicação da escala
+- [ ] Formulário com 15 perguntas sim/não
+- [ ] Cálculo automático de pontuação (0-15 pontos)
+- [ ] Classificação automática (normal, depressão leve, depressão grave)
+- [ ] Salvamento de resultados no banco
+- [ ] Visualização de histórico por paciente
+
+### Teste do Relógio
+- [ ] Página de aplicação do teste
+- [ ] Interface para desenho do relógio (canvas ou upload de imagem)
+- [ ] Sistema de pontuação manual (0-10 pontos)
+- [ ] Salvamento de resultados no banco
+- [ ] Visualização de histórico por paciente
+
+### Gestão de Pacientes para Testes Geriátricos
+- [x] Página de cadastro de pacientes
+- [x] Listagem de pacientes com filtros
+- [x] Edição de dados do paciente
+- [x] Exclusão de pacientes (soft delete)
+- [x] Vinculação de pacientes aos testes
+
+### Relatórios e Analytics de Testes Geriátricos
+- [ ] Dashboard com estatísticas dos testes
+- [ ] Página de histórico completo por paciente
+- [ ] Visualização detalhada de cada avaliação
+- [ ] Gráficos de evolução temporal
+- [ ] Comparação entre diferentes testes
+- [ ] Exportação de relatórios em PDF
+
+### Navegação e Integração
+- [ ] Adicionar seção "Testes Geriátricos" no menu do DashboardLayout
+- [ ] Criar rotas no App.tsx para todos os novos módulos
+- [ ] Adicionar ícones e navegação intuitiva
+
+### Testes Automatizados para Módulos Geriátricos
+- [ ] Testes para procedures tRPC de Katz
+- [ ] Testes para procedures tRPC de Lawton
+- [ ] Testes para procedures tRPC de Minimental
+- [ ] Testes para procedures tRPC de GDS-15
+- [ ] Testes para procedures tRPC de Teste do Relógio
+- [ ] Testes de integridade de dados
+- [ ] Testes de cálculo de pontuações
+
+## 📊 PROGRESSO DOS TESTES GERIÁTRICOS
+
+- Schema e Database: 0%
+- Procedures tRPC: 0%
+- Interface UI: 0%
+- Testes Automatizados: 0%
+- **META: 100% em todas as áreas**
+
+
+## 📧 SISTEMA DE E-MAILS ROBUSTO
+
+### Infraestrutura de E-mails
+- [x] Criar tabela de fila de e-mails (emailQueue)
+- [x] Criar tabela de logs de e-mails (emailLogs)
+- [x] Implementar sistema de retry automático
+- [x] Configurar templates de e-mails
+- [x] Implementar validação de e-mails
+
+### Funcionalidades de E-mail
+- [ ] Envio de credenciais de acesso
+- [ ] Notificações de avaliações
+- [ ] Notificações de aprovações
+- [ ] Lembretes de prazos
+- [ ] Relatórios periódicos
+- [ ] E-mails de recuperação de senha
+- [ ] E-mails de boas-vindas
+
+### Garantias e Monitoramento
+- [x] Sistema de retry com backoff exponencial
+- [x] Logs detalhados de todos os envios
+- [ ] Dashboard de monitoramento de e-mails
+- [ ] Alertas de falhas de envio
+- [x] Relatório de taxa de entrega
+- [ ] Validação de bounce e spam
+
+### Testes de E-mail
+- [ ] Testes automatizados de envio
+- [ ] Testes de templates
+- [ ] Testes de retry
+- [ ] Testes de logs
+- [ ] Validação de configuração SMTP
