@@ -1201,3 +1201,237 @@ export async function countPendenciasByStatus(responsavelId?: number) {
     return { pendente: 0, em_andamento: 0, concluida: 0, cancelada: 0 };
   }
 }
+
+// ============================================================================
+// PLANO DE SUCESSÃO E SUCESSORES
+// ============================================================================
+
+import {
+  successionPlans,
+  successionCandidates,
+  type InsertSuccessionPlan,
+  type InsertSuccessionCandidate,
+  type SuccessionPlan,
+  type SuccessionCandidate,
+} from "../drizzle/schema";
+
+/**
+ * Criar um novo plano de sucessão
+ */
+export async function createSuccessionPlan(plan: InsertSuccessionPlan) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(successionPlans).values(plan);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create succession plan:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar todos os planos de sucessão
+ */
+export async function getAllSuccessionPlans() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(successionPlans)
+      .orderBy(sql`${successionPlans.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get succession plans:", error);
+    return [];
+  }
+}
+
+/**
+ * Buscar plano de sucessão por ID
+ */
+export async function getSuccessionPlanById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(successionPlans)
+      .where(sql`${successionPlans.id} = ${id}`)
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get succession plan:", error);
+    return null;
+  }
+}
+
+/**
+ * Buscar plano de sucessão por cargo
+ */
+export async function getSuccessionPlanByPosition(positionId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(successionPlans)
+      .where(sql`${successionPlans.positionId} = ${positionId}`)
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get succession plan by position:", error);
+    return null;
+  }
+}
+
+/**
+ * Atualizar plano de sucessão
+ */
+export async function updateSuccessionPlan(id: number, data: Partial<InsertSuccessionPlan>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    await db
+      .update(successionPlans)
+      .set(data)
+      .where(sql`${successionPlans.id} = ${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Failed to update succession plan:", error);
+    throw error;
+  }
+}
+
+/**
+ * Deletar plano de sucessão
+ */
+export async function deleteSuccessionPlan(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Primeiro deletar todos os sucessores vinculados
+    await db.delete(successionCandidates).where(sql`${successionCandidates.planId} = ${id}`);
+    // Depois deletar o plano
+    await db.delete(successionPlans).where(sql`${successionPlans.id} = ${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Failed to delete succession plan:", error);
+    throw error;
+  }
+}
+
+/**
+ * Adicionar sucessor ao plano
+ */
+export async function createSuccessionCandidate(candidate: InsertSuccessionCandidate) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(successionCandidates).values(candidate);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create succession candidate:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar sucessores de um plano
+ */
+export async function getSuccessionCandidatesByPlan(planId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(successionCandidates)
+      .where(sql`${successionCandidates.planId} = ${planId}`)
+      .orderBy(sql`${successionCandidates.priority} ASC`);
+  } catch (error) {
+    console.error("[Database] Failed to get succession candidates:", error);
+    return [];
+  }
+}
+
+/**
+ * Buscar sucessor por ID
+ */
+export async function getSuccessionCandidateById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(successionCandidates)
+      .where(sql`${successionCandidates.id} = ${id}`)
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get succession candidate:", error);
+    return null;
+  }
+}
+
+/**
+ * Atualizar sucessor
+ */
+export async function updateSuccessionCandidate(id: number, data: Partial<InsertSuccessionCandidate>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    await db
+      .update(successionCandidates)
+      .set(data)
+      .where(sql`${successionCandidates.id} = ${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Failed to update succession candidate:", error);
+    throw error;
+  }
+}
+
+/**
+ * Deletar sucessor
+ */
+export async function deleteSuccessionCandidate(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    await db.delete(successionCandidates).where(sql`${successionCandidates.id} = ${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Failed to delete succession candidate:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar sucessores de um funcionário específico
+ */
+export async function getSuccessionCandidatesByEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(successionCandidates)
+      .where(sql`${successionCandidates.employeeId} = ${employeeId}`)
+      .orderBy(sql`${successionCandidates.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get succession candidates by employee:", error);
+    return [];
+  }
+}

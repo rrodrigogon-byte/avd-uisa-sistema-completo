@@ -658,18 +658,32 @@ export const successionCandidates = mysqlTable("successionCandidates", {
   id: int("id").autoincrement().primaryKey(),
   planId: int("planId").notNull(),
   employeeId: int("employeeId").notNull(),
-  readinessLevel: mysqlEnum("readinessLevel", ["imediato", "1_ano", "2_3_anos", "mais_3_anos"]).notNull(),
-  priority: int("priority").default(1).notNull(), // Ordem de prioridade (1=Principal, 2=Secundário, 3=Backup)
   
-  // Avaliações
-  performanceRating: mysqlEnum("performanceRating", ["baixo", "medio", "alto", "excepcional"]),
-  potentialRating: mysqlEnum("potentialRating", ["baixo", "medio", "alto", "excepcional"]),
-  nineBoxPosition: varchar("nineBoxPosition", { length: 100 }), // Posição na matriz 9-box
+  // Nível de Prontidão (conforme modal)
+  readinessLevel: mysqlEnum("readinessLevel", [
+    "pronto_ate_12_meses",
+    "pronto_12_24_meses",
+    "pronto_24_36_meses",
+    "pronto_mais_36_meses"
+  ]).notNull(),
   
-  // Análise e Desenvolvimento
-  gapAnalysis: text("gapAnalysis"), // Análise de gaps (lacunas)
-  developmentActions: text("developmentActions"), // Ações de desenvolvimento recomendadas
-  notes: text("notes"),
+  // Prioridade (1 = mais alta)
+  priority: int("priority").default(1).notNull(),
+  
+  // Avaliações de Performance e Potencial (conforme modal)
+  performance: mysqlEnum("performance", ["baixo", "medio", "alto"]).notNull(),
+  potential: mysqlEnum("potential", ["baixo", "medio", "alto"]).notNull(),
+  
+  // Análise de Gaps de Competências
+  gapAnalysis: text("gapAnalysis"),
+  
+  // Ações de Desenvolvimento Recomendadas
+  developmentActions: text("developmentActions"),
+  
+  // Comentários sobre o sucessor
+  comments: text("comments"),
+  
+  // Metadados
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

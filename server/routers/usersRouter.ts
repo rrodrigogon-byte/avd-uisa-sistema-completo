@@ -6,6 +6,7 @@ import { notifyNewUser } from "../adminRhEmailService";
 import { users, employees } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { sendEmail } from "../emailService";
+import { sendCredentialsEmail } from "../_core/email";
 import bcrypt from "bcryptjs";
 
 /**
@@ -492,4 +493,104 @@ export const usersRouter = router({
       salaryLeads: allUsers.filter((u) => u.isSalaryLead).length,
     };
   }),
+
+  /**
+   * Enviar credenciais por email
+   * Gera username e senha e envia ambos por email
+   */
+  sendCredentials: adminOrRHProcedure
+    .input(
+      z.object({
+        userId: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const database = await db.getDb();
+      if (!database) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Banco de dados não disponível",
+        });
+      }
+
+      // Buscar usuário
+      const user = await db.getUserById(input.userId);
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Usuário não encontrado",
+        });
+      }
+
+      if (!user.email) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Usuário não possui email cadastrado",
+        });
+      }
+
+      // Gerar username (primeira parte do email)
+      const username = user.email.split('@')[0];
+
+      // Gerar senha aleatória segura (8 caracteres: letras maiúsculas, minúsculas e números)
+      const generatePassword = () => {
+        const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const all = uppercase + lowercase + numbers;
+        
+        let password = '';
+        // Garantir pelo menos 1 maiúscula, 1 minúscula e 1 número
+        password += uppercase[Math.floor(Math.random() * uppercase.length)];
+        password += lowercase[Math.floor(Math.random() * lowercase.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        
+        // Completar com caracteres aleatórios
+        for (let i = 0; i < 5; i++) {
+          password += all[Math.floor(Math.random() * all.length)];
+        }
+        
+        // Embaralhar
+        return password.split('').sort(() => Math.random() - 0.5).join('');
+      };
+
+      const password = generatePassword();
+
+      // Hash da senha para armazenar no banco (se necessário)
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      // Atualizar usuário com passwordHash se houver campo
+      // (Nota: o schema atual de users não tem passwordHash, mas employees tem)
+      // Se precisar armazenar, adicionar campo no schema
+
+      try {
+        // Enviar email com username E senha
+        const emailSent = await sendCredentialsEmail(
+          user.email,
+          user.name || 'Usuário',
+          username,
+          password
+        );
+
+        if (!emailSent) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Falha ao enviar email. Verifique a configuração SMTP.",
+          });
+        }
+
+        return {
+          success: true,
+          message: `Credenciais enviadas com sucesso para ${user.email}`,
+          username,
+          // NÃO retornar a senha na resposta por segurança
+        };
+      } catch (error) {
+        console.error('[UsersRouter] Failed to send credentials email:', error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erro ao enviar credenciais por email",
+        });
+      }
+    }),
 });

@@ -207,43 +207,47 @@ export const successionRouter = router({
       return { success: true };
     }),
 
-  // Adicionar sucessor ao plano (FORMULÁRIO COMPLETO)
+  // Adicionar sucessor ao plano (FORMULÁRIO COMPLETO CONFORME MODAL)
   addSuccessor: protectedProcedure
     .input(
       z.object({
         planId: z.number(),
         employeeId: z.number(),
-        readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]),
+        // Nível de Prontidão (conforme modal)
+        readinessLevel: z.enum([
+          "pronto_ate_12_meses",
+          "pronto_12_24_meses",
+          "pronto_24_36_meses",
+          "pronto_mais_36_meses"
+        ]),
+        // Prioridade
         priority: z.number().default(1),
-        // Novos campos de avaliação
-        performanceRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
-        potentialRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
-        nineBoxPosition: z.string().optional(),
-        // Análise e desenvolvimento
+        // Performance e Potencial (conforme modal)
+        performance: z.enum(["baixo", "medio", "alto"]),
+        potential: z.enum(["baixo", "medio", "alto"]),
+        // Análise de Gaps de Competências
         gapAnalysis: z.string().optional(),
+        // Ações de Desenvolvimento
         developmentActions: z.string().optional(),
-        notes: z.string().optional(),
+        // Comentários
+        comments: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const database = await getDb();
       if (!database) throw new Error("Database not available");
 
-      // Preparar dados com valores default para campos opcionais
-      const candidateData = {
+      const [result] = await database.insert(successionCandidates).values({
         planId: input.planId,
         employeeId: input.employeeId,
         readinessLevel: input.readinessLevel,
         priority: input.priority,
-        performanceRating: input.performanceRating || null,
-        potentialRating: input.potentialRating || null,
-        nineBoxPosition: input.nineBoxPosition || null,
+        performance: input.performance,
+        potential: input.potential,
         gapAnalysis: input.gapAnalysis || null,
         developmentActions: input.developmentActions || null,
-        notes: input.notes || null,
-      };
-
-      const [result] = await database.insert(successionCandidates).values(candidateData);
+        comments: input.comments || null,
+      });
 
       return { id: result.insertId, success: true };
     }),
@@ -262,41 +266,30 @@ export const successionRouter = router({
       return { success: true };
     }),
 
-  // Atualizar sucessor
+  // Atualizar sucessor (conforme modal)
   updateSuccessor: protectedProcedure
     .input(
       z.object({
-        id: z.number().optional(),
-        successorId: z.number().optional(), // Alias para id
-        readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]).optional(),
+        id: z.number(),
+        readinessLevel: z.enum([
+          "pronto_ate_12_meses",
+          "pronto_12_24_meses",
+          "pronto_24_36_meses",
+          "pronto_mais_36_meses"
+        ]).optional(),
         priority: z.number().optional(),
-        // Novos campos de avaliação
-        performance: z.number().min(1).max(5).optional(),
-        potential: z.number().min(1).max(5).optional(),
-        performanceRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
-        potentialRating: z.enum(["baixo", "medio", "alto", "excepcional"]).optional(),
-        nineBoxPosition: z.string().optional(),
-        nineBoxScore: z.string().optional(),
-        nineBoxCategory: z.string().optional(),
-        lossRisk: z.enum(["baixo", "medio", "alto"]).optional(),
-        lossImpact: z.enum(["baixo", "medio", "alto"]).optional(),
-        // Análise e desenvolvimento
+        performance: z.enum(["baixo", "medio", "alto"]).optional(),
+        potential: z.enum(["baixo", "medio", "alto"]).optional(),
         gapAnalysis: z.string().optional(),
         developmentActions: z.string().optional(),
-        notes: z.string().optional(),
+        comments: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const database = await getDb();
       if (!database) throw new Error("Database not available");
 
-      // Usar successorId se fornecido, caso contrário usar id
-      const successorId = input.successorId || input.id;
-      if (!successorId) {
-        throw new Error("ID do sucessor é obrigatório");
-      }
-
-      const { id, successorId: _, ...data } = input;
+      const { id, ...data } = input;
 
       await database
         .update(successionCandidates)

@@ -181,3 +181,88 @@ export async function sendNotificationEmail(
     html,
   });
 }
+
+/**
+ * Enviar credenciais de acesso por email
+ * IMPORTANTE: Envia username E senha
+ */
+export async function sendCredentialsEmail(
+  recipientEmail: string,
+  recipientName: string,
+  username: string,
+  password: string,
+  loginUrl?: string
+): Promise<boolean> {
+  const appUrl = loginUrl || process.env.VITE_OAUTH_PORTAL_URL || 'https://portal.manus.im';
+  
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #F39200 0%, #d97f00 100%); padding: 30px; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">Sistema AVD UISA</h1>
+        <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Suas credenciais de acesso</p>
+      </div>
+      
+      <div style="background-color: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+          Olá <strong>${recipientName}</strong>,
+        </p>
+        
+        <p style="font-size: 14px; color: #666; margin-bottom: 25px;">
+          Suas credenciais de acesso ao Sistema AVD UISA foram criadas com sucesso. 
+          Utilize os dados abaixo para fazer login:
+        </p>
+        
+        <div style="background-color: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #F39200; margin: 25px 0;">
+          <div style="margin-bottom: 15px;">
+            <p style="margin: 0; font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Usuário</p>
+            <p style="margin: 5px 0 0 0; font-size: 18px; color: #333; font-weight: bold; font-family: 'Courier New', monospace;">
+              ${username}
+            </p>
+          </div>
+          
+          <div style="border-top: 1px solid #dee2e6; padding-top: 15px;">
+            <p style="margin: 0; font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Senha</p>
+            <p style="margin: 5px 0 0 0; font-size: 18px; color: #333; font-weight: bold; font-family: 'Courier New', monospace;">
+              ${password}
+            </p>
+          </div>
+        </div>
+        
+        <div style="background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 15px; margin: 25px 0;">
+          <p style="margin: 0; font-size: 13px; color: #856404;">
+            <strong>⚠️ Importante:</strong> Por segurança, recomendamos que você altere sua senha após o primeiro acesso.
+          </p>
+        </div>
+        
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="${appUrl}" 
+             style="background-color: #F39200; color: white; padding: 14px 32px; 
+                    text-decoration: none; border-radius: 6px; display: inline-block; 
+                    font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            Acessar Sistema
+          </a>
+        </p>
+        
+        <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 30px;">
+          <p style="font-size: 12px; color: #999; margin: 0;">
+            Se o botão não funcionar, copie e cole este link no navegador:<br>
+            <a href="${appUrl}" style="color: #F39200; word-break: break-all;">${appUrl}</a>
+          </p>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+          <p style="font-size: 12px; color: #999; margin: 0; text-align: center;">
+            Este é um e-mail automático do Sistema AVD UISA.<br>
+            Em caso de dúvidas, entre em contato com o suporte.
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to: recipientEmail,
+    subject: 'Suas credenciais de acesso - Sistema AVD UISA',
+    html,
+  });
+}

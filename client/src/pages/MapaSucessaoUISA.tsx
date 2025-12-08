@@ -873,18 +873,18 @@ function EditSuccessorForm({ successor, onSave, onCancel, isLoading }: any) {
   );
 }
 
-// Componente: Formulário de Adicionar Sucessor
+// Componente: Formulário de Adicionar Sucessor (Conforme Modal da Imagem)
 function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch, loadingEmployees, onSave, onCancel, isLoading }: any) {
   const [formData, setFormData] = useState({
     planId: planId,
     employeeId: "",
-    readinessLevel: "1_ano",
+    readinessLevel: "pronto_ate_12_meses",
     priority: 1,
-    performanceRating: "medio",
-    potentialRating: "medio",
+    performance: "medio",
+    potential: "medio",
     gapAnalysis: "",
     developmentActions: "",
-    notes: "",
+    comments: "",
   });
 
   const handleSubmit = () => {
@@ -902,7 +902,7 @@ function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch
       employeeId: parseInt(formData.employeeId),
       gapAnalysis: formData.gapAnalysis?.trim() || undefined,
       developmentActions: formData.developmentActions?.trim() || undefined,
-      notes: formData.notes?.trim() || undefined,
+      comments: formData.comments?.trim() || undefined,
     };
     onSave(dataToSave);
   };
@@ -940,13 +940,13 @@ function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch
           <Label>Nível de Prontidão *</Label>
           <Select value={formData.readinessLevel} onValueChange={(v) => setFormData({...formData, readinessLevel: v})}>
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder="Selecione o nível de prontidão" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="imediato">Pronto</SelectItem>
-              <SelectItem value="1_ano">Pronto em até 12 meses</SelectItem>
-              <SelectItem value="2_3_anos">Pronto em até 24 meses</SelectItem>
-              <SelectItem value="mais_3_anos">Pronto em até 36 meses</SelectItem>
+              <SelectItem value="pronto_ate_12_meses">Pronto em até 12 meses</SelectItem>
+              <SelectItem value="pronto_12_24_meses">Pronto em 12-24 meses</SelectItem>
+              <SelectItem value="pronto_24_36_meses">Pronto em 24-36 meses</SelectItem>
+              <SelectItem value="pronto_mais_36_meses">Pronto em mais de 36 meses</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -963,7 +963,7 @@ function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch
 
         <div>
           <Label>Performance</Label>
-          <Select value={formData.performanceRating} onValueChange={(v) => setFormData({...formData, performanceRating: v})}>
+          <Select value={formData.performance} onValueChange={(v) => setFormData({...formData, performance: v})}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -971,14 +971,13 @@ function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch
               <SelectItem value="baixo">Baixo</SelectItem>
               <SelectItem value="medio">Médio</SelectItem>
               <SelectItem value="alto">Alto</SelectItem>
-              <SelectItem value="excepcional">Excepcional</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
           <Label>Potencial</Label>
-          <Select value={formData.potentialRating} onValueChange={(v) => setFormData({...formData, potentialRating: v})}>
+          <Select value={formData.potential} onValueChange={(v) => setFormData({...formData, potential: v})}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -986,7 +985,6 @@ function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch
               <SelectItem value="baixo">Baixo</SelectItem>
               <SelectItem value="medio">Médio</SelectItem>
               <SelectItem value="alto">Alto</SelectItem>
-              <SelectItem value="excepcional">Excepcional</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -1015,8 +1013,8 @@ function AddSuccessorForm({ planId, employees, employeeSearch, setEmployeeSearch
       <div>
         <Label>Comentários</Label>
         <Textarea 
-          value={formData.notes}
-          onChange={(e) => setFormData({...formData, notes: e.target.value})}
+          value={formData.comments}
+          onChange={(e) => setFormData({...formData, comments: e.target.value})}
           rows={3}
           placeholder="Comentários sobre o sucessor..."
         />
