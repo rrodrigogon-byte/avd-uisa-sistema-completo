@@ -3,6 +3,11 @@
 **Data de Criação:** 07/12/2025  
 **Status:** Sistema já está 100% implementado e funcional
 
+## 🔧 CORREÇÕES URGENTES (08/12/2025)
+
+- [x] Corrigir erro "No procedure found on path evaluationCycles.update" ao atualizar ciclo
+- [x] Implementar funcionalidade do botão "Ativar Metas" no modal de edição de ciclo
+
 ## ✅ SISTEMA COMPLETO E FUNCIONAL
 
 O sistema AVD UISA está **completamente implementado** com todas as funcionalidades principais:

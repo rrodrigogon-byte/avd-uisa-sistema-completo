@@ -308,4 +308,88 @@ export const evaluationCyclesRouter = router({
 
       return { success: true };
     }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1, "Nome é obrigatório").optional(),
+        year: z.number().int().min(2020).max(2100).optional(),
+        type: z.enum(["anual", "semestral", "trimestral"]).optional(),
+        startDate: z.string().or(z.date()).optional(),
+        endDate: z.string().or(z.date()).optional(),
+        description: z.string().optional(),
+        selfEvaluationDeadline: z.string().or(z.date()).optional().nullable(),
+        managerEvaluationDeadline: z.string().or(z.date()).optional().nullable(),
+        consensusDeadline: z.string().or(z.date()).optional().nullable(),
+        status: z.enum(["planejado", "ativo", "concluido", "cancelado"]).optional(),
+        active: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar ciclo existente
+      const existingCycle = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, input.id))
+        .limit(1);
+
+      if (existingCycle.length === 0) {
+        throw new Error("Ciclo não encontrado");
+      }
+
+      // Preparar dados para atualização
+      const updateData: any = {};
+
+      if (input.name !== undefined) updateData.name = input.name;
+      if (input.year !== undefined) updateData.year = input.year;
+      if (input.type !== undefined) updateData.type = input.type;
+      if (input.description !== undefined) updateData.description = input.description;
+      if (input.status !== undefined) updateData.status = input.status;
+      if (input.active !== undefined) updateData.active = input.active;
+
+      // Converter datas se fornecidas
+      if (input.startDate !== undefined) {
+        updateData.startDate = typeof input.startDate === 'string' ? new Date(input.startDate) : input.startDate;
+      }
+      if (input.endDate !== undefined) {
+        updateData.endDate = typeof input.endDate === 'string' ? new Date(input.endDate) : input.endDate;
+      }
+      if (input.selfEvaluationDeadline !== undefined) {
+        updateData.selfEvaluationDeadline = input.selfEvaluationDeadline
+          ? (typeof input.selfEvaluationDeadline === 'string' ? new Date(input.selfEvaluationDeadline) : input.selfEvaluationDeadline)
+          : null;
+      }
+      if (input.managerEvaluationDeadline !== undefined) {
+        updateData.managerEvaluationDeadline = input.managerEvaluationDeadline
+          ? (typeof input.managerEvaluationDeadline === 'string' ? new Date(input.managerEvaluationDeadline) : input.managerEvaluationDeadline)
+          : null;
+      }
+      if (input.consensusDeadline !== undefined) {
+        updateData.consensusDeadline = input.consensusDeadline
+          ? (typeof input.consensusDeadline === 'string' ? new Date(input.consensusDeadline) : input.consensusDeadline)
+          : null;
+      }
+
+      // Validar que endDate é posterior a startDate se ambos forem fornecidos
+      if (updateData.startDate && updateData.endDate) {
+        if (updateData.endDate <= updateData.startDate) {
+          throw new Error("Data de término deve ser posterior à data de início");
+        }
+      }
+
+      // Atualizar ciclo
+      await db
+        .update(evaluationCycles)
+        .set(updateData)
+        .where(eq(evaluationCycles.id, input.id));
+
+      return {
+        success: true,
+        id: input.id,
+      };
+    }),
 });
