@@ -97,6 +97,8 @@ import TestIE from "./pages/TestIE";
 import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
+import TestResponse from "./pages/TestResponse";
+import PsychometricTestsAdmin from "./pages/PsychometricTestsAdmin";
 import EnviarTestes from "./pages/EnviarTestes";
 import ImportadorDescricoesCargo from "./pages/ImportadorDescricoesCargo";
 import Notificacoes from "./pages/Notificacoes";
@@ -316,6 +318,8 @@ function Router() {
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
+      <Route path="/testes-psicometricos/admin" component={PsychometricTestsAdmin} />
+      <Route path="/teste/:token" component={TestResponse} />
       <Route path="/descricao-cargos/importar" component={ImportadorDescricoesCargo} />
       <Route path="/descricao-cargos" component={DescricaoCargos} />
       <Route path="/descricao-cargos-uisa" component={DescricaoCargosUISA} />

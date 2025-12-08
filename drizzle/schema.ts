@@ -942,6 +942,99 @@ export const testQuestions = mysqlTable("testQuestions", {
 export type TestQuestion = typeof testQuestions.$inferSelect;
 export type InsertTestQuestion = typeof testQuestions.$inferInsert;
 
+/**
+ * Test Invitations - Convites para realização de testes psicométricos
+ * Gerencia envio de links únicos para colaboradores responderem testes
+ */
+export const testInvitations = mysqlTable("testInvitations", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).notNull(),
+  
+  // Link único de acesso
+  uniqueToken: varchar("uniqueToken", { length: 128 }).notNull().unique(),
+  
+  // Status do convite
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluido", "expirado"]).default("pendente").notNull(),
+  
+  // Datas
+  sentAt: datetime("sentAt").notNull(),
+  expiresAt: datetime("expiresAt").notNull(),
+  startedAt: datetime("startedAt"),
+  completedAt: datetime("completedAt"),
+  
+  // E-mail enviado
+  emailSent: boolean("emailSent").default(false).notNull(),
+  emailSentAt: datetime("emailSentAt"),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TestInvitation = typeof testInvitations.$inferSelect;
+export type InsertTestInvitation = typeof testInvitations.$inferInsert;
+
+/**
+ * Test Responses - Respostas individuais de testes psicométricos
+ * Armazena cada resposta dada pelo colaborador durante o teste
+ */
+export const testResponses = mysqlTable("testResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  invitationId: int("invitationId").notNull(),
+  questionId: int("questionId").notNull(),
+  
+  // Resposta
+  answer: int("answer").notNull(), // Escala 1-5 ou similar
+  
+  // Tempo de resposta (em segundos)
+  responseTime: int("responseTime"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TestResponse = typeof testResponses.$inferSelect;
+export type InsertTestResponse = typeof testResponses.$inferInsert;
+
+/**
+ * Test Results - Resultados consolidados e descritivos dos testes
+ * Armazena não apenas pontuações, mas também interpretações descritivas completas
+ */
+export const testResults = mysqlTable("testResults", {
+  id: int("id").autoincrement().primaryKey(),
+  invitationId: int("invitationId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).notNull(),
+  
+  // Pontuações numéricas (JSON)
+  scores: text("scores").notNull(), // JSON com todas as pontuações por dimensão
+  
+  // Resultados descritivos completos
+  profileType: varchar("profileType", { length: 50 }), // Ex: "ENTJ", "Alto D", etc
+  profileDescription: text("profileDescription"), // Descrição completa do perfil
+  strengths: text("strengths"), // Pontos fortes identificados
+  developmentAreas: text("developmentAreas"), // Áreas de desenvolvimento
+  workStyle: text("workStyle"), // Estilo de trabalho
+  communicationStyle: text("communicationStyle"), // Estilo de comunicação
+  leadershipStyle: text("leadershipStyle"), // Estilo de liderança (se aplicável)
+  motivators: text("motivators"), // Principais motivadores
+  stressors: text("stressors"), // Principais estressores
+  teamContribution: text("teamContribution"), // Contribuição para equipe
+  careerRecommendations: text("careerRecommendations"), // Recomendações de carreira
+  
+  // Dados brutos para análises futuras
+  rawData: text("rawData"), // JSON com dados completos do teste
+  
+  // Metadados
+  completedAt: datetime("completedAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TestResult = typeof testResults.$inferSelect;
+export type InsertTestResult = typeof testResults.$inferInsert;
+
 // ============================================================================
 // CONFIGURAÇÕES DO SISTEMA
 // ============================================================================

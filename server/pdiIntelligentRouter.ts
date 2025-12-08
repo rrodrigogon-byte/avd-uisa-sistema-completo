@@ -659,6 +659,34 @@ export const pdiIntelligentRouter = router({
         throw new TRPCError({ code: "NOT_FOUND", message: "PDI não encontrado" });
       }
 
+      // Buscar perfil psicométrico do funcionário
+      const { getTestResultsByEmployee } = await import("./psychometricTestsHelpers");
+      const psychometricResults = await getTestResultsByEmployee(pdiPlan.employee?.id || 0);
+      
+      // Consolidar perfil psicométrico
+      let psychometricProfile = "";
+      if (psychometricResults.length > 0) {
+        const profiles: string[] = [];
+        for (const result of psychometricResults) {
+          if (result.profileType) {
+            profiles.push(`${result.testType.toUpperCase()}: ${result.profileType}`);
+          }
+          if (result.strengths) {
+            profiles.push(`Pontos Fortes: ${result.strengths}`);
+          }
+          if (result.developmentAreas) {
+            profiles.push(`Áreas de Desenvolvimento: ${result.developmentAreas}`);
+          }
+          if (result.workStyle) {
+            profiles.push(`Estilo de Trabalho: ${result.workStyle}`);
+          }
+          if (result.leadershipStyle) {
+            profiles.push(`Estilo de Liderança: ${result.leadershipStyle}`);
+          }
+        }
+        psychometricProfile = profiles.join("\n");
+      }
+
       // Buscar gaps do PDI
       const gaps = await db
         .select({
@@ -696,7 +724,10 @@ Contexto:
 - Contexto estratégico: ${pdiPlan.details?.strategicContext || "Desenvolvimento para posição de liderança"}
 - Duração do PDI: ${pdiPlan.details?.durationMonths || 24} meses
 
-Gaps de competências identificados:
+${psychometricProfile ? `Perfil Psicométrico do Colaborador:
+${psychometricProfile}
+
+` : ""}Gaps de competências identificados:
 ${JSON.stringify(gapsContext, null, 2)}
 
 Gere sugestões de ações de desenvolvimento seguindo o modelo 70-20-10:
