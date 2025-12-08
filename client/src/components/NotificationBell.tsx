@@ -32,6 +32,7 @@ export default function NotificationBell() {
   const [, setLocation] = useLocation();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [browserNotificationsEnabled, setBrowserNotificationsEnabled] = useState(false);
 
   const { data: notifications, refetch } = trpc.notifications.getMyNotifications.useQuery({
     limit: 10,
@@ -49,6 +50,43 @@ export default function NotificationBell() {
     },
   });
 
+  // Solicitar permissão para notificações do navegador
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then((permission) => {
+        setBrowserNotificationsEnabled(permission === "granted");
+      });
+    } else if ("Notification" in window && Notification.permission === "granted") {
+      setBrowserNotificationsEnabled(true);
+    }
+  }, []);
+
+  // Função para tocar som de notificação
+  const playNotificationSound = () => {
+    try {
+      const audio = new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGmi77eeeTRAMUKfj8LZjHAY4ktfyzHksBSR3x/DdkEAKFF606+uoVRQKRp/g8r5sIQUrgs7y2Yk2CBlou+3nnk0QDFC");
+      audio.volume = 0.3;
+      audio.play().catch(() => {});
+    } catch (error) {
+      // Silenciar erro se o navegador bloquear o som
+    }
+  };
+
+  // Função para mostrar notificação do navegador
+  const showBrowserNotification = (title: string, message: string) => {
+    if (browserNotificationsEnabled && "Notification" in window) {
+      try {
+        new Notification(title, {
+          body: message,
+          icon: "/favicon.ico",
+          badge: "/favicon.ico",
+        });
+      } catch (error) {
+        console.error("Erro ao mostrar notificação:", error);
+      }
+    }
+  };
+
   // WebSocket para notificações em tempo real
   useEffect(() => {
     const newSocket = io(window.location.origin, {
@@ -60,7 +98,16 @@ export default function NotificationBell() {
       console.log("[WebSocket] Conectado ao sistema de notificações");
     });
 
-    newSocket.on("new-notification", () => {
+    newSocket.on("new-notification", (data: { title: string; message: string }) => {
+      // Tocar som
+      playNotificationSound();
+      
+      // Mostrar notificação do navegador
+      if (data.title && data.message) {
+        showBrowserNotification(data.title, data.message);
+      }
+      
+      // Atualizar lista de notificações
       refetch();
     });
 
@@ -69,7 +116,7 @@ export default function NotificationBell() {
     return () => {
       newSocket.disconnect();
     };
-  }, [refetch]);
+  }, [refetch, browserNotificationsEnabled]);
 
   // Atualizar contador de não lidas
   useEffect(() => {

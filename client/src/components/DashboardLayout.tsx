@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo, AlertCircle, Home, Sparkles, Users2, TrendingDown, FileBarChart, Database, Bell, Megaphone } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -101,26 +101,24 @@ function MenuSection({ item, location, setLocation, badgeCounts }: { item: any; 
 }
 
 const menuItems = [
-  // 📊 VISÃO GERAL
+  // 🏠 INÍCIO
   {
-    icon: LayoutDashboard,
-    label: "Visão Geral",
+    icon: Home,
+    label: "Início",
     isSection: true,
     children: [
       { icon: LayoutDashboard, label: "Dashboard Principal", path: "/" },
       { icon: Gauge, label: "Dashboard Executivo", path: "/dashboard-executivo" },
-      { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
-      { icon: TrendingUp, label: "Analytics Avançado", path: "/analytics/avancado" },
+      { icon: Activity, label: "Visão Integrada", path: "/performance-integrada" },
     ],
   },
   
-  // 🎯 Gestão de Performance
+  // 🎯 METAS E PERFORMANCE
   {
-    icon: Zap,
-    label: "Performance",
+    icon: Target,
+    label: "Metas",
     isSection: true,
     children: [
-      { icon: Activity, label: "Visão Integrada", path: "/performance-integrada" },
       { icon: Target, label: "Minhas Metas", path: "/metas" },
       { icon: Building2, label: "Metas Corporativas", path: "/metas/corporativas" },
       { icon: CheckCircle, label: "Adesão de Metas", path: "/metas/corporativas/adesao" },
@@ -128,104 +126,112 @@ const menuItems = [
     ],
   },
   
-  // 🔄 Avaliações 360°
+  // ⭐ AVALIAÇÕES
   {
-    icon: Award,
-    label: "Avaliações 360°",
+    icon: Star,
+    label: "Avaliações",
     isSection: true,
     children: [
-      { icon: Star, label: "360° Enhanced", path: "/360-enhanced" },
-      { icon: ClipboardList, label: "Avaliações", path: "/avaliacoes" },
-      { icon: Settings, label: "Configurar", path: "/avaliacoes/configurar" },
+      { icon: Sparkles, label: "360° Enhanced", path: "/360-enhanced" },
+      { icon: ClipboardList, label: "Minhas Avaliações", path: "/avaliacoes" },
       { icon: Calendar, label: "Ciclos Ativos", path: "/ciclos/ativos" },
       { icon: Scale, label: "Calibração", path: "/calibracao" },
       { icon: Shield, label: "Calibração Diretoria", path: "/admin/calibracao-diretoria" },
       { icon: Grid3x3, label: "Nine Box", path: "/nine-box" },
       { icon: PieChart, label: "Nine Box Comparativo", path: "/nine-box-comparativo" },
+      { icon: Settings, label: "Configurar", path: "/avaliacoes/configurar" },
     ],
   },
   
-  // 🎓 DESENVOLVIMENTO E SUCESSÃO
+  // 🎓 DESENVOLVIMENTO
   {
     icon: GraduationCap,
     label: "Desenvolvimento",
     isSection: true,
     children: [
       { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
-      { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
-      { icon: TrendingUp, label: "Sucessão UISA", path: "/mapa-sucessao-uisa" },
-      { icon: LineChart, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
       { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },
       { icon: PieChart, label: "Comparativo de Testes", path: "/testes/comparativo" },
       { icon: MessageSquare, label: "Feedback Contínuo", path: "/feedback" },
-      { icon: Trophy, label: "Conquistas e Badges", path: "/badges" },
-      { icon: Activity, label: "Pesquisas Pulse", path: "/pesquisas-pulse" },
+      { icon: Trophy, label: "Conquistas", path: "/badges" },
+      { icon: Megaphone, label: "Pesquisas Pulse", path: "/pesquisas-pulse" },
     ],
   },
   
-  // 👥 Gestão de Pessoas
+  // 🔄 SUCESSÃO
   {
-    icon: UsersRound,
+    icon: Users2,
+    label: "Sucessão",
+    isSection: true,
+    children: [
+      { icon: GitBranch, label: "Mapa de Sucessão", path: "/sucessao" },
+      { icon: TrendingUp, label: "Sucessão UISA", path: "/mapa-sucessao-uisa" },
+      { icon: LineChart, label: "Sucessão Inteligente", path: "/sucessao-inteligente" },
+    ],
+  },
+  
+  // 👥 PESSOAS
+  {
+    icon: Users,
     label: "Pessoas",
     isSection: true,
     children: [
       { icon: Users, label: "Funcionários", path: "/funcionarios" },
-      { icon: Edit3, label: "Gerenciar Funcionários", path: "/funcionarios/gerenciar" },
-      { icon: UserCheck, label: "Funcionários Ativos", path: "/funcionarios-ativos" },
+      { icon: Edit3, label: "Gerenciar", path: "/funcionarios/gerenciar" },
+      { icon: UserCheck, label: "Ativos", path: "/funcionarios-ativos" },
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
       { icon: Briefcase, label: "Centros de Custo", path: "/centros-custos" },
-      { icon: ClipboardList, label: "Descrição de Cargos", path: "/descricao-cargos" },
-      { icon: FileText, label: "Descrição UISA", path: "/descricao-cargos-uisa" },
-      { icon: Upload, label: "Importação em Massa", path: "/importacao-descricoes" },
+      { icon: FileText, label: "Descrição de Cargos", path: "/descricao-cargos" },
+      { icon: ClipboardList, label: "Descrição UISA", path: "/descricao-cargos-uisa" },
+      { icon: Upload, label: "Importação", path: "/importacao-descricoes" },
     ],
   },
   
-  // ⏰ Gestão de Tempo
+  // ⏰ TEMPO E PRODUTIVIDADE
   {
-    icon: Timer,
-    label: "Gestão de Tempo",
+    icon: Clock,
+    label: "Tempo",
     isSection: true,
     children: [
       { icon: Clock, label: "Minhas Atividades", path: "/minhas-atividades" },
       { icon: Upload, label: "Importar Ponto", path: "/importacao-ponto" },
       { icon: AlertTriangle, label: "Discrepâncias", path: "/discrepancias" },
-      { icon: CheckCircle, label: "Validação por Líder", path: "/validacao-lider" },
-      { icon: BarChart, label: "Relatórios", path: "/relatorios-produtividade" },
-      { icon: AlertTriangle, label: "Alertas", path: "/alertas" },
+      { icon: CheckCircle, label: "Validação Líder", path: "/validacao-lider" },
       { icon: FileSearch, label: "Análise de Gaps", path: "/analise-gaps" },
+      { icon: Bell, label: "Alertas", path: "/alertas" },
     ],
   },
   
-  // 📋 Pendências
+  // 📋 PENDÊNCIAS
   {
     icon: ListTodo,
     label: "Pendências",
     isSection: true,
     children: [
-      { icon: ListTodo, label: "Minhas Pendências", path: "/pendencias", badge: "pendencias" },
-      { icon: Clock, label: "Pendentes", path: "/pendencias?status=pendente" },
+      { icon: ListTodo, label: "Todas", path: "/pendencias", badge: "pendencias" },
+      { icon: Clock, label: "Pendentes", path: "/pendencias?status=pendente", badge: "pendentes" },
       { icon: AlertCircle, label: "Em Andamento", path: "/pendencias?status=em_andamento" },
       { icon: CheckCircle, label: "Concluídas", path: "/pendencias?status=concluida" },
     ],
   },
   
-  // ✅ Aprovações
+  // ✅ APROVAÇÕES
   {
     icon: CheckSquare,
     label: "Aprovações",
     isSection: true,
     children: [
-      { icon: BarChart, label: "Dashboard", path: "/aprovacoes/dashboard" },
+      { icon: LayoutDashboard, label: "Dashboard", path: "/aprovacoes/dashboard", badge: "aprovacoes" },
       { icon: Inbox, label: "Minhas Solicitações", path: "/aprovacoes/solicitacoes" },
-      { icon: Calendar, label: "Ciclos de Avaliação", path: "/aprovacoes/ciclos-avaliacao" },
-      { icon: CheckSquare, label: "PDIs Pendentes", path: "/aprovacoes/pdi" },
-      { icon: Users, label: "Avaliações Pendentes", path: "/aprovacoes/avaliacoes" },
-      { icon: Gift, label: "Bônus", path: "/aprovacoes/bonus" },
+      { icon: CheckSquare, label: "PDIs", path: "/aprovacoes/pdi", badge: "pdi_pendentes" },
+      { icon: Star, label: "Avaliações", path: "/aprovacoes/avaliacoes", badge: "avaliacoes_pendentes" },
+      { icon: Gift, label: "Bônus", path: "/aprovacoes/bonus", badge: "bonus_pendentes" },
+      { icon: Calendar, label: "Ciclos", path: "/aprovacoes/ciclos-avaliacao" },
       { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
     ],
   },
   
-  // 💰 Bônus e Remuneração
+  // 💰 BÔNUS
   {
     icon: DollarSign,
     label: "Bônus",
@@ -233,65 +239,77 @@ const menuItems = [
     children: [
       { icon: DollarSign, label: "Políticas", path: "/bonus" },
       { icon: TrendingUp, label: "Previsão", path: "/previsao-bonus" },
-      { icon: CheckSquare, label: "Aprovação em Lote", path: "/aprovacoes/bonus-lote" },
+      { icon: CheckSquare, label: "Aprovação Lote", path: "/aprovacoes/bonus-lote" },
       { icon: Workflow, label: "Workflows", path: "/admin/bonus-workflows" },
-      { icon: CheckCircle, label: "Compliance e SLA", path: "/compliance/bonus" },
+      { icon: CheckCircle, label: "Compliance", path: "/compliance/bonus" },
       { icon: FileSearch, label: "Auditoria", path: "/bonus/auditoria" },
-      { icon: FileText, label: "Relatórios", path: "/relatorios/bonus" },
       { icon: Upload, label: "Exportar Folha", path: "/folha-pagamento/exportar" },
     ],
   },
   
-  // 📊 RELATÓRIOS E ANÁLISES
+  // 📊 ANALYTICS E RELATÓRIOS
   {
-    icon: FileText,
+    icon: BarChart3,
+    label: "Analytics",
+    isSection: true,
+    children: [
+      { icon: BarChart3, label: "Analytics de RH", path: "/analytics" },
+      { icon: TrendingUp, label: "Analytics Avançado", path: "/analytics/avancado" },
+      { icon: Scale, label: "Benchmarking", path: "/benchmarking" },
+      { icon: BarChart, label: "Relatórios", path: "/relatorios-produtividade" },
+    ],
+  },
+  
+  // 📄 RELATÓRIOS
+  {
+    icon: FileBarChart,
     label: "Relatórios",
     isSection: true,
     children: [
-      { icon: Scale, label: "Benchmarking", path: "/benchmarking" },
+      { icon: Sparkles, label: "Relatórios Avançados", path: "/relatorios/avancados" },
       { icon: FileText, label: "Relatórios Gerais", path: "/relatorios" },
-      { icon: Calendar, label: "Progresso de Ciclos", path: "/relatorios/ciclos" },
-      { icon: BarChart3, label: "Relatórios Executivos", path: "/relatorios-executivos" },
-      { icon: FileText, label: "Relatórios de PDI", path: "/relatorios/pdi" },
-      { icon: FileText, label: "Relatórios de Bônus", path: "/relatorios/bonus" },
+      { icon: Gauge, label: "Executivos", path: "/relatorios-executivos" },
+      { icon: Calendar, label: "Progresso Ciclos", path: "/relatorios/ciclos" },
+      { icon: Lightbulb, label: "PDI", path: "/relatorios/pdi" },
+      { icon: DollarSign, label: "Bônus", path: "/relatorios/bonus" },
       { icon: HistoryIcon, label: "Histórico", path: "/historico" },
     ],
   },
   
-  // 🔧 Administração
+  // 🔧 ADMINISTRAÇÃO
   {
-    icon: UserCog,
+    icon: Shield,
     label: "Administração",
     isSection: true,
     requiredRole: ["admin", "rh"],
     children: [
-      { icon: Users, label: "Gestão de Usuários", path: "/admin/usuarios" },
-      { icon: UserCheck, label: "Gestão de Aprovadores", path: "/admin/gestao-aprovadores" },
-      { icon: GitBranch, label: "Hierarquia Organizacional", path: "/admin/hierarquia" },
-      { icon: FileSearch, label: "Histórico de Alterações", path: "/admin/audit-log" },
-      { icon: Shield, label: "Histórico de Senhas", path: "/admin/historico-senhas" },
-      { icon: UserCog, label: "Gerenciar Senhas Líderes", path: "/admin/gerenciar-senhas-lideres" },
-      { icon: Mail, label: "Dashboard de Emails", path: "/admin/emails" },
+      { icon: Users, label: "Usuários", path: "/admin/usuarios" },
+      { icon: UserCheck, label: "Aprovadores", path: "/admin/gestao-aprovadores" },
+      { icon: GitBranch, label: "Hierarquia", path: "/admin/hierarquia" },
+      { icon: FileSearch, label: "Auditoria", path: "/admin/audit-log" },
+      { icon: Shield, label: "Histórico Senhas", path: "/admin/historico-senhas" },
+      { icon: UserCog, label: "Senhas Líderes", path: "/admin/gerenciar-senhas-lideres" },
+      { icon: Mail, label: "Dashboard Emails", path: "/admin/emails" },
       { icon: Mail, label: "Emails Admin/RH", path: "/admin/emails-admin-rh" },
-      { icon: LineChart, label: "Métricas de E-mail", path: "/admin/email-metrics" },
-      { icon: Upload, label: "Importar Dados UISA", path: "/admin/import-uisa" },
+      { icon: LineChart, label: "Métricas Email", path: "/admin/email-metrics" },
+      { icon: Upload, label: "Importar UISA", path: "/admin/import-uisa" },
     ],
   },
   
-  // ⚙️ Configurações
+  // ⚙️ CONFIGURAÇÕES
   {
     icon: Settings,
     label: "Configurações",
     isSection: true,
     children: [
       { icon: Settings, label: "Gerais", path: "/configuracoes" },
-      { icon: Settings, label: "Notificações Push", path: "/configuracoes/notificacoes" },
-      { icon: Mail, label: "SMTP (Admin)", path: "/configuracoes/smtp" },
+      { icon: Bell, label: "Notificações", path: "/configuracoes/notificacoes" },
+      { icon: Mail, label: "SMTP", path: "/configuracoes/smtp" },
       { icon: Calendar, label: "Relatórios Agendados", path: "/admin/scheduled-reports" },
-      { icon: BarChart3, label: "Report Builder", path: "/admin/report-builder" },
-      { icon: TrendingUp, label: "Analytics (Reports)", path: "/admin/report-analytics" },
-      { icon: FileText, label: "Templates de Avaliação", path: "/admin/templates-avaliacao" },
-      { icon: Mail, label: "Notificações Analytics", path: "/admin/notificacoes-analytics" },
+      { icon: Database, label: "Report Builder", path: "/admin/report-builder" },
+      { icon: TrendingUp, label: "Report Analytics", path: "/admin/report-analytics" },
+      { icon: FileText, label: "Templates Avaliação", path: "/admin/templates-avaliacao" },
+      { icon: BarChart, label: "Notificações Analytics", path: "/admin/notificacoes-analytics" },
     ],
   },
 ];

@@ -100,6 +100,7 @@ import Notificacoes from "./pages/Notificacoes";
 import DashboardComparativoTestes from "./pages/DashboardComparativoTestes";
 import RelatoriosExecutivos from "./pages/RelatoriosExecutivos";
 import DashboardRelatorios from "./pages/DashboardRelatorios";
+import RelatoriosAvancados from "./pages/RelatoriosAvancados";
 import CiclosAVD from "./pages/avd/CiclosAVD";
 import MinhasAvaliacoes from "./pages/avd/MinhasAvaliacoes";
 import FormularioAvaliacao from "./pages/avd/FormularioAvaliacao";
@@ -251,6 +252,7 @@ function Router() {
       <Route path={"/descricao-cargos/aprovar-superior"} component={AprovarDescricaoSuperior} />
       <Route path={"/descricao-cargos/aprovar-rh"} component={AprovarDescricaoRH} />      <Route path={"/nine-box"} component={NineBox} />
       <Route path={'/relatorios'} component={Relatorios} />
+      <Route path={'/relatorios/avancados'} component={RelatoriosAvancados} />
       <Route path={'/relatorios/dashboard'} component={DashboardRelatorios} />
       <Route path={'/relatorios/360-consolidado'} component={Relatorio360Consolidado} />
       <Route path="/relatorios/ciclos" component={ProgressoCiclos} />
