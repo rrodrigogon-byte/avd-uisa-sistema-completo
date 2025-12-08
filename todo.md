@@ -7,6 +7,10 @@
 
 - [x] Corrigir erro "No procedure found on path evaluationCycles.update" ao atualizar ciclo
 - [x] Implementar funcionalidade do botão "Ativar Metas" no modal de edição de ciclo
+- [x] Corrigir erro "Funcionário vinculado não encontrado" na gestão de usuários
+- [x] Corrigir sistema de envio de emails ao clicar no envelope (enviar credenciais)
+- [x] Validar vinculação entre usuários e funcionários
+- [x] Testar envio de emails com credenciais de acesso (5 testes passaram com sucesso)
 
 ## ✅ SISTEMA COMPLETO E FUNCIONAL
 

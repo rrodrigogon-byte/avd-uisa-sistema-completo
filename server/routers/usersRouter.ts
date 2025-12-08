@@ -307,18 +307,39 @@ export const usersRouter = router({
         }
 
         // Buscar employee vinculado ao usuário
-        const [employee] = await database
+        let employee = await database
           .select()
           .from(employees)
           .where(eq(employees.userId, user.id))
           .limit(1);
 
-        if (!employee) {
+        // Se não encontrou por userId, tentar buscar por email
+        if (!employee || employee.length === 0) {
+          employee = await database
+            .select()
+            .from(employees)
+            .where(eq(employees.email, user.email!))
+            .limit(1);
+
+          // Se encontrou por email, criar vinculação
+          if (employee && employee.length > 0) {
+            await database
+              .update(employees)
+              .set({ userId: user.id })
+              .where(eq(employees.id, employee[0].id));
+            
+            console.log(`[UsersRouter] Vinculação criada: userId ${user.id} -> employeeId ${employee[0].id}`);
+          }
+        }
+
+        if (!employee || employee.length === 0) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Funcionário vinculado não encontrado",
+            message: `Funcionário vinculado não encontrado. Verifique se existe um funcionário cadastrado com o email ${user.email}`,
           });
         }
+
+        const employeeData = employee[0];
 
         // Gerar senha temporária (16 caracteres aleatórios)
         const tempPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8).toUpperCase();
@@ -328,7 +349,7 @@ export const usersRouter = router({
         await database
           .update(employees)
           .set({ passwordHash })
-          .where(eq(employees.id, employee.id));
+          .where(eq(employees.id, employeeData.id));
 
         // Enviar e-mail com credenciais
         await sendEmail({
