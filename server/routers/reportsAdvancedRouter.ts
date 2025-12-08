@@ -243,48 +243,42 @@ export const reportsAdvancedRouter = router({
       }
 
       // Buscar avaliações
-      let evalQuery = db
+      const evalConditions = [
+        inArray(performanceEvaluations.employeeId, employeeIds),
+        eq(performanceEvaluations.status, 'concluida')
+      ];
+
+      if (input.startDate && input.endDate) {
+        evalConditions.push(
+          gte(performanceEvaluations.createdAt, new Date(input.startDate)),
+          lte(performanceEvaluations.createdAt, new Date(input.endDate))
+        );
+      }
+
+      const evaluations = await db
         .select({
           employeeId: performanceEvaluations.employeeId,
           finalScore: performanceEvaluations.finalScore,
         })
         .from(performanceEvaluations)
-        .where(
-          and(
-            inArray(performanceEvaluations.employeeId, employeeIds),
-            eq(performanceEvaluations.status, 'concluida')
-          )
-        );
+        .where(and(...evalConditions));
+
+      // Buscar metas
+      const goalsConditions = [inArray(goals.employeeId, employeeIds)];
 
       if (input.startDate && input.endDate) {
-        evalQuery = evalQuery.where(
-          and(
-            gte(performanceEvaluations.createdAt, new Date(input.startDate)),
-            lte(performanceEvaluations.createdAt, new Date(input.endDate))
-          )
+        goalsConditions.push(
+          gte(goals.createdAt, new Date(input.startDate)),
+          lte(goals.createdAt, new Date(input.endDate))
         );
       }
 
-      const evaluations = await evalQuery;
-
-      // Buscar metas
-      let goalsQuery = db
+      const goalsData = await db
         .select({
           status: goals.status,
         })
         .from(goals)
-        .where(inArray(goals.employeeId, employeeIds));
-
-      if (input.startDate && input.endDate) {
-        goalsQuery = goalsQuery.where(
-          and(
-            gte(goals.createdAt, new Date(input.startDate)),
-            lte(goals.createdAt, new Date(input.endDate))
-          )
-        );
-      }
-
-      const goalsData = await goalsQuery;
+        .where(and(...goalsConditions));
 
       // Buscar PDIs
       const pdisData = await db
