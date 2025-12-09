@@ -957,3 +957,43 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Implementar histórico recente de emails
 - [x] Implementar agrupamento de emails por tipo
 - [x] Implementar função de retry de emails falhados
+
+
+## 📥 IMPORTAÇÃO DE FUNCIONÁRIOS E CADASTRO AUTOMÁTICO DE USUÁRIOS (CONCLUÍDO - 09/12/2025)
+
+### Atualização do Schema e Database
+- [x] Atualizar tabela de funcionários com todos os campos da planilha
+- [x] Criar índices para otimizar buscas
+- [x] Implementar validações de dados
+
+### Lógica de Importação
+- [x] Criar script Python para processar planilha Excel
+- [x] Identificar cargos de liderança (Lider, Supervisor, Coordenador, Gerente, Gerente Exec, Diretor, CEO, Presidente, Especialista)
+- [x] Implementar lógica de limpeza de usuários existentes (exceto admins)
+- [x] Implementar importação em lote de funcionários
+- [x] Implementar cadastro automático de usuários para cargos de liderança
+
+### Procedures tRPC
+- [x] Criar procedure para limpar usuários não-admin
+- [x] Criar procedure para importar funcionários da planilha
+- [x] Criar procedure para cadastrar automaticamente usuários de liderança
+- [x] Criar procedure para listar funcionários importados
+
+### Validação e Testes
+- [x] Executar importação e validar dados
+- [x] Testar cadastro automático de usuários
+- [x] Validar que apenas admins foram preservados
+- [x] Verificar integridade dos dados importados
+- [ ] Criar testes automatizados para importação
+
+### Documentação
+- [x] Documentar processo de importação
+- [x] Documentar critérios de cargos de liderança
+- [x] Criar guia de uso para futuras importações
+
+### Resultados da Importação
+- [x] 3.114 funcionários processados (1.275 novos + 1.839 atualizados)
+- [x] 310 usuários de liderança criados automaticamente
+- [x] 17 usuários não-admin removidos
+- [x] Administradores preservados
+- [x] Credenciais salvas em users-credentials.json

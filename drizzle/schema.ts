@@ -237,16 +237,30 @@ export const employees = mysqlTable("employees", {
   userId: int("userId").unique(), // Vinculação com usuário do sistema
   employeeCode: varchar("employeeCode", { length: 50 }).notNull().unique(),
   name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 320 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  personalEmail: varchar("personalEmail", { length: 320 }),
+  corporateEmail: varchar("corporateEmail", { length: 320 }),
   passwordHash: varchar("passwordHash", { length: 255 }), // Senha para validação de consenso
   cpf: varchar("cpf", { length: 14 }).unique(),
   birthDate: datetime("birthDate"),
-  hireDate: datetime("hireDate").notNull(),
-  departmentId: int("departmentId").notNull(),
-  positionId: int("positionId").notNull(),
+  hireDate: datetime("hireDate"),
+  departmentId: int("departmentId"),
+  positionId: int("positionId"),
   managerId: int("managerId"), // Gestor direto
   costCenter: varchar("costCenter", { length: 100 }), // Centro de custos
   active: boolean("active").default(true).notNull(), // Status ativo/inativo
+  
+  // Campos da planilha TOTVS
+  chapa: varchar("chapa", { length: 50 }), // CHAPA
+  codSecao: varchar("codSecao", { length: 100 }), // CODSEÇÃO
+  secao: varchar("secao", { length: 255 }), // SEÇÃO
+  codFuncao: varchar("codFuncao", { length: 50 }), // CODFUNÇÃO
+  funcao: varchar("funcao", { length: 255 }), // FUNÇÃO
+  situacao: varchar("situacao", { length: 50 }), // SITUAÇÃO
+  gerencia: varchar("gerencia", { length: 255 }), // GERENCIA
+  diretoria: varchar("diretoria", { length: 255 }), // DIRETORIA
+  cargo: varchar("cargo", { length: 255 }), // CARGO
+  telefone: varchar("telefone", { length: 50 }), // TELEFONE
   
   // Informações financeiras e hierárquicas
   salary: int("salary"), // Salário em centavos (ex: 500000 = R$ 5.000,00)
