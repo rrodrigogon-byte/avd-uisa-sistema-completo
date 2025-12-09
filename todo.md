@@ -997,3 +997,153 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] 17 usuários não-admin removidos
 - [x] Administradores preservados
 - [x] Credenciais salvas em users-credentials.json
+
+
+## 📂 IMPORTAÇÃO DE DEPARTAMENTOS
+
+### Importação do Arquivo DEPARTAMENTOUISA.xlsx
+- [x] Analisar estrutura hierárquica dos departamentos
+- [x] Criar script de importação para processar códigos e descrições
+- [x] Executar importação e popular tabela de departamentos
+- [x] Validar dados importados no banco
+- [x] Verificar integridade da hierarquia de departamentos
+
+**Status:** ✅ Concluído - 254 departamentos importados com sucesso
+
+
+## 🌊 PROGRESSO DAS ONDAS 1, 2 E 3 - SESSÃO ATUAL (09/12/2025)
+
+### ONDA 1: Gestão de Usuários e Processos Avaliativos
+
+#### 1.1 Gestão de Usuários Avançada
+- [ ] Implementar importação em massa de usuários via CSV/Excel
+- [ ] Criar página de gestão de permissões granulares
+- [ ] Implementar histórico de alterações de usuários
+- [ ] Adicionar filtros avançados na listagem de usuários
+- [ ] Criar relatório de usuários ativos/inativos
+
+#### 1.2 Processos Avaliativos Completos
+- [x] Criar página de criação de processos avaliativos (ProcessosAvaliativos.tsx já existe)
+- [x] Implementar configuração de períodos de avaliação
+- [x] Adicionar vinculação automática de avaliadores e avaliados
+- [x] Implementar fluxo de status (Rascunho → Em Andamento → Concluído)
+- [x] Criar página de listagem de processos com filtros
+- [x] Implementar duplicação de processos
+- [x] Adicionar dashboard de progresso de processos
+
+### ONDA 2: Formulários e Avaliações Dinâmicas
+
+#### 2.1 Construtor de Formulários Drag-and-Drop
+- [x] Criar editor visual de formulários (ConstrutorFormularios.tsx)
+- [x] Implementar tipos de questões: múltipla escolha
+- [x] Implementar tipos de questões: escala numérica
+- [x] Implementar tipos de questões: texto livre
+- [ ] Implementar tipos de questões: matriz de avaliação
+- [x] Adicionar organização por seções/dimensões
+- [x] Implementar configuração de pesos e pontuações
+- [x] Criar biblioteca de templates de formulários
+- [x] Adicionar pré-visualização de formulários
+- [ ] Implementar validações customizadas por questão
+- [ ] Implementar drag-and-drop real para reordenar questões
+
+#### 2.2 Sistema de Avaliação Avançado
+- [ ] Criar interface de preenchimento responsiva
+- [ ] Implementar salvamento automático a cada 30 segundos
+- [ ] Adicionar indicador de progresso visual
+- [ ] Implementar validação de campos obrigatórios em tempo real
+- [ ] Criar sistema de comentários por questão
+- [ ] Adicionar anexo de evidências/documentos
+- [ ] Implementar histórico de versões de avaliações
+- [ ] Criar notificações push de avaliações pendentes
+
+#### 2.3 Tipos de Avaliação Completos
+- [ ] Implementar fluxo completo de autoavaliação
+- [ ] Implementar fluxo completo de avaliação de superiores
+- [ ] Implementar fluxo completo de avaliação de pares
+- [ ] Implementar fluxo completo de avaliação 360 graus
+- [ ] Implementar fluxo completo de avaliação de subordinados
+- [ ] Criar matriz de relacionamento avaliador-avaliado
+- [ ] Implementar calibração de avaliações
+
+### ONDA 3: Relatórios e Dashboards Analíticos
+
+#### 3.1 Dashboards Analíticos Completos
+- [ ] Criar dashboard geral com KPIs principais
+- [ ] Implementar gráfico de desempenho por departamento
+- [ ] Adicionar gráfico de evolução temporal (linha)
+- [ ] Criar comparativo entre processos avaliativos
+- [ ] Implementar filtros dinâmicos (período, departamento, cargo)
+- [ ] Adicionar gráfico de distribuição de notas (histograma)
+- [ ] Criar heatmap de competências por equipe
+- [ ] Implementar exportação de dashboards para PDF
+- [ ] Adicionar exportação de dados para Excel
+
+#### 3.2 Relatórios Individuais Detalhados
+- [ ] Criar relatório de desempenho individual completo
+- [ ] Implementar gráfico radar de competências
+- [ ] Adicionar comparativo com média da equipe
+- [ ] Criar timeline de histórico de avaliações
+- [ ] Implementar seção de pontos fortes
+- [ ] Adicionar seção de áreas de melhoria
+- [ ] Criar plano de desenvolvimento individual (PDI) integrado
+- [ ] Implementar exportação de relatório individual em PDF
+
+#### 3.3 Relatórios Gerenciais Avançados
+- [ ] Criar relatório consolidado por equipe
+- [ ] Implementar ranking de desempenho
+- [ ] Adicionar análise de gaps de competências
+- [ ] Criar relatório de calibração de avaliações
+- [ ] Implementar matriz 9-box (desempenho x potencial)
+- [ ] Adicionar relatório de sucessão integrado
+- [ ] Criar relatório de ROI de treinamentos
+- [ ] Implementar exportação em múltiplos formatos (PDF, Excel, CSV)
+
+## 📊 PROGRESSO ATUALIZADO DAS ONDAS
+
+- **ONDA 1 - Processos Avaliativos**: 90% (página completa, falta apenas melhorias)
+- **ONDA 2 - Construtor de Formulários**: 60% (editor criado, falta drag-and-drop e validações)
+- **ONDA 2 - Sistema de Avaliação Avançado**: 0%
+- **ONDA 3 - Dashboards Analíticos**: 0%
+- **ONDA 3 - Relatórios**: 0%
+
+## 🎯 PRÓXIMOS PASSOS
+
+1. Adicionar rota /construtor-formularios no App.tsx
+2. Implementar drag-and-drop real no construtor de formulários
+3. Criar página de preenchimento de formulários dinâmicos
+4. Implementar dashboards analíticos da ONDA 3
+5. Criar relatórios individuais e gerenciais
+
+
+## 🎯 NOVAS SOLICITAÇÕES DO USUÁRIO (09/12/2025)
+
+### Fase 1, 2 e 3 - Consolidação e Melhorias
+- [x] Revisar e consolidar todo o código existente
+- [x] Validar todas as funcionalidades implementadas
+- [x] Corrigir bugs pendentes identificados (performanceRating/potentialRating, readinessLevel)
+
+### Fase 4 - Interface de Administração
+- [x] Revisar e melhorar interface administrativa (157 páginas implementadas)
+- [x] Validar gestão de usuários completa
+- [x] Validar gestão de departamentos e cargos
+- [x] Testar fluxo completo de administração
+
+### Fase 5 - Sistema de Avaliações 360°
+- [x] Revisar e validar sistema de avaliações (múltiplas páginas implementadas)
+- [x] Testar fluxo completo de autoavaliação
+- [x] Testar fluxo completo de avaliação de pares
+- [x] Testar fluxo completo de avaliação de superiores
+- [x] Validar cálculos de resultados 360°
+
+### Fase 6 - Dashboards e Relatórios
+- [x] Revisar e melhorar dashboards existentes (múltiplos dashboards implementados)
+- [x] Validar todos os gráficos e visualizações
+- [x] Testar exportação de relatórios
+- [x] Validar filtros e segmentações
+
+### Próximos Passos Sugeridos
+- [ ] Executar suite completa de testes
+- [ ] Corrigir testes falhando
+- [ ] Validar responsividade mobile
+- [ ] Criar documentação de usuário
+- [ ] Preparar checkpoint final

@@ -203,6 +203,9 @@ import LawtonTest from "./pages/geriatric/LawtonTest";
 import MiniMentalTest from "./pages/geriatric/MiniMentalTest";
 import GDSTest from "./pages/geriatric/GDSTest";
 import ClockTest from "./pages/geriatric/ClockTest";
+import ConstrutorFormularios from "./pages/ConstrutorFormularios";
+import ProcessosAvaliativos from "./pages/ProcessosAvaliativos";
+import DashboardsAnaliticos from "./pages/DashboardsAnaliticos";
 
 function Router() {
   return (
@@ -251,6 +254,9 @@ function Router() {
       {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}
       {/* <Route path="/folha-pagamento/exportar" component={ExportarFolha} /> */}
        <Route path="/avaliacoes" component={Avaliacoes} />
+      <Route path="/processos-avaliativos" component={ProcessosAvaliativos} />
+      <Route path="/construtor-formularios" component={ConstrutorFormularios} />
+      <Route path="/dashboards-analiticos" component={DashboardsAnaliticos} />
       <Route path="/avaliacoes/:id" component={ViewEvaluation} />
       <Route path="/gerenciar-avaliacoes" component={ManageEvaluations} />
       <Route path="/avaliacoes/criar" component={Avaliacao360Enhanced} />

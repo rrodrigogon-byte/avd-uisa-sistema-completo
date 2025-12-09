@@ -393,7 +393,7 @@ export const usersRouter = router({
                   <div class="credentials">
                     <div class="credential-item">
                       <div class="credential-label">👤 Usuário:</div>
-                      <div class="credential-value">${employee.employeeCode}</div>
+                      <div class="credential-value">${employeeData.employeeCode}</div>
                     </div>
                     <div class="credential-item">
                       <div class="credential-label">🔑 Senha Temporária:</div>

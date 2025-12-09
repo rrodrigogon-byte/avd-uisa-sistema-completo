@@ -170,7 +170,7 @@ export const psychometricTestsRouter = router({
 
       for (const employeeId of input.employeeIds) {
         try {
-          const result = await psychometricTestsRouter.createCaller(ctx).sendIndividualInvitation({
+          const result: any = await psychometricTestsRouter.createCaller(ctx).sendIndividualInvitation({
             employeeId,
             testType: input.testType,
             expiresInDays: input.expiresInDays,

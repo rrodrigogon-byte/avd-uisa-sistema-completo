@@ -21,10 +21,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 
 export default function ProcessosAvaliativos() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
 
@@ -78,7 +78,7 @@ export default function ProcessosAvaliativos() {
       const result = await duplicateMutation.mutateAsync({ id });
       toast.success("Processo duplicado com sucesso!");
       refetch();
-      navigate(`/processos-avaliativos/${result.id}/editar`);
+      setLocation(`/processos-avaliativos/${result.id}/editar`);
     } catch (error) {
       toast.error("Erro ao duplicar processo");
     }
@@ -138,7 +138,7 @@ export default function ProcessosAvaliativos() {
             Gerencie processos completos de avaliação de desempenho
           </p>
         </div>
-        <Button onClick={() => navigate("/processos-avaliativos/novo")}>
+        <Button onClick={() => setLocation("/processos-avaliativos/novo")}>
           <Plus className="mr-2 h-4 w-4" />
           Novo Processo
         </Button>
@@ -303,7 +303,7 @@ export default function ProcessosAvaliativos() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => navigate(`/processos-avaliativos/${process.id}`)}
+                          onClick={() => setLocation(`/processos-avaliativos/${process.id}`)}
                           title="Ver Detalhes"
                         >
                           <Pencil className="h-4 w-4" />

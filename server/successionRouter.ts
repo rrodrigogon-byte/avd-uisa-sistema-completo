@@ -118,7 +118,7 @@ export const successionRouter = router({
           employeeEmail: employees.email,
           readinessLevel: successionCandidates.readinessLevel,
           priority: successionCandidates.priority,
-          notes: successionCandidates.notes,
+          comments: successionCandidates.comments,
           createdAt: successionCandidates.createdAt,
         })
         .from(successionCandidates)
@@ -294,7 +294,7 @@ export const successionRouter = router({
       await database
         .update(successionCandidates)
         .set(data)
-        .where(eq(successionCandidates.id, successorId));
+        .where(eq(successionCandidates.id, id));
 
       return { success: true };
     }),
@@ -365,7 +365,7 @@ export const successionRouter = router({
               z.object({
                 employeeName: z.string(),
                 employeeCode: z.string(),
-                readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]),
+                readinessLevel: z.enum(["pronto_ate_12_meses", "pronto_12_24_meses", "pronto_24_36_meses", "pronto_mais_36_meses"]),
                 priority: z.number(),
               })
             ),
@@ -470,6 +470,8 @@ export const successionRouter = router({
               employeeId,
               readinessLevel: successorData.readinessLevel,
               priority: successorData.priority,
+              performance: "medio",
+              potential: "medio",
             });
           }
 
@@ -517,12 +519,12 @@ export const successionRouter = router({
       // Mapear readinessLevel
       const mapReadiness = (level: string) => {
         const map: Record<string, string> = {
-          ready_now: "imediato",
-          "1-2_years": "1_ano",
-          "2-3_years": "2_3_anos",
-          "3+_years": "mais_3_anos",
+          ready_now: "pronto_ate_12_meses",
+          "1-2_years": "pronto_12_24_meses",
+          "2-3_years": "pronto_24_36_meses",
+          "3+_years": "pronto_mais_36_meses",
         };
-        return map[level] || "1_ano";
+        return map[level] || "pronto_12_24_meses";
       };
 
       // Mapear riskLevel (remover acentos)
@@ -625,6 +627,8 @@ export const successionRouter = router({
               employeeId,
               readinessLevel: mapReadiness(successorData.readinessLevel) as any,
               priority: i + 1,
+              performance: "medio",
+              potential: "medio",
             });
           }
 
@@ -835,8 +839,8 @@ export const successionRouter = router({
           departmentId: employees.departmentId,
           readinessLevel: successionCandidates.readinessLevel,
           riskLevel: successionPlans.riskLevel,
-          performanceRating: successionCandidates.performanceRating,
-          potentialRating: successionCandidates.potentialRating,
+          performance: successionCandidates.performance,
+          potential: successionCandidates.potential,
         })
         .from(successionCandidates)
         .leftJoin(employees, eq(successionCandidates.employeeId, employees.id))
@@ -915,7 +919,7 @@ export const successionRouter = router({
       const candidates = await query;
 
       const totalSuccessors = candidates.length;
-      const readyNow = candidates.filter((c) => c.readinessLevel === "imediato").length;
+      const readyNow = candidates.filter((c) => c.readinessLevel === "pronto_ate_12_meses").length;
       const highRisk = candidates.filter(
         (c) => c.riskLevel === "alto" || c.riskLevel === "critico"
       ).length;
