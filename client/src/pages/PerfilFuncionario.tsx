@@ -12,6 +12,7 @@ import HistoricoFuncionario from "@/components/HistoricoFuncionario";
 import EditPersonalInfoDialog from "@/components/EditPersonalInfoDialog";
 import CompetenciesManager from "@/components/CompetenciesManager";
 import GoalsManager from "@/components/GoalsManager";
+import EvaluationsTab from "@/components/EvaluationsTab";
 
 /**
  * Página de Perfil do Funcionário - Versão Completa com CRUD
@@ -246,62 +247,7 @@ export default function PerfilFuncionario() {
 
           {/* Tab: Avaliações */}
           <TabsContent value="evaluations" className="space-y-4">
-            {loadingEvaluations ? (
-              <div className="flex items-center justify-center h-64">
-                <Loader2 className="w-8 h-8 animate-spin text-[#F39200]" />
-              </div>
-            ) : evaluations && evaluations.length > 0 ? (
-              <div className="space-y-4">
-                {evaluations.map((evaluation: any) => (
-                  <Card key={evaluation.id}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle>Avaliação de Desempenho</CardTitle>
-                          <p className="text-sm text-gray-600 mt-1">
-                            ID: {evaluation.id}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className={
-                          evaluation.status === "concluida" ? "bg-green-50 text-green-700 border-green-200" : "bg-yellow-50 text-yellow-700 border-yellow-200"
-                        }>
-                          {evaluation.status || "Em andamento"}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <p className="text-sm text-gray-600">Autoavaliação</p>
-                          <p className="text-2xl font-bold text-gray-900">
-                            {evaluation.selfScore || "-"}/100
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Avaliação Gestor</p>
-                          <p className="text-2xl font-bold text-gray-900">
-                            {evaluation.managerScore || "-"}/100
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Score Final</p>
-                          <p className="text-2xl font-bold text-[#F39200]">
-                            {evaluation.finalScore || "-"}/100
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="p-12">
-                <div className="text-center text-gray-500">
-                  <Award className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p>Nenhuma avaliação registrada</p>
-                </div>
-              </Card>
-            )}
+            <EvaluationsTab employeeId={employeeId} />
           </TabsContent>
 
           {/* Tab: Testes Psicométricos */}

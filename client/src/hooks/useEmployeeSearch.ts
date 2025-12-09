@@ -56,6 +56,8 @@ export function useEmployeeSearch(
     isLoading,
     search,
     setSearch,
+    searchTerm: search,
+    setSearchTerm: setSearch,
     debouncedSearch,
   };
 }

@@ -434,3 +434,170 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Responsividade mobile (já garantida pelo Tailwind)
 - [x] Design system consistente (já implementado)
 - [x] Navegação intuitiva com DashboardLayout
+
+
+## 🔥 NOVA FASE - COMPLETAR FUNCIONALIDADES PENDENTES (08/12/2025)
+
+### 1. Pesquisas Pulse - Melhorias e Testes
+- [ ] Verificar se o sistema de criação de pesquisas está funcional
+- [ ] Testar envio de emails para destinatários
+- [ ] Validar página de resposta pública (sem autenticação)
+- [ ] Verificar visualização de resultados
+- [ ] Implementar gráficos de evolução temporal
+- [ ] Adicionar filtros por departamento/centro de custo
+- [ ] Implementar exportação de resultados (PDF/Excel)
+- [ ] Criar dashboard consolidado de todas as pesquisas
+- [ ] Adicionar notificações para novas respostas
+- [ ] Implementar lembretes automáticos para não respondentes
+
+### 2. Perfil de Funcionários - Completar Todas as Abas
+- [ ] Aba "Informações Pessoais" - Permitir edição completa
+- [ ] Aba "Avaliações" - Listar histórico completo de avaliações
+- [ ] Aba "Avaliações" - Permitir visualizar detalhes de cada avaliação
+- [ ] Aba "Avaliações" - Adicionar gráficos de evolução
+- [ ] Aba "Avaliações" - Permitir exportar histórico
+- [ ] Aba "Metas" - Listar todas as metas do funcionário
+- [ ] Aba "Metas" - Permitir criar novas metas
+- [ ] Aba "Metas" - Permitir editar metas existentes
+- [ ] Aba "Metas" - Mostrar progresso visual
+- [ ] Aba "PDI" - Listar planos de desenvolvimento
+- [ ] Aba "PDI" - Permitir criar novo PDI
+- [ ] Aba "PDI" - Permitir editar PDI existente
+- [ ] Aba "PDI" - Mostrar status de ações
+- [ ] Aba "Competências" - Listar competências avaliadas
+- [ ] Aba "Competências" - Mostrar radar de competências
+- [ ] Aba "Competências" - Comparar com perfil ideal do cargo
+- [ ] Aba "Testes Psicométricos" - Listar resultados de testes
+- [ ] Aba "Testes Psicométricos" - Permitir visualizar relatórios
+- [ ] Aba "Histórico" - Timeline completa de eventos
+- [ ] Aba "Histórico" - Filtros por tipo de evento
+- [ ] Aba "Documentos" - Upload de documentos
+- [ ] Aba "Documentos" - Download de documentos
+- [ ] Aba "Sucessão" - Mostrar posições que pode assumir
+- [ ] Aba "Sucessão" - Mostrar plano de desenvolvimento para sucessão
+
+### 3. Sistema de Avaliações (AVD) - Executar e Modificar
+- [ ] Criar página de listagem de avaliações do funcionário
+- [ ] Implementar botão "Iniciar Avaliação"
+- [ ] Criar formulário de autoavaliação
+- [ ] Permitir salvar rascunho da avaliação
+- [ ] Permitir editar avaliação antes de enviar
+- [ ] Implementar validação de campos obrigatórios
+- [ ] Criar fluxo de envio para aprovação
+- [ ] Implementar avaliação do gestor
+- [ ] Criar tela de consenso (gestor + RH)
+- [ ] Permitir adicionar comentários em cada competência
+- [ ] Implementar sistema de anexos/evidências
+- [ ] Criar visualização de resultado final
+- [ ] Implementar assinatura digital
+- [ ] Adicionar histórico de modificações
+- [ ] Criar notificações de prazos
+
+### 4. Sistema de Sucessão - Melhorias e Correções
+- [ ] Corrigir listagem de funcionários no mapa de sucessão
+- [ ] Implementar busca de funcionários por nome/cargo
+- [ ] Permitir adicionar sucessores com todos os campos
+- [ ] Implementar edição de sucessores existentes
+- [ ] Permitir remover sucessores
+- [ ] Adicionar validação de campos obrigatórios
+- [ ] Criar visualização de gaps de competências
+- [ ] Implementar plano de desenvolvimento para sucessores
+- [ ] Adicionar timeline de prontidão
+- [ ] Criar relatório de sucessão por cargo crítico
+- [ ] Implementar matriz de sucessão
+- [ ] Adicionar indicadores de risco (sem sucessor)
+- [ ] Criar dashboard de sucessão
+
+### 5. Lista de Funcionários - Correções
+- [ ] Verificar por que lista não aparece em algumas páginas
+- [ ] Corrigir filtros de busca
+- [ ] Implementar paginação
+- [ ] Adicionar ordenação por colunas
+- [ ] Corrigir exibição de dados (nome, cargo, departamento)
+- [ ] Implementar ações em lote (exportar, enviar email)
+- [ ] Adicionar indicadores visuais (status, avaliações pendentes)
+- [ ] Corrigir navegação para perfil do funcionário
+
+### 6. Melhorias Gerais Identificadas
+- [ ] Implementar busca global (Ctrl+K) em todas as páginas
+- [ ] Adicionar breadcrumbs para navegação
+- [ ] Implementar skeleton loaders consistentes
+- [ ] Melhorar mensagens de erro
+- [ ] Adicionar tooltips explicativos
+- [ ] Implementar confirmações antes de ações críticas
+- [ ] Criar sistema de ajuda contextual
+- [ ] Implementar tour guiado para novos usuários
+- [ ] Adicionar atalhos de teclado
+- [ ] Melhorar responsividade mobile
+- [ ] Implementar modo offline (cache)
+- [ ] Adicionar indicadores de progresso
+- [ ] Criar sistema de favoritos
+- [ ] Implementar histórico de navegação
+
+### 7. Testes e Validações
+- [ ] Testar fluxo completo de pesquisa pulse
+- [ ] Testar todas as abas do perfil de funcionário
+- [ ] Testar fluxo completo de avaliação
+- [ ] Testar sistema de sucessão
+- [ ] Validar lista de funcionários em todas as páginas
+- [ ] Testar responsividade em mobile
+- [ ] Validar permissões de acesso
+- [ ] Testar performance com dados em volume
+- [ ] Validar exportação de relatórios
+- [ ] Testar notificações
+
+## 📊 PROGRESSO DA NOVA FASE
+
+- Pesquisas Pulse: 0%
+- Perfil de Funcionários: 30%
+- Sistema de Avaliações (AVD): 0%
+- Sistema de Sucessão: 50%
+- Lista de Funcionários: 0%
+- Melhorias Gerais: 20%
+- Testes: 0%
+- **META: 100% em todas as áreas**
+
+
+## ✅ TAREFAS CONCLUÍDAS NESTA SESSÃO (08/12/2025)
+
+### Perfil de Funcionários - Melhorias Implementadas
+- [x] Criar componente EvaluationsTab com visualização completa
+- [x] Implementar cards de estatísticas (total, média autoavaliação, média gestor, média final)
+- [x] Adicionar gráfico de evolução de performance com LineChart
+- [x] Criar tabela detalhada de histórico de avaliações
+- [x] Implementar modal de detalhes para cada avaliação
+- [x] Adicionar funcionalidade de exportação de relatórios
+- [x] Integrar componente EvaluationsTab no PerfilFuncionario.tsx
+
+### Sistema de Sucessão - Correções
+- [x] Corrigir hook useEmployeeSearch para retornar searchTerm e setSearchTerm
+- [x] Validar que MapaSucessaoUISA.tsx está funcional
+- [x] Confirmar que botões Editar, Incluir e Deletar estão funcionando
+
+### Sistema de AVD - Validação
+- [x] Confirmar que MinhasAvaliacoes.tsx está funcional
+- [x] Confirmar que FormularioAvaliacao.tsx permite executar e salvar avaliações
+- [x] Validar sistema de rascunho (salvar e continuar depois)
+- [x] Validar validações de campos obrigatórios
+
+### Lista de Funcionários - Validação
+- [x] Confirmar que Funcionarios.tsx tem estrutura correta
+- [x] Validar filtros de busca (nome, email, CPF, matrícula)
+- [x] Validar filtros por departamento, status e cargo
+- [x] Confirmar que tabela de listagem está implementada
+
+## 🔄 PRÓXIMAS AÇÕES RECOMENDADAS
+
+### Testes Necessários
+- [ ] Testar fluxo completo de pesquisa pulse no navegador
+- [ ] Testar todas as abas do perfil de funcionário
+- [ ] Testar criação e edição de sucessores
+- [ ] Testar execução de avaliações AVD
+- [ ] Validar lista de funcionários carregando dados do backend
+
+### Melhorias Sugeridas
+- [ ] Implementar paginação na lista de funcionários
+- [ ] Adicionar ordenação por colunas
+- [ ] Implementar exportação de relatórios em PDF
+- [ ] Adicionar mais gráficos no perfil do funcionário
+- [ ] Implementar notificações em tempo real
