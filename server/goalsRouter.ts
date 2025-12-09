@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { and, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { z } from "zod";
 import { notifySmartGoalActivity } from "./adminRhEmailService";
+import { sendGoalCreatedEmail, sendGoalCompletedEmail } from "./_core/email";
 import {
   goalApprovals,
   goalComments,
@@ -262,6 +263,16 @@ export const goalsRouter = router({
             targetEmployee[0].name,
             input.goalType === "corporate" ? "approved" : "draft"
           );
+          
+          // Enviar email para o colaborador sobre a nova meta
+          if (targetEmployee[0].email) {
+            await sendGoalCreatedEmail(
+              targetEmployee[0].email,
+              targetEmployee[0].name,
+              input.title,
+              new Date(input.endDate)
+            );
+          }
         }
       } catch (error) {
         console.error('[GoalsRouter] Failed to send email notification:', error);
@@ -581,6 +592,15 @@ export const goalsRouter = router({
               targetEmployee.name,
               updateData.status
             );
+            
+            // Enviar email quando meta é concluída
+            if (input.progress === 100 && targetEmployee.email) {
+              await sendGoalCompletedEmail(
+                targetEmployee.email,
+                targetEmployee.name,
+                goal.title
+              );
+            }
           }
         }
       } catch (error) {

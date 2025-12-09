@@ -4,6 +4,7 @@ import { getDb } from "./db";
 import { feedbacks, employees, pdiPlans } from "../drizzle/schema";
 import { protectedProcedure, router } from "./_core/trpc";
 import { notifyNewFeedback } from "./notificationEvents";
+import { sendFeedbackReceivedEmail } from "./_core/email";
 
 export const feedbackRouter = router({
   // Criar novo feedback
@@ -37,6 +38,17 @@ export const feedbackRouter = router({
       const managerResult = await database.select().from(employees).where(eq(employees.userId, ctx.user.id)).limit(1);
       const managerName = managerResult[0]?.name || "Seu gestor";
       await notifyNewFeedback(input.employeeId, managerName);
+      
+      // Enviar email para o colaborador sobre o novo feedback
+      const employeeResult = await database.select().from(employees).where(eq(employees.id, input.employeeId)).limit(1);
+      if (employeeResult[0]?.email) {
+        await sendFeedbackReceivedEmail(
+          employeeResult[0].email,
+          employeeResult[0].name,
+          managerName,
+          input.type
+        );
+      }
 
       return { success: true };
     }),

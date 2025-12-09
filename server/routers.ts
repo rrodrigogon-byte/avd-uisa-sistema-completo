@@ -80,6 +80,21 @@ import { psychometricTestsRouter } from "./routers/psychometricTestsRouter";
 import { geriatricRouter } from "./routers/geriatricRouter";
 import { adminAdvancedRouter } from "./routers/adminAdvancedRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
+import { 
+  sendWelcomeEmail, 
+  sendLoginNotification, 
+  sendEvaluationCreatedEmail,
+  sendEvaluationReminderEmail,
+  sendEvaluationCompletedEmail,
+  sendCycleStartedEmail,
+  sendGoalCreatedEmail,
+  sendGoalCompletedEmail,
+  sendPDICreatedEmail,
+  sendFeedbackReceivedEmail,
+  sendRoleChangeEmail,
+  sendAdminReportEmail,
+  sendCredentialsEmail
+} from "./_core/email";
 
 export const appRouter = router({
   system: systemRouter,

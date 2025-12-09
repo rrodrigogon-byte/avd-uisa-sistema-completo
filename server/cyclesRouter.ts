@@ -5,6 +5,7 @@ import { evaluationCycles, performanceEvaluations, smartGoals, pdiPlans, employe
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 import { notifyNewEvaluationCycle } from "./adminRhEmailService";
+import { sendCycleStartedEmail } from "./_core/email";
 
 /**
  * Router de Gestão de Ciclos de Avaliação
@@ -248,6 +249,20 @@ export const cyclesRouter = router({
           new Date(input.endDate),
           participantsCount
         );
+        
+        // Enviar email para todos os colaboradores sobre o novo ciclo
+        const allEmployees = await db.select().from(employees).where(eq(employees.active, true));
+        for (const employee of allEmployees) {
+          if (employee.email) {
+            await sendCycleStartedEmail(
+              employee.email,
+              employee.name,
+              input.name,
+              new Date(input.startDate),
+              new Date(input.endDate)
+            );
+          }
+        }
       } catch (error) {
         console.error('[CyclesRouter] Failed to send email notification:', error);
       }

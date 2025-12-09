@@ -601,3 +601,59 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [ ] Implementar exportação de relatórios em PDF
 - [ ] Adicionar mais gráficos no perfil do funcionário
 - [ ] Implementar notificações em tempo real
+
+
+## 🚀 NOVA SOLICITAÇÃO: EMAILS EM TODAS AS OPERAÇÕES (09/12/2025)
+
+### Sistema de Emails Expandido - 100% de Cobertura
+- [x] Email de boas-vindas ao criar novo usuário
+- [ ] Email de notificação de login (toda vez que usuário faz login)
+- [ ] Email quando nova avaliação é criada (para avaliado e avaliadores)
+- [ ] Email quando avaliação é atribuída a um avaliador
+- [x] Email de lembrete de avaliação pendente (automático)
+- [ ] Email quando avaliação é concluída (para avaliado e RH)
+- [ ] Email de relatório final de avaliação
+- [x] Email quando período de avaliação inicia
+- [x] Email quando período de avaliação está próximo do fim (7, 3, 1 dia antes)
+- [x] Email quando meta SMART é criada
+- [ ] Email quando meta SMART é atualizada
+- [x] Email quando meta SMART é concluída
+- [x] Email quando PDI é criado
+- [ ] Email quando PDI é atualizado
+- [ ] Email quando ação de PDI é concluída
+- [x] Email quando feedback é enviado
+- [x] Email quando feedback é recebido
+- [ ] Email quando teste psicométrico é atribuído
+- [ ] Email quando teste psicométrico é concluído
+- [ ] Email quando pesquisa pulse é criada
+- [ ] Email quando pesquisa pulse é respondida
+- [ ] Email quando funcionário é promovido/rebaixado
+- [ ] Email quando funcionário é transferido de departamento
+- [ ] Email quando bônus é atribuído
+- [ ] Email quando calibração é realizada
+- [ ] Email quando sucessor é adicionado ao plano de sucessão
+- [x] Email de relatórios periódicos para administradores (semanal/mensal)
+- [ ] Email de alertas de sistema (erros críticos, falhas)
+
+### Garantias de Entrega de Emails
+- [x] Validar que TODOS os emails estão sendo enviados corretamente
+- [x] Implementar logs detalhados de cada envio
+- [ ] Criar dashboard de monitoramento de emails
+- [x] Implementar retry automático para emails falhados (já existe, validar)
+- [ ] Criar alertas quando taxa de falha > 5%
+- [x] Implementar fila de prioridade para emails críticos
+- [x] Validar templates de todos os emails
+- [x] Testar envio em diferentes cenários (sucesso, falha, retry)
+
+### Testes de Email
+- [ ] Criar testes automatizados para cada tipo de email
+- [ ] Validar que emails contêm informações corretas
+- [ ] Testar fluxo completo de cada operação com email
+- [ ] Validar que emails não são duplicados
+- [ ] Testar rate limiting e throttling
+
+### Documentação de Emails
+- [ ] Documentar todos os tipos de emails do sistema
+- [ ] Criar guia de configuração SMTP
+- [ ] Documentar troubleshooting de emails
+- [ ] Criar exemplos de cada template de email

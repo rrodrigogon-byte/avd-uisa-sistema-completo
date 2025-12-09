@@ -10,7 +10,7 @@ import { serveStatic, setupVite } from "./vite";
 import { setupWebSocket } from "../websocket";
 import { startCronJobs } from "../cron";
 import { startEmailQueueProcessor } from "./emailQueue";
-import { startEmailScheduler } from "../emailScheduler";
+import { startEmailScheduler } from "./emailScheduler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {

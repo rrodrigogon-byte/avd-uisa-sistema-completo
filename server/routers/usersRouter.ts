@@ -6,7 +6,7 @@ import { notifyNewUser } from "../adminRhEmailService";
 import { users, employees } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { sendEmail } from "../emailService";
-import { sendCredentialsEmail } from "../_core/email";
+import { sendCredentialsEmail, sendWelcomeEmail } from "../_core/email";
 import bcrypt from "bcryptjs";
 
 /**
@@ -126,6 +126,13 @@ export const usersRouter = router({
           await notifyNewUser(input.name, input.email, input.role);
         } catch (error) {
           console.error('[UsersRouter] Failed to send email notification:', error);
+        }
+
+        // Enviar email de boas-vindas para o novo usuário
+        try {
+          await sendWelcomeEmail(input.email, input.name);
+        } catch (error) {
+          console.error('[UsersRouter] Failed to send welcome email:', error);
         }
 
         // Buscar o usuário recém-criado

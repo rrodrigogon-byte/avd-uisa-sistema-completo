@@ -3,6 +3,7 @@ import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
 import { notifyPdiActivity } from "./adminRhEmailService";
+import { sendPDICreatedEmail } from "./_core/email";
 import {
   competencies,
   employees,
@@ -163,6 +164,15 @@ export const pdiIntelligentRouter = router({
             `PDI para ${targetPosition.title}`,
             0
           );
+          
+          // Enviar email para o colaborador sobre o novo PDI
+          if (employee.email) {
+            await sendPDICreatedEmail(
+              employee.email,
+              employee.name,
+              `PDI para ${targetPosition.title}`
+            );
+          }
         }
       } catch (error) {
         console.error('[PdiIntelligentRouter] Failed to send email notification:', error);

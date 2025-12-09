@@ -261,7 +261,7 @@ export const reportsAdvancedRouter = router({
           finalScore: performanceEvaluations.finalScore,
         })
         .from(performanceEvaluations)
-        .where(and(...evalConditions));
+        .where(evalConditions.length > 0 ? and(...evalConditions) : undefined);
 
       // Buscar metas
       const goalsConditions = [inArray(goals.employeeId, employeeIds)];
@@ -278,7 +278,7 @@ export const reportsAdvancedRouter = router({
           status: goals.status,
         })
         .from(goals)
-        .where(and(...goalsConditions));
+        .where(goalsConditions.length > 0 ? and(...goalsConditions) : undefined);
 
       // Buscar PDIs
       const pdisData = await db
