@@ -83,6 +83,7 @@ import { evaluationProcessesRouter } from "./routers/evaluationProcessesRouter";
 import { formBuilderRouter } from "./routers/formBuilderRouter";
 import { consolidatedReportsRouter } from "./routers/consolidatedReportsRouter";
 import { emailNotificationsRouter } from "./routers/emailNotificationsRouter";
+import { emailMonitoringRouter } from "./routers/emailMonitoringRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -124,6 +125,7 @@ export const appRouter = router({
   formBuilder: formBuilderRouter,
   consolidatedReports: consolidatedReportsRouter,
   emailNotifications: emailNotificationsRouter,
+  emailMonitoring: emailMonitoringRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

@@ -17,6 +17,7 @@ import PredictiveAnalytics from "./pages/PredictiveAnalytics";
 import ContinuousFeedback from "./pages/ContinuousFeedback";
 import ResultadosIndividuais from "./pages/ResultadosIndividuais";
 import DashboardAdmin from "./pages/DashboardAdmin";
+import EmailMonitoring from "./pages/EmailMonitoring";
 import Departamentos from "./pages/Departamentos";
 import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
@@ -411,6 +412,7 @@ function Router() {
       {/* Passos 4, 5 e 6 - Resultados e Dashboard Admin */}
       <Route path="/resultados/:participantId" component={ResultadosIndividuais} />
       <Route path="/admin/dashboard-processos" component={DashboardAdmin} />
+      <Route path="/admin/email-monitoring" component={EmailMonitoring} />
       
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />

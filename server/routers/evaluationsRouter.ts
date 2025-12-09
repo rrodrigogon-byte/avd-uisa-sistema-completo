@@ -495,7 +495,6 @@ export const evaluationsRouter = router({
 
       return result;
     }),
-});
 
   /**
    * Enviar notificação por email sobre avaliação
