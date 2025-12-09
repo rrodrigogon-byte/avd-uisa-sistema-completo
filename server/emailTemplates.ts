@@ -305,3 +305,250 @@ export function pdiCreatedTemplate(data: {
     html: baseTemplate("PDI Criado", content),
   };
 }
+
+/**
+ * Template: Período Avaliativo Iniciado
+ */
+export function periodStartedTemplate(data: {
+  recipientName: string;
+  periodName: string;
+  startDate: string;
+  endDate: string;
+  description?: string;
+  dashboardUrl: string;
+}): { subject: string; html: string } {
+  const content = `
+    <h2>👋 Olá, ${data.recipientName}!</h2>
+    <p>Um novo período de avaliação de desempenho foi iniciado e você está incluído(a) neste processo.</p>
+    
+    <div class="info-box">
+      <h3 style="margin-top: 0; color: #92400e;">📅 ${data.periodName}</h3>
+      <p style="color: #78350f;"><strong>Início:</strong> ${data.startDate}</p>
+      <p style="color: #78350f;"><strong>Término:</strong> ${data.endDate}</p>
+      ${data.description ? `<p style="color: #78350f; margin-bottom: 0;">${data.description}</p>` : ''}
+    </div>
+    
+    <p>Você receberá notificações adicionais quando for necessário realizar sua autoavaliação.</p>
+    
+    <a href="${data.dashboardUrl}" class="button">Acessar Sistema</a>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 14px; color: #6b7280;">
+      💡 <strong>Dica:</strong> Prepare-se revisando suas metas e conquistas do período.
+    </p>
+  `;
+
+  return {
+    subject: `📅 Novo Período Avaliativo: ${data.periodName}`,
+    html: baseTemplate("Período Avaliativo Iniciado", content),
+  };
+}
+
+/**
+ * Template: Lembrete de Autoavaliação Pendente
+ */
+export function selfEvaluationReminderTemplate(data: {
+  recipientName: string;
+  periodName: string;
+  deadline: string;
+  daysRemaining: number;
+  dashboardUrl: string;
+}): { subject: string; html: string } {
+  const isUrgent = data.daysRemaining <= 3;
+  const boxClass = isUrgent ? 'info-box' : 'info-box';
+  const emoji = isUrgent ? '⚠️' : '⏰';
+
+  const content = `
+    <h2>👋 Olá, ${data.recipientName}!</h2>
+    <p>Este é um lembrete sobre sua autoavaliação pendente no período <strong>${data.periodName}</strong>.</p>
+    
+    <div class="${boxClass}">
+      <p style="margin: 0;"><strong>${emoji} Prazo Final:</strong> ${data.deadline}</p>
+      <p style="margin: 8px 0 0 0;"><strong>Tempo Restante:</strong> ${data.daysRemaining} ${data.daysRemaining === 1 ? 'dia' : 'dias'}</p>
+    </div>
+    
+    ${isUrgent ? `
+    <p style="color: #dc2626; font-weight: 600;">
+      ⚠️ Atenção: O prazo está próximo! Complete sua autoavaliação o quanto antes.
+    </p>
+    ` : `
+    <p>Por favor, reserve um tempo para refletir sobre seu desempenho e preencher sua autoavaliação.</p>
+    `}
+    
+    <a href="${data.dashboardUrl}" class="button">Preencher Autoavaliação</a>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 14px; color: #6b7280;">
+      💡 <strong>Lembre-se:</strong> A autoavaliação é uma oportunidade de reflexão sobre suas conquistas e áreas de desenvolvimento.
+    </p>
+  `;
+
+  return {
+    subject: `${emoji} Lembrete: Autoavaliação Pendente - ${data.periodName}`,
+    html: baseTemplate("Lembrete de Autoavaliação", content),
+  };
+}
+
+/**
+ * Template: Notificação para Supervisor Avaliar
+ */
+export function supervisorEvaluationTemplate(data: {
+  recipientName: string;
+  employeeName: string;
+  periodName: string;
+  deadline: string;
+  dashboardUrl: string;
+}): { subject: string; html: string } {
+  const content = `
+    <h2>👋 Olá, ${data.recipientName}!</h2>
+    <p>Você precisa avaliar o desempenho de um colaborador da sua equipe.</p>
+    
+    <div class="info-box">
+      <p style="margin: 0;"><strong>👤 Colaborador:</strong> ${data.employeeName}</p>
+      <p style="margin: 8px 0;"><strong>📅 Período:</strong> ${data.periodName}</p>
+      <p style="margin: 0;"><strong>⏰ Prazo Final:</strong> ${data.deadline}</p>
+    </div>
+    
+    <p>O colaborador já concluiu sua autoavaliação. Agora é sua vez de avaliar o desempenho dele(a) durante este período.</p>
+    
+    <a href="${data.dashboardUrl}" class="button">Avaliar Colaborador</a>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 14px; color: #6b7280;">
+      💡 <strong>Dica:</strong> Revise as metas estabelecidas e as entregas realizadas antes de avaliar.
+    </p>
+  `;
+
+  return {
+    subject: `👤 Avaliação Pendente: ${data.employeeName} - ${data.periodName}`,
+    html: baseTemplate("Avaliação de Colaborador", content),
+  };
+}
+
+/**
+ * Template: Confirmação de Avaliação Concluída
+ */
+export function evaluationCompletedTemplate(data: {
+  recipientName: string;
+  periodName: string;
+  evaluationType: 'autoavaliacao' | 'supervisor';
+  submissionDate: string;
+  dashboardUrl: string;
+}): { subject: string; html: string } {
+  const typeText = data.evaluationType === 'autoavaliacao' ? 'Autoavaliação' : 'Avaliação de Supervisor';
+
+  const content = `
+    <h2>👋 Olá, ${data.recipientName}!</h2>
+    <p>Sua ${typeText.toLowerCase()} foi recebida e registrada no sistema.</p>
+    
+    <div class="success-box">
+      <p style="margin: 0;"><strong>✅ Status:</strong> Concluída</p>
+      <p style="margin: 8px 0;"><strong>📅 Período:</strong> ${data.periodName}</p>
+      <p style="margin: 0;"><strong>🕐 Data de Envio:</strong> ${data.submissionDate}</p>
+    </div>
+    
+    ${data.evaluationType === 'autoavaliacao' ? `
+    <p>Agora sua avaliação será analisada por seu supervisor. Você receberá uma notificação quando o processo estiver completo.</p>
+    ` : `
+    <p>A avaliação foi registrada e o colaborador será notificado sobre a conclusão do processo.</p>
+    `}
+    
+    <a href="${data.dashboardUrl}" class="button">Ver Detalhes</a>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 14px; color: #6b7280;">
+      Obrigado por participar do processo de avaliação de desempenho!
+    </p>
+  `;
+
+  return {
+    subject: `✅ ${typeText} Concluída - ${data.periodName}`,
+    html: baseTemplate("Avaliação Concluída", content),
+  };
+}
+
+/**
+ * Template: Resultado Final da Avaliação
+ */
+export function finalResultTemplate(data: {
+  recipientName: string;
+  periodName: string;
+  selfScore: number;
+  supervisorScore: number;
+  finalScore: number;
+  supervisorComments?: string;
+  dashboardUrl: string;
+}): { subject: string; html: string } {
+  const content = `
+    <h2>👋 Olá, ${data.recipientName}!</h2>
+    <p>Sua avaliação de desempenho foi concluída. Confira os resultados abaixo:</p>
+    
+    <div class="success-box">
+      <h3 style="margin-top: 0; color: #065f46;">🎯 Resultado da Avaliação</h3>
+      <p style="color: #047857; margin: 8px 0;"><strong>📅 Período:</strong> ${data.periodName}</p>
+      <p style="color: #047857; margin: 8px 0;"><strong>📊 Sua Autoavaliação:</strong> ${data.selfScore.toFixed(2)}</p>
+      <p style="color: #047857; margin: 8px 0;"><strong>👤 Avaliação do Supervisor:</strong> ${data.supervisorScore.toFixed(2)}</p>
+      <p style="font-size: 24px; font-weight: 700; color: #059669; margin: 16px 0 0 0;">
+        <strong>🏆 Nota Final:</strong> ${data.finalScore.toFixed(2)}
+      </p>
+    </div>
+    
+    ${data.supervisorComments ? `
+    <div class="info-box">
+      <h4 style="margin-top: 0; color: #92400e;">💬 Comentários do Supervisor:</h4>
+      <p style="color: #78350f; margin-bottom: 0;">${data.supervisorComments}</p>
+    </div>
+    ` : ''}
+    
+    <p>Acesse o sistema para ver os detalhes completos da sua avaliação e discutir os próximos passos com seu supervisor.</p>
+    
+    <a href="${data.dashboardUrl}" class="button">Ver Avaliação Completa</a>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 14px; color: #6b7280;">
+      💡 <strong>Próximos Passos:</strong> Agende uma reunião com seu supervisor para discutir seu desenvolvimento profissional.
+    </p>
+  `;
+
+  return {
+    subject: `🎯 Resultado da Avaliação - ${data.periodName}`,
+    html: baseTemplate("Resultado da Avaliação", content),
+  };
+}
+
+/**
+ * Template: Notificação Genérica
+ */
+export function genericNotificationTemplate(data: {
+  recipientName: string;
+  title: string;
+  message: string;
+  actionText?: string;
+  actionUrl?: string;
+}): { subject: string; html: string } {
+  const content = `
+    <h2>👋 Olá, ${data.recipientName}!</h2>
+    <h3 style="color: #1f2937;">${data.title}</h3>
+    <p>${data.message}</p>
+    
+    ${data.actionText && data.actionUrl ? `
+    <a href="${data.actionUrl}" class="button">${data.actionText}</a>
+    ` : ''}
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 14px; color: #6b7280;">
+      Sistema AVD UISA - Avaliação de Desempenho
+    </p>
+  `;
+
+  return {
+    subject: `🔔 ${data.title}`,
+    html: baseTemplate(data.title, content),
+  };
+}

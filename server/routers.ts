@@ -78,11 +78,13 @@ import { dashboardGestorRouter } from "./routers/dashboardGestorRouter";
 import { reportsAdvancedRouter } from "./routers/reportsAdvancedRouter";
 import { psychometricTestsRouter } from "./routers/psychometricTestsRouter";
 import { geriatricRouter } from "./routers/geriatricRouter";
+import { adminAdvancedRouter } from "./routers/adminAdvancedRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
   admin: adminRouter,
+  adminAdvanced: adminAdvancedRouter,
   audit: auditRouter,
   search: searchRouter,
   users: usersRouter,
