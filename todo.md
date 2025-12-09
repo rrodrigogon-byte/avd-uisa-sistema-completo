@@ -306,6 +306,7 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página de Pendências ao editar (linha 583 - responsavelId pode ser null/undefined)
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página Pendências ao acessar /pendencias?status=em_andamento
+- [x] Corrigir erro de tabela costCenters ausente no banco de dados (página Performance Integrada)
 
 
 ## 🚀 MELHORIAS E PRÓXIMOS PASSOS (NOVA FASE)
