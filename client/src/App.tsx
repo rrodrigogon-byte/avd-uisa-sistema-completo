@@ -15,6 +15,8 @@ import Pendencias from "./pages/Pendencias";
 import CustomReportBuilder from "./pages/CustomReportBuilder";
 import PredictiveAnalytics from "./pages/PredictiveAnalytics";
 import ContinuousFeedback from "./pages/ContinuousFeedback";
+import ResultadosIndividuais from "./pages/ResultadosIndividuais";
+import DashboardAdmin from "./pages/DashboardAdmin";
 import Departamentos from "./pages/Departamentos";
 import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
@@ -401,6 +403,10 @@ function Router() {
       <Route path="/relatorios/personalizados" component={CustomReportBuilder} />
       <Route path="/analytics/preditiva" component={PredictiveAnalytics} />
       <Route path="/feedback/continuo" component={ContinuousFeedback} />
+      
+      {/* Passos 4, 5 e 6 - Resultados e Dashboard Admin */}
+      <Route path="/resultados/:participantId" component={ResultadosIndividuais} />
+      <Route path="/admin/dashboard-processos" component={DashboardAdmin} />
       
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />
