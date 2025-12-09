@@ -516,14 +516,14 @@ export const evaluationsRouter = router({
       const resultUrl = `${process.env.VITE_APP_URL || 'http://localhost:3000'}/avaliacoes/${evaluation.id}`;
       
       const emailHtml = getAvaliationCreatedEmailTemplate({
-        avaliadoName: evaluation.employeeName,
-        avaliadorName: evaluation.evaluatorName,
-        periodo: evaluation.evaluationPeriod,
+        avaliadoName: "Colaborador",
+        avaliadorName: "Avaliador",
+        periodo: "Ciclo de Avaliação",
         resultadoUrl: resultUrl,
       });
 
-      // Usar email do colaborador ou fallback para email do usuário
-      const recipientEmail = evaluation.employeeEmail || ctx.user.email || '';
+      // Usar email do usuário logado
+      const recipientEmail = ctx.user.email || '';
       if (!recipientEmail) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -533,7 +533,7 @@ export const evaluationsRouter = router({
 
       const result = await sendEmail({
         to: recipientEmail,
-        subject: `Nova Avaliação de Desempenho - ${evaluation.evaluationPeriod}`,
+        subject: `Nova Avaliação de Desempenho`,
         html: emailHtml,
       });
 

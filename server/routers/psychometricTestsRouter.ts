@@ -72,12 +72,12 @@ export const psychometricTestsRouter = router({
       const { getEmployeeById } = await import("../db");
       const employee = await getEmployeeById(input.employeeId);
 
-      if (!employee || !employee.email) {
+      if (!employee || !employee.employee.email) {
         throw new Error("Funcionário não encontrado ou sem e-mail cadastrado");
       }
 
       // Gerar link de acesso
-      const testLink = `${ENV.frontendUrl || "http://localhost:3000"}/teste/${uniqueToken}`;
+      const testLink = `http://localhost:3000/teste/${uniqueToken}`;
 
       // Mapear nomes dos testes
       const testNames: Record<string, string> = {
@@ -93,12 +93,12 @@ export const psychometricTestsRouter = router({
       // Enviar e-mail
       try {
         await sendEmail({
-          to: employee.email,
+          to: employee.employee.email!,
           subject: `Convite para Teste Psicométrico - ${testNames[input.testType]}`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #2563eb;">Convite para Teste Psicométrico</h2>
-              <p>Olá <strong>${employee.name}</strong>,</p>
+              <p>Olá <strong>${employee.employee.name}</strong>,</p>
               <p>Você foi convidado(a) a realizar o teste psicométrico <strong>${testNames[input.testType]}</strong>.</p>
               <p>Este teste é uma ferramenta importante para o seu desenvolvimento profissional e ajudará a identificar seus pontos fortes, estilo de trabalho e áreas de crescimento.</p>
               
