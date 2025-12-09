@@ -79,6 +79,9 @@ import { reportsAdvancedRouter } from "./routers/reportsAdvancedRouter";
 import { psychometricTestsRouter } from "./routers/psychometricTestsRouter";
 import { geriatricRouter } from "./routers/geriatricRouter";
 import { adminAdvancedRouter } from "./routers/adminAdvancedRouter";
+import { evaluationProcessesRouter } from "./routers/evaluationProcessesRouter";
+import { formBuilderRouter } from "./routers/formBuilderRouter";
+import { consolidatedReportsRouter } from "./routers/consolidatedReportsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -114,6 +117,11 @@ export const appRouter = router({
   reportsAdvanced: reportsAdvancedRouter,
   psychometricTests: psychometricTestsRouter,
   geriatric: geriatricRouter,
+  
+  // Ondas 1, 2 e 3 - Processos Avaliativos e Formulários Dinâmicos
+  evaluationProcesses: evaluationProcessesRouter,
+  formBuilder: formBuilderRouter,
+  consolidatedReports: consolidatedReportsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

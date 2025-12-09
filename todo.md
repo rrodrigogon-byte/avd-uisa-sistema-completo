@@ -657,3 +657,199 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [ ] Criar guia de configuração SMTP
 - [ ] Documentar troubleshooting de emails
 - [ ] Criar exemplos de cada template de email
+
+
+## 🌊 ONDAS 1, 2 E 3 - SISTEMA COMPLETO AVD UISA (09/12/2025)
+
+### ONDA 1: Gestão de Usuários e Processos Avaliativos
+
+#### 1.1 Gestão de Usuários Avançada
+- [ ] Implementar importação em massa de usuários via CSV/Excel
+- [ ] Criar página de gestão de permissões granulares
+- [ ] Implementar histórico de alterações de usuários
+- [ ] Adicionar filtros avançados na listagem de usuários
+- [ ] Criar relatório de usuários ativos/inativos
+
+#### 1.2 Processos Avaliativos Completos
+- [ ] Criar página de criação de processos avaliativos
+- [ ] Implementar configuração de períodos de avaliação
+- [ ] Adicionar vinculação automática de avaliadores e avaliados
+- [ ] Implementar fluxo de status (Rascunho → Em Andamento → Concluído)
+- [ ] Criar página de listagem de processos com filtros
+- [ ] Implementar duplicação de processos
+- [ ] Adicionar dashboard de progresso de processos
+
+### ONDA 2: Formulários e Avaliações Dinâmicas
+
+#### 2.1 Construtor de Formulários Drag-and-Drop
+- [ ] Criar editor visual de formulários
+- [ ] Implementar tipos de questões: múltipla escolha
+- [ ] Implementar tipos de questões: escala numérica
+- [ ] Implementar tipos de questões: texto livre
+- [ ] Implementar tipos de questões: matriz de avaliação
+- [ ] Adicionar organização por seções/dimensões
+- [ ] Implementar configuração de pesos e pontuações
+- [ ] Criar biblioteca de templates de formulários
+- [ ] Adicionar pré-visualização de formulários
+- [ ] Implementar validações customizadas por questão
+
+#### 2.2 Sistema de Avaliação Avançado
+- [ ] Criar interface de preenchimento responsiva
+- [ ] Implementar salvamento automático a cada 30 segundos
+- [ ] Adicionar indicador de progresso visual
+- [ ] Implementar validação de campos obrigatórios em tempo real
+- [ ] Criar sistema de comentários por questão
+- [ ] Adicionar anexo de evidências/documentos
+- [ ] Implementar histórico de versões de avaliações
+- [ ] Criar notificações push de avaliações pendentes
+
+#### 2.3 Tipos de Avaliação Completos
+- [ ] Implementar fluxo completo de autoavaliação
+- [ ] Implementar fluxo completo de avaliação de superiores
+- [ ] Implementar fluxo completo de avaliação de pares
+- [ ] Implementar fluxo completo de avaliação 360 graus
+- [ ] Implementar fluxo completo de avaliação de subordinados
+- [ ] Criar matriz de relacionamento avaliador-avaliado
+- [ ] Implementar calibração de avaliações
+
+### ONDA 3: Relatórios e Dashboards Analíticos
+
+#### 3.1 Dashboards Analíticos Completos
+- [ ] Criar dashboard geral com KPIs principais
+- [ ] Implementar gráfico de desempenho por departamento
+- [ ] Adicionar gráfico de evolução temporal (linha)
+- [ ] Criar comparativo entre processos avaliativos
+- [ ] Implementar filtros dinâmicos (período, departamento, cargo)
+- [ ] Adicionar gráfico de distribuição de notas (histograma)
+- [ ] Criar heatmap de competências por equipe
+- [ ] Implementar exportação de dashboards para PDF
+- [ ] Adicionar exportação de dados para Excel
+
+#### 3.2 Relatórios Individuais Detalhados
+- [ ] Criar relatório de desempenho individual completo
+- [ ] Implementar gráfico radar de competências
+- [ ] Adicionar comparativo com média da equipe
+- [ ] Criar timeline de histórico de avaliações
+- [ ] Implementar seção de pontos fortes
+- [ ] Adicionar seção de áreas de melhoria
+- [ ] Criar plano de desenvolvimento individual (PDI) integrado
+- [ ] Implementar exportação de relatório individual em PDF
+
+#### 3.3 Relatórios Gerenciais Avançados
+- [ ] Criar relatório consolidado por equipe
+- [ ] Implementar ranking de desempenho
+- [ ] Adicionar análise de gaps de competências
+- [ ] Criar relatório de calibração de avaliações
+- [ ] Implementar matriz 9-box (desempenho x potencial)
+- [ ] Adicionar relatório de sucessão integrado
+- [ ] Criar relatório de ROI de treinamentos
+- [ ] Implementar exportação em múltiplos formatos (PDF, Excel, CSV)
+
+### Infraestrutura e Integrações
+
+#### Schema do Banco de Dados
+- [ ] Criar tabela de processos avaliativos
+- [ ] Criar tabela de formulários dinâmicos
+- [ ] Criar tabela de questões de formulários
+- [ ] Criar tabela de respostas de avaliações
+- [ ] Criar tabela de templates de formulários
+- [ ] Adicionar índices para performance
+- [ ] Criar views para relatórios complexos
+
+#### Backend (tRPC Procedures)
+- [ ] Implementar procedures para processos avaliativos
+- [ ] Criar procedures para construtor de formulários
+- [ ] Implementar procedures para avaliações dinâmicas
+- [ ] Adicionar procedures para relatórios analíticos
+- [ ] Criar procedures para dashboards
+- [ ] Implementar middleware de autorização por tipo de avaliação
+- [ ] Adicionar validações de negócio
+
+#### Frontend (Componentes e Páginas)
+- [ ] Criar componente FormBuilder (drag-and-drop)
+- [ ] Implementar componente FormRenderer (exibição)
+- [ ] Criar componente QuestionEditor
+- [ ] Implementar componente DashboardGrid
+- [ ] Criar componente ChartContainer (reutilizável)
+- [ ] Implementar componente ReportExporter
+- [ ] Criar componente ProcessWizard (criação de processos)
+- [ ] Implementar componente EvaluationProgress
+
+#### Testes Automatizados
+- [ ] Criar testes para procedures de processos
+- [ ] Implementar testes para construtor de formulários
+- [ ] Adicionar testes para cálculos de pontuação
+- [ ] Criar testes para geração de relatórios
+- [ ] Implementar testes de integração completos
+- [ ] Adicionar testes de performance
+
+### Emails e Notificações das Ondas
+
+#### Emails de Processos Avaliativos
+- [ ] Email quando novo processo é criado
+- [ ] Email quando processo é iniciado
+- [ ] Email quando processo está próximo do fim
+- [ ] Email quando processo é concluído
+- [ ] Email de relatório final do processo
+
+#### Emails de Avaliações
+- [ ] Email quando nova avaliação é atribuída
+- [ ] Email de lembrete de avaliação pendente (3 dias antes)
+- [ ] Email de lembrete urgente (1 dia antes)
+- [ ] Email quando avaliação é submetida
+- [ ] Email quando todas as avaliações de um processo são concluídas
+
+#### Notificações In-App
+- [ ] Notificação de nova avaliação atribuída
+- [ ] Notificação de avaliação pendente
+- [ ] Notificação de avaliação concluída
+- [ ] Notificação de relatório disponível
+- [ ] Notificação de processo iniciado/concluído
+
+## 📊 PROGRESSO DAS ONDAS 1, 2 E 3
+
+- Onda 1 - Gestão de Usuários e Processos: 0%
+- Onda 2 - Formulários e Avaliações: 0%
+- Onda 3 - Relatórios e Dashboards: 0%
+- Infraestrutura: 0%
+- Testes: 0%
+- **META: 100% em todas as áreas**
+
+
+## \u2705 PROGRESSO DAS ONDAS 1, 2 E 3 - ATUALIZA\u00c7\u00c3O (09/12/2025)
+
+### Schema do Banco de Dados
+- [x] Criar tabela evaluationProcesses (processos avaliativos)
+- [x] Criar tabela processParticipants (participantes)
+- [x] Criar tabela processEvaluators (avaliadores)
+- [x] Criar tabela formTemplates (templates de formul\u00e1rios)
+- [x] Criar tabela formSections (se\u00e7\u00f5es)
+- [x] Criar tabela formQuestions (quest\u00f5es)
+- [x] Criar tabela formResponses (respostas)
+- [x] Criar tabela processEvaluationComments (coment\u00e1rios)
+- [x] Criar tabela evaluationAttachments (anexos)
+- [x] Criar tabela consolidatedReports (relat\u00f3rios consolidados)
+- [x] Criar tabela reportExports (exporta\u00e7\u00f5es)
+
+### Helpers de Banco de Dados (db.ts)
+- [x] Implementar helpers para processos avaliativos
+- [x] Implementar helpers para participantes
+- [x] Implementar helpers para avaliadores
+- [x] Implementar helpers para templates de formul\u00e1rios
+- [x] Implementar helpers para se\u00e7\u00f5es e quest\u00f5es
+- [x] Implementar helpers para respostas
+- [x] Implementar helpers para relat\u00f3rios consolidados
+
+### Procedures tRPC
+- [x] Criar evaluationProcessesRouter completo
+- [x] Criar formBuilderRouter completo
+- [x] Criar consolidatedReportsRouter completo
+- [x] Integrar novos routers no appRouter
+
+### Pr\u00f3ximos Passos
+- [ ] Corrigir erro de tabela duplicada no schema
+- [ ] Aplicar migra\u00e7\u00f5es no banco de dados
+- [ ] Criar p\u00e1ginas de interface para processos avaliativos
+- [ ] Criar p\u00e1ginas de interface para construtor de formul\u00e1rios
+- [ ] Criar p\u00e1ginas de interface para relat\u00f3rios consolidados
+- [ ] Criar testes vitest para os novos routers

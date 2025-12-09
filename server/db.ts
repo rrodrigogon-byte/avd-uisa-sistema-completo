@@ -18,6 +18,16 @@ import {
   pendencias,
   type InsertPendencia,
   type Pendencia,
+  evaluationProcesses,
+  processParticipants,
+  processEvaluators,
+  formTemplates,
+  formSections,
+  formQuestions,
+  formResponses,
+  consolidatedReports,
+  reportExports,
+  successionCandidates,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1433,5 +1443,399 @@ export async function getSuccessionCandidatesByEmployee(employeeId: number) {
   } catch (error) {
     console.error("[Database] Failed to get succession candidates by employee:", error);
     return [];
+  }
+}
+
+// ============================================================================
+// ONDAS 1, 2 E 3 - PROCESSOS AVALIATIVOS E FORMULÁRIOS DINÂMICOS
+// ============================================================================
+
+/**
+ * ONDA 1: Processos Avaliativos
+ */
+
+/**
+ * Criar novo processo avaliativo
+ */
+export async function createEvaluationProcess(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(evaluationProcesses).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to create evaluation process:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar todos os processos avaliativos
+ */
+export async function getAllEvaluationProcesses() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(evaluationProcesses)
+      .orderBy(sql`${evaluationProcesses.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get evaluation processes:", error);
+    return [];
+  }
+}
+
+/**
+ * Buscar processo avaliativo por ID
+ */
+export async function getEvaluationProcessById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(evaluationProcesses)
+      .where(sql`${evaluationProcesses.id} = ${id}`)
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get evaluation process:", error);
+    return null;
+  }
+}
+
+/**
+ * Atualizar processo avaliativo
+ */
+export async function updateEvaluationProcess(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    await db
+      .update(evaluationProcesses)
+      .set(data)
+      .where(sql`${evaluationProcesses.id} = ${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Failed to update evaluation process:", error);
+    throw error;
+  }
+}
+
+/**
+ * Deletar processo avaliativo
+ */
+export async function deleteEvaluationProcess(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    await db.delete(evaluationProcesses).where(sql`${evaluationProcesses.id} = ${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Failed to delete evaluation process:", error);
+    throw error;
+  }
+}
+
+/**
+ * Adicionar participante ao processo
+ */
+export async function addProcessParticipant(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(processParticipants).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to add process participant:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar participantes de um processo
+ */
+export async function getProcessParticipants(processId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(processParticipants)
+      .where(sql`${processParticipants.processId} = ${processId}`)
+      .orderBy(sql`${processParticipants.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get process participants:", error);
+    return [];
+  }
+}
+
+/**
+ * Adicionar avaliador ao participante
+ */
+export async function addProcessEvaluator(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(processEvaluators).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to add process evaluator:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar avaliadores de um participante
+ */
+export async function getProcessEvaluators(participantId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(processEvaluators)
+      .where(sql`${processEvaluators.participantId} = ${participantId}`)
+      .orderBy(sql`${processEvaluators.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get process evaluators:", error);
+    return [];
+  }
+}
+
+/**
+ * ONDA 2: Formulários Dinâmicos
+ */
+
+/**
+ * Criar template de formulário
+ */
+export async function createFormTemplate(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(formTemplates).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to create form template:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar todos os templates de formulários
+ */
+export async function getAllFormTemplates() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(formTemplates)
+      .where(sql`${formTemplates.isActive} = true`)
+      .orderBy(sql`${formTemplates.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get form templates:", error);
+    return [];
+  }
+}
+
+/**
+ * Buscar template de formulário por ID
+ */
+export async function getFormTemplateById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(formTemplates)
+      .where(sql`${formTemplates.id} = ${id}`)
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get form template:", error);
+    return null;
+  }
+}
+
+/**
+ * Criar seção de formulário
+ */
+export async function createFormSection(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(formSections).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to create form section:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar seções de um template
+ */
+export async function getFormSections(templateId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(formSections)
+      .where(sql`${formSections.templateId} = ${templateId}`)
+      .orderBy(sql`${formSections.order} ASC`);
+  } catch (error) {
+    console.error("[Database] Failed to get form sections:", error);
+    return [];
+  }
+}
+
+/**
+ * Criar questão de formulário
+ */
+export async function createFormQuestion(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(formQuestions).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to create form question:", error);
+    throw error;
+  }
+}
+
+/**
+ * Listar questões de uma seção
+ */
+export async function getFormQuestions(sectionId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(formQuestions)
+      .where(sql`${formQuestions.sectionId} = ${sectionId}`)
+      .orderBy(sql`${formQuestions.order} ASC`);
+  } catch (error) {
+    console.error("[Database] Failed to get form questions:", error);
+    return [];
+  }
+}
+
+/**
+ * Salvar resposta de formulário
+ */
+export async function saveFormResponse(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(formResponses).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to save form response:", error);
+    throw error;
+  }
+}
+
+/**
+ * Buscar respostas de um avaliador
+ */
+export async function getFormResponses(processId: number, evaluatorId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    return await db
+      .select()
+      .from(formResponses)
+      .where(
+        sql`${formResponses.processId} = ${processId} AND ${formResponses.evaluatorId} = ${evaluatorId}`
+      )
+      .orderBy(sql`${formResponses.createdAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get form responses:", error);
+    return [];
+  }
+}
+
+/**
+ * ONDA 3: Relatórios Consolidados
+ */
+
+/**
+ * Criar relatório consolidado
+ */
+export async function createConsolidatedReport(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(consolidatedReports).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to create consolidated report:", error);
+    throw error;
+  }
+}
+
+/**
+ * Buscar relatórios consolidados
+ */
+export async function getConsolidatedReports(filters: any) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    let query = db.select().from(consolidatedReports);
+    
+    if (filters.processId) {
+      query = query.where(sql`${consolidatedReports.processId} = ${filters.processId}`);
+    }
+    
+    if (filters.reportType) {
+      query = query.where(sql`${consolidatedReports.reportType} = ${filters.reportType}`);
+    }
+    
+    return await query.orderBy(sql`${consolidatedReports.generatedAt} DESC`);
+  } catch (error) {
+    console.error("[Database] Failed to get consolidated reports:", error);
+    return [];
+  }
+}
+
+/**
+ * Registrar exportação de relatório
+ */
+export async function createReportExport(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(reportExports).values(data);
+    return { id: Number(result.insertId), success: true };
+  } catch (error) {
+    console.error("[Database] Failed to create report export:", error);
+    throw error;
   }
 }

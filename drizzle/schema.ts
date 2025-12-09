@@ -3524,5 +3524,337 @@ export const emailLogs = mysqlTable("emailLogs", {
 export type EmailLog = typeof emailLogs.$inferSelect;
 export type InsertEmailLog = typeof emailLogs.$inferInsert;
 
+// ============================================================================
+// ONDAS 1, 2 E 3 - PROCESSOS AVALIATIVOS E FORMULÁRIOS DINÂMICOS
+// ============================================================================
+
+/**
+ * Processos Avaliativos - Onda 1
+ * Gerencia processos completos de avaliação com configurações e períodos
+ */
+export const evaluationProcesses = mysqlTable("evaluationProcesses", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Tipo de processo
+  type: mysqlEnum("type", ["360", "180", "90", "autoavaliacao", "gestor", "pares", "subordinados"]).notNull(),
+  
+  // Status do processo
+  status: mysqlEnum("status", ["rascunho", "em_andamento", "concluido", "cancelado"]).default("rascunho").notNull(),
+  
+  // Períodos
+  startDate: datetime("startDate").notNull(),
+  endDate: datetime("endDate").notNull(),
+  
+  // Configurações
+  allowSelfEvaluation: boolean("allowSelfEvaluation").default(true).notNull(),
+  allowManagerEvaluation: boolean("allowManagerEvaluation").default(true).notNull(),
+  allowPeerEvaluation: boolean("allowPeerEvaluation").default(false).notNull(),
+  allowSubordinateEvaluation: boolean("allowSubordinateEvaluation").default(false).notNull(),
+  
+  // Número de avaliadores
+  minPeerEvaluators: int("minPeerEvaluators").default(0),
+  maxPeerEvaluators: int("maxPeerEvaluators").default(5),
+  minSubordinateEvaluators: int("minSubordinateEvaluators").default(0),
+  maxSubordinateEvaluators: int("maxSubordinateEvaluators").default(5),
+  
+  // Pesos para cálculo final
+  selfWeight: int("selfWeight").default(20), // %
+  managerWeight: int("managerWeight").default(50), // %
+  peerWeight: int("peerWeight").default(15), // %
+  subordinateWeight: int("subordinateWeight").default(15), // %
+  
+  // Formulário associado
+  formTemplateId: int("formTemplateId"),
+  
+  // Notificações
+  sendStartNotification: boolean("sendStartNotification").default(true).notNull(),
+  sendReminderNotification: boolean("sendReminderNotification").default(true).notNull(),
+  reminderDaysBefore: int("reminderDaysBefore").default(3),
+  sendCompletionNotification: boolean("sendCompletionNotification").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type EvaluationProcess = typeof evaluationProcesses.$inferSelect;
+export type InsertEvaluationProcess = typeof evaluationProcesses.$inferInsert;
+
+/**
+ * Participantes de Processos Avaliativos
+ * Vincula funcionários aos processos como avaliados
+ */
+export const processParticipants = mysqlTable("processParticipants", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluido"]).default("pendente").notNull(),
+  
+  // Progresso
+  selfEvaluationCompleted: boolean("selfEvaluationCompleted").default(false).notNull(),
+  managerEvaluationCompleted: boolean("managerEvaluationCompleted").default(false).notNull(),
+  peerEvaluationsCompleted: int("peerEvaluationsCompleted").default(0),
+  subordinateEvaluationsCompleted: int("subordinateEvaluationsCompleted").default(0),
+  
+  // Pontuações
+  selfScore: int("selfScore"),
+  managerScore: int("managerScore"),
+  peerAverageScore: int("peerAverageScore"),
+  subordinateAverageScore: int("subordinateAverageScore"),
+  finalScore: int("finalScore"),
+  
+  // Datas
+  startedAt: datetime("startedAt"),
+  completedAt: datetime("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProcessParticipant = typeof processParticipants.$inferSelect;
+export type InsertProcessParticipant = typeof processParticipants.$inferInsert;
+
+/**
+ * Avaliadores de Processos
+ * Vincula avaliadores aos participantes
+ */
+export const processEvaluators = mysqlTable("processEvaluators", {
+  id: int("id").autoincrement().primaryKey(),
+  participantId: int("participantId").notNull(),
+  evaluatorId: int("evaluatorId").notNull(),
+  evaluatorType: mysqlEnum("evaluatorType", ["self", "manager", "peer", "subordinate"]).notNull(),
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluido"]).default("pendente").notNull(),
+  
+  // Pontuação
+  score: int("score"),
+  comments: text("comments"),
+  
+  // Datas
+  notifiedAt: datetime("notifiedAt"),
+  startedAt: datetime("startedAt"),
+  completedAt: datetime("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProcessEvaluator = typeof processEvaluators.$inferSelect;
+export type InsertProcessEvaluator = typeof processEvaluators.$inferInsert;
+
+/**
+ * Templates de Formulários - Onda 2
+ * Biblioteca de templates reutilizáveis
+ */
+export const formTemplates = mysqlTable("formTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }),
+  
+  // Tipo de formulário
+  type: mysqlEnum("type", ["avaliacao_desempenho", "feedback", "competencias", "metas", "pdi", "outro"]).notNull(),
+  
+  // Status
+  isPublic: boolean("isPublic").default(false).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  // Configurações
+  allowComments: boolean("allowComments").default(true).notNull(),
+  allowAttachments: boolean("allowAttachments").default(false).notNull(),
+  requireAllQuestions: boolean("requireAllQuestions").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  usageCount: int("usageCount").default(0),
+});
+
+export type FormTemplate = typeof formTemplates.$inferSelect;
+export type InsertFormTemplate = typeof formTemplates.$inferInsert;
+
+/**
+ * Seções de Formulários
+ * Organiza questões em seções/dimensões
+ */
+export const formSections = mysqlTable("formSections", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  order: int("order").notNull(),
+  weight: int("weight").default(1).notNull(), // Peso para cálculo final
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type FormSection = typeof formSections.$inferSelect;
+export type InsertFormSection = typeof formSections.$inferInsert;
+
+/**
+ * Questões de Formulários Dinâmicos
+ * Suporta múltiplos tipos de questões
+ */
+export const formQuestions = mysqlTable("formQuestions", {
+  id: int("id").autoincrement().primaryKey(),
+  sectionId: int("sectionId").notNull(),
+  question: text("question").notNull(),
+  description: text("description"),
+  
+  // Tipo de questão
+  type: mysqlEnum("type", [
+    "escala",           // Escala numérica (1-5, 1-10)
+    "multipla_escolha", // Múltipla escolha
+    "texto_curto",      // Texto curto (input)
+    "texto_longo",      // Texto longo (textarea)
+    "matriz",           // Matriz de avaliação
+    "sim_nao",          // Sim/Não
+    "data",             // Data
+    "numero"            // Número
+  ]).notNull(),
+  
+  // Configurações por tipo
+  scaleMin: int("scaleMin").default(1),
+  scaleMax: int("scaleMax").default(5),
+  scaleMinLabel: varchar("scaleMinLabel", { length: 100 }),
+  scaleMaxLabel: varchar("scaleMaxLabel", { length: 100 }),
+  
+  // Opções (JSON) para múltipla escolha ou matriz
+  options: text("options"), // [{"value": "opt1", "label": "Opção 1"}]
+  
+  // Validações
+  required: boolean("required").default(true).notNull(),
+  minLength: int("minLength"),
+  maxLength: int("maxLength"),
+  
+  // Peso e ordem
+  weight: int("weight").default(1).notNull(),
+  order: int("order").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type FormQuestion = typeof formQuestions.$inferSelect;
+export type InsertFormQuestion = typeof formQuestions.$inferInsert;
+
+/**
+ * Respostas de Formulários Dinâmicos
+ * Armazena respostas de avaliações
+ */
+export const formResponses = mysqlTable("formResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId"),
+  participantId: int("participantId"),
+  evaluatorId: int("evaluatorId").notNull(),
+  questionId: int("questionId").notNull(),
+  
+  // Tipo de resposta
+  responseType: mysqlEnum("responseType", ["number", "text", "json"]).notNull(),
+  
+  // Valores
+  numberValue: int("numberValue"),
+  textValue: text("textValue"),
+  jsonValue: text("jsonValue"), // Para respostas complexas (matriz, múltipla escolha)
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FormResponse = typeof formResponses.$inferSelect;
+export type InsertFormResponse = typeof formResponses.$inferInsert;
+
+/**
+ * Comentários em Avaliações de Processos
+ * Permite comentários em questões ou seções
+ */
+export const processEvaluationComments = mysqlTable("processEvaluationComments", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId"),
+  participantId: int("participantId"),
+  evaluatorId: int("evaluatorId").notNull(),
+  questionId: int("questionId"),
+  sectionId: int("sectionId"),
+  comment: text("comment").notNull(),
+  isPrivate: boolean("isPrivate").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ProcessEvaluationComment = typeof processEvaluationComments.$inferSelect;
+export type InsertProcessEvaluationComment = typeof processEvaluationComments.$inferInsert;
+
+/**
+ * Anexos de Avaliações
+ * Permite anexar documentos/evidências
+ */
+export const evaluationAttachments = mysqlTable("evaluationAttachments", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId"),
+  participantId: int("participantId"),
+  evaluatorId: int("evaluatorId").notNull(),
+  questionId: int("questionId"),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileUrl: varchar("fileUrl", { length: 512 }).notNull(),
+  fileSize: int("fileSize"),
+  mimeType: varchar("mimeType", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EvaluationAttachment = typeof evaluationAttachments.$inferSelect;
+export type InsertEvaluationAttachment = typeof evaluationAttachments.$inferInsert;
+
+/**
+ * Relatórios Consolidados - Onda 3
+ * Armazena relatórios gerados para cache e histórico
+ */
+export const consolidatedReports = mysqlTable("consolidatedReports", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId"),
+  reportType: mysqlEnum("reportType", [
+    "individual",
+    "equipe",
+    "departamento",
+    "empresa",
+    "comparativo",
+    "evolucao",
+    "gaps",
+    "nine_box",
+    "sucessao"
+  ]).notNull(),
+  
+  // Filtros aplicados
+  filters: text("filters"), // JSON com filtros
+  
+  // Dados do relatório
+  data: text("data").notNull(), // JSON com dados processados
+  
+  // Metadados
+  generatedBy: int("generatedBy").notNull(),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  expiresAt: datetime("expiresAt"),
+});
+
+export type ConsolidatedReport = typeof consolidatedReports.$inferSelect;
+export type InsertConsolidatedReport = typeof consolidatedReports.$inferInsert;
+
+/**
+ * Histórico de Exportações
+ * Rastreia exportações de relatórios
+ */
+export const reportExports = mysqlTable("reportExports", {
+  id: int("id").autoincrement().primaryKey(),
+  reportId: int("reportId"),
+  processId: int("processId"),
+  exportType: mysqlEnum("exportType", ["pdf", "excel", "csv", "json"]).notNull(),
+  fileUrl: varchar("fileUrl", { length: 512 }),
+  status: mysqlEnum("status", ["processando", "concluido", "falhou"]).default("processando").notNull(),
+  exportedBy: int("exportedBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ReportExport = typeof reportExports.$inferSelect;
+export type InsertReportExport = typeof reportExports.$inferInsert;
+
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";
