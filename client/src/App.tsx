@@ -32,6 +32,8 @@ import DashboardGestor from "./pages/DashboardGestor";
 import ConfiguracoesSMTP from "./pages/ConfiguracoesSMTP";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
+import ViewEvaluation from "./pages/ViewEvaluation";
+import ManageEvaluations from "./pages/ManageEvaluations";
 import PDI from "./pages/PDI";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
@@ -248,6 +250,8 @@ function Router() {
       {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}
       {/* <Route path="/folha-pagamento/exportar" component={ExportarFolha} /> */}
        <Route path="/avaliacoes" component={Avaliacoes} />
+      <Route path="/avaliacoes/:id" component={ViewEvaluation} />
+      <Route path="/gerenciar-avaliacoes" component={ManageEvaluations} />
       <Route path="/avaliacoes/criar" component={Avaliacao360Enhanced} />
       <Route path="/avaliacoes/configurar" component={ConfigurarAvaliacoes} />
        <Route path="/avaliacoes/360/:id" component={Avaliacao360Enhanced} />

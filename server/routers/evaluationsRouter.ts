@@ -496,3 +496,55 @@ export const evaluationsRouter = router({
       return result;
     }),
 });
+
+  /**
+   * Enviar notificação por email sobre avaliação
+   */
+  sendNotification: protectedProcedure
+    .input(z.object({ evaluationId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const { sendEmail, getAvaliationCreatedEmailTemplate } = await import("../email");
+      const { getEvaluationById } = await import("../db");
+      
+      const evaluation = await getEvaluationById(input.evaluationId);
+      if (!evaluation) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Avaliação não encontrada",
+        });
+      }
+
+      const resultUrl = `${process.env.VITE_APP_URL || 'http://localhost:3000'}/avaliacoes/${evaluation.id}`;
+      
+      const emailHtml = getAvaliationCreatedEmailTemplate({
+        avaliadoName: evaluation.employeeName,
+        avaliadorName: evaluation.evaluatorName,
+        periodo: evaluation.evaluationPeriod,
+        resultadoUrl: resultUrl,
+      });
+
+      // Usar email do colaborador ou fallback para email do usuário
+      const recipientEmail = evaluation.employeeEmail || ctx.user.email || '';
+      if (!recipientEmail) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Email do destinatário não encontrado",
+        });
+      }
+
+      const result = await sendEmail({
+        to: recipientEmail,
+        subject: `Nova Avaliação de Desempenho - ${evaluation.evaluationPeriod}`,
+        html: emailHtml,
+      });
+
+      if (!result.success) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Falha ao enviar email",
+        });
+      }
+
+      return result;
+    }),
+});
