@@ -128,40 +128,40 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Criar procedures tRPC (routers.ts)
 
 ### Teste de Katz (AVD Básicas)
-- [ ] Página de aplicação do teste de Katz
-- [ ] Formulário com 6 atividades (banho, vestir, higiene, transferência, continência, alimentação)
-- [ ] Cálculo automático de pontuação (0-6 pontos)
-- [ ] Salvamento de resultados no banco
-- [ ] Visualização de histórico por paciente
+- [x] Página de aplicação do teste de Katz
+- [x] Formulário com 6 atividades (banho, vestir, higiene, transferência, continência, alimentação)
+- [x] Cálculo automático de pontuação (0-6 pontos)
+- [x] Salvamento de resultados no banco
+- [x] Visualização de histórico por paciente
 
 ### Teste de Lawton (AVD Instrumentais)
-- [ ] Página de aplicação do teste de Lawton
-- [ ] Formulário com 8 atividades (telefone, compras, preparo de alimentos, tarefas domésticas, lavanderia, transporte, medicação, finanças)
-- [ ] Cálculo automático de pontuação (0-8 pontos)
-- [ ] Salvamento de resultados no banco
-- [ ] Visualização de histórico por paciente
+- [x] Página de aplicação do teste de Lawton
+- [x] Formulário com 8 atividades (telefone, compras, preparo de alimentos, tarefas domésticas, lavanderia, transporte, medicação, finanças)
+- [x] Cálculo automático de pontuação (0-8 pontos)
+- [x] Salvamento de resultados no banco
+- [x] Visualização de histórico por paciente
 
 ### Minimental (Avaliação Cognitiva)
-- [ ] Página de aplicação do Minimental
-- [ ] Formulário com 11 categorias (orientação temporal, espacial, memória, atenção, linguagem, praxia)
-- [ ] Cálculo automático de pontuação (0-30 pontos)
-- [ ] Salvamento de resultados no banco
-- [ ] Visualização de histórico por paciente
+- [x] Página de aplicação do Minimental
+- [x] Formulário com 11 categorias (orientação temporal, espacial, memória, atenção, linguagem, praxia)
+- [x] Cálculo automático de pontuação (0-30 pontos)
+- [x] Salvamento de resultados no banco
+- [x] Visualização de histórico por paciente
 
 ### Escala de Depressão Geriátrica (GDS-15)
-- [ ] Página de aplicação da escala
-- [ ] Formulário com 15 perguntas sim/não
-- [ ] Cálculo automático de pontuação (0-15 pontos)
-- [ ] Classificação automática (normal, depressão leve, depressão grave)
-- [ ] Salvamento de resultados no banco
-- [ ] Visualização de histórico por paciente
+- [x] Página de aplicação da escala
+- [x] Formulário com 15 perguntas sim/não
+- [x] Cálculo automático de pontuação (0-15 pontos)
+- [x] Classificação automática (normal, depressão leve, depressão grave)
+- [x] Salvamento de resultados no banco
+- [x] Visualização de histórico por paciente
 
 ### Teste do Relógio
-- [ ] Página de aplicação do teste
-- [ ] Interface para desenho do relógio (canvas ou upload de imagem)
-- [ ] Sistema de pontuação manual (0-10 pontos)
-- [ ] Salvamento de resultados no banco
-- [ ] Visualização de histórico por paciente
+- [x] Página de aplicação do teste
+- [x] Interface para desenho do relógio (canvas ou upload de imagem)
+- [x] Sistema de pontuação manual (0-10 pontos)
+- [x] Salvamento de resultados no banco
+- [x] Visualização de histórico por paciente
 
 ### Gestão de Pacientes para Testes Geriátricos
 - [x] Página de cadastro de pacientes
@@ -171,16 +171,16 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Vinculação de pacientes aos testes
 
 ### Relatórios e Analytics de Testes Geriátricos
-- [ ] Dashboard com estatísticas dos testes
-- [ ] Página de histórico completo por paciente
-- [ ] Visualização detalhada de cada avaliação
+- [x] Dashboard com estatísticas dos testes
+- [x] Página de histórico completo por paciente
+- [x] Visualização detalhada de cada avaliação
 - [ ] Gráficos de evolução temporal
 - [ ] Comparação entre diferentes testes
 - [ ] Exportação de relatórios em PDF
 
 ### Navegação e Integração
 - [ ] Adicionar seção "Testes Geriátricos" no menu do DashboardLayout
-- [ ] Criar rotas no App.tsx para todos os novos módulos
+- [x] Criar rotas no App.tsx para todos os novos módulos
 - [ ] Adicionar ícones e navegação intuitiva
 
 ### Testes Automatizados para Módulos Geriátricos

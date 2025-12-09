@@ -190,6 +190,15 @@ import CiclosAtivos from "./pages/CiclosAtivos";
 import GerenciarCiclosAvaliacao from "./pages/GerenciarCiclosAvaliacao";
 import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
 
+// Testes Geriátricos
+import Patients from "./pages/geriatric/Patients";
+import PatientHistory from "./pages/geriatric/PatientHistory";
+import KatzTest from "./pages/geriatric/KatzTest";
+import LawtonTest from "./pages/geriatric/LawtonTest";
+import MiniMentalTest from "./pages/geriatric/MiniMentalTest";
+import GDSTest from "./pages/geriatric/GDSTest";
+import ClockTest from "./pages/geriatric/ClockTest";
+
 function Router() {
   return (
     <Switch>
@@ -378,6 +387,15 @@ function Router() {
       <Route path="/avd/avaliar/:id" component={FormularioAvaliacao} />
       <Route path="/avd/dashboard" component={DashboardAVD} />
       <Route path="/avd/compliance" component={RelatorioCompliance} />
+      
+      {/* Rotas Testes Geriátricos */}
+      <Route path="/geriatric/patients" component={Patients} />
+      <Route path="/geriatric/patient/:id" component={PatientHistory} />
+      <Route path="/geriatric/katz-test" component={KatzTest} />
+      <Route path="/geriatric/lawton-test" component={LawtonTest} />
+      <Route path="/geriatric/minimental-test" component={MiniMentalTest} />
+      <Route path="/geriatric/gds-test" component={GDSTest} />
+      <Route path="/geriatric/clock-test" component={ClockTest} />
       
       {/* Novos módulos - Três próximos passos */}
       <Route path="/relatorios/personalizados" component={CustomReportBuilder} />
