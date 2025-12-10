@@ -341,7 +341,11 @@ export default function Pendencias() {
           ))
         ) : filteredPendencias && filteredPendencias.length > 0 ? (
           filteredPendencias.map((pendencia: any) => {
-            const StatusIcon = statusConfig[pendencia.status as Status].icon;
+            // Validar dados antes de renderizar
+            if (!pendencia || !pendencia.id || !pendencia.status || !pendencia.prioridade) {
+              return null;
+            }
+            const StatusIcon = statusConfig[pendencia.status as Status]?.icon || Clock;
             const employee = employees?.find(e => e.id === pendencia.responsavelId);
             
             return (
@@ -351,13 +355,17 @@ export default function Pendencias() {
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-xl">{pendencia.titulo}</CardTitle>
-                        <Badge className={statusConfig[pendencia.status as Status].color}>
-                          <StatusIcon className="mr-1 h-3 w-3" />
-                          {statusConfig[pendencia.status as Status].label}
-                        </Badge>
-                        <Badge className={prioridadeConfig[pendencia.prioridade as Prioridade].color}>
-                          {prioridadeConfig[pendencia.prioridade as Prioridade].label}
-                        </Badge>
+                        {statusConfig[pendencia.status as Status] && (
+                          <Badge className={statusConfig[pendencia.status as Status].color}>
+                            <StatusIcon className="mr-1 h-3 w-3" />
+                            {statusConfig[pendencia.status as Status].label}
+                          </Badge>
+                        )}
+                        {prioridadeConfig[pendencia.prioridade as Prioridade] && (
+                          <Badge className={prioridadeConfig[pendencia.prioridade as Prioridade].color}>
+                            {prioridadeConfig[pendencia.prioridade as Prioridade].label}
+                          </Badge>
+                        )}
                       </div>
                       {pendencia.descricao && (
                         <CardDescription className="text-base">
@@ -580,7 +588,7 @@ export default function Pendencias() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-responsavelId">Responsável *</Label>
-                  <Select name="responsavelId" defaultValue={selectedPendencia.responsavelId ? selectedPendencia.responsavelId.toString() : ""} required>
+                  <Select name="responsavelId" defaultValue={selectedPendencia.responsavelId?.toString() || ""} required>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>

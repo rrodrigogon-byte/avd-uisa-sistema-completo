@@ -144,7 +144,7 @@ export default function EvaluationForm({ evaluationId, type, onComplete }: Evalu
             <div className="space-y-3">
               <Label>Avaliação *</Label>
               <RadioGroup
-                value={ratings[competency.id]?.toString()}
+                value={ratings[competency.id]?.toString() || ""}
                 onValueChange={(value) => handleRatingChange(competency.id, value)}
                 className="flex flex-col space-y-2"
               >
