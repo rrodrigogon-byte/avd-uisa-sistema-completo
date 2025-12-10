@@ -163,6 +163,31 @@ const hierarchyRouter = router({
       const stats = await getHierarchyStats();
       return stats;
     }),
+
+  // Gerar relatório de span of control
+  getSpanOfControlReport: protectedProcedure
+    .input(z.object({ managerId: z.number().optional() }))
+    .query(async ({ input }) => {
+      const { generateSpanOfControlReport } = await import('./db-hierarchy-reports');
+      const report = await generateSpanOfControlReport(input.managerId);
+      return report;
+    }),
+
+  // Gerar relatório de profundidade hierárquica
+  getDepthReport: protectedProcedure
+    .query(async () => {
+      const { generateHierarchyDepthReport } = await import('./db-hierarchy-reports');
+      const report = await generateHierarchyDepthReport();
+      return report;
+    }),
+
+  // Gerar relatório de distribuição de subordinados
+  getDistributionReport: protectedProcedure
+    .query(async () => {
+      const { generateSubordinateDistributionReport } = await import('./db-hierarchy-reports');
+      const report = await generateSubordinateDistributionReport();
+      return report;
+    }),
 });
 
 export const appRouter = router({
@@ -557,6 +582,77 @@ export const appRouter = router({
           employee: employeesData.find(e => e.id === evaluation.employeeId),
           cycle: cyclesData.find((c: any) => c.id === evaluation.cycleId),
         }));
+      }),
+
+    // Sugerir avaliadores automaticamente baseado na hierarquia
+    suggestEvaluators: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const { suggestEvaluators } = await import('./db-hierarchy-evaluators');
+        const suggestions = await suggestEvaluators(input.employeeId);
+        
+        if (!suggestions) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Funcionário não encontrado ou sem hierarquia definida",
+          });
+        }
+        
+        return suggestions;
+      }),
+
+    // Validar se um funcionário pode avaliar outro
+    validateEvaluator: protectedProcedure
+      .input(z.object({
+        evaluatorId: z.number(),
+        evaluatedId: z.number(),
+        evaluationType: z.enum(["manager", "peer", "subordinate"]),
+      }))
+      .query(async ({ input }) => {
+        const { canEvaluate } = await import('./db-hierarchy-evaluators');
+        const isValid = await canEvaluate(
+          input.evaluatorId,
+          input.evaluatedId,
+          input.evaluationType
+        );
+        
+        return { valid: isValid };
+      }),
+
+    // Buscar pares por departamento e posição
+    getPeers: protectedProcedure
+      .input(z.object({
+        employeeId: z.number(),
+        departmentId: z.number().nullable().optional(),
+        positionId: z.number().nullable().optional(),
+        limit: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const { getPeersByDepartmentAndPosition } = await import('./db-hierarchy-evaluators');
+        const peers = await getPeersByDepartmentAndPosition(
+          input.employeeId,
+          input.departmentId ?? null,
+          input.positionId ?? null,
+          input.limit
+        );
+        
+        return peers;
+      }),
+
+    // Buscar subordinados de um gestor
+    getSubordinates: protectedProcedure
+      .input(z.object({
+        managerId: z.number(),
+        limit: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const { getSubordinatesByManager } = await import('./db-hierarchy-evaluators');
+        const subordinates = await getSubordinatesByManager(
+          input.managerId,
+          input.limit
+        );
+        
+        return subordinates;
       }),
 
     // Relatório 360° Consolidado

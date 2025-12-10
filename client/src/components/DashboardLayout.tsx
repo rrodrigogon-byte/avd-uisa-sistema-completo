@@ -187,6 +187,17 @@ const menuItems = [
     ],
   },
   
+  // 🏛️ HIERARQUIA E ORGANOGRAMA
+  {
+    icon: GitBranch,
+    label: "Hierarquia",
+    isSection: true,
+    children: [
+      { icon: GitBranch, label: "Organograma", path: "/organograma" },
+      { icon: FileBarChart, label: "Relatórios Hierárquicos", path: "/relatorios/hierarquia" },
+    ],
+  },
+  
   // ⏰ TEMPO E PRODUTIVIDADE
   {
     icon: Clock,

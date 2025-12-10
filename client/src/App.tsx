@@ -208,6 +208,8 @@ import ConstrutorFormularios from "./pages/ConstrutorFormularios";
 import ProcessosAvaliativos from "./pages/ProcessosAvaliativos";
 import DashboardsAnaliticos from "./pages/DashboardsAnaliticos";
 import HierarchyView from "./pages/HierarchyView";
+import Organograma from "./pages/Organograma";
+import RelatoriosHierarquia from "./pages/RelatoriosHierarquia";
 
 function Router() {
   return (
@@ -374,6 +376,8 @@ function Router() {
       <Route path="/hierarquia-organizacional" component={HierarquiaOrganizacional} />
       <Route path="/hierarquia-import" component={HierarquiaImport} />
       <Route path="/hierarquia" component={HierarchyView} />
+      <Route path="/organograma" component={Organograma} />
+      <Route path="/relatorios/hierarquia" component={RelatoriosHierarquia} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/emails-admin-rh" component={AdminRhEmailDashboard} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />
