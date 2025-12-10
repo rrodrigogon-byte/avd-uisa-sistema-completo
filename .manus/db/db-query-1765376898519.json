@@ -1,0 +1,9 @@
+{
+  "query": "SHOW COLUMNS FROM bonusCalculations LIKE 'bonusAmountCents'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SHOW COLUMNS FROM bonusCalculations LIKE 'bonusAmountCents'",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 90
+}
