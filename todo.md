@@ -1237,3 +1237,67 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Criar alertas para testes críticos falhando
 - [x] Adicionar botão para executar testes manualmente
 - [ ] Integrar com sistema de notificações
+
+
+## 🔗 IMPORTAÇÃO DE HIERARQUIA DE FUNCIONÁRIOS (NOVA SOLICITAÇÃO - 10/12/2025)
+
+### Análise e Preparação
+- [x] Analisar estrutura do arquivo de hierarquia (colunas A-G: dados do funcionário, demais colunas: níveis hierárquicos)
+- [x] Identificar todos os níveis hierárquicos presentes (Presidente, Diretor, Gerente Executivo, Gerente, Coordenador, Supervisor, etc.)
+- [x] Mapear relacionamentos entre funcionários e líderes
+
+### Banco de Dados
+- [x] Atualizar schema para suportar hierarquia multinível
+- [x] Criar tabela de relacionamento funcionário-líder (employeeHierarchy)
+- [x] Adicionar campos para armazenar todos os níveis hierárquicos
+- [x] Executar migração do banco de dados
+
+### Script de Importação
+- [x] Criar script de leitura do arquivo Excel
+- [x] Implementar parser para extrair dados de funcionários (colunas A-G)
+- [x] Implementar parser para extrair hierarquia (colunas após G)
+- [x] Criar lógica de vinculação funcionário-líder
+- [x] Implementar validações de dados
+- [x] Criar logs de importação
+- [x] Tratar erros e inconsistências
+
+### Procedures tRPC
+- [x] Criar procedure para importar hierarquia
+- [x] Criar procedure para consultar hierarquia de um funcionário
+- [x] Criar procedure para listar subordinados diretos
+- [x] Criar procedure para listar toda a cadeia hierárquica
+- [x] Criar procedure para atualizar vínculos hierárquicos
+
+### Interface de Visualização
+- [x] Criar página de visualização da hierarquia organizacional
+- [ ] Implementar árvore hierárquica visual (organograma)
+- [x] Adicionar filtros por departamento/área
+- [x] Implementar busca de funcionários na hierarquia
+- [x] Criar visualização de subordinados diretos
+- [x] Criar visualização de cadeia de comando completa
+
+### Testes e Validação
+- [x] Testar importação do arquivo fornecido
+- [x] Validar vínculos hierárquicos criados
+- [x] Verificar integridade dos dados
+- [ ] Testar consultas de hierarquia
+- [ ] Validar performance com grande volume de dados
+- [ ] Criar testes automatizados para hierarquia
+
+### Integração com Sistema Existente
+- [ ] Integrar hierarquia com sistema de avaliações
+- [ ] Usar hierarquia para definir avaliadores automáticos
+- [ ] Integrar com sistema de aprovações
+- [ ] Atualizar relatórios para incluir hierarquia
+- [x] Adicionar navegação no menu para hierarquia
+
+## 📊 PROGRESSO DA IMPORTAÇÃO DE HIERARQUIA
+
+- Análise: 0%
+- Banco de Dados: 0%
+- Script de Importação: 0%
+- Procedures tRPC: 0%
+- Interface: 0%
+- Testes: 0%
+- Integração: 0%
+- **META: 100% em todas as áreas**

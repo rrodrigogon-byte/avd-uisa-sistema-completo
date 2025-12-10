@@ -207,6 +207,7 @@ import ClockTest from "./pages/geriatric/ClockTest";
 import ConstrutorFormularios from "./pages/ConstrutorFormularios";
 import ProcessosAvaliativos from "./pages/ProcessosAvaliativos";
 import DashboardsAnaliticos from "./pages/DashboardsAnaliticos";
+import HierarchyView from "./pages/HierarchyView";
 
 function Router() {
   return (
@@ -370,8 +371,9 @@ function Router() {
       <Route path="/testes/comparativo" component={DashboardComparativoTestes} />
       <Route path="/relatorios-executivos" component={RelatoriosExecutivos} />
       <Route path="/admin/smtp" component={AdminSmtp} />
-      <Route path="/admin/hierarquia" component={HierarquiaOrganizacional} />
-      <Route path="/admin/hierarquia/importar" component={HierarquiaImport} />
+      <Route path="/hierarquia-organizacional" component={HierarquiaOrganizacional} />
+      <Route path="/hierarquia-import" component={HierarquiaImport} />
+      <Route path="/hierarquia" component={HierarchyView} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/emails-admin-rh" component={AdminRhEmailDashboard} />
       <Route path="/admin/email-metrics" component={EmailMetrics} />

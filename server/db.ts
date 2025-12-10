@@ -29,6 +29,7 @@ import {
   consolidatedReports,
   reportExports,
   successionCandidates,
+  employeeHierarchy,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1832,5 +1833,205 @@ export async function createReportExport(data: any) {
   } catch (error) {
     console.error("[Database] Failed to create report export:", error);
     throw error;
+  }
+}
+
+
+// ============================================================================
+// HIERARQUIA ORGANIZACIONAL
+// ============================================================================
+
+/**
+ * Buscar hierarquia de um funcionário
+ */
+export async function getEmployeeHierarchy(employeeId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(employeeHierarchy)
+      .where(eq(employeeHierarchy.employeeId, employeeId))
+      .limit(1);
+
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("[Database] Failed to get employee hierarchy:", error);
+    return null;
+  }
+}
+
+/**
+ * Buscar hierarquia por chapa do funcionário
+ */
+export async function getEmployeeHierarchyByChapa(chapa: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(employeeHierarchy)
+      .where(eq(employeeHierarchy.employeeChapa, chapa))
+      .limit(1);
+
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("[Database] Failed to get employee hierarchy by chapa:", error);
+    return null;
+  }
+}
+
+/**
+ * Buscar todos os subordinados diretos de um líder
+ * @param leaderChapa - Chapa do líder
+ * @param level - Nível hierárquico ('coordinator', 'manager', 'director', 'president')
+ */
+export async function getDirectSubordinates(leaderChapa: string, level: 'coordinator' | 'manager' | 'director' | 'president') {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    let condition;
+    
+    switch (level) {
+      case 'coordinator':
+        condition = eq(employeeHierarchy.coordinatorChapa, leaderChapa);
+        break;
+      case 'manager':
+        condition = eq(employeeHierarchy.managerChapa, leaderChapa);
+        break;
+      case 'director':
+        condition = eq(employeeHierarchy.directorChapa, leaderChapa);
+        break;
+      case 'president':
+        condition = eq(employeeHierarchy.presidentChapa, leaderChapa);
+        break;
+      default:
+        return [];
+    }
+
+    const result = await db
+      .select()
+      .from(employeeHierarchy)
+      .where(condition)
+      .orderBy(employeeHierarchy.employeeName);
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get direct subordinates:", error);
+    return [];
+  }
+}
+
+/**
+ * Buscar toda a cadeia hierárquica de um funcionário (do funcionário até o presidente)
+ */
+export async function getHierarchyChain(employeeId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const hierarchy = await getEmployeeHierarchy(employeeId);
+    
+    if (!hierarchy) return null;
+
+    // Montar cadeia hierárquica
+    const chain = {
+      employee: {
+        id: hierarchy.employeeId,
+        chapa: hierarchy.employeeChapa,
+        name: hierarchy.employeeName,
+        email: hierarchy.employeeEmail,
+        function: hierarchy.employeeFunction,
+        functionCode: hierarchy.employeeFunctionCode,
+        section: hierarchy.employeeSection,
+        sectionCode: hierarchy.employeeSectionCode,
+      },
+      coordinator: hierarchy.coordinatorChapa ? {
+        id: hierarchy.coordinatorId,
+        chapa: hierarchy.coordinatorChapa,
+        name: hierarchy.coordinatorName,
+        email: hierarchy.coordinatorEmail,
+        function: hierarchy.coordinatorFunction,
+      } : null,
+      manager: hierarchy.managerChapa ? {
+        id: hierarchy.managerId,
+        chapa: hierarchy.managerChapa,
+        name: hierarchy.managerName,
+        email: hierarchy.managerEmail,
+        function: hierarchy.managerFunction,
+      } : null,
+      director: hierarchy.directorChapa ? {
+        id: hierarchy.directorId,
+        chapa: hierarchy.directorChapa,
+        name: hierarchy.directorName,
+        email: hierarchy.directorEmail,
+        function: hierarchy.directorFunction,
+      } : null,
+      president: hierarchy.presidentChapa ? {
+        id: hierarchy.presidentId,
+        chapa: hierarchy.presidentChapa,
+        name: hierarchy.presidentName,
+        email: hierarchy.presidentEmail,
+        function: hierarchy.presidentFunction,
+      } : null,
+    };
+
+    return chain;
+  } catch (error) {
+    console.error("[Database] Failed to get hierarchy chain:", error);
+    return null;
+  }
+}
+
+/**
+ * Buscar todos os funcionários de uma hierarquia (organograma completo)
+ */
+export async function getAllHierarchy() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(employeeHierarchy)
+      .orderBy(employeeHierarchy.employeeName);
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get all hierarchy:", error);
+    return [];
+  }
+}
+
+/**
+ * Buscar estatísticas da hierarquia
+ */
+export async function getHierarchyStats() {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const allHierarchy = await getAllHierarchy();
+    
+    // Contar por nível
+    const stats = {
+      totalEmployees: allHierarchy.length,
+      withCoordinator: allHierarchy.filter(h => h.coordinatorChapa).length,
+      withManager: allHierarchy.filter(h => h.managerChapa).length,
+      withDirector: allHierarchy.filter(h => h.directorChapa).length,
+      withPresident: allHierarchy.filter(h => h.presidentChapa).length,
+      uniqueCoordinators: new Set(allHierarchy.map(h => h.coordinatorChapa).filter(Boolean)).size,
+      uniqueManagers: new Set(allHierarchy.map(h => h.managerChapa).filter(Boolean)).size,
+      uniqueDirectors: new Set(allHierarchy.map(h => h.directorChapa).filter(Boolean)).size,
+      uniquePresidents: new Set(allHierarchy.map(h => h.presidentChapa).filter(Boolean)).size,
+    };
+
+    return stats;
+  } catch (error) {
+    console.error("[Database] Failed to get hierarchy stats:", error);
+    return null;
   }
 }

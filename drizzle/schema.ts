@@ -3872,3 +3872,65 @@ export type InsertReportExport = typeof reportExports.$inferInsert;
 
 // Re-export from schema-productivity.ts
 export * from "./schema-productivity";
+
+
+// ============================================================================
+// TABELA DE HIERARQUIA ORGANIZACIONAL
+// ============================================================================
+
+/**
+ * Hierarquia Organizacional dos Funcionários
+ * Armazena os vínculos hierárquicos entre funcionários e seus líderes em múltiplos níveis
+ * Baseado na estrutura: Funcionário -> Coordenador -> Gestor -> Diretor -> Presidente
+ */
+export const employeeHierarchy = mysqlTable("employeeHierarchy", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Funcionário
+  employeeId: int("employeeId").notNull(), // ID do funcionário na tabela employees
+  employeeChapa: varchar("employeeChapa", { length: 50 }).notNull(), // Chapa do funcionário
+  employeeName: varchar("employeeName", { length: 255 }).notNull(),
+  employeeEmail: varchar("employeeEmail", { length: 320 }),
+  employeeFunction: varchar("employeeFunction", { length: 255 }), // Função do funcionário
+  employeeFunctionCode: varchar("employeeFunctionCode", { length: 50 }), // Código da função
+  employeeSection: varchar("employeeSection", { length: 255 }), // Seção do funcionário
+  employeeSectionCode: varchar("employeeSectionCode", { length: 100 }), // Código da seção
+  
+  // Nível 1 - Coordenador
+  coordinatorChapa: varchar("coordinatorChapa", { length: 50 }),
+  coordinatorName: varchar("coordinatorName", { length: 255 }),
+  coordinatorFunction: varchar("coordinatorFunction", { length: 255 }),
+  coordinatorEmail: varchar("coordinatorEmail", { length: 320 }),
+  coordinatorId: int("coordinatorId"), // ID do coordenador na tabela employees (se existir)
+  
+  // Nível 2 - Gestor
+  managerChapa: varchar("managerChapa", { length: 50 }),
+  managerName: varchar("managerName", { length: 255 }),
+  managerFunction: varchar("managerFunction", { length: 255 }),
+  managerEmail: varchar("managerEmail", { length: 320 }),
+  managerId: int("managerId"), // ID do gestor na tabela employees (se existir)
+  
+  // Nível 3 - Diretor
+  directorChapa: varchar("directorChapa", { length: 50 }),
+  directorName: varchar("directorName", { length: 255 }),
+  directorFunction: varchar("directorFunction", { length: 255 }),
+  directorEmail: varchar("directorEmail", { length: 320 }),
+  directorId: int("directorId"), // ID do diretor na tabela employees (se existir)
+  
+  // Nível 4 - Presidente
+  presidentChapa: varchar("presidentChapa", { length: 50 }),
+  presidentName: varchar("presidentName", { length: 255 }),
+  presidentFunction: varchar("presidentFunction", { length: 255 }),
+  presidentEmail: varchar("presidentEmail", { length: 320 }),
+  presidentId: int("presidentId"), // ID do presidente na tabela employees (se existir)
+  
+  // Metadados
+  importedAt: timestamp("importedAt").defaultNow().notNull(), // Data da importação
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  
+  // Índices para performance
+  // Adicionar índices nas colunas de chapa para buscas rápidas
+});
+
+export type EmployeeHierarchy = typeof employeeHierarchy.$inferSelect;
+export type InsertEmployeeHierarchy = typeof employeeHierarchy.$inferInsert;

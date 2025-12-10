@@ -6,7 +6,15 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
-import { getUserByOpenId } from "./db";
+import { 
+  getUserByOpenId,
+  getEmployeeHierarchy,
+  getEmployeeHierarchyByChapa,
+  getHierarchyChain,
+  getDirectSubordinates,
+  getAllHierarchy,
+  getHierarchyStats,
+} from "./db";
 import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
@@ -102,6 +110,61 @@ import {
   sendCredentialsEmail
 } from "./_core/email";
 
+// ============================================================================
+// ROUTER DE HIERARQUIA ORGANIZACIONAL
+// ============================================================================
+
+const hierarchyRouter = router({
+  // Buscar hierarquia de um funcionário
+  getByEmployeeId: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const hierarchy = await getEmployeeHierarchy(input.employeeId);
+      return hierarchy;
+    }),
+
+  // Buscar hierarquia por chapa
+  getByChapa: protectedProcedure
+    .input(z.object({ chapa: z.string() }))
+    .query(async ({ input }) => {
+      const hierarchy = await getEmployeeHierarchyByChapa(input.chapa);
+      return hierarchy;
+    }),
+
+  // Buscar cadeia hierárquica completa
+  getChain: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const chain = await getHierarchyChain(input.employeeId);
+      return chain;
+    }),
+
+  // Buscar subordinados diretos
+  getSubordinates: protectedProcedure
+    .input(z.object({
+      leaderChapa: z.string(),
+      level: z.enum(['coordinator', 'manager', 'director', 'president']),
+    }))
+    .query(async ({ input }) => {
+      const subordinates = await getDirectSubordinates(input.leaderChapa, input.level);
+      return subordinates;
+    }),
+
+  // Buscar toda a hierarquia (organograma)
+  getAll: protectedProcedure
+    .query(async () => {
+      const hierarchy = await getAllHierarchy();
+      return hierarchy;
+    }),
+
+  // Buscar estatísticas da hierarquia
+  getStats: protectedProcedure
+    .query(async () => {
+      const stats = await getHierarchyStats();
+      return stats;
+    }),
+});
+
 export const appRouter = router({
   system: systemRouter,
   admin: adminRouter,
@@ -128,6 +191,7 @@ export const appRouter = router({
   emailNotifications: emailNotificationsRouter,
   emailMonitoring: emailMonitoringRouter,
   employeeImport: employeeImportRouter,
+  hierarchy: hierarchyRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
