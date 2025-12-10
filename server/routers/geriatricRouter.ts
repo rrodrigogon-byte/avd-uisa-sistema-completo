@@ -412,4 +412,149 @@ export const geriatricRouter = router({
         return await geriatricDb.getClockTestById(input.id);
       }),
   }),
+
+  // ============================================================================
+  // RELATÓRIOS E ANÁLISES
+  // ============================================================================
+
+  reports: router({
+    /**
+     * Histórico completo de um paciente com todos os testes
+     */
+    getPatientHistory: protectedProcedure
+      .input(z.object({ pacienteId: z.number() }))
+      .query(async ({ input }) => {
+        const patient = await geriatricDb.getPatientById(input.pacienteId);
+        const katzTests = await geriatricDb.getKatzTestsByPatient(input.pacienteId);
+        const lawtonTests = await geriatricDb.getLawtonTestsByPatient(input.pacienteId);
+        const minimentalTests = await geriatricDb.getMiniMentalTestsByPatient(input.pacienteId);
+        const gdsTests = await geriatricDb.getGDSTestsByPatient(input.pacienteId);
+        const clockTests = await geriatricDb.getClockTestsByPatient(input.pacienteId);
+
+        return {
+          patient,
+          katzTests,
+          lawtonTests,
+          minimentalTests,
+          gdsTests,
+          clockTests,
+        };
+      }),
+
+    /**
+     * Dados para gráfico de evolução temporal
+     */
+    getEvolutionData: protectedProcedure
+      .input(z.object({ 
+        pacienteId: z.number(),
+        testType: z.enum(["katz", "lawton", "minimental", "gds", "clock"])
+      }))
+      .query(async ({ input }) => {
+        let data: any[] = [];
+        
+        switch (input.testType) {
+          case "katz":
+            data = await geriatricDb.getKatzTestsByPatient(input.pacienteId);
+            return data.map(t => ({
+              date: t.dataAvaliacao,
+              score: t.pontuacaoTotal,
+              classification: t.classificacao,
+            }));
+          
+          case "lawton":
+            data = await geriatricDb.getLawtonTestsByPatient(input.pacienteId);
+            return data.map(t => ({
+              date: t.dataAvaliacao,
+              score: t.pontuacaoTotal,
+              classification: t.classificacao,
+            }));
+          
+          case "minimental":
+            data = await geriatricDb.getMiniMentalTestsByPatient(input.pacienteId);
+            return data.map(t => ({
+              date: t.dataAvaliacao,
+              score: t.pontuacaoTotal,
+              classification: t.classificacao,
+            }));
+          
+          case "gds":
+            data = await geriatricDb.getGDSTestsByPatient(input.pacienteId);
+            return data.map(t => ({
+              date: t.dataAvaliacao,
+              score: t.pontuacaoTotal,
+              classification: t.classificacao,
+            }));
+          
+          case "clock":
+            data = await geriatricDb.getClockTestsByPatient(input.pacienteId);
+            return data.map(t => ({
+              date: t.dataAvaliacao,
+              score: t.pontuacaoTotal,
+              classification: t.classificacao,
+            }));
+        }
+      }),
+
+    /**
+     * Comparação entre diferentes testes
+     */
+    getComparisonData: protectedProcedure
+      .input(z.object({ pacienteId: z.number() }))
+      .query(async ({ input }) => {
+        const katzTests = await geriatricDb.getKatzTestsByPatient(input.pacienteId);
+        const lawtonTests = await geriatricDb.getLawtonTestsByPatient(input.pacienteId);
+        const minimentalTests = await geriatricDb.getMiniMentalTestsByPatient(input.pacienteId);
+        const gdsTests = await geriatricDb.getGDSTestsByPatient(input.pacienteId);
+        const clockTests = await geriatricDb.getClockTestsByPatient(input.pacienteId);
+
+        // Pegar o teste mais recente de cada tipo
+        const latest = {
+          katz: katzTests[0] || null,
+          lawton: lawtonTests[0] || null,
+          minimental: minimentalTests[0] || null,
+          gds: gdsTests[0] || null,
+          clock: clockTests[0] || null,
+        };
+
+        // Normalizar pontuações para 0-100%
+        return {
+          katz: latest.katz ? {
+            score: latest.katz.pontuacaoTotal,
+            maxScore: 6,
+            percentage: (latest.katz.pontuacaoTotal / 6) * 100,
+            classification: latest.katz.classificacao,
+            date: latest.katz.dataAvaliacao,
+          } : null,
+          lawton: latest.lawton ? {
+            score: latest.lawton.pontuacaoTotal,
+            maxScore: 8,
+            percentage: (latest.lawton.pontuacaoTotal / 8) * 100,
+            classification: latest.lawton.classificacao,
+            date: latest.lawton.dataAvaliacao,
+          } : null,
+          minimental: latest.minimental ? {
+            score: latest.minimental.pontuacaoTotal,
+            maxScore: 30,
+            percentage: (latest.minimental.pontuacaoTotal / 30) * 100,
+            classification: latest.minimental.classificacao,
+            date: latest.minimental.dataAvaliacao,
+          } : null,
+          gds: latest.gds ? {
+            score: latest.gds.pontuacaoTotal,
+            maxScore: 15,
+            // GDS é invertido: menor é melhor
+            percentage: ((15 - latest.gds.pontuacaoTotal) / 15) * 100,
+            classification: latest.gds.classificacao,
+            date: latest.gds.dataAvaliacao,
+          } : null,
+          clock: latest.clock ? {
+            score: latest.clock.pontuacaoTotal,
+            maxScore: 10,
+            percentage: (latest.clock.pontuacaoTotal / 10) * 100,
+            classification: latest.clock.classificacao,
+            date: latest.clock.dataAvaliacao,
+          } : null,
+        };
+      }),
+  }),
 });

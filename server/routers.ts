@@ -97,6 +97,7 @@ import { emailNotificationsRouter } from "./routers/emailNotificationsRouter";
 import { emailMonitoringRouter } from "./routers/emailMonitoringRouter";
 import { employeeImportRouter } from "./routers/employeeImportRouter";
 import { hierarchyRouter } from "./routers/hierarchyRouter";
+import { htmlImportRouter } from "./routers/htmlImportRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -221,6 +222,7 @@ export const appRouter = router({
   emailMonitoring: emailMonitoringRouter,
   employeeImport: employeeImportRouter,
   hierarchy: hierarchyRouter,
+  htmlImport: htmlImportRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

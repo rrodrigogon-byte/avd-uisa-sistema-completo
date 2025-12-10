@@ -207,6 +207,8 @@ import LawtonTest from "./pages/geriatric/LawtonTest";
 import MiniMentalTest from "./pages/geriatric/MiniMentalTest";
 import GDSTest from "./pages/geriatric/GDSTest";
 import ClockTest from "./pages/geriatric/ClockTest";
+import TestesGeriatricosAnalises from "./pages/TestesGeriatricosAnalises";
+import ImportacaoHTML from "./pages/ImportacaoHTML";
 import ConstrutorFormularios from "./pages/ConstrutorFormularios";
 import ProcessosAvaliativos from "./pages/ProcessosAvaliativos";
 import DashboardsAnaliticos from "./pages/DashboardsAnaliticos";
@@ -423,6 +425,8 @@ function Router() {
       <Route path="/geriatric/minimental-test" component={MiniMentalTest} />
       <Route path="/geriatric/gds-test" component={GDSTest} />
       <Route path="/geriatric/clock-test" component={ClockTest} />
+      <Route path="/geriatric/analises" component={TestesGeriatricosAnalises} />
+      <Route path="/importacao-html" component={ImportacaoHTML} />
       
       {/* Novos módulos - Três próximos passos */}
       <Route path="/relatorios/personalizados" component={CustomReportBuilder} />
