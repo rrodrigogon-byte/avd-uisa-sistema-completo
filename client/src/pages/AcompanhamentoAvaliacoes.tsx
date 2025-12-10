@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, RefreshCw, TrendingUp, Users, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { FivePercentRuleValidator } from "@/components/FivePercentRuleValidator";
 import { toast } from "sonner";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import {
@@ -158,6 +159,13 @@ export default function AcompanhamentoAvaliacoes() {
 
         {selectedCycle && !statsLoading && stats && (
           <>
+            {/* Validação da Regra 5% */}
+            <FivePercentRuleValidator
+              totalEmployees={stats.totalEmployees || 0}
+              evaluatedEmployees={stats.completed || 0}
+              showDetails={true}
+            />
+
             {/* Cards de Métricas */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>

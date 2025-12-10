@@ -2,6 +2,39 @@ import nodemailer from 'nodemailer';
 import { ENV } from './env';
 
 /**
+ * Lista de emails permitidos para receber mensagens do sistema
+ * Todos os outros emails serão bloqueados temporariamente
+ */
+const EMAIL_WHITELIST = [
+  'rodrigo.goncalves@uisa.com.br',
+  'caroline.silva@uisa.com.br',
+  'andre.sbardellini@uisa.com.br',
+];
+
+/**
+ * Verifica se um email está na whitelist
+ */
+function isEmailAllowed(email: string): boolean {
+  const normalizedEmail = email.toLowerCase().trim();
+  return EMAIL_WHITELIST.some(allowed => allowed.toLowerCase() === normalizedEmail);
+}
+
+/**
+ * Filtra uma lista de emails, retornando apenas os permitidos
+ */
+function filterAllowedEmails(emails: string | string[]): string[] {
+  const emailList = Array.isArray(emails) ? emails : [emails];
+  const allowed = emailList.filter(isEmailAllowed);
+  const blocked = emailList.filter(email => !isEmailAllowed(email));
+  
+  if (blocked.length > 0) {
+    console.log('[Email] Emails bloqueados (não estão na whitelist):', blocked);
+  }
+  
+  return allowed;
+}
+
+/**
  * Configuração do transporte de email usando SMTP
  */
 let transporter: nodemailer.Transporter | null = null;
@@ -57,20 +90,29 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
     return false;
   }
 
+  // Filtrar emails permitidos
+  const allowedEmails = filterAllowedEmails(options.to);
+  
+  if (allowedEmails.length === 0) {
+    console.log('[Email] Nenhum email permitido na whitelist. Email não enviado.');
+    return false;
+  }
+
   try {
     const smtpFrom = process.env.SMTP_FROM || process.env.SMTP_USER;
     const fromName = process.env.SMTP_FROM_NAME || 'Sistema AVD UISA';
     
     const mailOptions = {
       from: options.from || `"${fromName}" <${smtpFrom}>`,
-      to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
+      to: allowedEmails.join(', '),
       subject: options.subject,
       html: options.html,
       text: options.text,
     };
 
     const info = await transport.sendMail(mailOptions);
-    console.log('[Email] Enviado:', info.messageId);
+    console.log('[Email] Enviado para:', allowedEmails);
+    console.log('[Email] Message ID:', info.messageId);
     return true;
   } catch (error) {
     console.error('[Email] Erro ao enviar:', error);

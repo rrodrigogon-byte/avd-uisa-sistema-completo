@@ -1199,3 +1199,41 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - A maioria das falhas restantes são relacionadas a erros de autenticação SMTP (Gmail bloqueando muitas tentativas de login)
 - Os testes de funcionalidade principal estão todos passando
 - Sistema está estável e pronto para uso
+
+
+## 🔐 RESTRIÇÃO DE ENVIO DE EMAILS (10/12/2025)
+
+### Implementar Whitelist de Emails
+- [x] Criar constante com lista de emails permitidos (rodrigo.goncalves@uisa.com.br, caroline.silva@uisa.com.br, andre.sbardellini@uisa.com.br)
+- [x] Atualizar função de envio de emails para verificar whitelist
+- [x] Atualizar envio de credenciais para verificar whitelist
+- [x] Atualizar envio de notificações para verificar whitelist
+- [x] Atualizar envio de lembretes para verificar whitelist
+- [x] Testar que apenas emails da whitelist recebem mensagens
+- [x] Adicionar logs para emails bloqueados (não enviados)
+
+## 📊 VALIDAÇÃO VISUAL DA REGRA 5% (10/12/2025)
+
+### Implementar Indicadores Visuais no Frontend
+- [x] Criar componente de alerta para regra 5% não atingida
+- [x] Adicionar indicador visual na página de avaliações
+- [x] Mostrar quantidade mínima necessária vs. quantidade atual
+- [x] Adicionar badge/tag quando regra não está cumprida
+- [x] Implementar tooltip explicativo sobre a regra 5%
+- [x] Adicionar validação no formulário de finalização
+- [x] Bloquear finalização quando regra não for atingida
+- [ ] Criar testes para validação da regra 5%
+
+## 🔍 DASHBOARD DE MONITORAMENTO DE TESTES (10/12/2025)
+
+### Criar Dashboard de Saúde do Sistema
+- [x] Criar página de monitoramento de testes
+- [x] Mostrar status dos últimos testes executados
+- [x] Exibir taxa de sucesso dos testes (%)
+- [x] Listar testes falhando com detalhes
+- [x] Adicionar gráfico de evolução de testes
+- [x] Implementar atualização em tempo real
+- [x] Adicionar filtros por módulo/categoria
+- [x] Criar alertas para testes críticos falhando
+- [x] Adicionar botão para executar testes manualmente
+- [ ] Integrar com sistema de notificações

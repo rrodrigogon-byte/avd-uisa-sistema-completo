@@ -22,7 +22,8 @@ import Departamentos from "./pages/Departamentos";
 import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
 import ImportacaoPonto from "@/pages/ImportacaoPonto";
-import SecurityDashboard from "@/pages/SecurityDashboard";
+import SecurityDashboard from "./pages/SecurityDashboard";
+import TestMonitoringDashboard from "./pages/TestMonitoringDashboard";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -419,6 +420,7 @@ function Router() {
       <Route path="/resultados/:participantId" component={ResultadosIndividuais} />
       <Route path="/admin/dashboard-processos" component={DashboardAdmin} />
       <Route path="/admin/email-monitoring" component={EmailMonitoring} />
+      <Route path="/admin/test-monitoring" component={TestMonitoringDashboard} />
       
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />
