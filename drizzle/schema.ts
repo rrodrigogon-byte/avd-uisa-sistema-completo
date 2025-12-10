@@ -2022,6 +2022,48 @@ export const pdiGovernanceReviews = mysqlTable("pdiGovernanceReviews", {
 export type PdiGovernanceReview = typeof pdiGovernanceReviews.$inferSelect;
 export type InsertPdiGovernanceReview = typeof pdiGovernanceReviews.$inferInsert;
 
+/**
+ * Tabela de histórico de importações de PDI
+ * Registra todas as importações em lote de PDIs via arquivo
+ */
+export const pdiImportHistory = mysqlTable("pdiImportHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Informações do arquivo
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileSize: int("fileSize").notNull(), // Tamanho em bytes
+  fileType: mysqlEnum("fileType", ["xlsx", "xls", "csv"]).notNull(),
+  fileUrl: varchar("fileUrl", { length: 512 }), // URL do arquivo no S3
+  
+  // Status da importação
+  status: mysqlEnum("status", ["processando", "concluido", "erro", "parcial"]).default("processando").notNull(),
+  
+  // Estatísticas
+  totalRecords: int("totalRecords").default(0).notNull(), // Total de registros no arquivo
+  successCount: int("successCount").default(0).notNull(), // Registros importados com sucesso
+  errorCount: int("errorCount").default(0).notNull(), // Registros com erro
+  
+  // Detalhes de erros (JSON)
+  errors: json("errors").$type<Array<{
+    row: number;
+    field: string;
+    message: string;
+    value?: string;
+  }>>(),
+  
+  // Metadados
+  importedBy: int("importedBy").notNull(), // Usuário que fez a importação
+  startedAt: datetime("startedAt").notNull(),
+  completedAt: datetime("completedAt"),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiImportHistory = typeof pdiImportHistory.$inferSelect;
+export type InsertPdiImportHistory = typeof pdiImportHistory.$inferInsert;
+
 
 // ============================================================================
 // PESQUISAS DE PULSE (ENGAJAMENTO E CLIMA ORGANIZACIONAL)

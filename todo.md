@@ -1507,3 +1507,81 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Criar testes automatizados para CRUD de Sucessão UISA
 - [x] Criar testes automatizados para CRUD de Sucessão Geral
 - [x] Validar que todas as funcionalidades estão operacionais
+
+
+## 📥 IMPORTAÇÃO DE PDI COMPLETO (NOVA FUNCIONALIDADE)
+
+### Funcionalidades de Importação
+- [x] Criar interface de upload de arquivo Excel/CSV para PDI completo
+- [x] Implementar parser para extrair dados do PDI (metas, competências, ações de desenvolvimento)
+- [x] Validar estrutura e dados do arquivo importado
+- [x] Criar preview dos dados antes da importação definitiva
+- [x] Implementar importação em lote com feedback de progresso
+- [x] Tratar erros e fornecer relatório de importação detalhado
+- [x] Adicionar suporte para múltiplos formatos (XLSX, CSV, XLS)
+
+### Estrutura de Dados PDI
+- [x] Verificar schema atual de PDI
+- [x] Adicionar campos necessários para importação em lote
+- [x] Criar tabela de histórico de importações
+- [x] Implementar validações de integridade de dados
+- [x] Adicionar campos de metadados (data importação, usuário, arquivo original)
+
+### Backend - Processamento PDI
+- [x] Criar procedure tRPC para upload de arquivo PDI
+- [x] Implementar lógica de parsing de Excel (usando biblioteca xlsx)
+- [x] Implementar lógica de parsing de CSV
+- [x] Criar validações de dados (campos obrigatórios, formatos, tipos)
+- [x] Implementar transações para importação atômica (tudo ou nada)
+- [x] Criar sistema de rollback em caso de erro
+- [x] Implementar logging detalhado de importações
+- [x] Criar procedure para listar histórico de importações
+- [x] Implementar exportação de template de PDI (arquivo exemplo)
+
+### Frontend - Interface de Importação
+- [x] Criar página dedicada de importação de PDI
+- [x] Implementar componente de upload de arquivo com drag-and-drop
+- [x] Adicionar validação de tipo e tamanho de arquivo
+- [x] Criar tabela de preview dos dados importados
+- [x] Implementar validação visual (destacar erros em vermelho)
+- [x] Adicionar feedback de progresso durante importação (barra de progresso)
+- [x] Criar modal de confirmação antes da importação
+- [x] Implementar página de histórico de importações
+- [x] Adicionar botão para download de template de PDI
+- [x] Criar visualização de erros e avisos pós-importação
+
+### Validações e Regras de Negócio
+- [x] Validar que funcionário existe no sistema
+- [x] Validar que período de avaliação existe
+- [x] Validar formatos de data
+- [x] Validar valores numéricos (porcentagens, pesos)
+- [x] Validar campos obrigatórios
+- [x] Validar duplicatas (mesmo funcionário, mesmo período)
+- [x] Implementar regras de substituição (atualizar vs criar novo)
+
+### Testes
+- [ ] Criar testes unitários para parser de Excel
+- [ ] Criar testes unitários para parser de CSV
+- [ ] Criar testes de validação de dados
+- [ ] Testar importação com arquivo válido
+- [ ] Testar importação com arquivo inválido
+- [ ] Testar rollback em caso de erro
+- [ ] Testar importação em lote (100+ registros)
+- [ ] Validar performance com arquivos grandes
+
+### Documentação
+- [ ] Criar guia de importação de PDI
+- [ ] Documentar formato esperado do arquivo
+- [ ] Criar template de exemplo com dados fictícios
+- [ ] Documentar possíveis erros e soluções
+- [ ] Adicionar tooltips e ajuda contextual na interface
+
+## 📊 PROGRESSO DA IMPORTAÇÃO DE PDI
+
+- Estrutura de Dados: 0%
+- Backend: 0%
+- Frontend: 0%
+- Validações: 0%
+- Testes: 0%
+- Documentação: 0%
+- **META: 100% em todas as áreas**

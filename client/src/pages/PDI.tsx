@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
 import { downloadICS } from "@/lib/generateICS";
 import { toast } from "sonner";
-import { AlertCircle, BookOpen, Calendar, CalendarPlus, CheckCircle2, Clock, Plus, TrendingUp, Users2, Lightbulb, Brain } from "lucide-react";
+import { AlertCircle, BookOpen, Calendar, CalendarPlus, CheckCircle2, Clock, Plus, TrendingUp, Users2, Lightbulb, Brain, Upload } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function PDI() {
@@ -82,6 +82,14 @@ export default function PDI() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => setLocation("/pdi/import")}
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Importar PDI
+            </Button>
             <Button
               size="lg"
               variant="outline"

@@ -1008,6 +1008,132 @@ export const appRouter = router({
     getDevelopmentActions: protectedProcedure.query(async () => {
       return await db.getDevelopmentActions();
     }),
+
+    // Importação de PDI em lote
+    uploadImportFile: protectedProcedure
+      .input(z.object({
+        fileName: z.string(),
+        fileSize: z.number(),
+        fileType: z.enum(['xlsx', 'xls', 'csv']),
+        fileData: z.string(), // Base64
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { PDIImportParser } = await import('./services/pdiImportService');
+        
+        // Converter base64 para buffer
+        const buffer = Buffer.from(input.fileData, 'base64');
+        
+        // Buscar ID do usuário
+        const employee = await db.getEmployeeByUserId(ctx.user!.id);
+        if (!employee) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Usuário não encontrado',
+          });
+        }
+        
+        // Processar importação
+        const result = await PDIImportParser.processImport(
+          buffer,
+          input.fileName,
+          input.fileSize,
+          input.fileType,
+          employee.id
+        );
+        
+        return result;
+      }),
+
+    // Preview de importação (validar sem salvar)
+    previewImport: protectedProcedure
+      .input(z.object({
+        fileData: z.string(), // Base64
+        fileType: z.enum(['xlsx', 'xls', 'csv']),
+      }))
+      .mutation(async ({ input }) => {
+        const { PDIImportParser } = await import('./services/pdiImportService');
+        
+        // Converter base64 para buffer
+        const buffer = Buffer.from(input.fileData, 'base64');
+        
+        // Parse do arquivo
+        const data = await PDIImportParser.parseFile(buffer, input.fileType);
+        
+        // Validar dados
+        const errors = await PDIImportParser.validateData(data);
+        
+        return {
+          totalRecords: data.length,
+          data: data.slice(0, 10), // Retornar apenas primeiras 10 linhas para preview
+          errors,
+          hasErrors: errors.length > 0,
+        };
+      }),
+
+    // Download de template de importação
+    downloadTemplate: protectedProcedure
+      .query(async () => {
+        const { PDIImportParser } = await import('./services/pdiImportService');
+        const buffer = PDIImportParser.generateTemplate();
+        return {
+          data: buffer.toString('base64'),
+          fileName: 'template_importacao_pdi.xlsx',
+        };
+      }),
+
+    // Listar histórico de importações
+    listImportHistory: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional().default(20),
+        offset: z.number().optional().default(0),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+        
+        const { pdiImportHistory } = await import('../drizzle/schema');
+        const { desc } = await import('drizzle-orm');
+        
+        const history = await database
+          .select()
+          .from(pdiImportHistory)
+          .orderBy(desc(pdiImportHistory.createdAt))
+          .limit(input.limit)
+          .offset(input.offset);
+        
+        return history;
+      }),
+
+    // Obter detalhes de uma importação
+    getImportDetails: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiImportHistory } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        const result = await database
+          .select()
+          .from(pdiImportHistory)
+          .where(eq(pdiImportHistory.id, input.id))
+          .limit(1);
+        
+        if (result.length === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Importação não encontrada',
+          });
+        }
+        
+        return result[0];
+      }),
   }),
 
   // ============================================================================

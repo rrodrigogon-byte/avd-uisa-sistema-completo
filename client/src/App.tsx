@@ -37,6 +37,8 @@ import Avaliacoes from "./pages/Avaliacoes";
 import ViewEvaluation from "./pages/ViewEvaluation";
 import ManageEvaluations from "./pages/ManageEvaluations";
 import PDI from "./pages/PDI";
+import PDIImport from "./pages/PDIImport";
+import PDIImportHistory from "./pages/PDIImportHistory";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
@@ -279,7 +281,10 @@ function Router() {
       <Route path="/ciclos-avaliacao" component={CiclosAvaliacao} />
       <Route path="/ciclos-avaliacao/gerenciar" component={GerenciarCiclosAvaliacao} />
       <Route path="/ciclos/ativos" component={CiclosAtivos} />
-      <Route path={"/pdi"} component={PDI} />      <Route path={"/pdi/criar"} component={CriarPDI} />
+      <Route path={"/pdi"} component={PDI} />
+      <Route path={"/pdi/import"} component={PDIImport} />
+      <Route path={"/pdi/import/history"} component={PDIImportHistory} />
+      <Route path={"/pdi/criar"} component={CriarPDI} />
       <Route path={"/produtividade/dashboard"} component={DashboardProdutividade} />
       <Route path={"/descricao-cargos/aprovar-superior"} component={AprovarDescricaoSuperior} />
       <Route path={"/descricao-cargos/aprovar-rh"} component={AprovarDescricaoRH} />      <Route path={"/nine-box"} component={NineBox} />
