@@ -1186,6 +1186,13 @@ export const pdiIntelligentDetails = mysqlTable("pdiIntelligentDetails", {
   id: int("id").autoincrement().primaryKey(),
   planId: int("planId").notNull().unique(), // Relacionamento 1:1 com pdiPlans
   
+  // Importação de HTML
+  importedFromHtml: boolean("importedFromHtml").default(false).notNull(),
+  htmlOriginalPath: varchar("htmlOriginalPath", { length: 512 }), // Caminho do HTML original
+  htmlContent: text("htmlContent"), // Conteúdo HTML completo para referência
+  importedAt: datetime("importedAt"),
+  importedBy: int("importedBy"), // ID do usuário que importou
+  
   // Contexto estratégico
   strategicContext: text("strategicContext"), // Descrição do desafio estratégico
   durationMonths: int("durationMonths").default(24).notNull(), // Duração do plano em meses

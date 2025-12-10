@@ -25,6 +25,7 @@ import { executiveRouter } from "./executiveRouter";
 import { successionRouter } from "./successionRouter";
 import { nineBoxRouter } from "./nineBoxRouter";
 import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
+import { pdiHtmlImportRouter } from "./pdiHtmlImportRouter";
 import { evaluation360Router } from "./evaluation360Router";
 import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
@@ -2603,6 +2604,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de PDI Inteligente
   pdiIntelligent: pdiIntelligentRouter,
+  
+  // Router de Importação de PDI HTML
+  pdiHtmlImport: pdiHtmlImportRouter,
 
   // Router de Nine Box Comparativo
   nineBoxComparative: nineBoxRouter,

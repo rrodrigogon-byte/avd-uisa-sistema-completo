@@ -58,6 +58,7 @@ import MapaSucessaoUISA from "./pages/MapaSucessaoUISA";
 import PDIInteligente from "./pages/PDIInteligente";
 import PDIInteligenteNovo from "./pages/PDIInteligenteNovo";
 import PDIInteligenteDetalhes from "./pages/PDIInteligenteDetalhes";
+import PDIInteligenteImport from "./pages/PDIInteligenteImport";
 import TestesResultadosRH from "./pages/TestesResultadosRH";
 import NineBoxComparativo from "./pages/NineBoxComparativo";
 import ReportBuilder from "./pages/ReportBuilder";
@@ -312,6 +313,7 @@ function Router() {
       <Route path="/mapa-sucessao" component={SucessaoMelhorado} />
       <Route path="/mapa-sucessao-completo" component={MapaSucessaoCompleto} />
       <Route path="/mapa-sucessao-uisa" component={MapaSucessaoUISA} />
+      <Route path="/pdi-inteligente/import" component={PDIInteligenteImport} />
       <Route path="/pdi-inteligente/novo" component={PDIInteligenteNovo} />
       <Route path="/pdi-inteligente/:id/detalhes" component={PDIInteligenteDetalhes} />
       <Route path="/pdi-inteligente/:id" component={PDIInteligente} />

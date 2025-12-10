@@ -1446,3 +1446,24 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [ ] Implementar breadcrumb hierárquico
 - [x] Adicionar validações de hierarquia (evitar loops, etc.)
 - [x] Testar fluxo completo de gestão hierárquica
+
+
+## 🆕 PDI INTELIGENTE - IMPORTAÇÃO DE HTML
+
+### Funcionalidades de Importação
+- [x] Criar botão "PDI Inteligente" na interface
+- [x] Implementar parser de arquivos HTML de PDI
+- [x] Extrair dados estruturados dos HTMLs (PDI_Wilson3.html e PDI_Fernando9.html)
+- [x] Criar procedure tRPC para importação de PDI
+- [x] Validar estrutura dos dados importados
+- [x] Salvar PDIs importados no banco de dados
+- [x] Exibir PDIs importados na interface
+- [ ] Permitir edição de PDIs importados
+- [ ] Implementar versionamento de PDIs
+
+### Integração com Sistema Existente
+- [x] Vincular PDIs importados aos funcionários correspondentes
+- [x] Criar visualização detalhada de PDI importado
+- [ ] Implementar exportação de PDI em formato HTML
+- [x] Adicionar histórico de importações
+- [ ] Criar dashboard de PDIs ativos
