@@ -26,6 +26,8 @@ import { successionRouter } from "./successionRouter";
 import { nineBoxRouter } from "./nineBoxRouter";
 import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
 import { pdiHtmlImportRouter } from "./pdiHtmlImportRouter";
+import { pdiExportRouter } from "./pdiExportRouter";
+import { competencyValidationRouter } from "./competencyValidationRouter";
 import { evaluation360Router } from "./evaluation360Router";
 import { reportBuilderRouter } from "./reportBuilderRouter";
 import { reportAnalyticsRouter } from "./reportAnalyticsRouter";
@@ -2733,6 +2735,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Importação de PDI HTML
   pdiHtmlImport: pdiHtmlImportRouter,
+  
+  // Router de Exportação de PDI
+  pdiExport: pdiExportRouter,
+  
+  // Router de Validação Avançada de Competências
+  competencyValidation: competencyValidationRouter,
 
   // Router de Nine Box Comparativo
   nineBoxComparative: nineBoxRouter,

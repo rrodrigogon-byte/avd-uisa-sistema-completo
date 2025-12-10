@@ -1585,3 +1585,114 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - Testes: 0%
 - Documentação: 0%
 - **META: 100% em todas as áreas**
+
+
+## 🆕 IMPORTAÇÃO E GERAÇÃO DE PDI EM HTML (NOVA SOLICITAÇÃO - 10/12/2025)
+
+### Funcionalidade de Importação de HTML
+- [x] Criar página de importação de arquivos HTML
+- [x] Implementar upload de arquivos HTML
+- [x] Criar parser para extrair dados dos HTMLs importados
+- [x] Validar estrutura do HTML importado
+- [x] Mapear dados extraídos para o schema do banco de dados
+
+### Extração de Dados do HTML
+- [x] Extrair dados do perfil do colaborador (nome, cargo, sponsor)
+- [x] Extrair KPIs (posição atual, reenquadramento, nova posição, plano)
+- [x] Extrair análise de gaps de competências
+- [x] Extrair dados do gráfico de competências (Chart.js)
+- [x] Extrair estratégia/trilha de remuneração
+- [x] Extrair plano de ação (70-20-10)
+- [x] Extrair pacto de responsabilidades
+- [x] Extrair cronograma de acompanhamento
+
+### Salvamento no Banco de Dados
+- [x] Criar/atualizar registro de colaborador
+- [x] Salvar KPIs do colaborador
+- [x] Salvar gaps de competências identificados
+- [x] Salvar dados de competências para gráfico (em pdiIntelligentDetails)
+- [x] Salvar trilha de remuneração (em pdiIntelligentDetails)
+- [x] Salvar plano de ação detalhado (em pdiActions)
+- [x] Salvar pacto de responsabilidades (em pdiIntelligentDetails)
+- [x] Salvar cronograma de acompanhamento (em pdiGovernanceReviews)
+
+### Geração de PDI em HTML
+- [ ] Criar template HTML base (usando estrutura dos arquivos importados)
+- [ ] Implementar injeção de dados do banco no template
+- [ ] Garantir que Tailwind CSS seja carregado via CDN
+- [ ] Garantir que Chart.js seja carregado via CDN
+- [ ] Garantir que Google Fonts (Poppins) seja carregado
+- [ ] Implementar geração dinâmica do gráfico de competências
+- [ ] Implementar seção de perfil e KPIs dinâmica
+- [ ] Implementar seção de diagnóstico de competências dinâmica
+- [ ] Implementar seção de remuneração dinâmica
+- [ ] Implementar seção de plano de ação dinâmica
+- [ ] Implementar seção de pacto de responsabilidades dinâmica
+- [ ] Implementar seção de cronograma dinâmica
+
+### Funcionalidades de Exportação
+- [ ] Implementar botão de download do HTML gerado
+- [ ] Implementar preview do HTML antes de exportar
+- [ ] Implementar opção de exportar para PDF (via browser print)
+- [ ] Implementar compartilhamento por email do PDI gerado
+
+### Integração com Sistema Existente
+- [x] Adicionar menu "Importar PDI" no DashboardLayout (já existe)
+- [x] Adicionar menu "Gerar PDI" no DashboardLayout (já existe)
+- [x] Criar rotas no App.tsx para importação e geração (já existem)
+- [x] Integrar com módulo de colaboradores existente
+- [x] Integrar com módulo de avaliações existente
+- [x] Integrar com módulo de competências existente
+
+### Testes
+- [ ] Testar importação de HTML do Wilson
+- [ ] Testar importação de HTML do Fernando
+- [ ] Testar extração de todos os dados
+- [ ] Testar salvamento no banco de dados
+- [ ] Testar geração de novo HTML
+- [ ] Validar que HTML gerado mantém formatação original
+- [ ] Validar que gráficos são renderizados corretamente
+- [ ] Testar exportação para PDF
+
+## 📊 PROGRESSO DA IMPORTAÇÃO DE PDI
+
+- Parser de HTML: 100% ✅
+- Extração de Dados: 100% ✅
+- Salvamento no Banco: 100% ✅
+- Template HTML: 0% (próxima fase)
+- Geração Dinâmica: 0% (próxima fase)
+- Exportação: 50% (retorna HTML original)
+- Testes: 0%
+- **PROGRESSO ATUAL: 70%**
+
+
+## 🆕 NOVAS MELHORIAS - SISTEMA DE PDI
+
+### Geração de HTML e Testes
+- [x] Implementar lógica completa de geração de HTML na procedure generateHtml
+- [x] Testar importação do arquivo Wilson (teste automatizado criado)
+- [x] Testar importação do arquivo Fernando (teste automatizado criado)
+- [x] Validar que todos os dados são corretamente extraídos e salvos
+
+### Exportação para PDF
+- [x] Implementar exportação de PDI individual para PDF
+- [x] Implementar exportação em lote de PDIs para PDF
+- [x] Garantir formatação adequada do PDF (cabeçalho, tabelas, assinaturas)
+
+### Notificações por Email para PDIs
+- [x] Implementar envio de email quando importação de PDI for concluída
+- [x] Notificar gestores sobre PDIs importados que precisam de aprovação
+- [x] Template de email com resumo dos PDIs importados
+- [x] Integrar com sistema de emails existente
+
+### Validação Avançada de Competências
+- [x] Implementar busca fuzzy de competências similares
+- [x] Sugerir competências existentes quando não encontrada correspondência exata
+- [x] Permitir criação de novas competências durante importação
+- [x] Interface para aceitar/rejeitar sugestões de competências
+
+### Exportação de PDIs Existentes
+- [x] Implementar exportação de PDI para formato HTML (template original)
+- [x] Permitir exportação em lote de múltiplos PDIs
+- [x] Garantir compatibilidade com re-importação
+- [x] Facilitar edições em massa via HTML

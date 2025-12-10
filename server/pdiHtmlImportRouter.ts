@@ -15,6 +15,9 @@ import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
 import fs from "fs/promises";
 import path from "path";
+import { parsePDIHtml, type ParsedPDI } from "./pdiHtmlParser";
+import { generatePDIHtml, type PDIData } from "./pdiHtmlGenerator";
+import { sendPDIImportCompletedEmail } from "./pdiEmailService";
 
 /**
  * Router para importação de PDI a partir de arquivos HTML
@@ -22,14 +25,15 @@ import path from "path";
 
 export const pdiHtmlImportRouter = router({
   /**
-   * Importar PDI a partir de arquivo HTML
-   * Processa os arquivos PDI_Wilson3.html e PDI_Fernando9.html
+   * Importar PDI a partir de conteúdo HTML
+   * Aceita upload direto de arquivo HTML ou conteúdo HTML como string
    */
   importFromHtml: protectedProcedure
     .input(
       z.object({
-        htmlFilename: z.enum(["PDI_Wilson3.html", "PDI_Fernando9.html"]),
+        htmlContent: z.string(),
         cycleId: z.number(),
+        filename: z.string().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -37,20 +41,13 @@ export const pdiHtmlImportRouter = router({
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
       try {
-        // Ler arquivo JSON com dados extraídos
-        const dataPath = path.join(process.cwd(), "pdi_data.json");
-        const jsonData = await fs.readFile(dataPath, "utf-8");
-        const pdiDataArray = JSON.parse(jsonData);
+        // Fazer parse do HTML usando o novo parser
+        const pdiData = parsePDIHtml(input.htmlContent);
 
-        // Encontrar dados do PDI correspondente ao arquivo
-        const pdiData = pdiDataArray.find((item: any) => 
-          item.html_original.includes(input.htmlFilename)
-        );
-
-        if (!pdiData) {
+        if (!pdiData.employeeName) {
           throw new TRPCError({ 
-            code: "NOT_FOUND", 
-            message: `Dados não encontrados para ${input.htmlFilename}` 
+            code: "BAD_REQUEST", 
+            message: "Não foi possível extrair o nome do colaborador do HTML" 
           });
         }
 
@@ -58,7 +55,7 @@ export const pdiHtmlImportRouter = router({
         let employee = await db
           .select()
           .from(employees)
-          .where(eq(employees.name, pdiData.nome))
+          .where(eq(employees.name, pdiData.employeeName))
           .limit(1);
 
         let employeeId: number;
@@ -70,9 +67,9 @@ export const pdiHtmlImportRouter = router({
             .insert(employees)
             .values({
               employeeCode: employeeCode,
-              name: pdiData.nome,
+              name: pdiData.employeeName,
               chapa: `IMPORT_${Date.now()}`, // Chapa temporária
-              cargo: pdiData.cargo,
+              cargo: pdiData.position,
               status: "ativo",
             })
             .$returningId();
@@ -83,8 +80,8 @@ export const pdiHtmlImportRouter = router({
         }
 
         // Extrair duração em meses dos KPIs
-        const durationMonths = pdiData.kpis["Plano de Performance"]
-          ? parseInt(pdiData.kpis["Plano de Performance"].replace(/\D/g, "")) || 24
+        const durationMonths = pdiData.kpis.planDuration
+          ? parseInt(pdiData.kpis.planDuration.replace(/\D/g, "")) || 24
           : 24;
 
         // Criar data de início e fim
@@ -105,9 +102,9 @@ export const pdiHtmlImportRouter = router({
           })
           .$returningId();
 
-        // Ler conteúdo HTML original
-        const htmlPath = path.join(process.cwd(), input.htmlFilename);
-        const htmlContent = await fs.readFile(htmlPath, "utf-8");
+        // Usar o HTML fornecido
+        const htmlContent = input.htmlContent;
+        const htmlPath = input.filename || `imported_${Date.now()}.html`;
 
         // Criar detalhes inteligentes do PDI
         await db.insert(pdiIntelligentDetails).values({
@@ -117,21 +114,21 @@ export const pdiHtmlImportRouter = router({
           htmlContent: htmlContent,
           importedAt: new Date(),
           importedBy: ctx.user.id,
-          strategicContext: pdiData.foco_desenvolvimento || pdiData.estrategia_remuneracao?.justificativa || "",
+          strategicContext: pdiData.developmentFocus || "",
           durationMonths: durationMonths,
           milestone12Months: "Primeiro ano de desenvolvimento concluído",
           milestone24Months: "Plano de desenvolvimento completo",
         });
 
         // Criar gaps de competências (se houver)
-        if (pdiData.gaps_prioritarios && pdiData.gaps_prioritarios.length > 0) {
+        if (pdiData.competencyGaps && pdiData.competencyGaps.length > 0) {
           // Buscar ou criar competências
-          for (const gap of pdiData.gaps_prioritarios) {
+          for (const gap of pdiData.competencyGaps) {
             // Tentar encontrar competência existente
             let competency = await db
               .select()
               .from(competencies)
-              .where(eq(competencies.name, gap.titulo))
+              .where(eq(competencies.name, gap.title))
               .limit(1);
 
             let competencyId: number;
@@ -142,8 +139,8 @@ export const pdiHtmlImportRouter = router({
                 .insert(competencies)
                 .values({
                   code: `COMP_${Date.now()}_${Math.random().toString(36).substring(7)}`,
-                  name: gap.titulo,
-                  description: gap.descricao,
+                  name: gap.title,
+                  description: gap.description,
                   category: "tecnica",
                   isActive: true,
                 })
@@ -171,8 +168,8 @@ export const pdiHtmlImportRouter = router({
         const actions: any[] = [];
 
         // 70% - Prática
-        if (pdiData.plano_acao["70_pratica"]) {
-          for (const action of pdiData.plano_acao["70_pratica"]) {
+        if (pdiData.actionPlan.onTheJob && pdiData.actionPlan.onTheJob.length > 0) {
+          for (const action of pdiData.actionPlan.onTheJob) {
             actions.push({
               planId: plan.id,
               title: action.substring(0, 100),
@@ -186,8 +183,8 @@ export const pdiHtmlImportRouter = router({
         }
 
         // 20% - Social
-        if (pdiData.plano_acao["20_social"]) {
-          for (const action of pdiData.plano_acao["20_social"]) {
+        if (pdiData.actionPlan.social && pdiData.actionPlan.social.length > 0) {
+          for (const action of pdiData.actionPlan.social) {
             actions.push({
               planId: plan.id,
               title: action.substring(0, 100),
@@ -201,8 +198,8 @@ export const pdiHtmlImportRouter = router({
         }
 
         // 10% - Formal
-        if (pdiData.plano_acao["10_formal"]) {
-          for (const action of pdiData.plano_acao["10_formal"]) {
+        if (pdiData.actionPlan.formal && pdiData.actionPlan.formal.length > 0) {
+          for (const action of pdiData.actionPlan.formal) {
             actions.push({
               planId: plan.id,
               title: action.substring(0, 100),
@@ -219,12 +216,28 @@ export const pdiHtmlImportRouter = router({
           await db.insert(pdiActions).values(actions);
         }
 
+        // Enviar email de notificação
+        try {
+          await sendPDIImportCompletedEmail({
+            employeeName: pdiData.employeeName,
+            employeeEmail: employee.length > 0 ? employee[0].email : undefined,
+            pdiId: plan.id,
+            importedBy: ctx.user?.name || "Sistema",
+            importDate: new Date(),
+            totalGaps: gaps.length,
+            totalActions: actions.length,
+          });
+        } catch (emailError) {
+          console.error("Erro ao enviar email de PDI importado:", emailError);
+          // Não falhar a importação se o email falhar
+        }
+
         return {
           success: true,
           planId: plan.id,
           employeeId: employeeId,
-          employeeName: pdiData.nome,
-          message: `PDI importado com sucesso para ${pdiData.nome}`,
+          employeeName: pdiData.employeeName,
+          message: `PDI importado com sucesso para ${pdiData.employeeName}`,
         };
       } catch (error: any) {
         console.error("Erro ao importar PDI:", error);
@@ -236,62 +249,173 @@ export const pdiHtmlImportRouter = router({
     }),
 
   /**
-   * Listar PDIs disponíveis para importação
+   * Listar PDIs já importados
    */
-  listAvailableImports: protectedProcedure.query(async () => {
-    try {
-      const dataPath = path.join(process.cwd(), "pdi_data.json");
-      const jsonData = await fs.readFile(dataPath, "utf-8");
-      const pdiDataArray = JSON.parse(jsonData);
+  listImportedPDIs: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      return pdiDataArray.map((item: any) => ({
-        nome: item.nome,
-        cargo: item.cargo,
-        htmlFilename: path.basename(item.html_original),
-        kpis: item.kpis,
-        gaps_count: item.gaps_prioritarios?.length || 0,
-        acoes_count: 
-          (item.plano_acao["70_pratica"]?.length || 0) +
-          (item.plano_acao["20_social"]?.length || 0) +
-          (item.plano_acao["10_formal"]?.length || 0),
-      }));
+    try {
+      const importedPDIs = await db
+        .select({
+          planId: pdiPlans.id,
+          employeeId: employees.id,
+          employeeName: employees.name,
+          position: employees.cargo,
+          status: pdiPlans.status,
+          startDate: pdiPlans.startDate,
+          endDate: pdiPlans.endDate,
+          importedAt: pdiIntelligentDetails.importedAt,
+          importedFromHtml: pdiIntelligentDetails.importedFromHtml,
+        })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .leftJoin(pdiIntelligentDetails, eq(pdiIntelligentDetails.planId, pdiPlans.id))
+        .where(eq(pdiIntelligentDetails.importedFromHtml, true));
+
+      return importedPDIs;
     } catch (error: any) {
-      console.error("Erro ao listar PDIs disponíveis:", error);
+      console.error("Erro ao listar PDIs importados:", error);
       return [];
     }
   }),
 
   /**
-   * Visualizar detalhes de um PDI antes de importar
+   * Visualizar preview de um HTML antes de importar
    */
-  previewImport: protectedProcedure
+  previewHtml: protectedProcedure
     .input(
       z.object({
-        htmlFilename: z.enum(["PDI_Wilson3.html", "PDI_Fernando9.html"]),
+        htmlContent: z.string(),
       })
     )
     .query(async ({ input }) => {
       try {
-        const dataPath = path.join(process.cwd(), "pdi_data.json");
-        const jsonData = await fs.readFile(dataPath, "utf-8");
-        const pdiDataArray = JSON.parse(jsonData);
-
-        const pdiData = pdiDataArray.find((item: any) => 
-          item.html_original.includes(input.htmlFilename)
-        );
-
-        if (!pdiData) {
-          throw new TRPCError({ 
-            code: "NOT_FOUND", 
-            message: `Dados não encontrados para ${input.htmlFilename}` 
-          });
-        }
-
+        const pdiData = parsePDIHtml(input.htmlContent);
         return pdiData;
       } catch (error: any) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `Erro ao visualizar PDI: ${error.message}`,
+          message: `Erro ao fazer parse do HTML: ${error.message}`,
+        });
+      }
+    }),
+
+  /**
+   * Gerar HTML de PDI a partir dos dados do banco
+   */
+  generateHtml: protectedProcedure
+    .input(
+      z.object({
+        planId: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      try {
+        // Buscar dados do PDI
+        const plan = await db
+          .select()
+          .from(pdiPlans)
+          .where(eq(pdiPlans.id, input.planId))
+          .limit(1);
+
+        if (plan.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "PDI não encontrado" });
+        }
+
+        // Buscar funcionário
+        const employee = await db
+          .select()
+          .from(employees)
+          .where(eq(employees.id, plan[0].employeeId))
+          .limit(1);
+
+        if (employee.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Funcionário não encontrado" });
+        }
+
+        // Buscar detalhes inteligentes
+        const details = await db
+          .select()
+          .from(pdiIntelligentDetails)
+          .where(eq(pdiIntelligentDetails.planId, input.planId))
+          .limit(1);
+
+        // Buscar gaps de competências
+        const gaps = await db
+          .select({
+            id: pdiCompetencyGaps.id,
+            competencyName: competencies.name,
+            competencyDescription: competencies.description,
+            currentLevel: pdiCompetencyGaps.currentLevel,
+            targetLevel: pdiCompetencyGaps.targetLevel,
+            gap: pdiCompetencyGaps.gap,
+            priority: pdiCompetencyGaps.priority,
+          })
+          .from(pdiCompetencyGaps)
+          .leftJoin(competencies, eq(pdiCompetencyGaps.competencyId, competencies.id))
+          .where(eq(pdiCompetencyGaps.planId, input.planId));
+
+        // Buscar ações do PDI
+        const actions = await db
+          .select()
+          .from(pdiActions)
+          .where(eq(pdiActions.planId, input.planId));
+
+        // Se foi importado de HTML, retornar o HTML original
+        if (details.length > 0 && details[0].htmlContent) {
+          return {
+            html: details[0].htmlContent,
+            isOriginal: true,
+          };
+        }
+
+        // Caso contrário, gerar novo HTML a partir dos dados
+        const pdiData: PDIData = {
+          employeeName: employee[0].name,
+          position: employee[0].cargo || "Não especificado",
+          developmentFocus: details.length > 0 ? details[0].developmentFocus || "Desenvolvimento profissional" : "Desenvolvimento profissional",
+          sponsorName: details.length > 0 ? details[0].sponsorName || "Não especificado" : "Não especificado",
+          kpis: {
+            currentPosition: employee[0].cargo || "Não especificado",
+            reframing: details.length > 0 ? details[0].reframingTimeline || "A definir" : "A definir",
+            newPosition: details.length > 0 ? details[0].targetPosition || "A definir" : "A definir",
+            planDuration: details.length > 0 ? details[0].planDuration || "12 meses" : "12 meses",
+          },
+          competencyGaps: gaps.map(gap => ({
+            title: gap.competencyName || "Competência",
+            description: `Nível atual: ${gap.currentLevel || 0}, Nível alvo: ${gap.targetLevel || 0}, Gap: ${gap.gap || 0}`,
+          })),
+          competencyChart: {
+            labels: gaps.map(gap => gap.competencyName || "Competência"),
+            currentProfile: gaps.map(gap => gap.currentLevel || 0),
+            targetProfile: gaps.map(gap => gap.targetLevel || 0),
+          },
+          compensationTrack: [],
+          actionPlan: {
+            onTheJob: actions.filter(a => a.type === "70_on_the_job").map(a => a.description),
+            social: actions.filter(a => a.type === "20_social").map(a => a.description),
+            formal: actions.filter(a => a.type === "10_formal").map(a => a.description),
+          },
+          responsibilityPact: {
+            employee: details.length > 0 && details[0].employeeResponsibilities ? JSON.parse(details[0].employeeResponsibilities) : [],
+            leadership: details.length > 0 && details[0].leadershipResponsibilities ? JSON.parse(details[0].leadershipResponsibilities) : [],
+            dho: details.length > 0 && details[0].dhoResponsibilities ? JSON.parse(details[0].dhoResponsibilities) : [],
+          },
+        };
+
+        const generatedHtml = generatePDIHtml(pdiData);
+        return {
+          html: generatedHtml,
+          isOriginal: false,
+        };
+      } catch (error: any) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Erro ao gerar HTML: ${error.message}`,
         });
       }
     }),
