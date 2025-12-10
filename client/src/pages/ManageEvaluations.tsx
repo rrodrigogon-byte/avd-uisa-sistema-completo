@@ -167,7 +167,7 @@ export default function ManageEvaluations() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {evaluations.map((evaluation) => (
+                  {evaluations.map((evaluation: any) => (
                     <TableRow key={evaluation.id}>
                       <TableCell className="font-medium">{evaluation.employeeName}</TableCell>
                       <TableCell>{evaluation.employeePosition}</TableCell>

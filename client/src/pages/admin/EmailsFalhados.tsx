@@ -106,7 +106,7 @@ export default function EmailsFalhados() {
 
   const selectAll = () => {
     if (filteredEmails) {
-      setSelectedEmails(filteredEmails.map((e) => e.id));
+      setSelectedEmails(filteredEmails.map((e: any) => e.id));
     }
   };
 
@@ -125,7 +125,7 @@ export default function EmailsFalhados() {
   });
 
   // Tipos únicos para o filtro
-  const emailTypes = Array.from(new Set(failedEmails?.map((e) => e.type) || []));
+  const emailTypes = Array.from(new Set(failedEmails?.map((e: any) => e.type) || []));
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -234,7 +234,7 @@ export default function EmailsFalhados() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os tipos</SelectItem>
-                {emailTypes.map((type) => (
+                {emailTypes.map((type: any) => (
                   <SelectItem key={type} value={type}>
                     {type}
                   </SelectItem>
@@ -277,7 +277,7 @@ export default function EmailsFalhados() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEmails.map((email) => (
+                  {filteredEmails.map((email: any) => (
                     <TableRow key={email.id}>
                       <TableCell>
                         <Checkbox

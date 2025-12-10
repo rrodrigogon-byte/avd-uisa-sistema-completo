@@ -211,8 +211,8 @@ export default function DashboardProdutividade() {
     doc.text("Evolução de Produtividade", 14, yPos);
 
     const dadosEvolucao = periodo === "semanal"
-      ? dadosSemanais.labels.map((label, i) => [label, `${dadosSemanais.datasets[0].data[i]}%`])
-      : dadosMensais.labels.map((label, i) => [label, `${dadosMensais.datasets[0].data[i]}%`]);
+      ? dadosSemanais.labels.map((label: any, i: number) => [label, `${dadosSemanais.datasets[0].data[i]}%`])
+      : dadosMensais.labels.map((label: any, i: number) => [label, `${dadosMensais.datasets[0].data[i]}%`]);
 
     autoTable(doc, {
       startY: yPos + 5,
@@ -227,7 +227,7 @@ export default function DashboardProdutividade() {
     doc.setFontSize(14);
     doc.text("Distribuição por Categoria", 14, yPos2);
 
-    const dadosDistribuicao = dadosCategoria.labels.map((label, i) => [
+    const dadosDistribuicao = dadosCategoria.labels.map((label: any, i: number) => [
       label,
       `${dadosCategoria.datasets[0].data[i]}%`,
     ]);
@@ -280,11 +280,11 @@ export default function DashboardProdutividade() {
     ];
 
     const dadosEvolucao = periodo === "semanal"
-      ? dadosSemanais.labels.map((label, i) => ({
+      ? dadosSemanais.labels.map((label: any, i: number) => ({
           periodo: label,
           produtividade: dadosSemanais.datasets[0].data[i],
         }))
-      : dadosMensais.labels.map((label, i) => ({
+      : dadosMensais.labels.map((label: any, i: number) => ({
           periodo: label,
           produtividade: dadosMensais.datasets[0].data[i],
         }));
@@ -305,7 +305,7 @@ export default function DashboardProdutividade() {
       { header: "Percentual (%)", key: "percentual", width: 20 },
     ];
 
-    const dadosDistribuicao = dadosCategoria.labels.map((label, i) => ({
+    const dadosDistribuicao = dadosCategoria.labels.map((label: any, i: number) => ({
       categoria: label,
       percentual: dadosCategoria.datasets[0].data[i],
     }));

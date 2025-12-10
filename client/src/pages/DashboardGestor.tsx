@@ -460,7 +460,7 @@ export default function DashboardGestor() {
                         fill="#8884d8"
                         dataKey="count"
                       >
-                        {performanceDistribution.map((entry, index) => (
+                        {performanceDistribution.map((entry: any, index: number) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

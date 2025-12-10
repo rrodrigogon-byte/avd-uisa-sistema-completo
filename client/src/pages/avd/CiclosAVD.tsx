@@ -143,7 +143,7 @@ export default function CiclosAVD() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {years.map((year) => (
+                          {years.map((year: any) => (
                             <SelectItem key={year} value={year.toString()}>
                               {year}
                             </SelectItem>
@@ -263,7 +263,7 @@ export default function CiclosAVD() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos os anos</SelectItem>
-                    {years.map((year) => (
+                    {years.map((year: any) => (
                       <SelectItem key={year} value={year.toString()}>
                         {year}
                       </SelectItem>
@@ -302,7 +302,7 @@ export default function CiclosAVD() {
           </div>
         ) : cycles && cycles.length > 0 ? (
           <div className="grid gap-4">
-            {cycles.map((cycle) => (
+            {cycles.map((cycle: any) => (
               <Card key={cycle.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">

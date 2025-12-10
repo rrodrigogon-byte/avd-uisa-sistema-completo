@@ -145,7 +145,7 @@ export default function BenchmarkingMercado() {
   };
 
   // Calcular diferenças
-  const differences = Object.keys(uisaProfile).map((key) => {
+  const differences = Object.keys(uisaProfile).map((key: any) => {
     const uisaValue = uisaProfile[key as keyof typeof uisaProfile] || 0;
     const marketValue = marketProfile[key as keyof typeof marketProfile] || 0;
     const diff = uisaValue - marketValue;
@@ -210,7 +210,7 @@ export default function BenchmarkingMercado() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.keys(testType === "disc" ? MARKET_PROFILES.disc : MARKET_PROFILES.bigFive).map((profile) => (
+                    {Object.keys(testType === "disc" ? MARKET_PROFILES.disc : MARKET_PROFILES.bigFive).map((profile: any) => (
                       <SelectItem key={profile} value={profile}>
                         {profile}
                       </SelectItem>
@@ -253,7 +253,7 @@ export default function BenchmarkingMercado() {
                   </tr>
                 </thead>
                 <tbody>
-                  {differences.map((item) => {
+                  {differences.map((item: any) => {
                     const isHigher = item.diff > 0;
                     const isSignificant = Math.abs(item.diff) >= 10;
 

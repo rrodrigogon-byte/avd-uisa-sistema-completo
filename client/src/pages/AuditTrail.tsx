@@ -66,7 +66,7 @@ export default function AuditTrail() {
 
     // Criar CSV
     const headers = ["ID", "Usuário", "Ação", "Entidade", "Entidade ID", "Data", "IP"];
-    const rows = logs.map((log) => [
+    const rows = logs.map((log: any) => [
       log.id,
       log.userId || "Sistema",
       log.action,
@@ -78,7 +78,7 @@ export default function AuditTrail() {
 
     const csvContent = [
       headers.join(","),
-      ...rows.map((row) => row.join(",")),
+      ...rows.map((row: any) => row.join(",")),
     ].join("\n");
 
     // Download
@@ -227,7 +227,7 @@ export default function AuditTrail() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {logs.map((log) => (
+                  {logs.map((log: any) => (
                     <TableRow key={log.id}>
                       <TableCell className="font-mono text-sm">{log.id}</TableCell>
                       <TableCell>{log.userId || "Sistema"}</TableCell>

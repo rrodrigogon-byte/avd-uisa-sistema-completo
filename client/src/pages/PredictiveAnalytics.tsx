@@ -68,7 +68,7 @@ export default function PredictiveAnalytics() {
       {/* Alertas Proativos */}
       {proactiveAlerts && proactiveAlerts.length > 0 && (
         <div className="space-y-2">
-          {proactiveAlerts.map((alert, idx) => (
+          {proactiveAlerts.map((alert: any, idx: number) => (
             <Alert key={idx} variant={alert.severity === "critical" ? "destructive" : "default"}>
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>{alert.message}</AlertTitle>
@@ -109,7 +109,7 @@ export default function PredictiveAnalytics() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {turnoverRisks?.slice(0, 10).map((risk) => (
+                  {turnoverRisks?.slice(0, 10).map((risk: any) => (
                     <div key={risk.employeeId} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
@@ -189,7 +189,7 @@ export default function PredictiveAnalytics() {
                   {performanceTrend.historicalData && (
                     <ResponsiveContainer width="100%" height={300}>
                       <LineChart
-                        data={performanceTrend.historicalData.map((rating, idx) => ({
+                        data={performanceTrend.historicalData.map((rating: any, idx: number) => ({
                           avaliacao: `Aval ${idx + 1}`,
                           rating,
                         }))}
@@ -206,7 +206,7 @@ export default function PredictiveAnalytics() {
 
                   <div className="space-y-2">
                     <h4 className="font-semibold">Insights</h4>
-                    {performanceTrend.insights?.map((insight, idx) => (
+                    {performanceTrend.insights?.map((insight: any, idx: number) => (
                       <p key={idx} className="text-sm text-muted-foreground">
                         • {insight}
                       </p>
@@ -247,7 +247,7 @@ export default function PredictiveAnalytics() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {trainingNeeds?.slice(0, 10).map((need) => (
+                    {trainingNeeds?.slice(0, 10).map((need: any) => (
                       <TableRow key={need.employeeId}>
                         <TableCell className="font-medium">{need.employeeName}</TableCell>
                         <TableCell>{need.department}</TableCell>
@@ -290,7 +290,7 @@ export default function PredictiveAnalytics() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {promotionReadiness?.slice(0, 10).map((readiness) => (
+                  {promotionReadiness?.slice(0, 10).map((readiness: any) => (
                     <div key={readiness.employeeId} className="p-4 border rounded-lg">
                       <div className="flex items-center justify-between mb-3">
                         <div>
@@ -307,7 +307,7 @@ export default function PredictiveAnalytics() {
                       <div className="grid gap-2 md:grid-cols-2">
                         <div>
                           <p className="text-xs font-semibold mb-1">Pontos Fortes:</p>
-                          {readiness.strengths.slice(0, 2).map((strength, idx) => (
+                          {readiness.strengths.slice(0, 2).map((strength: any, idx: number) => (
                             <p key={idx} className="text-xs text-muted-foreground">
                               ✓ {strength}
                             </p>
@@ -315,7 +315,7 @@ export default function PredictiveAnalytics() {
                         </div>
                         <div>
                           <p className="text-xs font-semibold mb-1">Áreas de Desenvolvimento:</p>
-                          {readiness.developmentAreas.slice(0, 2).map((area, idx) => (
+                          {readiness.developmentAreas.slice(0, 2).map((area: any, idx: number) => (
                             <p key={idx} className="text-xs text-muted-foreground">
                               • {area}
                             </p>
@@ -347,7 +347,7 @@ export default function PredictiveAnalytics() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {engagementScores?.slice(0, 10).map((score) => (
+                  {engagementScores?.slice(0, 10).map((score: any) => (
                     <div key={score.employeeId} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">

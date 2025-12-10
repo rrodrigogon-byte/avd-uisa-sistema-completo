@@ -544,8 +544,8 @@ export default function SucessaoInteligente() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-3 gap-2 p-4">
-                    {[3, 2, 1].map((potencial) =>
-                      [1, 2, 3].map((performance) => {
+                    {[3, 2, 1].map((potencial: any) =>
+                      [1, 2, 3].map((performance: any) => {
                         const candidatesInBox = successors.filter((s: any) => {
                           const nb = s.nineBoxData;
                           return nb?.performance === performance && nb?.potential === potencial;

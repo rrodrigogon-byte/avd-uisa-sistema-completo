@@ -224,7 +224,7 @@ export default function Bonus() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {bonusRequests.map((request) => (
+                {bonusRequests.map((request: any) => (
                   <div key={request.id} className="p-4 rounded-lg border">
                     <div className="flex items-start justify-between mb-3">
                       <div>

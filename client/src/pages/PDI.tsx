@@ -209,7 +209,7 @@ export default function PDI() {
                     </CardContent>
                   </Card>
                 ) : (
-                  pdiItems?.map((item) => (
+                  pdiItems?.map((item: any) => (
                     <Card key={item.id}>
                       <CardHeader>
                         <div className="flex items-start justify-between">
@@ -291,7 +291,7 @@ export default function PDI() {
                     </CardContent>
                   </Card>
                 ) : (
-                  items70.map((item) => (
+                  items70.map((item: any) => (
                     <Card key={item.id}>
                       <CardHeader>
                         <CardTitle className="text-base">{item.title}</CardTitle>
@@ -320,7 +320,7 @@ export default function PDI() {
                     </CardContent>
                   </Card>
                 ) : (
-                  items20.map((item) => (
+                  items20.map((item: any) => (
                     <Card key={item.id}>
                       <CardHeader>
                         <CardTitle className="text-base">{item.title}</CardTitle>
@@ -349,7 +349,7 @@ export default function PDI() {
                     </CardContent>
                   </Card>
                 ) : (
-                  items10.map((item) => (
+                  items10.map((item: any) => (
                     <Card key={item.id}>
                       <CardHeader>
                         <CardTitle className="text-base">{item.title}</CardTitle>

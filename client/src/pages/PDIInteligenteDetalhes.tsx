@@ -165,11 +165,11 @@ export default function PDIInteligenteDetalhes() {
 
   // Dados do gráfico de evolução do IPS
   const ipsChartData = {
-    labels: ipsEvolution?.map((e) => new Date(e.reviewDate).toLocaleDateString("pt-BR")) || [],
+    labels: ipsEvolution?.map((e: any) => new Date(e.reviewDate).toLocaleDateString("pt-BR")) || [],
     datasets: [
       {
         label: "Índice de Prontidão para Sucessão (IPS)",
-        data: ipsEvolution?.map((e) => parseFloat(e.readinessIndex)) || [],
+        data: ipsEvolution?.map((e: any) => parseFloat(e.readinessIndex)) || [],
         borderColor: "rgb(124, 58, 237)",
         backgroundColor: "rgba(124, 58, 237, 0.1)",
         tension: 0.4,
@@ -609,7 +609,7 @@ export default function PDIInteligenteDetalhes() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {actions.map((action) => (
+                    {actions.map((action: any) => (
                       <TableRow key={action.id}>
                         <TableCell>
                           <div>
@@ -778,7 +778,7 @@ export default function PDIInteligenteDetalhes() {
                 </div>
               ) : reviews && reviews.length > 0 ? (
                 <div className="space-y-4">
-                  {reviews.map((review) => (
+                  {reviews.map((review: any) => (
                     <Card key={review.id}>
                       <CardHeader>
                         <div className="flex items-center justify-between">

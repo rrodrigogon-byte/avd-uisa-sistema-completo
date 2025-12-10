@@ -27,7 +27,7 @@ export default function AdminDashboard() {
       <div className="container py-8">
         <h1 className="text-3xl font-bold mb-8">Dashboard Administrativo</h1>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(8)].map((_: any, i: number) => (
             <Card key={i}>
               <CardHeader>
                 <Skeleton className="h-4 w-24" />
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
 
       {/* Estatísticas Gerais */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        {statCards.map((stat) => (
+        {statCards.map((stat: any) => (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
               </p>
             ) : (
               <div className="space-y-4">
-                {stats.recentActivities.map((activity) => (
+                {stats.recentActivities.map((activity: any) => (
                   <div
                     key={activity.id}
                     className="flex items-start gap-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors"

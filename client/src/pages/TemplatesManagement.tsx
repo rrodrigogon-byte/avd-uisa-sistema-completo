@@ -155,7 +155,7 @@ export default function TemplatesManagement() {
         {/* Lista de Templates */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {[1, 2, 3, 4, 5, 6].map((i: any) => (
               <Card key={i}>
                 <CardHeader>
                   <Skeleton className="h-6 w-3/4" />
@@ -169,7 +169,7 @@ export default function TemplatesManagement() {
           </div>
         ) : filteredTemplates && filteredTemplates.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredTemplates.map((template) => (
+            {filteredTemplates.map((template: any) => (
               <Card key={template.id} className="flex flex-col">
                 <CardHeader>
                   <div className="flex items-start justify-between">

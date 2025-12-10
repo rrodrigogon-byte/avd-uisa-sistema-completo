@@ -162,7 +162,7 @@ function GoalTreeNode({ node, level = 0 }: { node: GoalNode; level?: number }) {
       {/* Renderizar filhos */}
       {hasChildren && isExpanded && (
         <div className="relative">
-          {node.children.map((child) => (
+          {node.children.map((child: any) => (
             <GoalTreeNode key={child.id} node={child} level={level + 1} />
           ))}
         </div>

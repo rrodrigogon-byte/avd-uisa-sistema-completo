@@ -168,7 +168,7 @@ export default function Bonus() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="">Todos os cargos</SelectItem>
-                        {positions?.map((pos) => (
+                        {positions?.map((pos: any) => (
                           <SelectItem key={pos.id} value={pos.id.toString()}>
                             {pos.title}
                           </SelectItem>

@@ -253,7 +253,7 @@ export default function CriarPDI() {
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
-              {actions.map((action, index) => (
+              {actions.map((action: any, index: number) => (
                 <Card key={index} className="border-l-4 border-l-[#F39200]">
                   <CardContent className="pt-6 space-y-4">
                     <div className="flex items-start justify-between">

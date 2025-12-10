@@ -201,7 +201,7 @@ export default function AderirCicloAvaliacao() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {individualGoals.map((goal, index) => (
+            {individualGoals.map((goal: any, index: number) => (
               <Card key={index} className="border-2">
                 <CardHeader>
                   <div className="flex items-center justify-between">

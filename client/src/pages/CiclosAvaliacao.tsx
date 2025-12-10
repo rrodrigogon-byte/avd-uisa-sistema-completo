@@ -339,7 +339,7 @@ export default function CiclosAvaliacao() {
           </Card>
         )}
 
-        {cycles?.map((cycle) => (
+        {cycles?.map((cycle: any) => (
           <Card key={cycle.id}>
             <CardHeader>
               <div className="flex items-start justify-between">

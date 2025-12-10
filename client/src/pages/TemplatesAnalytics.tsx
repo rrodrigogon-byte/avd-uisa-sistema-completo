@@ -223,7 +223,7 @@ export default function TemplatesAnalytics() {
               </TableHeader>
               <TableBody>
                 {templates && templates.length > 0 ? (
-                  templates.map((template) => (
+                  templates.map((template: any) => (
                     <TableRow key={template.id}>
                       <TableCell className="font-medium">{template.name}</TableCell>
                       <TableCell>{template.creatorName || "Desconhecido"}</TableCell>

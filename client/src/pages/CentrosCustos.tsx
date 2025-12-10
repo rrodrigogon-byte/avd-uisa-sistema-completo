@@ -221,7 +221,7 @@ export default function CentrosCustos() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os departamentos</SelectItem>
-                  {departments?.map((dept) => (
+                  {departments?.map((dept: any) => (
                     <SelectItem key={dept.id} value={dept.id.toString()}>
                       {dept.name}
                     </SelectItem>
@@ -251,7 +251,7 @@ export default function CentrosCustos() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {costCenters.map((cc) => (
+                  {costCenters.map((cc: any) => (
                     <TableRow key={cc.id}>
                       <TableCell className="font-mono">{cc.code}</TableCell>
                       <TableCell className="font-medium">{cc.name}</TableCell>
@@ -341,7 +341,7 @@ export default function CentrosCustos() {
                       <SelectValue placeholder="Selecione um departamento" />
                     </SelectTrigger>
                     <SelectContent>
-                      {departments?.map((dept) => (
+                      {departments?.map((dept: any) => (
                         <SelectItem key={dept.id} value={dept.id.toString()}>
                           {dept.name}
                         </SelectItem>

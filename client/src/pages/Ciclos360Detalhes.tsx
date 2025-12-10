@@ -386,7 +386,7 @@ export default function Ciclos360Detalhes() {
               <CardContent>
                 {competencies.length > 0 ? (
                   <div className="space-y-4">
-                    {competencies.map((comp, index) => (
+                    {competencies.map((comp: any, index: number) => (
                       <Card key={index} className="border-l-4 border-l-primary">
                         <CardContent className="pt-6">
                           <div className="flex items-start justify-between">
@@ -437,7 +437,7 @@ export default function Ciclos360Detalhes() {
               <CardContent>
                 {participants.length > 0 ? (
                   <div className="space-y-2">
-                    {participants.map((participant) => (
+                    {participants.map((participant: any) => (
                       <div
                         key={participant.id}
                         className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors"

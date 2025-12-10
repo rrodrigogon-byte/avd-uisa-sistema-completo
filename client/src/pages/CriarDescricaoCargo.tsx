@@ -158,7 +158,7 @@ export default function CriarDescricaoCargo() {
         {/* Wizard Steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            {steps.map((step, index) => (
+            {steps.map((step: any, index: number) => (
               <div key={step.number} className="flex items-center">
                 <div className="flex flex-col items-center">
                   <div
@@ -244,7 +244,7 @@ export default function CriarDescricaoCargo() {
                     Adicionar
                   </Button>
                 </div>
-                {responsibilities.map((resp, index) => (
+                {responsibilities.map((resp: any, index: number) => (
                   <div key={index} className="border p-4 rounded-lg space-y-2">
                     <div className="flex justify-between items-center">
                       <Select
@@ -296,7 +296,7 @@ export default function CriarDescricaoCargo() {
                   </Button>
                 </div>
                 <div className="grid gap-4">
-                  {knowledge.map((k, index) => (
+                  {knowledge.map((k: any, index: number) => (
                     <div key={index} className="flex gap-4 items-center">
                       <Input
                         value={k.name}
@@ -345,7 +345,7 @@ export default function CriarDescricaoCargo() {
                     Adicionar
                   </Button>
                 </div>
-                {mandatoryTraining.map((training, index) => (
+                {mandatoryTraining.map((training: any, index: number) => (
                   <div key={index} className="flex gap-4">
                     <Input
                       value={training}
@@ -376,7 +376,7 @@ export default function CriarDescricaoCargo() {
                   </Button>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {competencies.map((comp, index) => (
+                  {competencies.map((comp: any, index: number) => (
                     <div key={index} className="flex gap-2 items-center">
                       <Input
                         value={comp.name}

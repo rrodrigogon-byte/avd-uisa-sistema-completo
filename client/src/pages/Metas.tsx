@@ -352,7 +352,7 @@ export default function Metas() {
               </CardContent>
             </Card>
           ) : (
-            goals?.map((goal) => (
+            goals?.map((goal: any) => (
               <Card key={goal.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">

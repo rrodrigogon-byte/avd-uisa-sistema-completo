@@ -121,7 +121,7 @@ export default function AnaliseGaps() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {mockData.comparison.map((item, index) => (
+              {mockData.comparison.map((item: any, index: number) => (
                 <div key={index} className="space-y-2">
                   <div className="flex justify-between items-center">
                     <div className="flex-1">
@@ -154,7 +154,7 @@ export default function AnaliseGaps() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockData.gaps.map((gap, index) => (
+              {mockData.gaps.map((gap: any, index: number) => (
                 <div key={index} className="border-l-4 border-orange-500 pl-4 py-2">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -183,7 +183,7 @@ export default function AnaliseGaps() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockData.suggestions.map((suggestion, index) => (
+              {mockData.suggestions.map((suggestion: any, index: number) => (
                 <div key={index} className="p-4 border rounded-lg">
                   <div className="flex items-start gap-3">
                     <div className="mt-1">

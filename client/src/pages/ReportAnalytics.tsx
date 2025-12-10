@@ -34,11 +34,11 @@ export default function ReportAnalytics() {
 
   // Dados para gráfico de métricas mais usadas
   const metricsChartData = {
-    labels: mostUsedMetrics?.map((m) => m.metric) || [],
+    labels: mostUsedMetrics?.map((m: any) => m.metric) || [],
     datasets: [
       {
         label: "Número de Usos",
-        data: mostUsedMetrics?.map((m) => m.count) || [],
+        data: mostUsedMetrics?.map((m: any) => m.count) || [],
         backgroundColor: "rgba(59, 130, 246, 0.5)",
         borderColor: "rgb(59, 130, 246)",
         borderWidth: 1,
@@ -48,11 +48,11 @@ export default function ReportAnalytics() {
 
   // Dados para gráfico de tendências
   const trendsChartData = {
-    labels: trends?.map((t) => new Date(t.date).toLocaleDateString("pt-BR")) || [],
+    labels: trends?.map((t: any) => new Date(t.date).toLocaleDateString("pt-BR")) || [],
     datasets: [
       {
         label: "Relatórios Gerados",
-        data: trends?.map((t) => t.count) || [],
+        data: trends?.map((t: any) => t.count) || [],
         borderColor: "rgb(34, 197, 94)",
         backgroundColor: "rgba(34, 197, 94, 0.1)",
         tension: 0.4,
@@ -235,7 +235,7 @@ export default function ReportAnalytics() {
                   </tr>
                 </thead>
                 <tbody>
-                  {exportHistory.map((item) => (
+                  {exportHistory.map((item: any) => (
                     <tr key={item.id} className="border-b hover:bg-muted/50">
                       <td className="p-2">{item.reportName}</td>
                       <td className="p-2">

@@ -94,7 +94,7 @@ export default function AnalyticsMetas() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os Departamentos</SelectItem>
-              {departments?.map((dept) => (
+              {departments?.map((dept: any) => (
                 <SelectItem key={dept.id} value={dept.id.toString()}>
                   {dept.name}
                 </SelectItem>

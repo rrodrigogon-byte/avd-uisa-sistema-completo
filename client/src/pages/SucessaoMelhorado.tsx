@@ -276,7 +276,7 @@ export default function SucessaoMelhorado() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {filteredPlans.map((plan) => (
+                {filteredPlans.map((plan: any) => (
                   <Link key={plan.id} href={`/sucessao?id=${plan.id}`}>
                     <div className="flex items-center gap-4 p-4 rounded-lg border hover:bg-accent transition-colors cursor-pointer">
                       <div className="flex-1 min-w-0">

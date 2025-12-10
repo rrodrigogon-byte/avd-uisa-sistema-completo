@@ -136,7 +136,7 @@ export default function ResultadosPesquisaPulse() {
                   labelFormatter={(label) => `Nota ${label}`}
                 />
                 <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-                  {chartData.map((entry, index) => (
+                  {chartData.map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={getBarColor(entry.rating)} />
                   ))}
                 </Bar>
@@ -156,7 +156,7 @@ export default function ResultadosPesquisaPulse() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {results.comments.map((comment) => (
+                {results.comments.map((comment: any) => (
                   <div
                     key={comment.id}
                     className="border-l-4 pl-4 py-2"

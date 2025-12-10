@@ -158,7 +158,7 @@ export default function ContinuousFeedback() {
                     <SelectValue placeholder="Selecione o contexto" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CONTEXT_OPTIONS.map((opt) => (
+                    {CONTEXT_OPTIONS.map((opt: any) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.label}
                       </SelectItem>
@@ -249,7 +249,7 @@ export default function ContinuousFeedback() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {dashboard.commonStrengths.map((strength, idx) => (
+                    {dashboard.commonStrengths.map((strength: any, idx: number) => (
                       <div key={idx} className="flex items-center justify-between">
                         <span className="text-sm">{strength.theme}</span>
                         <Badge variant="secondary">{strength.count}x</Badge>
@@ -264,7 +264,7 @@ export default function ContinuousFeedback() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {dashboard.commonImprovements.map((improvement, idx) => (
+                    {dashboard.commonImprovements.map((improvement: any, idx: number) => (
                       <div key={idx} className="flex items-center justify-between">
                         <span className="text-sm">{improvement.theme}</span>
                         <Badge variant="secondary">{improvement.count}x</Badge>
@@ -283,11 +283,11 @@ export default function ContinuousFeedback() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {dashboard.recentFeedbacks.map((feedback) => (
+                  {dashboard.recentFeedbacks.map((feedback: any) => (
                     <div key={feedback.id} className="p-3 border rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          {[...Array(5)].map((_, i) => (
+                          {[...Array(5)].map((_: any, i: number) => (
                             <Star key={i} className={`h-4 w-4 ${i < (feedback.rating || 0) ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}`} />
                           ))}
                         </div>
@@ -306,7 +306,7 @@ export default function ContinuousFeedback() {
         <TabsContent value="pending" className="space-y-4">
           {pendingRequests && pendingRequests.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
-              {pendingRequests.map((request) => (
+              {pendingRequests.map((request: any) => (
                 <Card key={request.id}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -405,7 +405,7 @@ export default function ContinuousFeedback() {
         {/* Templates */}
         <TabsContent value="templates" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            {templates?.map((template) => (
+            {templates?.map((template: any) => (
               <Card key={template.id}>
                 <CardHeader>
                   <CardTitle>{template.name}</CardTitle>
@@ -438,7 +438,7 @@ export default function ContinuousFeedback() {
             <div>
               <Label>Avaliação Geral *</Label>
               <div className="flex items-center gap-2 mt-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
+                {[1, 2, 3, 4, 5].map((rating: any) => (
                   <button key={rating} onClick={() => setOverallRating(rating)}>
                     <Star className={`h-8 w-8 ${rating <= overallRating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}`} />
                   </button>

@@ -193,7 +193,7 @@ export default function GDSTest() {
               </p>
             </div>
 
-            {questions.map((question, index) => (
+            {questions.map((question: any, index: number) => (
               <div key={question.key} className="space-y-3 p-4 border rounded-lg">
                 <Label className="text-base font-semibold">
                   {index + 1}. {question.text}

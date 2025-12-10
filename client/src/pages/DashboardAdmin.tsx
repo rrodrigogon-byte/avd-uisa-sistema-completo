@@ -147,7 +147,7 @@ export default function DashboardAdmin() {
                   <SelectValue placeholder="Selecione um processo" />
                 </SelectTrigger>
                 <SelectContent>
-                  {processes?.items.map((process) => (
+                  {processes?.items.map((process: any) => (
                     <SelectItem key={process.id} value={process.id.toString()}>
                       {process.name}
                     </SelectItem>
@@ -281,7 +281,7 @@ export default function DashboardAdmin() {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {statusData.map((entry, index) => (
+                      {statusData.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -323,7 +323,7 @@ export default function DashboardAdmin() {
                 </div>
               ) : emailLogs && emailLogs.length > 0 ? (
                 <div className="space-y-2">
-                  {emailLogs.map((log) => (
+                  {emailLogs.map((log: any) => (
                     <div key={log.id} className="flex items-center justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">{log.subject}</p>

@@ -137,7 +137,7 @@ export default function AprovarMetasGestor() {
       {/* Lista de Aprovações Pendentes */}
       {pendingApprovals && pendingApprovals.length > 0 ? (
         <div className="space-y-4">
-          {pendingApprovals.map((participant) => {
+          {pendingApprovals.map((participant: any) => {
             const individualGoals = participant.individualGoals ? JSON.parse(participant.individualGoals) : [];
             
             return (

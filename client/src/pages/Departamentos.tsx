@@ -195,7 +195,7 @@ export default function Departamentos() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {departments.map((dept) => (
+                  {departments.map((dept: any) => (
                     <TableRow key={dept.id}>
                       <TableCell className="font-mono">{dept.code}</TableCell>
                       <TableCell className="font-medium">{dept.name}</TableCell>

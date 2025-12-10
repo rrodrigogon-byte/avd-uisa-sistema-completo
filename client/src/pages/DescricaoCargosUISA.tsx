@@ -163,7 +163,7 @@ export default function DescricaoCargosUISA() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {jobDescriptions?.map((job) => (
+                {jobDescriptions?.map((job: any) => (
                   <TableRow key={job.id}>
                     <TableCell className="font-medium">{job.positionTitle}</TableCell>
                     <TableCell>{job.departmentName}</TableCell>

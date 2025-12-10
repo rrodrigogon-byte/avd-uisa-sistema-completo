@@ -167,7 +167,7 @@ export default function EmailMonitoring() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {emailsByType?.map((type) => (
+              {emailsByType?.map((type: any) => (
                 <div key={type.type} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-primary" />
@@ -215,7 +215,7 @@ export default function EmailMonitoring() {
                     </TableCell>
                   </TableRow>
                 ) : recentEmails && recentEmails.length > 0 ? (
-                  recentEmails.map((email) => (
+                  recentEmails.map((email: any) => (
                     <TableRow key={email.id}>
                       <TableCell>
                         {email.status === 'sent' ? (

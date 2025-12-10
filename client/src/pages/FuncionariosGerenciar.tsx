@@ -257,7 +257,7 @@ export default function FuncionariosGerenciar() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    {departments?.map((dept) => (
+                    {departments?.map((dept: any) => (
                       <SelectItem key={dept.id} value={dept.id.toString()}>
                         {dept.name}
                       </SelectItem>
@@ -306,7 +306,7 @@ export default function FuncionariosGerenciar() {
           <CardContent>
             {loadingEmployees ? (
               <div className="space-y-3">
-                {[1, 2, 3, 4, 5].map((i) => (
+                {[1, 2, 3, 4, 5].map((i: any) => (
                   <Skeleton key={i} className="h-16 w-full" />
                 ))}
               </div>
@@ -327,7 +327,7 @@ export default function FuncionariosGerenciar() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {employees.map((emp) => (
+                    {employees.map((emp: any) => (
                       <TableRow key={emp.employee.id}>
                         <TableCell className="font-mono text-sm">
                           {emp.employee.employeeCode}
@@ -468,7 +468,7 @@ export default function FuncionariosGerenciar() {
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments?.map((dept) => (
+                    {departments?.map((dept: any) => (
                       <SelectItem key={dept.id} value={dept.id.toString()}>
                         {dept.name}
                       </SelectItem>
@@ -484,7 +484,7 @@ export default function FuncionariosGerenciar() {
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {positions?.map((pos) => (
+                    {positions?.map((pos: any) => (
                       <SelectItem key={pos.id} value={pos.id.toString()}>
                         {pos.title}
                       </SelectItem>
@@ -580,7 +580,7 @@ export default function FuncionariosGerenciar() {
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments?.map((dept) => (
+                    {departments?.map((dept: any) => (
                       <SelectItem key={dept.id} value={dept.id.toString()}>
                         {dept.name}
                       </SelectItem>
@@ -596,7 +596,7 @@ export default function FuncionariosGerenciar() {
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {positions?.map((pos) => (
+                    {positions?.map((pos: any) => (
                       <SelectItem key={pos.id} value={pos.id.toString()}>
                         {pos.title}
                       </SelectItem>

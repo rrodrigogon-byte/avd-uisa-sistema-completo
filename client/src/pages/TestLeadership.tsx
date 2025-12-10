@@ -151,7 +151,7 @@ export default function TestLeadership() {
                 Seu Perfil de Liderança
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {leadershipStyles.map((style) => {
+                {leadershipStyles.map((style: any) => {
                   const score = result.profile?.[style.key] || 0;
                   return (
                     <div key={style.key} className={`${style.bg} p-4 rounded-lg border`}>
@@ -314,7 +314,7 @@ export default function TestLeadership() {
                   { value: 3, label: "Neutro", color: "border-gray-200 hover:bg-gray-50" },
                   { value: 4, label: "Concordo", color: "border-blue-200 hover:bg-blue-50" },
                   { value: 5, label: "Concordo Totalmente", color: "border-green-200 hover:bg-green-50" },
-                ].map((option) => (
+                ].map((option: any) => (
                   <div key={option.value} className={`flex items-center space-x-3 border-2 rounded-lg p-4 cursor-pointer transition-all ${option.color} ${responses[currentQ.id] === option.value ? 'ring-2 ring-purple-500 bg-purple-50' : ''}`}>
                     <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
                     <Label htmlFor={`option-${option.value}`} className="flex-1 cursor-pointer font-medium">

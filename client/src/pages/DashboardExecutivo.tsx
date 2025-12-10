@@ -342,7 +342,7 @@ export default function DashboardExecutivo() {
                         dataKey="value"
                         label
                       >
-                        {(successionCoverage || []).map((entry, index) => (
+                        {(successionCoverage || []).map((entry: any, index: number) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -350,7 +350,7 @@ export default function DashboardExecutivo() {
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="flex-1 space-y-3">
-                    {(successionCoverage || []).map((item, idx) => (
+                    {(successionCoverage || []).map((item: any, idx: number) => (
                       <div key={idx} className="flex items-center gap-2">
                         <div
                           className="h-3 w-3 rounded-full"
@@ -389,13 +389,13 @@ export default function DashboardExecutivo() {
             <CardContent>
               {topPerfLoading ? (
                 <div className="space-y-3">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map((_: any, i: number) => (
                     <Skeleton key={i} className="h-16 w-full" />
                   ))}
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {(topPerformers || []).map((performer, idx) => (
+                  {(topPerformers || []).map((performer: any, idx: number) => (
                     <div
                       key={performer.id}
                       className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors"
@@ -440,13 +440,13 @@ export default function DashboardExecutivo() {
             <CardContent>
               {flightRiskLoading ? (
                 <div className="space-y-3">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map((_: any, i: number) => (
                     <Skeleton key={i} className="h-16 w-full" />
                   ))}
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {(flightRisk || []).slice(0, 10).map((person) => (
+                  {(flightRisk || []).slice(0, 10).map((person: any) => (
                     <div
                       key={person.id}
                       className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent transition-colors"
@@ -565,7 +565,7 @@ export default function DashboardExecutivo() {
               <Skeleton className="h-64 w-full" />
             ) : (
               <div className="space-y-4">
-                {(nineBoxTrend || []).map((quarter) => (
+                {(nineBoxTrend || []).map((quarter: any) => (
                   <div key={quarter.quarter} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-semibold">{quarter.quarter}</h4>

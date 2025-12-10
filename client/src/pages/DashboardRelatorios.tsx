@@ -289,7 +289,7 @@ export default function DashboardRelatorios() {
                         fill="#8884d8"
                         dataKey="value"
                       >
-                        {statusDistribution.map((entry, index) => (
+                        {statusDistribution.map((entry: any, index: number) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -373,7 +373,7 @@ export default function DashboardRelatorios() {
                         fill="#8884d8"
                         dataKey="funcionarios"
                       >
-                        {performanceByDepartment.map((entry, index) => (
+                        {performanceByDepartment.map((entry: any, index: number) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

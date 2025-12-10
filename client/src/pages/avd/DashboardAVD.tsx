@@ -28,7 +28,7 @@ export default function DashboardAVD() {
   const byDepartment = dashboard?.byDepartment || [];
 
   // Preparar dados para gráfico
-  const chartData = byDepartment.map((d) => ({
+  const chartData = byDepartment.map((d: any) => ({
     name: d.departmentName.length > 20 ? d.departmentName.substring(0, 20) + "..." : d.departmentName,
     "Taxa de Conclusão": d.completionRate,
     "Média de Nota": d.avgScore,
@@ -61,7 +61,7 @@ export default function DashboardAVD() {
                   <SelectValue placeholder="Selecione um ciclo" />
                 </SelectTrigger>
                 <SelectContent>
-                  {cycles?.map((cycle) => (
+                  {cycles?.map((cycle: any) => (
                     <SelectItem key={cycle.id} value={cycle.id.toString()}>
                       {cycle.name} ({cycle.status})
                     </SelectItem>
@@ -205,7 +205,7 @@ export default function DashboardAVD() {
                       </tr>
                     </thead>
                     <tbody>
-                      {byDepartment.map((dept) => (
+                      {byDepartment.map((dept: any) => (
                         <tr key={dept.departmentId || "no-dept"} className="border-b hover:bg-muted/50">
                           <td className="py-3 px-4 font-medium">{dept.departmentName}</td>
                           <td className="text-center py-3 px-4">{dept.total}</td>

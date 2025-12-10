@@ -280,7 +280,7 @@ export default function Ciclos360VisaoGeral() {
               </div>
             ) : cycles && cycles.length > 0 ? (
               <div className="space-y-4">
-                {cycles.map((cycle) => (
+                {cycles.map((cycle: any) => (
                   <Card key={cycle.id} className="border-l-4 border-l-primary">
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between">

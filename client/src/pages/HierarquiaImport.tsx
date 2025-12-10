@@ -211,7 +211,7 @@ export default function HierarquiaImport() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {previewData.map((row, index) => (
+                      {previewData.map((row: any, index: number) => (
                         <TableRow key={index}>
                           <TableCell>
                             {row.status === 'pending' && (

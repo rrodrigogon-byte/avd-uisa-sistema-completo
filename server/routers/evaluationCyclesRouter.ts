@@ -67,6 +67,12 @@ export const evaluationCyclesRouter = router({
             .set({ passwordHash })
             .where(eq(employees.id, employee.id));
 
+          // Validar se o funcionário tem email
+          if (!employee.email) {
+            console.warn(`Funcionário ${employee.name} (ID: ${employee.id}) não possui email cadastrado`);
+            continue;
+          }
+
           // Determinar se deve enviar para este funcionário
           const shouldSend = input.testEmails && input.testEmails.length > 0
             ? input.testEmails.includes(employee.email)
@@ -451,6 +457,11 @@ export const evaluationCyclesRouter = router({
 
       if (employee.length === 0 || cycle.length === 0) {
         throw new Error("Dados não encontrados");
+      }
+
+      // Validar se o funcionário tem email
+      if (!employee[0].email) {
+        throw new Error(`Funcionário ${employee[0].name} não possui email cadastrado`);
       }
 
       // Enviar email de lembrete

@@ -266,7 +266,7 @@ export default function EditarTemplateAvaliacao() {
               </div>
             ) : (
               <div className="space-y-4">
-                {questions.map((question, index) => (
+                {questions.map((question: any, index: number) => (
                   <div key={question.id} className="border rounded-lg p-4">
                     <div className="flex items-start justify-between mb-4">
                       <span className="text-sm font-medium text-gray-500">

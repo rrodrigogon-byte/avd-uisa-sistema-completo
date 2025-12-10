@@ -170,7 +170,7 @@ export default function MinhasSolicitacoes() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {filteredRequests.map((request) => (
+              {filteredRequests.map((request: any) => (
                 <div
                   key={request.id}
                   className="flex items-center gap-4 p-4 rounded-lg border hover:bg-accent transition-colors"

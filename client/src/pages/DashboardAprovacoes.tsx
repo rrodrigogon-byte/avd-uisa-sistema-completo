@@ -321,7 +321,7 @@ export default function DashboardAprovacoes() {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {pieData.map((entry, index) => (
+                      {pieData.map((entry: any, index: number) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -361,7 +361,7 @@ export default function DashboardAprovacoes() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {bottlenecks.map((item, idx) => (
+                      {bottlenecks.map((item: any, idx: number) => (
                         <TableRow key={idx}>
                           <TableCell>
                             <Badge variant="outline">{getTypeLabel(item.type)}</Badge>

@@ -331,7 +331,7 @@ export default function Pendencias() {
       {/* Pendências List */}
       <div className="grid gap-4">
         {isLoading ? (
-          Array.from({ length: 3 }).map((_, i) => (
+          Array.from({ length: 3 }).map((_: any, i: number) => (
             <Card key={i}>
               <CardHeader>
                 <Skeleton className="h-6 w-3/4" />
@@ -340,7 +340,7 @@ export default function Pendencias() {
             </Card>
           ))
         ) : filteredPendencias && filteredPendencias.length > 0 ? (
-          filteredPendencias.map((pendencia) => {
+          filteredPendencias.map((pendencia: any) => {
             const StatusIcon = statusConfig[pendencia.status as Status].icon;
             const employee = employees?.find(e => e.id === pendencia.responsavelId);
             
@@ -489,7 +489,7 @@ export default function Pendencias() {
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees?.map((emp) => emp.id ? (
+                    {employees?.map((emp: any) => emp.id ? (
                       <SelectItem key={emp.id} value={emp.id.toString()}>
                         {emp.name}
                       </SelectItem>
@@ -585,7 +585,7 @@ export default function Pendencias() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.map((emp) => emp.id ? (
+                      {employees?.map((emp: any) => emp.id ? (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.name}
                         </SelectItem>

@@ -276,7 +276,7 @@ export default function DashboardsAnaliticos() {
                         fill="#8884d8"
                         dataKey="count"
                       >
-                        {distributionData.map((entry, index) => (
+                        {distributionData.map((entry: any, index: number) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -319,11 +319,11 @@ export default function DashboardsAnaliticos() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {competencyHeatmap.map((item) => (
+                  {competencyHeatmap.map((item: any) => (
                     <div key={item.competency} className="space-y-2">
                       <div className="font-medium">{item.competency}</div>
                       <div className="grid grid-cols-4 gap-2">
-                        {[item.dept1, item.dept2, item.dept3, item.dept4].map((value, idx) => (
+                        {[item.dept1, item.dept2, item.dept3, item.dept4].map((value: any, idx: number) => (
                           <div
                             key={idx}
                             className="h-12 rounded flex items-center justify-center text-white font-bold"

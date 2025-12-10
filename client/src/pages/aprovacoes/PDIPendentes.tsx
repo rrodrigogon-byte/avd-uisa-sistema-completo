@@ -124,7 +124,7 @@ export default function PDIPendentes() {
       {/* Lista de PDIs */}
       {filteredPDIs && filteredPDIs.length > 0 ? (
         <div className="grid gap-4">
-          {filteredPDIs.map((pdi) => (
+          {filteredPDIs.map((pdi: any) => (
             <Card key={pdi.id} className="p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-start justify-between">
                 <div className="flex-1">

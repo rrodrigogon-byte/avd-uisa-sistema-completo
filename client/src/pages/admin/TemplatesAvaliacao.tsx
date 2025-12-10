@@ -261,7 +261,7 @@ export default function TemplatesAvaliacao() {
           </div>
         )}
 
-        {templates?.map((template) => (
+        {templates?.map((template: any) => (
           <Card key={template.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">

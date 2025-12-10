@@ -256,7 +256,7 @@ export default function Calibracao() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    {departments?.filter(dept => dept.id).map((dept) => (
+                    {departments?.filter(dept => dept.id).map((dept: any) => (
                       <SelectItem key={dept.id} value={dept.id!.toString()}>
                         {dept.name}
                       </SelectItem>
@@ -277,7 +277,7 @@ export default function Calibracao() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    {cycles?.filter(cycle => cycle.id).map((cycle) => (
+                    {cycles?.filter(cycle => cycle.id).map((cycle: any) => (
                       <SelectItem key={cycle.id} value={cycle.id!.toString()}>
                         {cycle.name}
                       </SelectItem>
@@ -327,7 +327,7 @@ export default function Calibracao() {
               </CardContent>
             </Card>
           ) : (
-            filteredEvaluations.map((evaluation) => (
+            filteredEvaluations.map((evaluation: any) => (
               <Card key={evaluation.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -534,7 +534,7 @@ export default function Calibracao() {
                 Nenhuma calibração realizada ainda
               </div>
             ) : (
-              history.map((item) => (
+              history.map((item: any) => (
                 <Card key={item.id}>
                   <CardContent className="pt-4">
                     <div className="flex items-start justify-between mb-2">

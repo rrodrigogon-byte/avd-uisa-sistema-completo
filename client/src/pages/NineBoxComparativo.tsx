@@ -142,7 +142,7 @@ export default function NineBoxComparativo() {
 
   const selectAll = () => {
     if (positions) {
-      setSelectedPositions(positions.map((p) => p.id));
+      setSelectedPositions(positions.map((p: any) => p.id));
     }
   };
 
@@ -184,7 +184,7 @@ export default function NineBoxComparativo() {
         "Análise Detalhada por Cargo",
         generateTableHTML(
           ["Cargo", "Colaboradores", "Perf Média", "Pot Médio", "Alto Desemp.", "Alto Pot.", "Stars"],
-          comparative.map((c) => [
+          comparative.map((c: any) => [
             c.positionTitle,
             c.totalEmployees.toString(),
             c.avgPerformance.toFixed(2),
@@ -252,18 +252,18 @@ export default function NineBoxComparativo() {
 
   // Preparar dados para gráfico de barras (Performance e Potencial médios)
   const barChartData = {
-    labels: comparative?.map((c) => c.positionTitle) || [],
+    labels: comparative?.map((c: any) => c.positionTitle) || [],
     datasets: [
       {
         label: "Performance Média",
-        data: comparative?.map((c) => c.avgPerformance) || [],
+        data: comparative?.map((c: any) => c.avgPerformance) || [],
         backgroundColor: "rgba(59, 130, 246, 0.8)",
         borderColor: "rgb(59, 130, 246)",
         borderWidth: 1,
       },
       {
         label: "Potencial Médio",
-        data: comparative?.map((c) => c.avgPotential) || [],
+        data: comparative?.map((c: any) => c.avgPotential) || [],
         backgroundColor: "rgba(16, 185, 129, 0.8)",
         borderColor: "rgb(16, 185, 129)",
         borderWidth: 1,
@@ -296,25 +296,25 @@ export default function NineBoxComparativo() {
 
   // Preparar dados para gráfico radar (% Alto Desempenho, % Alto Potencial, % Stars)
   const radarChartData = {
-    labels: comparative?.map((c) => c.positionTitle) || [],
+    labels: comparative?.map((c: any) => c.positionTitle) || [],
     datasets: [
       {
         label: "% Alto Desempenho",
-        data: comparative?.map((c) => c.highPerformersPercent) || [],
+        data: comparative?.map((c: any) => c.highPerformersPercent) || [],
         backgroundColor: "rgba(59, 130, 246, 0.2)",
         borderColor: "rgb(59, 130, 246)",
         borderWidth: 2,
       },
       {
         label: "% Alto Potencial",
-        data: comparative?.map((c) => c.highPotentialPercent) || [],
+        data: comparative?.map((c: any) => c.highPotentialPercent) || [],
         backgroundColor: "rgba(16, 185, 129, 0.2)",
         borderColor: "rgb(16, 185, 129)",
         borderWidth: 2,
       },
       {
         label: "% Stars (Alto/Alto)",
-        data: comparative?.map((c) => c.starsPercent) || [],
+        data: comparative?.map((c: any) => c.starsPercent) || [],
         backgroundColor: "rgba(245, 158, 11, 0.2)",
         borderColor: "rgb(245, 158, 11)",
         borderWidth: 2,
@@ -453,7 +453,7 @@ export default function NineBoxComparativo() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todos">Todos os colaboradores</SelectItem>
-                    {leaders?.filter(l => l?.id).map((leader) => (
+                    {leaders?.filter(l => l?.id).map((leader: any) => (
                       <SelectItem key={leader.id} value={leader.id.toString()}>
                         {leader.name} - {leader.positionTitle} ({leader.subordinatesCount} subordinados)
                       </SelectItem>
@@ -563,7 +563,7 @@ export default function NineBoxComparativo() {
               
               {savedFilters.length > 0 && (
                 <div className="flex gap-2 flex-wrap">
-                  {savedFilters.map((filter) => (
+                  {savedFilters.map((filter: any) => (
                     <div key={filter.id} className="flex items-center gap-1 bg-blue-50 border border-blue-200 rounded-md px-2 py-1">
                       <Button
                         variant="ghost"
@@ -612,7 +612,7 @@ export default function NineBoxComparativo() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {positions?.map((position) => (
+              {positions?.map((position: any) => (
                 <div
                   key={position.id}
                   className={`p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -755,7 +755,7 @@ export default function NineBoxComparativo() {
                       </tr>
                     </thead>
                     <tbody>
-                      {comparative.map((item) => (
+                      {comparative.map((item: any) => (
                         <tr key={item.positionTitle} className="border-b hover:bg-muted/50">
                           <td className="py-3 px-4 font-medium">{item.positionTitle}</td>
                           <td className="text-center py-3 px-4">{item.totalEmployees}</td>

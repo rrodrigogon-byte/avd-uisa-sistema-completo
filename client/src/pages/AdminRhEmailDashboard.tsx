@@ -279,7 +279,7 @@ export default function AdminRhEmailDashboard() {
         <CardContent>
           {loadingEmails ? (
             <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
+              {[...Array(5)].map((_: any, i: number) => (
                 <Skeleton key={i} className="h-16 w-full" />
               ))}
             </div>
@@ -296,7 +296,7 @@ export default function AdminRhEmailDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {emailsData.emails.map((email) => (
+                  {emailsData.emails.map((email: any) => (
                     <TableRow key={email.id}>
                       <TableCell>
                         {email.success ? (
@@ -377,7 +377,7 @@ export default function AdminRhEmailDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {stats.emailsByType.map((item, index) => (
+              {stats.emailsByType.map((item: any, index: number) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <span className="text-sm font-medium">{item.type}</span>
                   <Badge variant="secondary">{item.count} emails</Badge>

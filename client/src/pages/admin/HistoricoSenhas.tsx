@@ -51,7 +51,7 @@ export default function HistoricoSenhas() {
       ]),
     ];
 
-    const csv = rows.map((row) => row.join(",")).join("\n");
+    const csv = rows.map((row: any) => row.join(",")).join("\n");
     const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);

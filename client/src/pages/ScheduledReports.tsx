@@ -107,7 +107,7 @@ export default function ScheduledReports() {
     // Validar recipients
     const recipientsArray = formData.recipients
       .split(",")
-      .map((email) => email.trim())
+      .map((email: any) => email.trim())
       .filter((email) => email.length > 0);
 
     if (recipientsArray.length === 0) {
@@ -275,7 +275,7 @@ export default function ScheduledReports() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {dayOfWeekLabels.map((day, index) => (
+                      {dayOfWeekLabels.map((day: any, index: number) => (
                         <SelectItem key={index} value={index.toString()}>
                           {day}
                         </SelectItem>
@@ -376,7 +376,7 @@ export default function ScheduledReports() {
         <div className="text-center py-12">Carregando relatórios...</div>
       ) : reports && reports.length > 0 ? (
         <div className="grid gap-4">
-          {reports.map((report) => {
+          {reports.map((report: any) => {
             let recipients: string[] = [];
             try {
               recipients = typeof report.recipients === 'string' 

@@ -149,7 +149,7 @@ export default function Feedbacks() {
                       {loadingEmployees ? (
                         <SelectItem value="loading" disabled>Carregando...</SelectItem>
                       ) : (
-                        employees?.map((emp) => (
+                        employees?.map((emp: any) => (
                           <SelectItem key={emp.id} value={emp.id.toString()}>
                             {emp.name}
                           </SelectItem>
@@ -308,7 +308,7 @@ export default function Feedbacks() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
-                {employees?.map((item) => (
+                {employees?.map((item: any) => (
                   <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
                     {item.employee.name}
                   </SelectItem>
@@ -347,7 +347,7 @@ export default function Feedbacks() {
         </CardHeader>
         <CardContent className="space-y-4">
           {feedbacks && feedbacks.length > 0 ? (
-            feedbacks.map((item) => (
+            feedbacks.map((item: any) => (
               <Card key={item.feedback.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">

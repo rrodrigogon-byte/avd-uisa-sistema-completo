@@ -433,7 +433,7 @@ export default function ProgressoCiclos() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {evaluationStatusData.map((entry, index) => (
+                  {evaluationStatusData.map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

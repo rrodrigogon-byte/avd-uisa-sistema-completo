@@ -61,11 +61,11 @@ export default function AnalyticsAvancado() {
 
   // Preparar dados para gráfico de adesão de metas
   const goalsAdherenceChartData = {
-    labels: goalsAdherence?.map((d) => d.month) || [],
+    labels: goalsAdherence?.map((d: any) => d.month) || [],
     datasets: [
       {
         label: "Taxa de Adesão (%)",
-        data: goalsAdherence?.map((d) => d.adherenceRate) || [],
+        data: goalsAdherence?.map((d: any) => d.adherenceRate) || [],
         borderColor: "#F39200",
         backgroundColor: "rgba(243, 146, 0, 0.1)",
         fill: true,
@@ -73,7 +73,7 @@ export default function AnalyticsAvancado() {
       },
       {
         label: "Progresso Médio (%)",
-        data: goalsAdherence?.map((d) => Number(d.avgProgress)) || [],
+        data: goalsAdherence?.map((d: any) => Number(d.avgProgress)) || [],
         borderColor: "#10b981",
         backgroundColor: "rgba(16, 185, 129, 0.1)",
         fill: true,
@@ -84,21 +84,21 @@ export default function AnalyticsAvancado() {
 
   // Preparar dados para gráfico de PDI
   const pdiChartData = {
-    labels: pdiTrend?.map((d) => d.month) || [],
+    labels: pdiTrend?.map((d: any) => d.month) || [],
     datasets: [
       {
         label: "Concluídos",
-        data: pdiTrend?.map((d) => d.completedItems) || [],
+        data: pdiTrend?.map((d: any) => d.completedItems) || [],
         backgroundColor: "#10b981",
       },
       {
         label: "Em Progresso",
-        data: pdiTrend?.map((d) => d.inProgressItems) || [],
+        data: pdiTrend?.map((d: any) => d.inProgressItems) || [],
         backgroundColor: "#f59e0b",
       },
       {
         label: "Não Iniciados",
-        data: pdiTrend?.map((d) => d.notStartedItems) || [],
+        data: pdiTrend?.map((d: any) => d.notStartedItems) || [],
         backgroundColor: "#ef4444",
       },
     ],
@@ -108,14 +108,14 @@ export default function AnalyticsAvancado() {
   const forecastChartData = forecast?.historicalData
     ? {
         labels: [
-          ...forecast.historicalData.map((d) => d.month),
-          ...(forecast.forecast?.map((f) => f.month) || []),
+          ...forecast.historicalData.map((d: any) => d.month),
+          ...(forecast.forecast?.map((f: any) => f.month) || []),
         ],
         datasets: [
           {
             label: "Performance Histórica",
             data: [
-              ...forecast.historicalData.map((d) => Number(d.avgPerformance)),
+              ...forecast.historicalData.map((d: any) => Number(d.avgPerformance)),
               ...new Array(forecast.forecast?.length || 0).fill(null),
             ],
             borderColor: "#3b82f6",
@@ -128,7 +128,7 @@ export default function AnalyticsAvancado() {
             data: [
               ...new Array(forecast.historicalData.length - 1).fill(null),
               Number(forecast.historicalData[forecast.historicalData.length - 1].avgPerformance),
-              ...(forecast.forecast?.map((f) => Number(f.predictedPerformance)) || []),
+              ...(forecast.forecast?.map((f: any) => Number(f.predictedPerformance)) || []),
             ],
             borderColor: "#8b5cf6",
             backgroundColor: "rgba(139, 92, 246, 0.1)",
@@ -361,7 +361,7 @@ export default function AnalyticsAvancado() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {cyclesComparison.map((cycle) => (
+                {cyclesComparison.map((cycle: any) => (
                   <div key={cycle.id} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div>

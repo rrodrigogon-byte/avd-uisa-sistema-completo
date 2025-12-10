@@ -287,7 +287,7 @@ export default function TestMBTI() {
                   { value: 3, label: "3 - Neutro" },
                   { value: 4, label: "4 - Concordo parcialmente" },
                   { value: 5, label: "5 - Concordo totalmente" },
-                ].map((option) => (
+                ].map((option: any) => (
                   <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-accent transition-colors">
                     <RadioGroupItem value={option.value.toString()} id={`q${currentQ.id}-${option.value}`} />
                     <Label htmlFor={`q${currentQ.id}-${option.value}`} className="flex-1 cursor-pointer">

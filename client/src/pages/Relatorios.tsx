@@ -183,7 +183,7 @@ export default function Relatorios() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {monthlyGoalsData.map((item) => (
+                    {monthlyGoalsData.map((item: any) => (
                       <div key={item.month} className="space-y-1">
                         <div className="flex items-center justify-between text-sm">
                           <span className="font-medium">{item.month}</span>
@@ -256,7 +256,7 @@ export default function Relatorios() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {["quantitativa", "qualitativa", "projeto", "comportamental"].map((category) => {
+                  {["quantitativa", "qualitativa", "projeto", "comportamental"].map((category: any) => {
                     const categoryGoals = goals?.filter(g => g.category === category) || [];
                     const avgProgress = categoryGoals.length
                       ? Math.round(categoryGoals.reduce((sum, g) => sum + g.progress, 0) / categoryGoals.length)
@@ -327,7 +327,7 @@ export default function Relatorios() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {["rascunho", "pendente_aprovacao", "aprovado", "em_andamento", "concluido"].map((status) => {
+                  {["rascunho", "pendente_aprovacao", "aprovado", "em_andamento", "concluido"].map((status: any) => {
                     const count = pdis?.filter(p => p.status === status).length || 0;
                     const percentage = totalPDIs > 0 ? Math.round((count / totalPDIs) * 100) : 0;
 
@@ -362,7 +362,7 @@ export default function Relatorios() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {departmentPerformance.map((dept) => (
+                  {departmentPerformance.map((dept: any) => (
                     <div key={dept.name} className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
                         <div>

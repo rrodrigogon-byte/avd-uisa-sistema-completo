@@ -95,7 +95,7 @@ export default function MinhasAvaliacoes() {
             {/* Autoavaliações */}
             <TabsContent value="self" className="space-y-4">
               {selfEvaluations.length > 0 ? (
-                selfEvaluations.map((item) => {
+                selfEvaluations.map((item: any) => {
                   const overdue = isOverdue(item.cycle?.selfEvaluationDeadline);
                   return (
                     <Card key={item.evaluation.id} className={overdue ? "border-destructive" : ""}>
@@ -181,7 +181,7 @@ export default function MinhasAvaliacoes() {
             {/* Avaliações de Subordinados */}
             <TabsContent value="manager" className="space-y-4">
               {managerEvaluations.length > 0 ? (
-                managerEvaluations.map((item) => {
+                managerEvaluations.map((item: any) => {
                   const overdue = isOverdue(item.cycle?.managerEvaluationDeadline);
                   return (
                     <Card key={item.evaluation.id} className={overdue ? "border-destructive" : ""}>

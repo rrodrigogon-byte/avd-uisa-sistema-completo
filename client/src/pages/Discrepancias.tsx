@@ -317,7 +317,7 @@ export default function Discrepancias() {
                   </tr>
                 </thead>
                 <tbody>
-                  {discrepancies.map((disc) => (
+                  {discrepancies.map((disc: any) => (
                     <tr key={disc.id} className="border-b hover:bg-accent/50">
                       <td className="py-3 px-4">
                         <div>

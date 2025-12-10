@@ -179,7 +179,7 @@ export default function TestCareerAnchors() {
                 Seu Perfil Completo de Âncoras
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {sortedAnchors.map((anchor, index) => (
+                {sortedAnchors.map((anchor: any, index: number) => (
                   <div key={anchor.key} className={`${anchor.bg} p-4 rounded-lg border ${index === 0 ? 'ring-2 ring-teal-400' : ''}`}>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl">{anchor.icon}</span>
@@ -368,7 +368,7 @@ export default function TestCareerAnchors() {
                   { value: 3, label: "Neutro", color: "border-gray-200 hover:bg-gray-50" },
                   { value: 4, label: "Concordo", color: "border-blue-200 hover:bg-blue-50" },
                   { value: 5, label: "Concordo Totalmente", color: "border-green-200 hover:bg-green-50" },
-                ].map((option) => (
+                ].map((option: any) => (
                   <div key={option.value} className={`flex items-center space-x-3 border-2 rounded-lg p-4 cursor-pointer transition-all ${option.color} ${responses[currentQ.id] === option.value ? 'ring-2 ring-teal-500 bg-teal-50' : ''}`}>
                     <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
                     <Label htmlFor={`option-${option.value}`} className="flex-1 cursor-pointer font-medium">

@@ -203,7 +203,7 @@ export default function AcompanharCicloAvaliacao() {
 
                   {goalEvidences.length > 0 ? (
                     <div className="space-y-2">
-                      {goalEvidences.map((evidence) => (
+                      {goalEvidences.map((evidence: any) => (
                         <Card key={evidence.id} className="border-2">
                           <CardContent className="pt-4">
                             <div className="flex items-start gap-2">

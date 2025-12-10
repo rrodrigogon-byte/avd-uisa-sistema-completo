@@ -220,7 +220,7 @@ export default function Avaliacao360Gestor() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((score) => (
+                  {[1, 2, 3, 4, 5].map((score: any) => (
                     <Button
                       key={score}
                       variant={responses[question.id] === score ? "default" : "outline"}

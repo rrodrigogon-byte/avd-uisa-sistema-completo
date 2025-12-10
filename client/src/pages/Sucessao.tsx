@@ -382,7 +382,7 @@ export default function Sucessao() {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        {positions?.filter(p => p?.id).map((pos) => (
+                        {positions?.filter(p => p?.id).map((pos: any) => (
                           <SelectItem key={pos.id} value={pos.id.toString()}>
                             {pos.title}
                           </SelectItem>
@@ -398,7 +398,7 @@ export default function Sucessao() {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        {employees?.filter(e => e?.employee?.id).map((item) => (
+                        {employees?.filter(e => e?.employee?.id).map((item: any) => (
                           <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
                             {item.employee.name}
                           </SelectItem>
@@ -548,7 +548,7 @@ export default function Sucessao() {
               </CardContent>
             </Card>
           ) : (
-            plans.map((plan) => (
+            plans.map((plan: any) => (
               <Card
                 key={plan.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
@@ -687,7 +687,7 @@ export default function Sucessao() {
                   </div>
 
                   {selectedPlan.successors && selectedPlan.successors.length > 0 ? (
-                    selectedPlan.successors.map((successor) => (
+                    selectedPlan.successors.map((successor: any) => (
                       <Card key={successor.id}>
                         <CardContent className="pt-6">
                           <div className="flex items-start justify-between">
@@ -990,7 +990,7 @@ export default function Sucessao() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.filter(e => e?.employee?.id).map((item) => (
+                      {employees?.filter(e => e?.employee?.id).map((item: any) => (
                         <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
                           {item.employee.name}
                         </SelectItem>
@@ -1100,7 +1100,7 @@ export default function Sucessao() {
                     { id: "vark", name: "VARK" },
                     { id: "lideranca", name: "Liderança" },
                     { id: "ancoras", name: "Âncoras de Carreira" },
-                  ].map((test) => (
+                  ].map((test: any) => (
                     <div key={test.id} className="flex items-center space-x-2">
                       <Checkbox
                         id={test.id}
@@ -1144,7 +1144,7 @@ export default function Sucessao() {
                   <TabsContent value="candidates" className="space-y-2">
                     <Label>Selecione os Candidatos</Label>
                     <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                      {selectedPlan?.successors?.map((successor) => (
+                      {selectedPlan?.successors?.map((successor: any) => (
                         <div key={successor.id} className="flex items-center space-x-2">
                           <Checkbox
                             id={`candidate-${successor.id}`}
@@ -1177,7 +1177,7 @@ export default function Sucessao() {
                   <TabsContent value="department" className="space-y-2">
                     <Label>Selecione os Departamentos</Label>
                     <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                      {departments?.map((dept) => (
+                      {departments?.map((dept: any) => (
                         <div key={dept.id} className="flex items-center space-x-2">
                           <Checkbox
                             id={`dept-${dept.id}`}
@@ -1210,7 +1210,7 @@ export default function Sucessao() {
                       placeholder="email1@example.com, email2@example.com"
                       value={testsData.emails.join(", ")}
                       onChange={(e) => {
-                        const emails = e.target.value.split(",").map((email) => email.trim()).filter(Boolean);
+                        const emails = e.target.value.split(",").map((email: any) => email.trim()).filter(Boolean);
                         setTestsData({ ...testsData, emails });
                       }}
                       rows={4}
@@ -1262,7 +1262,7 @@ export default function Sucessao() {
             </DialogHeader>
             <div className="space-y-4 max-h-[500px] overflow-y-auto">
               {history && history.length > 0 ? (
-                history.map((item) => (
+                history.map((item: any) => (
                   <Card key={item.id}>
                     <CardContent className="pt-4">
                       <div className="flex items-start justify-between">

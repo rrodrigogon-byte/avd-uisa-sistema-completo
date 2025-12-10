@@ -174,7 +174,7 @@ export default function AprovarDescricaoSuperior() {
 
         {/* Lista de Descrições Pendentes */}
         <div className="space-y-4">
-          {descricoesPendentes.map((desc) => (
+          {descricoesPendentes.map((desc: any) => (
             <Card key={desc.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -215,7 +215,7 @@ export default function AprovarDescricaoSuperior() {
                 <div>
                   <h4 className="font-semibold text-sm text-gray-700 mb-2">Responsabilidades</h4>
                   <ul className="list-disc list-inside space-y-1">
-                    {desc.responsabilidades.map((resp, idx) => (
+                    {desc.responsabilidades.map((resp: any, idx: number) => (
                       <li key={idx} className="text-gray-600 text-sm">
                         {resp}
                       </li>
@@ -227,7 +227,7 @@ export default function AprovarDescricaoSuperior() {
                 <div>
                   <h4 className="font-semibold text-sm text-gray-700 mb-2">Competências Requeridas</h4>
                   <div className="flex flex-wrap gap-2">
-                    {desc.competencias.map((comp, idx) => (
+                    {desc.competencias.map((comp: any, idx: number) => (
                       <Badge key={idx} variant="secondary">
                         {comp}
                       </Badge>

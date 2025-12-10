@@ -208,7 +208,7 @@ export default function Avaliar360() {
         {/* Navegação de Categorias */}
         {categorizedQuestions.length > 0 && (
           <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            {categorizedQuestions.map((cat, idx) => (
+            {categorizedQuestions.map((cat: any, idx: number) => (
               <Button
                 key={idx}
                 variant={currentCategory === idx ? "default" : "outline"}

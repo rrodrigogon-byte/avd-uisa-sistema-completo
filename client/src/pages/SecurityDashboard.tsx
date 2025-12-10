@@ -70,12 +70,12 @@ export default function SecurityDashboard() {
   };
 
   // Preparar dados para gráficos
-  const activityChartData = stats?.topActions.map((action) => ({
+  const activityChartData = stats?.topActions.map((action: any) => ({
     name: action.action,
     total: action.count,
   })) || [];
 
-  const userActivityData = stats?.topUsers.map((user) => ({
+  const userActivityData = stats?.topUsers.map((user: any) => ({
     userId: user.userId,
     atividades: user.count,
   })) || [];
@@ -223,7 +223,7 @@ export default function SecurityDashboard() {
                 <div>
                   <h4 className="font-semibold mb-2">Múltiplas Tentativas Falhadas</h4>
                   <div className="space-y-2">
-                    {suspicious.failedActions.map((item, idx) => (
+                    {suspicious.failedActions.map((item: any, idx: number) => (
                       <div key={idx} className="flex items-center justify-between p-2 bg-destructive/10 rounded">
                         <span className="text-sm">
                           Usuário ID: {item.userId} - Ação: {item.action}
@@ -239,7 +239,7 @@ export default function SecurityDashboard() {
                 <div>
                   <h4 className="font-semibold mb-2">Volume Anormal de Atividades</h4>
                   <div className="space-y-2">
-                    {suspicious.highVolume.map((item, idx) => (
+                    {suspicious.highVolume.map((item: any, idx: number) => (
                       <div key={idx} className="flex items-center justify-between p-2 bg-yellow-500/10 rounded">
                         <span className="text-sm">Usuário ID: {item.userId}</span>
                         <Badge variant="outline">{item.count} atividades</Badge>
@@ -323,7 +323,7 @@ export default function SecurityDashboard() {
               </TableHeader>
               <TableBody>
                 {logs && logs.logs.length > 0 ? (
-                  logs.logs.map((log) => (
+                  logs.logs.map((log: any) => (
                     <TableRow key={log.id}>
                       <TableCell className="font-mono text-xs">{log.id}</TableCell>
                       <TableCell>{log.userId}</TableCell>

@@ -306,7 +306,7 @@ export default function PesquisasPulse() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {surveys.map((survey) => (
+                {surveys.map((survey: any) => (
                   <TableRow key={survey.id}>
                     <TableCell className="font-medium">{survey.title}</TableCell>
                     <TableCell className="max-w-xs truncate">{survey.question}</TableCell>

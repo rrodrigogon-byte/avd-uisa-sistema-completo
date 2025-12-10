@@ -245,7 +245,7 @@ export default function Aprovadores() {
                         <SelectValue placeholder="Selecione um departamento" />
                       </SelectTrigger>
                       <SelectContent>
-                        {departments?.map((dept) => (
+                        {departments?.map((dept: any) => (
                           <SelectItem key={dept.id} value={dept.id.toString()}>
                             {dept.name}
                           </SelectItem>
@@ -263,7 +263,7 @@ export default function Aprovadores() {
                         <SelectValue placeholder="Selecione um centro de custo" />
                       </SelectTrigger>
                       <SelectContent>
-                        {costCenters?.map((cc) => (
+                        {costCenters?.map((cc: any) => (
                           <SelectItem key={cc.id} value={cc.id.toString()}>
                             {cc.name} ({cc.code})
                           </SelectItem>
@@ -287,7 +287,7 @@ export default function Aprovadores() {
                         <SelectValue placeholder="Selecione um funcionário" />
                       </SelectTrigger>
                       <SelectContent>
-                        {employees?.map((emp) => (
+                        {employees?.map((emp: any) => (
                           <SelectItem key={emp.id} value={emp.id.toString()}>
                             {emp.name} ({emp.employeeCode})
                           </SelectItem>
@@ -310,7 +310,7 @@ export default function Aprovadores() {
                       <SelectValue placeholder="Selecione o aprovador" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.map((emp) => (
+                      {employees?.map((emp: any) => (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.name} - {emp.department?.name || "Sem departamento"}
                         </SelectItem>
@@ -420,7 +420,7 @@ export default function Aprovadores() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rules.map((rule) => (
+                  {rules.map((rule: any) => (
                     <TableRow key={rule.id}>
                       <TableCell>
                         <Badge variant="outline">{RULE_TYPE_LABELS[rule.ruleType]}</Badge>

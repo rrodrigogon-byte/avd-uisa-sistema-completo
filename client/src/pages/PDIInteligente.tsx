@@ -71,18 +71,18 @@ export default function PDIInteligente() {
 
   // Dados do gráfico radar
   const radarData = {
-    labels: pdi.gaps.map((g) => g.competencyName || `Competência ${g.competencyId}`),
+    labels: pdi.gaps.map((g: any) => g.competencyName || `Competência ${g.competencyId}`),
     datasets: [
       {
         label: "Perfil Atual",
-        data: pdi.gaps.map((g) => g.currentLevel),
+        data: pdi.gaps.map((g: any) => g.currentLevel),
         backgroundColor: "rgba(59, 130, 246, 0.2)",
         borderColor: "rgba(59, 130, 246, 1)",
         borderWidth: 2,
       },
       {
         label: "Perfil Alvo",
-        data: pdi.gaps.map((g) => g.targetLevel),
+        data: pdi.gaps.map((g: any) => g.targetLevel),
         backgroundColor: "rgba(34, 197, 94, 0.2)",
         borderColor: "rgba(34, 197, 94, 1)",
         borderWidth: 2,
@@ -322,7 +322,7 @@ export default function PDIInteligente() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {pdi.gaps.map((gap, idx) => (
+                  {pdi.gaps.map((gap: any, idx: number) => (
                     <div key={idx} className="p-4 rounded-lg border">
                       <div className="flex items-start justify-between mb-3">
                         <div>
@@ -526,7 +526,7 @@ export default function PDIInteligente() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {pdi.risks?.map((risk, idx) => (
+                  {pdi.risks?.map((risk: any, idx: number) => (
                     <div key={idx} className="p-4 rounded-lg border">
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-semibold">{risk.description}</h4>

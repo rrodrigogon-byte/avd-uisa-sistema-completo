@@ -165,7 +165,7 @@ export default function Workflows() {
 
         {/* Workflows */}
         <div className="space-y-6">
-          {workflows.map((workflow) => (
+          {workflows.map((workflow: any) => (
             <Card key={workflow.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">

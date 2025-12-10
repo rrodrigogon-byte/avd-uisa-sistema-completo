@@ -476,7 +476,7 @@ export default function CalibrationMeetingRoom() {
               </CardHeader>
               <CardContent className="flex-1 flex flex-col p-0">
                 <ScrollArea className="flex-1 p-4">
-                  {messages.map((msg, idx) => (
+                  {messages.map((msg: any, idx: number) => (
                     <div key={idx} className="mb-3">
                       <div className="flex items-start gap-2">
                         <div className="flex-1">

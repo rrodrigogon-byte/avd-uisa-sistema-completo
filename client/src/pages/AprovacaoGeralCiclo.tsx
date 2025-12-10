@@ -113,7 +113,7 @@ export default function AprovacaoGeralCiclo() {
               <SelectValue placeholder="Selecione um ciclo..." />
             </SelectTrigger>
             <SelectContent>
-              {activeCycles.map((cycle) => (
+              {activeCycles.map((cycle: any) => (
                 <SelectItem key={cycle.id} value={cycle.id.toString()}>
                   {cycle.name} ({new Date(cycle.startDate).toLocaleDateString("pt-BR")} - {new Date(cycle.endDate).toLocaleDateString("pt-BR")})
                 </SelectItem>
@@ -166,7 +166,7 @@ export default function AprovacaoGeralCiclo() {
       {/* Lista de Participantes */}
       {selectedCycleId && pendingParticipants.length > 0 ? (
         <div className="space-y-4">
-          {pendingParticipants.map((participant) => {
+          {pendingParticipants.map((participant: any) => {
             const individualGoals = participant.individualGoals ? JSON.parse(participant.individualGoals) : [];
 
             return (
@@ -280,7 +280,7 @@ export default function AprovacaoGeralCiclo() {
               <div>
                 <p className="font-medium mb-2">Evidências Registradas ({evidences.length}):</p>
                 <div className="space-y-2">
-                  {evidences.map((evidence) => (
+                  {evidences.map((evidence: any) => (
                     <Card key={evidence.id} className="border-2">
                       <CardContent className="pt-4">
                         <div className="flex items-start gap-2">

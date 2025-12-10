@@ -145,7 +145,7 @@ export default function RankingGamificacao() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os departamentos</SelectItem>
-              {departments?.map((dept) => (
+              {departments?.map((dept: any) => (
                 <SelectItem key={dept.id} value={dept.id.toString()}>
                   {dept.name}
                 </SelectItem>
@@ -163,7 +163,7 @@ export default function RankingGamificacao() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {levels?.map((level) => (
+            {levels?.map((level: any) => (
               <div
                 key={level.name}
                 className={`p-4 rounded-lg ${getLevelColor(level.name)}`}
@@ -195,7 +195,7 @@ export default function RankingGamificacao() {
             <div className="text-center py-12 text-gray-500">Carregando...</div>
           ) : displayRanking && displayRanking.length > 0 ? (
             <div className="space-y-3">
-              {displayRanking.map((item) => (
+              {displayRanking.map((item: any) => (
                 <div
                   key={item.employee.id}
                   className={`flex items-center gap-4 p-4 rounded-lg border transition-all hover:shadow-md ${

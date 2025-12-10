@@ -225,7 +225,7 @@ export default function Avaliacao360Enhanced() {
               </CardContent>
             </Card>
           ) : (
-            evaluations.map((evaluation) => {
+            evaluations.map((evaluation: any) => {
               const progress = calculateProgress(evaluation);
               const isSelected = selectedEvaluation === evaluation.id;
 
@@ -309,7 +309,7 @@ export default function Avaliacao360Enhanced() {
 
                     {/* Etapas */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {stages.map((stage) => {
+                      {stages.map((stage: any) => {
                         const Icon = stage.icon;
                         const completed = (evaluation as any)[stage.key];
                         

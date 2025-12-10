@@ -123,7 +123,7 @@ export default function DashboardMetasCiclos() {
         {/* Cards de Ciclos */}
         {cycleStats && cycleStats.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2">
-            {cycleStats.map((cycle) => (
+            {cycleStats.map((cycle: any) => (
               <Card key={cycle.cycleId} className="overflow-hidden">
                 <CardHeader className="bg-muted/50">
                   <div className="flex items-start justify-between">

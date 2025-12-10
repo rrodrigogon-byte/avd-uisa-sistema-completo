@@ -194,7 +194,7 @@ export default function ImportacaoPonto() {
                   </tr>
                 </thead>
                 <tbody>
-                  {parsedData.slice(0, 100).map((record, idx) => (
+                  {parsedData.slice(0, 100).map((record: any, idx: number) => (
                     <tr key={idx} className="border-b hover:bg-accent/50">
                       <td className="py-2 px-4">{record.employeeId}</td>
                       <td className="py-2 px-4">{record.employeeCode || "-"}</td>

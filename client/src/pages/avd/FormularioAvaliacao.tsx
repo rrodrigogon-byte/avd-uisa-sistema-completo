@@ -276,7 +276,7 @@ export default function FormularioAvaliacao() {
                 <CardDescription>{categoryQuestions.length} questões</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {categoryQuestions.map((question, index) => (
+                {categoryQuestions.map((question: any, index: number) => (
                   <div key={question.id}>
                     {index > 0 && <Separator className="my-6" />}
                     <div className="space-y-4">
@@ -297,7 +297,7 @@ export default function FormularioAvaliacao() {
                           onValueChange={(value) => handleResponseChange(question.id, "score", parseInt(value))}
                         >
                           <div className="flex gap-4">
-                            {[1, 2, 3, 4, 5].map((score) => (
+                            {[1, 2, 3, 4, 5].map((score: any) => (
                               <div key={score} className="flex items-center space-x-2">
                                 <RadioGroupItem value={score.toString()} id={`q${question.id}-${score}`} />
                                 <Label htmlFor={`q${question.id}-${score}`} className="font-normal cursor-pointer">

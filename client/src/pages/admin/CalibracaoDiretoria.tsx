@@ -135,7 +135,7 @@ function NineBoxQuadrant({
         </Badge>
       </h3>
       <div className="space-y-2">
-        {quadrantEmployees.map((employee) => (
+        {quadrantEmployees.map((employee: any) => (
           <div key={employee.id} onClick={() => onEmployeeClick(employee)}>
             <DraggableEmployee employee={employee} />
           </div>

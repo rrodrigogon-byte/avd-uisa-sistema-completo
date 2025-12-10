@@ -232,7 +232,7 @@ export default function Perfil() {
                     { action: "Avaliação 360° concluída", date: "2 dias atrás", type: "avaliacao" },
                     { action: "PDI criado", date: "3 dias atrás", type: "pdi" },
                     { action: "Perfil atualizado", date: "1 semana atrás", type: "perfil" },
-                  ].map((item, index) => (
+                  ].map((item: any, index: number) => (
                     <div key={index} className="flex items-center justify-between py-3 border-b last:border-0">
                       <div>
                         <p className="font-medium">{item.action}</p>

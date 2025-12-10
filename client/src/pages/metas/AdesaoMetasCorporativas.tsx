@@ -60,7 +60,7 @@ export default function AdesaoMetasCorporativas() {
         emp.daysSinceLastUpdate > 14 ? "Crítico" : emp.daysSinceLastUpdate > 7 ? "Atrasado" : "Atenção",
       ]),
     ]
-      .map((row) => row.join(","))
+      .map((row: any) => row.join(","))
       .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });

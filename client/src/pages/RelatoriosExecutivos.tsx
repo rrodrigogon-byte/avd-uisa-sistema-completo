@@ -310,7 +310,7 @@ export default function RelatoriosExecutivos() {
                           fill="#8884d8"
                           dataKey="value"
                         >
-                          {discDistribution.map((entry, index) => (
+                          {discDistribution.map((entry: any, index: number) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
@@ -338,7 +338,7 @@ export default function RelatoriosExecutivos() {
                 <CardContent>
                   {profilesByDept.length > 0 ? (
                     <div className="space-y-3">
-                      {profilesByDept.slice(0, 5).map((dept, index) => (
+                      {profilesByDept.slice(0, 5).map((dept: any, index: number) => (
                         <div key={index} className="flex items-center justify-between">
                           <div className="flex-1">
                             <div className="font-medium text-sm">{dept.name}</div>
@@ -401,7 +401,7 @@ export default function RelatoriosExecutivos() {
 
           {/* Insights Estratégicos */}
           <TabsContent value="insights" className="space-y-4">
-            {insights.map((insight, index) => (
+            {insights.map((insight: any, index: number) => (
               <Card key={index} className={
                 insight.priority === "high" ? "border-orange-200 bg-orange-50" :
                 insight.priority === "medium" ? "border-yellow-200 bg-yellow-50" :

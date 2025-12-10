@@ -149,7 +149,7 @@ export default function CiclosAvaliacaoLista() {
       {/* Lista de Ciclos */}
       <div className="grid grid-cols-1 gap-4">
         {filteredCycles && filteredCycles.length > 0 ? (
-          filteredCycles.map((cycle) => (
+          filteredCycles.map((cycle: any) => (
             <Card key={cycle.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">

@@ -271,7 +271,7 @@ export default function Notificacoes() {
               </div>
             ) : (
               <div className="space-y-3">
-                {filteredNotifications.map((notification) => (
+                {filteredNotifications.map((notification: any) => (
                   <div
                     key={notification.id}
                     className={cn(

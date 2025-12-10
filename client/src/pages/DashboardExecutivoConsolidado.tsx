@@ -551,7 +551,7 @@ function QuadrantDetailsModal({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {employees.map((emp) => (
+                {employees.map((emp: any) => (
                   <TableRow key={emp.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">

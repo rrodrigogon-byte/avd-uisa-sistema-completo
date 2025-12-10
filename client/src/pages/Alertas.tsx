@@ -300,7 +300,7 @@ export default function Alertas() {
             <div className="text-center py-8 text-muted-foreground">Nenhum alerta encontrado</div>
           ) : (
             <div className="space-y-4">
-              {alerts.map((alert) => {
+              {alerts.map((alert: any) => {
                 const SeverityIcon = severityConfig[alert.severity as AlertSeverity].icon;
                 return (
                   <div

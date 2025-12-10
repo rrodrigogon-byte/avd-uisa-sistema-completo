@@ -116,11 +116,11 @@ export default function ExecutiveDashboard() {
 
   // Configurações dos gráficos
   const headcountTrendData = {
-    labels: headcountTrend?.map((d) => d.month) || [],
+    labels: headcountTrend?.map((d: any) => d.month) || [],
     datasets: [
       {
         label: "Total de Colaboradores",
-        data: headcountTrend?.map((d) => d.total) || [],
+        data: headcountTrend?.map((d: any) => d.total) || [],
         borderColor: "rgb(59, 130, 246)",
         backgroundColor: "rgba(59, 130, 246, 0.1)",
         fill: true,
@@ -130,11 +130,11 @@ export default function ExecutiveDashboard() {
   };
 
   const headcountByDeptData = {
-    labels: headcountByDept?.slice(0, 10).map((d) => d.department) || [],
+    labels: headcountByDept?.slice(0, 10).map((d: any) => d.department) || [],
     datasets: [
       {
         label: "Colaboradores",
-        data: headcountByDept?.slice(0, 10).map((d) => d.count) || [],
+        data: headcountByDept?.slice(0, 10).map((d: any) => d.count) || [],
         backgroundColor: [
           "rgba(59, 130, 246, 0.8)",
           "rgba(16, 185, 129, 0.8)",
@@ -152,22 +152,22 @@ export default function ExecutiveDashboard() {
   };
 
   const salaryDistributionData = {
-    labels: salaryDistribution?.map((d) => d.range) || [],
+    labels: salaryDistribution?.map((d: any) => d.range) || [],
     datasets: [
       {
         label: "Colaboradores",
-        data: salaryDistribution?.map((d) => d.count) || [],
+        data: salaryDistribution?.map((d: any) => d.count) || [],
         backgroundColor: "rgba(16, 185, 129, 0.8)",
       },
     ],
   };
 
   const turnoverRateData = {
-    labels: turnoverRate?.map((d) => d.month) || [],
+    labels: turnoverRate?.map((d: any) => d.month) || [],
     datasets: [
       {
         label: "Taxa de Turnover (%)",
-        data: turnoverRate?.map((d) => d.rate) || [],
+        data: turnoverRate?.map((d: any) => d.rate) || [],
         borderColor: "rgb(239, 68, 68)",
         backgroundColor: "rgba(239, 68, 68, 0.1)",
         fill: true,
@@ -372,7 +372,7 @@ export default function ExecutiveDashboard() {
               <div className="text-center py-8">Carregando...</div>
             ) : successionPipeline && successionPipeline.length > 0 ? (
               <div className="space-y-4">
-                {successionPipeline.slice(0, 5).map((item, index) => (
+                {successionPipeline.slice(0, 5).map((item: any, index: number) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                     <div>
                       <p className="font-medium">{item.position}</p>

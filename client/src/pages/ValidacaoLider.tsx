@@ -220,7 +220,7 @@ export default function ValidacaoLider() {
 
         {/* Lista */}
         <div className="grid grid-cols-1 gap-4">
-          {filteredDescriptions?.map((desc) => (
+          {filteredDescriptions?.map((desc: any) => (
             <Card key={desc.id} className={selectedIds.includes(desc.id) ? "border-primary" : ""}>
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">

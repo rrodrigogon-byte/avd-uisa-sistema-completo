@@ -573,18 +573,18 @@ export default function RelatorioBonus() {
             {monthlyTrends && monthlyTrends.length > 0 ? (
               <Line
                 data={{
-                  labels: monthlyTrends.map((t) => t.month),
+                  labels: monthlyTrends.map((t: any) => t.month),
                   datasets: [
                     {
                       label: "Total de Bônus (R$)",
-                      data: monthlyTrends.map((t) => Number(t.totalAmount) / 100),
+                      data: monthlyTrends.map((t: any) => Number(t.totalAmount) / 100),
                       borderColor: "rgb(59, 130, 246)",
                       backgroundColor: "rgba(59, 130, 246, 0.1)",
                       tension: 0.4,
                     },
                     {
                       label: "Bônus Pagos (R$)",
-                      data: monthlyTrends.map((t) => Number(t.paidAmount) / 100),
+                      data: monthlyTrends.map((t: any) => Number(t.paidAmount) / 100),
                       borderColor: "rgb(34, 197, 94)",
                       backgroundColor: "rgba(34, 197, 94, 0.1)",
                       tension: 0.4,
@@ -656,14 +656,14 @@ export default function RelatorioBonus() {
             {filteredDeptDistribution && filteredDeptDistribution.length > 0 ? (
               <Bar
                 data={{
-                  labels: filteredDeptDistribution.map((d) => {
+                  labels: filteredDeptDistribution.map((d: any) => {
                     const dept = departments?.find((dep: any) => dep.id === d.departmentId);
                     return dept?.name || `Dept. ${d.departmentId}`;
                   }),
                   datasets: [
                     {
                       label: "Total de Bônus (R$)",
-                      data: filteredDeptDistribution.map((d) => Number(d.totalAmount) / 100),
+                      data: filteredDeptDistribution.map((d: any) => Number(d.totalAmount) / 100),
                       backgroundColor: "rgba(147, 51, 234, 0.7)",
                       borderColor: "rgb(147, 51, 234)",
                       borderWidth: 1,

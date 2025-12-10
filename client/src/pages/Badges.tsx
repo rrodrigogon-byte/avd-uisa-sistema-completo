@@ -11,7 +11,7 @@ export default function Badges() {
   const { data: ranking, isLoading: loadingRanking } = trpc.badges.getRanking.useQuery({ limit: 10 });
   const { data: stats } = trpc.badges.getStats.useQuery();
 
-  const earnedBadgeIds = new Set(myBadges?.badges.map((b) => b.badgeId) || []);
+  const earnedBadgeIds = new Set(myBadges?.badges.map((b: any) => b.badgeId) || []);
 
   const getIcon = (iconName: string | null) => {
     if (!iconName) return Trophy;
@@ -125,7 +125,7 @@ export default function Badges() {
         <TabsContent value="my-badges" className="space-y-4">
           {myBadges && myBadges.badges.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {myBadges.badges.map((item) => {
+              {myBadges.badges.map((item: any) => {
                 const Icon = getIcon(item.badge.icon);
                 return (
                   <Card key={item.id} className="relative overflow-hidden">
@@ -171,7 +171,7 @@ export default function Badges() {
         {/* Todos os Badges */}
         <TabsContent value="all-badges" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {allBadges?.map((badge) => {
+            {allBadges?.map((badge: any) => {
               const Icon = getIcon(badge.icon);
               const isEarned = earnedBadgeIds.has(badge.id);
 
@@ -222,7 +222,7 @@ export default function Badges() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {ranking?.map((item, index) => (
+                {ranking?.map((item: any, index: number) => (
                   <div
                     key={item.employeeId}
                     className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"

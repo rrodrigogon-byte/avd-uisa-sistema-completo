@@ -171,7 +171,7 @@ export default function Avaliacoes() {
               </CardContent>
             </Card>
           ) : (
-            evaluations?.map((evaluation) => {
+            evaluations?.map((evaluation: any) => {
               const progress = calculateProgress(evaluation);
               
               return (

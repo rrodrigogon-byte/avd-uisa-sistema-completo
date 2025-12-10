@@ -107,7 +107,7 @@ export default function CriarPesquisaPulse() {
         targetGroups: targetGroups as any,
         targetDepartmentIds: targetDepartmentIds.length > 0 ? targetDepartmentIds : undefined,
         targetCostCenterIds: targetCostCenterIds.length > 0 ? targetCostCenterIds : undefined,
-        targetEmails: targetEmails ? targetEmails.split(",").map((e) => e.trim()).filter(Boolean) : undefined,
+        targetEmails: targetEmails ? targetEmails.split(",").map((e: any) => e.trim()).filter(Boolean) : undefined,
       });
     }
   };
@@ -350,7 +350,7 @@ export default function CriarPesquisaPulse() {
                 <p className="text-sm text-muted-foreground">{formData.question}</p>
                 
                 <div className="flex flex-wrap gap-2 mt-3">
-                  {targetGroups.map((group) => (
+                  {targetGroups.map((group: any) => (
                     <Badge key={group} variant="secondary">
                       {group === "all" ? "Todos" : group === "diretoria" ? "Diretoria" : group}
                     </Badge>

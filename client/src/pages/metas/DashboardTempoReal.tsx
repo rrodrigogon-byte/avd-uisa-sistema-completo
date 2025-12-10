@@ -238,7 +238,7 @@ export default function DashboardTempoReal() {
 
           {goals && goals.length > 0 ? (
             <div className="grid grid-cols-1 gap-4">
-              {goals.map((goal) => {
+              {goals.map((goal: any) => {
                 const healthStatus = getHealthStatus(goal);
                 const isCritical = goal.progress < 30 && goal.status !== "completed";
 

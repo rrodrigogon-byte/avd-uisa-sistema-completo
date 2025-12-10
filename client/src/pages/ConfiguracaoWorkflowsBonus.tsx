@@ -121,7 +121,7 @@ export default function ConfiguracaoWorkflowsBonus() {
     // Reordenar níveis
     const reordered = selectedApprovers
       .filter((a) => a.level !== level)
-      .map((a, index) => ({ ...a, level: index + 1 }));
+      .map((a: any, index: number) => ({ ...a, level: index + 1 }));
     setSelectedApprovers(reordered);
     setCurrentLevel(reordered.length + 1);
   };
@@ -231,7 +231,7 @@ export default function ConfiguracaoWorkflowsBonus() {
                           {loadingEmployees ? (
                             <SelectItem value="loading" disabled>Carregando...</SelectItem>
                           ) : (
-                            employees?.map((emp) => (
+                            employees?.map((emp: any) => (
                               <SelectItem key={emp.id} value={emp.id.toString()}>
                                 {emp.name}
                               </SelectItem>
@@ -282,7 +282,7 @@ export default function ConfiguracaoWorkflowsBonus() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {selectedApprovers.map((approver, index) => (
+                      {selectedApprovers.map((approver: any, index: number) => (
                         <div key={approver.level}>
                           <div className="flex items-center gap-3 p-3 border rounded-lg">
                             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#F39200] text-white font-bold">

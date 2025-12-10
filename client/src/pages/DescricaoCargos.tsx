@@ -152,7 +152,7 @@ export default function DescricaoCargos() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {new Set(cargos.map((c) => c.department)).size}
+                {new Set(cargos.map((c: any) => c.department)).size}
               </div>
               <p className="text-xs text-muted-foreground">Com cargos cadastrados</p>
             </CardContent>
@@ -247,7 +247,7 @@ export default function DescricaoCargos() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {cargos.map((cargo) => (
+                {cargos.map((cargo: any) => (
                   <TableRow key={cargo.id}>
                     <TableCell className="font-medium">{cargo.code}</TableCell>
                     <TableCell>

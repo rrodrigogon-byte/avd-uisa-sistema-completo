@@ -204,7 +204,7 @@ export default function Relatorio360Consolidado() {
                         Nenhum ciclo ativo
                       </SelectItem>
                     ) : (
-                      activeCycles.map((cycle) => (
+                      activeCycles.map((cycle: any) => (
                         <SelectItem key={cycle.id} value={cycle.id.toString()}>
                           {cycle.name}
                         </SelectItem>
@@ -228,7 +228,7 @@ export default function Relatorio360Consolidado() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos os departamentos</SelectItem>
-                    {departments?.map((dept) => (
+                    {departments?.map((dept: any) => (
                       <SelectItem key={dept.id} value={dept.id.toString()}>
                         {dept.name}
                       </SelectItem>
@@ -256,7 +256,7 @@ export default function Relatorio360Consolidado() {
                         Carregando...
                       </SelectItem>
                     ) : (
-                      employees?.employees.map((emp) => (
+                      employees?.employees.map((emp: any) => (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.name}
                         </SelectItem>

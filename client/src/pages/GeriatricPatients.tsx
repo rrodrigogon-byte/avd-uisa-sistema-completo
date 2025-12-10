@@ -279,7 +279,7 @@ export default function GeriatricPatients() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredPatients?.map((patient) => (
+                filteredPatients?.map((patient: any) => (
                   <TableRow key={patient.id}>
                     <TableCell className="font-medium">{patient.nome}</TableCell>
                     <TableCell>{calculateAge(patient.dataNascimento)} anos</TableCell>

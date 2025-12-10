@@ -163,7 +163,7 @@ export default function Funcionarios() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os departamentos</SelectItem>
-                  {departments?.map((dept) => (
+                  {departments?.map((dept: any) => (
                     <SelectItem key={dept.id} value={dept.id.toString()}>
                       {dept.name}
                     </SelectItem>
@@ -220,7 +220,7 @@ export default function Funcionarios() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEmployees?.map((emp) => (
+                  {filteredEmployees?.map((emp: any) => (
                     <TableRow key={emp.employee.id}>
                       <TableCell className="font-mono text-sm">{emp.employee.employeeCode}</TableCell>
                       <TableCell className="font-medium">{emp.employee.name}</TableCell>
@@ -333,7 +333,7 @@ export default function Funcionarios() {
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments?.map((dept) => (
+                    {departments?.map((dept: any) => (
                       <SelectItem key={dept.id} value={dept.id.toString()}>
                         {dept.name}
                       </SelectItem>

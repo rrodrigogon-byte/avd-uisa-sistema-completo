@@ -228,7 +228,7 @@ export default function PerformanceIntegrada() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {performanceData.financialGoals.map((goal, idx) => (
+                  {performanceData.financialGoals.map((goal: any, idx: number) => (
                     <div key={idx} className="p-4 rounded-lg border">
                       <div className="flex items-center justify-between mb-3">
                         <div>
@@ -270,7 +270,7 @@ export default function PerformanceIntegrada() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {performanceData.behavioralGoals.map((goal, idx) => (
+                  {performanceData.behavioralGoals.map((goal: any, idx: number) => (
                     <div key={idx} className="p-4 rounded-lg border">
                       <div className="flex items-center justify-between mb-3">
                         <div>
@@ -302,7 +302,7 @@ export default function PerformanceIntegrada() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {performanceData.corporateGoals.map((goal, idx) => (
+                  {performanceData.corporateGoals.map((goal: any, idx: number) => (
                     <div key={idx} className="p-4 rounded-lg border">
                       <div className="flex items-center justify-between mb-3">
                         <div>

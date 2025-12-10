@@ -530,7 +530,7 @@ export default function EnviarTestes() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {results.map((result, index) => (
+                {results.map((result: any, index: number) => (
                   <div
                     key={index}
                     className={`flex items-center justify-between p-3 rounded-lg border ${

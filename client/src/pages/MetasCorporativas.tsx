@@ -345,7 +345,7 @@ export default function MetasCorporativas() {
         <CardContent>
           <div className="space-y-3">
             {filteredGoals.length > 0 ? (
-              filteredGoals.map((goal) => (
+              filteredGoals.map((goal: any) => (
                 <div
                   key={goal.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors cursor-pointer"

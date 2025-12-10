@@ -270,7 +270,7 @@ export default function AnalyticsAvancado() {
                     fill="#8884d8"
                     dataKey="quantidade"
                   >
-                    {distribuicaoColaboradoresPorNota.map((entry, index) => (
+                    {distribuicaoColaboradoresPorNota.map((entry: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={entry.cor} />
                     ))}
                   </Pie>

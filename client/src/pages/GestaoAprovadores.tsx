@@ -189,7 +189,7 @@ export default function GestaoAprovadores() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {conflicts.map((group, idx) => (
+                {conflicts.map((group: any, idx: number) => (
                   <div key={idx} className="text-sm text-yellow-700">
                     • {group.length} regras ativas para{" "}
                     <strong>{getContextLabel(group[0].approvalContext)}</strong> em{" "}
@@ -293,7 +293,7 @@ export default function GestaoAprovadores() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rules.map((rule) => (
+                  {rules.map((rule: any) => (
                     <TableRow key={rule.id}>
                       <TableCell>{getRuleTypeLabel(rule.ruleType)}</TableCell>
                       <TableCell>{getContextLabel(rule.approvalContext)}</TableCell>
@@ -375,7 +375,7 @@ export default function GestaoAprovadores() {
                   <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
 
                   <div className="space-y-6">
-                    {history.map((item) => (
+                    {history.map((item: any) => (
                       <div key={item.id} className="relative pl-10">
                         {/* Bolinha da timeline */}
                         <div

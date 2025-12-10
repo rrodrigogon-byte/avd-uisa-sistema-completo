@@ -176,8 +176,8 @@ export default function MovimentacaoNineBox() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
-            {(["alto", "médio", "baixo"] as Potential[]).map((potential) =>
-              (["baixo", "médio", "alto"] as Performance[]).map((performance) => {
+            {(["alto", "médio", "baixo"] as Potential[]).map((potential: any) =>
+              (["baixo", "médio", "alto"] as Performance[]).map((performance: any) => {
                 const key = `${performance}_${potential}`;
                 const employeesInQuadrant = employeesByQuadrant[key] || [];
 
@@ -193,7 +193,7 @@ export default function MovimentacaoNineBox() {
                     </div>
 
                     <div className="space-y-2">
-                      {employeesInQuadrant.map((emp) => (
+                      {employeesInQuadrant.map((emp: any) => (
                         <button
                           key={emp.employeeId}
                           onClick={() => handleOpenDialog(emp)}

@@ -174,7 +174,7 @@ export default function GerenciarSenhasLideres() {
         <CardContent>
           <div className="space-y-3">
             {leaders && leaders.length > 0 ? (
-              leaders.map((leader) => (
+              leaders.map((leader: any) => (
                 <div
                   key={leader.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors"

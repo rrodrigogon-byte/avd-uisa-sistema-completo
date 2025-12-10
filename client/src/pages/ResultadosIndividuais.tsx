@@ -77,7 +77,7 @@ export default function ResultadosIndividuais() {
   }
 
   // Preparar dados para o gráfico radar
-  const radarData = results.dimensionScores.map((dim) => ({
+  const radarData = results.dimensionScores.map((dim: any) => ({
     dimension: dim.dimensionName,
     autoavaliacao: dim.selfScore || 0,
     gestor: dim.managerScore || 0,
@@ -177,7 +177,7 @@ export default function ResultadosIndividuais() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {results.dimensionScores.map((dim) => (
+            {results.dimensionScores.map((dim: any) => (
               <div key={dim.dimensionName} className="border-b pb-4 last:border-0">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-semibold">{dim.dimensionName}</h3>
@@ -215,7 +215,7 @@ export default function ResultadosIndividuais() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {results.comments.map((comment, index) => (
+              {results.comments.map((comment: any, index: number) => (
                 <div key={index} className="border-l-4 border-primary pl-4">
                   <p className="text-sm text-muted-foreground mb-1">{comment.evaluatorType}</p>
                   <p className="text-sm">{comment.comment}</p>

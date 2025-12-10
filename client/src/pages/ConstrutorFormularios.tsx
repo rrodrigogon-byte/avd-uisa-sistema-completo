@@ -135,7 +135,7 @@ export default function ConstrutorFormularios() {
     if (type === "multiple_choice" || type === "checkbox") {
       const options = prompt("Opções (separadas por vírgula):");
       if (options) {
-        questionData.options = options.split(",").map((opt) => opt.trim());
+        questionData.options = options.split(",").map((opt: any) => opt.trim());
       }
     } else if (type === "scale") {
       questionData.minValue = 1;
@@ -391,7 +391,7 @@ export default function ConstrutorFormularios() {
                                         {Array.from(
                                           { length: (question.maxValue || 5) - (question.minValue || 1) + 1 },
                                           (_, i) => i + (question.minValue || 1)
-                                        ).map((num) => (
+                                        ).map((num: any) => (
                                           <div
                                             key={num}
                                             className="w-8 h-8 rounded-full border-2 border-muted-foreground flex items-center justify-center"

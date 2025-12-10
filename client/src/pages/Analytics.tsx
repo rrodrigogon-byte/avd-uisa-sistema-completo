@@ -158,7 +158,7 @@ export default function Analytics() {
                     outerRadius={80}
                     label={false}
                   >
-                    {(headcountByDept || []).map((entry, index) => (
+                    {(headcountByDept || []).map((entry: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
@@ -249,7 +249,7 @@ export default function Analytics() {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie data={diversity?.gender || []} dataKey="count" nameKey="gender" cx="50%" cy="50%" outerRadius={100} label>
-                    {(diversity?.gender || []).map((entry, index) => (
+                    {(diversity?.gender || []).map((entry: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>

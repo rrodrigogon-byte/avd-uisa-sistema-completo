@@ -169,7 +169,7 @@ export default function MinhasAtividades() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4">
-              {getCategoryDistribution().map((item) => (
+              {getCategoryDistribution().map((item: any) => (
                 <div key={item.category} className="flex justify-between items-center border p-3 rounded">
                   {getCategoryBadge(item.category)}
                   <span className="font-bold">{item.hours}h</span>
@@ -196,7 +196,7 @@ export default function MinhasAtividades() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {activities?.map((activity) => (
+                {activities?.map((activity: any) => (
                   <TableRow key={activity.id}>
                     <TableCell>{new Date(activity.activityDate).toLocaleDateString("pt-BR")}</TableCell>
                     <TableCell className="font-medium">{activity.title}</TableCell>

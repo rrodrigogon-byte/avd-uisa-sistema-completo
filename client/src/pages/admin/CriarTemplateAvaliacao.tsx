@@ -122,7 +122,7 @@ function SortableQuestion({
               )}
               {question.options && question.options.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1">
-                  {question.options.map((opt, idx) => (
+                  {question.options.map((opt: any, idx: number) => (
                     <Badge key={idx} variant="secondary" className="text-xs">
                       {opt}
                     </Badge>
@@ -201,7 +201,7 @@ export default function CriarTemplateAvaliacao() {
         const newIndex = items.findIndex((item) => item.id === over.id);
         const newItems = arrayMove(items, oldIndex, newIndex);
         // Atualizar displayOrder
-        return newItems.map((item, index) => ({ ...item, displayOrder: index }));
+        return newItems.map((item: any, index: number) => ({ ...item, displayOrder: index }));
       });
     }
   };
@@ -249,7 +249,7 @@ export default function CriarTemplateAvaliacao() {
     };
 
     if (editingQuestion) {
-      setQuestions(questions.map((q) => (q.id === editingQuestion.id ? newQuestion : q)));
+      setQuestions(questions.map((q: any) => (q.id === editingQuestion.id ? newQuestion : q)));
     } else {
       setQuestions([...questions, newQuestion]);
     }
@@ -278,7 +278,7 @@ export default function CriarTemplateAvaliacao() {
       templateType,
       isActive,
       isDefault,
-      questions: questions.map((q) => ({
+      questions: questions.map((q: any) => ({
         category: q.category,
         questionText: q.questionText,
         questionType: q.questionType,
@@ -403,8 +403,8 @@ export default function CriarTemplateAvaliacao() {
                 </div>
               ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
-                    {questions.map((question) => (
+                  <SortableContext items={questions.map((q: any) => q.id)} strategy={verticalListSortingStrategy}>
+                    {questions.map((question: any) => (
                       <SortableQuestion
                         key={question.id}
                         question={question}

@@ -186,7 +186,7 @@ export default function ImportadorDescricoesCargo() {
                 )}
 
                 <div className="border rounded-lg divide-y max-h-64 overflow-y-auto">
-                  {files.map((file, index) => (
+                  {files.map((file: any, index: number) => (
                     <div key={index} className="flex items-center justify-between p-3">
                       <div className="flex items-center gap-3">
                         <FileText className="h-5 w-5 text-blue-500" />

@@ -119,7 +119,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {activeGoals.slice(0, 3).map((goal) => (
+                  {activeGoals.slice(0, 3).map((goal: any) => (
                     <div key={goal.id} className="space-y-2">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -170,7 +170,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {activePDIs.slice(0, 2).map((pdi) => (
+                  {activePDIs.slice(0, 2).map((pdi: any) => (
                     <div key={pdi.id} className="space-y-2 p-4 border rounded-lg">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">

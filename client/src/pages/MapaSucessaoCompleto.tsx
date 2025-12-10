@@ -374,7 +374,7 @@ export default function MapaSucessaoCompleto() {
                                   <SelectValue placeholder="Selecione o candidato..." />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {employees?.map((emp) => (
+                                  {employees?.map((emp: any) => (
                                     <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
                                       {emp.employee.name}
                                     </SelectItem>

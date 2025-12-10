@@ -137,7 +137,7 @@ export default function History() {
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {evaluations.map((evaluation) => (
+                  {evaluations.map((evaluation: any) => (
                     <Card key={evaluation.id}>
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between">
@@ -218,7 +218,7 @@ export default function History() {
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {pdis.map((pdi) => (
+                  {pdis.map((pdi: any) => (
                     <Card key={pdi.id}>
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between">
@@ -273,7 +273,7 @@ export default function History() {
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {nineBoxHistory.map((position) => {
+                  {nineBoxHistory.map((position: any) => {
                     const boxInfo = getBoxLabel(position.box);
                     return (
                       <Card key={position.id}>

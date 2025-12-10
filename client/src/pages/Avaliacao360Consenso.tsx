@@ -245,7 +245,7 @@ export default function Avaliacao360Consenso() {
                         <div>
                           <p className="text-xs font-medium mb-1">Autoavaliação</p>
                           <div className="flex gap-1">
-                            {[1, 2, 3, 4, 5].map((score) => (
+                            {[1, 2, 3, 4, 5].map((score: any) => (
                               <div
                                 key={score}
                                 className={`h-8 w-full rounded ${
@@ -258,7 +258,7 @@ export default function Avaliacao360Consenso() {
                         <div>
                           <p className="text-xs font-medium mb-1">Avaliação Gestor</p>
                           <div className="flex gap-1">
-                            {[1, 2, 3, 4, 5].map((score) => (
+                            {[1, 2, 3, 4, 5].map((score: any) => (
                               <div
                                 key={score}
                                 className={`h-8 w-full rounded ${
@@ -275,7 +275,7 @@ export default function Avaliacao360Consenso() {
                     <div>
                       <p className="text-sm font-medium mb-2">Consenso Final</p>
                       <div className="flex items-center gap-2">
-                        {[1, 2, 3, 4, 5].map((score) => (
+                        {[1, 2, 3, 4, 5].map((score: any) => (
                           <Button
                             key={score}
                             variant={responses[question.id] === score ? "default" : "outline"}

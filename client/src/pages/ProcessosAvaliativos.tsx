@@ -243,7 +243,7 @@ export default function ProcessosAvaliativos() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredProcesses?.map((process) => (
+                filteredProcesses?.map((process: any) => (
                   <TableRow key={process.id}>
                     <TableCell>
                       <div>

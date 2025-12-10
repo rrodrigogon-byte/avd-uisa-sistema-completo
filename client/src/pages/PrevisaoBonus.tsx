@@ -280,11 +280,11 @@ export default function PrevisaoBonus() {
           <CardContent>
             <Line
               data={{
-                labels: futureProjection.map((f) => f.month),
+                labels: futureProjection.map((f: any) => f.month),
                 datasets: [
                   {
                     label: "Cenário Conservador",
-                    data: futureProjection.map((f) => f.conservative / 100),
+                    data: futureProjection.map((f: any) => f.conservative / 100),
                     borderColor: "rgb(239, 68, 68)",
                     backgroundColor: "rgba(239, 68, 68, 0.1)",
                     borderDash: [5, 5],
@@ -293,7 +293,7 @@ export default function PrevisaoBonus() {
                   },
                   {
                     label: "Cenário Moderado",
-                    data: futureProjection.map((f) => f.moderate / 100),
+                    data: futureProjection.map((f: any) => f.moderate / 100),
                     borderColor: "rgb(59, 130, 246)",
                     backgroundColor: "rgba(59, 130, 246, 0.2)",
                     tension: 0.4,
@@ -301,7 +301,7 @@ export default function PrevisaoBonus() {
                   },
                   {
                     label: "Cenário Otimista",
-                    data: futureProjection.map((f) => f.optimistic / 100),
+                    data: futureProjection.map((f: any) => f.optimistic / 100),
                     borderColor: "rgb(34, 197, 94)",
                     backgroundColor: "rgba(34, 197, 94, 0.1)",
                     borderDash: [5, 5],

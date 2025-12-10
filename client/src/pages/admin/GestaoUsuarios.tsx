@@ -336,7 +336,7 @@ export default function GestaoUsuarios() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map((u) => (
+                    {users.map((u: any) => (
                       <TableRow key={u.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">

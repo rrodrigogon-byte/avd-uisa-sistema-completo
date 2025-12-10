@@ -89,7 +89,7 @@ export default function TestResponse() {
       return;
     }
 
-    const formattedResponses = questions.map((q) => ({
+    const formattedResponses = questions.map((q: any) => ({
       questionId: q.id,
       answer: responses[q.id],
       responseTime: Math.floor((Date.now() - startTime) / 1000 / totalQuestions),
@@ -244,7 +244,7 @@ export default function TestResponse() {
               onValueChange={(value) => handleAnswer(currentQ?.id, parseInt(value))}
             >
               <div className="space-y-3">
-                {[1, 2, 3, 4, 5].map((value) => (
+                {[1, 2, 3, 4, 5].map((value: any) => (
                   <div
                     key={value}
                     className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-accent cursor-pointer transition-colors"
@@ -273,7 +273,7 @@ export default function TestResponse() {
             Anterior
           </Button>
           <div className="flex gap-2">
-            {questions.map((_, index) => (
+            {questions.map((_: any, index: number) => (
               <button
                 key={index}
                 onClick={() => goToQuestion(index)}

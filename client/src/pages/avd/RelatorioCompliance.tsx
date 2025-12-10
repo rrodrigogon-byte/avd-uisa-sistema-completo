@@ -85,7 +85,7 @@ export default function RelatorioCompliance() {
                     <SelectValue placeholder="Selecione um ciclo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {cycles?.map((cycle) => (
+                    {cycles?.map((cycle: any) => (
                       <SelectItem key={cycle.id} value={cycle.id.toString()}>
                         {cycle.name} ({cycle.status})
                       </SelectItem>
@@ -195,7 +195,7 @@ export default function RelatorioCompliance() {
                             </tr>
                           </thead>
                           <tbody>
-                            {selfPending.map((item) => {
+                            {selfPending.map((item: any) => {
                               const overdue = isOverdue(item.cycle?.selfEvaluationDeadline);
                               return (
                                 <tr key={item.evaluation.id} className="border-b hover:bg-muted/50">
@@ -273,7 +273,7 @@ export default function RelatorioCompliance() {
                             </tr>
                           </thead>
                           <tbody>
-                            {managerPending.map((item) => {
+                            {managerPending.map((item: any) => {
                               const overdue = isOverdue(item.cycle?.managerEvaluationDeadline);
                               return (
                                 <tr key={item.evaluation.id} className="border-b hover:bg-muted/50">

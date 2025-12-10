@@ -78,7 +78,7 @@ export default function ResponderPesquisaPulse() {
                 Selecione uma nota de 0 a 10:
               </Label>
               <RadioGroup value={rating} onValueChange={setRating} className="grid grid-cols-11 gap-2">
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value: any) => (
                   <div key={value} className="flex flex-col items-center">
                     <RadioGroupItem
                       value={value.toString()}

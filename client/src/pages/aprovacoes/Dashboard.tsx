@@ -233,7 +233,7 @@ export default function Dashboard() {
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {statusData.map((entry, index) => (
+                    {statusData.map((entry: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -256,7 +256,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {pendingRequests.map((request) => (
+              {pendingRequests.map((request: any) => (
                 <div
                   key={request.id}
                   className="flex items-center gap-4 p-4 rounded-lg border hover:bg-accent transition-colors"

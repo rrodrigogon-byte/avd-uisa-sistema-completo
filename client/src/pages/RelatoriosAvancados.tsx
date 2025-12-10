@@ -247,7 +247,7 @@ export default function RelatoriosAvancados() {
                 <CardContent>
                   <ScrollArea className="h-[600px] pr-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {reportTemplates.map((template) => {
+                      {reportTemplates.map((template: any) => {
                         const Icon = template.icon;
                         const isSelected = selectedTemplate?.id === template.id;
 
@@ -283,7 +283,7 @@ export default function RelatoriosAvancados() {
                                 {template.description}
                               </p>
                               <div className="mt-3 flex flex-wrap gap-1">
-                                {template.requiredFilters.map((filter) => (
+                                {template.requiredFilters.map((filter: any) => (
                                   <Badge key={filter} variant="secondary" className="text-xs">
                                     {filter}
                                   </Badge>
@@ -368,7 +368,7 @@ export default function RelatoriosAvancados() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="all">Todos os departamentos</SelectItem>
-                              {departments?.map((dept) => (
+                              {departments?.map((dept: any) => (
                                 <SelectItem key={dept.id} value={dept.id.toString()}>
                                   {dept.name}
                                 </SelectItem>
@@ -387,7 +387,7 @@ export default function RelatoriosAvancados() {
                               <SelectValue placeholder="Selecione um ciclo" />
                             </SelectTrigger>
                             <SelectContent>
-                              {cycles?.map((cycle) => (
+                              {cycles?.map((cycle: any) => (
                                 <SelectItem key={cycle.id} value={cycle.id.toString()}>
                                   {cycle.name}
                                 </SelectItem>

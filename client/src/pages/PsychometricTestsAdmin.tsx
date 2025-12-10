@@ -241,7 +241,7 @@ export default function PsychometricTestsAdmin() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pendingInvitations?.map((item) => (
+                    {pendingInvitations?.map((item: any) => (
                       <TableRow key={item.invitation.id}>
                         <TableCell className="font-medium">
                           {item.employee?.name || "N/A"}
@@ -318,7 +318,7 @@ export default function PsychometricTestsAdmin() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {allResults?.map((item) => (
+                    {allResults?.map((item: any) => (
                       <TableRow key={item.result.id}>
                         <TableCell className="font-medium">
                           {item.employee?.name || "N/A"}
@@ -373,7 +373,7 @@ export default function PsychometricTestsAdmin() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {resultsByType?.map((item) => (
+                  {resultsByType?.map((item: any) => (
                     <div key={item.testType} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <BarChart3 className="h-5 w-5 text-muted-foreground" />
@@ -416,7 +416,7 @@ export default function PsychometricTestsAdmin() {
                     <SelectValue placeholder="Selecione um funcionário" />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees?.map((emp) => (
+                    {employees?.map((emp: any) => (
                       <SelectItem key={emp.id} value={emp.id.toString()}>
                         {emp.name}
                       </SelectItem>
@@ -431,7 +431,7 @@ export default function PsychometricTestsAdmin() {
                     <SelectValue placeholder="Selecione o tipo de teste" />
                   </SelectTrigger>
                   <SelectContent>
-                    {testTypes.map((test) => (
+                    {testTypes.map((test: any) => (
                       <SelectItem key={test.value} value={test.value}>
                         {test.label}
                       </SelectItem>
@@ -481,7 +481,7 @@ export default function PsychometricTestsAdmin() {
               <div className="space-y-2">
                 <Label>Funcionários ({selectedEmployees.length} selecionados)</Label>
                 <div className="border rounded-md p-4 max-h-60 overflow-y-auto space-y-2">
-                  {employees?.map((emp) => (
+                  {employees?.map((emp: any) => (
                     <div key={emp.id} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
@@ -512,7 +512,7 @@ export default function PsychometricTestsAdmin() {
                     <SelectValue placeholder="Selecione o tipo de teste" />
                   </SelectTrigger>
                   <SelectContent>
-                    {testTypes.map((test) => (
+                    {testTypes.map((test: any) => (
                       <SelectItem key={test.value} value={test.value}>
                         {test.label}
                       </SelectItem>

@@ -215,7 +215,7 @@ export default function GerenciarUsuarios() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredUsers.map((user) => (
+                    {filteredUsers.map((user: any) => (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell>{user.email || "—"}</TableCell>
@@ -257,7 +257,7 @@ export default function GerenciarUsuarios() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {salaryLeads.map((lead) => (
+                {salaryLeads.map((lead: any) => (
                   <div
                     key={lead.id}
                     className="border rounded-lg p-4 flex items-start gap-3 hover:bg-accent/50 transition-colors"

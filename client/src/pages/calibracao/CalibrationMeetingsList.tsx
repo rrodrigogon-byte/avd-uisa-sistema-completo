@@ -111,7 +111,7 @@ export default function CalibrationMeetingsList() {
                       <SelectValue placeholder="Selecione o ciclo" />
                     </SelectTrigger>
                     <SelectContent>
-                      {cycles?.map((cycle) => (
+                      {cycles?.map((cycle: any) => (
                         <SelectItem key={cycle.id} value={cycle.id.toString()}>
                           {cycle.name}
                         </SelectItem>
@@ -130,7 +130,7 @@ export default function CalibrationMeetingsList() {
                       <SelectValue placeholder="Todos os departamentos" />
                     </SelectTrigger>
                     <SelectContent>
-                      {departments?.map((dept) => (
+                      {departments?.map((dept: any) => (
                         <SelectItem key={dept.id} value={dept.id.toString()}>
                           {dept.name}
                         </SelectItem>
@@ -162,7 +162,7 @@ export default function CalibrationMeetingsList() {
                       <SelectValue placeholder="Adicionar participante" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.map((emp) => (
+                      {employees?.map((emp: any) => (
                         <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
                           {emp.employee.name}
                         </SelectItem>
@@ -172,7 +172,7 @@ export default function CalibrationMeetingsList() {
 
                   {selectedParticipants.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {selectedParticipants.map((id) => {
+                      {selectedParticipants.map((id: any) => {
                         const emp = employees?.find((e) => e.employee.id === id);
                         return (
                           <Badge
@@ -207,7 +207,7 @@ export default function CalibrationMeetingsList() {
         </div>
 
         <div className="grid gap-4">
-          {meetings?.map((meeting) => (
+          {meetings?.map((meeting: any) => (
             <Card key={meeting.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start">

@@ -118,7 +118,7 @@ export default function AvaliacoesAprovacao() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os ciclos</SelectItem>
-            {cycles?.map((cycle) => (
+            {cycles?.map((cycle: any) => (
               <SelectItem key={cycle.id} value={cycle.id.toString()}>
                 {cycle.name}
               </SelectItem>
@@ -194,7 +194,7 @@ export default function AvaliacoesAprovacao() {
               </CardContent>
             </Card>
           ) : (
-            pendingEvaluations?.filter(e => e.status === "pendente").map((evaluation) => (
+            pendingEvaluations?.filter(e => e.status === "pendente").map((evaluation: any) => (
               <Card key={evaluation.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -287,7 +287,7 @@ export default function AvaliacoesAprovacao() {
               </CardContent>
             </Card>
           ) : (
-            pendingEvaluations?.filter(e => e.status === "concluida").map((evaluation) => (
+            pendingEvaluations?.filter(e => e.status === "concluida").map((evaluation: any) => (
               <Card key={evaluation.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">

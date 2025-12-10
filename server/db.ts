@@ -6,6 +6,7 @@ import {
   developmentActions,
   employeeCompetencies,
   employees,
+  type InsertEmployee,
   evaluationCycles,
   goals,
   InsertUser,
@@ -650,7 +651,7 @@ export async function reactivateEmployee(employeeId: number) {
  */
 export async function logEmployeeAudit(auditData: {
   employeeId: number;
-  action: string;
+  action: "criado" | "atualizado" | "desativado" | "reativado" | "excluido";
   fieldChanged?: string;
   oldValue?: string;
   newValue?: string;
@@ -660,13 +661,8 @@ export async function logEmployeeAudit(auditData: {
 }) {
   const db = await getDb();
   if (!db) return;
-
   const { employeeAuditLog } = await import("../drizzle/schema");
-
-  await db.insert(employeeAuditLog).values({
-    ...auditData,
-    changedAt: new Date(),
-  });
+  await db.insert(employeeAuditLog).values(auditData);
 }
 
 /**
@@ -698,16 +694,16 @@ export async function listEvaluationCriteria(category?: string) {
 
   const { evaluationCriteria } = await import("../drizzle/schema");
 
-  let query = db
-    .select()
-    .from(evaluationCriteria)
-    .where(eq(evaluationCriteria.isActive, true));
-
+  const conditions = [eq(evaluationCriteria.isActive, true)];
   if (category) {
-    query = query.where(eq(evaluationCriteria.category, category as any)) as any;
+    conditions.push(eq(evaluationCriteria.category, category as any));
   }
 
-  return await query.orderBy(evaluationCriteria.displayOrder);
+  return await db
+    .select()
+    .from(evaluationCriteria)
+    .where(and(...conditions))
+    .orderBy(evaluationCriteria.displayOrder);
 }
 
 /**
@@ -829,22 +825,21 @@ export async function getPerformanceMetrics(filters: {
 
   const { performanceMetrics } = await import("../drizzle/schema");
 
-  let query = db
-    .select()
-    .from(performanceMetrics)
-    .where(eq(performanceMetrics.periodYear, filters.periodYear));
-
+  const conditions = [eq(performanceMetrics.periodYear, filters.periodYear)];
   if (filters.employeeId) {
-    query = query.where(eq(performanceMetrics.employeeId, filters.employeeId)) as any;
+    conditions.push(eq(performanceMetrics.employeeId, filters.employeeId));
   }
   if (filters.departmentId) {
-    query = query.where(eq(performanceMetrics.departmentId, filters.departmentId)) as any;
+    conditions.push(eq(performanceMetrics.departmentId, filters.departmentId));
   }
   if (filters.periodMonth) {
-    query = query.where(eq(performanceMetrics.periodMonth, filters.periodMonth)) as any;
+    conditions.push(eq(performanceMetrics.periodMonth, filters.periodMonth));
   }
 
-  return await query;
+  return await db
+    .select()
+    .from(performanceMetrics)
+    .where(and(...conditions));
 }
 
 /**
@@ -876,23 +871,21 @@ export async function getDepartmentPerformanceSummary(
 
   const { departmentPerformanceSummary } = await import("../drizzle/schema");
 
-  let query = db
-    .select()
-    .from(departmentPerformanceSummary)
-    .where(
-      and(
-        eq(departmentPerformanceSummary.departmentId, departmentId),
-        eq(departmentPerformanceSummary.periodYear, periodYear)
-      )
-    );
+  const conditions = [
+    eq(departmentPerformanceSummary.departmentId, departmentId),
+    eq(departmentPerformanceSummary.periodYear, periodYear)
+  ];
 
   if (periodQuarter) {
-    query = query.where(
-      eq(departmentPerformanceSummary.periodQuarter, periodQuarter)
-    ) as any;
+    conditions.push(eq(departmentPerformanceSummary.periodQuarter, periodQuarter));
   }
 
-  const results = await query.limit(1);
+  const results = await db
+    .select()
+    .from(departmentPerformanceSummary)
+    .where(and(...conditions))
+    .limit(1);
+
   return results.length > 0 ? results[0] : null;
 }
 
@@ -1218,7 +1211,6 @@ export async function countPendenciasByStatus(responsavelId?: number) {
 
 import {
   successionPlans,
-  successionCandidates,
   type InsertSuccessionPlan,
   type InsertSuccessionCandidate,
   type SuccessionPlan,
@@ -1463,7 +1455,7 @@ export async function createEvaluationProcess(data: any) {
 
   try {
     const result = await db.insert(evaluationProcesses).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to create evaluation process:", error);
     throw error;
@@ -1552,7 +1544,7 @@ export async function addProcessParticipant(data: any) {
 
   try {
     const result = await db.insert(processParticipants).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to add process participant:", error);
     throw error;
@@ -1587,7 +1579,7 @@ export async function addProcessEvaluator(data: any) {
 
   try {
     const result = await db.insert(processEvaluators).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to add process evaluator:", error);
     throw error;
@@ -1626,7 +1618,7 @@ export async function createFormTemplate(data: any) {
 
   try {
     const result = await db.insert(formTemplates).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to create form template:", error);
     throw error;
@@ -1681,7 +1673,7 @@ export async function createFormSection(data: any) {
 
   try {
     const result = await db.insert(formSections).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to create form section:", error);
     throw error;
@@ -1716,7 +1708,7 @@ export async function createFormQuestion(data: any) {
 
   try {
     const result = await db.insert(formQuestions).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to create form question:", error);
     throw error;
@@ -1751,7 +1743,7 @@ export async function saveFormResponse(data: any) {
 
   try {
     const result = await db.insert(formResponses).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to save form response:", error);
     throw error;
@@ -1792,7 +1784,7 @@ export async function createConsolidatedReport(data: any) {
 
   try {
     const result = await db.insert(consolidatedReports).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to create consolidated report:", error);
     throw error;
@@ -1807,17 +1799,20 @@ export async function getConsolidatedReports(filters: any) {
   if (!db) return [];
 
   try {
-    let query = db.select().from(consolidatedReports);
+    const conditions = [];
     
     if (filters.processId) {
-      query = query.where(sql`${consolidatedReports.processId} = ${filters.processId}`);
+      conditions.push(eq(consolidatedReports.processId, filters.processId));
     }
     
     if (filters.reportType) {
-      query = query.where(sql`${consolidatedReports.reportType} = ${filters.reportType}`);
+      conditions.push(eq(consolidatedReports.reportType, filters.reportType));
     }
     
-    return await query.orderBy(sql`${consolidatedReports.generatedAt} DESC`);
+    const query = db.select().from(consolidatedReports);
+    const finalQuery = conditions.length > 0 ? query.where(and(...conditions)) : query;
+    
+    return await finalQuery.orderBy(desc(consolidatedReports.generatedAt));
   } catch (error) {
     console.error("[Database] Failed to get consolidated reports:", error);
     return [];
@@ -1833,7 +1828,7 @@ export async function createReportExport(data: any) {
 
   try {
     const result = await db.insert(reportExports).values(data);
-    return { id: Number(result.insertId), success: true };
+    return { id: Number(result[0].insertId), success: true };
   } catch (error) {
     console.error("[Database] Failed to create report export:", error);
     throw error;

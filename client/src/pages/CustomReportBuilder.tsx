@@ -137,7 +137,7 @@ export default function CustomReportBuilder() {
           <Table>
             <TableHeader>
               <TableRow>
-                {columns.map((col) => (
+                {columns.map((col: any) => (
                   <TableHead key={col} className="font-semibold">
                     {col}
                   </TableHead>
@@ -147,7 +147,7 @@ export default function CustomReportBuilder() {
             <TableBody>
               {reportData.data.map((row: any, idx: number) => (
                 <TableRow key={idx}>
-                  {columns.map((col) => (
+                  {columns.map((col: any) => (
                     <TableCell key={col}>{row[col]?.toString() || "-"}</TableCell>
                   ))}
                 </TableRow>
@@ -250,7 +250,7 @@ export default function CustomReportBuilder() {
                     <SelectValue placeholder="Selecione a fonte de dados" />
                   </SelectTrigger>
                   <SelectContent>
-                    {DATA_SOURCES.map((source) => (
+                    {DATA_SOURCES.map((source: any) => (
                       <SelectItem key={source.value} value={source.value}>
                         {source.label}
                       </SelectItem>
@@ -272,7 +272,7 @@ export default function CustomReportBuilder() {
                   />
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {selectedFields.map((field, idx) => (
+                  {selectedFields.map((field: any, idx: number) => (
                     <Badge key={idx} variant="secondary">
                       {field}
                       <button className="ml-2" onClick={() => setSelectedFields(selectedFields.filter((_, i) => i !== idx))}>
@@ -289,7 +289,7 @@ export default function CustomReportBuilder() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {VISUALIZATION_TYPES.map((viz) => (
+                    {VISUALIZATION_TYPES.map((viz: any) => (
                       <SelectItem key={viz.value} value={viz.value}>
                         {viz.label}
                       </SelectItem>
@@ -319,7 +319,7 @@ export default function CustomReportBuilder() {
 
         <TabsContent value="reports" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {reports?.map((report) => (
+            {reports?.map((report: any) => (
               <Card key={report.id}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">

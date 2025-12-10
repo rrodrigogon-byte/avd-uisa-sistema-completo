@@ -146,7 +146,7 @@ export default function SecurityDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {recentLogs?.logs.map((log) => (
+                  {recentLogs?.logs.map((log: any) => (
                     <div
                       key={log.id}
                       className="flex items-start justify-between border-b pb-3 last:border-0"
@@ -178,7 +178,7 @@ export default function SecurityDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {stats?.topActions.map((action, index) => (
+                  {stats?.topActions.map((action: any, index: number) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Badge variant="outline">{index + 1}</Badge>
@@ -200,7 +200,7 @@ export default function SecurityDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {stats?.topUsers.map((user, index) => (
+                  {stats?.topUsers.map((user: any, index: number) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Badge variant="outline">{index + 1}</Badge>

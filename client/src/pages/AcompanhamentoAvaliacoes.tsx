@@ -98,11 +98,11 @@ export default function AcompanhamentoAvaliacoes() {
 
   const departmentProgress = stats?.byDepartment || [];
   const departmentChartData = {
-    labels: departmentProgress.map((d) => d.department),
+    labels: departmentProgress.map((d: any) => d.department),
     datasets: [
       {
         label: "Taxa de Conclusão (%)",
-        data: departmentProgress.map((d) => d.completionRate),
+        data: departmentProgress.map((d: any) => d.completionRate),
         borderColor: "#3b82f6",
         backgroundColor: "rgba(59, 130, 246, 0.1)",
         tension: 0.4,
@@ -145,7 +145,7 @@ export default function AcompanhamentoAvaliacoes() {
                 <SelectValue placeholder="Selecione um ciclo ativo" />
               </SelectTrigger>
               <SelectContent>
-                {cycles?.map((cycle) => (
+                {cycles?.map((cycle: any) => (
                   <SelectItem key={cycle.id} value={cycle.id.toString()}>
                     {cycle.name} ({new Date(cycle.startDate).toLocaleDateString()} -{" "}
                     {new Date(cycle.endDate).toLocaleDateString()})
@@ -306,7 +306,7 @@ export default function AcompanhamentoAvaliacoes() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Todos os departamentos</SelectItem>
-                      {departmentProgress.map((dept) => (
+                      {departmentProgress.map((dept: any) => (
                         <SelectItem key={dept.department} value={dept.department}>
                           {dept.department}
                         </SelectItem>
@@ -329,7 +329,7 @@ export default function AcompanhamentoAvaliacoes() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pendingEvaluators?.map((evaluator) => {
+                    {pendingEvaluators?.map((evaluator: any) => {
                       const isOverdue = new Date(evaluator.deadline) < new Date();
                       return (
                         <TableRow key={evaluator.id}>
