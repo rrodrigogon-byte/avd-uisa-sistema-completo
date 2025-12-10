@@ -304,6 +304,8 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 
 ## 🐛 BUGS REPORTADOS
 
+- [x] Corrigir erro "Cannot read properties of undefined (reading 'name')" na página PDI ✅ CORRIGIDO
+
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página de Pendências ao editar (linha 583 - responsavelId pode ser null/undefined) ✅ CORRIGIDO
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página Pendências ao acessar /pendencias?status=em_andamento ✅ CORRIGIDO
 - [x] Corrigir erro de tabela costCenters ausente no banco de dados (página Performance Integrada) ✅ CORRIGIDO

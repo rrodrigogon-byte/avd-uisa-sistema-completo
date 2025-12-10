@@ -26,7 +26,7 @@ export default function PDIWizard({ onComplete, onCancel }: PDIWizardProps) {
   // Use employee search hook for better performance
   const { employees: employeesData } = useEmployeeSearch("");
   const positions = employeesData?.reduce((acc: any[], emp) => {
-    if (emp.position && !acc.find(p => p.id === emp.position!.id)) {
+    if (emp.position && emp.position.id && emp.position.title && !acc.find(p => p.id === emp.position!.id)) {
       acc.push(emp.position);
     }
     return acc;
