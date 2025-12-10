@@ -4,7 +4,6 @@ import { getDb } from "../db";
 import { jobDescriptions, jobResponsibilities, jobKnowledge, jobCompetencies, jobDescriptionApprovals } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-// @ts-expect-error - no types available for html-pdf-node
 import htmlPdf from "html-pdf-node";
 
 export const jobDescriptionsPDFRouter = router({

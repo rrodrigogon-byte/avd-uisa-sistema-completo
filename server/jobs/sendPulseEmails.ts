@@ -21,7 +21,9 @@ export async function sendPulseEmailsJob() {
     const testConfig = await db.select().from(systemSettings).where(eq(systemSettings.settingKey, 'smtp_config')).limit(1);
     if (testConfig.length === 0) {
       console.warn("[Pulse Job] ⚠️  SMTP não configurado. Configure em /admin/smtp para enviar emails.");
-      return;
+      // NÃO retornar aqui - continuar processando para logar as pesquisas ativas
+    } else {
+      console.log("[Pulse Job] ✓ SMTP configurado");
     }
   } catch (err) {
     console.error("[Pulse Job] Erro ao verificar configuração SMTP:", err);
@@ -67,19 +69,25 @@ async function sendSurveyEmails(survey: any) {
   if (!db) return;
 
   console.log(`[Pulse Job] Processando pesquisa: ${survey.title}`);
+  console.log(`[Pulse Job] ID da pesquisa: ${survey.id}`);
+  console.log(`[Pulse Job] Status: ${survey.status}`);
 
   // Determinar público-alvo
   let targetEmployees: any[] = [];
 
   if (survey.targetEmployeeIds && Array.isArray(survey.targetEmployeeIds) && survey.targetEmployeeIds.length > 0) {
-    // Enviar para IDs específicos
-    targetEmployees = await db
-      .select()
-      .from(employees)
-      .where(
-        sql`${employees.id} IN (${sql.join(survey.targetEmployeeIds.map((id: number) => sql`${id}`), sql`, `)})`
-      );
+    console.log(`[Pulse Job] Enviando para IDs específicos: ${survey.targetEmployeeIds.join(', ')}`);
+    // Enviar para IDs específicos - CORRIGIDO: verificar array vazio
+    if (survey.targetEmployeeIds.length > 0) {
+      targetEmployees = await db
+        .select()
+        .from(employees)
+        .where(
+          sql`${employees.id} IN (${sql.join(survey.targetEmployeeIds.map((id: number) => sql`${id}`), sql`, `)})`
+        );
+    }
   } else if (survey.targetDepartmentId) {
+    console.log(`[Pulse Job] Enviando para departamento ID: ${survey.targetDepartmentId}`);
     // Enviar para departamento específico
     targetEmployees = await db
       .select()
@@ -136,8 +144,10 @@ async function sendSurveyEmails(survey: any) {
 
   for (const employee of employeesToSend) {
     try {
-      // Gerar link da pesquisa
-      const surveyLink = `${process.env.VITE_APP_URL || "http://localhost:3000"}/pesquisas-pulse/${survey.id}/responder`;
+      // Gerar link da pesquisa - CORRIGIDO: usar URL correta
+      const baseUrl = process.env.VITE_APP_URL || process.env.BASE_URL || "http://localhost:3000";
+      const surveyLink = `${baseUrl}/pesquisas-pulse/${survey.id}/responder`;
+      console.log(`[Pulse Job] Link da pesquisa: ${surveyLink}`);
 
       // Enviar e-mail
       const emailHtml = `
@@ -165,7 +175,9 @@ async function sendSurveyEmails(survey: any) {
         </div>
       `;
       
+      console.log(`[Pulse Job] Tentando enviar email para ${employee.email}...`);
       const emailSent = await emailService.sendCustomEmail(employee.email, `📊 ${survey.title}`, emailHtml);
+      console.log(`[Pulse Job] Resultado do envio para ${employee.email}: ${emailSent ? 'sucesso' : 'falha'}`);
       
       if (!emailSent) {
         throw new Error("Falha ao enviar email via SMTP");
@@ -214,8 +226,8 @@ async function sendSurveyEmails(survey: any) {
       console.error(`[Pulse Job] Erro ao enviar e-mail para ${employee.email}:`, error.message);
     }
 
-    // Aguardar 100ms entre envios para não sobrecarregar
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Aguardar 500ms entre envios para evitar rate limiting
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
   console.log(`[Pulse Job] Pesquisa ${survey.title}: ${successCount} enviados, ${failCount} falhas`);

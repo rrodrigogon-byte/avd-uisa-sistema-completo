@@ -16,6 +16,70 @@ import {
 import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
+/**
+ * Analisar sentimento de texto (simplificado)
+ * Retorna score de -100 (muito negativo) a +100 (muito positivo)
+ */
+function analyzeSentiment(text1: string, text2: string = ""): { score: number; label: string } {
+  const combinedText = `${text1} ${text2}`.toLowerCase();
+  
+  // Palavras positivas e negativas (simplificado)
+  const positiveWords = ['excelente', 'ótimo', 'bom', 'parabéns', 'sucesso', 'eficiente', 'proativo', 'dedicado', 'comprometido', 'talentoso'];
+  const negativeWords = ['ruim', 'péssimo', 'problema', 'dificuldade', 'falha', 'erro', 'atrasado', 'desorganizado', 'ineficiente'];
+  
+  let score = 0;
+  
+  positiveWords.forEach(word => {
+    const count = (combinedText.match(new RegExp(word, 'g')) || []).length;
+    score += count * 10;
+  });
+  
+  negativeWords.forEach(word => {
+    const count = (combinedText.match(new RegExp(word, 'g')) || []).length;
+    score -= count * 10;
+  });
+  
+  // Normalizar entre -100 e 100
+  score = Math.max(-100, Math.min(100, score));
+  
+  let label = 'neutro';
+  if (score > 30) label = 'positivo';
+  else if (score < -30) label = 'negativo';
+  
+  return { score, label };
+}
+
+/**
+ * Extrair temas comuns de uma lista de textos
+ * Retorna os temas mais frequentes com exemplos
+ */
+function extractCommonThemes(texts: string[]): Array<{ theme: string; count: number; examples: string[] }> {
+  if (texts.length === 0) return [];
+  
+  // Análise simplificada - contar palavras-chave
+  const themes: Record<string, string[]> = {};
+  const keywords = ["comunicação", "liderança", "técnico", "equipe", "prazo", "qualidade", "proatividade", "organização", "conhecimento", "relacionamento"];
+  
+  texts.forEach((text) => {
+    const lowerText = text.toLowerCase();
+    keywords.forEach((keyword) => {
+      if (lowerText.includes(keyword)) {
+        if (!themes[keyword]) themes[keyword] = [];
+        themes[keyword].push(text.slice(0, 100)); // Primeiros 100 chars como exemplo
+      }
+    });
+  });
+  
+  return Object.entries(themes)
+    .map(([theme, examples]) => ({
+      theme,
+      count: examples.length,
+      examples: examples.slice(0, 3), // Top 3 exemplos
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5); // Top 5 temas
+}
+
 export const continuousFeedbackRouter = router({
   /**
    * Solicitar feedback ad-hoc
@@ -100,7 +164,12 @@ export const continuousFeedbackRouter = router({
       .orderBy(desc(feedbacks.createdAt));
 
     return requests.map((r) => {
-      const data = r.context ? JSON.parse(r.comment as string) : {};
+      let data: any = {};
+      try {
+        data = r.context ? JSON.parse(r.comment as string) : {};
+      } catch (e) {
+        console.error('[Feedback] Erro ao fazer parse de JSON:', e);
+      }
       return {
         id: r.id,
         requesterName: r.requester,
@@ -395,60 +464,6 @@ export const continuousFeedbackRouter = router({
 // ============================================================================
 // FUNÇÕES AUXILIARES
 // ============================================================================
-
-function analyzeSentiment(text1: string, text2: string): { score: number; label: string } {
-  const combinedText = `${text1} ${text2}`.toLowerCase();
-
-  // Palavras positivas e negativas (simplificado)
-  const positiveWords = ["excelente", "ótimo", "bom", "parabéns", "sucesso", "eficiente", "proativo", "dedicado"];
-  const negativeWords = ["ruim", "problema", "dificuldade", "atraso", "falha", "erro", "melhorar", "atenção"];
-
-  let score = 0;
-  positiveWords.forEach((word) => {
-    if (combinedText.includes(word)) score += 20;
-  });
-  negativeWords.forEach((word) => {
-    if (combinedText.includes(word)) score -= 20;
-  });
-
-  // Normalizar entre -100 e 100
-  score = Math.max(-100, Math.min(100, score));
-
-  let label = "neutral";
-  if (score >= 50) label = "very_positive";
-  else if (score >= 20) label = "positive";
-  else if (score <= -50) label = "very_negative";
-  else if (score <= -20) label = "negative";
-
-  return { score, label };
-}
-
-function extractCommonThemes(texts: string[]): Array<{ theme: string; count: number; examples: string[] }> {
-  if (texts.length === 0) return [];
-
-  // Análise simplificada - contar palavras-chave
-  const themes: Record<string, string[]> = {};
-  const keywords = ["comunicação", "liderança", "técnico", "equipe", "prazo", "qualidade", "proatividade", "organização"];
-
-  texts.forEach((text) => {
-    const lowerText = text.toLowerCase();
-    keywords.forEach((keyword) => {
-      if (lowerText.includes(keyword)) {
-        if (!themes[keyword]) themes[keyword] = [];
-        themes[keyword].push(text.slice(0, 100)); // Primeiros 100 chars
-      }
-    });
-  });
-
-  return Object.entries(themes)
-    .map(([theme, examples]) => ({
-      theme,
-      count: examples.length,
-      examples: examples.slice(0, 3), // Top 3 exemplos
-    }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5); // Top 5 temas
-}
 
 function calculateTrend(values: number[]): "improving" | "stable" | "declining" {
   if (values.length < 2) return "stable";

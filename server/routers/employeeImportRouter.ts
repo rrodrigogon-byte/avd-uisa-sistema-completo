@@ -7,7 +7,7 @@ import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 import { employees, users } from "../../drizzle/schema";
-import { eq, and, ne } from "drizzle-orm";
+import { eq, and, ne, sql } from "drizzle-orm";
 import crypto from "crypto";
 import { sendEmail } from "../emailService";
 import { TRPCError } from "@trpc/server";

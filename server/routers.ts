@@ -93,6 +93,7 @@ import { consolidatedReportsRouter } from "./routers/consolidatedReportsRouter";
 import { emailNotificationsRouter } from "./routers/emailNotificationsRouter";
 import { emailMonitoringRouter } from "./routers/emailMonitoringRouter";
 import { employeeImportRouter } from "./routers/employeeImportRouter";
+import { hierarchyRouter } from "./routers/hierarchyRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -2097,20 +2098,51 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
       }))
       .mutation(async ({ input, ctx }) => {
+        console.log('[Psychometric] Iniciando envio de testes psicométricos...');
+        console.log(`[Psychometric] Tipo de teste: ${input.testType}`);
+        console.log(`[Psychometric] Emails: ${input.emails.join(', ')}`);
+        
         // Verificar se é admin
         if (ctx.user.role !== "admin") {
+          console.error('[Psychometric] Acesso negado: usuário não é admin');
           throw new Error("Acesso negado: apenas administradores");
         }
 
+        const database = await getDb();
+        if (!database) {
+          console.error('[Psychometric] Database not available');
+          throw new Error("Database not available");
+        }
+
+        // Verificar SMTP configurado ANTES de processar
+        const smtpConfig = await database.select()
+          .from(systemSettings)
+          .where(eq(systemSettings.settingKey, "smtp_config"))
+          .limit(1);
+        
+        if (smtpConfig.length === 0) {
+          console.error('[Psychometric] SMTP não configurado');
+          throw new Error("SMTP não configurado. Acesse /admin/smtp para configurar");
+        }
+        
+        console.log('[Psychometric] SMTP configurado ✓');
+
         const { createTestInviteEmail, testInfo } = await import("./utils/testInviteTemplate");
         const { emailService } = await import("./utils/emailService");
-        const database = await getDb();
-        if (!database) throw new Error("Database not available");
 
         const results = [];
         const testData = testInfo[input.testType];
+        
+        if (!testData) {
+          console.error(`[Psychometric] Tipo de teste inválido: ${input.testType}`);
+          throw new Error(`Tipo de teste inválido: ${input.testType}`);
+        }
+        
+        console.log(`[Psychometric] Dados do teste: ${testData.name}`);
 
         for (const email of input.emails) {
+          console.log(`[Psychometric] Processando email: ${email}`);
+          
           // Buscar colaborador pelo email
           const employee = await database.select()
             .from(employees)
@@ -2118,12 +2150,16 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             .limit(1);
 
           if (employee.length === 0) {
+            console.warn(`[Psychometric] Colaborador não encontrado: ${email}`);
             results.push({ email, success: false, message: "Colaborador não encontrado" });
             continue;
           }
+          
+          console.log(`[Psychometric] Colaborador encontrado: ${employee[0].name}`);
 
           // Usar URL base do ambiente (funciona tanto em dev quanto em produção)
           const baseUrl = process.env.VITE_APP_URL || ctx.req.headers.origin || `${ctx.req.protocol}://${ctx.req.get('host')}`;
+          console.log(`[Psychometric] Base URL: ${baseUrl}`);
           
           // Mapeamento de tipos de teste (inglês → português) para URLs corretas
           const testTypeMap: Record<string, string> = {
@@ -2133,11 +2169,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             'ie': 'ie',
             'vark': 'vark',
             'leadership': 'lideranca',
-            'career-anchors': 'ancoras-carreira',
+            'careeranchors': 'ancoras-carreira',
           };
           
           const testSlug = testTypeMap[input.testType] || input.testType;
           const testUrl = `${baseUrl}/teste-${testSlug}`;
+          console.log(`[Psychometric] URL do teste: ${testUrl}`);
           
           const emailTemplate = createTestInviteEmail({
             employeeName: employee[0].name,
@@ -2147,38 +2184,46 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             estimatedTime: testData.estimatedTime,
             testUrl,
           });
+          
+          console.log(`[Psychometric] Template criado para ${employee[0].name}`);
 
-          // Enviar email usando o emailService
-          const sent = await emailService.sendCustomEmail(
-            email,
-            emailTemplate.subject,
-            emailTemplate.html
-          );
+          try {
+            // Enviar email usando o emailService
+            console.log(`[Psychometric] Enviando email para ${email}...`);
+            const sent = await emailService.sendCustomEmail(
+              email,
+              emailTemplate.subject,
+              emailTemplate.html
+            );
 
-          if (!sent) {
-            // Verificar se SMTP está configurado
-            const smtpConfig = await database.select()
-              .from(systemSettings)
-              .where(eq(systemSettings.settingKey, "smtp_config"))
-              .limit(1);
-            
-            const errorMessage = smtpConfig.length === 0 
-              ? "SMTP não configurado. Acesse /admin/smtp para configurar"
-              : "Erro ao enviar email. Verifique as configurações SMTP";
-            
+            if (!sent) {
+              console.error(`[Psychometric] Falha ao enviar email para ${email}`);
+              results.push({
+                email,
+                success: false,
+                message: "Erro ao enviar email. Verifique as configurações SMTP",
+              });
+            } else {
+              console.log(`[Psychometric] ✓ Email enviado com sucesso para ${email}`);
+              results.push({
+                email,
+                success: true,
+                message: "Convite enviado com sucesso",
+              });
+            }
+          } catch (error: any) {
+            console.error(`[Psychometric] Erro ao enviar email para ${email}:`, error);
             results.push({
               email,
               success: false,
-              message: errorMessage,
-            });
-          } else {
-            results.push({
-              email,
-              success: true,
-              message: "Convite enviado com sucesso",
+              message: `Erro: ${error.message || 'Erro desconhecido'}`,
             });
           }
         }
+        
+        const successCount = results.filter(r => r.success).length;
+        const failCount = results.filter(r => !r.success).length;
+        console.log(`[Psychometric] Resumo: ${successCount} enviados, ${failCount} falhas`);
 
         return { results };
       }),

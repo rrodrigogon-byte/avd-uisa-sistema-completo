@@ -1408,3 +1408,41 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Adicionar fallbacks para ícones e labels
 - [x] Implementar verificações de null/undefined em todos os campos críticos
 - [x] Melhorar tratamento de erros em componentes de formulário
+
+
+## 🚨 CORREÇÕES CRÍTICAS - BUGS REPORTADOS (10/12/2025)
+
+### 1. Envio de Emails - Testes Psicométricos Individual
+- [x] Investigar por que emails de testes psicométricos individuais não estão sendo enviados
+- [x] Verificar procedure tRPC psychometricTests.sendIndividualTest
+- [x] Validar configuração SMTP e templates de email
+- [x] Testar envio completo de email com link de teste
+- [x] Adicionar logs detalhados para debug
+- [ ] Criar teste automatizado para envio de emails de testes
+
+### 2. Feedback Contínuo - Erros Identificados
+- [x] Identificar erros específicos no módulo de feedback contínuo
+- [x] Verificar procedures tRPC de feedback
+- [x] Validar formulários de feedback
+- [x] Testar fluxo completo de criação e envio de feedback
+- [x] Corrigir erros de validação e salvamento
+- [x] Adicionar tratamento de erros apropriado
+
+### 3. Envio de Emails - Pesquisas Pulse
+- [x] Investigar por que emails de pesquisas pulse não estão sendo enviados
+- [x] Verificar procedure tRPC pulseSurveys.send
+- [x] Validar templates de email de pesquisas
+- [x] Testar envio completo de email com link de pesquisa
+- [x] Adicionar logs detalhados para debug
+- [ ] Criar teste automatizado para envio de emails de pesquisas
+
+### 4. Hierarquia Organizacional - Implementação Completa
+- [x] Revisar requisitos de hierarquia organizacional
+- [x] Implementar visualização de organograma completo
+- [x] Criar gestão de subordinados diretos e indiretos
+- [x] Implementar gestão de superiores hierárquicos
+- [x] Adicionar filtros por hierarquia nos relatórios
+- [x] Criar página de visualização de estrutura organizacional
+- [ ] Implementar breadcrumb hierárquico
+- [x] Adicionar validações de hierarquia (evitar loops, etc.)
+- [x] Testar fluxo completo de gestão hierárquica
