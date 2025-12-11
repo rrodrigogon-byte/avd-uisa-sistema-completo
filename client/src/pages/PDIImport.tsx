@@ -53,6 +53,7 @@ export default function PDIImport() {
       enabled: false, // Não executar automaticamente
     }
   );
+  const utils = trpc.useUtils();
   const previewMutation = trpc.pdi.previewImport.useMutation();
   const uploadMutation = trpc.pdi.uploadImportFile.useMutation();
 
@@ -207,38 +208,53 @@ export default function PDIImport() {
       const reader = new FileReader();
       
       reader.onload = async (e) => {
-        const arrayBuffer = e.target?.result as ArrayBuffer;
-        // Converter ArrayBuffer para base64 usando Uint8Array
-        const bytes = new Uint8Array(arrayBuffer);
-        let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
+        try {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          // Converter ArrayBuffer para base64 usando Uint8Array
+          const bytes = new Uint8Array(arrayBuffer);
+          let binary = '';
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          const base64 = btoa(binary);
+          
+          const fileName = file.name.toLowerCase();
+          const fileType = fileName.endsWith('.csv') ? 'csv' : 
+                          fileName.endsWith('.xls') ? 'xls' : 
+                          fileName.endsWith('.txt') ? 'txt' :
+                          fileName.endsWith('.html') ? 'html' : 'xlsx';
+
+          const result = await uploadMutation.mutateAsync({
+            fileName: file.name,
+            fileSize: file.size,
+            fileType,
+            fileData: base64,
+          });
+
+          setImportResult(result);
+          setIsProcessing(false);
+
+          // Invalidar cache para atualizar lista de PDIs
+          await utils.pdi.getPlans.invalidate();
+          await utils.pdi.getImportHistory.invalidate();
+
+          if (result.success) {
+            toast.success(`Importação concluída! ${result.successCount} PDI(s) importado(s).`);
+          } else if (result.successCount > 0) {
+            toast.warning(`Importação parcial: ${result.successCount} sucesso, ${result.errorCount} erro(s).`);
+          } else {
+            toast.error('Falha na importação. Verifique os erros.');
+          }
+        } catch (error) {
+          setIsProcessing(false);
+          toast.error('Erro ao importar arquivo');
+          console.error(error);
         }
-        const base64 = btoa(binary);
-        
-        const fileName = file.name.toLowerCase();
-        const fileType = fileName.endsWith('.csv') ? 'csv' : 
-                        fileName.endsWith('.xls') ? 'xls' : 
-                        fileName.endsWith('.txt') ? 'txt' :
-                        fileName.endsWith('.html') ? 'html' : 'xlsx';
+      };
 
-        const result = await uploadMutation.mutateAsync({
-          fileName: file.name,
-          fileSize: file.size,
-          fileType,
-          fileData: base64,
-        });
-
-        setImportResult(result);
+      reader.onerror = () => {
         setIsProcessing(false);
-
-        if (result.success) {
-          toast.success(`Importação concluída! ${result.successCount} PDI(s) importado(s).`);
-        } else if (result.successCount > 0) {
-          toast.warning(`Importação parcial: ${result.successCount} sucesso, ${result.errorCount} erro(s).`);
-        } else {
-          toast.error('Falha na importação. Verifique os erros.');
-        }
+        toast.error('Erro ao ler arquivo');
       };
 
       reader.readAsArrayBuffer(file);
@@ -486,8 +502,17 @@ export default function PDIImport() {
                 onClick={handleImport}
                 disabled={previewData.hasErrors || isProcessing}
               >
-                <Upload className="h-4 w-4 mr-2" />
-                Confirmar Importação
+                {isProcessing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Confirmar Importação
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>

@@ -2195,3 +2195,20 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Criar template personalizado para Gerentes Executivos
 - [x] Criar template personalizado para Diretores
 - [x] Criar template personalizado para CEO
+
+
+## 🐛 BUG REPORTADO - IMPORTAÇÃO DE PDI (11/12/2025)
+
+### Problema
+- [x] Corrigir travamento após clicar em "Confirmar Importação" de PDI
+- [x] Corrigir PDIs importados não aparecem na lista de PDI
+- [x] Investigar por que o processo mostra "Validado" mas trava
+- [x] Validar que os dados estão sendo salvos corretamente no banco
+- [x] Garantir feedback visual adequado durante o processo de importação
+
+### Solução Implementada
+- [x] Adicionar tratamento de erro robusto no FileReader
+- [x] Implementar invalidação de cache após importação bem-sucedida
+- [x] Adicionar feedback visual de "Processando..." no botão
+- [x] Criar testes unitários para validação do serviço de importação
+- [x] Garantir que a lista de PDIs é atualizada automaticamente após importação
