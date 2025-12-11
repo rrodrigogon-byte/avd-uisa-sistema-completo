@@ -104,11 +104,19 @@ export default function PDIImport() {
     const validTypes = [
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // xlsx
       'application/vnd.ms-excel', // xls
-      'text/csv'
+      'text/csv', // csv
+      'text/plain', // txt
+      'text/html', // html
+      'application/octet-stream' // fallback para arquivos sem tipo específico
     ];
+    
+    // Validar extensão do arquivo
+    const fileName = selectedFile.name.toLowerCase();
+    const validExtensions = ['.xlsx', '.xls', '.csv', '.txt', '.html'];
+    const hasValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
 
-    if (!validTypes.includes(selectedFile.type)) {
-      toast.error('Tipo de arquivo inválido. Use XLSX, XLS ou CSV.');
+    if (!validTypes.includes(selectedFile.type) && !hasValidExtension) {
+      toast.error('Tipo de arquivo inválido. Use XLSX, XLS, CSV, TXT ou HTML.');
       return;
     }
 
@@ -131,8 +139,11 @@ export default function PDIImport() {
         const arrayBuffer = e.target?.result as ArrayBuffer;
         const base64 = Buffer.from(arrayBuffer).toString('base64');
         
-        const fileType = selectedFile.name.endsWith('.csv') ? 'csv' : 
-                        selectedFile.name.endsWith('.xls') ? 'xls' : 'xlsx';
+        const fileName = selectedFile.name.toLowerCase();
+        const fileType = fileName.endsWith('.csv') ? 'csv' : 
+                        fileName.endsWith('.xls') ? 'xls' : 
+                        fileName.endsWith('.txt') ? 'txt' :
+                        fileName.endsWith('.html') ? 'html' : 'xlsx';
 
         const result = await previewMutation.mutateAsync({
           fileData: base64,
@@ -171,8 +182,11 @@ export default function PDIImport() {
         const arrayBuffer = e.target?.result as ArrayBuffer;
         const base64 = Buffer.from(arrayBuffer).toString('base64');
         
-        const fileType = file.name.endsWith('.csv') ? 'csv' : 
-                        file.name.endsWith('.xls') ? 'xls' : 'xlsx';
+        const fileName = file.name.toLowerCase();
+        const fileType = fileName.endsWith('.csv') ? 'csv' : 
+                        fileName.endsWith('.xls') ? 'xls' : 
+                        fileName.endsWith('.txt') ? 'txt' :
+                        fileName.endsWith('.html') ? 'html' : 'xlsx';
 
         const result = await uploadMutation.mutateAsync({
           fileName: file.name,
@@ -217,7 +231,7 @@ export default function PDIImport() {
           </Button>
           <h1 className="text-3xl font-bold">Importação de PDI</h1>
           <p className="text-muted-foreground">
-            Importe múltiplos PDIs de uma vez usando arquivo Excel ou CSV
+            Importe múltiplos PDIs de uma vez usando arquivo Excel, CSV, TXT ou HTML
           </p>
         </div>
         <Button
@@ -250,7 +264,7 @@ export default function PDIImport() {
         <CardHeader>
           <CardTitle>Upload de Arquivo</CardTitle>
           <CardDescription>
-            Arraste e solte o arquivo ou clique para selecionar (XLSX, XLS ou CSV)
+            Arraste e solte o arquivo ou clique para selecionar (XLSX, XLS, CSV, TXT ou HTML)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -269,7 +283,7 @@ export default function PDIImport() {
             <input
               id="file-input"
               type="file"
-              accept=".xlsx,.xls,.csv"
+              accept=".xlsx,.xls,.csv,.txt,.html"
               className="hidden"
               onChange={(e) => {
                 const selectedFile = e.target.files?.[0];

@@ -1425,6 +1425,131 @@ Retorne um JSON no formato:
         mbti: mbtiResult[0] || null,
       };
     }),
+
+  /**
+   * Buscar perfis psicométricos de toda a equipe do gestor (genérico)
+   */
+  getTeamPsychometricProfiles: protectedProcedure
+    .input(z.object({ 
+      managerId: z.number(),
+      testType: z.enum(["disc", "bigfive", "mbti", "ie"])
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { testResults } = await import("../drizzle/schema");
+      const { eq, and } = await import("drizzle-orm");
+
+      // Buscar todos os funcionários subordinados ao gestor
+      const teamMembers = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.managerId, input.managerId));
+
+      // Para cada membro da equipe, buscar o último resultado do teste especificado
+      const teamProfiles = await Promise.all(
+        teamMembers.map(async (member) => {
+          const testResultsData = await db
+            .select()
+            .from(testResults)
+            .where(
+              and(
+                eq(testResults.employeeId, member.id),
+                eq(testResults.testType, input.testType)
+              )
+            )
+            .orderBy(desc(testResults.completedAt))
+            .limit(1);
+
+          const testResult = testResultsData[0];
+          let profile = null;
+
+          if (testResult && testResult.results) {
+            try {
+              const data = typeof testResult.results === 'string' 
+                ? JSON.parse(testResult.results) 
+                : testResult.results;
+              
+              // Extrair dados dependendo do tipo de teste
+              if (input.testType === 'disc') {
+                profile = {
+                  type: testResult.profileType || data.profile || "N/A",
+                  scores: data.scores || {},
+                  completedAt: testResult.completedAt,
+                };
+              } else if (input.testType === 'bigfive') {
+                profile = {
+                  traits: data.traits || data,
+                  completedAt: testResult.completedAt,
+                };
+              } else if (input.testType === 'mbti') {
+                profile = {
+                  type: data.type || data.profile || "N/A",
+                  dimensions: data.dimensions || {},
+                  completedAt: testResult.completedAt,
+                };
+              } else if (input.testType === 'ie') {
+                profile = {
+                  totalScore: data.totalScore || data.score || 0,
+                  dimensions: data.dimensions || {},
+                  completedAt: testResult.completedAt,
+                };
+              }
+            } catch (error) {
+              console.error(`Erro ao processar resultado ${input.testType}:`, error);
+            }
+          }
+
+          return {
+            employeeId: member.id,
+            employeeName: member.name,
+            position: member.funcao || member.cargo || "N/A",
+            profile: profile,
+          };
+        })
+      );
+
+      // Calcular estatísticas de distribuição
+      const profileDistribution: Record<string, number> = {};
+      let totalWithProfiles = 0;
+
+      teamProfiles.forEach((member) => {
+        if (member.profile) {
+          totalWithProfiles++;
+          let profileKey = "N/A";
+          
+          if (input.testType === 'disc' && member.profile.type) {
+            profileKey = member.profile.type;
+          } else if (input.testType === 'mbti' && member.profile.type) {
+            profileKey = member.profile.type;
+          } else if (input.testType === 'bigfive' && member.profile.traits) {
+            // Para Big Five, usar o traço dominante
+            const traits = member.profile.traits;
+            const topTrait = Object.entries(traits)
+              .sort(([,a]: any, [,b]: any) => (b as number) - (a as number))[0];
+            profileKey = topTrait ? topTrait[0] : "N/A";
+          } else if (input.testType === 'ie' && member.profile.totalScore) {
+            // Para IE, categorizar por faixa de score
+            const score = member.profile.totalScore;
+            if (score >= 80) profileKey = "Alto (80-100)";
+            else if (score >= 60) profileKey = "Médio-Alto (60-79)";
+            else if (score >= 40) profileKey = "Médio (40-59)";
+            else profileKey = "Baixo (0-39)";
+          }
+          
+          profileDistribution[profileKey] = (profileDistribution[profileKey] || 0) + 1;
+        }
+      });
+
+      return {
+        teamMembers: teamProfiles,
+        totalMembers: teamMembers.length,
+        membersWithProfiles: totalWithProfiles,
+        profileDistribution,
+        testType: input.testType,
+      };
+    }),
 });
 
 /**

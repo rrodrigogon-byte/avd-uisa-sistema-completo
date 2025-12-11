@@ -150,8 +150,10 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
+      { icon: Upload, label: "Importar PDI", path: "/pdi/import" },
       { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },
       { icon: PieChart, label: "Comparativo de Testes", path: "/testes/comparativo" },
+      { icon: Users, label: "Perfis da Equipe", path: "/team-disc-profiles" },
       { icon: MessageSquare, label: "Feedback Contínuo", path: "/feedback" },
       { icon: Trophy, label: "Conquistas", path: "/badges" },
       { icon: Megaphone, label: "Pesquisas Pulse", path: "/pesquisas-pulse" },

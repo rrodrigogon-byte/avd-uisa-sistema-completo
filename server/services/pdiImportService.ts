@@ -69,8 +69,14 @@ export class PDIImportParser {
   /**
    * Ler arquivo e converter para array de objetos
    */
-  static async parseFile(buffer: Buffer, fileType: 'xlsx' | 'xls' | 'csv'): Promise<PDIImportRow[]> {
+  static async parseFile(buffer: Buffer, fileType: 'xlsx' | 'xls' | 'csv' | 'txt' | 'html'): Promise<PDIImportRow[]> {
     try {
+      // Se for .txt ou .html, usar parser inteligente
+      if (fileType === 'txt' || fileType === 'html') {
+        return await this.parseTextOrHtml(buffer, fileType);
+      }
+      
+      // Para Excel/CSV, usar XLSX
       const workbook = XLSX.read(buffer, { type: 'buffer' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
@@ -85,6 +91,196 @@ export class PDIImportParser {
     } catch (error) {
       throw new Error(`Erro ao ler arquivo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
+  }
+  
+  /**
+   * Parser inteligente para arquivos .txt e .html
+   * Extrai: nome, cargo, competências e plano de ação 70-20-10
+   */
+  static async parseTextOrHtml(buffer: Buffer, fileType: 'txt' | 'html'): Promise<PDIImportRow[]> {
+    const content = buffer.toString('utf-8');
+    
+    // Remover tags HTML se necessário
+    let text = content;
+    if (fileType === 'html') {
+      text = content
+        .replace(/<style[^>]*>.*?<\/style>/gis, '')
+        .replace(/<script[^>]*>.*?<\/script>/gis, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+    }
+    
+    // Normalizar espaços
+    text = text.replace(/\s+/g, ' ').trim();
+    
+    // Extrair dados
+    const data: PDIImportRow = {
+      nome_colaborador: this.extractField(text, ['nome', 'colaborador', 'funcionário', 'nome completo']) || 'Não identificado',
+      ciclo: this.extractField(text, ['ciclo', 'período', 'ano']) || new Date().getFullYear().toString(),
+      cargo_alvo: this.extractField(text, ['cargo', 'posição', 'função', 'cargo alvo']),
+      data_inicio: this.extractDate(text, ['data de início', 'início', 'data inicial']) || this.formatDate(new Date()),
+      data_fim: this.extractDate(text, ['data de término', 'término', 'data final', 'fim']) || this.formatDate(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)),
+      email: this.extractEmail(text),
+      competencia: '',
+      acao_desenvolvimento: '',
+      categoria: '70_pratica',
+      data_inicio_acao: this.formatDate(new Date()),
+      data_fim_acao: this.formatDate(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)),
+    };
+    
+    // Extrair competências e ações
+    const items = this.extractPDIItems(text);
+    
+    if (items.length === 0) {
+      // Se não encontrou itens estruturados, criar um item genérico
+      return [{
+        ...data,
+        competencia: 'Desenvolvimento Geral',
+        acao_desenvolvimento: 'Ações de desenvolvimento conforme documento',
+        categoria: '70_pratica',
+      }];
+    }
+    
+    // Retornar um registro para cada item
+    return items.map(item => ({
+      ...data,
+      ...item,
+    }));
+  }
+  
+  /**
+   * Extrair campo por palavras-chave
+   */
+  static extractField(text: string, keywords: string[]): string | undefined {
+    for (const keyword of keywords) {
+      const regex = new RegExp(`${keyword}\\s*:?\\s*([^\\n\\r.;]+)`, 'i');
+      const match = text.match(regex);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+    return undefined;
+  }
+  
+  /**
+   * Extrair data por palavras-chave
+   */
+  static extractDate(text: string, keywords: string[]): string | undefined {
+    for (const keyword of keywords) {
+      const regex = new RegExp(`${keyword}\\s*:?\\s*(\\d{1,2}[\\/\\-]\\d{1,2}[\\/\\-]\\d{2,4})`, 'i');
+      const match = text.match(regex);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+    }
+    return undefined;
+  }
+  
+  /**
+   * Extrair email
+   */
+  static extractEmail(text: string): string | undefined {
+    const regex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+    const match = text.match(regex);
+    return match ? match[0] : undefined;
+  }
+  
+  /**
+   * Formatar data para DD/MM/AAAA
+   */
+  static formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+  
+  /**
+   * Extrair itens do PDI (competências e ações)
+   */
+  static extractPDIItems(text: string): Array<Pick<PDIImportRow, 'competencia' | 'acao_desenvolvimento' | 'categoria'>> {
+    const items: Array<Pick<PDIImportRow, 'competencia' | 'acao_desenvolvimento' | 'categoria'>> = [];
+    
+    // Padrões para identificar competências
+    const competencyPatterns = [
+      /competência\s*:?\s*([^\n\r]+)/gi,
+      /habilidade\s*:?\s*([^\n\r]+)/gi,
+      /área de desenvolvimento\s*:?\s*([^\n\r]+)/gi,
+    ];
+    
+    // Padrões para identificar ações
+    const actionPatterns = [
+      /ação\s*:?\s*([^\n\r]+)/gi,
+      /atividade\s*:?\s*([^\n\r]+)/gi,
+      /desenvolvimento\s*:?\s*([^\n\r]+)/gi,
+    ];
+    
+    // Extrair competências
+    const competencies: string[] = [];
+    for (const pattern of competencyPatterns) {
+      let match;
+      while ((match = pattern.exec(text)) !== null) {
+        competencies.push(match[1].trim());
+      }
+    }
+    
+    // Extrair ações
+    const actions: string[] = [];
+    for (const pattern of actionPatterns) {
+      let match;
+      while ((match = pattern.exec(text)) !== null) {
+        actions.push(match[1].trim());
+      }
+    }
+    
+    // Identificar categorias 70-20-10
+    const text70 = /70[%\s]*[-:]?\s*([^\n\r.;]+)/gi;
+    const text20 = /20[%\s]*[-:]?\s*([^\n\r.;]+)/gi;
+    const text10 = /10[%\s]*[-:]?\s*([^\n\r.;]+)/gi;
+    
+    let match70, match20, match10;
+    while ((match70 = text70.exec(text)) !== null) {
+      items.push({
+        competencia: competencies[0] || 'Prática no trabalho',
+        acao_desenvolvimento: match70[1].trim(),
+        categoria: '70_pratica',
+      });
+    }
+    
+    while ((match20 = text20.exec(text)) !== null) {
+      items.push({
+        competencia: competencies[0] || 'Mentoria e feedback',
+        acao_desenvolvimento: match20[1].trim(),
+        categoria: '20_mentoria',
+      });
+    }
+    
+    while ((match10 = text10.exec(text)) !== null) {
+      items.push({
+        competencia: competencies[0] || 'Cursos e treinamentos',
+        acao_desenvolvimento: match10[1].trim(),
+        categoria: '10_curso',
+      });
+    }
+    
+    // Se encontrou competências e ações mas não categorizou, criar itens genéricos
+    if (items.length === 0 && (competencies.length > 0 || actions.length > 0)) {
+      const maxLength = Math.max(competencies.length, actions.length);
+      for (let i = 0; i < maxLength; i++) {
+        items.push({
+          competencia: competencies[i] || 'Desenvolvimento Geral',
+          acao_desenvolvimento: actions[i] || 'Ação de desenvolvimento',
+          categoria: '70_pratica',
+        });
+      }
+    }
+    
+    return items;
   }
   
   /**
@@ -260,7 +456,7 @@ export class PDIImportParser {
     buffer: Buffer,
     fileName: string,
     fileSize: number,
-    fileType: 'xlsx' | 'xls' | 'csv',
+    fileType: 'xlsx' | 'xls' | 'csv' | 'txt' | 'html',
     userId: number
   ): Promise<ImportResult> {
     const db = await getDb();
