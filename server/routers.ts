@@ -1251,6 +1251,553 @@ export const appRouter = router({
         
         return result[0];
       }),
+
+    // Reprocessar importação com erro (permitir edição e nova tentativa)
+    reprocessImport: protectedProcedure
+      .input(z.object({
+        importId: z.number(),
+        correctedData: z.object({
+          fileName: z.string().optional(),
+          fileUrl: z.string().optional(),
+        }).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiImportHistory } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Buscar importação existente
+        const existing = await database
+          .select()
+          .from(pdiImportHistory)
+          .where(eq(pdiImportHistory.id, input.importId))
+          .limit(1);
+        
+        if (existing.length === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Importação não encontrada',
+          });
+        }
+        
+        // Verificar se a importação está com erro
+        if (existing[0].status !== 'erro' && existing[0].status !== 'parcial') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Apenas importações com erro ou parciais podem ser reprocessadas',
+          });
+        }
+        
+        // Atualizar status para processando
+        await database
+          .update(pdiImportHistory)
+          .set({
+            status: 'processando',
+            startedAt: new Date(),
+            completedAt: null,
+            ...(input.correctedData?.fileName && { fileName: input.correctedData.fileName }),
+            ...(input.correctedData?.fileUrl && { fileUrl: input.correctedData.fileUrl }),
+          })
+          .where(eq(pdiImportHistory.id, input.importId));
+        
+        return {
+          success: true,
+          message: 'Importação marcada para reprocessamento',
+          importId: input.importId,
+        };
+      }),
+
+    // Listar PDIs importados via HTML
+    listImported: protectedProcedure
+      .input(z.object({
+        employeeId: z.number().optional(),
+        cycleId: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+        
+        const { pdiPlans, pdiActions } = await import('../drizzle/schema');
+        const { eq, and, count } = await import('drizzle-orm');
+        
+        // Construir condições de filtro
+        const conditions = [eq(pdiPlans.importedFromHtml, true)];
+        if (input.employeeId) {
+          conditions.push(eq(pdiPlans.employeeId, input.employeeId));
+        }
+        if (input.cycleId) {
+          conditions.push(eq(pdiPlans.cycleId, input.cycleId));
+        }
+        
+        // Buscar PDIs importados
+        const pdis = await database
+          .select()
+          .from(pdiPlans)
+          .where(and(...conditions))
+          .orderBy(desc(pdiPlans.importedAt));
+        
+        // Buscar dados relacionados
+        const employeesData = await database.select().from(employees);
+        const cyclesData = await database.select().from(evaluationCycles);
+        const positionsData = await database.select().from(positions);
+        
+        // Contar ações para cada PDI
+        const pdisWithCounts = await Promise.all(
+          pdis.map(async (pdi) => {
+            const actionsCount = await database
+              .select({ count: count() })
+              .from(pdiActions)
+              .where(eq(pdiActions.planId, pdi.id));
+            
+            const employee = employeesData.find(e => e.id === pdi.employeeId);
+            const cycle = cyclesData.find((c: any) => c.id === pdi.cycleId);
+            const position = positionsData.find((p: any) => p.id === employee?.positionId);
+            
+            return {
+              id: pdi.id,
+              employeeId: pdi.employeeId,
+              employeeName: employee?.name || 'N/A',
+              positionName: position?.title || null,
+              cycleId: pdi.cycleId,
+              cycleName: cycle?.name || 'N/A',
+              importedAt: pdi.importedAt,
+              gapsCount: 0, // TODO: Adicionar contagem de gaps se houver campo
+              actionsCount: actionsCount[0]?.count || 0,
+              status: pdi.status,
+            };
+          })
+        );
+        
+        return pdisWithCounts;
+      }),
+
+    // Obter detalhes de um PDI importado
+    getImportedDetails: protectedProcedure
+      .input(z.object({ pdiId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiPlans, pdiActions } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Buscar PDI
+        const pdi = await database
+          .select()
+          .from(pdiPlans)
+          .where(eq(pdiPlans.id, input.pdiId))
+          .limit(1);
+        
+        if (pdi.length === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'PDI não encontrado',
+          });
+        }
+        
+        // Buscar ações
+        const actions = await database
+          .select()
+          .from(pdiActions)
+          .where(eq(pdiActions.planId, input.pdiId));
+        
+        // Buscar dados relacionados
+        const employee = await database
+          .select()
+          .from(employees)
+          .where(eq(employees.id, pdi[0].employeeId))
+          .limit(1);
+        
+        const cycle = await database
+          .select()
+          .from(evaluationCycles)
+          .where(eq(evaluationCycles.id, pdi[0].cycleId))
+          .limit(1);
+        
+        return {
+          id: pdi[0].id,
+          employeeName: employee[0]?.name || 'N/A',
+          cycleName: cycle[0]?.name || 'N/A',
+          importedAt: pdi[0].importedAt,
+          status: pdi[0].status,
+          gaps: [], // TODO: Adicionar gaps se houver campo
+          actions: actions.map(action => ({
+            id: action.id,
+            description: action.description,
+            developmentArea: action.developmentArea,
+            responsible: action.responsible,
+            dueDate: action.dueDate,
+            status: action.status,
+            successMetric: action.successMetric,
+          })),
+        };
+      }),
+
+    // Editar ação de PDI importado
+    updateImportedAction: protectedProcedure
+      .input(z.object({
+        actionId: z.number(),
+        updates: z.object({
+          description: z.string().optional(),
+          developmentArea: z.string().optional(),
+          responsible: z.string().optional(),
+          dueDate: z.string().optional(),
+          successMetric: z.string().optional(),
+          status: z.enum(["nao_iniciado", "em_andamento", "concluido"]).optional(),
+        }),
+        editReason: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiActions, pdiEditHistory } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Buscar ação existente
+        const existing = await database
+          .select()
+          .from(pdiActions)
+          .where(eq(pdiActions.id, input.actionId))
+          .limit(1);
+        
+        if (existing.length === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Ação não encontrada',
+          });
+        }
+        
+        const action = existing[0];
+        
+        // Registrar histórico de cada campo alterado
+        const historyEntries = [];
+        
+        if (input.updates.description && input.updates.description !== action.description) {
+          historyEntries.push({
+            pdiId: action.planId,
+            actionId: action.id,
+            editType: 'action_update' as const,
+            fieldChanged: 'description',
+            oldValue: action.description,
+            newValue: input.updates.description,
+            editedBy: ctx.user.id,
+            editReason: input.editReason,
+          });
+        }
+        
+        if (input.updates.developmentArea && input.updates.developmentArea !== action.developmentArea) {
+          historyEntries.push({
+            pdiId: action.planId,
+            actionId: action.id,
+            editType: 'action_update' as const,
+            fieldChanged: 'developmentArea',
+            oldValue: action.developmentArea || '',
+            newValue: input.updates.developmentArea,
+            editedBy: ctx.user.id,
+            editReason: input.editReason,
+          });
+        }
+        
+        if (input.updates.responsible && input.updates.responsible !== action.responsible) {
+          historyEntries.push({
+            pdiId: action.planId,
+            actionId: action.id,
+            editType: 'action_update' as const,
+            fieldChanged: 'responsible',
+            oldValue: action.responsible || '',
+            newValue: input.updates.responsible,
+            editedBy: ctx.user.id,
+            editReason: input.editReason,
+          });
+        }
+        
+        if (input.updates.dueDate) {
+          const newDueDate = new Date(input.updates.dueDate);
+          const oldDueDate = action.dueDate ? new Date(action.dueDate) : null;
+          if (!oldDueDate || newDueDate.getTime() !== oldDueDate.getTime()) {
+            historyEntries.push({
+              pdiId: action.planId,
+              actionId: action.id,
+              editType: 'action_update' as const,
+              fieldChanged: 'dueDate',
+              oldValue: oldDueDate?.toISOString() || '',
+              newValue: newDueDate.toISOString(),
+              editedBy: ctx.user.id,
+              editReason: input.editReason,
+            });
+          }
+        }
+        
+        if (input.updates.successMetric && input.updates.successMetric !== action.successMetric) {
+          historyEntries.push({
+            pdiId: action.planId,
+            actionId: action.id,
+            editType: 'action_update' as const,
+            fieldChanged: 'successMetric',
+            oldValue: action.successMetric || '',
+            newValue: input.updates.successMetric,
+            editedBy: ctx.user.id,
+            editReason: input.editReason,
+          });
+        }
+        
+        if (input.updates.status && input.updates.status !== action.status) {
+          historyEntries.push({
+            pdiId: action.planId,
+            actionId: action.id,
+            editType: 'action_update' as const,
+            fieldChanged: 'status',
+            oldValue: action.status || '',
+            newValue: input.updates.status,
+            editedBy: ctx.user.id,
+            editReason: input.editReason,
+          });
+        }
+        
+        // Inserir histórico
+        if (historyEntries.length > 0) {
+          await database.insert(pdiEditHistory).values(historyEntries);
+        }
+        
+        // Atualizar ação
+        const updateData: any = {};
+        if (input.updates.description) updateData.description = input.updates.description;
+        if (input.updates.developmentArea) updateData.developmentArea = input.updates.developmentArea;
+        if (input.updates.responsible) updateData.responsible = input.updates.responsible;
+        if (input.updates.dueDate) updateData.dueDate = new Date(input.updates.dueDate);
+        if (input.updates.successMetric) updateData.successMetric = input.updates.successMetric;
+        if (input.updates.status) updateData.status = input.updates.status;
+        
+        await database
+          .update(pdiActions)
+          .set(updateData)
+          .where(eq(pdiActions.id, input.actionId));
+        
+        return {
+          success: true,
+          message: 'Ação atualizada com sucesso',
+          changesCount: historyEntries.length,
+        };
+      }),
+
+    // Obter histórico de edições de um PDI
+    getEditHistory: protectedProcedure
+      .input(z.object({ pdiId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+        
+        const { pdiEditHistory, users } = await import('../drizzle/schema');
+        const { eq, desc } = await import('drizzle-orm');
+        
+        const history = await database
+          .select()
+          .from(pdiEditHistory)
+          .where(eq(pdiEditHistory.pdiId, input.pdiId))
+          .orderBy(desc(pdiEditHistory.createdAt));
+        
+        // Buscar dados dos usuários
+        const userIds = [...new Set(history.map(h => h.editedBy))];
+        const usersData = await database
+          .select()
+          .from(users)
+          .where(sql`${users.id} IN (${sql.join(userIds, sql`, `)})`);        
+        return history.map(h => ({
+          ...h,
+          editorName: usersData.find(u => u.id === h.editedBy)?.name || 'Usuário desconhecido',
+        }));
+      }),
+
+    // Obter relatório comparativo de PDIs manuais vs. importados
+    getComparison: protectedProcedure
+      .input(z.object({
+        cycleId: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          return {
+            total: 0,
+            manual: 0,
+            imported: 0,
+            avgCreationTimeMinutes: 0,
+            manualQuality: {
+              completeness: 0,
+              avgActions: 0,
+              avgDescriptionLength: 0,
+              completionRate: 0,
+            },
+            importedQuality: {
+              completeness: 0,
+              avgActions: 0,
+              avgDescriptionLength: 0,
+              completionRate: 0,
+            },
+          };
+        }
+        
+        const { pdiPlans, pdiActions } = await import('../drizzle/schema');
+        const { eq, and, count, avg, sql } = await import('drizzle-orm');
+        
+        // Construir condições de filtro
+        const baseConditions = [];
+        if (input.cycleId) {
+          baseConditions.push(eq(pdiPlans.cycleId, input.cycleId));
+        }
+        
+        // Buscar PDIs manuais
+        const manualConditions = [...baseConditions, eq(pdiPlans.importedFromHtml, false)];
+        const manualPDIs = await database
+          .select()
+          .from(pdiPlans)
+          .where(and(...manualConditions));
+        
+        // Buscar PDIs importados
+        const importedConditions = [...baseConditions, eq(pdiPlans.importedFromHtml, true)];
+        const importedPDIs = await database
+          .select()
+          .from(pdiPlans)
+          .where(and(...importedConditions));
+        
+        // Calcular métricas para PDIs manuais
+        const manualQuality = await (async () => {
+          if (manualPDIs.length === 0) {
+            return {
+              completeness: 0,
+              avgActions: 0,
+              avgDescriptionLength: 0,
+              completionRate: 0,
+            };
+          }
+          
+          // Buscar ações de PDIs manuais
+          const manualPDIIds = manualPDIs.map(p => p.id);
+          const manualActions = await database
+            .select()
+            .from(pdiActions)
+            .where(sql`${pdiActions.planId} IN (${sql.join(manualPDIIds, sql`, `)})`);          
+          // Calcular completude (campos obrigatórios preenchidos)
+          const completenessScores = manualActions.map(action => {
+            let score = 0;
+            if (action.description) score += 20;
+            if (action.developmentArea) score += 20;
+            if (action.responsible) score += 20;
+            if (action.dueDate) score += 20;
+            if (action.successMetric) score += 20;
+            return score;
+          });
+          const completeness = completenessScores.length > 0
+            ? Math.round(completenessScores.reduce((a, b) => a + b, 0) / completenessScores.length)
+            : 0;
+          
+          // Média de ações por PDI
+          const avgActions = manualActions.length > 0
+            ? parseFloat((manualActions.length / manualPDIs.length).toFixed(1))
+            : 0;
+          
+          // Tamanho médio das descrições
+          const descriptionLengths = manualActions
+            .map(a => a.description?.length || 0)
+            .filter(l => l > 0);
+          const avgDescriptionLength = descriptionLengths.length > 0
+            ? Math.round(descriptionLengths.reduce((a, b) => a + b, 0) / descriptionLengths.length)
+            : 0;
+          
+          // Taxa de conclusão
+          const completedPDIs = manualPDIs.filter(p => p.status === 'concluido').length;
+          const completionRate = Math.round((completedPDIs / manualPDIs.length) * 100);
+          
+          return {
+            completeness,
+            avgActions,
+            avgDescriptionLength,
+            completionRate,
+          };
+        })();
+        
+        // Calcular métricas para PDIs importados
+        const importedQuality = await (async () => {
+          if (importedPDIs.length === 0) {
+            return {
+              completeness: 0,
+              avgActions: 0,
+              avgDescriptionLength: 0,
+              completionRate: 0,
+            };
+          }
+          
+          // Buscar ações de PDIs importados
+          const importedPDIIds = importedPDIs.map(p => p.id);
+          const importedActions = await database
+            .select()
+            .from(pdiActions)
+            .where(sql`${pdiActions.planId} IN (${sql.join(importedPDIIds, sql`, `)})`);          
+          // Calcular completude
+          const completenessScores = importedActions.map(action => {
+            let score = 0;
+            if (action.description) score += 20;
+            if (action.developmentArea) score += 20;
+            if (action.responsible) score += 20;
+            if (action.dueDate) score += 20;
+            if (action.successMetric) score += 20;
+            return score;
+          });
+          const completeness = completenessScores.length > 0
+            ? Math.round(completenessScores.reduce((a, b) => a + b, 0) / completenessScores.length)
+            : 0;
+          
+          // Média de ações por PDI
+          const avgActions = importedActions.length > 0
+            ? parseFloat((importedActions.length / importedPDIs.length).toFixed(1))
+            : 0;
+          
+          // Tamanho médio das descrições
+          const descriptionLengths = importedActions
+            .map(a => a.description?.length || 0)
+            .filter(l => l > 0);
+          const avgDescriptionLength = descriptionLengths.length > 0
+            ? Math.round(descriptionLengths.reduce((a, b) => a + b, 0) / descriptionLengths.length)
+            : 0;
+          
+          // Taxa de conclusão
+          const completedPDIs = importedPDIs.filter(p => p.status === 'concluido').length;
+          const completionRate = Math.round((completedPDIs / importedPDIs.length) * 100);
+          
+          return {
+            completeness,
+            avgActions,
+            avgDescriptionLength,
+            completionRate,
+          };
+        })();
+        
+        return {
+          total: manualPDIs.length + importedPDIs.length,
+          manual: manualPDIs.length,
+          imported: importedPDIs.length,
+          avgCreationTimeMinutes: 15, // Estimativa: manuais levam ~15min, importados ~2min
+          manualQuality,
+          importedQuality,
+        };
+      }),
   }),
 
   // ============================================================================

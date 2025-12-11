@@ -2064,6 +2064,34 @@ export const pdiImportHistory = mysqlTable("pdiImportHistory", {
 export type PdiImportHistory = typeof pdiImportHistory.$inferSelect;
 export type InsertPdiImportHistory = typeof pdiImportHistory.$inferInsert;
 
+/**
+ * Histórico de Edições de PDI
+ * Registra todas as alterações feitas em PDIs importados
+ */
+export const pdiEditHistory = mysqlTable("pdiEditHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamento
+  pdiId: int("pdiId").notNull(), // ID do PDI editado
+  actionId: int("actionId"), // ID da ação editada (null se edição do PDI geral)
+  
+  // Informações da edição
+  editType: mysqlEnum("editType", ["pdi_update", "action_update", "action_create", "action_delete"]).notNull(),
+  fieldChanged: varchar("fieldChanged", { length: 100 }), // Campo alterado
+  oldValue: text("oldValue"), // Valor anterior
+  newValue: text("newValue"), // Novo valor
+  
+  // Metadados
+  editedBy: int("editedBy").notNull(), // Usuário que fez a edição
+  editReason: text("editReason"), // Motivo da edição
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PdiEditHistory = typeof pdiEditHistory.$inferSelect;
+export type InsertPdiEditHistory = typeof pdiEditHistory.$inferInsert;
+
 
 // ============================================================================
 // PESQUISAS DE PULSE (ENGAJAMENTO E CLIMA ORGANIZACIONAL)

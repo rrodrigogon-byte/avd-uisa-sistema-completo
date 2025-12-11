@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +37,8 @@ import { ptBR } from 'date-fns/locale';
 export default function PDIImportHistory() {
   const [, setLocation] = useLocation();
   const [selectedImport, setSelectedImport] = useState<number | null>(null);
+  const [editingImport, setEditingImport] = useState<number | null>(null);
+  const [editedFileName, setEditedFileName] = useState('');
 
   const { data: history, isLoading } = trpc.pdi.listImportHistory.useQuery({
     limit: 50,
@@ -46,6 +49,26 @@ export default function PDIImportHistory() {
     { id: selectedImport! },
     { enabled: !!selectedImport }
   );
+
+  const reprocessMutation = trpc.pdi.reprocessImport.useMutation({
+    onSuccess: () => {
+      toast.success('Importação marcada para reprocessamento');
+      setEditingImport(null);
+      setSelectedImport(null);
+      // Recarregar histórico
+      window.location.reload();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao reprocessar: ${error.message}`);
+    },
+  });
+
+  const handleReprocess = (importId: number, fileName?: string) => {
+    reprocessMutation.mutate({
+      importId,
+      correctedData: fileName ? { fileName } : undefined,
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -173,14 +196,28 @@ export default function PDIImportHistory() {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedImport(item.id)}
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Detalhes
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedImport(item.id)}
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Detalhes
+                          </Button>
+                          {(item.status === 'erro' || item.status === 'parcial') && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setEditingImport(item.id);
+                                setEditedFileName(item.fileName);
+                              }}
+                            >
+                              Editar e Reprocessar
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -190,6 +227,56 @@ export default function PDIImportHistory() {
           )}
         </CardContent>
       </Card>
+
+      {/* Dialog de Edição */}
+      <Dialog open={!!editingImport} onOpenChange={() => setEditingImport(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editar e Reprocessar Importação</DialogTitle>
+            <DialogDescription>
+              Corrija as informações e tente importar novamente
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Nome do Arquivo
+              </label>
+              <input
+                type="text"
+                value={editedFileName}
+                onChange={(e) => setEditedFileName(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Nome do arquivo"
+              />
+            </div>
+
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Ao reprocessar, o sistema tentará importar o arquivo novamente.
+                Certifique-se de que os erros foram corrigidos.
+              </AlertDescription>
+            </Alert>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setEditingImport(null)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={() => handleReprocess(editingImport!, editedFileName)}
+                disabled={reprocessMutation.isPending}
+              >
+                {reprocessMutation.isPending ? 'Reprocessando...' : 'Reprocessar'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog de Detalhes */}
       <Dialog open={!!selectedImport} onOpenChange={() => setSelectedImport(null)}>

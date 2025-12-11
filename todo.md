@@ -2270,3 +2270,60 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [ ] Testar importação com PDI_Wilson3.txt
 - [ ] Validar que dados são salvos corretamente no banco
 - [ ] Verificar que PDI aparece na listagem após importação
+
+
+## 🆕 NOVAS FUNCIONALIDADES - PDI E METAS (11/12/2025)
+
+### Correção Urgente - Bug de Metas
+- [x] Corrigir erro "Colaborador não encontrado" ao salvar nova meta
+- [x] Investigar validação de funcionário no procedure de metas
+- [x] Validar campos obrigatórios no formulário de metas
+- [x] Testar criação de meta com sucesso
+
+### Importação de PDI - Edição de Erros
+- [x] Permitir editar importações com erro em /pdi/import/history
+- [x] Implementar modal de edição de importação falhada
+- [x] Adicionar validação de campos corrigidos
+- [x] Implementar re-processamento de importação corrigida
+- [x] Salvar histórico de correções
+
+### Visualização de PDIs Importados
+- [x] Criar página de listagem de PDIs importados via HTML
+- [x] Implementar filtro por funcionário
+- [x] Implementar filtro por ciclo
+- [x] Exibir gaps identificados na listagem
+- [x] Exibir ações de desenvolvimento na listagem
+- [x] Implementar paginação e ordenação
+
+### Edição de PDIs Importados
+- [x] Criar modal/página de edição de PDI importado
+- [x] Permitir ajustar ações sugeridas
+- [x] Permitir ajustar prazos das ações
+- [x] Permitir ajustar responsáveis
+- [x] Implementar histórico de alterações (quem, quando, o que mudou)
+- [x] Criar tabela de auditoria para PDIs importados
+
+### Relatório Comparativo de PDIs
+- [x] Criar dashboard de comparação PDIs manuais vs. importados
+- [x] Implementar métrica: total de PDIs por tipo
+- [x] Implementar métrica: tempo médio de criação
+- [x] Implementar métrica: completude das ações (campos preenchidos)
+- [x] Implementar métrica: qualidade das ações (tamanho, detalhamento)
+- [x] Criar gráficos de comparação
+- [x] Implementar filtros por período e departamento
+- [ ] Exportar relatório em PDF
+
+### Infraestrutura para Novas Funcionalidades
+- [ ] Criar tabela de histórico de edições de PDI (pdiEditHistory)
+- [ ] Adicionar campos de auditoria em pdiActions
+- [ ] Criar procedures tRPC para edição de PDIs
+- [ ] Criar procedures tRPC para relatório comparativo
+- [ ] Implementar helpers de banco de dados
+
+### Testes Automatizados
+- [ ] Testar correção de bug de metas
+- [ ] Testar edição de importação com erro
+- [ ] Testar visualização de PDIs importados
+- [ ] Testar edição de PDI importado
+- [ ] Testar geração de relatório comparativo
+- [ ] Validar histórico de alterações

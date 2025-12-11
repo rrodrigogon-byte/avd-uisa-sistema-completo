@@ -42,6 +42,8 @@ import ManageEvaluations from "./pages/ManageEvaluations";
 import PDI from "./pages/PDI";
 import PDIImport from "./pages/PDIImport";
 import PDIImportHistory from "./pages/PDIImportHistory";
+import PDIImportedList from "./pages/PDIImportedList";
+import PDIComparativeReport from "./pages/PDIComparativeReport";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
@@ -289,6 +291,8 @@ function Router() {
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/pdi/import"} component={PDIImport} />
       <Route path={"/pdi/import/history"} component={PDIImportHistory} />
+      <Route path={"/pdi/imported"} component={PDIImportedList} />
+      <Route path={"/pdi/comparison"} component={PDIComparativeReport} />
       <Route path={"/pdi/criar"} component={CriarPDI} />
       <Route path={"/produtividade/dashboard"} component={DashboardProdutividade} />
       <Route path={"/descricao-cargos/aprovar-superior"} component={AprovarDescricaoSuperior} />

@@ -140,11 +140,15 @@ export const goalsRouter = router({
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
       // Buscar employeeId correto do usuário logado
+      // Admin e RH podem criar metas sem ser funcionários
       const currentEmployee = await getUserEmployee(ctx.user.id);
-      if (!currentEmployee) {
+      const isAdminOrRH = ctx.user.role === 'admin' || ctx.user.role === 'rh';
+      
+      // Se não for admin/RH e não tiver vínculo de funcionário, bloquear
+      if (!currentEmployee && !isAdminOrRH) {
         throw new TRPCError({ 
           code: "NOT_FOUND", 
-          message: "Colaborador não encontrado" 
+          message: "Colaborador não encontrado. Apenas administradores e RH podem criar metas sem vínculo de funcionário." 
         });
       }
 
@@ -186,14 +190,13 @@ export const goalsRouter = router({
       }
 
       // Determinar o employeeId alvo (próprio ou de outro profissional)
-      let targetEmployeeId = currentEmployee.id;
+      let targetEmployeeId = currentEmployee?.id;
       
       if (input.targetEmployeeId) {
         // Validar permissão para criar meta para outro profissional
-        const isAdmin = ctx.user.role === 'admin' || ctx.user.role === 'rh';
-        const isManager = currentEmployee.managerId !== null;
+        const isManager = currentEmployee?.managerId !== null;
         
-        if (!isAdmin && !isManager) {
+        if (!isAdminOrRH && !isManager) {
           throw new TRPCError({ 
             code: "FORBIDDEN", 
             message: "Apenas gestores e administradores podem criar metas para outros profissionais" 
@@ -201,6 +204,12 @@ export const goalsRouter = router({
         }
         
         targetEmployeeId = input.targetEmployeeId;
+      } else if (!targetEmployeeId) {
+        // Se não especificou targetEmployeeId e não é funcionário, deve especificar
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "Você deve especificar o funcionário alvo da meta" 
+        });
       }
 
       // Validar critérios SMART automaticamente
