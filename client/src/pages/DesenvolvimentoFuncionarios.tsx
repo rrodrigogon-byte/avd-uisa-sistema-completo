@@ -136,7 +136,7 @@ export default function DesenvolvimentoFuncionarios() {
               </TableHeader>
               <TableBody>
                 {employees.map((employee: any) => (
-                  <TableRow key={employee.id}>
+                  <TableRow key={`employee-${employee.id}`}>
                     <TableCell className="font-medium">
                       {employee.employeeCode}
                     </TableCell>

@@ -389,6 +389,7 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 ## 🐛 BUGS REPORTADOS
 
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'name')" na página PDI ✅ CORRIGIDO
+- [x] Corrigir erro de chaves duplicadas no componente de funcionários (IDs undefined) ✅ CORRIGIDO
 
 ## 🚨 BUGS CRÍTICOS CORRIGIDOS (11/12/2025)
 
@@ -2534,3 +2535,14 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [ ] Testar salvamento de meta Individual com colaborador selecionado
 - [ ] Testar salvamento de meta Organizacional (sem colaborador)
 - [ ] Testar salvamento de meta de Equipe (com departamento)
+
+## ✅ BUG CORRIGIDO - REACT KEY PROP (11/12/2025)
+
+### Problema Reportado
+- [x] Erro "Each child in a list should have a unique 'key' prop" na página /desenvolvimento/funcionarios
+- [x] Componente DesenvolvimentoFuncionarios renderizando TableBody sem keys
+
+### Correção Implementada
+- [x] Atualizada key prop para usar formato `employee-${employee.id}` garantindo unicidade
+- [x] Validado que não há outros componentes com o mesmo problema
+

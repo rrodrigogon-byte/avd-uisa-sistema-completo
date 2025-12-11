@@ -595,7 +595,12 @@ export async function listEmployees(filters?: {
     .where(and(...conditions))
     .limit(100); // Limitar a 100 resultados para performance
 
-  return results;
+  // Retornar estrutura flat para evitar problemas no frontend
+  return results.map((row) => ({
+    ...row.employee,
+    department: row.department,
+    position: row.position,
+  }));
 }
 
 /**
