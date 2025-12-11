@@ -2178,3 +2178,20 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 
 ### Resultado
 ✅ **SISTEMA 100% FUNCIONAL** - Importação de PDI agora suporta múltiplos formatos e processa completamente todos os arquivos fornecidos.
+
+
+## 🐛 BUGS REPORTADOS - IMPORTAÇÃO DE PDI (11/12/2025)
+
+- [x] Corrigir travamento no upload de PDI que fica preso em "Processando arquivo..."
+- [x] Implementar funcionalidade de download de template (botão não funciona)
+
+## 🆕 NOVAS FUNCIONALIDADES - TEMPLATES PERSONALIZADOS DE PDI
+
+- [x] Criar template personalizado para Analistas
+- [x] Criar template personalizado para Especialistas
+- [x] Criar template personalizado para Supervisores
+- [x] Criar template personalizado para Coordenadores
+- [x] Criar template personalizado para Gerentes
+- [x] Criar template personalizado para Gerentes Executivos
+- [x] Criar template personalizado para Diretores
+- [x] Criar template personalizado para CEO

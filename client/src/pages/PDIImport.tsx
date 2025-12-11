@@ -45,27 +45,49 @@ export default function PDIImport() {
   const [previewData, setPreviewData] = useState<PreviewData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [importResult, setImportResult] = useState<any>(null);
+  const [selectedLevel, setSelectedLevel] = useState<string>('');
 
-  const downloadTemplate = trpc.pdi.downloadTemplate.useQuery();
+  const downloadTemplate = trpc.pdi.downloadTemplate.useQuery(
+    selectedLevel ? { level: selectedLevel as any } : undefined,
+    {
+      enabled: false, // Não executar automaticamente
+    }
+  );
   const previewMutation = trpc.pdi.previewImport.useMutation();
   const uploadMutation = trpc.pdi.uploadImportFile.useMutation();
 
   // Download do template
-  const handleDownloadTemplate = () => {
-    if (downloadTemplate.data) {
-      const blob = new Blob(
-        [Buffer.from(downloadTemplate.data.data, 'base64')],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-      );
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = downloadTemplate.data.fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      toast.success('Template baixado com sucesso!');
+  const handleDownloadTemplate = async (level?: string) => {
+    if (level) {
+      setSelectedLevel(level);
+    }
+    try {
+      const result = await downloadTemplate.refetch();
+      if (result.data) {
+        // Converter base64 para Uint8Array
+        const binaryString = atob(result.data.data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        const blob = new Blob(
+          [bytes],
+          { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+        );
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = result.data.fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success('Template baixado com sucesso!');
+      }
+    } catch (error) {
+      toast.error('Erro ao baixar template');
+      console.error(error);
     }
   };
 
@@ -137,7 +159,13 @@ export default function PDIImport() {
       
       reader.onload = async (e) => {
         const arrayBuffer = e.target?.result as ArrayBuffer;
-        const base64 = Buffer.from(arrayBuffer).toString('base64');
+        // Converter ArrayBuffer para base64 usando Uint8Array
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
         
         const fileName = selectedFile.name.toLowerCase();
         const fileType = fileName.endsWith('.csv') ? 'csv' : 
@@ -180,7 +208,13 @@ export default function PDIImport() {
       
       reader.onload = async (e) => {
         const arrayBuffer = e.target?.result as ArrayBuffer;
-        const base64 = Buffer.from(arrayBuffer).toString('base64');
+        // Converter ArrayBuffer para base64 usando Uint8Array
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
         
         const fileName = file.name.toLowerCase();
         const fileType = fileName.endsWith('.csv') ? 'csv' : 
@@ -234,14 +268,35 @@ export default function PDIImport() {
             Importe múltiplos PDIs de uma vez usando arquivo Excel, CSV, TXT ou HTML
           </p>
         </div>
-        <Button
-          variant="outline"
-          onClick={handleDownloadTemplate}
-          disabled={!downloadTemplate.data}
-        >
-          <Download className="h-4 w-4 mr-2" />
-          Baixar Template
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => handleDownloadTemplate()}
+            disabled={downloadTemplate.isFetching}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            {downloadTemplate.isFetching ? 'Gerando...' : 'Template Genérico'}
+          </Button>
+          <select
+            className="px-3 py-2 border rounded-md text-sm"
+            onChange={(e) => {
+              if (e.target.value) {
+                handleDownloadTemplate(e.target.value);
+              }
+            }}
+            disabled={downloadTemplate.isFetching}
+          >
+            <option value="">Templates por Nível</option>
+            <option value="analista">Analista</option>
+            <option value="especialista">Especialista</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="coordenador">Coordenador</option>
+            <option value="gerente">Gerente</option>
+            <option value="gerente_executivo">Gerente Executivo</option>
+            <option value="diretor">Diretor</option>
+            <option value="ceo">CEO</option>
+          </select>
+        </div>
       </div>
 
       {/* Instruções */}

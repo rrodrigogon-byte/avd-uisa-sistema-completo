@@ -1172,12 +1172,33 @@ export const appRouter = router({
 
     // Download de template de importação
     downloadTemplate: protectedProcedure
-      .query(async () => {
+      .input(z.object({
+        level: z.enum(['analista', 'especialista', 'supervisor', 'coordenador', 'gerente', 'gerente_executivo', 'diretor', 'ceo']).optional(),
+      }).optional())
+      .query(async ({ input }) => {
         const { PDIImportParser } = await import('./services/pdiImportService');
-        const buffer = PDIImportParser.generateTemplate();
+        const level = input?.level;
+        const buffer = PDIImportParser.generateTemplate(level);
+        
+        // Nome do arquivo baseado no nível
+        const levelNames: Record<string, string> = {
+          'analista': 'Analista',
+          'especialista': 'Especialista',
+          'supervisor': 'Supervisor',
+          'coordenador': 'Coordenador',
+          'gerente': 'Gerente',
+          'gerente_executivo': 'Gerente_Executivo',
+          'diretor': 'Diretor',
+          'ceo': 'CEO',
+        };
+        
+        const fileName = level 
+          ? `template_pdi_${levelNames[level]}.xlsx`
+          : 'template_importacao_pdi.xlsx';
+        
         return {
           data: buffer.toString('base64'),
-          fileName: 'template_importacao_pdi.xlsx',
+          fileName,
         };
       }),
 
