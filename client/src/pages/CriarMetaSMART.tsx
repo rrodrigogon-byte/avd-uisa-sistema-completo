@@ -56,6 +56,7 @@ export default function CriarMetaSMART() {
     cycleId: "",
     pdiPlanId: "",
     targetEmployeeId: "",
+    departmentId: "",
   });
 
   // Buscar ciclos
@@ -65,10 +66,13 @@ export default function CriarMetaSMART() {
   const { data: pdis = [] } = trpc.pdi.list.useQuery({});
 
   // Buscar lista de funcionários (para admin/RH/gestores)
-  const { data: employees = [] } = trpc.employees.list.useQuery({});
+  const { data: employees = [] } = trpc.employees.list.useQuery();
 
   // Buscar dados do funcionário atual
   const { data: currentEmployee } = trpc.employees.me.useQuery();
+
+  // Buscar lista de departamentos
+  const { data: departments = [] } = trpc.departments.list.useQuery();
 
   // Validação SMART
   const [validation, setValidation] = useState<any>(null);
@@ -132,10 +136,17 @@ export default function CriarMetaSMART() {
       }
     }
 
-    // Validar colaborador selecionado
-    if (!formData.targetEmployeeId) {
+    // Validar colaborador/departamento baseado no tipo
+    if (formData.type === "individual" && !formData.targetEmployeeId) {
       toast.error("Colaborador obrigatório", {
-        description: "Selecione o colaborador responsável pela meta",
+        description: "Selecione o colaborador responsável pela meta individual",
+      });
+      return;
+    }
+    
+    if (formData.type === "team" && !formData.departmentId) {
+      toast.error("Departamento obrigatório", {
+        description: "Selecione o departamento responsável pela meta de equipe",
       });
       return;
     }
@@ -317,32 +328,64 @@ export default function CriarMetaSMART() {
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="targetEmployeeId">Colaborador *</Label>
-              <Select
-                value={formData.targetEmployeeId}
-                onValueChange={(v) => setFormData({ ...formData, targetEmployeeId: v })}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Selecione o colaborador" />
-                </SelectTrigger>
-                <SelectContent>
-                  {currentEmployee && (
-                    <SelectItem value={currentEmployee.id.toString()}>
-                      {currentEmployee.name} (Você)
-                    </SelectItem>
-                  )}
-                  {employees.filter((emp: any) => emp.id !== currentEmployee?.id).map((emp: any) => (
-                    <SelectItem key={emp.id} value={emp.id.toString()}>
-                      {emp.name} - {emp.position || 'Sem cargo'}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-gray-500 mt-1">
-                Selecione o colaborador que será responsável por esta meta
-              </p>
-            </div>
+            {/* Campo Colaborador - somente para tipo Individual */}
+            {formData.type === "individual" && (
+              <div>
+                <Label htmlFor="targetEmployeeId">Colaborador *</Label>
+                <Select
+                  value={formData.targetEmployeeId}
+                  onValueChange={(v) => setFormData({ ...formData, targetEmployeeId: v })}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Selecione o colaborador" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {employees.filter((emp: any) => emp.status === 'ativo').map((emp: any) => (
+                      <SelectItem key={emp.id} value={emp.id.toString()}>
+                        {emp.name} - {emp.position || 'Sem cargo'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Selecione o colaborador ativo que será responsável por esta meta
+                </p>
+              </div>
+            )}
+
+            {/* Campo Departamento - somente para tipo Equipe */}
+            {formData.type === "team" && (
+              <div>
+                <Label htmlFor="departmentId">Departamento *</Label>
+                <Select
+                  value={formData.departmentId}
+                  onValueChange={(v) => setFormData({ ...formData, departmentId: v })}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Selecione o departamento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept: any) => (
+                      <SelectItem key={dept.id} value={dept.id.toString()}>
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Selecione o departamento responsável por esta meta de equipe
+                </p>
+              </div>
+            )}
+
+            {/* Mensagem informativa para tipo Organizacional */}
+            {formData.type === "organizational" && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Meta Organizacional:</strong> Esta meta será aplicada automaticamente a todos os funcionários ativos da empresa.
+                </p>
+              </div>
+            )}
 
             <div className="flex justify-end">
               <Button onClick={() => setStep(2)} className="bg-[#F39200] hover:bg-[#d67e00]">

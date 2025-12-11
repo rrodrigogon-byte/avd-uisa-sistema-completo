@@ -133,6 +133,7 @@ export const goalsRouter = router({
         pdiPlanId: z.number().optional(),
         cycleId: z.number(),
         targetEmployeeId: z.number().optional(), // Permitir vincular a outro profissional
+        departmentId: z.number().optional(), // Para metas de equipe
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -189,27 +190,44 @@ export const goalsRouter = router({
         });
       }
 
-      // Determinar o employeeId alvo (próprio ou de outro profissional)
-      let targetEmployeeId = currentEmployee?.id;
+      // Determinar o employeeId alvo baseado no tipo de meta
+      let targetEmployeeId: number | null = null;
       
-      if (input.targetEmployeeId) {
-        // Validar permissão para criar meta para outro profissional
-        const isManager = currentEmployee?.managerId !== null;
-        
-        if (!isAdminOrRH && !isManager) {
+      if (input.type === "organizational") {
+        // Metas organizacionais não têm employeeId específico
+        targetEmployeeId = null;
+      } else if (input.type === "team") {
+        // Metas de equipe precisam de departmentId
+        if (!input.departmentId) {
           throw new TRPCError({ 
-            code: "FORBIDDEN", 
-            message: "Apenas gestores e administradores podem criar metas para outros profissionais" 
+            code: "BAD_REQUEST", 
+            message: "Metas de equipe precisam ter um departamento especificado" 
           });
         }
-        
-        targetEmployeeId = input.targetEmployeeId;
-      } else if (!targetEmployeeId) {
-        // Se não especificou targetEmployeeId e não é funcionário, deve especificar
-        throw new TRPCError({ 
-          code: "BAD_REQUEST", 
-          message: "Você deve especificar o funcionário alvo da meta" 
-        });
+        targetEmployeeId = null; // Metas de equipe não têm employeeId específico
+      } else if (input.type === "individual") {
+        // Metas individuais precisam de employeeId
+        if (input.targetEmployeeId) {
+          // Validar permissão para criar meta para outro profissional
+          const isManager = currentEmployee?.managerId !== null;
+          
+          if (!isAdminOrRH && !isManager) {
+            throw new TRPCError({ 
+              code: "FORBIDDEN", 
+              message: "Apenas gestores e administradores podem criar metas para outros profissionais" 
+            });
+          }
+          
+          targetEmployeeId = input.targetEmployeeId;
+        } else {
+          targetEmployeeId = currentEmployee?.id || null;
+          if (!targetEmployeeId) {
+            throw new TRPCError({ 
+              code: "BAD_REQUEST", 
+              message: "Você deve especificar o funcionário alvo da meta individual" 
+            });
+          }
+        }
       }
 
       // Validar critérios SMART automaticamente
@@ -232,6 +250,7 @@ export const goalsRouter = router({
       // Criar meta
       const [result] = await db.insert(smartGoals).values({
         employeeId: targetEmployeeId,
+        departmentId: input.departmentId || null,
         cycleId: input.cycleId,
         pdiPlanId: input.pdiPlanId,
         title: input.title,
@@ -252,36 +271,46 @@ export const goalsRouter = router({
         isAchievable: validation.isAchievable,
         isRelevant: validation.isRelevant,
         isTimeBound: validation.isTimeBound,
-        // Metas corporativas não precisam de aprovação
-        status: input.goalType === "corporate" ? "approved" : "draft",
-        approvalStatus: input.goalType === "corporate" ? "approved" : "not_submitted",
+        // Metas corporativas e organizacionais não precisam de aprovação
+        status: (input.goalType === "corporate" || input.type === "organizational") ? "approved" : "draft",
+        approvalStatus: (input.goalType === "corporate" || input.type === "organizational") ? "approved" : "not_submitted",
         createdBy: ctx.user.id,
       });
 
       // Notificar Admin e RH sobre nova meta criada
       try {
-        const targetEmployee = await db.select()
-          .from(employees)
-          .where(eq(employees.id, targetEmployeeId))
-          .limit(1);
-        
-        if (targetEmployee.length > 0) {
+        if (targetEmployeeId) {
+          const targetEmployee = await db.select()
+            .from(employees)
+            .where(eq(employees.id, targetEmployeeId))
+            .limit(1);
+          
+          if (targetEmployee.length > 0) {
+            await notifySmartGoalActivity(
+              'criada',
+              input.title,
+              targetEmployee[0].name,
+              (input.goalType === "corporate" || input.type === "organizational") ? "approved" : "draft"
+            );
+            
+            // Enviar email para o colaborador sobre a nova meta
+            if (targetEmployee[0].email) {
+              await sendGoalCreatedEmail(
+                targetEmployee[0].email,
+                targetEmployee[0].name,
+                input.title,
+                new Date(input.endDate)
+              );
+            }
+          }
+        } else {
+          // Meta organizacional ou de equipe - notificar admin/RH
           await notifySmartGoalActivity(
             'criada',
             input.title,
-            targetEmployee[0].name,
-            input.goalType === "corporate" ? "approved" : "draft"
+            input.type === "organizational" ? "Todos os funcionários" : "Equipe",
+            "approved"
           );
-          
-          // Enviar email para o colaborador sobre a nova meta
-          if (targetEmployee[0].email) {
-            await sendGoalCreatedEmail(
-              targetEmployee[0].email,
-              targetEmployee[0].name,
-              input.title,
-              new Date(input.endDate)
-            );
-          }
         }
       } catch (error) {
         console.error('[GoalsRouter] Failed to send email notification:', error);

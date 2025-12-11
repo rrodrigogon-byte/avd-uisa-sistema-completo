@@ -382,7 +382,7 @@ export type InsertEvaluationCycle = typeof evaluationCycles.$inferInsert;
 export const goals = mysqlTable("goals", {
   id: int("id").autoincrement().primaryKey(),
   cycleId: int("cycleId").notNull(),
-  employeeId: int("employeeId").notNull(),
+  employeeId: int("employeeId"), // Opcional - null para metas organizacionais
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   type: mysqlEnum("type", ["individual", "equipe", "organizacional"]).notNull(),
@@ -1389,7 +1389,8 @@ export const pdiReviewsRelations = relations(pdiReviews, ({ one }) => ({
 
 export const smartGoals = mysqlTable("smartGoals", {
   id: int("id").autoincrement().primaryKey(),
-  employeeId: int("employeeId").notNull(),
+  employeeId: int("employeeId"), // Opcional - null para metas organizacionais e de equipe
+  departmentId: int("departmentId"), // Para metas de equipe
   cycleId: int("cycleId").notNull(),
   pdiPlanId: int("pdiPlanId"), // Opcional: vincular com PDI
   

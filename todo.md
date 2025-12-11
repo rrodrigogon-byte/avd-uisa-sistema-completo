@@ -3,6 +3,25 @@
 **Data de Atualização:** 11/12/2025  
 **Status:** Bug "Usuário não encontrado" na importação de PDI CORRIGIDO ✅
 
+## 🐛 NOVA CORREÇÃO - LÓGICA DE CRIAÇÃO DE METAS (11/12/2025)
+
+### Problema Reportado
+- [x] Campo "Colaborador" deve ser habilitado SOMENTE quando tipo = "Individual"
+- [x] Quando tipo = "Organizacional", meta deve aplicar a TODOS os funcionários ativos automaticamente
+- [x] Quando tipo = "Equipe", deve mostrar campo de seleção de DEPARTAMENTO
+- [x] Listar todos os colaboradores ATIVOS no campo de seleção
+- [x] Listar todos os departamentos cadastrados no campo de seleção
+
+### Correções Implementadas
+- [x] Atualizar schema do banco de dados (employeeId opcional, departmentId adicionado)
+- [x] Corrigir procedures tRPC para suportar metas organizacionais e por equipe
+- [x] Atualizar componente CriarMetaSMART com lógica condicional
+- [x] Implementar lógica para metas organizacionais (sem employeeId)
+- [x] Implementar seleção de departamento (tipo Equipe)
+- [x] Filtrar apenas colaboradores ATIVOS na seleção
+- [x] Listar todos os departamentos cadastrados na seleção
+- [x] Adicionar mensagem informativa para metas organizacionais
+
 ## ✅ CORREÇÃO CONCLUÍDA - ERRO "USUÁRIO NÃO ENCONTRADO" (11/12/2025)
 
 ### Problema Identificado
