@@ -3,7 +3,7 @@ import { ENV } from './env';
 
 /**
  * Lista de emails permitidos para receber mensagens do sistema
- * Todos os outros emails serão bloqueados temporariamente
+ * Apenas ativa se ENABLE_EMAIL_WHITELIST=true nas variáveis de ambiente
  */
 const EMAIL_WHITELIST = [
   'rodrigo.goncalves@uisa.com.br',
@@ -12,9 +12,21 @@ const EMAIL_WHITELIST = [
 ];
 
 /**
+ * Verifica se a whitelist está habilitada via variável de ambiente
+ */
+function isWhitelistEnabled(): boolean {
+  return process.env.ENABLE_EMAIL_WHITELIST === 'true';
+}
+
+/**
  * Verifica se um email está na whitelist
  */
 function isEmailAllowed(email: string): boolean {
+  // Se whitelist não está habilitada, permite todos os emails
+  if (!isWhitelistEnabled()) {
+    return true;
+  }
+  
   const normalizedEmail = email.toLowerCase().trim();
   return EMAIL_WHITELIST.some(allowed => allowed.toLowerCase() === normalizedEmail);
 }
@@ -24,11 +36,18 @@ function isEmailAllowed(email: string): boolean {
  */
 function filterAllowedEmails(emails: string | string[]): string[] {
   const emailList = Array.isArray(emails) ? emails : [emails];
+  
+  // Se whitelist não está habilitada, retorna todos os emails
+  if (!isWhitelistEnabled()) {
+    return emailList;
+  }
+  
   const allowed = emailList.filter(isEmailAllowed);
   const blocked = emailList.filter(email => !isEmailAllowed(email));
   
   if (blocked.length > 0) {
-    console.log('[Email] Emails bloqueados (não estão na whitelist):', blocked);
+    console.log('[Email] Emails bloqueados pela whitelist:', blocked);
+    console.log('[Email] ATENÇÃO: Whitelist está ATIVA. Para desabilitar, remova ENABLE_EMAIL_WHITELIST das variáveis de ambiente.');
   }
   
   return allowed;
@@ -90,11 +109,16 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
     return false;
   }
 
-  // Filtrar emails permitidos
+  // Filtrar emails permitidos (apenas se whitelist estiver habilitada)
   const allowedEmails = filterAllowedEmails(options.to);
   
   if (allowedEmails.length === 0) {
-    console.log('[Email] Nenhum email permitido na whitelist. Email não enviado.');
+    if (isWhitelistEnabled()) {
+      console.log('[Email] Nenhum email permitido na whitelist. Email não enviado.');
+      console.log('[Email] ATENÇÃO: Whitelist está ATIVA. Para desabilitar, remova ENABLE_EMAIL_WHITELIST das variáveis de ambiente.');
+    } else {
+      console.log('[Email] Nenhum destinatário válido fornecido.');
+    }
     return false;
   }
 

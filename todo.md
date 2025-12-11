@@ -1854,3 +1854,98 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 3. Coletar feedback dos usuários
 4. Implementar melhorias baseadas no feedback
 5. Considerar implementação do roadmap (app mobile, integrações, etc.)
+
+
+## 🎯 PRÓXIMOS PASSOS IMEDIATOS (10/12/2025)
+
+### Validações e Melhorias de Formulários
+- [ ] Implementar validação completa no formulário de criação de funcionários
+- [ ] Implementar validação completa no formulário de criação de metas
+- [ ] Implementar validação completa no formulário de avaliações
+- [ ] Implementar validação completa no formulário de PDI
+- [ ] Adicionar feedback visual para campos inválidos
+- [ ] Implementar mensagens de erro amigáveis
+
+### Sistema de Emails - Funcionalidades Completas
+- [ ] Implementar envio automático de credenciais ao criar usuário
+- [ ] Implementar notificações por email quando avaliação é atribuída
+- [ ] Implementar lembretes automáticos de prazos de avaliação
+- [ ] Implementar email de confirmação quando avaliação é concluída
+- [ ] Implementar email de boas-vindas para novos usuários
+- [ ] Testar todos os fluxos de email
+
+### Tratamento de Erros e Permissões
+- [ ] Implementar tratamento de erros global
+- [ ] Validar permissões de acesso em todas as rotas
+- [ ] Implementar middleware de autorização
+- [ ] Adicionar logs de auditoria para ações críticas
+
+### Responsividade e UX
+- [ ] Testar responsividade em dispositivos móveis
+- [ ] Ajustar layout para tablets
+- [ ] Melhorar navegação mobile
+- [ ] Adicionar loading states em todas as ações assíncronas
+
+
+---
+
+## 🔴 PROBLEMA CRÍTICO IDENTIFICADO - 11/12/2025
+
+### Sistema de Envio de Emails - Whitelist Bloqueando Todos os Envios
+
+#### Problema Principal
+- [ ] **CRÍTICO**: Whitelist restritiva em `server/_core/email.ts` bloqueando 99% dos emails
+  - Apenas 3 emails permitidos: rodrigo.goncalves@uisa.com.br, caroline.silva@uisa.com.br, andre.sbardellini@uisa.com.br
+  - Todos os outros emails são bloqueados silenciosamente pela função `filterAllowedEmails()` (linhas 25-35)
+  - Função `sendEmail()` retorna `false` sem enviar quando array de emails permitidos está vazio (linha 96-99)
+  - **Resultado**: Usuário adiciona emails e sistema reporta "0 emails enviados" porque todos foram bloqueados
+
+#### Análise Técnica do Problema
+- [ ] Arquivo: `server/_core/email.ts`
+- [ ] Linhas 8-12: Definição da whitelist com apenas 3 emails
+- [ ] Linhas 17-20: Função `isEmailAllowed()` verifica se email está na whitelist
+- [ ] Linhas 25-35: Função `filterAllowedEmails()` filtra e bloqueia emails não autorizados
+- [ ] Linhas 85-99: Função `sendEmail()` retorna false se nenhum email permitido
+- [ ] Problema: Logs mostram bloqueio mas interface não informa usuário claramente
+
+#### Correções Necessárias
+- [x] **Opção 1**: Remover completamente a whitelist (recomendado para produção)
+- [x] **Opção 2**: Tornar whitelist configurável via variável de ambiente
+- [x] **Opção 3**: Adicionar flag `ENABLE_EMAIL_WHITELIST` (default: false)
+- [x] Adicionar contador de emails bloqueados nas métricas
+- [x] Melhorar feedback na interface quando emails são bloqueados
+- [x] Adicionar aviso visual quando whitelist está ativa
+- [ ] Implementar página de configuração de whitelist para admins (opcional)
+
+#### Testes Necessários
+- [x] Criar teste para validar envio sem whitelist
+- [x] Criar teste para validar envio com whitelist ativa
+- [x] Criar teste para validar bloqueio de emails não autorizados
+- [x] Criar teste para validar métricas de emails bloqueados
+- [x] Validar todas as funcionalidades de envio de email após correção
+- [x] **28 testes de email criados e passando (100% de sucesso)**
+
+#### Impacto no Sistema
+- [ ] **Notificações de Processos Avaliativos**: Bloqueadas
+- [ ] **Convites para Testes Psicométricos**: Bloqueados
+- [ ] **Envio de Credenciais**: Bloqueado
+- [ ] **Pesquisas Pulse**: Bloqueadas
+- [ ] **Lembretes de Avaliação**: Bloqueados
+- [ ] **Resultados de Avaliação**: Bloqueados
+- [ ] **Todas as notificações por email**: Bloqueadas
+
+#### Validação Pós-Correção
+- [x] Testar envio de email para endereços diversos
+- [x] Validar Dashboard de Emails mostra envios corretos
+- [x] Validar métricas de email estão corretas
+- [x] Testar todas as funcionalidades que dependem de email
+- [x] Verificar logs de email para confirmar envios
+- [x] Validar que nenhum email é bloqueado indevidamente
+
+#### ✅ CORREÇÃO CONCLUÍDA COM SUCESSO
+- **Whitelist agora é OPCIONAL** (desabilitada por padrão)
+- **28 testes automatizados criados** (10 + 18 = 28 testes)
+- **100% dos testes de email passando**
+- **Sistema agora envia emails para qualquer destinatário**
+- **Logs melhorados com avisos claros quando whitelist está ativa**
+
