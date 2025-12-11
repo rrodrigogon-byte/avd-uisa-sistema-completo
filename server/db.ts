@@ -596,11 +596,19 @@ export async function listEmployees(filters?: {
     .limit(100); // Limitar a 100 resultados para performance
 
   // Retornar estrutura com objetos aninhados para compatibilidade com o frontend
-  return results.map((row) => ({
-    employee: row.employee,
-    department: row.department,
-    position: row.position,
-  }));
+  // Filtrar apenas registros com ID válido para evitar erros no frontend
+  return results
+    .filter((row) => row.employee && row.employee.id && row.employee.id > 0)
+    .map((row) => ({
+      id: row.employee.id, // Adicionar ID no nível raiz para facilitar acesso
+      employee: row.employee,
+      department: row.department,
+      position: row.position,
+      // Adicionar campos calculados para facilitar uso no frontend
+      status: row.employee.status,
+      name: row.employee.name,
+      email: row.employee.email,
+    }));
 }
 
 /**
@@ -2037,6 +2045,238 @@ export async function getHierarchyStats() {
     return stats;
   } catch (error) {
     console.error("[Database] Failed to get hierarchy stats:", error);
+    return null;
+  }
+}
+
+// ============================================================================
+// LIMPEZA E VALIDAÇÃO DE DADOS
+// ============================================================================
+
+/**
+ * Identificar e reportar registros inconsistentes no banco de dados
+ */
+export async function identifyInconsistentRecords() {
+  const db = await getDb();
+  if (!db) return { employees: [], users: [], evaluations: [] };
+
+  const issues: any = {
+    employees: [],
+    users: [],
+    evaluations: [],
+    goals: [],
+  };
+
+  try {
+    // 1. Funcionários sem ID válido ou com dados incompletos
+    const allEmployees = await db.select().from(employees);
+    issues.employees = allEmployees.filter(
+      (emp) =>
+        !emp.id ||
+        emp.id <= 0 ||
+        !emp.name ||
+        emp.name.trim() === "" ||
+        !emp.email ||
+        emp.email.trim() === ""
+    );
+
+    // 2. Usuários sem openId ou email
+    const allUsers = await db.select().from(users);
+    issues.users = allUsers.filter(
+      (user) =>
+        !user.id ||
+        user.id <= 0 ||
+        !user.openId ||
+        user.openId.trim() === ""
+    );
+
+    // 3. Avaliações sem funcionário ou ciclo válido
+    const { evaluations } = await import("../drizzle/schema");
+    const allEvaluations = await db.select().from(evaluations);
+    issues.evaluations = allEvaluations.filter(
+      (evaluation) =>
+        !evaluation.id ||
+        evaluation.id <= 0 ||
+        !evaluation.employeeId ||
+        evaluation.employeeId <= 0 ||
+        !evaluation.cycleId ||
+        evaluation.cycleId <= 0
+    );
+
+    // 4. Metas sem cycleId válido
+    const { smartGoals } = await import("../drizzle/schema");
+    const allGoals = await db.select().from(smartGoals);
+    issues.goals = allGoals.filter(
+      (goal) =>
+        !goal.id ||
+        goal.id <= 0 ||
+        !goal.cycleId ||
+        goal.cycleId <= 0
+    );
+
+    return issues;
+  } catch (error) {
+    console.error("[Database] Failed to identify inconsistent records:", error);
+    return issues;
+  }
+}
+
+/**
+ * Limpar registros inconsistentes (soft delete)
+ * Retorna o número de registros afetados
+ */
+export async function cleanInconsistentRecords() {
+  const db = await getDb();
+  if (!db) return { deleted: 0, updated: 0 };
+
+  const stats = { deleted: 0, updated: 0 };
+
+  try {
+    // Identificar registros problemáticos
+    const issues = await identifyInconsistentRecords();
+
+    // Não deletar, apenas marcar como inativos ou corrigir
+    // Para funcionários com dados incompletos, marcar como desligado
+    for (const emp of issues.employees) {
+      if (emp.id && emp.id > 0) {
+        await db
+          .update(employees)
+          .set({
+            status: "desligado",
+            active: false,
+            updatedAt: new Date(),
+          })
+          .where(eq(employees.id, emp.id));
+        stats.updated++;
+      }
+    }
+
+    return stats;
+  } catch (error) {
+    console.error("[Database] Failed to clean inconsistent records:", error);
+    return stats;
+  }
+}
+
+/**
+ * Obter perfil completo de um funcionário com todas as informações
+ * Inclui: dados básicos, departamento, cargo, testes realizados, avaliações, PDI, metas, etc.
+ */
+export async function getEmployeeFullProfile(employeeId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    // 1. Dados básicos do funcionário
+    const employeeData = await db
+      .select({
+        employee: employees,
+        department: departments,
+        position: positions,
+      })
+      .from(employees)
+      .leftJoin(departments, eq(employees.departmentId, departments.id))
+      .leftJoin(positions, eq(employees.positionId, positions.id))
+      .where(eq(employees.id, employeeId))
+      .limit(1);
+
+    if (employeeData.length === 0) return null;
+
+    const profile = employeeData[0];
+
+    // 2. Testes Psicométricos realizados
+    const { psychometricTests } = await import("../drizzle/schema");
+    const tests = await db
+      .select()
+      .from(psychometricTests)
+      .where(eq(psychometricTests.employeeId, employeeId))
+      .orderBy(desc(psychometricTests.completedAt));
+
+    // 3. Avaliações 360°
+    const { evaluations } = await import("../drizzle/schema");
+    const evaluationsData = await db
+      .select()
+      .from(evaluations)
+      .where(eq(evaluations.employeeId, employeeId))
+      .orderBy(desc(evaluations.createdAt));
+
+    // 4. Metas SMART
+    const { smartGoals } = await import("../drizzle/schema");
+    const goals = await db
+      .select()
+      .from(smartGoals)
+      .where(eq(smartGoals.employeeId, employeeId))
+      .orderBy(desc(smartGoals.createdAt));
+
+    // 5. PDI (Plano de Desenvolvimento Individual)
+    const { pdiPlans } = await import("../drizzle/schema");
+    const pdiData = await db
+      .select()
+      .from(pdiPlans)
+      .where(eq(pdiPlans.employeeId, employeeId))
+      .orderBy(desc(pdiPlans.createdAt));
+
+    // 6. Feedbacks recebidos
+    const { feedbacks } = await import("../drizzle/schema");
+    const feedbacksData = await db
+      .select()
+      .from(feedbacks)
+      .where(eq(feedbacks.recipientId, employeeId))
+      .orderBy(desc(feedbacks.createdAt))
+      .limit(20);
+
+    // 7. Histórico de auditoria
+    const auditLog = await getEmployeeAuditLog(employeeId);
+
+    // 8. Competências e habilidades
+    const { employeeCompetencies } = await import("../drizzle/schema");
+    const competencies = await db
+      .select()
+      .from(employeeCompetencies)
+      .where(eq(employeeCompetencies.employeeId, employeeId));
+
+    // Montar perfil completo
+    return {
+      // Dados básicos
+      id: profile.employee.id,
+      employeeCode: profile.employee.employeeCode,
+      name: profile.employee.name,
+      email: profile.employee.email,
+      cpf: profile.employee.cpf,
+      birthDate: profile.employee.birthDate,
+      hireDate: profile.employee.hireDate,
+      status: profile.employee.status,
+      active: profile.employee.active,
+      phone: profile.employee.phone,
+      address: profile.employee.address,
+      salary: profile.employee.salary,
+
+      // Relacionamentos
+      department: profile.department,
+      position: profile.position,
+      managerId: profile.employee.managerId,
+
+      // Dados agregados
+      tests: tests || [],
+      evaluations: evaluationsData || [],
+      goals: goals || [],
+      pdi: pdiData || [],
+      feedbacks: feedbacksData || [],
+      auditLog: auditLog || [],
+      competencies: competencies || [],
+
+      // Estatísticas
+      stats: {
+        totalTests: tests?.length || 0,
+        totalEvaluations: evaluationsData?.length || 0,
+        totalGoals: goals?.length || 0,
+        completedGoals: goals?.filter((g) => g.status === "completed").length || 0,
+        totalPDI: pdiData?.length || 0,
+        totalFeedbacks: feedbacksData?.length || 0,
+      },
+    };
+  } catch (error) {
+    console.error("[Database] Failed to get employee full profile:", error);
     return null;
   }
 }

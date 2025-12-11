@@ -1,9 +1,49 @@
 # Sistema AVD UISA - TODO Completo
 
 **Data de Atualização:** 11/12/2025  
-**Status:** Bug "Usuário não encontrado" na importação de PDI CORRIGIDO ✅
+**Status:** Corrigindo erro ao salvar metas SMART
 
-## 🐛 NOVA CORREÇÃO - LÓGICA DE CRIAÇÃO DE METAS (11/12/2025)
+## ✅ CORREÇÃO CONCLUÍDA - ERRO AO SALVAR METAS SMART (11/12/2025)
+
+### Problema Reportado
+- [x] Erro ao criar meta: departmentId e cycleId estavam sendo enviados como vazios/null
+- [x] Query SQL falhando: insert into `smartGoals` com valores nulos para campos obrigatórios
+- [x] Campos problemáticos: departmentId, cycleId
+- [x] Investigado por que esses campos não estavam sendo preenchidos corretamente
+
+### Correções Implementadas
+- [x] Verificado schema do banco de dados (cycleId obrigatório, departmentId opcional)
+- [x] Corrigido formulário CriarMetaSMART para preencher cycleId automaticamente
+- [x] Adicionado useEffect para selecionar ciclo ativo por padrão
+- [x] Validado que cycleId seja obrigatório antes do envio
+- [x] Ajustada lógica de envio de dados (conversão de string vazia para undefined)
+- [x] Adicionados indicadores visuais de campos obrigatórios
+- [x] Implementada validação robusta de parseInt para evitar NaN
+
+### Melhorias Adicionais (Passos 1, 2 e 3)
+- [x] **Passo 1:** Investigada origem dos registros sem ID - identificado problema na função listEmployees
+- [x] **Passo 2:** Adicionada validação no backend (employees.list) para filtrar apenas registros com ID válido
+- [x] **Passo 3:** Implementada limpeza de dados inconsistentes:
+  - [x] Função `identifyInconsistentRecords()` para identificar problemas
+  - [x] Função `cleanInconsistentRecords()` para limpar dados (soft delete)
+  - [x] Função `getEmployeeFullProfile()` para trazer perfil completo com:
+    - [x] Dados básicos do funcionário
+    - [x] Departamento e cargo
+    - [x] Testes psicométricos realizados
+    - [x] Avaliações 360°
+    - [x] Metas SMART
+    - [x] PDI (Plano de Desenvolvimento Individual)
+    - [x] Feedbacks recebidos
+    - [x] Histórico de auditoria
+    - [x] Competências e habilidades
+    - [x] Estatísticas agregadas
+  - [x] Procedures tRPC criados:
+    - [x] `employees.identifyInconsistentRecords` (admin/RH)
+    - [x] `employees.cleanInconsistentRecords` (admin)
+    - [x] `employees.getFullProfile` (por ID)
+    - [x] `employees.getMyFullProfile` (usuário logado)
+
+## 🐛 CORREÇÃO ANTERIOR - LÓGICA DE CRIAÇÃO DE METAS (11/12/2025)
 
 ### Problema Reportado
 - [x] Campo "Colaborador" deve ser habilitado SOMENTE quando tipo = "Individual"

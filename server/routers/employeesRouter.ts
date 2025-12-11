@@ -749,4 +749,87 @@ export const employeesRouter = router({
       const history = await query;
       return history;
     }),
+
+  /**
+   * Identificar registros inconsistentes no banco de dados
+   */
+  identifyInconsistentRecords: protectedProcedure
+    .query(async ({ ctx }) => {
+      // Apenas admin e RH podem executar
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores e RH podem identificar registros inconsistentes",
+        });
+      }
+
+      const { identifyInconsistentRecords } = await import("../db");
+      return await identifyInconsistentRecords();
+    }),
+
+  /**
+   * Limpar registros inconsistentes (soft delete)
+   */
+  cleanInconsistentRecords: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      // Apenas admin pode executar
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores podem limpar registros inconsistentes",
+        });
+      }
+
+      const { cleanInconsistentRecords } = await import("../db");
+      return await cleanInconsistentRecords();
+    }),
+
+  /**
+   * Obter perfil completo de um funcionário
+   * Inclui: dados básicos, testes, avaliações, metas, PDI, feedbacks, etc.
+   */
+  getFullProfile: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const { getEmployeeFullProfile } = await import("../db");
+      const profile = await getEmployeeFullProfile(input.id);
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Funcionário não encontrado",
+        });
+      }
+
+      return profile;
+    }),
+
+  /**
+   * Obter perfil completo do funcionário logado
+   */
+  getMyFullProfile: protectedProcedure
+    .query(async ({ ctx }) => {
+      const { getEmployeeByUserId, getEmployeeFullProfile } = await import("../db");
+      
+      // Buscar employeeId do usuário logado
+      const employee = await getEmployeeByUserId(ctx.user.id);
+      
+      if (!employee) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Funcionário não encontrado para o usuário logado",
+        });
+      }
+
+      const profile = await getEmployeeFullProfile(employee.id);
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil do funcionário não encontrado",
+        });
+      }
+
+      return profile;
+    }),
 });

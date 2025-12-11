@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { formatCurrency, parseCurrency, formatCurrencyInput } from "@/lib/currency";
 import { trpc } from "@/lib/trpc";
@@ -61,6 +61,17 @@ export default function CriarMetaSMART() {
 
   // Buscar ciclos
   const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery();
+
+  // Definir ciclo padrão quando os ciclos forem carregados
+  useEffect(() => {
+    if (cycles.length > 0 && !formData.cycleId) {
+      // Selecionar o primeiro ciclo ativo ou o primeiro da lista
+      const activeCycle = cycles.find((c: any) => c.status === 'ativo') || cycles[0];
+      if (activeCycle) {
+        setFormData(prev => ({ ...prev, cycleId: activeCycle.id.toString() }));
+      }
+    }
+  }, [cycles]);
 
   // Buscar PDIs do colaborador
   const { data: pdis = [] } = trpc.pdi.list.useQuery({});
@@ -166,18 +177,32 @@ export default function CriarMetaSMART() {
       bonusEligible: formData.bonusEligible,
       bonusPercentage: formData.bonusPercentage ? parseFloat(formData.bonusPercentage) : undefined,
       bonusAmount: formData.bonusAmount ? parseFloat(formData.bonusAmount) : undefined,
-      cycleId: parseInt(formData.cycleId),
-      pdiPlanId: formData.pdiPlanId && formData.pdiPlanId !== "" ? parseInt(formData.pdiPlanId) : undefined,
+      cycleId: formData.cycleId && formData.cycleId !== "" ? parseInt(formData.cycleId) : undefined,
+      pdiPlanId: formData.pdiPlanId && formData.pdiPlanId !== "" && formData.pdiPlanId !== "none" ? parseInt(formData.pdiPlanId) : undefined,
     };
 
+    // Validar que cycleId foi convertido corretamente
+    if (!submitData.cycleId || isNaN(submitData.cycleId)) {
+      toast.error("Ciclo inválido", {
+        description: "Selecione um ciclo de avaliação válido",
+      });
+      return;
+    }
+
     // Adicionar targetEmployeeId apenas se tipo for Individual
-    if (formData.type === "individual" && formData.targetEmployeeId) {
-      submitData.targetEmployeeId = parseInt(formData.targetEmployeeId);
+    if (formData.type === "individual" && formData.targetEmployeeId && formData.targetEmployeeId !== "") {
+      const employeeId = parseInt(formData.targetEmployeeId);
+      if (!isNaN(employeeId)) {
+        submitData.targetEmployeeId = employeeId;
+      }
     }
 
     // Adicionar departmentId apenas se tipo for Equipe
-    if (formData.type === "team" && formData.departmentId) {
-      submitData.departmentId = parseInt(formData.departmentId);
+    if (formData.type === "team" && formData.departmentId && formData.departmentId !== "") {
+      const deptId = parseInt(formData.departmentId);
+      if (!isNaN(deptId)) {
+        submitData.departmentId = deptId;
+      }
     }
 
     await createMutation.mutateAsync(submitData);
@@ -331,13 +356,25 @@ export default function CriarMetaSMART() {
                   <SelectValue placeholder="Selecione o ciclo" />
                 </SelectTrigger>
                 <SelectContent>
-                  {cycles.map((cycle: any) => (
-                    <SelectItem key={cycle.id} value={cycle.id.toString()}>
-                      {cycle.name} ({new Date(cycle.startDate).getFullYear()})
+                  {cycles.length === 0 ? (
+                    <SelectItem value="none" disabled>
+                      Nenhum ciclo disponível
                     </SelectItem>
-                  ))}
+                  ) : (
+                    cycles.map((cycle: any) => (
+                      <SelectItem key={cycle.id} value={cycle.id.toString()}>
+                        {cycle.name} ({new Date(cycle.startDate).getFullYear()})
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
+              {!formData.cycleId && (
+                <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  Campo obrigatório
+                </p>
+              )}
             </div>
 
             {/* Campo Colaborador - somente para tipo Individual */}
@@ -383,13 +420,25 @@ export default function CriarMetaSMART() {
                     <SelectValue placeholder="Selecione o departamento" />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments.map((dept: any) => (
-                      <SelectItem key={dept.id} value={dept.id.toString()}>
-                        {dept.name}
+                    {departments.length === 0 ? (
+                      <SelectItem value="none" disabled>
+                        Nenhum departamento disponível
                       </SelectItem>
-                    ))}
+                    ) : (
+                      departments.map((dept: any) => (
+                        <SelectItem key={dept.id} value={dept.id.toString()}>
+                          {dept.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
+                {!formData.departmentId && (
+                  <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Campo obrigatório para metas de equipe
+                  </p>
+                )}
                 <p className="text-xs text-gray-500 mt-1">
                   Selecione o departamento responsável por esta meta de equipe
                 </p>
