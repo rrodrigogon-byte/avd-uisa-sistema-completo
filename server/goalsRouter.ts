@@ -250,22 +250,22 @@ export const goalsRouter = router({
       // Criar meta
       const [result] = await db.insert(smartGoals).values({
         employeeId: targetEmployeeId,
-        departmentId: input.departmentId || null,
+        departmentId: input.departmentId ?? null,
         cycleId: input.cycleId,
-        pdiPlanId: input.pdiPlanId,
+        pdiPlanId: input.pdiPlanId ?? null,
         title: input.title,
         description: input.description,
         type: input.type,
         goalType: input.goalType,
         category: input.category,
-        measurementUnit: input.measurementUnit,
-        targetValueCents: input.targetValueCents,
+        measurementUnit: input.measurementUnit ?? null,
+        targetValueCents: input.targetValueCents ?? null,
         weight: input.weight,
         startDate: new Date(input.startDate),
         endDate: new Date(input.endDate),
         bonusEligible: input.bonusEligible,
-        bonusPercentage: input.bonusPercentage,
-        bonusAmountCents: input.bonusAmountCents,
+        bonusPercentage: input.bonusPercentage ?? null,
+        bonusAmountCents: input.bonusAmountCents ?? null,
         isSpecific: validation.isSpecific,
         isMeasurable: validation.isMeasurable,
         isAchievable: validation.isAchievable,
@@ -1115,14 +1115,14 @@ export const goalsRouter = router({
       if (input.description !== undefined) updateData.description = input.description;
       if (input.type !== undefined) updateData.type = input.type;
       if (input.category !== undefined) updateData.category = input.category;
-      if (input.measurementUnit !== undefined) updateData.measurementUnit = input.measurementUnit;
-      if (input.targetValueCents !== undefined) updateData.targetValueCents = input.targetValueCents;
+      if (input.measurementUnit !== undefined) updateData.measurementUnit = input.measurementUnit ?? null;
+      if (input.targetValueCents !== undefined) updateData.targetValueCents = input.targetValueCents ?? null;
       if (input.weight !== undefined) updateData.weight = input.weight;
       if (input.startDate !== undefined) updateData.startDate = new Date(input.startDate);
       if (input.endDate !== undefined) updateData.endDate = new Date(input.endDate);
       if (input.bonusEligible !== undefined) updateData.bonusEligible = input.bonusEligible;
-      if (input.bonusPercentage !== undefined) updateData.bonusPercentage = input.bonusPercentage;
-      if (input.bonusAmountCents !== undefined) updateData.bonusAmountCents = input.bonusAmountCents;
+      if (input.bonusPercentage !== undefined) updateData.bonusPercentage = input.bonusPercentage ?? null;
+      if (input.bonusAmountCents !== undefined) updateData.bonusAmountCents = input.bonusAmountCents ?? null;
 
       await db
         .update(smartGoals)

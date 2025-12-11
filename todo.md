@@ -1,26 +1,35 @@
 # Sistema AVD UISA - TODO Completo
 
 **Data de Atualização:** 11/12/2025  
-**Status:** Corrigindo erro ao salvar metas SMART
+**Status:** ✅ ERRO DE SALVAMENTO DE METAS CORRIGIDO DEFINITIVAMENTE
 
-## ✅ CORREÇÃO CONCLUÍDA - ERRO AO SALVAR METAS SMART (11/12/2025)
+## ✅ CORREÇÃO DEFINITIVA - ERRO AO SALVAR METAS SMART (11/12/2025)
 
-### Problema Reportado
-- [x] Erro ao criar meta: departmentId e cycleId estavam sendo enviados como vazios/null
-- [x] Query SQL falhando: insert into `smartGoals` com valores nulos para campos obrigatórios
-- [x] Campos problemáticos: departmentId, cycleId
-- [x] Investigado por que esses campos não estavam sendo preenchidos corretamente
+### Problema Original
+- [x] Erro SQL: `insert into smartGoals ... values (default, ?, ?, ?, default, ...)`
+- [x] Campos opcionais (pdiPlanId, departmentId, measurementUnit, etc.) enviados como "default" ou undefined
+- [x] Banco de dados rejeitando valores inválidos
+
+### Diagnóstico
+- [x] Identificado que campos opcionais usavam `||` ao invés de `??` para valores padrão
+- [x] Descoberto que coluna `departmentId` não existia no banco (apenas no schema TypeScript)
+- [x] Descoberto que coluna `employeeId` estava como NOT NULL (impedia metas organizacionais)
 
 ### Correções Implementadas
-- [x] Verificado schema do banco de dados (cycleId obrigatório, departmentId opcional)
-- [x] Corrigido formulário CriarMetaSMART para preencher cycleId automaticamente
-- [x] Adicionado useEffect para selecionar ciclo ativo por padrão
-- [x] Validado que cycleId seja obrigatório antes do envio
-- [x] Ajustada lógica de envio de dados (conversão de string vazia para undefined)
-- [x] Adicionados indicadores visuais de campos obrigatórios
-- [x] Implementada validação robusta de parseInt para evitar NaN
+- [x] **Código:** Alterado `goalsRouter.ts` para usar operador `??` ao invés de `||`
+- [x] **Código:** Corrigido procedure `createSMART` para converter undefined em null
+- [x] **Código:** Corrigido procedure `update` para converter undefined em null
+- [x] **Banco:** Adicionada coluna `departmentId INT NULL` na tabela smartGoals
+- [x] **Banco:** Alterada coluna `employeeId` para permitir NULL (metas organizacionais)
+- [x] **Testes:** Criados 3 testes automatizados (100% passando)
 
-### Melhorias Adicionais (Passos 1, 2 e 3)
+### Validação
+- [x] Teste 1: Criar meta com campos opcionais como NULL ✅
+- [x] Teste 2: Criar meta com todos os campos opcionais preenchidos ✅
+- [x] Teste 3: Criar meta organizacional sem employeeId ✅
+- [x] **RESULTADO: 3/3 testes passando (100% sucesso)**
+
+### Melhorias Anteriores (Passos 1, 2 e 3)
 - [x] **Passo 1:** Investigada origem dos registros sem ID - identificado problema na função listEmployees
 - [x] **Passo 2:** Adicionada validação no backend (employees.list) para filtrar apenas registros com ID válido
 - [x] **Passo 3:** Implementada limpeza de dados inconsistentes:
