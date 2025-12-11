@@ -117,13 +117,24 @@ export function parseHTMLPDI(htmlContent: string): ParsedPDI {
     const label = $(elem).find('p.text-sm').text().trim();
     const value = $(elem).find('p.text-lg, p.text-xl').text().trim();
     
+    // Formato Fernando (Excelência Técnica, Liderança, Incentivo imediato)
     if (label.includes('Excelência Técnica') || label.includes('Técnica')) {
       result.technicalExcellence = value;
     } else if (label.includes('Liderança')) {
       result.leadership = value;
     } else if (label.includes('Incentivo')) {
       result.immediateIncentive = value;
-    } else if (label.includes('Plano') || label.includes('Performance')) {
+    } 
+    // Formato Wilson (Posição Atual, Reenquadramento, Nova Posição)
+    else if (label.includes('Posição Atual')) {
+      result.technicalExcellence = value; // Usar campo técnico para armazenar
+    } else if (label.includes('Reenquadramento')) {
+      result.immediateIncentive = value; // Usar campo incentivo para armazenar
+    } else if (label.includes('Nova Posição')) {
+      result.leadership = value; // Usar campo liderança para armazenar
+    }
+    // Duração do plano (comum a ambos)
+    if (label.includes('Plano') || label.includes('Performance')) {
       result.planDuration = value;
       const monthsMatch = value.match(/(\d+)\s*meses?/i);
       if (monthsMatch) {
@@ -151,6 +162,8 @@ export function parseHTMLPDI(htmlContent: string): ParsedPDI {
   const salaryRows = $('table tbody tr');
   salaryRows.each((i, row) => {
     const cells = $(row).find('td');
+    
+    // Formato Fernando (5 colunas: Nível, Prazo, Gatilho/Meta, Salário Projetado, Posição na Faixa)
     if (cells.length >= 5) {
       result.salaryPath!.push({
         level: $(cells[0]).text().trim(),
@@ -158,6 +171,26 @@ export function parseHTMLPDI(htmlContent: string): ParsedPDI {
         trigger: $(cells[2]).text().trim(),
         projectedSalary: $(cells[3]).text().trim(),
         positionInRange: $(cells[4]).text().trim()
+      });
+    }
+    // Formato Wilson (4 colunas: Movimento, Mecanismo, Novo Salário/Posição, Justificativa Estratégica)
+    else if (cells.length >= 4) {
+      result.salaryPath!.push({
+        level: $(cells[0]).text().trim(),
+        deadline: $(cells[1]).text().trim(), // Mecanismo
+        trigger: $(cells[3]).text().trim(), // Justificativa
+        projectedSalary: $(cells[2]).text().trim(), // Novo Salário
+        positionInRange: '' // Não disponível neste formato
+      });
+    }
+    // Formato alternativo (3 colunas)
+    else if (cells.length >= 3) {
+      result.salaryPath!.push({
+        level: $(cells[0]).text().trim(),
+        deadline: $(cells[1]).text().trim(),
+        trigger: '',
+        projectedSalary: $(cells[2]).text().trim(),
+        positionInRange: ''
       });
     }
   });

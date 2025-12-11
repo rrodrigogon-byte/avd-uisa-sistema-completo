@@ -110,13 +110,29 @@ export function parsePDIHtml(htmlContent: string): ParsedPDI {
     planDuration: ''
   };
   
-  kpiCards.forEach((card, index) => {
+  kpiCards.forEach((card) => {
+    const label = extractText(card.querySelector('p.text-sm'));
     const value = extractText(card.querySelector('p.font-bold:not(.text-gray-500)'));
-    switch(index) {
-      case 0: kpis.currentPosition = value; break;
-      case 1: kpis.reframing = value; break;
-      case 2: kpis.newPosition = value; break;
-      case 3: kpis.planDuration = value; break;
+    
+    // Formato Wilson (Posição Atual, Reenquadramento, Nova Posição)
+    if (label.includes('Posição Atual')) {
+      kpis.currentPosition = value;
+    } else if (label.includes('Reenquadramento')) {
+      kpis.reframing = value;
+    } else if (label.includes('Nova Posição')) {
+      kpis.newPosition = value;
+    }
+    // Formato Fernando (Excelência Técnica, Liderança, Incentivo)
+    else if (label.includes('Excelência Técnica') || label.includes('Técnica')) {
+      kpis.currentPosition = value;
+    } else if (label.includes('Liderança')) {
+      kpis.newPosition = value;
+    } else if (label.includes('Incentivo')) {
+      kpis.reframing = value;
+    }
+    // Duração do plano (comum a ambos)
+    if (label.includes('Plano') || label.includes('Performance')) {
+      kpis.planDuration = value;
     }
   });
   
@@ -216,13 +232,35 @@ export function parsePDIHtml(htmlContent: string): ParsedPDI {
     const rows = compensationTable.querySelectorAll('tbody tr');
     rows.forEach(row => {
       const cells = row.querySelectorAll('td');
-      if (cells.length >= 4) {
+      
+      // Formato Fernando (5 colunas: Nível, Prazo, Gatilho/Meta, Salário Projetado, Posição na Faixa)
+      if (cells.length >= 5) {
         compensationTrack.push({
           level: extractText(cells[0]),
           timeline: extractText(cells[1]),
           trigger: extractText(cells[2]),
           projectedSalary: extractText(cells[3]),
-          positionInRange: cells.length >= 5 ? extractText(cells[4]) : ''
+          positionInRange: extractText(cells[4])
+        });
+      }
+      // Formato Wilson (4 colunas: Movimento, Mecanismo, Novo Salário/Posição, Justificativa Estratégica)
+      else if (cells.length >= 4) {
+        compensationTrack.push({
+          level: extractText(cells[0]),
+          timeline: extractText(cells[1]), // Mecanismo
+          trigger: extractText(cells[3]), // Justificativa
+          projectedSalary: extractText(cells[2]), // Novo Salário
+          positionInRange: ''
+        });
+      }
+      // Formato alternativo (3 colunas)
+      else if (cells.length >= 3) {
+        compensationTrack.push({
+          level: extractText(cells[0]),
+          timeline: extractText(cells[1]),
+          trigger: '',
+          projectedSalary: extractText(cells[2]),
+          positionInRange: ''
         });
       }
     });
