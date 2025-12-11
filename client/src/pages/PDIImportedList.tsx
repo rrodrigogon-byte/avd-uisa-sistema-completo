@@ -34,16 +34,21 @@ import {
   Calendar,
   User,
   Target,
-  TrendingUp
+  TrendingUp,
+  Pencil
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import EditImportedActionDialog from '@/components/EditImportedActionDialog';
 
 export default function PDIImportedList() {
   const [, setLocation] = useLocation();
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
   const [selectedPDI, setSelectedPDI] = useState<number | null>(null);
+  const [editingActionId, setEditingActionId] = useState<number | null>(null);
+
+  const utils = trpc.useUtils();
 
   // Buscar funcionários para filtro
   const { data: employees } = trpc.employees.list.useQuery({
@@ -319,7 +324,16 @@ export default function PDIImportedList() {
                   <CardContent>
                     <div className="space-y-4">
                       {pdiDetails.actions.map((action: any, idx: number) => (
-                        <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2">
+                        <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2 relative">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-2 right-2"
+                            onClick={() => setEditingActionId(action.id)}
+                          >
+                            <Pencil className="h-4 w-4 mr-1" />
+                            Editar
+                          </Button>
                           <h4 className="font-medium">{action.description}</h4>
                           <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
                             <div>
@@ -357,6 +371,17 @@ export default function PDIImportedList() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Dialog de Edição de Ação */}
+      <EditImportedActionDialog
+        actionId={editingActionId}
+        open={!!editingActionId}
+        onOpenChange={(open) => !open && setEditingActionId(null)}
+        onSuccess={() => {
+          utils.pdi.getImportedDetails.invalidate();
+          utils.pdi.listImported.invalidate();
+        }}
+      />
     </div>
   );
 }

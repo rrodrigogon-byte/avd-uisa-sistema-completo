@@ -27,6 +27,7 @@ import { nineBoxRouter } from "./nineBoxRouter";
 import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
 import { pdiHtmlImportRouter } from "./pdiHtmlImportRouter";
 import { pdiExportRouter } from "./pdiExportRouter";
+import { pdiReportExportRouter } from "./pdiReportExport";
 import { competencyValidationRouter } from "./competencyValidationRouter";
 import { evaluation360Router } from "./evaluation360Router";
 import { reportBuilderRouter } from "./reportBuilderRouter";
@@ -1221,6 +1222,103 @@ export const appRouter = router({
         return history;
       }),
 
+    // Obter métricas de importação
+    getImportMetrics: protectedProcedure
+      .input(z.object({
+        period: z.enum(['week', 'month', 'year']).optional().default('month'),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          return {
+            totalImports: 0,
+            successRate: 0,
+            errorCount: 0,
+            totalPDIsImported: 0,
+            timeline: [],
+            errorPatterns: [],
+          };
+        }
+        
+        const { pdiImportHistory } = await import('../drizzle/schema');
+        const { gte, sql } = await import('drizzle-orm');
+        
+        // Calcular data de início baseado no período
+        const now = new Date();
+        const startDate = new Date();
+        
+        if (input.period === 'week') {
+          startDate.setDate(now.getDate() - 7);
+        } else if (input.period === 'month') {
+          startDate.setMonth(now.getMonth() - 1);
+        } else {
+          startDate.setFullYear(now.getFullYear() - 1);
+        }
+        
+        // Buscar importações no período
+        const imports = await database
+          .select()
+          .from(pdiImportHistory)
+          .where(gte(pdiImportHistory.createdAt, startDate));
+        
+        // Calcular métricas gerais
+        const totalImports = imports.length;
+        const successfulImports = imports.filter(i => i.status === 'concluido').length;
+        const errorImports = imports.filter(i => i.status === 'erro').length;
+        const totalPDIsImported = imports.reduce((sum, i) => sum + (i.successCount || 0), 0);
+        
+        const successRate = totalImports > 0 ? (successfulImports / totalImports) * 100 : 0;
+        
+        // Agrupar por data para timeline
+        const timelineMap = new Map<string, { date: string; total: number; successCount: number }>;
+        
+        imports.forEach(imp => {
+          const dateKey = new Date(imp.createdAt).toLocaleDateString('pt-BR');
+          const existing = timelineMap.get(dateKey) || { date: dateKey, total: 0, successCount: 0 };
+          existing.total++;
+          if (imp.status === 'concluido') {
+            existing.successCount++;
+          }
+          timelineMap.set(dateKey, existing);
+        });
+        
+        const timeline = Array.from(timelineMap.values()).map(item => ({
+          ...item,
+          successRate: item.total > 0 ? (item.successCount / item.total) * 100 : 0,
+        }));
+        
+        // Analisar padrões de erro
+        const errorPatternsMap = new Map<string, { field: string; message: string; count: number }>;
+        
+        imports.forEach(imp => {
+          if (imp.errors && Array.isArray(imp.errors)) {
+            imp.errors.forEach((error: any) => {
+              const key = `${error.field}-${error.message}`;
+              const existing = errorPatternsMap.get(key) || {
+                field: error.field,
+                message: error.message,
+                count: 0,
+              };
+              existing.count++;
+              errorPatternsMap.set(key, existing);
+            });
+          }
+        });
+        
+        const errorPatterns = Array.from(errorPatternsMap.values())
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 5); // Top 5 erros
+        
+        return {
+          totalImports,
+          successRate,
+          errorCount: errorImports,
+          totalPDIsImported,
+          timeline,
+          errorPatterns,
+        };
+      }),
+
     // Obter detalhes de uma importação
     getImportDetails: protectedProcedure
       .input(z.object({ id: z.number() }))
@@ -1445,6 +1543,39 @@ export const appRouter = router({
         };
       }),
 
+    // Buscar ação de PDI por ID
+    getActionById: protectedProcedure
+      .input(z.object({
+        actionId: z.number(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiActions } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        const result = await database
+          .select()
+          .from(pdiActions)
+          .where(eq(pdiActions.id, input.actionId))
+          .limit(1);
+        
+        if (result.length === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Ação não encontrada',
+          });
+        }
+        
+        return result[0];
+      }),
+
     // Editar ação de PDI importado
     updateImportedAction: protectedProcedure
       .input(z.object({
@@ -1590,6 +1721,76 @@ export const appRouter = router({
           .update(pdiActions)
           .set(updateData)
           .where(eq(pdiActions.id, input.actionId));
+        
+        // Enviar notificação por email se houver alterações
+        if (historyEntries.length > 0) {
+          try {
+            const { pdiPlans, employees } = await import('../drizzle/schema');
+            
+            // Buscar dados do PDI e funcionário
+            const pdiData = await database
+              .select({
+                pdiId: pdiPlans.id,
+                employeeId: pdiPlans.employeeId,
+                employeeName: employees.name,
+                employeeEmail: employees.email,
+              })
+              .from(pdiPlans)
+              .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+              .where(eq(pdiPlans.id, action.planId))
+              .limit(1);
+            
+            if (pdiData.length > 0 && pdiData[0].employeeEmail) {
+              const { sendEmail } = await import('./_core/email');
+              
+              // Preparar lista de campos alterados
+              const changedFields = historyEntries.map(entry => {
+                const fieldLabels: Record<string, string> = {
+                  description: 'Descrição',
+                  developmentArea: 'Área de Desenvolvimento',
+                  responsible: 'Responsável',
+                  dueDate: 'Data de Conclusão',
+                  successMetric: 'Métrica de Sucesso',
+                  status: 'Status',
+                };
+                
+                return `<li><strong>${fieldLabels[entry.fieldChanged] || entry.fieldChanged}:</strong> ${entry.oldValue} → ${entry.newValue}</li>`;
+              }).join('');
+              
+              await sendEmail({
+                to: pdiData[0].employeeEmail,
+                subject: '📝 PDI Importado - Ação Editada',
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #2563eb;">📝 PDI Importado - Ação Editada</h2>
+                    
+                    <p>Olá <strong>${pdiData[0].employeeName}</strong>,</p>
+                    
+                    <p>Uma ação do seu PDI importado foi editada:</p>
+                    
+                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                      <p><strong>Ação:</strong> ${action.description}</p>
+                      ${input.editReason ? `<p><strong>Motivo da Edição:</strong> ${input.editReason}</p>` : ''}
+                    </div>
+                    
+                    <p><strong>Campos Alterados:</strong></p>
+                    <ul style="line-height: 1.8;">
+                      ${changedFields}
+                    </ul>
+                    
+                    <p style="margin-top: 20px;">Acesse o sistema para visualizar os detalhes completos.</p>
+                    
+                    <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #6b7280; font-size: 12px;">Esta é uma notificação automática do Sistema AVD UISA.</p>
+                  </div>
+                `,
+              });
+            }
+          } catch (emailError) {
+            console.error('[PDI] Erro ao enviar email de notificação:', emailError);
+            // Não falha a operação se o email falhar
+          }
+        }
         
         return {
           success: true,
@@ -3662,6 +3863,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Exportação de PDI
   pdiExport: pdiExportRouter,
+  
+  // Router de Exportação de Relatórios de PDI
+  pdiReportExport: pdiReportExportRouter,
   
   // Router de Validação Avançada de Competências
   competencyValidation: competencyValidationRouter,

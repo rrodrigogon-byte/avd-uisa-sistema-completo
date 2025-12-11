@@ -19,12 +19,48 @@ import {
   TrendingUp,
   Target,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  Download,
+  FileSpreadsheet
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function PDIComparativeReport() {
   const [, setLocation] = useLocation();
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const exportPDFMutation = trpc.pdiReportExport.exportComparativePDF.useMutation({
+    onSuccess: (data) => {
+      // Download do PDF
+      const link = document.createElement('a');
+      link.href = `data:${data.mimeType};base64,${data.data}`;
+      link.download = data.filename;
+      link.click();
+      toast.success('Relatório PDF exportado com sucesso!');
+      setIsExporting(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao exportar PDF');
+      setIsExporting(false);
+    },
+  });
+
+  const exportExcelMutation = trpc.pdiReportExport.exportComparativeExcel.useMutation({
+    onSuccess: (data) => {
+      // Download do Excel
+      const link = document.createElement('a');
+      link.href = `data:${data.mimeType};base64,${data.data}`;
+      link.download = data.filename;
+      link.click();
+      toast.success('Relatório Excel exportado com sucesso!');
+      setIsExporting(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao exportar Excel');
+      setIsExporting(false);
+    },
+  });
 
   // Buscar ciclos para filtro
   const { data: cycles } = trpc.evaluationCycles.list.useQuery({
@@ -67,6 +103,34 @@ export default function PDIComparativeReport() {
           <p className="text-muted-foreground">
             Compare PDIs criados manualmente vs. importados de HTML
           </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIsExporting(true);
+              exportPDFMutation.mutate({
+                cycleId: selectedCycleId || undefined,
+              });
+            }}
+            disabled={!comparison || isExporting}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            {isExporting && exportPDFMutation.isPending ? 'Exportando...' : 'Exportar PDF'}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIsExporting(true);
+              exportExcelMutation.mutate({
+                cycleId: selectedCycleId || undefined,
+              });
+            }}
+            disabled={!comparison || isExporting}
+          >
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            {isExporting && exportExcelMutation.isPending ? 'Exportando...' : 'Exportar Excel'}
+          </Button>
         </div>
       </div>
 

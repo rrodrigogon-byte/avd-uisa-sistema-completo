@@ -2327,3 +2327,103 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [ ] Testar edição de PDI importado
 - [ ] Testar geração de relatório comparativo
 - [ ] Validar histórico de alterações
+
+
+## 🚨 CORREÇÕES URGENTES - PDI IMPORTADO (11/12/2025)
+
+### Problema Reportado
+- [x] Ao clicar em "Editar" no PDI importado, formulário abre vazio
+- [x] Campos obrigatórios não estão sendo validados antes de salvar
+- [x] Usuário não consegue ajustar dados existentes no sistema
+
+### Correções a Implementar
+- [x] Carregar dados existentes do PDI ao abrir formulário de edição
+- [x] Pré-preencher todos os campos com valores atuais
+- [x] Validar campos obrigatórios antes de permitir salvamento
+- [x] Implementar mensagens de erro claras para campos faltantes
+- [x] Testar fluxo completo de edição de PDI importado
+
+## 📫 NOTIFICAÇÕES AUTOMÁTICAS - PDI
+
+### Infraestrutura
+- [x] Criar tabela de notificações de PDI no schema
+- [x] Implementar procedure tRPC para envio de notificações
+- [x] Configurar templates de email para notificações
+
+### Funcionalidades
+- [x] Enviar email quando PDI importado for editado
+- [x] Enviar email quando importação de PDI falhar
+- [x] Incluir detalhes da edição no email (campos alterados)
+- [x] Incluir detalhes do erro no email de falha
+- [ ] Criar página de histórico de notificações enviadas (não solicitado)
+
+### Validação
+- [x] Testar envio de email ao editar PDI
+- [x] Testar envio de email ao falhar importação
+- [x] Validar conteúdo dos emails enviados
+- [x] Verificar que notificações são registradas no banco
+
+## 📊 EXPORTAÇÃO DE RELATÓRIOS - PDI
+
+### Relatório Comparativo
+- [x] Adicionar botão "Exportar PDF" no relatório comparativo
+- [x] Adicionar botão "Exportar Excel" no relatório comparativo
+- [x] Implementar geração de PDF com gráficos e tabelas
+- [x] Implementar geração de Excel com múltiplas abas
+
+### Conteúdo do Relatório PDF
+- [x] Incluir cabeçalho com logo e data
+- [x] Incluir gráfico de comparação de PDIs
+- [x] Incluir tabela detalhada de diferenças
+- [x] Incluir análise de gaps identificados
+- [x] Incluir recomendações de desenvolvimento
+
+### Conteúdo do Relatório Excel
+- [x] Aba 1: Resumo executivo
+- [x] Aba 2: PDIs Manuais
+- [x] Aba 3: PDIs Importados
+- [x] Aba 4: Análise comparativa
+- [x] Formatação profissional com colunas ajustadas
+
+### Validação
+- [x] Testar exportação em PDF
+- [x] Testar exportação em Excel
+- [x] Validar formatação dos documentos
+- [x] Verificar que todos os dados estão presentes
+
+## 📈 DASHBOARD DE MÉTRICAS DE IMPORTAÇÃO
+
+### Infraestrutura
+- [x] Criar tabela de logs de importação no schema (já existia: pdiImportHistory)
+- [x] Registrar todas as tentativas de importação (sucesso e falha)
+- [x] Implementar procedures tRPC para consulta de métricas
+
+### Visualizações
+- [x] Criar página de dashboard de métricas (/pdi/metrics)
+- [x] Implementar gráfico de taxa de sucesso ao longo do tempo
+- [x] Adicionar gráfico de tipos de erro mais comuns
+- [x] Criar tabela de importações recentes
+- [x] Implementar filtros por período (última semana, mês, ano)
+- [ ] Adicionar filtros por usuário importador (não solicitado)
+- [x] Criar visualização de padrões de erro
+
+### Análises
+- [x] Calcular taxa de sucesso geral
+- [x] Identificar padrões de erro mais comuns
+- [x] Exibir métricas principais em cards
+- [x] Criar timeline de taxa de sucesso
+- [x] Top 5 erros mais frequentes
+
+### Validação
+- [x] Testar registro de logs de importação
+- [x] Validar cálculos de métricas
+- [x] Testar filtros e visualizações
+- [x] Verificar performance com muitos dados
+
+## 📊 PROGRESSO DAS NOVAS FUNCIONALIDADES
+
+- Correção de edição de PDI: ✅ **100%**
+- Notificações automáticas: ✅ **100%**
+- Exportação de relatórios: ✅ **100%**
+- Dashboard de métricas: ✅ **100%**
+- **✅ META ATINGIDA: 100% em todas as áreas!**

@@ -348,6 +348,47 @@ export const pdiHtmlImportRouter = router({
         };
       } catch (error: any) {
         console.error("Erro ao importar PDI:", error);
+        
+        // Enviar email de notificação de falha
+        try {
+          const { sendEmail } = await import('./_core/email');
+          
+          // Enviar para o usuário que tentou importar
+          if (ctx.user?.email) {
+            await sendEmail({
+              to: ctx.user.email,
+              subject: '⚠️ Falha na Importação de PDI',
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: #dc2626;">⚠️ Falha na Importação de PDI</h2>
+                  
+                  <p>Olá <strong>${ctx.user.name}</strong>,</p>
+                  
+                  <p>A importação do arquivo PDI HTML falhou:</p>
+                  
+                  <div style="background-color: #fee2e2; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc2626;">
+                    <p><strong>Arquivo:</strong> ${input.htmlFilename || input.filename || 'arquivo HTML'}</p>
+                    <p><strong>Data/Hora:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                    <p><strong>Erro:</strong> ${error.message}</p>
+                  </div>
+                  
+                  <p><strong>Possíveis Soluções:</strong></p>
+                  <ul style="line-height: 1.8;">
+                    <li>Verifique se o arquivo HTML está no formato correto</li>
+                    <li>Certifique-se de que o arquivo contém todas as informações necessárias</li>
+                    <li>Tente novamente ou entre em contato com o suporte</li>
+                  </ul>
+                  
+                  <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                  <p style="color: #6b7280; font-size: 12px;">Esta é uma notificação automática do Sistema AVD UISA.</p>
+                </div>
+              `,
+            });
+          }
+        } catch (emailError) {
+          console.error('[PDI] Erro ao enviar email de falha de importação:', emailError);
+        }
+        
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `Erro ao importar PDI: ${error.message}`,
@@ -600,6 +641,47 @@ export const pdiHtmlImportRouter = router({
         };
       } catch (error: any) {
         console.error("Erro ao importar PDI:", error);
+        
+        // Enviar email de notificação de falha
+        try {
+          const { sendEmail } = await import('./_core/email');
+          
+          // Enviar para o usuário que tentou importar
+          if (ctx.user?.email) {
+            await sendEmail({
+              to: ctx.user.email,
+              subject: '⚠️ Falha na Importação de PDI',
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: #dc2626;">⚠️ Falha na Importação de PDI</h2>
+                  
+                  <p>Olá <strong>${ctx.user.name}</strong>,</p>
+                  
+                  <p>A importação do arquivo PDI HTML falhou:</p>
+                  
+                  <div style="background-color: #fee2e2; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc2626;">
+                    <p><strong>Arquivo:</strong> ${input.htmlFilename || input.filename || 'arquivo HTML'}</p>
+                    <p><strong>Data/Hora:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                    <p><strong>Erro:</strong> ${error.message}</p>
+                  </div>
+                  
+                  <p><strong>Possíveis Soluções:</strong></p>
+                  <ul style="line-height: 1.8;">
+                    <li>Verifique se o arquivo HTML está no formato correto</li>
+                    <li>Certifique-se de que o arquivo contém todas as informações necessárias</li>
+                    <li>Tente novamente ou entre em contato com o suporte</li>
+                  </ul>
+                  
+                  <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                  <p style="color: #6b7280; font-size: 12px;">Esta é uma notificação automática do Sistema AVD UISA.</p>
+                </div>
+              `,
+            });
+          }
+        } catch (emailError) {
+          console.error('[PDI] Erro ao enviar email de falha de importação:', emailError);
+        }
+        
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `Erro ao importar PDI: ${error.message}`,
