@@ -1027,14 +1027,10 @@ export const appRouter = router({
         // Converter base64 para buffer
         const buffer = Buffer.from(input.fileData, 'base64');
         
-        // Buscar ID do usuário
+        // Buscar ID do funcionário (se usuário for funcionário)
+        // Admin/RH podem importar PDI sem serem funcionários
         const employee = await db.getEmployeeByUserId(ctx.user!.id);
-        if (!employee) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Usuário não encontrado',
-          });
-        }
+        const employeeId = employee?.id || ctx.user!.id; // Usa ID do usuário se não for funcionário
         
         // Processar importação
         const result = await PDIImportParser.processImport(
@@ -1042,7 +1038,7 @@ export const appRouter = router({
           input.fileName,
           input.fileSize,
           input.fileType,
-          employee.id
+          employeeId
         );
         
         return result;

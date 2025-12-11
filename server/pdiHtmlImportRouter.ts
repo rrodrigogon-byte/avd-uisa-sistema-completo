@@ -113,6 +113,14 @@ export const pdiHtmlImportRouter = router({
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      
+      // Validar que o usuário está autenticado
+      if (!ctx.user || !ctx.user.id) {
+        throw new TRPCError({ 
+          code: "UNAUTHORIZED", 
+          message: "Usuário não encontrado. Por favor, faça login novamente." 
+        });
+      }
 
       try {
         // Ler arquivo HTML
@@ -361,6 +369,14 @@ export const pdiHtmlImportRouter = router({
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      
+      // Validar que o usuário está autenticado
+      if (!ctx.user || !ctx.user.id) {
+        throw new TRPCError({ 
+          code: "UNAUTHORIZED", 
+          message: "Usuário não encontrado. Por favor, faça login novamente." 
+        });
+      }
 
       try {
         // Fazer parse do HTML usando o novo parser

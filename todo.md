@@ -1,13 +1,25 @@
 # Sistema AVD UISA - TODO Completo
 
 **Data de Atualização:** 11/12/2025  
-**Status:** Corrigindo erro "Usuário não encontrado" na importação de PDI
+**Status:** Bug "Usuário não encontrado" na importação de PDI CORRIGIDO ✅
 
-## ✅ CORREÇÃO CONCLUÍDA - ERRO NA IMPORTAÇÃO DE PDI (11/12/2025)
+## ✅ CORREÇÃO CONCLUÍDA - ERRO "USUÁRIO NÃO ENCONTRADO" (11/12/2025)
 
-- [x] Corrigir erro "Usuário não encontrado" na importação de PDI
-- [x] Refinar tipagem do protectedProcedure para garantir ctx.user não-nulo
-- [x] Criar testes automatizados para validar a correção
+### Problema Identificado
+- [x] Erro "Usuário não encontrado" ao tentar importar PDI na página /pdi/import
+- [x] Causa: Código exigia que admin/RH fossem funcionários cadastrados para importar PDI
+- [x] Linha problemática: routers.ts linha 1031-1036 (uploadImportFile)
+
+### Correções Implementadas
+- [x] Removida validação desnecessária que bloqueava admin/RH
+- [x] Ajustada lógica para permitir importação sem vínculo de funcionário
+- [x] Adicionadas validações de segurança em pdiHtmlImportRouter.ts
+- [x] Criados 3 testes automatizados (100% passando)
+
+### Validação
+- [x] Teste 1: Admin pode importar PDI sem ser funcionário ✅
+- [x] Teste 2: Usuário autenticado não recebe erro "Usuário não encontrado" ✅
+- [x] Teste 3: Requisições sem autenticação são rejeitadas corretamente ✅
 
 ## 🚨 CORREÇÃO URGENTE - ERRO DE ENVIO DE EMAIL
 
