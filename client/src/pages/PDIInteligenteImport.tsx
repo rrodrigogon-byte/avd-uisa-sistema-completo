@@ -68,7 +68,7 @@ export default function PDIInteligenteImport() {
       toast.error("Selecione um arquivo para importar");
       return;
     }
-    if (!selectedCycle) {
+    if (selectedCycle === 0) {
       toast.error("Selecione um ciclo de avaliação");
       return;
     }
@@ -174,7 +174,7 @@ export default function PDIInteligenteImport() {
               </Button>
               <Button
                 onClick={handleImport}
-                disabled={!selectedFile || !selectedCycle || importMutation.isPending}
+                disabled={!selectedFile || selectedCycle === 0 || importMutation.isPending}
                 className="flex-1 bg-uisa-blue hover:bg-uisa-blue/90"
               >
                 <Upload className="h-4 w-4 mr-2" />

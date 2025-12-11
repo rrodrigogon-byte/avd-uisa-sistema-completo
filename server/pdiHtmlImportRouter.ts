@@ -25,10 +25,332 @@ import { sendPDIImportCompletedEmail } from "./pdiEmailService";
 
 export const pdiHtmlImportRouter = router({
   /**
-   * Importar PDI a partir de conteúdo HTML
-   * Aceita upload direto de arquivo HTML ou conteúdo HTML como string
+   * Listar arquivos HTML de PDI disponíveis para importação
+   */
+  listAvailableImports: protectedProcedure.query(async () => {
+    try {
+      // Buscar arquivos HTML na pasta do projeto
+      const projectPath = path.join(process.cwd());
+      const files = await fs.readdir(projectPath);
+      const htmlFiles = files.filter(f => f.startsWith('PDI_') && (f.endsWith('.html') || f.endsWith('.txt')));
+
+      const availableImports = [];
+
+      for (const file of htmlFiles) {
+        try {
+          const filePath = path.join(projectPath, file);
+          const content = await fs.readFile(filePath, 'utf-8');
+          const parsed = parsePDIHtml(content);
+
+          availableImports.push({
+            htmlFilename: file,
+            nome: parsed.employeeName || 'Nome não identificado',
+            cargo: parsed.position || 'Cargo não identificado',
+            gaps_count: parsed.competencyGaps?.length || 0,
+            acoes_count: (parsed.actionPlan.onTheJob?.length || 0) + (parsed.actionPlan.social?.length || 0) + (parsed.actionPlan.formal?.length || 0),
+          });
+        } catch (error) {
+          console.error(`Erro ao processar arquivo ${file}:`, error);
+        }
+      }
+
+      return availableImports;
+    } catch (error: any) {
+      console.error('Erro ao listar arquivos disponíveis:', error);
+      return [];
+    }
+  }),
+
+  /**
+   * Visualizar preview de um arquivo HTML antes de importar
+   */
+  previewImport: protectedProcedure
+    .input(
+      z.object({
+        htmlFilename: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      try {
+        const projectPath = path.join(process.cwd());
+        const filePath = path.join(projectPath, input.htmlFilename);
+        const content = await fs.readFile(filePath, 'utf-8');
+        const parsed = parsePDIHtml(content);
+
+        return {
+          nome: parsed.employeeName || 'Nome não identificado',
+          cargo: parsed.position || 'Cargo não identificado',
+          foco: parsed.developmentFocus || '',
+          sponsor: parsed.sponsor || '',
+          kpis: parsed.kpis,
+          gaps_competencias: parsed.competencyGaps || [],
+          plano_acao: {
+            '70_pratica': parsed.actionPlan.onTheJob || [],
+            '20_social': parsed.actionPlan.social || [],
+            '10_formal': parsed.actionPlan.formal || [],
+          },
+          trilha_remuneracao: parsed.compensationTrack || [],
+          responsabilidades: parsed.responsibilityPact || {},
+        };
+      } catch (error: any) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `Erro ao visualizar preview: ${error.message}`,
+        });
+      }
+    }),
+
+  /**
+   * Importar PDI a partir de nome de arquivo HTML
    */
   importFromHtml: protectedProcedure
+    .input(
+      z.object({
+        htmlFilename: z.string(),
+        cycleId: z.number(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      try {
+        // Ler arquivo HTML
+        const projectPath = path.join(process.cwd());
+        const filePath = path.join(projectPath, input.htmlFilename);
+        const htmlContent = await fs.readFile(filePath, 'utf-8');
+
+        // Fazer parse do HTML usando o novo parser
+        const pdiData = parsePDIHtml(htmlContent);
+
+        if (!pdiData.employeeName) {
+          throw new TRPCError({ 
+            code: "BAD_REQUEST", 
+            message: "Não foi possível extrair o nome do colaborador do HTML" 
+          });
+        }
+
+        // Buscar ou criar funcionário
+        let employee = await db
+          .select()
+          .from(employees)
+          .where(eq(employees.name, pdiData.employeeName))
+          .limit(1);
+
+        let employeeId: number;
+        
+        if (employee.length === 0) {
+          // Criar funcionário se não existir
+          const employeeCode = `EMP_${Date.now()}`;
+          const [newEmployee] = await db
+            .insert(employees)
+            .values({
+              employeeCode: employeeCode,
+              name: pdiData.employeeName,
+              chapa: `IMPORT_${Date.now()}`, // Chapa temporária
+              cargo: pdiData.position,
+              status: "ativo",
+            })
+            .$returningId();
+          
+          employeeId = newEmployee.id;
+        } else {
+          employeeId = employee[0].id;
+        }
+
+        // Extrair duração em meses dos KPIs
+        const durationMonths = pdiData.kpis.planDuration
+          ? parseInt(pdiData.kpis.planDuration.replace(/\D/g, "")) || 24
+          : 24;
+
+        // Criar data de início e fim
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + durationMonths);
+
+        // Criar PDI Plan
+        const [plan] = await db
+          .insert(pdiPlans)
+          .values({
+            cycleId: input.cycleId,
+            employeeId: employeeId,
+            status: "aprovado",
+            startDate: startDate,
+            endDate: endDate,
+            overallProgress: 0,
+          })
+          .$returningId();
+
+        // Criar detalhes inteligentes do PDI
+        await db.insert(pdiIntelligentDetails).values({
+          planId: plan.id,
+          importedFromHtml: true,
+          htmlOriginalPath: input.htmlFilename,
+          htmlContent: htmlContent,
+          importedAt: new Date(),
+          importedBy: ctx.user.id,
+          strategicContext: pdiData.developmentFocus || "",
+          durationMonths: durationMonths,
+          milestone12Months: "Primeiro ano de desenvolvimento concluído",
+          milestone24Months: "Plano de desenvolvimento completo",
+        });
+
+        // Criar gaps de competências (se houver)
+        const gaps = [];
+        if (pdiData.competencyGaps && pdiData.competencyGaps.length > 0) {
+          // Buscar ou criar competências
+          for (const gap of pdiData.competencyGaps) {
+            // Tentar encontrar competência existente
+            let competency = await db
+              .select()
+              .from(competencies)
+              .where(eq(competencies.name, gap.title))
+              .limit(1);
+
+            let competencyId: number;
+
+            if (competency.length === 0) {
+              // Criar competência se não existir
+              const [newComp] = await db
+                .insert(competencies)
+                .values({
+                  code: `COMP_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+                  name: gap.title,
+                  description: gap.description,
+                  category: "tecnica",
+                  isActive: true,
+                })
+                .$returningId();
+              
+              competencyId = newComp.id;
+            } else {
+              competencyId = competency[0].id;
+            }
+
+            // Criar gap de competência
+            await db.insert(pdiCompetencyGaps).values({
+              planId: plan.id,
+              competencyId: competencyId,
+              currentLevel: 2, // Nível médio
+              targetLevel: 5, // Nível alto esperado
+              gap: 3,
+              priority: "alta",
+              status: "identificado",
+            });
+            
+            gaps.push({ competencyId });
+          }
+        }
+
+        // Criar ações do PDI (modelo 70-20-10)
+        const actions: any[] = [];
+
+        // 70% - Prática
+        if (pdiData.actionPlan.onTheJob && pdiData.actionPlan.onTheJob.length > 0) {
+          for (const action of pdiData.actionPlan.onTheJob) {
+            const dueDate = new Date(endDate);
+            dueDate.setMonth(dueDate.getMonth() - 6); // 6 meses antes do fim do PDI
+            
+            actions.push({
+              planId: plan.id,
+              title: action.substring(0, 100),
+              description: action,
+              axis: "70_pratica",
+              developmentArea: pdiData.developmentFocus?.substring(0, 100) || "Desenvolvimento Profissional",
+              successMetric: "Conclusão da ação e aplicação prática",
+              responsible: pdiData.sponsor || "Líder Direto",
+              dueDate: dueDate,
+              status: "nao_iniciado",
+              priority: "alta",
+              progress: 0,
+            });
+          }
+        }
+
+        // 20% - Social
+        if (pdiData.actionPlan.social && pdiData.actionPlan.social.length > 0) {
+          for (const action of pdiData.actionPlan.social) {
+            const dueDate = new Date(endDate);
+            dueDate.setMonth(dueDate.getMonth() - 12); // 12 meses antes do fim do PDI
+            
+            actions.push({
+              planId: plan.id,
+              title: action.substring(0, 100),
+              description: action,
+              axis: "20_experiencia",
+              developmentArea: pdiData.developmentFocus?.substring(0, 100) || "Desenvolvimento Profissional",
+              successMetric: "Aplicação de aprendizados sociais",
+              responsible: pdiData.sponsor || "DHO",
+              dueDate: dueDate,
+              status: "nao_iniciado",
+              priority: "media",
+              progress: 0,
+            });
+          }
+        }
+
+        // 10% - Formal
+        if (pdiData.actionPlan.formal && pdiData.actionPlan.formal.length > 0) {
+          for (const action of pdiData.actionPlan.formal) {
+            const dueDate = new Date(endDate);
+            dueDate.setMonth(dueDate.getMonth() - 18); // 18 meses antes do fim do PDI
+            
+            actions.push({
+              planId: plan.id,
+              title: action.substring(0, 100),
+              description: action,
+              axis: "10_educacao",
+              developmentArea: pdiData.developmentFocus?.substring(0, 100) || "Desenvolvimento Profissional",
+              successMetric: "Conclusão do treinamento formal",
+              responsible: "DHO",
+              dueDate: dueDate,
+              status: "nao_iniciado",
+              priority: "baixa",
+              progress: 0,
+            });
+          }
+        }
+
+        if (actions.length > 0) {
+          await db.insert(pdiActions).values(actions);
+        }
+
+        // Enviar email de notificação
+        try {
+          await sendPDIImportCompletedEmail({
+            employeeName: pdiData.employeeName,
+            employeeEmail: employee.length > 0 ? employee[0].email : undefined,
+            pdiId: plan.id,
+            importedBy: ctx.user?.name || "Sistema",
+            importDate: new Date(),
+            totalGaps: gaps.length,
+            totalActions: actions.length,
+          });
+        } catch (emailError) {
+          console.error("Erro ao enviar email de PDI importado:", emailError);
+          // Não falhar a importação se o email falhar
+        }
+
+        return {
+          success: true,
+          planId: plan.id,
+          employeeId: employeeId,
+          employeeName: pdiData.employeeName,
+          message: `PDI importado com sucesso para ${pdiData.employeeName}`,
+        };
+      } catch (error: any) {
+        console.error("Erro ao importar PDI:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Erro ao importar PDI: ${error.message}`,
+        });
+      }
+    }),
+
+  /**
+   * Importar PDI a partir de conteúdo HTML (método alternativo)
+   */
+  importFromHtmlContent: protectedProcedure
     .input(
       z.object({
         htmlContent: z.string(),
@@ -170,12 +492,19 @@ export const pdiHtmlImportRouter = router({
         // 70% - Prática
         if (pdiData.actionPlan.onTheJob && pdiData.actionPlan.onTheJob.length > 0) {
           for (const action of pdiData.actionPlan.onTheJob) {
+            const dueDate = new Date(endDate);
+            dueDate.setMonth(dueDate.getMonth() - 6); // 6 meses antes do fim do PDI
+            
             actions.push({
               planId: plan.id,
               title: action.substring(0, 100),
               description: action,
               axis: "70_pratica",
-              status: "planejada",
+              developmentArea: pdiData.developmentFocus?.substring(0, 100) || "Desenvolvimento Profissional",
+              successMetric: "Conclusão da ação e aplicação prática",
+              responsible: pdiData.sponsor || "Líder Direto",
+              dueDate: dueDate,
+              status: "nao_iniciado",
               priority: "alta",
               progress: 0,
             });
@@ -185,12 +514,19 @@ export const pdiHtmlImportRouter = router({
         // 20% - Social
         if (pdiData.actionPlan.social && pdiData.actionPlan.social.length > 0) {
           for (const action of pdiData.actionPlan.social) {
+            const dueDate = new Date(endDate);
+            dueDate.setMonth(dueDate.getMonth() - 12); // 12 meses antes do fim do PDI
+            
             actions.push({
               planId: plan.id,
               title: action.substring(0, 100),
               description: action,
               axis: "20_experiencia",
-              status: "planejada",
+              developmentArea: pdiData.developmentFocus?.substring(0, 100) || "Desenvolvimento Profissional",
+              successMetric: "Aplicação de aprendizados sociais",
+              responsible: pdiData.sponsor || "DHO",
+              dueDate: dueDate,
+              status: "nao_iniciado",
               priority: "media",
               progress: 0,
             });
@@ -200,12 +536,19 @@ export const pdiHtmlImportRouter = router({
         // 10% - Formal
         if (pdiData.actionPlan.formal && pdiData.actionPlan.formal.length > 0) {
           for (const action of pdiData.actionPlan.formal) {
+            const dueDate = new Date(endDate);
+            dueDate.setMonth(dueDate.getMonth() - 18); // 18 meses antes do fim do PDI
+            
             actions.push({
               planId: plan.id,
               title: action.substring(0, 100),
               description: action,
               axis: "10_educacao",
-              status: "planejada",
+              developmentArea: pdiData.developmentFocus?.substring(0, 100) || "Desenvolvimento Profissional",
+              successMetric: "Conclusão do treinamento formal",
+              responsible: "DHO",
+              dueDate: dueDate,
+              status: "nao_iniciado",
               priority: "baixa",
               progress: 0,
             });

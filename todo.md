@@ -31,6 +31,25 @@
 - [x] Testar envio de email em Testes Psicométricos (interface)
 - [x] Testar envio de email em Pesquisa Pulse (interface)
 
+## ✅ BUG RESOLVIDO - IMPORTAÇÃO DE PDI HTML (11/12/2025)
+
+### Problema Original
+- [x] Ao importar arquivos PDI HTML, sistema validava com sucesso mas falhava ao confirmar importação
+- [x] Erro: "Erro ao importar arquivo" após clicar em "Confirmar Importação"
+
+### Correções Implementadas
+- [x] Adicionadas colunas faltantes no banco de dados (importedFromHtml, importedAt)
+- [x] Adicionados campos obrigatórios nas ações (developmentArea, successMetric, responsible, dueDate)
+- [x] Corrigida condição disabled do botão de importação
+- [x] Implementados procedures listAvailableImports e previewImport
+- [x] Corrigido status das ações para "nao_iniciado"
+- [x] Arquivos HTML copiados para o diretório correto
+
+### Validação
+- [x] Importação testada com sucesso (PDI_Fernando9.html)
+- [x] Dados salvos no banco sem erros
+- [x] Sistema funcional e pronto para uso
+
 ## 🔥 TAREFAS PRIORITÁRIAS
 
 ### 1. Sistema de Emails
@@ -2212,3 +2231,24 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Adicionar feedback visual de "Processando..." no botão
 - [x] Criar testes unitários para validação do serviço de importação
 - [x] Garantir que a lista de PDIs é atualizada automaticamente após importação
+
+
+## 🚨 BUG CRÍTICO - IMPORTAÇÃO DE PDI (11/12/2025)
+
+### Problema Reportado
+- [ ] Investigar erro "Erro ao importar arquivo" após validação bem-sucedida
+- [ ] Analisar arquivos PDI fornecidos (PDI_Fernando9.txt, PDI_Wilson3.txt)
+- [ ] Verificar lógica de validação vs importação
+- [ ] Identificar causa raiz do erro de importação
+
+### Correções Necessárias
+- [ ] Corrigir lógica de importação de arquivos PDI
+- [ ] Garantir consistência entre validação e importação
+- [ ] Adicionar logs detalhados para debug
+- [ ] Implementar tratamento de erros mais robusto
+
+### Validação Final
+- [ ] Testar importação com PDI_Fernando9.txt
+- [ ] Testar importação com PDI_Wilson3.txt
+- [ ] Validar que dados são salvos corretamente no banco
+- [ ] Verificar que PDI aparece na listagem após importação
