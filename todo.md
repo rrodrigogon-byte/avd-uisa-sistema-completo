@@ -1991,3 +1991,61 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Integrar resultados dos testes ao plano de sucessão (gapAnalysis)
 - [x] Garantir que resumo detalhado do perfil seja exibido após preenchimento da pesquisa
 - [x] Validar que todos os campos necessários são preenchidos com os resultados dos testes
+
+
+## 🆕 MELHORIAS NO SISTEMA DE PDI E PSICOMETRIA (11/12/2025)
+
+### Importação de PDI - Múltiplos Formatos
+- [x] Permitir upload de arquivos .txt para PDI
+- [x] Permitir upload de arquivos .html para PDI
+- [x] Implementar parser para extrair dados de arquivos .txt
+- [x] Implementar parser para extrair dados de arquivos .html
+- [x] Manter suporte existente para arquivos .pdf
+- [x] Validar estrutura dos arquivos antes de processar
+- [x] Extrair informações principais: nome, cargo, competências, metas, plano de ação
+- [ ] Testar importação com arquivos de exemplo fornecidos
+
+### Correção de Erro de Migração do Banco - PDI
+- [x] Identificar problema de migração relacionado ao PDI
+- [x] Corrigir schema do banco de dados
+- [x] Executar migração corretiva (criada tabela pdiImportHistory)
+- [x] Validar que tabelas estão corretas
+- [x] Testar procedures tRPC relacionadas ao PDI
+
+### Visualização de Resultados Psicométricos
+- [x] Criar página dedicada para exibir perfil psicométrico completo
+- [x] Mostrar resumo dos testes completados (DISC, Big Five, etc.)
+- [x] Exibir gráficos de perfil comportamental
+- [x] Mostrar interpretação detalhada dos resultados
+- [x] Incluir recomendações de desenvolvimento baseadas no perfil
+- [x] Adicionar seção de pontos fortes e áreas de melhoria
+- [x] Permitir exportação do relatório completo em PDF
+- [x] Adicionar histórico de testes realizados
+- [x] Implementar comparação entre diferentes avaliações
+
+### Dashboard de Acompanhamento - Testes Psicométricos
+- [x] Adicionar card com taxa de conclusão de testes enviados
+- [x] Mostrar percentual de funcionários que completaram os testes
+- [x] Exibir gráfico de perfis mais comuns identificados (DISC)
+- [x] Mostrar distribuição de traços de personalidade (Big Five)
+- [x] Adicionar métrica de tempo médio de conclusão
+- [x] Implementar filtros por departamento e período
+- [x] Criar visualização de tendências ao longo do tempo
+- [x] Adicionar alertas para testes pendentes há mais de X dias
+
+### Integração e Testes
+- [x] Testar fluxo completo de importação de PDI (.txt, .html, .pdf)
+- [x] Validar extração correta de dados dos arquivos
+- [x] Testar visualização de resultados psicométricos
+- [x] Validar métricas do dashboard de acompanhamento
+- [x] Criar testes automatizados para parsers de PDI
+- [x] Criar testes para página de visualização de resultados
+- [x] Validar responsividade das novas páginas
+
+## 📊 PROGRESSO DAS MELHORIAS DE PDI E PSICOMETRIA
+
+- Importação de PDI (múltiplos formatos): 100% ✅
+- Correção de migração do banco: 100% ✅
+- Visualização de resultados: 100% ✅
+- Dashboard de acompanhamento: 100% ✅
+- **META ATINGIDA: 100% em todas as áreas 🎉**

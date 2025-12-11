@@ -24,6 +24,7 @@ import SucessaoInteligente from "./pages/SucessaoInteligente";
 import ImportacaoPonto from "@/pages/ImportacaoPonto";
 import SecurityDashboard from "./pages/SecurityDashboard";
 import TestMonitoringDashboard from "./pages/TestMonitoringDashboard";
+import PsychometricResults from "./pages/PsychometricResults";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -354,6 +355,7 @@ function Router() {
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/admin" component={PsychometricTestsAdmin} />
+      <Route path="/testes-psicometricos/meus-resultados" component={PsychometricResults} />
       <Route path="/teste/:token" component={TestResponse} />
       <Route path="/descricao-cargos/importar" component={ImportadorDescricoesCargo} />
       <Route path="/descricao-cargos" component={DescricaoCargos} />

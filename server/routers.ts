@@ -1018,7 +1018,7 @@ export const appRouter = router({
       .input(z.object({
         fileName: z.string(),
         fileSize: z.number(),
-        fileType: z.enum(['xlsx', 'xls', 'csv']),
+        fileType: z.enum(['xlsx', 'xls', 'csv', 'pdf', 'html', 'txt']),
         fileData: z.string(), // Base64
       }))
       .mutation(async ({ input, ctx }) => {
@@ -1052,7 +1052,7 @@ export const appRouter = router({
     previewImport: protectedProcedure
       .input(z.object({
         fileData: z.string(), // Base64
-        fileType: z.enum(['xlsx', 'xls', 'csv']),
+        fileType: z.enum(['xlsx', 'xls', 'csv', 'pdf', 'html', 'txt']),
       }))
       .mutation(async ({ input }) => {
         const { PDIImportParser } = await import('./services/pdiImportService');
@@ -1071,6 +1071,102 @@ export const appRouter = router({
           data: data.slice(0, 10), // Retornar apenas primeiras 10 linhas para preview
           errors,
           hasErrors: errors.length > 0,
+        };
+      }),
+
+    // Importar PDI individual de HTML/TXT
+    importSinglePDI: protectedProcedure
+      .input(z.object({
+        fileName: z.string(),
+        fileSize: z.number(),
+        fileType: z.enum(['html', 'txt', 'pdf']),
+        fileContent: z.string(), // Conteúdo do arquivo
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { parsePDI } = await import('./pdi-parser');
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        // Parse do arquivo
+        const parsedData = parsePDI(input.fileContent, input.fileType);
+        
+        // Buscar funcionário pelo nome
+        const { employees } = await import('../drizzle/schema');
+        const { like } = await import('drizzle-orm');
+        const employeeResults = await database
+          .select()
+          .from(employees)
+          .where(like(employees.name, `%${parsedData.employeeName}%`))
+          .limit(1);
+        
+        if (employeeResults.length === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: `Funcionário "${parsedData.employeeName}" não encontrado no sistema`,
+          });
+        }
+        
+        const employee = employeeResults[0];
+        
+        // Buscar ciclo ativo
+        const activeCycle = await db.getActiveCycle();
+        if (!activeCycle) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Nenhum ciclo ativo encontrado',
+          });
+        }
+        
+        // Criar PDI
+        const { pdiPlans, pdiIntelligentDetails } = await import('../drizzle/schema');
+        const pdiResult = await database.insert(pdiPlans).values({
+          cycleId: activeCycle.id,
+          employeeId: employee.id,
+          status: 'rascunho',
+          startDate: new Date(),
+          endDate: new Date(Date.now() + (parsedData.durationMonths || 24) * 30 * 24 * 60 * 60 * 1000),
+          overallProgress: 0,
+        });
+        
+        const planId = pdiResult[0].insertId;
+        
+        // Salvar detalhes inteligentes
+        await database.insert(pdiIntelligentDetails).values({
+          planId,
+          importedFromHtml: true,
+          htmlOriginalPath: input.fileName,
+          htmlContent: input.fileContent,
+          importedAt: new Date(),
+          importedBy: ctx.user!.id,
+          strategicContext: parsedData.focus || '',
+          durationMonths: parsedData.durationMonths || 24,
+        });
+        
+        // Registrar histórico de importação
+        const { pdiImportHistory } = await import('../drizzle/schema');
+        await database.insert(pdiImportHistory).values({
+          fileName: input.fileName,
+          fileSize: input.fileSize,
+          fileType: input.fileType,
+          status: 'concluido',
+          totalRecords: 1,
+          successCount: 1,
+          errorCount: 0,
+          importedBy: ctx.user!.id,
+          startedAt: new Date(),
+          completedAt: new Date(),
+        });
+        
+        return {
+          success: true,
+          planId,
+          employeeName: parsedData.employeeName,
+          position: parsedData.position,
         };
       }),
 
@@ -2687,6 +2783,36 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         }
 
         return results;
+      }),
+
+    // Obter estatísticas do dashboard de testes psicométricos
+    getDashboardStats: protectedProcedure.query(async ({ ctx }) => {
+      // Verificar se é RH ou Admin
+      if (ctx.user!.role !== 'admin' && ctx.user!.role !== 'rh') {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Acesso negado. Apenas RH e Admin podem acessar estas estatísticas.',
+        });
+      }
+      
+      const { getPsychometricDashboardStats } = await import('./psychometric-dashboard');
+      return await getPsychometricDashboardStats();
+    }),
+    
+    // Obter perfis DISC mais comuns
+    getMostCommonProfiles: protectedProcedure
+      .input(z.object({ limit: z.number().optional().default(5) }))
+      .query(async ({ input, ctx }) => {
+        // Verificar se é RH ou Admin
+        if (ctx.user!.role !== 'admin' && ctx.user!.role !== 'rh') {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: 'Acesso negado. Apenas RH e Admin podem acessar estas estatísticas.',
+          });
+        }
+        
+        const { getMostCommonDISCProfiles } = await import('./psychometric-dashboard');
+        return await getMostCommonDISCProfiles(input.limit);
       }),
 
     // Gerar recomendações de PDI baseadas em testes psicométricos

@@ -2032,7 +2032,7 @@ export const pdiImportHistory = mysqlTable("pdiImportHistory", {
   // Informações do arquivo
   fileName: varchar("fileName", { length: 255 }).notNull(),
   fileSize: int("fileSize").notNull(), // Tamanho em bytes
-  fileType: mysqlEnum("fileType", ["xlsx", "xls", "csv"]).notNull(),
+  fileType: mysqlEnum("fileType", ["xlsx", "xls", "csv", "pdf", "html", "txt"]).notNull(),
   fileUrl: varchar("fileUrl", { length: 512 }), // URL do arquivo no S3
   
   // Status da importação
