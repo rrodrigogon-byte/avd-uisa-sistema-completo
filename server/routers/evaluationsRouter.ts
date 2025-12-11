@@ -20,6 +20,65 @@ import { getDb } from "../db";
  */
 export const evaluationsRouter = router({
   /**
+   * Listar todas as avaliações (admin/RH)
+   */
+  listAll: protectedProcedure
+    .query(async ({ ctx }) => {
+      // Verificar permissão
+      if (ctx.user.role !== 'admin' && ctx.user.role !== 'rh') {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Apenas administradores e RH podem visualizar todas as avaliações',
+        });
+      }
+
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+
+      const { evaluationInstances, employees, evaluationCycles } = await import('../../drizzle/schema');
+      const { desc } = await import('drizzle-orm');
+
+      const instances = await db
+        .select({
+          id: evaluationInstances.id,
+          employeeId: evaluationInstances.employeeId,
+          evaluatorId: evaluationInstances.evaluatorId,
+          cycleId: evaluationInstances.cycleId,
+          evaluationType: evaluationInstances.evaluationType,
+          status: evaluationInstances.status,
+          startedAt: evaluationInstances.startedAt,
+          completedAt: evaluationInstances.completedAt,
+          finalScore: evaluationInstances.totalScore,
+          finalRating: evaluationInstances.finalRating,
+        })
+        .from(evaluationInstances)
+        .orderBy(desc(evaluationInstances.createdAt))
+        .limit(1000);
+
+      // Buscar nomes de funcionários, avaliadores e ciclos
+      const employeeIds = [...new Set([...instances.map(i => i.employeeId), ...instances.map(i => i.evaluatorId)])];
+      const cycleIds = [...new Set(instances.map(i => i.cycleId).filter(Boolean))];
+
+      const employeesData = employeeIds.length > 0
+        ? await db.select({ id: employees.id, name: employees.name }).from(employees).where(eq(employees.id, employeeIds[0]))
+        : [];
+
+      const cyclesData = cycleIds.length > 0
+        ? await db.select({ id: evaluationCycles.id, name: evaluationCycles.name }).from(evaluationCycles).where(eq(evaluationCycles.id, cycleIds[0]))
+        : [];
+
+      const employeesMap = new Map(employeesData.map(e => [e.id, e.name]));
+      const cyclesMap = new Map(cyclesData.map(c => [c.id, c.name]));
+
+      return instances.map(instance => ({
+        ...instance,
+        employeeName: employeesMap.get(instance.employeeId) || 'N/A',
+        evaluatorName: employeesMap.get(instance.evaluatorId) || 'N/A',
+        cycleName: instance.cycleId ? cyclesMap.get(instance.cycleId) || 'N/A' : 'N/A',
+      }));
+    }),
+
+  /**
    * Listar critérios de avaliação
    */
   listCriteria: protectedProcedure

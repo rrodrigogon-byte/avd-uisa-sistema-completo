@@ -55,6 +55,7 @@ export default function CriarMetaSMART() {
     bonusAmount: "",
     cycleId: "",
     pdiPlanId: "",
+    targetEmployeeId: "",
   });
 
   // Buscar ciclos
@@ -62,6 +63,12 @@ export default function CriarMetaSMART() {
 
   // Buscar PDIs do colaborador
   const { data: pdis = [] } = trpc.pdi.list.useQuery({});
+
+  // Buscar lista de funcionários (para admin/RH/gestores)
+  const { data: employees = [] } = trpc.employees.list.useQuery({});
+
+  // Buscar dados do funcionário atual
+  const { data: currentEmployee } = trpc.employees.me.useQuery();
 
   // Validação SMART
   const [validation, setValidation] = useState<any>(null);
@@ -125,6 +132,14 @@ export default function CriarMetaSMART() {
       }
     }
 
+    // Validar colaborador selecionado
+    if (!formData.targetEmployeeId) {
+      toast.error("Colaborador obrigatório", {
+        description: "Selecione o colaborador responsável pela meta",
+      });
+      return;
+    }
+
     await createMutation.mutateAsync({
       title: formData.title,
       description: formData.description,
@@ -141,6 +156,7 @@ export default function CriarMetaSMART() {
       bonusAmount: formData.bonusAmount ? parseFloat(formData.bonusAmount) : undefined,
       cycleId: parseInt(formData.cycleId),
       pdiPlanId: formData.pdiPlanId && formData.pdiPlanId !== "" ? parseInt(formData.pdiPlanId) : undefined,
+      targetEmployeeId: parseInt(formData.targetEmployeeId),
     });
   };
 
@@ -299,6 +315,33 @@ export default function CriarMetaSMART() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="targetEmployeeId">Colaborador *</Label>
+              <Select
+                value={formData.targetEmployeeId}
+                onValueChange={(v) => setFormData({ ...formData, targetEmployeeId: v })}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Selecione o colaborador" />
+                </SelectTrigger>
+                <SelectContent>
+                  {currentEmployee && (
+                    <SelectItem value={currentEmployee.id.toString()}>
+                      {currentEmployee.name} (Você)
+                    </SelectItem>
+                  )}
+                  {employees.filter((emp: any) => emp.id !== currentEmployee?.id).map((emp: any) => (
+                    <SelectItem key={emp.id} value={emp.id.toString()}>
+                      {emp.name} - {emp.position || 'Sem cargo'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500 mt-1">
+                Selecione o colaborador que será responsável por esta meta
+              </p>
             </div>
 
             <div className="flex justify-end">

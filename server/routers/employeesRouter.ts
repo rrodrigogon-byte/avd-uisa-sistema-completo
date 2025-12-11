@@ -68,6 +68,21 @@ export const employeesRouter = router({
   }),
 
   /**
+   * Obter funcionário do usuário logado (alias para getCurrent)
+   */
+  me: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.user) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Usuário não autenticado",
+      });
+    }
+    const { getEmployeeByUserId } = await import("../db");
+    const employee = await getEmployeeByUserId(ctx.user.id);
+    return employee || null;
+  }),
+
+  /**
    * Criar funcionário
    */
   create: protectedProcedure

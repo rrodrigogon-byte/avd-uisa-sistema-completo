@@ -1,0 +1,417 @@
+import { useState } from 'react';
+import { useRoute, useLocation } from 'wouter';
+import DashboardLayout from '@/components/DashboardLayout';
+import { trpc } from '@/lib/trpc';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Briefcase,
+  Building2,
+  Target,
+  TrendingUp,
+  Award,
+  FileText,
+  Clock,
+  CheckCircle2,
+} from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
+export default function FuncionarioDetalhes() {
+  const [, params] = useRoute('/funcionarios/:id');
+  const [, setLocation] = useLocation();
+  const employeeId = params?.id ? parseInt(params.id) : null;
+
+  // Buscar dados do funcionário
+  const { data: employee, isLoading } = trpc.employees.getById.useQuery(
+    { id: employeeId! },
+    { enabled: !!employeeId }
+  );
+
+  // Buscar metas do funcionário
+  const { data: goals } = trpc.goals.list.useQuery(
+    { employeeId: employeeId! },
+    { enabled: !!employeeId }
+  );
+
+  // Buscar avaliações do funcionário
+  const { data: evaluations } = trpc.evaluations.list.useQuery(
+    { employeeId: employeeId! },
+    { enabled: !!employeeId }
+  );
+
+  // Buscar PDIs do funcionário
+  const { data: pdis } = trpc.pdi.list.useQuery(
+    { employeeId: employeeId! },
+    { enabled: !!employeeId }
+  );
+
+  if (!employeeId) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Funcionário não encontrado</p>
+          <Button onClick={() => setLocation('/funcionarios')} className="mt-4">
+            Voltar para Funcionários
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!employee) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Funcionário não encontrado</p>
+          <Button onClick={() => setLocation('/funcionarios')} className="mt-4">
+            Voltar para Funcionários
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const formatDate = (date: Date | string | null | undefined) => {
+    if (!date) return 'N/A';
+    return format(new Date(date), 'dd/MM/yyyy', { locale: ptBR });
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, any> = {
+      ativo: 'default',
+      afastado: 'secondary',
+      desligado: 'destructive',
+    };
+    return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation('/funcionarios')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar para Funcionários
+          </Button>
+          <div className="flex items-start gap-6">
+            <Avatar className="h-24 w-24">
+              <AvatarImage src={employee.employee?.avatarUrl} />
+              <AvatarFallback className="text-2xl">
+                {employee.employee?.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold">{employee.employee?.name}</h1>
+              <p className="text-muted-foreground text-lg">
+                {employee.position?.title || 'Cargo não informado'}
+              </p>
+              <div className="flex items-center gap-4 mt-2">
+                {getStatusBadge(employee.employee?.status || 'ativo')}
+                <span className="text-sm text-muted-foreground">
+                  Matrícula: {employee.employee?.employeeCode}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Informações Gerais */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <Mail className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">E-mail</p>
+                  <p className="font-medium">{employee.employee?.email || 'N/A'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <Building2 className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Departamento</p>
+                  <p className="font-medium">{employee.department?.name || 'N/A'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <Calendar className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Data de Admissão</p>
+                  <p className="font-medium">{formatDate(employee.employee?.hireDate)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <Briefcase className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Tempo de Casa</p>
+                  <p className="font-medium">
+                    {employee.employee?.hireDate
+                      ? `${Math.floor(
+                          (new Date().getTime() - new Date(employee.employee.hireDate).getTime()) /
+                            (1000 * 60 * 60 * 24 * 365)
+                        )} anos`
+                      : 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tabs com Informações Detalhadas */}
+        <Tabs defaultValue="metas" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="metas">
+              <Target className="h-4 w-4 mr-2" />
+              Metas ({goals?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger value="avaliacoes">
+              <Award className="h-4 w-4 mr-2" />
+              Avaliações ({evaluations?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger value="pdi">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              PDI ({pdis?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger value="dados">
+              <User className="h-4 w-4 mr-2" />
+              Dados Pessoais
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Tab Metas */}
+          <TabsContent value="metas" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Metas do Funcionário</CardTitle>
+                <CardDescription>
+                  Acompanhe o progresso das metas individuais
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!goals || goals.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    Nenhuma meta cadastrada
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Título</TableHead>
+                        <TableHead>Categoria</TableHead>
+                        <TableHead>Progresso</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Prazo</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {goals.map((goal: any) => (
+                        <TableRow key={goal.id}>
+                          <TableCell className="font-medium">{goal.title}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{goal.category}</Badge>
+                          </TableCell>
+                          <TableCell>{goal.progress || 0}%</TableCell>
+                          <TableCell>
+                            <Badge>{goal.status}</Badge>
+                          </TableCell>
+                          <TableCell>{formatDate(goal.endDate)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab Avaliações */}
+          <TabsContent value="avaliacoes" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Histórico de Avaliações</CardTitle>
+                <CardDescription>
+                  Avaliações de desempenho realizadas
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!evaluations || evaluations.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    Nenhuma avaliação encontrada
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Ciclo</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Nota Final</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Data</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {evaluations.map((evaluation: any) => (
+                        <TableRow key={evaluation.id}>
+                          <TableCell>{evaluation.cycleName || 'N/A'}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{evaluation.type}</Badge>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {evaluation.finalScore || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            <Badge>{evaluation.status}</Badge>
+                          </TableCell>
+                          <TableCell>{formatDate(evaluation.evaluationDate)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab PDI */}
+          <TabsContent value="pdi" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Planos de Desenvolvimento Individual</CardTitle>
+                <CardDescription>
+                  Acompanhe o desenvolvimento profissional
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!pdis || pdis.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    Nenhum PDI cadastrado
+                  </p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Título</TableHead>
+                        <TableHead>Progresso</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Período</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pdis.map((pdi: any) => (
+                        <TableRow key={pdi.id}>
+                          <TableCell className="font-medium">{pdi.title}</TableCell>
+                          <TableCell>{pdi.progress || 0}%</TableCell>
+                          <TableCell>
+                            <Badge>{pdi.status}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            {formatDate(pdi.startDate)} - {formatDate(pdi.endDate)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab Dados Pessoais */}
+          <TabsContent value="dados" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Informações Pessoais</CardTitle>
+                <CardDescription>
+                  Dados cadastrais do funcionário
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Nome Completo</p>
+                    <p className="font-medium">{employee.employee?.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">CPF</p>
+                    <p className="font-medium">{employee.employee?.cpf || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Data de Nascimento</p>
+                    <p className="font-medium">{formatDate(employee.employee?.birthDate)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Telefone</p>
+                    <p className="font-medium">{employee.employee?.phone || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Endereço</p>
+                    <p className="font-medium">{employee.employee?.address || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Salário</p>
+                    <p className="font-medium">
+                      {employee.employee?.salary
+                        ? `R$ ${employee.employee.salary.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2,
+                          })}`
+                        : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </DashboardLayout>
+  );
+}

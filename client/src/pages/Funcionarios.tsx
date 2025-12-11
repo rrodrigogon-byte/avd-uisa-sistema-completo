@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Plus, Search, Pencil, Trash2, Download, Upload, Users } from "lucide-react";
+import { Loader2, Plus, Search, Pencil, Trash2, Download, Upload, Users, Eye } from "lucide-react";
+import { useLocation } from "wouter";
 
 /**
  * Página de Gestão de Funcionários
@@ -18,6 +19,7 @@ import { Loader2, Plus, Search, Pencil, Trash2, Download, Upload, Users } from "
  */
 
 export default function Funcionarios() {
+  const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -237,7 +239,16 @@ export default function Funcionarios() {
                           <Button
                             variant="ghost"
                             size="sm"
+                            onClick={() => setLocation(`/funcionarios/${emp.employee.id}`)}
+                            title="Ver Perfil"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleEdit(emp)}
+                            title="Editar"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -245,6 +256,7 @@ export default function Funcionarios() {
                             variant="ghost"
                             size="sm"
                             className="text-destructive hover:text-destructive"
+                            title="Excluir"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

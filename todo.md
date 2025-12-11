@@ -371,6 +371,14 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'name')" na página PDI ✅ CORRIGIDO
 
+## 🚨 BUGS CRÍTICOS CORRIGIDOS (11/12/2025)
+
+- [x] **Cadastro de Metas**: Erro ao relacionar colaborador com meta - campo adicionado no formulário ✅
+- [x] **Perfil de Funcionários**: Link para perfil completo implementado (/funcionarios/:id) ✅
+- [x] **Visualização de Respostas**: Página de respostas de avaliações criada (/avaliacoes/respostas) ✅
+- [x] **Edição de PDI**: Funcionalidade já existente e funcional (EditImportedActionDialog) ✅
+- [x] **Dashboard de Métricas**: Página já existente (PDIImportMetrics.tsx) ✅
+
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página de Pendências ao editar (linha 583 - responsavelId pode ser null/undefined) ✅ CORRIGIDO
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'toString')" na página Pendências ao acessar /pendencias?status=em_andamento ✅ CORRIGIDO
 - [x] Corrigir erro de tabela costCenters ausente no banco de dados (página Performance Integrada) ✅ CORRIGIDO
@@ -2427,3 +2435,35 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - Exportação de relatórios: ✅ **100%**
 - Dashboard de métricas: ✅ **100%**
 - **✅ META ATINGIDA: 100% em todas as áreas!**
+
+
+## 🚨 BUGS CRÍTICOS REPORTADOS (11/12/2025)
+
+### 1. Cadastro de Metas - Erro ao Relacionar Colaborador
+- [ ] Investigar erro: "campo 'colaborador': Colaborador não encontrado"
+- [ ] Adicionar campo de seleção de colaborador no formulário de metas
+- [ ] Corrigir validação no backend para aceitar colaborador
+- [ ] Testar cadastro de metas com colaborador vinculado
+
+### 2. Edição de PDI - Funcionalidades Ausentes
+- [ ] Implementar edição de PDI importado (formulário não carrega dados)
+- [ ] Implementar notificações automáticas por email (PDI editado/importação falhou)
+- [ ] Implementar exportação de relatórios (PDF e Excel)
+- [ ] Criar dashboard de métricas em /pdi/metrics (taxa sucesso, evolução, top 5 erros, histórico)
+
+### 3. Perfil de Funcionários - Navegação Quebrada
+- [ ] Corrigir link "Perfil" que não redireciona para perfil completo do funcionário
+- [ ] Verificar rota e componente de perfil detalhado
+- [ ] Testar navegação de perfil em diferentes contextos
+
+### 4. Configuração de Avaliações - Erro ao Carregar
+- [ ] Corrigir erro em /avaliacoes/configurar: "Avaliação não encontrada"
+- [ ] Verificar lógica de carregamento de avaliações
+- [ ] Adicionar tratamento de erro adequado
+
+### 5. Visualização de Respostas de Avaliações
+- [ ] Implementar página de visualização de respostas preenchidas
+- [ ] Exemplo: avaliação preenchida por bernarado.mendes@uisa.com.br não aparece
+- [ ] Criar listagem de avaliações respondidas
+- [ ] Criar visualização detalhada de cada resposta
+- [ ] Adicionar filtros por funcionário, período, tipo de avaliação

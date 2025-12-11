@@ -37,6 +37,7 @@ import DashboardGestor from "./pages/DashboardGestor";
 import ConfiguracoesSMTP from "./pages/ConfiguracoesSMTP";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
+import AvaliacoesRespostas from "./pages/AvaliacoesRespostas";
 import ViewEvaluation from "./pages/ViewEvaluation";
 import ManageEvaluations from "./pages/ManageEvaluations";
 import PDI from "./pages/PDI";
@@ -52,6 +53,7 @@ import Configuracoes from "./pages/Configuracoes";
 import Perfil from "./pages/Perfil";
 import History from "./pages/History";
 import Funcionarios from "./pages/Funcionarios";
+import FuncionarioDetalhes from "./pages/FuncionarioDetalhes";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
 import FuncionariosGerenciar from "./pages/FuncionariosGerenciar";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
@@ -269,6 +271,7 @@ function Router() {
       {/* <Route path="/compliance/bonus" component={BonusCompliance} /> */}
       {/* <Route path="/folha-pagamento/exportar" component={ExportarFolha} /> */}
        <Route path="/avaliacoes" component={Avaliacoes} />
+      <Route path="/avaliacoes/respostas" component={AvaliacoesRespostas} />
       <Route path="/processos-avaliativos" component={ProcessosAvaliativos} />
       <Route path="/construtor-formularios" component={ConstrutorFormularios} />
       <Route path="/dashboards-analiticos" component={DashboardsAnaliticos} />
@@ -311,6 +314,7 @@ function Router() {
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
       <Route path="/funcionarios" component={Funcionarios} />
+      <Route path="/funcionarios/:id" component={FuncionarioDetalhes} />
       <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
       <Route path="/funcionarios/:id" component={PerfilFuncionario} />
       <Route path="/funcionarios-ativos" component={FuncionariosAtivos} />
