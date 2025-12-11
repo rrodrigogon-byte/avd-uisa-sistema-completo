@@ -15,7 +15,7 @@ import {
   getAllHierarchy,
   getHierarchyStats,
 } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria, pdiIntelligentDetails, successionCandidates } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, testResults, testInvitations, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria, pdiIntelligentDetails, successionCandidates } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -2709,7 +2709,8 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           testValues.discInfluence = Math.round((profile.I || 0) * 20);
           testValues.discSteadiness = Math.round((profile.S || 0) * 20);
           testValues.discCompliance = Math.round((profile.C || 0) * 20);
-          const maxDimension = Object.entries(profile).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+          const entries = Object.entries(profile);
+          const maxDimension = entries.length > 0 ? entries.reduce((a, b) => a[1] > b[1] ? a : b)[0] : 'D';
           testValues.discProfile = maxDimension;
         } else if (input.testType === "bigfive") {
           testValues.bigFiveOpenness = Math.round((profile.O || 0) * 20);
@@ -2719,8 +2720,83 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           testValues.bigFiveNeuroticism = Math.round((profile.N || 0) * 20);
         }
 
-        // Salvar teste no banco
+        // Salvar teste no banco (tabela legada)
         await database.insert(psychometricTests).values(testValues);
+
+        // ========================================
+        // SALVAR NA TABELA testResults (NOVA TABELA)
+        // ========================================
+        // Criar ou buscar convite para este teste
+        let invitationId: number | null = null;
+        
+        // Tentar encontrar um convite pendente para este funcionário e tipo de teste
+        const existingInvitation = await database.select()
+          .from(testInvitations)
+          .where(
+            and(
+              eq(testInvitations.employeeId, employee[0].id),
+              eq(testInvitations.testType, input.testType),
+              or(
+                eq(testInvitations.status, 'pendente'),
+                eq(testInvitations.status, 'em_andamento')
+              )
+            )
+          )
+          .limit(1);
+        
+        if (existingInvitation.length > 0) {
+          invitationId = existingInvitation[0].id;
+          // Atualizar status do convite para concluído
+          await database.update(testInvitations)
+            .set({ 
+              status: 'concluido',
+              completedAt: new Date(),
+            })
+            .where(eq(testInvitations.id, invitationId));
+        } else {
+          // Criar um convite retroativo se não existir
+          const [insertResult] = await database.insert(testInvitations).values({
+            employeeId: employee[0].id,
+            testType: input.testType,
+            uniqueToken: crypto.randomBytes(32).toString('hex'),
+            status: 'concluido',
+            sentAt: new Date(),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 dias
+            completedAt: new Date(),
+            emailSent: true,
+            emailSentAt: new Date(),
+            createdBy: 1, // Sistema
+          });
+          invitationId = insertResult.insertId;
+        }
+
+        // Preparar dados do resultado completo
+        const resultData: any = {
+          invitationId: invitationId!,
+          employeeId: employee[0].id,
+          testType: input.testType,
+          scores: JSON.stringify(profile),
+          completedAt: new Date(),
+        };
+
+        // Adicionar campos específicos baseado no tipo de teste
+        if (input.testType === 'disc') {
+          resultData.profileType = profile.profile || 'N/A';
+          resultData.profileDescription = `Perfil DISC: D=${Math.round((profile.D || 0) * 20)}, I=${Math.round((profile.I || 0) * 20)}, S=${Math.round((profile.S || 0) * 20)}, C=${Math.round((profile.C || 0) * 20)}`;
+        } else if (input.testType === 'bigfive') {
+          resultData.profileType = 'Big Five';
+          resultData.profileDescription = `Abertura=${Math.round((profile.O || 0) * 20)}, Conscienciosidade=${Math.round((profile.C || 0) * 20)}, Extroversão=${Math.round((profile.E || 0) * 20)}, Amabilidade=${Math.round((profile.A || 0) * 20)}, Neuroticismo=${Math.round((profile.N || 0) * 20)}`;
+        } else if (input.testType === 'mbti') {
+          resultData.profileType = profile.profile || 'N/A';
+          resultData.profileDescription = `Tipo de Personalidade MBTI: ${profile.profile || 'N/A'}`;
+        } else if (input.testType === 'ie') {
+          resultData.profileType = 'Inteligência Emocional';
+          resultData.profileDescription = `Pontuação IE: ${profile.score || 0}/100`;
+        }
+
+        // Salvar resultado na tabela testResults
+        await database.insert(testResults).values(resultData);
+        console.log(`[Psychometric] Resultado salvo com sucesso na tabela testResults (invitationId: ${invitationId})`);
 
         // ========================================
         // INTEGRAÇÃO AUTOMÁTICA COM PDI E SUCESSÃO
@@ -2994,8 +3070,83 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           testValues.bigFiveNeuroticism = Math.round((profile.N || 0) * 20);
         }
 
-        // Salvar teste no banco
+        // Salvar teste no banco (tabela legada)
         await database.insert(psychometricTests).values(testValues);
+
+        // ========================================
+        // SALVAR NA TABELA testResults (NOVA TABELA)
+        // ========================================
+        // Criar ou buscar convite para este teste
+        let invitationId: number | null = null;
+        
+        // Tentar encontrar um convite pendente para este funcionário e tipo de teste
+        const existingInvitation = await database.select()
+          .from(testInvitations)
+          .where(
+            and(
+              eq(testInvitations.employeeId, employee[0].id),
+              eq(testInvitations.testType, input.testType),
+              or(
+                eq(testInvitations.status, 'pendente'),
+                eq(testInvitations.status, 'em_andamento')
+              )
+            )
+          )
+          .limit(1);
+        
+        if (existingInvitation.length > 0) {
+          invitationId = existingInvitation[0].id;
+          // Atualizar status do convite para concluído
+          await database.update(testInvitations)
+            .set({ 
+              status: 'concluido',
+              completedAt: new Date(),
+            })
+            .where(eq(testInvitations.id, invitationId));
+        } else {
+          // Criar um convite retroativo se não existir
+          const [insertResult] = await database.insert(testInvitations).values({
+            employeeId: employee[0].id,
+            testType: input.testType,
+            uniqueToken: crypto.randomBytes(32).toString('hex'),
+            status: 'concluido',
+            sentAt: new Date(),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 dias
+            completedAt: new Date(),
+            emailSent: true,
+            emailSentAt: new Date(),
+            createdBy: 1, // Sistema
+          });
+          invitationId = insertResult.insertId;
+        }
+
+        // Preparar dados do resultado completo
+        const resultData: any = {
+          invitationId: invitationId!,
+          employeeId: employee[0].id,
+          testType: input.testType,
+          scores: JSON.stringify(profile),
+          completedAt: new Date(),
+        };
+
+        // Adicionar campos específicos baseado no tipo de teste
+        if (input.testType === 'disc') {
+          resultData.profileType = profile.profile || 'N/A';
+          resultData.profileDescription = `Perfil DISC: D=${Math.round((profile.D || 0) * 20)}, I=${Math.round((profile.I || 0) * 20)}, S=${Math.round((profile.S || 0) * 20)}, C=${Math.round((profile.C || 0) * 20)}`;
+        } else if (input.testType === 'bigfive') {
+          resultData.profileType = 'Big Five';
+          resultData.profileDescription = `Abertura=${Math.round((profile.O || 0) * 20)}, Conscienciosidade=${Math.round((profile.C || 0) * 20)}, Extroversão=${Math.round((profile.E || 0) * 20)}, Amabilidade=${Math.round((profile.A || 0) * 20)}, Neuroticismo=${Math.round((profile.N || 0) * 20)}`;
+        } else if (input.testType === 'mbti') {
+          resultData.profileType = profile.profile || 'N/A';
+          resultData.profileDescription = `Tipo de Personalidade MBTI: ${profile.profile || 'N/A'}`;
+        } else if (input.testType === 'ie') {
+          resultData.profileType = 'Inteligência Emocional';
+          resultData.profileDescription = `Pontuação IE: ${profile.score || 0}/100`;
+        }
+
+        // Salvar resultado na tabela testResults
+        await database.insert(testResults).values(resultData);
+        console.log(`[Psychometric] Resultado salvo com sucesso na tabela testResults (invitationId: ${invitationId})`);
 
         // ========================================
         // INTEGRAÇÃO AUTOMÁTICA COM PDI E SUCESSÃO

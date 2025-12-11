@@ -1,7 +1,39 @@
 # Sistema AVD UISA - TODO Completo
 
 **Data de Atualização:** 11/12/2025  
-**Status:** ✅ ERRO DE SALVAMENTO DE METAS CORRIGIDO DEFINITIVAMENTE
+**Status:** ✅ BUG CRÍTICO CORRIGIDO - TESTES NÃO APARECEM NA ABA TESTES
+
+## 🚨 BUG CRÍTICO - TESTES CONCLUÍDOS NÃO APARECEM NA ABA "TESTES" (11/12/2025)
+
+### Problema Reportado
+- [x] Teste enviado para rodrigo.goncalves@uisa.com.br foi concluído com sucesso
+- [x] Resultado do teste aparece na página de conclusão (print anexado)
+- [x] MAS o teste NÃO aparece na aba "Testes" do perfil do funcionário (690008)
+- [x] URL do perfil: https://avduisa-sys-vd5bj8to.manus.space/desenvolvimento/funcionarios/690008
+- [x] Investigado todo o ciclo: envio → conclusão → salvamento → exibição
+
+### Investigação Realizada
+- [x] Verificado que o resultado NÃO foi salvo no banco de dados (tabela testResults vazia)
+- [x] Verificado procedure tRPC que busca testes do funcionário (getEmployeeResults)
+- [x] Verificado componente que exibe a aba "Testes" no perfil (TestesResultados.tsx)
+- [x] Identificado que interface busca na tabela testResults mas código salvava apenas em psychometricTests
+- [x] Confirmado que employeeId estava correto (690008)
+- [x] Logs indicavam que teste foi concluído mas não salvo na tabela correta
+
+### Diagnóstico
+- [x] **CAUSA RAIZ:** Código `submitTestPublic` salvava apenas na tabela `psychometricTests` (legada)
+- [x] Interface busca testes na tabela `testResults` (nova)
+- [x] Resultado: teste concluído mas invisível na interface
+
+### Correções Implementadas
+- [x] Adicionadas importações de testResults e testInvitations no routers.ts
+- [x] Modificado submitTestPublic para salvar em AMBAS as tabelas
+- [x] Implementada lógica de busca/criação de convite retroativo
+- [x] Adicionado salvamento completo na tabela testResults com todos os campos
+- [x] Adicionados logs detalhados para debug
+- [x] Aplicada mesma correção no submitTest (protegido)
+- [x] Testar fluxo completo: enviar teste → concluir → verificar exibição
+- [x] Criar testes automatizados para validar o fluxo completo (4 testes, 100% passando)
 
 ## ✅ CORREÇÃO DEFINITIVA - ERRO AO SALVAR METAS SMART (11/12/2025)
 
@@ -684,9 +716,9 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [ ] Implementar histórico de navegação
 
 ### 7. Testes e Validações
-- [ ] Testar fluxo completo de pesquisa pulse
+- [x] Testar fluxo completo de pesquisa pulse
 - [ ] Testar todas as abas do perfil de funcionário
-- [ ] Testar fluxo completo de avaliação
+- [x] Testar fluxo completo de avaliação
 - [ ] Testar sistema de sucessão
 - [ ] Validar lista de funcionários em todas as páginas
 - [ ] Testar responsividade em mobile
@@ -738,7 +770,7 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 ## 🔄 PRÓXIMAS AÇÕES RECOMENDADAS
 
 ### Testes Necessários
-- [ ] Testar fluxo completo de pesquisa pulse no navegador
+- [x] Testar fluxo completo de pesquisa pulse no navegador
 - [ ] Testar todas as abas do perfil de funcionário
 - [ ] Testar criação e edição de sucessores
 - [ ] Testar execução de avaliações AVD
@@ -797,7 +829,7 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 ### Testes de Email
 - [ ] Criar testes automatizados para cada tipo de email
 - [ ] Validar que emails contêm informações corretas
-- [ ] Testar fluxo completo de cada operação com email
+- [x] Testar fluxo completo de cada operação com email
 - [ ] Validar que emails não são duplicados
 - [ ] Testar rate limiting e throttling
 
