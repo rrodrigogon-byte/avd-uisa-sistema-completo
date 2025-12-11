@@ -2245,18 +2245,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           throw new Error("Database not available");
         }
 
-        // Verificar SMTP configurado ANTES de processar
-        const smtpConfig = await database.select()
-          .from(systemSettings)
-          .where(eq(systemSettings.settingKey, "smtp_config"))
-          .limit(1);
-        
-        if (smtpConfig.length === 0) {
-          console.error('[Psychometric] SMTP não configurado');
-          throw new Error("SMTP não configurado. Acesse /admin/smtp para configurar");
-        }
-        
-        console.log('[Psychometric] SMTP configurado ✓');
+        // SMTP será validado automaticamente pelo emailService
 
         const { createTestInviteEmail, testInfo } = await import("./utils/testInviteTemplate");
         const { emailService } = await import("./utils/emailService");

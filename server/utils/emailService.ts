@@ -8,19 +8,40 @@ let cachedSmtpConfig: any = null;
 let lastFetch = 0;
 const CACHE_TTL = 60000; // 1 minuto
 
-// Buscar configuração SMTP do banco de dados
+// Buscar configuração SMTP com prioridade para variáveis de ambiente
 async function getSmtpConfig() {
   const now = Date.now();
   
-  // Retornar do cache se ainda válido
+  // 1. PRIORIDADE: Verificar variáveis de ambiente primeiro
+  const envConfig = {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+    fromEmail: process.env.SMTP_FROM || process.env.SMTP_USER,
+    fromName: process.env.SMTP_FROM_NAME || "Sistema AVD UISA",
+    secure: process.env.SMTP_PORT === '465',
+  };
+
+  // Se todas as variáveis de ambiente estão configuradas, usar elas
+  if (envConfig.host && envConfig.port && envConfig.user && envConfig.pass) {
+    console.log("[EmailService] ✓ Usando configuração SMTP das variáveis de ambiente:", envConfig.host);
+    return envConfig;
+  }
+
+  console.log("[EmailService] Variáveis de ambiente SMTP não encontradas, tentando banco de dados...");
+  
+  // 2. FALLBACK: Retornar do cache se ainda válido
   if (cachedSmtpConfig && (now - lastFetch) < CACHE_TTL) {
+    console.log("[EmailService] ✓ Usando configuração SMTP do cache");
     return cachedSmtpConfig;
   }
 
+  // 3. FALLBACK: Buscar do banco de dados
   try {
     const db = await getDb();
     if (!db) {
-      console.warn("[EmailService] Database not available");
+      console.warn("[EmailService] ⚠️ Database not available");
       return null;
     }
 
@@ -31,31 +52,37 @@ async function getSmtpConfig() {
       .limit(1);
 
     if (result.length === 0) {
-      console.warn("[EmailService] SMTP não configurado no banco de dados");
+      console.warn("[EmailService] ⚠️ SMTP não configurado no banco de dados");
       return null;
     }
 
     cachedSmtpConfig = JSON.parse(result[0].settingValue || '{}');
     lastFetch = now;
-    console.log("[EmailService] SMTP config carregado do banco:", cachedSmtpConfig.host);
+    console.log("[EmailService] ✓ SMTP config carregado do banco:", cachedSmtpConfig.host);
     return cachedSmtpConfig;
   } catch (error) {
-    console.error("[EmailService] Erro ao buscar SMTP config:", error);
+    console.error("[EmailService] ❌ Erro ao buscar SMTP config:", error);
     return null;
   }
 }
 
-// Criar transporter baseado na configuração do banco
+// Criar transporter baseado na configuração
 async function createTransporter() {
   const config = await getSmtpConfig();
   
   if (!config || !config.host || !config.port || !config.user || !config.pass) {
-    console.warn("[EmailService] SMTP não configurado completamente");
+    console.error("[EmailService] ❌ SMTP não configurado completamente");
+    console.error("[EmailService] Config atual:", JSON.stringify({
+      host: config?.host || 'MISSING',
+      port: config?.port || 'MISSING',
+      user: config?.user || 'MISSING',
+      pass: config?.pass ? '***CONFIGURED***' : 'MISSING',
+    }));
     return null;
   }
 
   try {
-    return nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: config.host,
       port: parseInt(config.port),
       secure: config.secure || parseInt(config.port) === 465,
@@ -67,20 +94,59 @@ async function createTransporter() {
         rejectUnauthorized: false,
       },
     });
+
+    // Verificar conexão SMTP
+    try {
+      await transporter.verify();
+      console.log("[EmailService] ✓ Conexão SMTP verificada com sucesso");
+    } catch (verifyError) {
+      console.error("[EmailService] ⚠️ Falha na verificação SMTP:", verifyError);
+      // Não retornar null aqui, pois alguns servidores SMTP não suportam verify()
+    }
+
+    return transporter;
   } catch (error) {
-    console.error("[EmailService] Erro ao criar transporter:", error);
+    console.error("[EmailService] ❌ Erro ao criar transporter:", error);
     return null;
   }
 }
 
-// Função base de envio de email
+// Função de retry com backoff exponencial
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  let lastError: any;
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      
+      if (attempt < maxRetries - 1) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.log(`[EmailService] Tentativa ${attempt + 1}/${maxRetries} falhou. Aguardando ${delay}ms antes de tentar novamente...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  throw lastError;
+}
+
+// Função base de envio de email com retry
 async function sendCustomEmail(to: string, subject: string, html: string): Promise<boolean> {
+  console.log(`[EmailService] 📧 Iniciando envio de email para ${to}`);
+  console.log(`[EmailService] Assunto: ${subject}`);
+  
   const transporter = await createTransporter();
   
   if (!transporter) {
-    const errorMsg = "[EmailService] SMTP não configurado. Configure em /admin/smtp";
+    const errorMsg = "[EmailService] ❌ SMTP não configurado. Configure as variáveis de ambiente SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS";
     console.error(errorMsg);
-    return false; // Retorna false ao invés de lançar exceção
+    return false;
   }
 
   try {
@@ -88,17 +154,27 @@ async function sendCustomEmail(to: string, subject: string, html: string): Promi
     const smtpFrom = config?.fromEmail || config?.user || "noreply@avduisa.com";
     const fromName = config?.fromName || "Sistema AVD UISA";
 
-    await transporter.sendMail({
-      from: `"${fromName}" <${smtpFrom}>`,
-      to,
-      subject,
-      html,
-    });
+    console.log(`[EmailService] Remetente: "${fromName}" <${smtpFrom}>`);
 
-    console.log(`[EmailService] Email enviado para ${to}`);
+    // Enviar com retry
+    await retryWithBackoff(async () => {
+      await transporter.sendMail({
+        from: `"${fromName}" <${smtpFrom}>`,
+        to,
+        subject,
+        html,
+      });
+    }, 3, 1000);
+
+    console.log(`[EmailService] ✅ Email enviado com sucesso para ${to}`);
     return true;
-  } catch (error) {
-    console.error(`[EmailService] Erro ao enviar email para ${to}:`, error);
+  } catch (error: any) {
+    console.error(`[EmailService] ❌ Erro ao enviar email para ${to}:`, error);
+    console.error(`[EmailService] Detalhes do erro:`, {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+    });
     return false;
   }
 }
@@ -225,6 +301,6 @@ export async function sendTestEmail(recipientEmail: string): Promise<{ success: 
     success,
     message: success 
       ? `Email de teste enviado com sucesso para ${recipientEmail}` 
-      : 'Falha ao enviar email de teste. Verifique as configurações SMTP.'
+      : 'Falha ao enviar email de teste. Verifique as configurações SMTP e os logs do servidor.'
   };
 }

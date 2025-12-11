@@ -196,7 +196,7 @@ export const pulseRouter = router({
 
       // Enviar emails para participantes
       try {
-        const { sendEmail } = await import("../emailService");
+        const { emailService } = await import("../utils/emailService");
         
         // Buscar participantes baseado nos filtros da pesquisa
         let targetEmployees: any[] = [];
@@ -231,10 +231,10 @@ export const pulseRouter = router({
           const surveyUrl = `${process.env.VITE_APP_URL || "http://localhost:3000"}/pesquisas/pulse/responder/${survey.id}`;
 
           try {
-            const sent = await sendEmail({
-              to: employee.email,
-              subject: `📊 Nova Pesquisa Pulse: ${survey.title}`,
-            html: `
+            const sent = await emailService.sendCustomEmail(
+              employee.email,
+              `📊 Nova Pesquisa Pulse: ${survey.title}`,
+              `
               <!DOCTYPE html>
               <html>
               <head>
@@ -279,8 +279,8 @@ export const pulseRouter = router({
                 </div>
               </body>
               </html>
-            `,
-            });
+            `
+            );
             
             if (sent) {
               emailsSent++;
