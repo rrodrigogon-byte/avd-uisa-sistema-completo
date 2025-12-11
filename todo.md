@@ -2723,3 +2723,14 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
   - [x] bonusPercentage arredondado corretamente
 - [x] Validação de cycleId mantida
 - [x] Conversão de valores para centavos implementada em handleValidate e handleSubmit
+
+
+## 🧪 MELHORIAS EM TESTES PSICOMÉTRICOS (11/12/2025)
+
+### Tarefas Solicitadas
+- [ ] Testar fluxo completo: enviar teste → concluir → verificar aparição imediata na aba "Testes"
+- [x] Criar script de migração de dados históricos (psychometricTests → testResults)
+- [x] Executar migração de dados históricos
+- [x] Adicionar filtros por tipo de teste na aba Testes do perfil
+- [x] Adicionar filtros por período na aba Testes do perfil
+- [x] Validar funcionamento completo dos filtros
