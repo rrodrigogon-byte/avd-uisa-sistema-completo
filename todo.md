@@ -390,6 +390,7 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 
 - [x] Corrigir erro "Cannot read properties of undefined (reading 'name')" na página PDI ✅ CORRIGIDO
 - [x] Corrigir erro de chaves duplicadas no componente de funcionários (IDs undefined) ✅ CORRIGIDO
+- [x] Corrigir erro de chaves duplicadas na página /desenvolvimento/funcionarios (employee-undefined) ✅ CORRIGIDO
 
 ## 🚨 BUGS CRÍTICOS CORRIGIDOS (11/12/2025)
 

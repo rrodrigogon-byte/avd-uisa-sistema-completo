@@ -135,8 +135,10 @@ export default function DesenvolvimentoFuncionarios() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {employees.map((employee: any) => (
-                  <TableRow key={`employee-${employee.id}`}>
+                {employees
+                  .filter((employee: any) => employee.id != null)
+                  .map((employee: any, index: number) => (
+                  <TableRow key={`employee-${employee.id}-${index}`}>
                     <TableCell className="font-medium">
                       {employee.employeeCode}
                     </TableCell>
@@ -174,6 +176,7 @@ export default function DesenvolvimentoFuncionarios() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleViewProfile(employee.id)}
+                        disabled={!employee.id}
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         Ver Perfil
