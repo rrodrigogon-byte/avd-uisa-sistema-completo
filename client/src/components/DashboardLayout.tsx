@@ -299,7 +299,7 @@ const menuItems = [
     children: [
       { icon: Users, label: "Usuários", path: "/admin/usuarios" },
       { icon: UserCheck, label: "Aprovadores", path: "/admin/gestao-aprovadores" },
-      { icon: GitBranch, label: "Hierarquia", path: "/admin/hierarquia" },
+      { icon: GitBranch, label: "Hierarquia", path: "/hierarquia" },
       { icon: FileSearch, label: "Auditoria", path: "/admin/audit-log" },
       { icon: Shield, label: "Histórico Senhas", path: "/admin/historico-senhas" },
       { icon: UserCog, label: "Senhas Líderes", path: "/admin/gerenciar-senhas-lideres" },

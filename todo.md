@@ -2658,3 +2658,27 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Implementar visualização hierárquica completa
 - [x] Garantir que todos os níveis hierárquicos estejam funcionais
 - [x] Testar navegação e funcionalidade completa
+
+
+## ✅ BUGS CORRIGIDOS - 11/12/2025 (BERNARDO MENDES)
+
+### Bug 1: Resultados de Testes Não Carregam
+- [x] Investigado: Funcionário bernardo.mendes@uisa.com.br (ID 692706) existe no banco
+- [x] Causa identificada: Funcionário nunca recebeu convites de testes psicométricos
+- [x] Solução: Sistema funcionando corretamente - precisa enviar testes através da página "Testes Psicométricos > Enviar Testes"
+- [x] Componente TestesResultados validado e funcionando corretamente
+
+### Bug 2: Erro 404 em /admin/hierarquia
+- [x] Causa identificada: Link no menu apontava para /admin/hierarquia mas rota registrada é /hierarquia
+- [x] Correção aplicada: Atualizado link no DashboardLayout.tsx linha 302
+- [x] Rota correta: /hierarquia (sem prefixo /admin)
+- [x] Navegação validada e funcionando
+
+### Bug 3: Erro ao Salvar Meta
+- [x] Causa identificada: Frontend enviava valores decimais mas backend espera centavos (int)
+- [x] Correção aplicada em CriarMetaSMART.tsx:
+  - [x] targetValue → targetValueCents (multiplicado por 100)
+  - [x] bonusAmount → bonusAmountCents (multiplicado por 100)
+  - [x] bonusPercentage arredondado corretamente
+- [x] Validação de cycleId mantida
+- [x] Conversão de valores para centavos implementada em handleValidate e handleSubmit
