@@ -83,10 +83,23 @@ export default function EnviarTestes() {
       return;
     }
 
+    // Dividir emails por vírgula e limpar espaços em branco
+    const emailList = manualEmail
+      .split(',')
+      .map(email => email.trim())
+      .filter(email => email.length > 0);
+
+    // Validar cada email
+    const invalidEmails = emailList.filter(email => !email.includes('@'));
+    if (invalidEmails.length > 0) {
+      toast.error(`Emails inválidos: ${invalidEmails.join(', ')}`);
+      return;
+    }
+
     setSendingIndividual(true);
     sendInviteMutation.mutate({
       testType: selectedTest as any,
-      emails: [manualEmail],
+      emails: emailList,
     });
   };
 
@@ -218,11 +231,14 @@ export default function EnviarTestes() {
                   <Label htmlFor="email">Email do Colaborador</Label>
                   <Input
                     id="email"
-                    type="email"
-                    placeholder="colaborador@empresa.com"
+                    type="text"
+                    placeholder="colaborador@empresa.com ou múltiplos separados por vírgula"
                     value={manualEmail}
                     onChange={(e) => setManualEmail(e.target.value)}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Para enviar para múltiplos emails, separe-os por vírgula: email1@empresa.com, email2@empresa.com
+                  </p>
                 </div>
                 <Button
                   onClick={handleSendIndividual}

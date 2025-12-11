@@ -15,7 +15,7 @@ import {
   getAllHierarchy,
   getHierarchyStats,
 } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria, pdiIntelligentDetails, successionCandidates } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -1853,6 +1853,126 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         // Salvar teste no banco
         await database.insert(psychometricTests).values(testValues);
 
+        // ========================================
+        // INTEGRAÇÃO AUTOMÁTICA COM PDI E SUCESSÃO
+        // ========================================
+        try {
+          // Buscar PDI ativo do funcionário
+          const activePdi = await database.select()
+            .from(pdiPlans)
+            .where(
+              and(
+                eq(pdiPlans.employeeId, employee[0].id),
+                or(
+                  eq(pdiPlans.status, 'em_andamento'),
+                  eq(pdiPlans.status, 'aprovado')
+                )
+              )
+            )
+            .limit(1);
+
+          if (activePdi.length > 0) {
+            console.log(`[Psychometric] PDI ativo encontrado para ${employee[0].name}, atualizando perfil...`);
+            
+            // Buscar ou criar pdiIntelligentDetails
+            const pdiDetails = await database.select()
+              .from(pdiIntelligentDetails)
+              .where(eq(pdiIntelligentDetails.planId, activePdi[0].id))
+              .limit(1);
+
+            // Preparar currentProfile atualizado
+            const currentProfile: any = pdiDetails.length > 0 && pdiDetails[0].currentProfile 
+              ? pdiDetails[0].currentProfile 
+              : {};
+
+            // Atualizar com novos dados do teste
+            if (input.testType === 'disc') {
+              currentProfile.disc = {
+                d: profile.D || 0,
+                i: profile.I || 0,
+                s: profile.S || 0,
+                c: profile.C || 0,
+              };
+            } else if (input.testType === 'bigfive') {
+              currentProfile.bigFive = {
+                o: profile.O || 0,
+                c: profile.C || 0,
+                e: profile.E || 0,
+                a: profile.A || 0,
+                n: profile.N || 0,
+              };
+            } else if (input.testType === 'mbti') {
+              currentProfile.mbti = profile.profile || 'N/A';
+            } else if (input.testType === 'ie') {
+              currentProfile.ie = profile.score || 0;
+            }
+
+            if (pdiDetails.length > 0) {
+              // Atualizar existente
+              await database.update(pdiIntelligentDetails)
+                .set({ 
+                  currentProfile,
+                  updatedAt: new Date(),
+                })
+                .where(eq(pdiIntelligentDetails.id, pdiDetails[0].id));
+              console.log(`[Psychometric] PDI atualizado com sucesso`);
+            } else {
+              // Criar novo
+              await database.insert(pdiIntelligentDetails).values({
+                planId: activePdi[0].id,
+                currentProfile,
+                durationMonths: 24,
+              });
+              console.log(`[Psychometric] PDI Intelligent Details criado com sucesso`);
+            }
+          }
+
+          // Buscar planos de sucessão onde o funcionário é candidato
+          const successionCandidatesData = await database.select()
+            .from(successionCandidates)
+            .where(eq(successionCandidates.employeeId, employee[0].id));
+
+          if (successionCandidatesData.length > 0) {
+            console.log(`[Psychometric] Funcionário é candidato em ${successionCandidatesData.length} plano(s) de sucessão, atualizando...`);
+            
+            // Gerar análise de gaps baseada nos testes
+            let gapAnalysisText = `Análise baseada em testes psicométricos (atualizado em ${new Date().toLocaleDateString('pt-BR')}):\n\n`;
+            
+            if (input.testType === 'disc') {
+              gapAnalysisText += `**DISC - Perfil Comportamental:**\n`;
+              gapAnalysisText += `- Dominância (D): ${Math.round((profile.D || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Influência (I): ${Math.round((profile.I || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Estabilidade (S): ${Math.round((profile.S || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Conformidade (C): ${Math.round((profile.C || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Perfil dominante: ${profile.profile || 'N/A'}\n\n`;
+            } else if (input.testType === 'bigfive') {
+              gapAnalysisText += `**Big Five - Personalidade:**\n`;
+              gapAnalysisText += `- Abertura (O): ${Math.round((profile.O || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Conscienciosidade (C): ${Math.round((profile.C || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Extroversão (E): ${Math.round((profile.E || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Amabilidade (A): ${Math.round((profile.A || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Neuroticismo (N): ${Math.round((profile.N || 0) * 20)}/100\n\n`;
+            }
+
+            // Atualizar todos os planos de sucessão
+            for (const candidate of successionCandidatesData) {
+              const existingGapAnalysis = candidate.gapAnalysis || '';
+              const updatedGapAnalysis = existingGapAnalysis + '\n' + gapAnalysisText;
+              
+              await database.update(successionCandidates)
+                .set({ 
+                  gapAnalysis: updatedGapAnalysis,
+                  updatedAt: new Date(),
+                })
+                .where(eq(successionCandidates.id, candidate.id));
+            }
+            console.log(`[Psychometric] Planos de sucessão atualizados com sucesso`);
+          }
+        } catch (integrationError) {
+          console.error('[Psychometric] Erro na integração automática:', integrationError);
+          // Não falhar a operação principal se integração falhar
+        }
+
         // Enviar notificação por email para gestor e RH
         try {
           const testTypeLabels: Record<string, string> = {
@@ -2007,6 +2127,126 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
         // Salvar teste no banco
         await database.insert(psychometricTests).values(testValues);
+
+        // ========================================
+        // INTEGRAÇÃO AUTOMÁTICA COM PDI E SUCESSÃO
+        // ========================================
+        try {
+          // Buscar PDI ativo do funcionário
+          const activePdi = await database.select()
+            .from(pdiPlans)
+            .where(
+              and(
+                eq(pdiPlans.employeeId, employee[0].id),
+                or(
+                  eq(pdiPlans.status, 'em_andamento'),
+                  eq(pdiPlans.status, 'aprovado')
+                )
+              )
+            )
+            .limit(1);
+
+          if (activePdi.length > 0) {
+            console.log(`[Psychometric] PDI ativo encontrado para ${employee[0].name}, atualizando perfil...`);
+            
+            // Buscar ou criar pdiIntelligentDetails
+            const pdiDetails = await database.select()
+              .from(pdiIntelligentDetails)
+              .where(eq(pdiIntelligentDetails.planId, activePdi[0].id))
+              .limit(1);
+
+            // Preparar currentProfile atualizado
+            const currentProfile: any = pdiDetails.length > 0 && pdiDetails[0].currentProfile 
+              ? pdiDetails[0].currentProfile 
+              : {};
+
+            // Atualizar com novos dados do teste
+            if (input.testType === 'disc') {
+              currentProfile.disc = {
+                d: profile.D || 0,
+                i: profile.I || 0,
+                s: profile.S || 0,
+                c: profile.C || 0,
+              };
+            } else if (input.testType === 'bigfive') {
+              currentProfile.bigFive = {
+                o: profile.O || 0,
+                c: profile.C || 0,
+                e: profile.E || 0,
+                a: profile.A || 0,
+                n: profile.N || 0,
+              };
+            } else if (input.testType === 'mbti') {
+              currentProfile.mbti = profile.profile || 'N/A';
+            } else if (input.testType === 'ie') {
+              currentProfile.ie = profile.score || 0;
+            }
+
+            if (pdiDetails.length > 0) {
+              // Atualizar existente
+              await database.update(pdiIntelligentDetails)
+                .set({ 
+                  currentProfile,
+                  updatedAt: new Date(),
+                })
+                .where(eq(pdiIntelligentDetails.id, pdiDetails[0].id));
+              console.log(`[Psychometric] PDI atualizado com sucesso`);
+            } else {
+              // Criar novo
+              await database.insert(pdiIntelligentDetails).values({
+                planId: activePdi[0].id,
+                currentProfile,
+                durationMonths: 24,
+              });
+              console.log(`[Psychometric] PDI Intelligent Details criado com sucesso`);
+            }
+          }
+
+          // Buscar planos de sucessão onde o funcionário é candidato
+          const successionCandidatesData = await database.select()
+            .from(successionCandidates)
+            .where(eq(successionCandidates.employeeId, employee[0].id));
+
+          if (successionCandidatesData.length > 0) {
+            console.log(`[Psychometric] Funcionário é candidato em ${successionCandidatesData.length} plano(s) de sucessão, atualizando...`);
+            
+            // Gerar análise de gaps baseada nos testes
+            let gapAnalysisText = `Análise baseada em testes psicométricos (atualizado em ${new Date().toLocaleDateString('pt-BR')}):\n\n`;
+            
+            if (input.testType === 'disc') {
+              gapAnalysisText += `**DISC - Perfil Comportamental:**\n`;
+              gapAnalysisText += `- Dominância (D): ${Math.round((profile.D || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Influência (I): ${Math.round((profile.I || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Estabilidade (S): ${Math.round((profile.S || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Conformidade (C): ${Math.round((profile.C || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Perfil dominante: ${profile.profile || 'N/A'}\n\n`;
+            } else if (input.testType === 'bigfive') {
+              gapAnalysisText += `**Big Five - Personalidade:**\n`;
+              gapAnalysisText += `- Abertura (O): ${Math.round((profile.O || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Conscienciosidade (C): ${Math.round((profile.C || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Extroversão (E): ${Math.round((profile.E || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Amabilidade (A): ${Math.round((profile.A || 0) * 20)}/100\n`;
+              gapAnalysisText += `- Neuroticismo (N): ${Math.round((profile.N || 0) * 20)}/100\n\n`;
+            }
+
+            // Atualizar todos os planos de sucessão
+            for (const candidate of successionCandidatesData) {
+              const existingGapAnalysis = candidate.gapAnalysis || '';
+              const updatedGapAnalysis = existingGapAnalysis + '\n' + gapAnalysisText;
+              
+              await database.update(successionCandidates)
+                .set({ 
+                  gapAnalysis: updatedGapAnalysis,
+                  updatedAt: new Date(),
+                })
+                .where(eq(successionCandidates.id, candidate.id));
+            }
+            console.log(`[Psychometric] Planos de sucessão atualizados com sucesso`);
+          }
+        } catch (integrationError) {
+          console.error('[Psychometric] Erro na integração automática:', integrationError);
+          // Não falhar a operação principal se integração falhar
+        }
 
         // Criar notificação in-app e email para gestores/RH
         try {
@@ -2229,9 +2469,12 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
       }))
       .mutation(async ({ input, ctx }) => {
+        // Limpar espaços em branco dos emails
+        const cleanedEmails = input.emails.map(email => email.trim());
+        
         console.log('[Psychometric] Iniciando envio de testes psicométricos...');
         console.log(`[Psychometric] Tipo de teste: ${input.testType}`);
-        console.log(`[Psychometric] Emails: ${input.emails.join(', ')}`);
+        console.log(`[Psychometric] Emails: ${cleanedEmails.join(', ')}`);
         
         // Verificar se é admin
         if (ctx.user.role !== "admin") {
@@ -2260,7 +2503,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         
         console.log(`[Psychometric] Dados do teste: ${testData.name}`);
 
-        for (const email of input.emails) {
+        for (const email of cleanedEmails) {
           console.log(`[Psychometric] Processando email: ${email}`);
           
           // Buscar colaborador pelo email
