@@ -151,7 +151,8 @@ export default function CriarMetaSMART() {
       return;
     }
 
-    await createMutation.mutateAsync({
+    // Preparar dados para envio
+    const submitData: any = {
       title: formData.title,
       description: formData.description,
       type: formData.type,
@@ -167,8 +168,19 @@ export default function CriarMetaSMART() {
       bonusAmount: formData.bonusAmount ? parseFloat(formData.bonusAmount) : undefined,
       cycleId: parseInt(formData.cycleId),
       pdiPlanId: formData.pdiPlanId && formData.pdiPlanId !== "" ? parseInt(formData.pdiPlanId) : undefined,
-      targetEmployeeId: parseInt(formData.targetEmployeeId),
-    });
+    };
+
+    // Adicionar targetEmployeeId apenas se tipo for Individual
+    if (formData.type === "individual" && formData.targetEmployeeId) {
+      submitData.targetEmployeeId = parseInt(formData.targetEmployeeId);
+    }
+
+    // Adicionar departmentId apenas se tipo for Equipe
+    if (formData.type === "team" && formData.departmentId) {
+      submitData.departmentId = parseInt(formData.departmentId);
+    }
+
+    await createMutation.mutateAsync(submitData);
   };
 
   const renderSMARTIndicator = (criterion: string, value: boolean | undefined) => {
@@ -340,11 +352,17 @@ export default function CriarMetaSMART() {
                     <SelectValue placeholder="Selecione o colaborador" />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees.filter((emp: any) => emp.status === 'ativo').map((emp: any) => (
-                      <SelectItem key={emp.id} value={emp.id.toString()}>
-                        {emp.name} - {emp.position || 'Sem cargo'}
-                      </SelectItem>
-                    ))}
+                    {employees
+                      .filter((emp: any) => emp.employee?.status === 'ativo' || emp.status === 'ativo')
+                      .map((emp: any) => {
+                        const employee = emp.employee || emp;
+                        const position = emp.position?.title || employee.positionTitle || 'Sem cargo';
+                        return (
+                          <SelectItem key={employee.id} value={employee.id.toString()}>
+                            {employee.name} - {position}
+                          </SelectItem>
+                        );
+                      })}
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-gray-500 mt-1">

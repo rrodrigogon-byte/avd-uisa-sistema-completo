@@ -61,10 +61,16 @@ export interface ParsedPDI {
 }
 
 /**
- * Extrai texto de um elemento HTML
+ * Extrai texto de um elemento HTML e limpa placeholders
  */
 function extractText(element: Element | null): string {
-  return element?.textContent?.trim() || '';
+  let text = element?.textContent?.trim() || '';
+  
+  // Remover placeholders comuns
+  text = text.replace(/\[Nome[^\]]*\]/gi, '');
+  text = text.replace(/\[.*?\]/g, '');
+  
+  return text.trim();
 }
 
 /**
@@ -84,8 +90,17 @@ export function parsePDIHtml(htmlContent: string): ParsedPDI {
   const document = dom.window.document;
   
   // Extrair nome do colaborador
-  const employeeName = extractText(document.querySelector('h1 + p')) || 
-                        extractText(document.querySelector('h2.text-2xl'));
+  let employeeName = extractText(document.querySelector('h1 + p')) || 
+                     extractText(document.querySelector('h2.text-2xl'));
+  
+  // Validar e limpar nome
+  if (!employeeName || employeeName.includes('[') || employeeName.length < 3) {
+    // Tentar extrair do título da página
+    const titleMatch = htmlContent.match(/<title>.*?-\s*([^|]+)/i);
+    if (titleMatch && titleMatch[1]) {
+      employeeName = titleMatch[1].trim();
+    }
+  }
   
   // Extrair cargo
   const positionElement = document.querySelector('p.text-uisa-orange');
@@ -99,7 +114,13 @@ export function parsePDIHtml(htmlContent: string): ParsedPDI {
   // Extrair sponsor
   const sponsorElement = Array.from(document.querySelectorAll('p.text-sm'))
     .find(p => p.textContent?.includes('Diretor Sponsor:'));
-  const sponsorName = sponsorElement?.textContent?.replace('Diretor Sponsor:', '').trim() || '';
+  let sponsorName = sponsorElement?.textContent?.replace('Diretor Sponsor:', '').trim() || '';
+  
+  // Limpar placeholders do sponsor
+  sponsorName = sponsorName.replace(/\[.*?\]/g, '').trim();
+  if (!sponsorName || sponsorName.length < 3) {
+    sponsorName = 'Não informado';
+  }
   
   // Extrair KPIs
   const kpiCards = document.querySelectorAll('.kpi-card');

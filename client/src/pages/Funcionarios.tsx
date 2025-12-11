@@ -89,13 +89,13 @@ export default function Funcionarios() {
 
   // Filtrar funcionários
   const filteredEmployees = employees?.filter((emp) => {
-    const matchesSearch = emp.employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.employee.cpf?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.employee.employeeCode.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (emp.employee.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.employee.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.employee.cpf || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.employee.employeeCode || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDepartment = selectedDepartment === "all" || emp.employee.departmentId === parseInt(selectedDepartment);
     const matchesStatus = selectedStatus === "all" || emp.employee.status === selectedStatus;
-    const matchesCargo = selectedCargo === "all" || emp.employee.positionTitle?.toLowerCase().includes(selectedCargo.toLowerCase());
+    const matchesCargo = selectedCargo === "all" || (emp.employee.positionTitle || '').toLowerCase().includes(selectedCargo.toLowerCase());
     return matchesSearch && matchesDepartment && matchesStatus && matchesCargo;
   });
 

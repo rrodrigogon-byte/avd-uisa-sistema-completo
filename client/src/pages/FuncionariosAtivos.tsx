@@ -62,9 +62,9 @@ export default function FuncionariosAtivos() {
   // Filtrar funcionários
   const filteredEmployees = employees?.filter((emp) => {
     const matchesSearch =
-      emp.employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.employee.employeeCode.toLowerCase().includes(searchTerm.toLowerCase());
+      (emp.employee.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.employee.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.employee.employeeCode || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDepartment =
       selectedDepartment === "all" || emp.employee.departmentId === parseInt(selectedDepartment);
     return matchesSearch && matchesDepartment && emp.employee.status === "ativo";

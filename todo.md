@@ -2523,3 +2523,14 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Implementar gráficos de evolução de desempenho
 - [x] Adicionar botão de edição rápida
 - [x] Implementar exportação de perfil em PDF
+
+## Correção Urgente - Salvamento de Metas (11/12/2025)
+
+- [ ] Corrigir erro "Invalid input: expected number, received NaN" no campo targetEmployeeId
+- [ ] Garantir que funcionários ATIVOS estejam disponíveis para seleção
+- [ ] Validar que campo de colaborador só aparece quando tipo = "Individual"
+- [ ] Validar que campo de departamento só aparece quando tipo = "Equipe"
+- [ ] Garantir que metas organizacionais não exigem employeeId
+- [ ] Testar salvamento de meta Individual com colaborador selecionado
+- [ ] Testar salvamento de meta Organizacional (sem colaborador)
+- [ ] Testar salvamento de meta de Equipe (com departamento)
