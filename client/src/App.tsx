@@ -25,6 +25,7 @@ import ImportacaoPonto from "@/pages/ImportacaoPonto";
 import SecurityDashboard from "./pages/SecurityDashboard";
 import TestMonitoringDashboard from "./pages/TestMonitoringDashboard";
 import PsychometricResults from "./pages/PsychometricResults";
+import TeamDISCProfiles from "./pages/TeamDISCProfiles";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -326,6 +327,7 @@ function Router() {
       <Route path="/pdi-inteligente/:id/detalhes" component={PDIInteligenteDetalhes} />
       <Route path="/pdi-inteligente/:id" component={PDIInteligente} />
       <Route path="/testes-psicometricos/resultados" component={TestesResultadosRH} />
+      <Route path="/equipe/perfis-disc" component={TeamDISCProfiles} />
       <Route path="/nine-box-comparativo" component={NineBoxComparativo} />
       <Route path="/admin/report-builder" component={ReportBuilder} />
       <Route path="/admin/report-analytics" component={ReportAnalytics} />

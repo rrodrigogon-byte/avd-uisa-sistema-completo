@@ -22,6 +22,54 @@ import {
 } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
+
+/**
+ * Helper para gerar sumário de resultados psicométricos
+ */
+function generateTestSummary(result: any): string {
+  if (!result.results) return "Sem resultados disponíveis";
+
+  try {
+    const data = typeof result.results === 'string' ? JSON.parse(result.results) : result.results;
+
+    switch (result.testType) {
+      case 'disc':
+        const discProfile = data.profile || 'N/A';
+        return `Perfil DISC: ${discProfile}`;
+      
+      case 'big_five':
+        const traits = data.traits || {};
+        const topTrait = Object.entries(traits)
+          .sort(([,a]: any, [,b]: any) => (b as number) - (a as number))[0];
+        return topTrait ? `Traço dominante: ${topTrait[0]}` : 'Perfil Big Five';
+      
+      case 'mbti':
+        return `Tipo MBTI: ${data.type || 'N/A'}`;
+      
+      case 'emotional_intelligence':
+        const eiScore = data.totalScore || data.score || 0;
+        return `Inteligência Emocional: ${eiScore}/100`;
+      
+      case 'leadership_styles':
+        const style = data.dominantStyle || data.style || 'N/A';
+        return `Estilo de Liderança: ${style}`;
+      
+      case 'vark':
+        const varkStyle = data.dominantStyle || 'N/A';
+        return `Estilo de Aprendizagem: ${varkStyle}`;
+      
+      case 'career_anchors':
+        const anchor = data.primaryAnchor || data.anchor || 'N/A';
+        return `Âncora de Carreira: ${anchor}`;
+      
+      default:
+        return `Teste ${result.testType} concluído`;
+    }
+  } catch (error) {
+    return "Erro ao processar resultados";
+  }
+}
 
 /**
  * Router para PDI Inteligente
@@ -29,6 +77,108 @@ import { protectedProcedure, router } from "./_core/trpc";
  */
 
 export const pdiIntelligentRouter = router({
+  /**
+   * Buscar perfis DISC de toda a equipe do gestor
+   */
+  getTeamDISCProfiles: protectedProcedure
+    .input(z.object({ managerId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { testResults } = await import("../drizzle/schema");
+      const { eq, and } = await import("drizzle-orm");
+
+      // Buscar todos os funcionários subordinados ao gestor
+      const teamMembers = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.managerId, input.managerId));
+
+      // Para cada membro da equipe, buscar o último resultado DISC
+      const teamProfiles = await Promise.all(
+        teamMembers.map(async (member) => {
+          const discResults = await db
+            .select()
+            .from(testResults)
+            .where(
+              and(
+                eq(testResults.employeeId, member.id),
+                eq(testResults.testType, "disc")
+              )
+            )
+            .orderBy(desc(testResults.completedAt))
+            .limit(1);
+
+          const discResult = discResults[0];
+          let profile = null;
+
+          if (discResult && discResult.results) {
+            try {
+              const data = typeof discResult.results === 'string' 
+                ? JSON.parse(discResult.results) 
+                : discResult.results;
+              profile = {
+                type: discResult.profileType || data.profile || "N/A",
+                scores: data.scores || {},
+                completedAt: discResult.completedAt,
+              };
+            } catch (error) {
+              console.error("Erro ao processar resultado DISC:", error);
+            }
+          }
+
+          return {
+            employeeId: member.id,
+            employeeName: member.name,
+            position: member.funcao || member.cargo || "N/A",
+            discProfile: profile,
+          };
+        })
+      );
+
+      // Calcular estatísticas de distribuição
+      const profileDistribution: Record<string, number> = {};
+      let totalWithProfiles = 0;
+
+      teamProfiles.forEach((member) => {
+        if (member.discProfile) {
+          totalWithProfiles++;
+          const profileType = member.discProfile.type;
+          profileDistribution[profileType] = (profileDistribution[profileType] || 0) + 1;
+        }
+      });
+
+      return {
+        teamMembers: teamProfiles,
+        totalMembers: teamMembers.length,
+        membersWithProfiles: totalWithProfiles,
+        profileDistribution,
+      };
+    }),
+
+  /**
+   * Buscar resultados psicométricos do funcionário para integração com PDI
+   */
+  getPsychometricResults: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { getTestResultsByEmployee } = await import("./psychometricTestsHelpers");
+      const results = await getTestResultsByEmployee(input.employeeId);
+
+      // Retornar resultados formatados para exibição no PDI
+      return results.map((result) => ({
+        id: result.id,
+        testType: result.testType,
+        completedAt: result.completedAt,
+        results: result.results,
+        // Extrair principais insights dependendo do tipo de teste
+        summary: generateTestSummary(result),
+      }));
+    }),
   /**
    * Criar PDI Inteligente com análise automática de gaps
    */

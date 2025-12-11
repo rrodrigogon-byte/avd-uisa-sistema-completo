@@ -354,6 +354,93 @@ export const psychometricTestsRouter = router({
         completedAt: new Date(),
       });
 
+      // Enviar notificações por e-mail
+      try {
+        const { getEmployeeById } = await import("../db");
+        const { getDb } = await import("../db");
+        const db = await getDb();
+        
+        const employee = await getEmployeeById(invitation.employeeId);
+        
+        if (employee && db) {
+          const testNames: Record<string, string> = {
+            disc: "DISC",
+            bigfive: "Big Five",
+            mbti: "MBTI",
+            ie: "Inteligência Emocional",
+            vark: "VARK",
+            leadership: "Liderança",
+            careeranchors: "Âncoras de Carreira",
+          };
+
+          const testName = testNames[invitation.testType] || invitation.testType;
+
+          // 1. Notificar gestor do funcionário
+          if (employee.employee.managerId) {
+            const manager = await getEmployeeById(employee.employee.managerId);
+            if (manager?.employee.email) {
+              await sendEmail({
+                to: manager.employee.email,
+                subject: `Teste Psicométrico Concluído - ${employee.employee.name}`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #2563eb;">Teste Psicométrico Concluído</h2>
+                    <p>Olá <strong>${manager.employee.name}</strong>,</p>
+                    <p>O funcionário <strong>${employee.employee.name}</strong> completou o teste psicométrico <strong>${testName}</strong>.</p>
+                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                      <p style="margin: 5px 0;"><strong>Funcionário:</strong> ${employee.employee.name}</p>
+                      <p style="margin: 5px 0;"><strong>Teste:</strong> ${testName}</p>
+                      <p style="margin: 5px 0;"><strong>Data de Conclusão:</strong> ${new Date().toLocaleDateString("pt-BR")}</p>
+                    </div>
+                    <p>Você pode visualizar os resultados detalhados no sistema AVD UISA.</p>
+                    <p style="margin-top: 30px; color: #6b7280; font-size: 12px;">
+                      Esta é uma notificação automática do Sistema AVD UISA.
+                    </p>
+                  </div>
+                `,
+              }).catch((err) => console.error("Erro ao enviar email para gestor:", err));
+            }
+          }
+
+          // 2. Notificar equipe de RH (administradores)
+          const { users } = await import("../../drizzle/schema");
+          const { eq, or } = await import("drizzle-orm");
+          
+          const hrUsers = await db
+            .select()
+            .from(users)
+            .where(or(eq(users.role, "admin"), eq(users.role, "rh")));
+
+          for (const hrUser of hrUsers) {
+            if (hrUser.email) {
+              await sendEmail({
+                to: hrUser.email,
+                subject: `Teste Psicométrico Concluído - ${employee.employee.name}`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #2563eb;">Teste Psicométrico Concluído</h2>
+                    <p>Olá <strong>${hrUser.name || "Equipe RH"}</strong>,</p>
+                    <p>O funcionário <strong>${employee.employee.name}</strong> completou o teste psicométrico <strong>${testName}</strong>.</p>
+                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                      <p style="margin: 5px 0;"><strong>Funcionário:</strong> ${employee.employee.name}</p>
+                      <p style="margin: 5px 0;"><strong>Teste:</strong> ${testName}</p>
+                      <p style="margin: 5px 0;"><strong>Perfil:</strong> ${result.profileType || "N/A"}</p>
+                      <p style="margin: 5px 0;"><strong>Data de Conclusão:</strong> ${new Date().toLocaleDateString("pt-BR")}</p>
+                    </div>
+                    <p>Você pode visualizar os resultados detalhados no sistema AVD UISA.</p>
+                    <p style="margin-top: 30px; color: #6b7280; font-size: 12px;">
+                      Esta é uma notificação automática do Sistema AVD UISA.
+                    </p>
+                  </div>
+                `,
+              }).catch((err) => console.error("Erro ao enviar email para RH:", err));
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao enviar notificações:", error);
+      }
+
       return {
         success: true,
         resultId,

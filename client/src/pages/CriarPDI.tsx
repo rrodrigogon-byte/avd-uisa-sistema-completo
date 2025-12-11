@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, ArrowLeft, Plus, Trash2, FileText } from "lucide-react";
+import PsychometricResultsCard from "@/components/PsychometricResultsCard";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -154,6 +155,9 @@ export default function CriarPDI() {
 
         {/* Formulário */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Perfil Psicométrico */}
+          <PsychometricResultsCard employeeId={employeeId} />
+
           {/* Informações Básicas */}
           <Card>
             <CardHeader>
