@@ -2483,3 +2483,24 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [x] Implementar visualização detalhada de cada teste
 - [x] Procedure tRPC já existe (psychometricTests.getResultsByEmployee)
 - [x] Implementado com sucesso no FuncionarioDetalhes.tsx
+
+
+## 🆕 NOVA FUNCIONALIDADE - PERFIL COMPLETO DE FUNCIONÁRIOS NO MENU DE DESENVOLVIMENTO (11/12/2025)
+
+### Objetivo
+Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis completos de funcionários, incluindo todas as informações relevantes em uma interface organizada e intuitiva.
+
+### Implementação
+- [x] Criar página de listagem de funcionários (/desenvolvimento/funcionarios)
+- [x] Criar página de perfil detalhado (/desenvolvimento/funcionarios/:id)
+- [x] Adicionar item no menu de desenvolvimento
+- [x] Implementar visualização de dados pessoais
+- [x] Implementar visualização de dados profissionais
+- [x] Implementar visualização de histórico de avaliações
+- [x] Implementar visualização de metas associadas
+- [x] Implementar visualização de PDIs
+- [x] Implementar visualização de competências
+- [x] Implementar visualização de treinamentos
+- [x] Implementar gráficos de evolução de desempenho
+- [x] Adicionar botão de edição rápida
+- [x] Implementar exportação de perfil em PDF
