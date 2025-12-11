@@ -20,7 +20,7 @@ const requireUser = t.middleware(async opts => {
   return next({
     ctx: {
       ...ctx,
-      user: ctx.user,
+      user: ctx.user as NonNullable<typeof ctx.user>,
     },
   });
 });

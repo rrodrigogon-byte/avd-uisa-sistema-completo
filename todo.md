@@ -1,7 +1,13 @@
 # Sistema AVD UISA - TODO Completo
 
 **Data de Atualização:** 11/12/2025  
-**Status:** Corrigindo erro crítico de envio de emails em Testes Psicométricos e Pesquisas Pulse
+**Status:** Corrigindo erro "Usuário não encontrado" na importação de PDI
+
+## ✅ CORREÇÃO CONCLUÍDA - ERRO NA IMPORTAÇÃO DE PDI (11/12/2025)
+
+- [x] Corrigir erro "Usuário não encontrado" na importação de PDI
+- [x] Refinar tipagem do protectedProcedure para garantir ctx.user não-nulo
+- [x] Criar testes automatizados para validar a correção
 
 ## 🚨 CORREÇÃO URGENTE - ERRO DE ENVIO DE EMAIL
 
