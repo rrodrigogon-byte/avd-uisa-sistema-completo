@@ -2467,3 +2467,19 @@ Entregar um sistema **100% funcional**, **100% testado** e **100% documentado**,
 - [ ] Criar listagem de avaliações respondidas
 - [ ] Criar visualização detalhada de cada resposta
 - [ ] Adicionar filtros por funcionário, período, tipo de avaliação
+
+
+## 🆕 NOVA SOLICITAÇÃO - VISUALIZAÇÃO DE TESTES NO PERFIL (11/12/2025)
+
+### Requisito
+- [x] Adicionar visualização de resultados de testes psicométricos no perfil do funcionário
+- [x] Testar com funcionário Bernardo Mendes (bernardo.mendes@uisa.com.br)
+- [x] Garantir que todos os testes preenchidos apareçam no perfil
+
+### Implementação
+- [x] Investigar estrutura de testes psicométricos no banco de dados
+- [x] Adicionar nova aba "Testes Psicométricos" no perfil do funcionário
+- [x] Implementar listagem de testes realizados
+- [x] Implementar visualização detalhada de cada teste
+- [x] Procedure tRPC já existe (psychometricTests.getResultsByEmployee)
+- [x] Implementado com sucesso no FuncionarioDetalhes.tsx

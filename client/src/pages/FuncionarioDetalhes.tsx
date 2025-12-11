@@ -62,6 +62,12 @@ export default function FuncionarioDetalhes() {
     { enabled: !!employeeId }
   );
 
+  // Buscar testes psicométricos do funcionário
+  const { data: psychometricTests } = trpc.psychometricTests.getResultsByEmployee.useQuery(
+    { employeeId: employeeId! },
+    { enabled: !!employeeId }
+  );
+
   if (!employeeId) {
     return (
       <DashboardLayout>
@@ -208,7 +214,7 @@ export default function FuncionarioDetalhes() {
 
         {/* Tabs com Informações Detalhadas */}
         <Tabs defaultValue="metas" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="metas">
               <Target className="h-4 w-4 mr-2" />
               Metas ({goals?.length || 0})
@@ -220,6 +226,10 @@ export default function FuncionarioDetalhes() {
             <TabsTrigger value="pdi">
               <TrendingUp className="h-4 w-4 mr-2" />
               PDI ({pdis?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger value="testes">
+              <FileText className="h-4 w-4 mr-2" />
+              Testes ({psychometricTests?.length || 0})
             </TabsTrigger>
             <TabsTrigger value="dados">
               <User className="h-4 w-4 mr-2" />
@@ -360,6 +370,174 @@ export default function FuncionarioDetalhes() {
                       ))}
                     </TableBody>
                   </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab Testes Psicométricos */}
+          <TabsContent value="testes" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Testes Psicométricos Realizados</CardTitle>
+                <CardDescription>
+                  Histórico de testes e resultados
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!psychometricTests || psychometricTests.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    Nenhum teste realizado
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {psychometricTests.map((test: any) => (
+                      <Card key={test.id} className="border-l-4 border-blue-500">
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <CardTitle className="text-base">
+                                {test.testType === 'disc' && 'DISC'}
+                                {test.testType === 'bigfive' && 'Big Five'}
+                                {test.testType === 'mbti' && 'MBTI'}
+                                {test.testType === 'ie' && 'Inteligência Emocional'}
+                                {test.testType === 'vark' && 'VARK'}
+                                {test.testType === 'leadership' && 'Estilos de Liderança'}
+                                {test.testType === 'careeranchors' && 'Âncoras de Carreira'}
+                              </CardTitle>
+                              <CardDescription>
+                                Realizado em {formatDate(test.completedAt)}
+                              </CardDescription>
+                            </div>
+                            <Badge variant="default">
+                              {test.status || 'Concluído'}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          {/* Perfil Principal */}
+                          {test.profileType && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground">Perfil:</p>
+                              <p className="font-medium text-lg">{test.profileType}</p>
+                            </div>
+                          )}
+
+                          {/* Descrição */}
+                          {test.profileDescription && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground">Descrição:</p>
+                              <p className="text-sm">{test.profileDescription}</p>
+                            </div>
+                          )}
+
+                          {/* Pontos Fortes */}
+                          {test.strengths && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground">Pontos Fortes:</p>
+                              <p className="text-sm">{test.strengths}</p>
+                            </div>
+                          )}
+
+                          {/* Áreas de Desenvolvimento */}
+                          {test.developmentAreas && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground">Áreas de Desenvolvimento:</p>
+                              <p className="text-sm">{test.developmentAreas}</p>
+                            </div>
+                          )}
+
+                          {/* Estilo de Trabalho */}
+                          {test.workStyle && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground">Estilo de Trabalho:</p>
+                              <p className="text-sm">{test.workStyle}</p>
+                            </div>
+                          )}
+
+                          {/* Pontuações DISC */}
+                          {test.testType === 'disc' && (test.dominance || test.influence || test.steadiness || test.conscientiousness) && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground mb-2">Pontuações:</p>
+                              <div className="grid grid-cols-2 gap-2">
+                                {test.dominance && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Dominância (D)</span>
+                                    <Badge variant="outline">{test.dominance}</Badge>
+                                  </div>
+                                )}
+                                {test.influence && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Influência (I)</span>
+                                    <Badge variant="outline">{test.influence}</Badge>
+                                  </div>
+                                )}
+                                {test.steadiness && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Estabilidade (S)</span>
+                                    <Badge variant="outline">{test.steadiness}</Badge>
+                                  </div>
+                                )}
+                                {test.conscientiousness && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Conformidade (C)</span>
+                                    <Badge variant="outline">{test.conscientiousness}</Badge>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Pontuações Big Five */}
+                          {test.testType === 'bigfive' && (test.openness || test.conscientiousnessScore || test.extraversion || test.agreeableness || test.neuroticism) && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground mb-2">Pontuações:</p>
+                              <div className="grid grid-cols-2 gap-2">
+                                {test.openness && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Abertura</span>
+                                    <Badge variant="outline">{test.openness}</Badge>
+                                  </div>
+                                )}
+                                {test.conscientiousnessScore && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Conscienciosidade</span>
+                                    <Badge variant="outline">{test.conscientiousnessScore}</Badge>
+                                  </div>
+                                )}
+                                {test.extraversion && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Extroversão</span>
+                                    <Badge variant="outline">{test.extraversion}</Badge>
+                                  </div>
+                                )}
+                                {test.agreeableness && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Amabilidade</span>
+                                    <Badge variant="outline">{test.agreeableness}</Badge>
+                                  </div>
+                                )}
+                                {test.neuroticism && (
+                                  <div className="flex items-center justify-between p-2 bg-muted rounded">
+                                    <span className="text-sm">Neuroticismo</span>
+                                    <Badge variant="outline">{test.neuroticism}</Badge>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Recomendações */}
+                          {test.recommendations && (
+                            <div>
+                              <p className="text-sm font-semibold text-muted-foreground">Recomendações:</p>
+                              <p className="text-sm">{test.recommendations}</p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
                 )}
               </CardContent>
             </Card>
