@@ -595,9 +595,9 @@ export async function listEmployees(filters?: {
     .where(and(...conditions))
     .limit(100); // Limitar a 100 resultados para performance
 
-  // Retornar estrutura flat para evitar problemas no frontend
+  // Retornar estrutura com objetos aninhados para compatibilidade com o frontend
   return results.map((row) => ({
-    ...row.employee,
+    employee: row.employee,
     department: row.department,
     position: row.position,
   }));

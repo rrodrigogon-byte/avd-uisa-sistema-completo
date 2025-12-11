@@ -564,6 +564,15 @@ export const psychometricTestsRouter = router({
   listPendingInvitations: protectedProcedure.query(async () => {
     return await getAllPendingInvitations();
   }),
+
+  /**
+   * Obter resultados de testes de um funcionário específico
+   */
+  getEmployeeResults: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      return await getTestResultsByEmployee(input.employeeId);
+    }),
 });
 
 /**

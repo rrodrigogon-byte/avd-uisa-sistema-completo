@@ -89,6 +89,9 @@ export default function Funcionarios() {
 
   // Filtrar funcionários
   const filteredEmployees = employees?.filter((emp) => {
+    // Validar que emp e emp.employee existem
+    if (!emp || !emp.employee) return false;
+    
     const matchesSearch = (emp.employee.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (emp.employee.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (emp.employee.cpf || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -223,10 +226,10 @@ export default function Funcionarios() {
                 </TableHeader>
                 <TableBody>
                   {filteredEmployees?.map((emp: any) => (
-                    <TableRow key={emp.employee.id}>
-                      <TableCell className="font-mono text-sm">{emp.employee.employeeCode}</TableCell>
-                      <TableCell className="font-medium">{emp.employee.name}</TableCell>
-                      <TableCell>{emp.employee.email}</TableCell>
+                    <TableRow key={emp.employee?.id || Math.random()}>
+                      <TableCell className="font-mono text-sm">{emp.employee?.employeeCode || "-"}</TableCell>
+                      <TableCell className="font-medium">{emp.employee?.name || "-"}</TableCell>
+                      <TableCell>{emp.employee?.email || "-"}</TableCell>
                       <TableCell>{emp.position?.title || "-"}</TableCell>
                       <TableCell>{emp.department?.name || "-"}</TableCell>
                       <TableCell>

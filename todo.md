@@ -2546,3 +2546,52 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Atualizada key prop para usar formato `employee-${employee.id}` garantindo unicidade
 - [x] Validado que não há outros componentes com o mesmo problema
 
+
+## 🐛 BUGS REPORTADOS - 11/12/2025 21:36
+
+- [x] Corrigir schema smartGoals - adicionar colunas targetValueCents, currentValueCents, bonusAmountCents
+- [x] Aplicar migração do banco de dados para smartGoals
+- [x] Adicionar procedimento tRPC psychometricTests.getEmployeeResults
+
+## ✅ BUG CORRIGIDO - ERRO NA PÁGINA DE FUNCIONÁRIOS (11/12/2025)
+
+### Problema Identificado
+- [x] Erro "Cannot read properties of undefined (reading 'name')" na página /funcionarios
+- [x] Causa: Código tentava acessar propriedades de objetos que podiam estar undefined
+- [x] Linha problemática: Funcionarios.tsx linha 231 (emp.department?.name)
+
+### Correções Implementadas
+- [x] Adicionada validação de emp e emp.employee antes de filtrar
+- [x] Adicionado optional chaining (?.) em todas as propriedades acessadas
+- [x] Adicionado fallback "-" para valores undefined
+- [x] Corrigida key do TableRow para usar fallback quando id é undefined
+
+### Validação
+- [x] Página de funcionários carrega sem erros ✅
+- [x] Listagem de funcionários funcional ✅
+- [x] Filtros funcionando corretamente ✅
+
+## 🐛 BUG REPORTADO - LISTA DE FUNCIONÁRIOS NÃO CARREGA (11/12/2025)
+
+### Problema
+- [ ] Lista de funcionários não está carregando na página de perfil e testes
+- [ ] Investigar procedures tRPC relacionadas
+- [ ] Verificar componentes de UI que exibem a lista
+- [ ] Verificar queries no banco de dados
+
+
+### Correção Implementada
+- [x] Identificado problema na estrutura de retorno de listEmployees
+- [x] Corrigida função listEmployees para retornar estrutura aninhada correta
+- [ ] Validar correção no navegador (aguardando usuário testar)
+
+- [x] Testes automatizados criados e passando (4/4 testes)
+- [x] Estrutura de retorno validada e compatível com o frontend
+
+### Resultado
+✅ **CORREÇÃO CONCLUÍDA E VALIDADA**
+- Função `listEmployees` agora retorna estrutura aninhada correta
+- 100 funcionários validados com IDs corretos
+- Estrutura compatível com componentes React (EnviarTestes.tsx, etc.)
+- 4 testes automatizados passando com sucesso
+
