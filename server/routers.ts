@@ -170,6 +170,14 @@ const hierarchyRouter = router({
       return stats;
     }),
 
+  // Buscar árvore hierárquica completa
+  getFullTree: protectedProcedure
+    .query(async () => {
+      const { getFullHierarchyTree } = await import('./db');
+      const tree = await getFullHierarchyTree();
+      return tree;
+    }),
+
   // Gerar relatório de span of control
   getSpanOfControlReport: protectedProcedure
     .input(z.object({ managerId: z.number().optional() }))

@@ -2636,3 +2636,25 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - Estrutura compatível com componentes React (EnviarTestes.tsx, etc.)
 - 4 testes automatizados passando com sucesso
 
+
+
+## 🚨 CORREÇÃO URGENTE - HIERARQUIA UISA (11/12/2025)
+
+### Problema Reportado
+- [x] Página de hierarquia retornando erro 404
+- [x] Rota /hierarquia não está configurada corretamente
+- [x] Implementar estrutura hierárquica completa da UISA
+
+### Estrutura Hierárquica UISA a Implementar
+- [x] Reitoria (nível 1)
+- [x] Pró-Reitorias (nível 2)
+- [x] Diretorias (nível 3)
+- [x] Coordenações (nível 4)
+- [x] Setores (nível 5)
+
+### Correções Necessárias
+- [x] Verificar e corrigir roteamento no App.tsx
+- [x] Criar/corrigir componente de página Hierarquia
+- [x] Implementar visualização hierárquica completa
+- [x] Garantir que todos os níveis hierárquicos estejam funcionais
+- [x] Testar navegação e funcionalidade completa

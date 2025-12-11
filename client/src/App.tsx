@@ -224,6 +224,7 @@ import DashboardsAnaliticos from "./pages/DashboardsAnaliticos";
 import HierarchyView from "./pages/HierarchyView";
 import Organograma from "./pages/Organograma";
 import RelatoriosHierarquia from "./pages/RelatoriosHierarquia";
+import HierarquiaUISA from "./pages/HierarquiaUISA";
 
 function Router() {
   return (
@@ -403,7 +404,8 @@ function Router() {
       <Route path="/admin/smtp" component={AdminSmtp} />
       <Route path="/hierarquia-organizacional" component={HierarquiaOrganizacional} />
       <Route path="/hierarquia-import" component={HierarquiaImport} />
-      <Route path="/hierarquia" component={HierarchyView} />
+      <Route path="/hierarquia" component={HierarquiaUISA} />
+      <Route path="/hierarquia-busca" component={HierarchyView} />
       <Route path="/organograma" component={Organograma} />
       <Route path="/relatorios/hierarquia" component={RelatoriosHierarquia} />
       <Route path="/admin/emails" component={DashboardEmails} />

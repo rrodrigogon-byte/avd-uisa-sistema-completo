@@ -2280,3 +2280,166 @@ export async function getEmployeeFullProfile(employeeId: number) {
     return null;
   }
 }
+
+/**
+ * Buscar árvore hierárquica completa da organização
+ * Retorna estrutura em árvore com todos os níveis: Presidente → Diretor → Gestor → Coordenador → Funcionários
+ */
+export async function getFullHierarchyTree() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const allHierarchy = await getAllHierarchy();
+    
+    if (!allHierarchy || allHierarchy.length === 0) {
+      return [];
+    }
+
+    // Mapear todos os nós únicos por nível
+    const presidents = new Map<string, any>();
+    const directors = new Map<string, any>();
+    const managers = new Map<string, any>();
+    const coordinators = new Map<string, any>();
+    const employees = new Map<string, any>();
+
+    // Coletar todos os nós únicos
+    for (const h of allHierarchy) {
+      // Presidente
+      if (h.presidentChapa && !presidents.has(h.presidentChapa)) {
+        presidents.set(h.presidentChapa, {
+          id: h.presidentId || 0,
+          chapa: h.presidentChapa,
+          name: h.presidentName || "",
+          function: h.presidentFunction || "",
+          email: h.presidentEmail,
+          level: "presidente" as const,
+          children: [],
+          subordinatesCount: 0,
+        });
+      }
+
+      // Diretor
+      if (h.directorChapa && !directors.has(h.directorChapa)) {
+        directors.set(h.directorChapa, {
+          id: h.directorId || 0,
+          chapa: h.directorChapa,
+          name: h.directorName || "",
+          function: h.directorFunction || "",
+          email: h.directorEmail,
+          level: "diretor" as const,
+          parentChapa: h.presidentChapa,
+          children: [],
+          subordinatesCount: 0,
+        });
+      }
+
+      // Gestor
+      if (h.managerChapa && !managers.has(h.managerChapa)) {
+        managers.set(h.managerChapa, {
+          id: h.managerId || 0,
+          chapa: h.managerChapa,
+          name: h.managerName || "",
+          function: h.managerFunction || "",
+          email: h.managerEmail,
+          level: "gestor" as const,
+          parentChapa: h.directorChapa,
+          children: [],
+          subordinatesCount: 0,
+        });
+      }
+
+      // Coordenador
+      if (h.coordinatorChapa && !coordinators.has(h.coordinatorChapa)) {
+        coordinators.set(h.coordinatorChapa, {
+          id: h.coordinatorId || 0,
+          chapa: h.coordinatorChapa,
+          name: h.coordinatorName || "",
+          function: h.coordinatorFunction || "",
+          email: h.coordinatorEmail,
+          level: "coordenador" as const,
+          parentChapa: h.managerChapa,
+          children: [],
+          subordinatesCount: 0,
+        });
+      }
+
+      // Funcionário
+      if (h.employeeChapa && !employees.has(h.employeeChapa)) {
+        employees.set(h.employeeChapa, {
+          id: h.employeeId || 0,
+          chapa: h.employeeChapa,
+          name: h.employeeName || "",
+          function: h.employeeFunction || "",
+          email: h.employeeEmail,
+          level: "funcionario" as const,
+          parentChapa: h.coordinatorChapa || h.managerChapa || h.directorChapa,
+          children: [],
+          subordinatesCount: 0,
+        });
+      }
+    }
+
+    // Montar árvore hierárquica
+    // Conectar funcionários aos coordenadores
+    for (const emp of employees.values()) {
+      if (emp.parentChapa && coordinators.has(emp.parentChapa)) {
+        const coord = coordinators.get(emp.parentChapa);
+        coord.children.push(emp);
+        coord.subordinatesCount++;
+      } else if (emp.parentChapa && managers.has(emp.parentChapa)) {
+        const mgr = managers.get(emp.parentChapa);
+        mgr.children.push(emp);
+        mgr.subordinatesCount++;
+      } else if (emp.parentChapa && directors.has(emp.parentChapa)) {
+        const dir = directors.get(emp.parentChapa);
+        dir.children.push(emp);
+        dir.subordinatesCount++;
+      }
+    }
+
+    // Conectar coordenadores aos gestores
+    for (const coord of coordinators.values()) {
+      if (coord.parentChapa && managers.has(coord.parentChapa)) {
+        const mgr = managers.get(coord.parentChapa);
+        mgr.children.push(coord);
+        mgr.subordinatesCount += 1 + coord.subordinatesCount;
+      }
+    }
+
+    // Conectar gestores aos diretores
+    for (const mgr of managers.values()) {
+      if (mgr.parentChapa && directors.has(mgr.parentChapa)) {
+        const dir = directors.get(mgr.parentChapa);
+        dir.children.push(mgr);
+        dir.subordinatesCount += 1 + mgr.subordinatesCount;
+      }
+    }
+
+    // Conectar diretores aos presidentes
+    for (const dir of directors.values()) {
+      if (dir.parentChapa && presidents.has(dir.parentChapa)) {
+        const pres = presidents.get(dir.parentChapa);
+        pres.children.push(dir);
+        pres.subordinatesCount += 1 + dir.subordinatesCount;
+      }
+    }
+
+    // Ordenar children por nome em cada nível
+    const sortChildren = (node: any) => {
+      if (node.children && node.children.length > 0) {
+        node.children.sort((a: any, b: any) => a.name.localeCompare(b.name));
+        node.children.forEach(sortChildren);
+      }
+    };
+
+    const tree = Array.from(presidents.values());
+    tree.forEach(sortChildren);
+    tree.sort((a, b) => a.name.localeCompare(b.name));
+
+    return tree;
+  } catch (error) {
+    console.error("[Database] Failed to get full hierarchy tree:", error);
+    return [];
+  }
+}
