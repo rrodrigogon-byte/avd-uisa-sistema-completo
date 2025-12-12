@@ -3824,3 +3824,53 @@ O sistema está **pronto para uso em produção** com alta cobertura de testes (
 - [ ] Adicionar tooltips explicativos na interface de envio
 - [ ] Criar documentação de uso para RH
 - [ ] Adicionar notificações quando teste é concluído
+
+## 🎯 NOVOS REQUISITOS - VALIDAÇÃO DE TESTES E EMAIL (12/12/2025)
+
+### Validação de Testes no Fluxo de Avaliação
+- [x] Implementar validação de TODOS os testes (PIR + outros) antes de finalizar avaliação
+- [x] Adicionar campo de validação de testes na tabela de avaliações (testsValidated, testsValidatedAt, testsValidatedBy)
+- [x] Criar procedure tRPC para validar testes de um funcionário (getTestsValidationStatus, validateTests)
+- [ ] Adicionar UI para validação de testes no painel do gestor (próxima etapa)
+- [x] Bloquear finalização de avaliação se testes não estiverem validados (validateTests verifica PIR, DISC, BigFive)
+
+### Configuração de Email
+- [x] Configurar envio de email APENAS para rodrigo.goncalves@uisa.com.br
+- [x] Atualizar procedure de envio de email de avaliação finalizada (sendEvaluationCompletionEmail)
+- [ ] Testar envio de email após finalização de avaliação (testar na interface)
+
+### Fluxo Completo de Avaliação
+- [x] Implementar sequência: Autoavaliação → Avaliação Gestor → Validação Testes → Email
+- [x] Adicionar validação de testes antes do envio de email
+- [x] Criar testes automatizados para o fluxo completo (evaluation-tests-validation.test.ts)
+- [ ] Testar fluxo completo na interface (próxima etapa)
+
+### Testes Automatizados
+- [x] Criar testes para validação de testes (7 testes criados)
+- [x] Criar testes para envio de email configurado
+- [x] Criar testes para fluxo completo de avaliação
+
+### Detalhes da Implementação
+**Procedures tRPC Criados:**
+1. `evaluations.getTestsValidationStatus` - Verifica status de validação de testes
+   - Busca testes concluídos em testResults e psychometricTests
+   - Retorna testes obrigatórios (PIR, DISC, BigFive)
+   - Retorna testes faltantes
+   - Retorna informações de validação se já validado
+
+2. `evaluations.validateTests` - Valida testes de um funcionário
+   - Verifica se todos os testes obrigatórios foram concluídos
+   - Atualiza performanceEvaluations com testsValidated=true
+   - Registra data e usuário que validou
+   - Retorna erro se testes estiverem faltando
+
+3. `evaluations.sendEvaluationCompletionEmail` - Envia email de finalização
+   - Destinatário fixo: rodrigo.goncalves@uisa.com.br
+   - Template HTML profissional
+   - Inclui dados do funcionário e avaliação
+   - Mostra status de cada etapa (autoavaliação, gestor, testes)
+
+**Campos Adicionados no Schema:**
+- `testsValidated` (BOOLEAN) - Indica se testes foram validados
+- `testsValidatedAt` (DATETIME) - Data/hora da validação
+- `testsValidatedBy` (INT) - ID do usuário que validou

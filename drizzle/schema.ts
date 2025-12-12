@@ -444,6 +444,12 @@ export const performanceEvaluations = mysqlTable("performanceEvaluations", {
   
   selfEvaluationCompleted: boolean("selfEvaluationCompleted").default(false).notNull(),
   managerEvaluationCompleted: boolean("managerEvaluationCompleted").default(false).notNull(),
+  
+  // Validação de Testes
+  testsValidated: boolean("testsValidated").default(false).notNull(),
+  testsValidatedAt: datetime("testsValidatedAt"),
+  testsValidatedBy: int("testsValidatedBy"),
+  
   peersEvaluationCompleted: boolean("peersEvaluationCompleted").default(false).notNull(),
   subordinatesEvaluationCompleted: boolean("subordinatesEvaluationCompleted").default(false).notNull(),
   

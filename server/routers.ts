@@ -816,6 +816,244 @@ export const appRouter = router({
           averages,
         };
       }),
+
+    // Verificar status de validação de testes de um funcionário
+    getTestsValidationStatus: protectedProcedure
+      .input(z.object({ 
+        employeeId: z.number(),
+        evaluationId: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        // Buscar todos os testes concluídos do funcionário
+        const completedTests = await database
+          .select({
+            testType: testResults.testType,
+            completedAt: testResults.completedAt,
+          })
+          .from(testResults)
+          .where(eq(testResults.employeeId, input.employeeId))
+          .orderBy(desc(testResults.completedAt));
+
+        // Buscar testes do psychometricTests também (tabela legada)
+        const legacyTests = await database
+          .select({
+            testType: psychometricTests.testType,
+            completedAt: psychometricTests.completedAt,
+          })
+          .from(psychometricTests)
+          .where(eq(psychometricTests.employeeId, input.employeeId))
+          .orderBy(desc(psychometricTests.completedAt));
+
+        // Combinar testes de ambas as tabelas
+        const allTests = [...completedTests, ...legacyTests];
+
+        // Agrupar por tipo de teste e pegar o mais recente de cada tipo
+        const testsByType = new Map<string, Date>();
+        allTests.forEach(test => {
+          const existing = testsByType.get(test.testType);
+          if (!existing || (test.completedAt && test.completedAt > existing)) {
+            testsByType.set(test.testType, test.completedAt!);
+          }
+        });
+
+        // Verificar se avaliação já foi validada
+        let validationInfo = null;
+        if (input.evaluationId) {
+          const [evaluation] = await database
+            .select({
+              testsValidated: performanceEvaluations.testsValidated,
+              testsValidatedAt: performanceEvaluations.testsValidatedAt,
+              testsValidatedBy: performanceEvaluations.testsValidatedBy,
+            })
+            .from(performanceEvaluations)
+            .where(eq(performanceEvaluations.id, input.evaluationId))
+            .limit(1);
+
+          if (evaluation) {
+            validationInfo = evaluation;
+          }
+        }
+
+        // Testes obrigatórios (PIR + outros)
+        const requiredTests = ['pir', 'disc', 'bigfive'];
+        const completedTestTypes = Array.from(testsByType.keys());
+        const missingTests = requiredTests.filter(t => !completedTestTypes.includes(t));
+
+        return {
+          completedTests: Array.from(testsByType.entries()).map(([type, date]) => ({
+            testType: type,
+            completedAt: date,
+          })),
+          requiredTests,
+          missingTests,
+          allTestsCompleted: missingTests.length === 0,
+          validationInfo,
+        };
+      }),
+
+    // Validar testes de um funcionário
+    validateTests: protectedProcedure
+      .input(z.object({
+        evaluationId: z.number(),
+        employeeId: z.number(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        // Verificar se todos os testes obrigatórios foram concluídos
+        const status = await database
+          .select({
+            testType: testResults.testType,
+          })
+          .from(testResults)
+          .where(eq(testResults.employeeId, input.employeeId));
+
+        const legacyTests = await database
+          .select({
+            testType: psychometricTests.testType,
+          })
+          .from(psychometricTests)
+          .where(eq(psychometricTests.employeeId, input.employeeId));
+
+        const allTestTypes = new Set([
+          ...status.map(t => t.testType),
+          ...legacyTests.map(t => t.testType),
+        ]);
+
+        const requiredTests = ['pir', 'disc', 'bigfive'];
+        const missingTests = requiredTests.filter(t => !allTestTypes.has(t));
+
+        if (missingTests.length > 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Testes faltando: ${missingTests.join(', ')}`,
+          });
+        }
+
+        // Atualizar avaliação como validada
+        await database
+          .update(performanceEvaluations)
+          .set({
+            testsValidated: true,
+            testsValidatedAt: new Date(),
+            testsValidatedBy: ctx.user.id,
+          })
+          .where(eq(performanceEvaluations.id, input.evaluationId));
+
+        return { success: true };
+      }),
+
+    // Enviar email de finalização de avaliação
+    sendEvaluationCompletionEmail: protectedProcedure
+      .input(z.object({
+        evaluationId: z.number(),
+        employeeId: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        // Buscar dados do funcionário
+        const [employee] = await database
+          .select({
+            id: employees.id,
+            name: employees.name,
+            email: employees.email,
+            registrationNumber: employees.registrationNumber,
+          })
+          .from(employees)
+          .where(eq(employees.id, input.employeeId))
+          .limit(1);
+
+        if (!employee) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Funcionário não encontrado",
+          });
+        }
+
+        // Buscar dados da avaliação
+        const [evaluation] = await database
+          .select()
+          .from(performanceEvaluations)
+          .where(eq(performanceEvaluations.id, input.evaluationId))
+          .limit(1);
+
+        if (!evaluation) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Avaliação não encontrada",
+          });
+        }
+
+        // Email fixo do destinatário
+        const recipientEmail = 'rodrigo.goncalves@uisa.com.br';
+
+        // Enviar email
+        const { sendEmail } = await import('./_core/email');
+        await sendEmail({
+          to: recipientEmail,
+          subject: `✅ Avaliação Finalizada - ${employee.name}`,
+          html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+                .info-box { background: white; padding: 20px; border-left: 4px solid #10b981; margin: 20px 0; }
+                .status-badge { display: inline-block; padding: 8px 16px; background: #10b981; color: white; border-radius: 20px; font-size: 14px; }
+                .footer { text-align: center; color: #6b7280; font-size: 12px; margin-top: 20px; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0; font-size: 28px;">✅ Avaliação Finalizada</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9;">Sistema AVD UISA</p>
+                </div>
+                <div class="content">
+                  <p>Olá,</p>
+                  
+                  <p>A avaliação do colaborador <strong>${employee.name}</strong> foi finalizada com sucesso.</p>
+                  
+                  <div class="info-box">
+                    <p style="margin: 0 0 10px 0;"><strong>Colaborador:</strong> ${employee.name}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Matrícula:</strong> ${employee.registrationNumber || 'N/A'}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Tipo de Avaliação:</strong> ${evaluation.type}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Status:</strong> <span class="status-badge">Concluída</span></p>
+                    ${evaluation.finalScore ? `<p style="margin: 0;"><strong>Nota Final:</strong> ${evaluation.finalScore}/100</p>` : ''}
+                  </div>
+                  
+                  <p><strong>Etapas Concluídas:</strong></p>
+                  <ul style="line-height: 1.8;">
+                    ${evaluation.selfEvaluationCompleted ? '<li>✅ Autoavaliação</li>' : '<li>❌ Autoavaliação</li>'}
+                    ${evaluation.managerEvaluationCompleted ? '<li>✅ Avaliação do Gestor</li>' : '<li>❌ Avaliação do Gestor</li>'}
+                    ${evaluation.testsValidated ? '<li>✅ Validação de Testes</li>' : '<li>❌ Validação de Testes</li>'}
+                  </ul>
+                  
+                  <p>Acesse o sistema para visualizar os detalhes completos da avaliação.</p>
+                  
+                  <div class="footer">
+                    <p>Este é um email automático. Não responda esta mensagem.</p>
+                    <p>© ${new Date().getFullYear()} Sistema AVD UISA - Todos os direitos reservados</p>
+                  </div>
+                </div>
+              </div>
+            </body>
+            </html>
+          `,
+        });
+
+        return { success: true, sentTo: recipientEmail };
+      }),
   }),
 
   // ============================================================================
