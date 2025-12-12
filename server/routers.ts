@@ -15,7 +15,7 @@ import {
   getAllHierarchy,
   getHierarchyStats,
 } from "./db";
-import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, testResults, testInvitations, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria, pdiIntelligentDetails, successionCandidates } from "../drizzle/schema";
+import { employees, goals, pdiPlans, pdiItems, performanceEvaluations, nineBoxPositions, passwordResetTokens, users, successionPlans, testQuestions, psychometricTests, testResults, testInvitations, systemSettings, emailMetrics, calibrationSessions, calibrationReviews, evaluationResponses, evaluationQuestions, departments, positions, evaluationCycles, notifications, auditLogs, scheduledReports, reportExecutionLogs, workflows, workflowInstances, workflowStepApprovals, smtpConfig, costCenters, approvalRules, approvalRuleHistory, evaluationInstances, evaluationCriteriaResponses, evaluationCriteria, pdiIntelligentDetails, successionCandidates, pirAssessments, videoMetadata, pirQuestions, pirAnswers } from "../drizzle/schema";
 import { getDb } from "./db";
 import { analyticsRouter } from "./analyticsRouter";
 import { feedbackRouter } from "./feedbackRouter";
@@ -5304,6 +5304,117 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           .where(eq(pirAssessments.id, input.assessmentId));
 
         return { success: true };
+      }),
+
+    // Upload de vídeo (retorna URL assinada para upload)
+    uploadVideo: protectedProcedure
+      .input(z.object({
+        assessmentId: z.number(),
+        fileName: z.string(),
+        fileSize: z.number(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        // Verificar se a avaliação existe e pertence ao usuário ou se é admin/RH
+        const [assessment] = await database.select()
+          .from(pirAssessments)
+          .where(eq(pirAssessments.id, input.assessmentId))
+          .limit(1);
+
+        if (!assessment) {
+          throw new Error("Avaliação não encontrada");
+        }
+
+        // Gerar chave única para o vídeo
+        const timestamp = Date.now();
+        const randomSuffix = crypto.randomBytes(8).toString('hex');
+        const fileKey = `pir-videos/${assessment.employeeId}/${input.assessmentId}/${timestamp}-${randomSuffix}.webm`;
+
+        return {
+          fileKey,
+          assessmentId: input.assessmentId,
+        };
+      }),
+
+    // Confirmar upload de vídeo e salvar URL
+    confirmVideoUpload: protectedProcedure
+      .input(z.object({
+        assessmentId: z.number(),
+        videoUrl: z.string(),
+        videoKey: z.string(),
+        videoDuration: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(pirAssessments)
+          .set({
+            videoUrl: input.videoUrl,
+            videoKey: input.videoKey,
+            videoDuration: input.videoDuration,
+            videoRecordedAt: new Date(),
+            status: "em_andamento",
+          })
+          .where(eq(pirAssessments.id, input.assessmentId));
+
+        return { success: true };
+      }),
+
+    // Analisar vídeo com IA
+    analyzeVideo: protectedProcedure
+      .input(z.object({
+        assessmentId: z.number(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        // Buscar avaliação
+        const [assessment] = await database.select()
+          .from(pirAssessments)
+          .where(eq(pirAssessments.id, input.assessmentId))
+          .limit(1);
+
+        if (!assessment) {
+          throw new Error("Avaliação não encontrada");
+        }
+
+        if (!assessment.videoUrl) {
+          throw new Error("Vídeo não encontrado para esta avaliação");
+        }
+
+        // Buscar dados do funcionário para contexto
+        const [employee] = await database.select()
+          .from(employees)
+          .where(eq(employees.id, assessment.employeeId))
+          .limit(1);
+
+        // Importar e executar análise de vídeo
+        const { analyzeVideo } = await import('./videoAnalysis');
+        
+        const analysis = await analyzeVideo(
+          assessment.videoUrl,
+          assessment.videoDuration || 0,
+          {
+            employeeName: employee?.name || undefined,
+            assessmentType: 'PIR',
+          }
+        );
+
+        // Salvar resultado da análise no banco
+        await database.update(pirAssessments)
+          .set({
+            overallScore: analysis.overallScore,
+            comments: JSON.stringify(analysis),
+            status: "concluida",
+            completedAt: new Date(),
+          })
+          .where(eq(pirAssessments.id, input.assessmentId));
+
+        return analysis;
       }),
 
     // Salvar metadados de validação do vídeo

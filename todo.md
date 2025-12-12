@@ -3169,3 +3169,63 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Adicionar botão de ação "Ver Resultado Completo" no email
 - [x] Implementar envio tanto para submitTestPublic quanto submitTest
 - [x] Adicionar tratamento de erros para não falhar operação principal
+
+## 🆕 NOVAS FUNCIONALIDADES SOLICITADAS (12/12/2025)
+
+### Botão "Resumo da Pesquisa" em Testes
+- [x] Adicionar botão "Resumo da Pesquisa" na visualização de resultados de testes em Perfil do Funcionário
+- [x] Criar modal de visualização completa com todos os textos e resumos da pesquisa
+- [x] Incluir todas as perguntas e respostas do teste
+- [x] Incluir interpretação completa dos resultados
+- [ ] Adicionar opção de exportar resumo em PDF (funcionalidade futura)
+
+### Teste PIR na Seção PSCO
+- [x] Implementar teste PIR (Perfil de Interesses e Reações) completo
+- [x] Adicionar metodologia completa do teste PIR (60 questões em 6 dimensões)
+- [x] Criar formulário de aplicação do teste PIR (já integrado ao sistema)
+- [x] Implementar cálculo de pontuação do teste PIR (pirCalculations.ts)
+- [x] Adicionar interpretação de resultados do teste PIR (completa com todas as dimensões)
+- [x] Integrar teste PIR na seção PSCO (Testes Psicométricos)
+- [x] Criar visualização de resultados do teste PIR
+- [x] Seed de 60 perguntas PIR criado e executado com sucesso
+
+
+## 🎬 MELHORIAS URGENTES - GRAVAÇÃO DE VÍDEO NO PIR E BOTÃO PUBLICAR (12/12/2025)
+
+### Problema Reportado
+- [x] PIR precisa ter gravação de vídeo
+- [x] Sistema deve detectar padrões automaticamente do vídeo do PIR
+- [x] Análise do vídeo deve ser adicionada no relatório detalhado
+- [x] Botão "Publicar" não está aparecendo nos relatórios
+
+### Funcionalidades a Implementar
+- [x] Adicionar componente de gravação de vídeo no PIR
+- [x] Implementar upload de vídeo para S3
+- [x] Criar sistema de análise de vídeo com IA (detecção de padrões)
+- [x] Integrar análise de vídeo no relatório detalhado do PIR
+- [x] Corrigir botão "Publicar" que não está aparecendo
+- [ ] Testar gravação e upload de vídeo
+- [ ] Testar análise automática de vídeo
+- [ ] Testar geração de relatório com análise de vídeo
+- [ ] Testar publicação de relatório
+
+### Análise de Vídeo com IA
+- [x] Implementar detecção de movimentos e padrões corporais
+- [x] Analisar expressões faciais e linguagem corporal
+- [x] Identificar dificuldades em atividades específicas
+- [x] Gerar insights automáticos sobre capacidade funcional
+- [x] Adicionar pontuação automática baseada na análise
+
+### Integração com Relatório
+- [x] Adicionar seção de análise de vídeo no relatório
+- [x] Incluir timestamps de eventos importantes
+- [x] Mostrar insights e recomendações baseadas no vídeo
+- [x] Permitir visualização do vídeo no relatório
+- [x] Exportar análise de vídeo em PDF
+
+### Correção do Botão Publicar
+- [x] Investigar por que botão "Publicar" não aparece
+- [x] Verificar permissões e condições para exibir botão
+- [x] Corrigir lógica de exibição do botão
+- [ ] Testar publicação de relatórios
+- [ ] Validar que relatório publicado fica visível
