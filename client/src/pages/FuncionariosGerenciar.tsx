@@ -126,17 +126,24 @@ export default function FuncionariosGerenciar() {
       return;
     }
 
+    // Validar e formatar datas como strings ISO (YYYY-MM-DD)
+    const birthDateStr = formData.birthDate && formData.birthDate.trim() !== "" 
+      ? formData.birthDate.split('T')[0] // Garantir formato YYYY-MM-DD
+      : undefined;
+    
+    const hireDateStr = formData.hireDate.split('T')[0]; // Garantir formato YYYY-MM-DD
+
     createMutation.mutate({
       employeeCode: formData.employeeCode,
       name: formData.name,
       email: formData.email,
       cpf: formData.cpf && formData.cpf.trim() !== "" ? formData.cpf : undefined,
-      birthDate: formData.birthDate && formData.birthDate.trim() !== "" ? formData.birthDate : undefined,
-      hireDate: formData.hireDate,
+      birthDate: birthDateStr,
+      hireDate: hireDateStr,
       departmentId: parseInt(formData.departmentId),
       positionId: positionIdNum,
-      managerId: formData.managerId ? parseInt(formData.managerId) : undefined,
-      salary: formData.salary ? Math.round(parseFloat(formData.salary) * 100) : undefined,
+      managerId: formData.managerId && formData.managerId.trim() !== "" ? parseInt(formData.managerId) : undefined,
+      salary: formData.salary && formData.salary.trim() !== "" ? Math.round(parseFloat(formData.salary) * 100) : undefined,
       phone: formData.phone && formData.phone.trim() !== "" ? formData.phone : undefined,
       address: formData.address && formData.address.trim() !== "" ? formData.address : undefined,
     });

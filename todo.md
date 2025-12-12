@@ -2769,3 +2769,47 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Corrigir campo positionId obrigatório (validação adicionada)
 - [x] Testar cadastro de funcionário com sucesso
 - [x] Criar testes automatizados para validar correção (employee-create.test.ts)
+
+
+## ✅ CORREÇÃO DEFINITIVA - CADASTRO DE FUNCIONÁRIOS (11/12/2025)
+
+### Problema Reportado
+- [x] Erro ao criar funcionário: "Invalid input: expected string, received Date" para birthDate e hireDate
+- [x] Erro: "Invalid input: expected number, received undefined" para positionId
+- [x] Cadastro de funcionários completamente quebrado
+
+### Diagnóstico
+- [x] **CAUSA RAIZ:** Conflito entre validação tRPC e Drizzle ORM
+- [x] Schema tRPC espera datas como strings ISO (`z.string()`)
+- [x] Drizzle ORM espera datas como objetos Date (`.toISOString()`)
+- [x] Frontend enviava corretamente strings ISO, mas backend não convertia
+
+### Correções Implementadas
+- [x] **Frontend (FuncionariosGerenciar.tsx):**
+  - Adicionada validação para garantir formato YYYY-MM-DD
+  - Implementada conversão `.split('T')[0]` para remover timestamp
+  - Corrigida validação de campos opcionais (managerId, salary)
+  
+- [x] **Backend (db.ts - upsertEmployee):**
+  - Adicionada conversão de strings ISO para objetos Date
+  - Implementada verificação de tipo antes da conversão
+  - Garantida compatibilidade com Drizzle ORM
+
+- [x] **Testes Automatizados (employees-create.test.ts):**
+  - Criados 4 testes completos (100% passando)
+  - Teste 1: Criar funcionário com datas como strings ISO ✅
+  - Teste 2: Criar funcionário com birthDate opcional (undefined) ✅
+  - Teste 3: Validar que positionId é obrigatório e numérico ✅
+  - Teste 4: Validar formato de data ISO (YYYY-MM-DD) ✅
+
+### Validação
+- [x] **RESULTADO: 4/4 testes passando (100% sucesso)**
+- [x] Cadastro de funcionários funcionando perfeitamente
+- [x] Datas sendo salvas corretamente no banco
+- [x] Campos opcionais tratados adequadamente
+- [x] Validações de negócio funcionando
+
+### Arquivos Modificados
+- `client/src/pages/FuncionariosGerenciar.tsx` - Correção de formatação de datas
+- `server/db.ts` - Conversão de strings ISO para Date objects
+- `server/employees-create.test.ts` - Testes automatizados completos

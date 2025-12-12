@@ -620,16 +620,27 @@ export async function upsertEmployee(employeeData: any) {
 
   const { InsertEmployee } = await import("../drizzle/schema");
 
-  if (employeeData.id) {
+  // Converter strings ISO para objetos Date (Drizzle ORM espera Date objects)
+  const processedData = { ...employeeData };
+  
+  if (processedData.birthDate && typeof processedData.birthDate === 'string') {
+    processedData.birthDate = new Date(processedData.birthDate);
+  }
+  
+  if (processedData.hireDate && typeof processedData.hireDate === 'string') {
+    processedData.hireDate = new Date(processedData.hireDate);
+  }
+
+  if (processedData.id) {
     // Atualizar
     await db
       .update(employees)
-      .set({ ...employeeData, updatedAt: new Date() })
-      .where(eq(employees.id, employeeData.id));
-    return employeeData.id;
+      .set({ ...processedData, updatedAt: new Date() })
+      .where(eq(employees.id, processedData.id));
+    return processedData.id;
   } else {
     // Criar
-    const result = await db.insert(employees).values(employeeData);
+    const result = await db.insert(employees).values(processedData);
     return result[0].insertId;
   }
 }
