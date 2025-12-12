@@ -2454,3 +2454,430 @@ export async function getFullHierarchyTree() {
     return [];
   }
 }
+
+
+// ============================================================================
+// CICLO COMPLETO DE AVALIAÇÃO
+// ============================================================================
+
+import { eq, and, desc, sql as sqlOperator, inArray } from "drizzle-orm";
+import { evaluationResponses, evaluationQuestions, competencies } from "../drizzle/schema";
+
+/**
+ * Criar avaliações para todos os funcionários de um ciclo
+ */
+export async function createEvaluationsForCycle(cycleId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Buscar todos os funcionários ativos
+    const activeEmployees = await db
+      .select()
+      .from(employees)
+      .where(eq(employees.active, true));
+
+    // Criar avaliação 360° para cada funcionário
+    const evaluations = [];
+    for (const employee of activeEmployees) {
+      const [evaluation] = await db
+        .insert(performanceEvaluations)
+        .values({
+          cycleId,
+          employeeId: employee.id,
+          type: "360",
+          status: "pendente",
+          workflowStatus: "pending_self",
+          selfEvaluationCompleted: false,
+          managerEvaluationCompleted: false,
+          peersEvaluationCompleted: false,
+          subordinatesEvaluationCompleted: false,
+        })
+        .$returningId();
+
+      evaluations.push({ ...evaluation, employeeId: employee.id });
+    }
+
+    return evaluations;
+  } catch (error) {
+    console.error("[Database] Failed to create evaluations for cycle:", error);
+    throw error;
+  }
+}
+
+/**
+ * Preencher autoavaliação automaticamente (para simulação)
+ */
+export async function fillSelfEvaluation(evaluationId: number, employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Buscar todas as questões ativas
+    const questions = await db
+      .select()
+      .from(evaluationQuestions)
+      .where(eq(evaluationQuestions.active, true));
+
+    // Gerar respostas aleatórias mas realistas (3-5)
+    const responses = questions.map((question) => ({
+      evaluationId,
+      questionId: question.id,
+      evaluatorId: employeeId,
+      evaluatorType: "self" as const,
+      score: Math.floor(Math.random() * 3) + 3, // 3, 4 ou 5
+    }));
+
+    // Inserir respostas
+    await db.insert(evaluationResponses).values(responses);
+
+    // Calcular nota média
+    const avgScore = responses.reduce((sum, r) => sum + r.score, 0) / responses.length;
+    const selfScore = Math.round((avgScore / 5) * 100); // Converter para 0-100
+
+    // Atualizar avaliação
+    await db
+      .update(performanceEvaluations)
+      .set({
+        selfEvaluationCompleted: true,
+        selfScore,
+        selfCompletedAt: new Date(),
+        workflowStatus: "pending_manager",
+      })
+      .where(eq(performanceEvaluations.id, evaluationId));
+
+    return { success: true, selfScore };
+  } catch (error) {
+    console.error("[Database] Failed to fill self evaluation:", error);
+    throw error;
+  }
+}
+
+/**
+ * Preencher avaliação do gestor automaticamente (para simulação)
+ */
+export async function fillManagerEvaluation(evaluationId: number, managerId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Buscar todas as questões ativas
+    const questions = await db
+      .select()
+      .from(evaluationQuestions)
+      .where(eq(evaluationQuestions.active, true));
+
+    // Gerar respostas aleatórias mas realistas (2-5)
+    const responses = questions.map((question) => ({
+      evaluationId,
+      questionId: question.id,
+      evaluatorId: managerId,
+      evaluatorType: "manager" as const,
+      score: Math.floor(Math.random() * 4) + 2, // 2, 3, 4 ou 5
+    }));
+
+    // Inserir respostas
+    await db.insert(evaluationResponses).values(responses);
+
+    // Calcular nota média
+    const avgScore = responses.reduce((sum, r) => sum + r.score, 0) / responses.length;
+    const managerScore = Math.round((avgScore / 5) * 100); // Converter para 0-100
+
+    // Atualizar avaliação
+    await db
+      .update(performanceEvaluations)
+      .set({
+        managerEvaluationCompleted: true,
+        managerScore,
+        managerCompletedAt: new Date(),
+        workflowStatus: "pending_consensus",
+      })
+      .where(eq(performanceEvaluations.id, evaluationId));
+
+    return { success: true, managerScore };
+  } catch (error) {
+    console.error("[Database] Failed to fill manager evaluation:", error);
+    throw error;
+  }
+}
+
+/**
+ * Finalizar avaliação com consenso (média entre auto e gestor)
+ */
+export async function finalizeEvaluation(evaluationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Buscar avaliação
+    const [evaluation] = await db
+      .select()
+      .from(performanceEvaluations)
+      .where(eq(performanceEvaluations.id, evaluationId));
+
+    if (!evaluation) throw new Error("Evaluation not found");
+
+    // Calcular nota final (média entre auto e gestor)
+    const finalScore = Math.round(
+      ((evaluation.selfScore || 0) + (evaluation.managerScore || 0)) / 2
+    );
+
+    // Atualizar avaliação
+    await db
+      .update(performanceEvaluations)
+      .set({
+        finalScore,
+        status: "concluida",
+        workflowStatus: "completed",
+        consensusCompletedAt: new Date(),
+        completedAt: new Date(),
+      })
+      .where(eq(performanceEvaluations.id, evaluationId));
+
+    return { success: true, finalScore };
+  } catch (error) {
+    console.error("[Database] Failed to finalize evaluation:", error);
+    throw error;
+  }
+}
+
+/**
+ * Buscar resultados detalhados de uma avaliação
+ */
+export async function getEvaluationDetails(evaluationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Buscar avaliação
+    const [evaluation] = await db
+      .select()
+      .from(performanceEvaluations)
+      .where(eq(performanceEvaluations.id, evaluationId));
+
+    if (!evaluation) return null;
+
+    // Buscar respostas agrupadas por tipo de avaliador
+    const responses = await db
+      .select({
+        questionId: evaluationResponses.questionId,
+        question: evaluationQuestions.question,
+        category: evaluationQuestions.category,
+        evaluatorType: evaluationResponses.evaluatorType,
+        score: evaluationResponses.score,
+      })
+      .from(evaluationResponses)
+      .innerJoin(
+        evaluationQuestions,
+        eq(evaluationResponses.questionId, evaluationQuestions.id)
+      )
+      .where(eq(evaluationResponses.evaluationId, evaluationId));
+
+    // Agrupar por categoria e tipo de avaliador
+    const byCategory: Record<string, any> = {};
+    
+    for (const response of responses) {
+      const category = response.category || "Geral";
+      if (!byCategory[category]) {
+        byCategory[category] = {
+          category,
+          self: [],
+          manager: [],
+        };
+      }
+      
+      if (response.evaluatorType === "self") {
+        byCategory[category].self.push(response.score);
+      } else if (response.evaluatorType === "manager") {
+        byCategory[category].manager.push(response.score);
+      }
+    }
+
+    // Calcular médias por categoria
+    const competencyScores = Object.values(byCategory).map((cat: any) => ({
+      category: cat.category,
+      selfAvg: cat.self.length > 0 
+        ? cat.self.reduce((a: number, b: number) => a + b, 0) / cat.self.length 
+        : 0,
+      managerAvg: cat.manager.length > 0
+        ? cat.manager.reduce((a: number, b: number) => a + b, 0) / cat.manager.length
+        : 0,
+    }));
+
+    return {
+      evaluation,
+      competencyScores,
+      responses,
+    };
+  } catch (error) {
+    console.error("[Database] Failed to get evaluation details:", error);
+    throw error;
+  }
+}
+
+/**
+ * Buscar todas as avaliações 360° de um funcionário com detalhes do ciclo
+ */
+export async function getEmployeePerformanceEvaluationsWithCycle(employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const evaluations = await db
+      .select({
+        id: performanceEvaluations.id,
+        cycleId: performanceEvaluations.cycleId,
+        cycleName: evaluationCycles.name,
+        cycleYear: evaluationCycles.year,
+        type: performanceEvaluations.type,
+        status: performanceEvaluations.status,
+        workflowStatus: performanceEvaluations.workflowStatus,
+        selfScore: performanceEvaluations.selfScore,
+        managerScore: performanceEvaluations.managerScore,
+        finalScore: performanceEvaluations.finalScore,
+        completedAt: performanceEvaluations.completedAt,
+      })
+      .from(performanceEvaluations)
+      .innerJoin(
+        evaluationCycles,
+        eq(performanceEvaluations.cycleId, evaluationCycles.id)
+      )
+      .where(eq(performanceEvaluations.employeeId, employeeId))
+      .orderBy(desc(evaluationCycles.year));
+
+    return evaluations;
+  } catch (error) {
+    console.error("[Database] Failed to get employee evaluations:", error);
+    throw error;
+  }
+}
+
+/**
+ * Calcular quartis de desempenho de um ciclo
+ */
+export async function calculateCycleQuartiles(cycleId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Buscar todas as avaliações concluídas do ciclo
+    const evaluations = await db
+      .select({
+        id: performanceEvaluations.id,
+        employeeId: performanceEvaluations.employeeId,
+        finalScore: performanceEvaluations.finalScore,
+      })
+      .from(performanceEvaluations)
+      .where(
+        and(
+          eq(performanceEvaluations.cycleId, cycleId),
+          eq(performanceEvaluations.status, "concluida")
+        )
+      );
+
+    if (evaluations.length === 0) {
+      return { q1: 0, q2: 0, q3: 0, q4: 0, distribution: [] };
+    }
+
+    // Ordenar por nota final
+    const sorted = evaluations
+      .filter((e) => e.finalScore !== null)
+      .sort((a, b) => (a.finalScore || 0) - (b.finalScore || 0));
+
+    // Calcular quartis
+    const q1Index = Math.floor(sorted.length * 0.25);
+    const q2Index = Math.floor(sorted.length * 0.5);
+    const q3Index = Math.floor(sorted.length * 0.75);
+
+    const q1 = sorted[q1Index]?.finalScore || 0;
+    const q2 = sorted[q2Index]?.finalScore || 0;
+    const q3 = sorted[q3Index]?.finalScore || 0;
+
+    // Classificar cada avaliação em um quartil
+    const distribution = sorted.map((e) => {
+      let quartile = 1;
+      if ((e.finalScore || 0) > q3) quartile = 4;
+      else if ((e.finalScore || 0) > q2) quartile = 3;
+      else if ((e.finalScore || 0) > q1) quartile = 2;
+
+      return {
+        employeeId: e.employeeId,
+        finalScore: e.finalScore,
+        quartile,
+      };
+    });
+
+    return {
+      q1,
+      q2,
+      q3,
+      q4: sorted[sorted.length - 1]?.finalScore || 0,
+      distribution,
+    };
+  } catch (error) {
+    console.error("[Database] Failed to calculate cycle quartiles:", error);
+    throw error;
+  }
+}
+
+/**
+ * Gerar PDI automático baseado nos gaps da avaliação
+ */
+export async function generateAutomaticPDI(evaluationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Buscar detalhes da avaliação
+    const details = await getEvaluationDetails(evaluationId);
+    if (!details) throw new Error("Evaluation not found");
+
+    const { evaluation, competencyScores } = details;
+
+    // Identificar competências com gap (nota < 4)
+    const gaps = competencyScores.filter(
+      (comp) => comp.managerAvg < 4 || comp.selfAvg < 4
+    );
+
+    if (gaps.length === 0) {
+      return { success: true, message: "Nenhum gap identificado" };
+    }
+
+    // Criar PDI
+    const [pdi] = await db
+      .insert(pdiPlans)
+      .values({
+        cycleId: evaluation.cycleId,
+        employeeId: evaluation.employeeId,
+        status: "em_andamento",
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 ano
+      })
+      .$returningId();
+
+    // Criar ações de desenvolvimento para cada gap
+    const actions = gaps.map((gap) => ({
+      planId: pdi.id,
+      competencyId: 1, // TODO: buscar competency ID real
+      title: `Desenvolver: ${gap.category}`,
+      description: `Melhorar nota de ${Math.round(gap.managerAvg)} para 5`,
+      category: "70_pratica" as const,
+      type: "treinamento",
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000), // 6 meses
+      status: "pendente" as const,
+      progress: 0,
+    }));
+
+    await db.insert(pdiItems).values(actions);
+
+    return {
+      success: true,
+      pdiId: pdi.id,
+      actionsCreated: actions.length,
+    };
+  } catch (error) {
+    console.error("[Database] Failed to generate automatic PDI:", error);
+    throw error;
+  }
+}

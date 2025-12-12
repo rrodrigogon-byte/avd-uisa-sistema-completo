@@ -2925,3 +2925,68 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [ ] Implementar recomendações automáticas de vagas baseadas no PIR
 - [ ] Adicionar exportação de resultados em PDF
 - [ ] Criar relatório comparativo entre PIR e outros testes psicométricos
+
+
+## 🎯 CICLO COMPLETO DE AVALIAÇÃO - NOVA SOLICITAÇÃO (12/12/2025)
+
+### Envio Automático de Testes
+- [x] Implementar envio de emails para rodrigo.goncalves@uisa.com.br
+- [x] Implementar envio de emails para bernardo.mendes@uisa.com.br
+- [x] Implementar envio de emails para rodrigo.dias@uisa.com.br
+- [x] Criar sistema de rastreamento de envios
+
+### Preenchimento Automático Simulado
+- [x] Criar script de preenchimento automático de avaliações
+- [x] Simular respostas realistas para autoavaliação
+- [x] Simular respostas realistas para avaliação do gestor
+- [x] Implementar variação de notas (1-5) de forma inteligente
+
+### Exibição de Resultados Detalhados
+- [x] Criar seção de resultados no perfil do funcionário
+- [x] Exibir notas por competência com gráficos
+- [x] Mostrar comparação autoavaliação vs avaliação gestor
+- [x] Exibir classificação por quartil
+- [x] Mostrar evolução histórica de desempenho
+
+### PDI Integrado aos Resultados
+- [x] Vincular PDI aos gaps identificados na avaliação
+- [x] Gerar sugestões automáticas de ações de desenvolvimento
+- [x] Exibir PDI na página de resultados
+- [x] Implementar acompanhamento de progresso do PDI
+
+### Dashboard Analítico do PIR
+- [x] Criar página de dashboard PIR (Plano Individual de Resultados)
+- [x] Implementar gráfico de distribuição de notas por competência
+- [x] Criar visualização de quartis (Q1, Q2, Q3, Q4)
+- [x] Mostrar distribuição da equipe por faixa de desempenho
+- [x] Exibir métricas de engajamento (taxa de resposta, tempo médio)
+- [x] Criar gráficos de evolução temporal
+- [x] Implementar filtros por departamento, cargo, período
+
+### Exportação em PDF
+- [x] Criar template de PDF para resultados individuais
+- [x] Incluir gráfico de radar de competências no PDF
+- [x] Adicionar tabela detalhada de notas no PDF
+- [x] Incluir seção de PDI no PDF
+- [x] Adicionar identidade visual UISA no PDF
+- [x] Implementar botão de download de PDF no perfil
+
+### Execução do Ciclo Completo
+- [x] Criar ciclo de avaliação de teste
+- [x] Cadastrar 3 funcionários (Rodrigo G., Bernardo M., Rodrigo D.)
+- [x] Enviar emails de avaliação automaticamente
+- [x] Executar preenchimento automático simulado
+- [x] Calcular notas finais e classificações
+- [x] Gerar PDIs automáticos baseados nos gaps
+- [x] Validar exibição de resultados no perfil
+- [x] Validar dashboard PIR com dados reais
+- [x] Testar exportação de PDF
+- [x] Documentar todo o processo
+
+### Validação Final
+- [x] Verificar que emails foram recebidos
+- [x] Confirmar que resultados aparecem no perfil
+- [x] Validar cálculos de notas e quartis
+- [x] Testar todos os gráficos do dashboard PIR
+- [x] Validar PDFs gerados
+- [x] Criar checkpoint final
