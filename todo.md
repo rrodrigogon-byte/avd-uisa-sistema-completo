@@ -2813,3 +2813,5 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - `client/src/pages/FuncionariosGerenciar.tsx` - Correção de formatação de datas
 - `server/db.ts` - Conversão de strings ISO para Date objects
 - `server/employees-create.test.ts` - Testes automatizados completos
+
+- [x] Corrigir validação de datas e positionId no formulário de criação de funcionários

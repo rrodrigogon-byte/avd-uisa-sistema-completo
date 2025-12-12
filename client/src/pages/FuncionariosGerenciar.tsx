@@ -121,8 +121,15 @@ export default function FuncionariosGerenciar() {
 
     // Validar que positionId é um número válido
     const positionIdNum = parseInt(formData.positionId);
-    if (isNaN(positionIdNum)) {
-      toast.error("Cargo inválido");
+    if (isNaN(positionIdNum) || positionIdNum <= 0) {
+      toast.error("Selecione um cargo válido");
+      return;
+    }
+
+    // Validar departmentId
+    const departmentIdNum = parseInt(formData.departmentId);
+    if (isNaN(departmentIdNum) || departmentIdNum <= 0) {
+      toast.error("Selecione um departamento válido");
       return;
     }
 
@@ -140,7 +147,7 @@ export default function FuncionariosGerenciar() {
       cpf: formData.cpf && formData.cpf.trim() !== "" ? formData.cpf : undefined,
       birthDate: birthDateStr,
       hireDate: hireDateStr,
-      departmentId: parseInt(formData.departmentId),
+      departmentId: departmentIdNum,
       positionId: positionIdNum,
       managerId: formData.managerId && formData.managerId.trim() !== "" ? parseInt(formData.managerId) : undefined,
       salary: formData.salary && formData.salary.trim() !== "" ? Math.round(parseFloat(formData.salary) * 100) : undefined,
