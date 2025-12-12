@@ -151,6 +151,7 @@ const menuItems = [
     children: [
       { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
       { icon: Upload, label: "Importar PDI", path: "/pdi/import" },
+      { icon: Target, label: "PIR - Dashboard", path: "/pir/dashboard" },
       { icon: Users, label: "Perfis de Funcionários", path: "/desenvolvimento/funcionarios" },
       { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },
       { icon: PieChart, label: "Comparativo de Testes", path: "/testes/comparativo" },

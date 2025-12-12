@@ -118,6 +118,8 @@ import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
 import TestPIR from "./pages/TestPIR";
+import PIRDashboard from "./pages/PIRDashboard";
+import PIRReport from "./pages/PIRReport";
 import DetalhesResultadoTeste from "./pages/DetalhesResultadoTeste";
 import ResultadoCandidato from "./pages/ResultadoCandidato";
 import TestResponse from "./pages/TestResponse";
@@ -381,6 +383,8 @@ function Router() {
       <Route path="/teste-lideranca" component={TestLeadership} />
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
       <Route path="/teste-pir/:token" component={TestPIR} />
+      <Route path="/pir/dashboard" component={PIRDashboard} />
+      <Route path="/pir/relatorio/:employeeId" component={PIRReport} />
       <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />

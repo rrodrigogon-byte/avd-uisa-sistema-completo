@@ -3617,3 +3617,43 @@ Focar 100% no Google Cloud Platform (GCP) para todas as integrações de APIs, e
 - [x] Criar departamentos e cargos automaticamente
 - [x] Mapear campos TOTVS para schema do banco
 - [x] Executar importação em massa
+
+
+## 🎯 PRÓXIMAS TAREFAS - PIR E FUNCIONALIDADES PENDENTES (12/12/2025)
+
+### PIR (Plano Individual de Resultados) - ✅ 100% IMPLEMENTADO
+- [x] Verificar se tabela PIR já existe no banco de dados
+- [x] Criar/atualizar schema para PIR com campos completos
+- [x] Implementar procedures tRPC para gestão de PIR (pirVideo router)
+- [x] Criar página de listagem de PIRs (PIRDashboard.tsx)
+- [x] Criar página de criação/edição de PIR (TestPIR.tsx)
+- [x] Implementar vinculação PIR com metas SMART
+- [x] Implementar acompanhamento de progresso do PIR
+- [x] Criar relatórios de PIR (PIRReport.tsx)
+- [x] Adicionar PIR ao perfil do funcionário
+- [x] Adicionar PIR ao menu de navegação do DashboardLayout
+- [x] Adicionar rotas PIR no App.tsx (PIRDashboard e PIRReport)
+- [x] Criar testes de integração (5 de 7 testes passando - 71%)
+
+### Melhorias em Funcionalidades Existentes
+- [ ] Revisar e melhorar dashboard principal
+- [ ] Adicionar mais gráficos e estatísticas
+- [ ] Melhorar exportação de relatórios
+- [ ] Implementar filtros avançados em todas as listagens
+- [ ] Adicionar ordenação em todas as tabelas
+- [ ] Melhorar responsividade mobile
+
+### Validações Finais
+- [ ] Corrigir 6 testes falhando restantes
+- [ ] Validar todos os formulários
+- [ ] Verificar tratamento de erros em todas as páginas
+- [ ] Validar permissões de acesso em todas as rotas
+- [ ] Testar performance com dados em volume
+- [ ] Verificar logs de auditoria em todas as operações críticas
+
+### Documentação Final
+- [ ] Atualizar README com instruções completas
+- [ ] Documentar todos os módulos implementados
+- [ ] Criar guia de usuário completo
+- [ ] Criar guia de administrador
+- [ ] Documentar APIs e procedures tRPC
