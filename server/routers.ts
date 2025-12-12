@@ -2710,9 +2710,16 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           testValues.discInfluence = Math.round((profile.I || 0) * 20);
           testValues.discSteadiness = Math.round((profile.S || 0) * 20);
           testValues.discCompliance = Math.round((profile.C || 0) * 20);
-          const entries = Object.entries(profile);
-          const maxDimension = entries.length > 0 ? entries.reduce((a, b) => a[1] > b[1] ? a : b)[0] : 'D';
-          testValues.discProfile = maxDimension;
+          
+          // Calcular dimensão dominante
+          const dimensions = [
+            { key: 'D', value: profile.D || 0 },
+            { key: 'I', value: profile.I || 0 },
+            { key: 'S', value: profile.S || 0 },
+            { key: 'C', value: profile.C || 0 },
+          ];
+          const maxDimension = dimensions.reduce((max, curr) => curr.value > max.value ? curr : max, dimensions[0]);
+          testValues.discProfile = maxDimension.key;
         } else if (input.testType === "bigfive") {
           testValues.bigFiveOpenness = Math.round((profile.O || 0) * 20);
           testValues.bigFiveConscientiousness = Math.round((profile.C || 0) * 20);
@@ -2793,6 +2800,31 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         } else if (input.testType === 'ie') {
           resultData.profileType = 'Inteligência Emocional';
           resultData.profileDescription = `Pontuação IE: ${profile.score || 0}/100`;
+        } else if (input.testType === 'careeranchors') {
+          // Identificar a âncora dominante (maior pontuação)
+          const anchors = [
+            { key: 'competencia_tecnica', label: 'Competência Técnica' },
+            { key: 'competencia_gerencial', label: 'Competência Gerencial' },
+            { key: 'autonomia', label: 'Autonomia/Independência' },
+            { key: 'seguranca', label: 'Segurança/Estabilidade' },
+            { key: 'criatividade_empreendedora', label: 'Criatividade Empreendedora' },
+            { key: 'servico', label: 'Serviço/Dedicação' },
+            { key: 'desafio', label: 'Desafio Puro' },
+            { key: 'estilo_vida', label: 'Estilo de Vida' },
+          ];
+          
+          const sortedAnchors = anchors
+            .map(anchor => ({
+              ...anchor,
+              score: profile[anchor.key] || 0
+            }))
+            .sort((a, b) => b.score - a.score);
+          
+          const topAnchor = sortedAnchors[0];
+          const secondAnchor = sortedAnchors[1];
+          
+          resultData.profileType = topAnchor.label;
+          resultData.profileDescription = `Âncora Principal: ${topAnchor.label} (${topAnchor.score.toFixed(1)}), Segunda Âncora: ${secondAnchor.label} (${secondAnchor.score.toFixed(1)})`;
         }
 
         // Salvar resultado na tabela testResults
@@ -3143,6 +3175,31 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         } else if (input.testType === 'ie') {
           resultData.profileType = 'Inteligência Emocional';
           resultData.profileDescription = `Pontuação IE: ${profile.score || 0}/100`;
+        } else if (input.testType === 'careeranchors') {
+          // Identificar a âncora dominante (maior pontuação)
+          const anchors = [
+            { key: 'competencia_tecnica', label: 'Competência Técnica' },
+            { key: 'competencia_gerencial', label: 'Competência Gerencial' },
+            { key: 'autonomia', label: 'Autonomia/Independência' },
+            { key: 'seguranca', label: 'Segurança/Estabilidade' },
+            { key: 'criatividade_empreendedora', label: 'Criatividade Empreendedora' },
+            { key: 'servico', label: 'Serviço/Dedicação' },
+            { key: 'desafio', label: 'Desafio Puro' },
+            { key: 'estilo_vida', label: 'Estilo de Vida' },
+          ];
+          
+          const sortedAnchors = anchors
+            .map(anchor => ({
+              ...anchor,
+              score: profile[anchor.key] || 0
+            }))
+            .sort((a, b) => b.score - a.score);
+          
+          const topAnchor = sortedAnchors[0];
+          const secondAnchor = sortedAnchors[1];
+          
+          resultData.profileType = topAnchor.label;
+          resultData.profileDescription = `Âncora Principal: ${topAnchor.label} (${topAnchor.score.toFixed(1)}), Segunda Âncora: ${secondAnchor.label} (${secondAnchor.score.toFixed(1)})`;
         }
 
         // Salvar resultado na tabela testResults

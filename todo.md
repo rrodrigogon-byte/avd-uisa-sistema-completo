@@ -2738,7 +2738,13 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 
 ## 🚨 NOVA CORREÇÃO E RECURSOS (11/12/2025)
 
-### Bug Reportado - Avaliação de Desempenho
+## Bugs Reportados
+
+- [x] Corrigir submissão do teste Âncoras de Carreira - status não atualiza de "Pendente" para "Concluído" após envio
+- [x] Corrigir exibição de resultados do teste Âncoras de Carreira - resultados não aparecem após submissão
+- [x] Corrigir bug no cálculo do perfil DISC que causava erro "Reduce of empty array"
+
+## Bugs Reportados Anteriores- Avaliação de Desempenho
 - [x] Corrigir erro "Avaliação não encontrada" na página de Avaliação de Desempenho (erro não identificado - página funciona corretamente)
 
 ### Novos Recursos Solicitados
