@@ -3298,3 +3298,251 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Adicionar validação de tipo e tamanho de arquivo
 - [ ] Criar aba "Anexos" no perfil do funcionário (integrar componente)
 - [x] Implementar busca de anexos por nome/categoria (filtro por categoria)
+
+
+## 🔥 NOVA PRIORIDADE - INTEGRAÇÃO 100% GCP (12/12/2025)
+
+### Objetivo
+Focar 100% no Google Cloud Platform (GCP) para todas as integrações de APIs, especialmente reconhecimento facial e outras funcionalidades avançadas.
+
+### 1. GCP Vision API - Reconhecimento Facial
+- [ ] Configurar credenciais GCP via webdev_request_secrets (Service Account JSON)
+- [ ] Criar helper server/_core/gcpVision.ts para integração com Vision API
+- [ ] Implementar detecção de faces (Face Detection)
+- [ ] Implementar análise de landmarks faciais
+- [ ] Implementar detecção de emoções faciais
+- [ ] Criar procedure tRPC para upload e análise de foto facial
+- [ ] Criar procedure tRPC para comparação de faces (matching)
+- [ ] Implementar logging de tentativas de reconhecimento
+- [ ] Criar interface de cadastro facial de funcionários
+- [ ] Criar interface de verificação facial (login/identificação)
+- [ ] Implementar feedback visual de qualidade da foto
+- [ ] Criar testes automatizados para GCP Vision API
+
+### 2. GCP Cloud Storage - Armazenamento de Arquivos
+- [ ] Configurar bucket GCP Cloud Storage
+- [ ] Criar helper server/_core/gcpStorage.ts
+- [ ] Implementar upload de fotos para GCP Storage
+- [ ] Implementar geração de URLs assinadas
+- [ ] Migrar storage atual (S3) para GCP Cloud Storage
+- [ ] Atualizar procedures de upload de arquivos
+- [ ] Criar testes automatizados para GCP Storage
+
+### 3. GCP Natural Language API - Análise de Texto
+- [ ] Configurar Natural Language API
+- [ ] Criar helper server/_core/gcpNaturalLanguage.ts
+- [ ] Implementar análise de sentimento em feedbacks
+- [ ] Implementar extração de entidades em avaliações
+- [ ] Implementar classificação de conteúdo
+- [ ] Integrar com módulo de feedbacks
+- [ ] Integrar com módulo de avaliações
+- [ ] Criar testes automatizados para Natural Language API
+
+### 4. GCP Speech-to-Text - Transcrição de Áudio
+- [ ] Configurar Speech-to-Text API
+- [ ] Criar helper server/_core/gcpSpeech.ts
+- [ ] Implementar transcrição de áudio para texto
+- [ ] Criar interface de gravação de feedback por voz
+- [ ] Implementar salvamento de transcrições
+- [ ] Integrar com módulo de feedbacks
+- [ ] Criar testes automatizados para Speech-to-Text
+
+### 5. GCP Text-to-Speech - Síntese de Voz
+- [ ] Configurar Text-to-Speech API
+- [ ] Criar helper server/_core/gcpTextToSpeech.ts
+- [ ] Implementar geração de áudio a partir de texto
+- [ ] Criar funcionalidade de leitura de notificações
+- [ ] Criar funcionalidade de leitura de avaliações
+- [ ] Integrar com módulo de notificações
+- [ ] Criar testes automatizados para Text-to-Speech
+
+### 6. GCP Translation API - Tradução Automática
+- [ ] Configurar Translation API
+- [ ] Criar helper server/_core/gcpTranslation.ts
+- [ ] Implementar tradução automática de conteúdo
+- [ ] Criar seletor de idioma na interface
+- [ ] Implementar cache de traduções
+- [ ] Integrar com todos os módulos do sistema
+- [ ] Criar testes automatizados para Translation API
+
+### 7. GCP Cloud Functions - Processamento Assíncrono
+- [ ] Configurar Cloud Functions
+- [ ] Criar função para processamento de imagens em lote
+- [ ] Criar função para envio de emails em massa
+- [ ] Criar função para geração de relatórios pesados
+- [ ] Implementar triggers para eventos do sistema
+- [ ] Criar monitoramento de execução
+- [ ] Criar testes automatizados para Cloud Functions
+
+### 8. GCP Firestore - Cache e Dados em Tempo Real
+- [ ] Configurar Firestore
+- [ ] Criar helper server/_core/gcpFirestore.ts
+- [ ] Implementar cache de dados frequentes
+- [ ] Implementar notificações em tempo real
+- [ ] Integrar com sistema de notificações
+- [ ] Criar sincronização com banco MySQL
+- [ ] Criar testes automatizados para Firestore
+
+### 9. GCP Cloud Logging - Monitoramento e Logs
+- [ ] Configurar Cloud Logging
+- [ ] Criar helper server/_core/gcpLogging.ts
+- [ ] Implementar logging estruturado
+- [ ] Criar dashboard de monitoramento
+- [ ] Implementar alertas automáticos
+- [ ] Integrar com todos os módulos
+- [ ] Criar testes automatizados para Cloud Logging
+
+### 10. GCP Cloud Scheduler - Tarefas Agendadas
+- [ ] Configurar Cloud Scheduler
+- [ ] Criar jobs para envio de relatórios periódicos
+- [ ] Criar jobs para limpeza de dados antigos
+- [ ] Criar jobs para backup automático
+- [ ] Implementar notificações de execução
+- [ ] Criar monitoramento de jobs
+- [ ] Criar testes automatizados para Cloud Scheduler
+
+### 11. Documentação GCP
+- [ ] Documentar configuração de credenciais GCP
+- [ ] Documentar uso de cada API do GCP
+- [ ] Criar guia de troubleshooting
+- [ ] Documentar limites e quotas
+- [ ] Criar exemplos de uso
+- [ ] Documentar melhores práticas
+
+### 12. Testes e Validação GCP
+- [ ] Criar suite completa de testes para GCP
+- [ ] Validar integração com Vision API
+- [ ] Validar integração com Cloud Storage
+- [ ] Validar integração com Natural Language API
+- [ ] Validar integração com Speech-to-Text
+- [ ] Validar integração com Text-to-Speech
+- [ ] Validar integração com Translation API
+- [ ] Validar integração com Cloud Functions
+- [ ] Validar integração com Firestore
+- [ ] Validar integração com Cloud Logging
+- [ ] Validar integração com Cloud Scheduler
+- [ ] **META: 100% de cobertura de testes**
+
+## 📊 PROGRESSO INTEGRAÇÃO GCP
+
+- Credenciais GCP: 0%
+- Vision API (Facial): 0%
+- Cloud Storage: 0%
+- Natural Language API: 0%
+- Speech-to-Text: 0%
+- Text-to-Speech: 0%
+- Translation API: 0%
+- Cloud Functions: 0%
+- Firestore: 0%
+- Cloud Logging: 0%
+- Cloud Scheduler: 0%
+- Documentação: 0%
+- Testes: 0%
+- **META: 100% em todas as áreas**
+
+
+## 🚀 NOVAS FUNCIONALIDADES PRIORITÁRIAS (12/12/2025)
+
+### 1. Aba "Anexos" no Perfil de Funcionários
+- [ ] Criar tabela employeeAttachments no schema do banco de dados
+- [ ] Adicionar campos: id, employeeId, fileName, fileUrl, fileType, category, uploadedBy, uploadedAt, description
+- [ ] Implementar procedures tRPC para upload de anexos
+- [ ] Implementar procedures tRPC para listagem de anexos por funcionário
+- [ ] Implementar procedures tRPC para exclusão de anexos
+- [ ] Criar componente AnexosFuncionario.tsx para exibir na aba
+- [ ] Implementar upload de arquivos (PDF, imagens, documentos)
+- [ ] Implementar categorização de anexos (Certificados, Diplomas, Documentos, Outros)
+- [ ] Implementar visualização inline de PDFs e imagens
+- [ ] Implementar download de anexos
+- [ ] Adicionar controle de permissões (apenas gestores e RH podem visualizar)
+- [ ] Integrar aba "Anexos" nas páginas de perfil de funcionários
+- [ ] Criar testes automatizados para módulo de anexos
+
+### 2. Gráficos de Evolução Temporal PIR
+- [ ] Criar procedure tRPC para buscar histórico PIR de 3 meses
+- [ ] Criar procedure tRPC para buscar histórico PIR de 6 meses
+- [ ] Criar procedure tRPC para buscar histórico PIR de 12 meses
+- [ ] Implementar componente de gráfico de linha para evolução temporal
+- [ ] Implementar componente de gráfico radar para comparação de competências
+- [ ] Criar filtros de período (3, 6, 12 meses)
+- [ ] Implementar visualização de tendências (melhoria/declínio)
+- [ ] Adicionar indicadores visuais de performance
+- [ ] Implementar comparação entre diferentes períodos
+- [ ] Criar página dedicada para análise temporal PIR
+- [ ] Integrar gráficos na página de perfil do funcionário
+- [ ] Adicionar exportação de gráficos em PNG/PDF
+- [ ] Criar testes automatizados para visualizações temporais
+
+### 3. Correção do Parser de PDI HTML
+- [ ] Revisar arquivo FernandoPinto.html para identificar todos os campos
+- [ ] Mapear campo "Matriz de Responsabilidades" no parser
+- [ ] Mapear campo "Plano de Ação 70-20-10" no parser
+- [ ] Mapear campo "Cronograma" no parser
+- [ ] Corrigir extração de datas e prazos
+- [ ] Corrigir extração de responsáveis
+- [ ] Corrigir extração de áreas de desenvolvimento
+- [ ] Corrigir extração de métricas de sucesso
+- [ ] Implementar validação robusta de campos obrigatórios
+- [ ] Adicionar logs detalhados de parsing
+- [ ] Testar importação com arquivo FernandoPinto.html
+- [ ] Validar dados importados no banco de dados
+- [ ] Criar testes automatizados para parser de PDI
+
+## 📊 PROGRESSO DAS NOVAS FUNCIONALIDADES
+
+- Aba Anexos: 0%
+- Gráficos Temporais PIR: 0%
+- Parser PDI HTML: 0%
+- Testes: 0%
+- **META: 100% em todas as áreas**
+
+
+## ✅ ATUALIZAÇÃO - ABA ANEXOS CONCLUÍDA (12/12/2025)
+
+### Aba "Anexos" no Perfil de Funcionários
+- [x] Criar tabela employeeAttachments no schema do banco de dados
+- [x] Adicionar campos: id, employeeId, fileName, fileUrl, fileType, category, uploadedBy, uploadedAt, description
+- [x] Implementar procedures tRPC para upload de anexos
+- [x] Implementar procedures tRPC para listagem de anexos por funcionário
+- [x] Implementar procedures tRPC para exclusão de anexos
+- [x] Criar componente AnexosFuncionario.tsx para exibir na aba
+- [x] Implementar upload de arquivos (PDF, imagens, documentos)
+- [x] Implementar categorização de anexos (Certificados, Diplomas, Documentos, Outros)
+- [x] Implementar visualização inline de PDFs e imagens
+- [x] Implementar download de anexos
+- [x] Adicionar controle de permissões (apenas gestores e RH podem visualizar)
+- [x] Integrar aba "Anexos" nas páginas de perfil de funcionários
+- [ ] Criar testes automatizados para módulo de anexos
+
+
+## ✅ ATUALIZAÇÃO - GRÁFICOS TEMPORAIS PIR CONCLUÍDOS (12/12/2025)
+
+### Gráficos de Evolução Temporal PIR
+- [x] Criar procedure tRPC para buscar histórico PIR de 3 meses
+- [x] Criar procedure tRPC para buscar histórico PIR de 6 meses
+- [x] Criar procedure tRPC para buscar histórico PIR de 12 meses
+- [x] Implementar componente de gráfico de linha para evolução temporal
+- [x] Implementar componente de gráfico radar para comparação de competências
+- [x] Criar filtros de período (3, 6, 12 meses)
+- [x] Implementar visualização de tendências (melhoria/declínio)
+- [x] Adicionar indicadores visuais de performance
+- [x] Implementar comparação entre diferentes períodos
+- [ ] Criar página dedicada para análise temporal PIR
+- [ ] Integrar gráficos na página de perfil do funcionário
+- [ ] Adicionar exportação de gráficos em PNG/PDF
+- [ ] Criar testes automatizados para visualizações temporais
+
+
+## ✅ ATUALIZAÇÃO - PARSER PDI HTML CORRIGIDO (12/12/2025)
+
+### Correção do Parser de PDI HTML
+- [x] Analisar estrutura do arquivo FernandoPinto.html
+- [x] Identificar campos não mapeados (Matriz de Responsabilidades, Plano 70-20-10, Cronograma)
+- [x] Implementar extração da Matriz de Responsabilidades por Gap
+- [x] Implementar extração do Plano de Ação 70-20-10 da tabela detalhada
+- [x] Implementar extração do Cronograma de Progressão (Seção 5)
+- [x] Adicionar suporte para múltiplos formatos de tabela
+- [x] Manter compatibilidade com formato Wilson e outros PDIs
+- [ ] Criar testes automatizados para validar parser
+- [ ] Adicionar logs detalhados de parsing para debug
+- [ ] Implementar preview visual do PDI importado

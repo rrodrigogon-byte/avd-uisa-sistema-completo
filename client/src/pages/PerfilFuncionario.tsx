@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Mail, Phone, Calendar, Briefcase, Target, FileText, TrendingUp, Award, Pencil } from "lucide-react";
+import { Loader2, ArrowLeft, Mail, Phone, Calendar, Briefcase, Target, FileText, TrendingUp, Award, Pencil, Paperclip } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import TestesResultados from "@/components/TestesResultados";
 import HistoricoFuncionario from "@/components/HistoricoFuncionario";
@@ -13,6 +13,7 @@ import EditPersonalInfoDialog from "@/components/EditPersonalInfoDialog";
 import CompetenciesManager from "@/components/CompetenciesManager";
 import GoalsManager from "@/components/GoalsManager";
 import EvaluationsTab from "@/components/EvaluationsTab";
+import AnexosFuncionario from "@/components/AnexosFuncionario";
 
 /**
  * Página de Perfil do Funcionário - Versão Completa com CRUD
@@ -158,12 +159,16 @@ export default function PerfilFuncionario() {
 
         {/* Tabs de Conteúdo */}
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="competencies">Competências</TabsTrigger>
             <TabsTrigger value="goals">Metas</TabsTrigger>
             <TabsTrigger value="evaluations">Avaliações</TabsTrigger>
             <TabsTrigger value="tests">Testes</TabsTrigger>
+            <TabsTrigger value="attachments">
+              <Paperclip className="w-4 h-4 mr-2" />
+              Anexos
+            </TabsTrigger>
             <TabsTrigger value="history">Histórico</TabsTrigger>
           </TabsList>
 
@@ -253,6 +258,11 @@ export default function PerfilFuncionario() {
           {/* Tab: Testes Psicométricos */}
           <TabsContent value="tests" className="space-y-4">
             <TestesResultados employeeId={employeeId} />
+          </TabsContent>
+
+          {/* Tab: Anexos */}
+          <TabsContent value="attachments" className="space-y-4">
+            <AnexosFuncionario employeeId={employeeId} />
           </TabsContent>
 
           {/* Tab: Histórico */}

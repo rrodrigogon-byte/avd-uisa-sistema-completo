@@ -5467,6 +5467,125 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
         return metadata || null;
       }),
+
+    // Buscar histórico temporal PIR (3, 6 ou 12 meses)
+    getTemporalHistory: protectedProcedure
+      .input(z.object({
+        employeeId: z.number(),
+        months: z.enum(["3", "6", "12"]).default("6"),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Calcular data limite
+        const monthsNum = parseInt(input.months);
+        const limitDate = new Date();
+        limitDate.setMonth(limitDate.getMonth() - monthsNum);
+
+        // Buscar avaliações PIR do período
+        const assessments = await database.select()
+          .from(pirAssessments)
+          .where(
+            and(
+              eq(pirAssessments.employeeId, input.employeeId),
+              eq(pirAssessments.status, "concluida"),
+              sql`${pirAssessments.completedAt} >= ${limitDate}`
+            )
+          )
+          .orderBy(pirAssessments.completedAt);
+
+        // Buscar respostas de cada avaliação
+        const assessmentsWithAnswers = await Promise.all(
+          assessments.map(async (assessment) => {
+            const answers = await database.select()
+              .from(pirAnswers)
+              .innerJoin(pirQuestions, eq(pirAnswers.questionId, pirQuestions.id))
+              .where(eq(pirAnswers.pirAssessmentId, assessment.id));
+
+            return {
+              ...assessment,
+              answers: answers.map(a => ({
+                questionId: a.pirAnswers.questionId,
+                questionText: a.pirQuestions.questionText,
+                questionCategory: a.pirQuestions.category,
+                score: a.pirAnswers.score,
+                textAnswer: a.pirAnswers.textAnswer,
+              })),
+            };
+          })
+        );
+
+        return assessmentsWithAnswers;
+      }),
+
+    // Buscar evolução de competências PIR ao longo do tempo
+    getCompetencyEvolution: protectedProcedure
+      .input(z.object({
+        employeeId: z.number(),
+        months: z.enum(["3", "6", "12"]).default("6"),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        // Calcular data limite
+        const monthsNum = parseInt(input.months);
+        const limitDate = new Date();
+        limitDate.setMonth(limitDate.setMonth() - monthsNum);
+
+        // Buscar avaliações PIR concluídas do período
+        const assessments = await database.select()
+          .from(pirAssessments)
+          .where(
+            and(
+              eq(pirAssessments.employeeId, input.employeeId),
+              eq(pirAssessments.status, "concluida"),
+              sql`${pirAssessments.completedAt} >= ${limitDate}`
+            )
+          )
+          .orderBy(pirAssessments.completedAt);
+
+        // Para cada avaliação, calcular média por categoria
+        const evolution = await Promise.all(
+          assessments.map(async (assessment) => {
+            const answers = await database.select()
+              .from(pirAnswers)
+              .innerJoin(pirQuestions, eq(pirAnswers.questionId, pirQuestions.id))
+              .where(eq(pirAnswers.pirAssessmentId, assessment.id));
+
+            // Agrupar por categoria e calcular médias
+            const categoriesMap = new Map<string, { total: number; count: number }>();
+            
+            answers.forEach(a => {
+              const category = a.pirQuestions.category || "Geral";
+              const score = a.pirAnswers.score || 0;
+              
+              if (!categoriesMap.has(category)) {
+                categoriesMap.set(category, { total: 0, count: 0 });
+              }
+              
+              const cat = categoriesMap.get(category)!;
+              cat.total += score;
+              cat.count += 1;
+            });
+
+            const categories = Array.from(categoriesMap.entries()).map(([name, data]) => ({
+              category: name,
+              averageScore: data.count > 0 ? data.total / data.count : 0,
+            }));
+
+            return {
+              assessmentId: assessment.id,
+              assessmentDate: assessment.completedAt,
+              overallScore: assessment.overallScore,
+              categories,
+            };
+          })
+        );
+
+        return evolution;
+      }),
   }),
 
   // ============================================================================

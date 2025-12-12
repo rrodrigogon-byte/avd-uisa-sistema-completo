@@ -240,6 +240,29 @@ export function parseHTMLPDI(htmlContent: string): ParsedPDI {
     }
   });
   
+  // Extrair cronograma/marcos de progressão (Seção 5)
+  const progressionRows = $('section#progression-plan table tbody tr, table:has(th:contains("Marco do PDI")) tbody tr');
+  if (progressionRows.length > 0) {
+    if (!result.competencyGaps) result.competencyGaps = [];
+    
+    progressionRows.each((i, row) => {
+      const cells = $(row).find('td');
+      if (cells.length >= 3) {
+        const marco = $(cells[0]).text().trim();
+        const criterio = $(cells[1]).text().trim();
+        const acao = $(cells[2]).text().trim();
+        
+        // Armazenar como gap temporário (reutilizar estrutura existente)
+        result.competencyGaps!.push({
+          type: marco,
+          currentLevel: criterio,
+          targetLevel: acao,
+          description: `Cronograma: ${marco} - ${criterio} - ${acao}`
+        });
+      }
+    });
+  }
+  
   return result;
 }
 
