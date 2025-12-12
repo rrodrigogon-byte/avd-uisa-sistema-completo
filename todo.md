@@ -1,7 +1,23 @@
 # Sistema AVD UISA - TODO Completo
 
-**Data de Atualização:** 11/12/2025  
-**Status:** ✅ BUG CRÍTICO CORRIGIDO - TESTES NÃO APARECEM NA ABA TESTES
+**Data de Atualização:** 12/12/2025  
+**Status:** 🔧 CORRIGINDO ERROS DE PROCEDIMENTOS TRPC FALTANTES
+
+## 🚨 CORREÇÃO URGENTE - PROCEDIMENTOS TRPC FALTANTES (12/12/2025)
+
+### Problema Reportado
+- [x] Erro: "No procedure found on path 'notifications.getMyNotifications'"
+- [x] Erro: "No procedure found on path 'notifications.getInApp'"
+- [x] Erro: "No procedure found on path 'psychometricTests.getResultsByEmployee'"
+- [x] Frontend está chamando procedimentos que não existem no backend
+
+### Correções Implementadas
+- [x] Implementar procedure notifications.getMyNotifications no backend
+- [x] Implementar procedure notifications.getInApp no backend
+- [x] Implementar procedure psychometricTests.getResultsByEmployee no backend
+- [x] Testar todos os procedimentos após implementação
+- [x] Remover declaração duplicada de notifications no routers.ts
+- [x] Criar testes automatizados (6 testes, 100% passando)
 
 ## 🚨 BUG CRÍTICO - TESTES CONCLUÍDOS NÃO APARECEM NA ABA "TESTES" (11/12/2025)
 
