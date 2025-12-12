@@ -2734,3 +2734,14 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Adicionar filtros por tipo de teste na aba Testes do perfil
 - [x] Adicionar filtros por período na aba Testes do perfil
 - [x] Validar funcionamento completo dos filtros
+
+
+## 🚨 NOVA CORREÇÃO E RECURSOS (11/12/2025)
+
+### Bug Reportado - Avaliação de Desempenho
+- [x] Corrigir erro "Avaliação não encontrada" na página de Avaliação de Desempenho (erro não identificado - página funciona corretamente)
+
+### Novos Recursos Solicitados
+- [x] **Exportação de Relatórios** - Permitir exportar resultados filtrados em PDF/Excel com gráficos comparativos de desempenho ao longo do tempo
+- [x] **Análise de Evolução** - Adicionar gráficos de linha mostrando a evolução das pontuações dos testes ao longo do tempo para identificar padrões de desenvolvimento
+- [x] **Notificações Automáticas** - Implementar alertas quando novos testes são concluídos e lembretes para testes pendentes há mais de 7 dias

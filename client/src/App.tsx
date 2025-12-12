@@ -225,6 +225,8 @@ import HierarchyView from "./pages/HierarchyView";
 import Organograma from "./pages/Organograma";
 import RelatoriosHierarquia from "./pages/RelatoriosHierarquia";
 import HierarquiaUISA from "./pages/HierarquiaUISA";
+import AnaliseEvolucao from "./pages/AnaliseEvolucao";
+import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 
 function Router() {
   return (
@@ -453,6 +455,10 @@ function Router() {
       <Route path="/relatorios/personalizados" component={CustomReportBuilder} />
       <Route path="/analytics/preditiva" component={PredictiveAnalytics} />
       <Route path="/feedback/continuo" component={ContinuousFeedback} />
+      
+      {/* Novos recursos - Exportação e Análise de Evolução */}
+      <Route path="/relatorios/exportacao" component={ExportacaoRelatorios} />
+      <Route path="/analytics/evolucao" component={AnaliseEvolucao} />
       
       {/* Passos 4, 5 e 6 - Resultados e Dashboard Admin */}
       <Route path="/resultados/:participantId" component={ResultadosIndividuais} />

@@ -98,6 +98,7 @@ import { emailNotificationsRouter } from "./routers/emailNotificationsRouter";
 import { emailMonitoringRouter } from "./routers/emailMonitoringRouter";
 import { employeeImportRouter } from "./routers/employeeImportRouter";
 import { hierarchyRouter } from "./routers/hierarchyRouter";
+import { testNotificationsRouter } from "./routers/testNotificationsRouter";
 import { htmlImportRouter } from "./routers/htmlImportRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
@@ -3989,6 +3990,9 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Relatórios de Desempenho (Item 3)
   performanceReports: performanceReportsRouter,
+
+  // Router de Notificações Automáticas de Testes
+  testNotifications: testNotificationsRouter,
 
   // Router de Templates de Avaliação Customizados
   evaluationTemplates: evaluationTemplatesRouter,
