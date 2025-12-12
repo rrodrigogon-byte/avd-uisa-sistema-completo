@@ -2239,6 +2239,19 @@ export const appRouter = router({
     getActive: protectedProcedure.query(async () => {
       return await db.getActiveCycle();
     }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const cycle = await db.getCycleById(input.id);
+        if (!cycle) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ciclo não encontrado",
+          });
+        }
+        return cycle;
+      }),
   }),
 
   departments: router({

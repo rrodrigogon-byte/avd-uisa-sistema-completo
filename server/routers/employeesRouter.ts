@@ -38,7 +38,14 @@ export const employeesRouter = router({
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
       const { getEmployeeById } = await import("../db");
-      return await getEmployeeById(input.id);
+      const employee = await getEmployeeById(input.id);
+      if (!employee) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Funcionário não encontrado",
+        });
+      }
+      return employee;
     }),
 
   /**

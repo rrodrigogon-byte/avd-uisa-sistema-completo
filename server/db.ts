@@ -176,9 +176,23 @@ export async function getEmployeeById(id: number) {
 
   const result = await db
     .select({
-      employee: employees,
-      department: departments,
-      position: positions,
+      id: employees.id,
+      employeeCode: employees.employeeCode,
+      name: employees.name,
+      email: employees.email,
+      cpf: employees.cpf,
+      birthDate: employees.birthDate,
+      hireDate: employees.hireDate,
+      departmentId: employees.departmentId,
+      departmentName: departments.name,
+      positionId: employees.positionId,
+      positionTitle: positions.title,
+      managerId: employees.managerId,
+      salary: employees.salary,
+      status: employees.status,
+      userId: employees.userId,
+      createdAt: employees.createdAt,
+      updatedAt: employees.updatedAt,
     })
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
@@ -415,6 +429,19 @@ export async function getAllCycles() {
     .select()
     .from(evaluationCycles)
     .orderBy(desc(evaluationCycles.year), desc(evaluationCycles.startDate));
+}
+
+export async function getCycleById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(evaluationCycles)
+    .where(eq(evaluationCycles.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
 }
 
 // ============================================================================
