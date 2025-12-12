@@ -934,7 +934,7 @@ export const pdiItemsRelations = relations(pdiItems, ({ one, many }) => ({
 export const psychometricTests = mysqlTable("psychometricTests", {
   id: int("id").autoincrement().primaryKey(),
   employeeId: int("employeeId").notNull(),
-  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).notNull(),
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]).notNull(),
   completedAt: datetime("completedAt").notNull(),
   // Resultados DISC (0-100 para cada dimensão)
   discDominance: int("discDominance"), // Dominância
@@ -959,7 +959,7 @@ export type InsertPsychometricTest = typeof psychometricTests.$inferInsert;
 
 export const testQuestions = mysqlTable("testQuestions", {
   id: int("id").autoincrement().primaryKey(),
-  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).notNull(),
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]).notNull(),
   questionNumber: int("questionNumber").notNull(),
   questionText: text("questionText").notNull(),
   dimension: varchar("dimension", { length: 50 }).notNull(), // Ex: "dominance", "openness", "E/I", "Autoconsciência", "Visual"
@@ -976,8 +976,13 @@ export type InsertTestQuestion = typeof testQuestions.$inferInsert;
  */
 export const testInvitations = mysqlTable("testInvitations", {
   id: int("id").autoincrement().primaryKey(),
-  employeeId: int("employeeId").notNull(),
-  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).notNull(),
+  employeeId: int("employeeId"), // Nullable para candidatos externos
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]).notNull(),
+  
+  // Campos para candidatos externos
+  isExternalCandidate: boolean("isExternalCandidate").default(false).notNull(),
+  candidateName: varchar("candidateName", { length: 255 }),
+  candidateEmail: varchar("candidateEmail", { length: 320 }),
   
   // Link único de acesso
   uniqueToken: varchar("uniqueToken", { length: 128 }).notNull().unique(),
@@ -1032,8 +1037,8 @@ export type InsertTestResponse = typeof testResponses.$inferInsert;
 export const testResults = mysqlTable("testResults", {
   id: int("id").autoincrement().primaryKey(),
   invitationId: int("invitationId").notNull(),
-  employeeId: int("employeeId").notNull(),
-  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).notNull(),
+  employeeId: int("employeeId"), // Nullable para candidatos externos
+  testType: mysqlEnum("testType", ["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]).notNull(),
   
   // Pontuações numéricas (JSON)
   scores: text("scores").notNull(), // JSON com todas as pontuações por dimensão

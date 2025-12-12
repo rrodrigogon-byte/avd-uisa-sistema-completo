@@ -45,6 +45,7 @@ export default function TestesResultados({ employeeId }: TestesResultadosProps) 
     vark: { icon: Brain, color: "pink", label: "VARK" },
     leadership: { icon: Target, color: "indigo", label: "Liderança" },
     careeranchors: { icon: Award, color: "teal", label: "Âncoras de Carreira" },
+    pir: { icon: Brain, color: "amber", label: "PIR - Perfil de Interesses e Reações" },
   };
 
   // Filtrar resultados
@@ -166,6 +167,7 @@ export default function TestesResultados({ employeeId }: TestesResultadosProps) 
                   <SelectItem value="vark">VARK</SelectItem>
                   <SelectItem value="leadership">Liderança</SelectItem>
                   <SelectItem value="careeranchors">Âncoras de Carreira</SelectItem>
+                  <SelectItem value="pir">PIR - Perfil de Interesses e Reações</SelectItem>
                 </SelectContent>
               </Select>
             </div>

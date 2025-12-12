@@ -2641,7 +2641,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   psychometric: router({
     // Buscar perguntas de um teste específico (PÚBLICO - sem necessidade de login)
     getQuestionsPublic: publicProcedure
-      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]) }))
+      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]) }))
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -2656,7 +2656,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
     // Buscar perguntas de um teste específico (PROTEGIDO - requer login)
     getQuestions: protectedProcedure
-      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]) }))
+      .input(z.object({ testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]) }))
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -2672,7 +2672,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     // Submeter respostas de um teste (PÚBLICO - sem necessidade de login)
     submitTestPublic: publicProcedure
       .input(z.object({
-        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]),
         email: z.string().email(),
         responses: z.array(z.object({
           questionId: z.number(),
@@ -2825,6 +2825,40 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           
           resultData.profileType = topAnchor.label;
           resultData.profileDescription = `Âncora Principal: ${topAnchor.label} (${topAnchor.score.toFixed(1)}), Segunda Âncora: ${secondAnchor.label} (${secondAnchor.score.toFixed(1)})`;
+        } else if (input.testType === 'pir') {
+          // Calcular resultado do PIR usando o helper dedicado
+          const { calculatePIRResult } = await import('./pirCalculations');
+          
+          // Buscar questões para obter dimensões e reverse
+          const questions = await database.select()
+            .from(testQuestions)
+            .where(eq(testQuestions.testType, 'pir'))
+            .orderBy(testQuestions.questionNumber);
+          
+          // Mapear respostas com dimensões
+          const pirResponses = input.responses.map(response => {
+            const question = questions.find(q => q.id === response.questionId);
+            return {
+              questionNumber: question?.questionNumber || 0,
+              answer: response.score,
+              dimension: question?.dimension || '',
+              reverse: question?.reverse || false,
+            };
+          });
+          
+          const pirResult = calculatePIRResult(pirResponses);
+          
+          resultData.profileType = pirResult.profileType;
+          resultData.profileDescription = pirResult.profileDescription;
+          resultData.strengths = pirResult.strengths;
+          resultData.developmentAreas = pirResult.developmentAreas;
+          resultData.workStyle = pirResult.workStyle;
+          resultData.communicationStyle = pirResult.communicationStyle;
+          resultData.motivators = pirResult.motivators;
+          resultData.stressors = pirResult.stressors;
+          resultData.teamContribution = pirResult.teamContribution;
+          resultData.careerRecommendations = pirResult.careerRecommendations;
+          resultData.rawData = JSON.stringify(pirResult);
         }
 
         // Salvar resultado na tabela testResults
@@ -2961,6 +2995,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             vark: "VARK - Estilos de Aprendizagem",
             leadership: "Estilos de Liderança",
             careeranchors: "Âncoras de Carreira",
+            pir: "PIR - Perfil de Interesses e Reações",
           };
 
           const testLabel = testTypeLabels[input.testType] || input.testType.toUpperCase();
@@ -3055,7 +3090,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     // Submeter respostas de um teste (PROTEGIDO - requer login)
     submitTest: protectedProcedure
       .input(z.object({
-        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]),
         responses: z.array(z.object({
           questionId: z.number(),
           score: z.number().min(1).max(5),
@@ -3200,6 +3235,40 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           
           resultData.profileType = topAnchor.label;
           resultData.profileDescription = `Âncora Principal: ${topAnchor.label} (${topAnchor.score.toFixed(1)}), Segunda Âncora: ${secondAnchor.label} (${secondAnchor.score.toFixed(1)})`;
+        } else if (input.testType === 'pir') {
+          // Calcular resultado do PIR usando o helper dedicado
+          const { calculatePIRResult } = await import('./pirCalculations');
+          
+          // Buscar questões para obter dimensões e reverse
+          const questions = await database.select()
+            .from(testQuestions)
+            .where(eq(testQuestions.testType, 'pir'))
+            .orderBy(testQuestions.questionNumber);
+          
+          // Mapear respostas com dimensões
+          const pirResponses = input.responses.map(response => {
+            const question = questions.find(q => q.id === response.questionId);
+            return {
+              questionNumber: question?.questionNumber || 0,
+              answer: response.score,
+              dimension: question?.dimension || '',
+              reverse: question?.reverse || false,
+            };
+          });
+          
+          const pirResult = calculatePIRResult(pirResponses);
+          
+          resultData.profileType = pirResult.profileType;
+          resultData.profileDescription = pirResult.profileDescription;
+          resultData.strengths = pirResult.strengths;
+          resultData.developmentAreas = pirResult.developmentAreas;
+          resultData.workStyle = pirResult.workStyle;
+          resultData.communicationStyle = pirResult.communicationStyle;
+          resultData.motivators = pirResult.motivators;
+          resultData.stressors = pirResult.stressors;
+          resultData.teamContribution = pirResult.teamContribution;
+          resultData.careerRecommendations = pirResult.careerRecommendations;
+          resultData.rawData = JSON.stringify(pirResult);
         }
 
         // Salvar resultado na tabela testResults
@@ -3336,6 +3405,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             vark: "VARK - Estilos de Aprendizagem",
             leadership: "Estilos de Liderança",
             careeranchors: "Âncoras de Carreira",
+            pir: "PIR - Perfil de Interesses e Reações",
           };
 
           const testLabel = testTypeLabels[input.testType] || input.testType.toUpperCase();
@@ -3544,7 +3614,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           return emailRegex.test(email);
         }, { message: "Email inválido" })),
-        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]),
       }))
       .mutation(async ({ input, ctx }) => {
         // Limpar espaços em branco dos emails
@@ -3673,7 +3743,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     getAggregatedResults: protectedProcedure
       .input(z.object({
         groupBy: z.enum(["department", "position", "team"]),
-        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors"]).optional(),
+        testType: z.enum(["disc", "bigfive", "mbti", "ie", "vark", "leadership", "careeranchors", "pir"]).optional(),
       }))
       .query(async ({ input, ctx }) => {
         const database = await getDb();

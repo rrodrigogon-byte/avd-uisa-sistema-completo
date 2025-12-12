@@ -27,6 +27,7 @@ const TESTS = [
   { value: "vark", label: "VARK - Estilos de Aprendizagem", time: "8-10 min", questions: 40 },
   { value: "leadership", label: "Estilos de Liderança", time: "10-12 min", questions: 30 },
   { value: "careeranchors", label: "Âncoras de Carreira (Schein)", time: "12-15 min", questions: 40 },
+  { value: "pir", label: "PIR - Perfil de Interesses e Reações", time: "15-20 min", questions: 60 },
 ];
 
 export default function EnviarTestes() {

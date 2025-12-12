@@ -33,6 +33,7 @@ const testTypeEnum = z.enum([
   "vark",
   "leadership",
   "careeranchors",
+  "pir",
 ]);
 
 export const psychometricTestsRouter = router({
@@ -88,6 +89,7 @@ export const psychometricTestsRouter = router({
         vark: "VARK",
         leadership: "Liderança",
         careeranchors: "Âncoras de Carreira",
+        pir: "PIR - Perfil de Interesses e Reações",
       };
 
       // Enviar e-mail

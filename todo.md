@@ -2815,3 +2815,113 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - `server/employees-create.test.ts` - Testes automatizados completos
 
 - [x] Corrigir validação de datas e positionId no formulário de criação de funcionários
+
+
+## ✅ IMPLEMENTAÇÃO COMPLETA DO TESTE PIR (12/12/2025)
+
+### Fase 1-3: Schema e Dados ✅ CONCLUÍDO
+- [x] Adicionar 'pir' ao enum testType em 4 tabelas do banco
+- [x] Adicionar campos para candidatos externos (isExternalCandidate, candidateName, candidateEmail)
+- [x] Tornar employeeId nullable em testInvitations e testResults
+- [x] Inserir 60 questões do PIR no banco de dados (6 dimensões × 10 questões)
+- [x] Criar helper de cálculo PIR (pirCalculations.ts)
+
+### Fase 4: Backend tRPC ✅ CONCLUÍDO
+- [x] Adicionar 'pir' aos enums testType em todos os routers
+- [x] Implementar lógica de cálculo do PIR em submitTestPublic
+- [x] Implementar lógica de cálculo do PIR em submitTest
+- [x] Integrar PIR com sistema de PDI automático
+- [x] Adicionar PIR aos mapeamentos de nomes de testes para emails
+
+### Fase 5: Frontend - Interface do Teste ✅ CONCLUÍDO
+- [x] Criar página TestPIR.tsx com 60 questões
+- [x] Implementar sistema de paginação (10 questões por página)
+- [x] Adicionar barra de progresso visual
+- [x] Implementar escala Likert de 1 a 5
+- [x] Validação de preenchimento completo
+- [x] Adicionar PIR à lista de testes em EnviarTestes.tsx
+
+### Fase 6: Sistema de Emails ✅ CONCLUÍDO
+- [x] PIR adicionado aos mapeamentos de nomes de testes
+- [x] Emails automáticos após conclusão do teste
+- [x] Notificação para gestor e RH
+- [x] Email com resultados para o participante
+
+### Fase 7: Integração com Perfil ✅ CONCLUÍDO
+- [x] PIR adicionado ao componente TestesResultados
+- [x] Ícone e cor configurados para o PIR
+- [x] Filtro por tipo de teste incluindo PIR
+- [x] Resultados do PIR aparecem na aba "Testes"
+- [x] Integração automática com PDI ativo
+
+### Fase 8: Tela para Candidatos Externos ✅ CONCLUÍDO
+- [x] Criar página ResultadoCandidato.tsx
+- [x] Visualização detalhada das 6 dimensões
+- [x] Exibir pontos fortes e áreas de desenvolvimento
+- [x] Mostrar estilos de trabalho e comunicação
+- [x] Listar motivadores e estressores
+- [x] Apresentar recomendações de carreira
+
+### Fase 9: Testes e Validação 🚧 EM ANDAMENTO
+- [ ] Adicionar rota /teste-pir/:token no App.tsx
+- [ ] Adicionar rota /resultado-candidato/:id no App.tsx
+- [ ] Testar fluxo completo de envio de convite PIR
+- [ ] Testar preenchimento do teste por funcionário
+- [ ] Testar preenchimento do teste por candidato externo
+- [ ] Validar cálculo correto das 6 dimensões
+- [ ] Verificar envio de emails após conclusão
+- [ ] Confirmar exibição na aba Testes do perfil
+- [ ] Confirmar integração com PDI
+- [ ] Testar tela de resultados para candidatos
+
+### Fase 10: Documentação e Entrega 📋 PENDENTE
+- [ ] Documentar fluxo completo do PIR
+- [ ] Criar guia de uso para RH
+- [ ] Preparar checkpoint final
+- [ ] Entregar sistema ao usuário
+
+## 📊 PROGRESSO DO TESTE PIR
+
+- **Schema e Dados:** 100% ✅
+- **Backend tRPC:** 100% ✅
+- **Frontend Interface:** 100% ✅
+- **Sistema de Emails:** 100% ✅
+- **Integração Perfil:** 100% ✅
+- **Tela Candidatos:** 100% ✅
+- **Testes e Validação:** 20% 🚧
+- **Documentação:** 0% 📋
+
+**PROGRESSO GERAL: 87%**
+
+## 🎯 Dimensões do Teste PIR
+
+1. **IP - Interesse em Pessoas** (10 questões)
+   - Trabalhar com e para pessoas
+   - Colaboração e empatia
+
+2. **ID - Interesse em Dados** (10 questões)
+   - Análise e organização de informações
+   - Pensamento lógico e estruturado
+
+3. **IC - Interesse em Coisas** (10 questões)
+   - Trabalho prático e manual
+   - Habilidades técnicas
+
+4. **RM - Reação a Mudanças** (10 questões)
+   - Adaptabilidade e flexibilidade
+   - Abertura para inovação
+
+5. **RP - Reação a Pressão** (10 questões)
+   - Resiliência sob estresse
+   - Performance sob pressão
+
+6. **AU - Autonomia** (10 questões)
+   - Independência e autogestão
+   - Iniciativa própria
+
+## 📝 Próximas Melhorias Futuras do PIR
+- [ ] Adicionar comparação de resultados PIR ao longo do tempo
+- [ ] Criar dashboard de análise agregada de PIR por departamento
+- [ ] Implementar recomendações automáticas de vagas baseadas no PIR
+- [ ] Adicionar exportação de resultados em PDF
+- [ ] Criar relatório comparativo entre PIR e outros testes psicométricos

@@ -115,6 +115,8 @@ import TestIE from "./pages/TestIE";
 import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
+import TestPIR from "./pages/TestPIR";
+import ResultadoCandidato from "./pages/ResultadoCandidato";
 import TestResponse from "./pages/TestResponse";
 import PsychometricTestsAdmin from "./pages/PsychometricTestsAdmin";
 import EnviarTestes from "./pages/EnviarTestes";
@@ -372,6 +374,8 @@ function Router() {
       <Route path="/teste-vark" component={TestVARK} />
       <Route path="/teste-lideranca" component={TestLeadership} />
       <Route path="/teste-ancoras-carreira" component={TestCareerAnchors} />
+      <Route path="/teste-pir/:token" component={TestPIR} />
+      <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/admin" component={PsychometricTestsAdmin} />
