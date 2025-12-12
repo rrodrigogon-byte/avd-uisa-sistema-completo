@@ -116,6 +116,7 @@ import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
 import TestPIR from "./pages/TestPIR";
+import DetalhesResultadoTeste from "./pages/DetalhesResultadoTeste";
 import ResultadoCandidato from "./pages/ResultadoCandidato";
 import TestResponse from "./pages/TestResponse";
 import PsychometricTestsAdmin from "./pages/PsychometricTestsAdmin";
@@ -367,6 +368,7 @@ function Router() {
        <Route path="/ciclos-360/visao-geral" component={Ciclos360VisaoGeral} />
        <Route path="/ciclos-360/detalhes/:id" component={Ciclos360Detalhes} />
       <Route path="/testes-psicometricos" component={PsychometricTests} />
+      <Route path="/testes-psicometricos/resultado/:id" component={DetalhesResultadoTeste} />
       <Route path="/teste-disc" component={TestDISC} />
       <Route path="/teste-bigfive" component={TestBigFive} />
       <Route path="/teste-mbti" component={TestMBTI} />

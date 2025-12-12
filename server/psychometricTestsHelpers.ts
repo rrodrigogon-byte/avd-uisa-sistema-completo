@@ -281,3 +281,19 @@ export async function getTestResultsByType() {
     .from(testResults)
     .groupBy(testResults.testType);
 }
+
+/**
+ * Buscar resultado de teste por ID
+ */
+export async function getTestResultById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const results = await db
+    .select()
+    .from(testResults)
+    .where(eq(testResults.id, id))
+    .limit(1);
+
+  return results.length > 0 ? results[0] : null;
+}

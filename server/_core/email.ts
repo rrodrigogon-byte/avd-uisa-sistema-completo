@@ -144,6 +144,84 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   }
 }
 
+export async function sendTestCompletionNotification(
+  employeeEmail: string,
+  employeeName: string,
+  testType: string,
+  resultLink: string
+): Promise<boolean> {
+  const testNames: Record<string, string> = {
+    disc: 'DISC',
+    bigfive: 'Big Five',
+    mbti: 'MBTI',
+    ei: 'Inteligência Emocional',
+    ie: 'Inteligência Emocional',
+    vark: 'VARK',
+    leadership: 'Liderança',
+    anchors: 'Âncoras de Carreira',
+    careeranchors: 'Âncoras de Carreira',
+  };
+
+  const testName = testNames[testType] || testType;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">✓ Teste Concluído!</h1>
+      </div>
+      
+      <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Olá <strong>${employeeName}</strong>,
+        </p>
+        
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Parabéns! Você concluiu com sucesso o teste <strong>${testName}</strong>.
+        </p>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981; margin: 25px 0;">
+          <p style="margin: 0; color: #6b7280; font-size: 14px;">
+            <strong style="color: #374151;">Próximos passos:</strong><br>
+            Seus resultados foram salvos e estão disponíveis para visualização.
+            A equipe de RH analisará suas respostas e entrará em contato caso necessário.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resultLink}" 
+             style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                    color: white; 
+                    padding: 14px 32px; 
+                    text-decoration: none; 
+                    border-radius: 8px; 
+                    display: inline-block;
+                    font-weight: 600;
+                    font-size: 16px;
+                    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);">
+            📊 Ver Resultado Completo
+          </a>
+        </div>
+        
+        <p style="color: #9ca3af; font-size: 13px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          Se o botão não funcionar, copie e cole este link no navegador:<br>
+          <a href="${resultLink}" style="color: #10b981; word-break: break-all;">${resultLink}</a>
+        </p>
+        
+        <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 20px;">
+          Sistema AVD UISA - Avaliação de Desempenho<br>
+          Este é um email automático, por favor não responda.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to: employeeEmail,
+    subject: `✓ Teste ${testName} Concluído - Resultados Disponíveis`,
+    html,
+  });
+}
+
 export async function sendTestInvite(
   employeeEmail: string,
   employeeName: string,

@@ -13,6 +13,7 @@ import {
   countTestResponses,
   saveTestResult,
   getTestResultByInvitation,
+  getTestResultById,
   getTestResultsByEmployee,
   getLatestTestResultByType,
   getAllTestResults,
@@ -475,6 +476,43 @@ export const psychometricTestsRouter = router({
     .input(z.object({ invitationId: z.number() }))
     .query(async ({ input }) => {
       return await getTestResultByInvitation(input.invitationId);
+    }),
+
+  /**
+   * Buscar resultado por ID
+   */
+  getResultById: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const result = await getTestResultById(input.id);
+      if (!result) {
+        throw new Error("Resultado não encontrado");
+      }
+      
+      // Mapear campos do banco para o formato esperado pelo frontend
+      return {
+        id: result.id,
+        testType: result.testType,
+        status: "completed", // Todos os resultados salvos estão concluídos
+        employeeName: result.employeeName,
+        employeeId: result.employeeId,
+        completedAt: result.completedAt,
+        score: result.scores, // JSON com todas as pontuações
+        profile: result.profileType, // Ex: "ENTJ", "Alto D", "Estilo de Vida"
+        profileDescription: result.profileDescription,
+        answers: result.rawData, // JSON com dados completos do teste
+        recommendations: result.careerRecommendations || result.developmentAreas,
+        notes: result.strengths ? `**Pontos Fortes:** ${result.strengths}` : null,
+        // Campos adicionais que podem ser úteis
+        strengths: result.strengths,
+        developmentAreas: result.developmentAreas,
+        workStyle: result.workStyle,
+        communicationStyle: result.communicationStyle,
+        leadershipStyle: result.leadershipStyle,
+        motivators: result.motivators,
+        stressors: result.stressors,
+        teamContribution: result.teamContribution,
+      };
     }),
 
   /**

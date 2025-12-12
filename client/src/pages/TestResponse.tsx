@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { CheckCircle, Loader2, AlertCircle } from "lucide-react";
+import { CheckCircle, Loader2, AlertCircle, ExternalLink, Home } from "lucide-react";
 import { APP_LOGO, APP_TITLE } from "@/const";
 
 const scaleLabels = [
@@ -28,6 +28,8 @@ export default function TestResponse() {
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [testStarted, setTestStarted] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
+  const [countdown, setCountdown] = useState(5);
+  const [autoNavigate, setAutoNavigate] = useState(true);
 
   // Query para buscar dados do convite
   const { data, isLoading, error } = trpc.psychometricTests.getInvitationByToken.useQuery(
@@ -51,12 +53,26 @@ export default function TestResponse() {
   const submitTest = trpc.psychometricTests.submitTest.useMutation({
     onSuccess: () => {
       setTestCompleted(true);
+      setCountdown(5);
       toast.success("Teste concluído com sucesso!");
     },
     onError: (error) => {
       toast.error(`Erro ao submeter teste: ${error.message}`);
     },
   });
+
+  // Countdown automático para navegação
+  useEffect(() => {
+    if (testCompleted && autoNavigate && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (testCompleted && autoNavigate && countdown === 0) {
+      // Navegar para dashboard após countdown
+      window.location.href = "/";
+    }
+  }, [testCompleted, countdown, autoNavigate]);
 
   const questions = data?.questions || [];
   const totalQuestions = questions.length;
@@ -136,18 +152,69 @@ export default function TestResponse() {
   }
 
   if (testCompleted) {
+    const progressPercentage = ((5 - countdown) / 5) * 100;
+
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Teste Concluído!</h2>
-            <p className="text-muted-foreground text-center mb-6">
-              Obrigado por completar o teste. Seus resultados foram salvos e serão
+            <div className="relative mb-6">
+              <CheckCircle className="h-20 w-20 text-green-500 animate-in zoom-in duration-500" />
+              <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold animate-bounce">
+                ✓
+              </div>
+            </div>
+            
+            <h2 className="text-3xl font-bold mb-3 text-center">Teste Concluído!</h2>
+            
+            <p className="text-muted-foreground text-center mb-6 max-w-sm">
+              Obrigado por completar o teste. Seus resultados foram salvos com sucesso e serão
               analisados pela equipe de RH.
             </p>
-            <p className="text-sm text-muted-foreground">
-              Você pode fechar esta página.
+
+            {autoNavigate && countdown > 0 && (
+              <div className="w-full mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">
+                    Redirecionando em {countdown} segundo{countdown !== 1 ? 's' : ''}...
+                  </span>
+                  <span className="text-sm font-medium text-green-600">
+                    {Math.round(progressPercentage)}%
+                  </span>
+                </div>
+                <Progress value={progressPercentage} className="h-2" />
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3 w-full">
+              <Button
+                onClick={() => {
+                  setAutoNavigate(false);
+                  window.location.href = "/testes-psicometricos/meus-resultados";
+                }}
+                size="lg"
+                className="w-full"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Ver Resultado Completo
+              </Button>
+              
+              <Button
+                onClick={() => {
+                  setAutoNavigate(false);
+                  window.location.href = "/";
+                }}
+                variant="outline"
+                size="lg"
+                className="w-full"
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Voltar ao Dashboard
+              </Button>
+            </div>
+
+            <p className="text-xs text-muted-foreground text-center mt-6">
+              Clique em qualquer botão para cancelar o redirecionamento automático
             </p>
           </CardContent>
         </Card>

@@ -3082,7 +3082,28 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             });
           }
         } catch (error) {
-          console.error('[Psychometric] Erro ao enviar email de notificação:', error);
+          console.error('[Psychometric] Erro ao enviar email de notificação para RH:', error);
+          // Não falhar a operação principal se email falhar
+        }
+
+        // Enviar email de conclusão para o colaborador
+        try {
+          if (employee[0].email) {
+            const { sendTestCompletionNotification } = await import('./_core/email');
+            const appUrl = process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space';
+            const resultLink = `${appUrl}/testes-psicometricos/meus-resultados`;
+            
+            await sendTestCompletionNotification(
+              employee[0].email,
+              employee[0].name || 'Colaborador',
+              input.testType,
+              resultLink
+            );
+            
+            console.log(`[Psychometric] Email de conclusão enviado para ${employee[0].email}`);
+          }
+        } catch (error) {
+          console.error('[Psychometric] Erro ao enviar email de conclusão para colaborador:', error);
           // Não falhar a operação principal se email falhar
         }
 
@@ -3506,8 +3527,29 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
             });
           }
         } catch (error) {
-          console.error('[Psychometric] Erro ao criar notificação/email:', error);
+          console.error('[Psychometric] Erro ao criar notificação/email para RH:', error);
           // Não falhar a operação principal se notificação falhar
+        }
+
+        // Enviar email de conclusão para o colaborador
+        try {
+          if (employee[0].email) {
+            const { sendTestCompletionNotification } = await import('./_core/email');
+            const appUrl = process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space';
+            const resultLink = `${appUrl}/testes-psicometricos/meus-resultados`;
+            
+            await sendTestCompletionNotification(
+              employee[0].email,
+              employee[0].name || 'Colaborador',
+              input.testType,
+              resultLink
+            );
+            
+            console.log(`[Psychometric] Email de conclusão enviado para ${employee[0].email}`);
+          }
+        } catch (error) {
+          console.error('[Psychometric] Erro ao enviar email de conclusão para colaborador:', error);
+          // Não falhar a operação principal se email falhar
         }
 
         return { success: true, profile };
