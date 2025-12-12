@@ -5188,6 +5188,272 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         return { success: true };
       }),
   }),
+
+  // ============================================================================
+  // ROUTER DE NOTIFICAÇÕES
+  // ============================================================================
+  notifications: router({
+    // Listar notificações do usuário
+    list: protectedProcedure
+      .input(z.object({
+        unreadOnly: z.boolean().optional(),
+        limit: z.number().optional().default(50),
+      }))
+      .query(async ({ ctx, input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        let query = database.select()
+          .from(notifications)
+          .where(eq(notifications.userId, ctx.user.id))
+          .orderBy(desc(notifications.createdAt))
+          .limit(input.limit);
+
+        const results = await query;
+
+        if (input.unreadOnly) {
+          return results.filter((n: any) => !n.read);
+        }
+
+        return results;
+      }),
+
+    // Contar notificações não lidas
+    countUnread: protectedProcedure
+      .query(async ({ ctx }) => {
+        const database = await getDb();
+        if (!database) return 0;
+
+        const results = await database.select()
+          .from(notifications)
+          .where(and(
+            eq(notifications.userId, ctx.user.id),
+            eq(notifications.read, false)
+          ));
+
+        return results.length;
+      }),
+
+    // Marcar notificação como lida
+    markAsRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(notifications)
+          .set({ read: true, readAt: new Date() })
+          .where(and(
+            eq(notifications.id, input.id),
+            eq(notifications.userId, ctx.user.id)
+          ));
+
+        return { success: true };
+      }),
+
+    // Marcar todas como lidas
+    markAllAsRead: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(notifications)
+          .set({ read: true, readAt: new Date() })
+          .where(eq(notifications.userId, ctx.user.id));
+
+        return { success: true };
+      }),
+
+    // Criar notificação (admin/sistema)
+    create: protectedProcedure
+      .input(z.object({
+        userId: z.number(),
+        type: z.string(),
+        title: z.string(),
+        message: z.string(),
+        link: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await createNotification(input);
+      }),
+  }),
+
+  // ============================================================================
+  // ROUTER DE PIR COM VÍDEO
+  // ============================================================================
+  pirVideo: router({
+    // Criar avaliação PIR
+    createAssessment: protectedProcedure
+      .input(z.object({
+        employeeId: z.number(),
+        cycleId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        const [assessment] = await database.insert(pirAssessments).values({
+          employeeId: input.employeeId,
+          cycleId: input.cycleId,
+          assessmentDate: new Date(),
+          status: "pendente",
+          createdBy: ctx.user.id,
+        }).$returningId();
+
+        return assessment;
+      }),
+
+    // Listar avaliações PIR
+    list: protectedProcedure
+      .input(z.object({
+        employeeId: z.number().optional(),
+        cycleId: z.number().optional(),
+        status: z.enum(["pendente", "em_andamento", "concluida", "cancelada"]).optional(),
+      }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return [];
+
+        let conditions = [];
+        if (input.employeeId) conditions.push(eq(pirAssessments.employeeId, input.employeeId));
+        if (input.cycleId) conditions.push(eq(pirAssessments.cycleId, input.cycleId));
+        if (input.status) conditions.push(eq(pirAssessments.status, input.status));
+
+        const query = conditions.length > 0
+          ? database.select().from(pirAssessments).where(and(...conditions))
+          : database.select().from(pirAssessments);
+
+        return await query.orderBy(desc(pirAssessments.createdAt));
+      }),
+
+    // Atualizar vídeo da avaliação
+    updateVideo: protectedProcedure
+      .input(z.object({
+        assessmentId: z.number(),
+        videoUrl: z.string(),
+        videoKey: z.string(),
+        videoDuration: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.update(pirAssessments)
+          .set({
+            videoUrl: input.videoUrl,
+            videoKey: input.videoKey,
+            videoDuration: input.videoDuration,
+            videoRecordedAt: new Date(),
+            status: "em_andamento",
+          })
+          .where(eq(pirAssessments.id, input.assessmentId));
+
+        return { success: true };
+      }),
+
+    // Salvar metadados de validação do vídeo
+    saveVideoMetadata: protectedProcedure
+      .input(z.object({
+        pirAssessmentId: z.number(),
+        facesDetected: z.boolean(),
+        multipleFacesDetected: z.boolean(),
+        noFaceDetected: z.boolean(),
+        personChanged: z.boolean(),
+        totalFramesAnalyzed: z.number(),
+        framesWithFace: z.number(),
+        framesWithMultipleFaces: z.number(),
+        framesWithNoFace: z.number(),
+        multipleFacesTimestamps: z.array(z.number()).optional(),
+        noFaceTimestamps: z.array(z.number()).optional(),
+        personChangeTimestamps: z.array(z.number()).optional(),
+        validationPassed: z.boolean(),
+        validationScore: z.number().optional(),
+        validationNotes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const database = await getDb();
+        if (!database) throw new Error("Database not available");
+
+        await database.insert(videoMetadata).values(input);
+
+        return { success: true };
+      }),
+
+    // Buscar metadados de vídeo
+    getVideoMetadata: protectedProcedure
+      .input(z.object({ pirAssessmentId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return null;
+
+        const [metadata] = await database.select()
+          .from(videoMetadata)
+          .where(eq(videoMetadata.pirAssessmentId, input.pirAssessmentId))
+          .limit(1);
+
+        return metadata || null;
+      }),
+  }),
+
+  // ============================================================================
+  // ROUTER DE HISTÓRICO COMPLETO
+  // ============================================================================
+  employeeHistory: router({
+    // Buscar histórico completo do funcionário
+    getComplete: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        const database = await getDb();
+        if (!database) return null;
+
+        // Buscar dados do funcionário
+        const [employee] = await database.select()
+          .from(employees)
+          .where(eq(employees.id, input.employeeId))
+          .limit(1);
+
+        if (!employee) return null;
+
+        // Buscar todas as avaliações 360
+        const evaluations360 = await database.select()
+          .from(evaluation360CycleParticipants)
+          .where(eq(evaluation360CycleParticipants.employeeId, input.employeeId))
+          .orderBy(desc(evaluation360CycleParticipants.createdAt));
+
+        // Buscar todos os testes psicométricos
+        const psychometricTests = await database.select()
+          .from(testResults)
+          .where(eq(testResults.employeeId, input.employeeId))
+          .orderBy(desc(testResults.completedAt));
+
+        // Buscar todas as avaliações PIR
+        const pirAssessmentsData = await database.select()
+          .from(pirAssessments)
+          .where(eq(pirAssessments.employeeId, input.employeeId))
+          .orderBy(desc(pirAssessments.createdAt));
+
+        // Buscar todos os PDIs
+        const pdis = await database.select()
+          .from(pdiPlans)
+          .where(eq(pdiPlans.employeeId, input.employeeId))
+          .orderBy(desc(pdiPlans.createdAt));
+
+        // Buscar todas as metas SMART
+        const goals = await database.select()
+          .from(smartGoals)
+          .where(eq(smartGoals.employeeId, input.employeeId))
+          .orderBy(desc(smartGoals.createdAt));
+
+        return {
+          employee,
+          evaluations360,
+          psychometricTests,
+          pirAssessments: pirAssessmentsData,
+          pdis,
+          smartGoals: goals,
+        };
+      }),
+  }),
 });
 
 // Função auxiliar para calcular perfil psicométrico
@@ -5251,5 +5517,7 @@ async function createNotification(data: {
 
   return notification;
 }
+
+
 
 export type AppRouter = typeof appRouter;

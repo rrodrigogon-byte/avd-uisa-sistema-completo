@@ -4017,3 +4017,141 @@ export const employeeHierarchy = mysqlTable("employeeHierarchy", {
 
 export type EmployeeHierarchy = typeof employeeHierarchy.$inferSelect;
 export type InsertEmployeeHierarchy = typeof employeeHierarchy.$inferInsert;
+
+// ============================================================================
+// TABELAS DE PIR COM VÍDEO E DETECÇÃO DE FRAUDES
+// ============================================================================
+
+/**
+ * PIR Assessments - Avaliações do Plano Individual de Resultados
+ * Armazena as avaliações PIR incluindo vídeos gravados
+ */
+export const pirAssessments = mysqlTable("pirAssessments", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  cycleId: int("cycleId"), // Ciclo de avaliação (se aplicável)
+  
+  // Dados da avaliação
+  assessmentDate: datetime("assessmentDate").notNull(),
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluida", "cancelada"]).default("pendente").notNull(),
+  
+  // Vídeo
+  videoUrl: varchar("videoUrl", { length: 512 }), // URL do vídeo no S3
+  videoKey: varchar("videoKey", { length: 512 }), // Chave do arquivo no S3
+  videoDuration: int("videoDuration"), // Duração em segundos
+  videoRecordedAt: datetime("videoRecordedAt"),
+  
+  // Resultados da avaliação
+  overallScore: int("overallScore"), // Pontuação geral (0-100)
+  comments: text("comments"),
+  evaluatorId: int("evaluatorId"), // Quem avaliou
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type PirAssessment = typeof pirAssessments.$inferSelect;
+export type InsertPirAssessment = typeof pirAssessments.$inferInsert;
+
+/**
+ * Video Metadata - Metadados de validação de vídeos
+ * Armazena dados de detecção de fraudes e validações
+ */
+export const videoMetadata = mysqlTable("videoMetadata", {
+  id: int("id").autoincrement().primaryKey(),
+  pirAssessmentId: int("pirAssessmentId").notNull(), // Referência ao PIR
+  
+  // Validações de face
+  facesDetected: boolean("facesDetected").default(false).notNull(), // Face detectada?
+  multipleFacesDetected: boolean("multipleFacesDetected").default(false).notNull(), // Múltiplas faces?
+  noFaceDetected: boolean("noFaceDetected").default(false).notNull(), // Ausência de face?
+  personChanged: boolean("personChanged").default(false).notNull(), // Mudança de pessoa?
+  
+  // Estatísticas
+  totalFramesAnalyzed: int("totalFramesAnalyzed").default(0), // Total de frames analisados
+  framesWithFace: int("framesWithFace").default(0), // Frames com face detectada
+  framesWithMultipleFaces: int("framesWithMultipleFaces").default(0), // Frames com múltiplas faces
+  framesWithNoFace: int("framesWithNoFace").default(0), // Frames sem face
+  
+  // Timestamps de alertas (JSON array)
+  multipleFacesTimestamps: json("multipleFacesTimestamps").$type<number[]>(), // [10.5, 45.2, ...]
+  noFaceTimestamps: json("noFaceTimestamps").$type<number[]>(), // [5.1, 30.8, ...]
+  personChangeTimestamps: json("personChangeTimestamps").$type<number[]>(), // [20.3, ...]
+  
+  // Descritores faciais para comparação
+  faceDescriptors: json("faceDescriptors").$type<any[]>(), // Array de descritores ao longo do vídeo
+  
+  // Validação geral
+  validationPassed: boolean("validationPassed").default(false).notNull(), // Passou na validação?
+  validationScore: int("validationScore"), // Pontuação de validação (0-100)
+  validationNotes: text("validationNotes"), // Observações da validação
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VideoMetadata = typeof videoMetadata.$inferSelect;
+export type InsertVideoMetadata = typeof videoMetadata.$inferInsert;
+
+/**
+ * PIR Questions - Perguntas do PIR
+ * Armazena as perguntas que compõem o PIR
+ */
+export const pirQuestions = mysqlTable("pirQuestions", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId"), // Ciclo específico ou null para padrão
+  
+  // Dados da pergunta
+  questionText: text("questionText").notNull(),
+  questionType: mysqlEnum("questionType", ["texto", "multipla_escolha", "escala", "sim_nao"]).notNull(),
+  questionCategory: varchar("questionCategory", { length: 100 }), // Ex: "Metas", "Competências"
+  
+  // Opções (para múltipla escolha)
+  options: json("options").$type<string[]>(), // ["Opção 1", "Opção 2", ...]
+  
+  // Escala (para tipo escala)
+  scaleMin: int("scaleMin"), // Ex: 1
+  scaleMax: int("scaleMax"), // Ex: 5
+  scaleLabels: json("scaleLabels").$type<string[]>(), // ["Ruim", "Regular", "Bom", "Muito Bom", "Excelente"]
+  
+  // Configurações
+  required: boolean("required").default(true).notNull(),
+  order: int("order").default(0), // Ordem de exibição
+  active: boolean("active").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirQuestion = typeof pirQuestions.$inferSelect;
+export type InsertPirQuestion = typeof pirQuestions.$inferInsert;
+
+/**
+ * PIR Answers - Respostas do PIR
+ * Armazena as respostas dadas pelos funcionários
+ */
+export const pirAnswers = mysqlTable("pirAnswers", {
+  id: int("id").autoincrement().primaryKey(),
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  questionId: int("questionId").notNull(),
+  
+  // Resposta
+  answerText: text("answerText"), // Para perguntas de texto
+  answerOption: varchar("answerOption", { length: 255 }), // Para múltipla escolha
+  answerScale: int("answerScale"), // Para escala
+  answerBoolean: boolean("answerBoolean"), // Para sim/não
+  
+  // Metadados
+  answeredAt: datetime("answeredAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirAnswer = typeof pirAnswers.$inferSelect;
+export type InsertPirAnswer = typeof pirAnswers.$inferInsert;

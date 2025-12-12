@@ -1,16 +1,8 @@
 #!/bin/bash
+# Script para aplicar migrações automaticamente
 
-# Script para aplicar migrations automaticamente
-# Responde "create table" para todas as perguntas
+# Gerar migrações
+pnpm drizzle-kit generate --config=drizzle.config.ts
 
-cd /home/ubuntu/avd-uisa-sistema-completo
-
-# Gerar migrations respondendo automaticamente com Enter (primeira opção)
-yes "" | pnpm drizzle-kit generate 2>&1
-
-echo "Migrations geradas com sucesso!"
-
-# Aplicar migrations
-pnpm drizzle-kit migrate 2>&1
-
-echo "Migrations aplicadas com sucesso!"
+# Aplicar migrações diretamente no banco
+pnpm drizzle-kit migrate --config=drizzle.config.ts

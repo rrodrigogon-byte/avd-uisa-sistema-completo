@@ -261,41 +261,38 @@ export default function TestesResultados({ employeeId }: TestesResultadosProps) 
                     </div>
                     <Badge
                       variant="outline"
-                      className={
-                        result.status === "completed"
-                          ? "bg-green-50 text-green-700 border-green-200"
-                          : result.status === "in_progress"
-                          ? "bg-blue-50 text-blue-700 border-blue-200"
-                          : "bg-gray-50 text-gray-700 border-gray-200"
-                      }
+                      className="bg-green-50 text-green-700 border-green-200"
                     >
-                      {result.status === "completed"
-                        ? "Concluído"
-                        : result.status === "in_progress"
-                        ? "Em Andamento"
-                        : "Pendente"}
+                      Concluído
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {result.status === "completed" && result.profile ? (
+                  {result.profileType || result.profileDescription ? (
                     <div className="space-y-3">
                       {/* Perfil Principal */}
-                      {result.profile.primaryProfile && (
+                      {result.profileType && (
                         <div>
                           <p className="text-sm font-semibold text-gray-700">Perfil Principal:</p>
                           <p className="text-lg font-bold text-[#F39200]">
-                            {result.profile.primaryProfile}
+                            {result.profileType}
                           </p>
                         </div>
                       )}
 
                       {/* Scores */}
-                      {result.profile.scores && Object.keys(result.profile.scores).length > 0 && (
+                      {result.scores && typeof result.scores === 'string' && (() => {
+                        try {
+                          const scores = JSON.parse(result.scores);
+                          return Object.keys(scores).length > 0;
+                        } catch {
+                          return false;
+                        }
+                      })() && (
                         <div>
                           <p className="text-sm font-semibold text-gray-700 mb-2">Pontuações:</p>
                           <div className="space-y-2">
-                            {Object.entries(result.profile.scores).map(([key, value]: [string, any]) => (
+                            {Object.entries(JSON.parse(result.scores)).map(([key, value]: [string, any]) => (
                               <div key={key} className="flex items-center justify-between">
                                 <span className="text-sm text-gray-600 capitalize">
                                   {key.replace(/_/g, " ")}
@@ -318,9 +315,9 @@ export default function TestesResultados({ employeeId }: TestesResultadosProps) 
                       )}
 
                       {/* Descrição */}
-                      {result.profile.description && (
+                      {result.profileDescription && (
                         <div>
-                          <p className="text-sm text-gray-600">{result.profile.description}</p>
+                          <p className="text-sm text-gray-600">{result.profileDescription}</p>
                         </div>
                       )}
 

@@ -2990,3 +2990,112 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Testar todos os gráficos do dashboard PIR
 - [x] Validar PDFs gerados
 - [x] Criar checkpoint final
+
+
+## 🚀 NOVAS MELHORIAS SOLICITADAS (12/12/2025)
+
+### 1. Integração de Navegação
+- [ ] Adicionar link "Resultados de Avaliação" no menu lateral do DashboardLayout
+- [ ] Adicionar link "Dashboard PIR" no menu lateral do DashboardLayout
+- [ ] Adicionar link "Gestão de Ciclos" no menu lateral do DashboardLayout (admin only)
+- [ ] Organizar menu em seções lógicas (Avaliações, Gestão, Perfil, Notificações)
+- [ ] Adicionar ícones apropriados para cada item do menu
+
+### 2. Templates de Email Personalizados UISA
+- [ ] Criar sistema de templates de email com identidade visual UISA
+- [ ] Template: Convite para avaliação com instruções detalhadas
+- [ ] Template: Lembrete de prazo próximo (3 dias antes)
+- [ ] Template: Conclusão de avaliação com agradecimento
+- [ ] Template: Notificação de novo PDI atribuído
+- [ ] Template: Alerta de avaliação pendente para gestor
+- [ ] Adicionar logo UISA nos emails
+- [ ] Aplicar cores da identidade UISA (azul/verde)
+- [ ] Incluir informações de contato e suporte UISA
+
+### 3. Notificações em Tempo Real
+- [ ] Criar tabela de notificações no schema (se não existir)
+- [ ] Implementar procedures tRPC para notificações (list, create, markAsRead, markAllAsRead)
+- [ ] Criar componente NotificationCenter com dropdown
+- [ ] Adicionar badge de contagem de notificações não lidas
+- [ ] Implementar sistema de polling para atualização automática (30 segundos)
+- [ ] Notificação: Avaliação pendente atribuída
+- [ ] Notificação: Prazo de avaliação próximo (3 dias antes)
+- [ ] Notificação: Avaliação concluída com sucesso
+- [ ] Notificação: Novo PDI atribuído
+- [ ] Notificação: Meta SMART próxima do prazo
+- [ ] Adicionar som/vibração para novas notificações (opcional)
+- [ ] Implementar filtros de notificações (todas, não lidas, por tipo)
+
+### 4. PIR com Vídeo e Detecção de Fraudes
+- [ ] Criar campo videoUrl na tabela de avaliações PIR
+- [ ] Criar tabela videoMetadata para armazenar dados de validação
+- [ ] Implementar componente VideoRecorder com MediaRecorder API
+- [ ] Integrar detecção de face usando biblioteca face-api.js ou similar
+- [ ] Validação: Detectar múltiplas faces durante gravação
+- [ ] Validação: Detectar ausência de face
+- [ ] Validação: Detectar mudança de pessoa (comparação facial)
+- [ ] Validação: Garantir duração mínima de vídeo (ex: 2 minutos)
+- [ ] Implementar upload de vídeo para S3 com progress bar
+- [ ] Salvar metadados de validação no banco (faces detectadas, timestamps, alertas)
+- [ ] Criar procedure tRPC para upload e validação de vídeo
+- [ ] Adicionar interface de gravação na página do PIR
+- [ ] Mostrar feedback visual durante gravação (face detectada, alertas)
+- [ ] Implementar revisão de vídeo antes do envio
+- [ ] Adicionar opção de regravar se necessário
+
+### 5. Histórico Completo no Perfil do Funcionário
+- [ ] Criar página EmployeeProfile.tsx completa
+- [ ] Seção: Dados pessoais e profissionais
+- [ ] Seção: Timeline de todos os ciclos de avaliação
+- [ ] Seção: Resultados de avaliações 360° (todas)
+- [ ] Seção: Resultados de PIR com vídeos (se disponível)
+- [ ] Seção: Todos os testes psicométricos realizados
+- [ ] Seção: Histórico completo de PDIs (criados, em andamento, concluídos)
+- [ ] Seção: Metas SMART atribuídas e seu status
+- [ ] Seção: Feedbacks recebidos e dados
+- [ ] Seção: Participação em pesquisas Pulse
+- [ ] Implementar filtros por período (último ano, últimos 6 meses, todos)
+- [ ] Implementar filtros por tipo de avaliação
+- [ ] Adicionar gráficos de evolução temporal
+- [ ] Implementar exportação de histórico completo em PDF
+- [ ] Criar procedure tRPC getEmployeeCompleteHistory
+
+### 6. Testes Automatizados para Novas Funcionalidades
+- [ ] Testes: Procedures de notificações (create, list, markAsRead)
+- [ ] Testes: Upload de vídeo e validação de fraudes
+- [ ] Testes: Busca de histórico completo do funcionário
+- [ ] Testes: Templates de email personalizados
+- [ ] Testes: Integração completa de navegação
+- [ ] Validar que todos os testes passam (100%)
+
+### 7. Melhorias de UX
+- [ ] Adicionar loading skeletons para todas as novas páginas
+- [ ] Implementar feedback visual para ações (toasts, confirmações)
+- [ ] Adicionar tooltips explicativos em campos complexos
+- [ ] Garantir responsividade mobile em todas as novas páginas
+- [ ] Adicionar animações suaves de transição
+- [ ] Implementar estados vazios (empty states) com ilustrações
+
+### 8. Documentação das Novas Funcionalidades
+- [ ] Documentar processo de gravação de vídeo do PIR
+- [ ] Documentar sistema de detecção de fraudes em vídeos
+- [ ] Criar guia de uso do sistema de notificações
+- [ ] Documentar estrutura de dados do histórico completo
+- [ ] Criar manual de personalização de templates de email
+
+
+## ✅ BUG CORRIGIDO - STATUS DE TESTES NO PERFIL (12/12/2025)
+
+### Problema Reportado
+- [x] Testes concluídos aparecem com status "pendente" no perfil do funcionário
+- [x] Testado com rodrigo.goncalves@uisa.com.br - teste concluído mas status incorreto
+- [x] Investigar tabela testResults e campo status
+- [x] Corrigir lógica de atualização de status após conclusão
+- [x] Validar que status é atualizado corretamente para "concluido"
+
+### Solução Implementada
+- [x] Identificado que tabela testResults NÃO tem campo status (apenas resultados concluídos)
+- [x] Corrigido componente TestesResultados.tsx para remover lógica de status
+- [x] Todos os testes exibidos agora mostram badge "Concluído" (verde)
+- [x] Corrigido acesso a result.profile que não existe - usar result diretamente
+- [x] Ajustado parsing de scores (JSON) para exibição correta
