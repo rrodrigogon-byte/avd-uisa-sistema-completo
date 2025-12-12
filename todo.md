@@ -3229,3 +3229,72 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] Corrigir lógica de exibição do botão
 - [ ] Testar publicação de relatórios
 - [ ] Validar que relatório publicado fica visível
+
+
+## 🚀 NOVAS FUNCIONALIDADES - MELHORIAS NO SISTEMA (12/12/2025)
+
+### 1. Validação de Identidade no Vídeo (Reconhecimento Facial)
+- [x] Atualizar schema do banco de dados para armazenar dados de validação facial
+- [x] Adicionar campos na tabela videoAnalyses: faceValidationStatus, faceMatchScore, faceValidationTimestamp
+- [x] Criar tabela employeeFaceProfiles para armazenar perfis faciais dos funcionários
+- [x] Implementar procedure tRPC para upload de foto de referência do funcionário
+- [x] Implementar procedure tRPC para validar identidade no vídeo usando reconhecimento facial
+- [x] Integrar com API de reconhecimento facial (estrutura pronta para AWS Rekognition)
+- [ ] Criar interface para upload de foto de referência no perfil do funcionário (estrutura backend pronta)
+- [ ] Adicionar validação facial automática durante análise de vídeo PIR (estrutura backend pronta)
+- [ ] Exibir status de validação facial nos resultados de análise (estrutura backend pronta)
+- [ ] Adicionar alertas quando validação facial falhar (estrutura backend pronta)
+- [ ] Criar relatório de tentativas de fraude detectadas (estrutura backend pronta)
+
+### 2. Notificações Automáticas de Análise de Vídeo
+- [x] Implementar procedure tRPC para enviar notificações quando análise for concluída
+- [x] Criar template de email para notificação de análise concluída
+- [x] Enviar notificação para gestor direto do funcionário
+- [x] Enviar notificação para equipe de RH
+- [x] Incluir resumo da análise no email
+- [x] Adicionar link direto para visualizar relatório completo
+- [ ] Implementar notificações in-app além de email
+- [ ] Adicionar preferências de notificação no perfil do usuário
+- [ ] Criar dashboard de notificações pendentes
+
+### 3. Comparação Temporal de Análises PIR
+- [x] Atualizar schema para armazenar histórico de análises
+- [x] Implementar procedure tRPC para buscar análises históricas de um funcionário
+- [x] Criar procedure para calcular evolução de competências ao longo do tempo
+- [ ] Implementar gráficos de linha mostrando evolução temporal
+- [ ] Criar gráfico radar comparando análises de diferentes períodos
+- [ ] Adicionar tabela comparativa de métricas entre análises
+- [ ] Implementar filtros por período (últimos 3/6/12 meses)
+- [ ] Criar visualização de tendências (melhorando/estável/declinando)
+- [ ] Adicionar insights automáticos sobre evolução do funcionário
+- [ ] Implementar exportação de relatório comparativo em PDF
+- [ ] Criar página dedicada para comparação temporal no perfil do funcionário
+
+### 4. Correções no PDI e Importação
+- [ ] Revisar e corrigir fluxo completo de importação de PDI HTML
+- [ ] Validar parsing de todos os campos do arquivo HTML fornecido
+- [ ] Corrigir mapeamento de competências e gaps
+- [ ] Implementar importação de matriz de responsabilidades
+- [ ] Corrigir importação de plano de ação detalhado (70-20-10)
+- [ ] Validar importação de cronograma de revisões
+- [ ] Testar importação com arquivo FernandoPinto.html fornecido
+- [ ] Adicionar validação de estrutura HTML antes de importar
+- [ ] Melhorar mensagens de erro durante importação
+- [ ] Criar preview mais detalhado antes de confirmar importação
+
+### 5. Anexos nos Perfis dos Funcionários
+- [x] Atualizar schema para tabela de anexos (employeeAttachments)
+- [x] Adicionar campos: id, employeeId, fileName, fileUrl, fileType, fileSize, uploadedBy, uploadedAt, category, description
+- [x] Implementar procedure tRPC para upload de anexos
+- [x] Implementar procedure tRPC para listar anexos de um funcionário
+- [x] Implementar procedure tRPC para deletar anexo
+- [x] Implementar procedure tRPC para download de anexo
+- [x] Integrar com S3 para armazenamento de arquivos
+- [x] Criar interface de upload de anexos no perfil do funcionário (componente EmployeeAttachments)
+- [x] Adicionar categorização de anexos (certificados, documentos, fotos, etc.)
+- [x] Implementar visualização de anexos por categoria
+- [x] Adicionar preview de imagens e PDFs
+- [x] Implementar controle de permissões (quem pode ver/editar anexos)
+- [x] Adicionar validação de tipo e tamanho de arquivo
+- [ ] Criar aba "Anexos" no perfil do funcionário (integrar componente)
+- [x] Implementar busca de anexos por nome/categoria (filtro por categoria)

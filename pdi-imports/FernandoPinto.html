@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Desenvolvimento Estratégico - Fernando Pinto | UISA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'uisa-blue': '#002D62',
+                        'uisa-green': '#65B32E',
+                        'uisa-light-blue': '#00A6ED',
+                        'uisa-orange': '#F58220',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .status-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #D1D5DB;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .status-nao-iniciado { background-color: #FEF2F2; color: #991B1B; border-color: #FCA5A5;}
+        .status-em-andamento { background-color: #FFFBEB; color: #92400E; border-color: #FBBF24;}
+        .status-concluido { background-color: #F0FDF4; color: #166534; border-color: #86EFAC;}
+
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                background-color: #FFFFFF !important;
+            }
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                width: 100% !important;
+            }
+            .bg-white {
+                box-shadow: none !important;
+                border: 1px solid #EEE !important;
+            }
+            section {
+                page-break-inside: avoid !important;
+                padding-top: 20px;
+            }
+            .status-select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                border: none !important;
+                padding: 2px;
+            }
+             #add-review-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-uisa-blue text-white shadow-md">
+        <div class="container mx-auto px-6 py-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold">Plano de Desenvolvimento Estratégico</h1>
+                <p class="text-lg text-gray-200">Fernando Pinto: Preparação para Gerente Júnior de Planejamento e Custos</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="overview" class="mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-uisa-blue mb-2">Seção 1: O Desafio Estratégico</h2>
+                <p class="max-w-3xl mx-auto text-gray-600">A Gerência de Planejamento e Custos é um pilar para a sustentabilidade financeira e a tomada de decisão estratégica do nosso negócio. Este plano de 24 meses visa preparar Fernando Pinto, Coordenador de Planejamento e Custos, para assumir uma posição de Gerente Júnior, desenvolvendo suas competências estratégicas e de liderança para assegurar uma sucessão interna robusta e alinhada à nossa cultura de valorização de talentos.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                <div class="bg-white rounded-lg shadow-md p-8">
+                    <span class="text-6xl font-black text-uisa-light-blue">24</span>
+                    <p class="text-2xl font-semibold mt-2">Meses para Gerente Júnior</p>
+                    <p class="text-gray-500 mt-1">Tempo definido para que Fernando esteja plenamente preparado para a posição de Gerente Júnior.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-8">
+                    <span class="text-6xl font-black text-uisa-green">4</span>
+                    <p class="text-2xl font-semibold mt-2">Envolvidos-Chave</p>
+                    <p class="text-gray-500 mt-1">Fernando Pinto (Sucessor), Fábio L. Dal Posso (Sponsor), Rodrigo (Mentor - Diretor RH) e DHO (Guardião).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pacto" class="mb-12 bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-3xl font-bold text-center text-uisa-blue mb-8">Seção 2: Pacto de Desenvolvimento e Alinhamento de Expectativas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
+                <div>
+                    <h3 class="text-xl font-bold mb-2">O Papel do Colaborador (Fernando Pinto)</h3>
+                    <p class="text-gray-600">Assumir o protagonismo de sua jornada, com dedicação integral às ações, buscando ativamente o conhecimento e as experiências, solicitando feedbacks e aplicando os aprendizados de forma prática e imediata.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">O Papel do Sponsor (Fábio Dal Posso)</h3>
+                    <p class="text-gray-600">Atuar como patrocinador, garantindo acesso a oportunidades estratégicas, removendo barreiras, provendo direcionamento, realizando a mentoria técnica e de negócio e realizando acompanhamentos mensais rigorosos.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">O Papel do Mentor (Rodrigo, Diretor de RH)</h3>
+                    <p class="text-gray-600">Atuar como mentor de carreira e liderança, orientando Fernando no desenvolvimento das competências comportamentais, na navegação da cultura organizacional e no fortalecimento de sua postura como líder estratégico.</p>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-bold mb-2">O Papel da Empresa (DHO)</h3>
+                    <p class="text-gray-600">Orquestrar e monitorar o plano, facilitando o acesso a ferramentas (coaching, treinamentos), mediando os encontros de calibração e assegurando o alinhamento do PDI com as metas da companhia.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="profiles" class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-uisa-blue mb-8">Seção 3: Diagnóstico de Competências e Gaps</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                 <div class="chart-container">
+                    <canvas id="competencyRadarChart"></canvas>
+                </div>
+            </div>
+             <div class="mt-8">
+                 <h3 class="text-2xl font-bold text-center text-uisa-blue mb-6">Matriz de Responsabilidades para Superação dos Gaps</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-uisa-light-blue">
+                        <h4 class="text-xl font-bold mb-3">Gap: Liderança Estratégica & Visão Holística</h4>
+                        <ul class="space-y-3 text-gray-700">
+                            <li><b>Fernando:</b> Buscar proativamente projetos de maior escopo e participar ativamente de fóruns estratégicos. Focar em traduzir dados em insights de negócio, indo além do detalhe operacional.</li>
+                            <li><b>Fábio (Sponsor):</b> Prover acesso a reuniões de diretoria, delegar responsabilidades de maior impacto estratégico e desafiar Fernando a pensar no "quadro completo".</li>
+                            <li><b>Rodrigo (Mentor RH):</b> Orientar sobre postura de liderança, networking estratégico e como traduzir a visão da empresa para a equipe.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-uisa-orange">
+                        <h4 class="text-xl font-bold mb-3">Gap: Planejamento & Organização</h4>
+                        <ul class="space-y-3 text-gray-700">
+                             <li><b>Fernando:</b> Estruturar planos de projeto detalhados, mesmo para tarefas que domina. Utilizar ferramentas de planejamento e evitar a impulsividade na tomada de decisão, ponderando prós e contras.</li>
+                             <li><b>Fábio (Sponsor):</b> Realizar mentoria técnica focada em planejamento de longo prazo, direcionar estudos de caso complexos e prover feedback sobre a qualidade do planejamento apresentado.</li>
+                             <li><b>DHO (Guardião):</b> Facilitar acesso a treinamentos em metodologias de gestão de projetos (ex: Agile, Scrum) para complementar a visão.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-uisa-green">
+                        <h4 class="text-xl font-bold mb-3">Gap: Exposição Executiva e Influência</h4>
+                        <ul class="space-y-3 text-gray-700">
+                             <li><b>Fernando:</b> Preparar e conduzir apresentações de alto nível, buscar interações com líderes de outras áreas e defender suas propostas com base em dados e alinhamento estratégico, não apenas na assertividade.</li>
+                             <li><b>Fábio (Sponsor):</b> Criar as oportunidades de exposição, cedendo espaço para que Fernando apresente para a diretoria e outros stakeholders.</li>
+                             <li><b>Rodrigo (Mentor RH):</b> Fornecer coaching sobre comunicação executiva, storytelling com dados e técnicas de influência para equilibrar sua comunicação direta.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="detailed-action-plan" class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-uisa-blue mb-8">Seção 4: Plano de Ação Detalhado (70-20-10)</h2>
+            <div class="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
+                <table class="w-full text-left min-w-[900px]">
+                    <thead class="border-b-2 border-gray-200">
+                        <tr>
+                            <th class="p-3">Ação Específica (e % de Foco)</th>
+                            <th class="p-3">Eixo de Desenvolvimento</th>
+                            <th class="p-3">Métrica de Sucesso / Evidência</th>
+                            <th class="p-3">Responsáveis</th>
+                            <th class="p-3">Prazo</th>
+                            <th class="p-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-gray-100">
+                            <td class="p-3"><b>(70%)</b> Liderar projeto estratégico de otimização de custos em uma operação-chave (ex: CTT), com interface interdepartamental, desde o planejamento até a apresentação dos resultados.</td>
+                            <td class="p-3 text-uisa-light-blue font-semibold">Liderança Estratégica & Planejamento</td>
+                            <td class="p-3">Business case do projeto aprovado; Cronograma e plano de ação detalhado; Relatório final apresentado à Diretoria com economias ou eficiências mensuradas.</td>
+                            <td class="p-3">Fernando P. (Líder), Fábio L. Dal Posso (Sponsor)</td>
+                            <td class="p-3">Mês 3-9</td>
+                            <td class="p-3"><select class="status-select status-nao-iniciado"><option value="nao-iniciado" selected>Não Iniciado</option><option value="em-andamento">Em Andamento</option><option value="concluido">Concluído</option></select></td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                           <td class="p-3"><b>(70%)</b> Assumir a preparação e condução da apresentação dos resultados mensais da área para a Diretoria Financeira.</td>
+                           <td class="p-3 text-uisa-orange font-semibold">Exposição Executiva & Influência</td>
+                           <td class="p-3">Feedback formal do Diretor (Fábio) sobre a clareza, objetividade e profundidade estratégica da apresentação (avaliação 360° informal).</td>
+                           <td class="p-3">Fernando P. (Execução), Fábio L. Dal Posso (Sponsor)</td>
+                           <td class="p-3">A partir do Mês 4</td>
+                           <td class="p-3"><select class="status-select status-nao-iniciado"><option value="nao-iniciado" selected>Não Iniciado</option><option value="em-andamento">Em Andamento</option><option value="concluido">Concluído</option></select></td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="p-3"><b>(70%)</b> Realizar um job rotation de 1 mês na Gerência Industrial para compreender na prática os drivers de custo e a dinâmica operacional.</td>
+                            <td class="p-3 text-uisa-green font-semibold">Visão Holística & Técnica</td>
+                            <td class="p-3">Relatório de imersão com 3 propostas de melhoria na interface Planejamento-Indústria, validado pelo Gerente Industrial.</td>
+                            <td class="p-3">Fernando P. (Execução), Fábio L. Dal Posso (Apoio)</td>
+                            <td class="p-3">Mês 6</td>
+                            <td class="p-3"><select class="status-select status-nao-iniciado"><option value="nao-iniciado" selected>Não Iniciado</option><option value="em-andamento">Em Andamento</option><option value="concluido">Concluído</option></select></td>
+                        </tr>
+                         <tr class="border-b border-gray-100">
+                            <td class="p-3"><b>(20%)</b> Programa de Mentoria Estruturada com Fábio (Técnica/Negócio) e Rodrigo (Liderança/Carreira).</td>
+                            <td class="p-3 text-uisa-light-blue font-semibold">Técnica & Liderança</td>
+                            <td class="p-3">Plano de mentoria com agenda e metas definidas. Avaliação de progresso ao final do período pelos mentores, atestando a evolução nos gaps.</td>
+                            <td class="p-3">Fernando P., Fábio L. Dal Posso, Rodrigo</td>
+                            <td class="p-3">Mês 1-24 (Contínuo)</td>
+                            <td class="p-3"><select class="status-select status-nao-iniciado"><option value="nao-iniciado" selected>Não Iniciado</option><option value="em-andamento">Em Andamento</option><option value="concluido">Concluído</option></select></td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="p-3"><b>(20%)</b> Participar como ouvinte nas reuniões trimestrais do Comitê Executivo e de Planejamento Estratégico.</td>
+                            <td class="p-3 text-uisa-green font-semibold">Visão Holística & Estratégica</td>
+                            <td class="p-3">Apresentação de resumo com principais insights e possíveis impactos para a área de Custos ao seu gestor após cada ciclo de reuniões.</td>
+                            <td class="p-3">Fernando P., Fábio L. Dal Posso (Sponsor)</td>
+                            <td class="p-3">Contínuo</td>
+                            <td class="p-3"><select class="status-select status-nao-iniciado"><option value="nao-iniciado" selected>Não Iniciado</option><option value="em-andamento">Em Andamento</option><option value="concluido">Concluído</option></select></td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="p-3"><b>(10%)</b> Concluir curso de curta duração em "Finanças Estratégicas para o Agronegócio" ou similar.</td>
+                            <td class="p-3 text-uisa-light-blue font-semibold">Profundidade Técnica</td>
+                            <td class="p-3">Certificado de conclusão e apresentação de um plano de aplicação dos conceitos aprendidos em um desafio real da UISA.</td>
+                            <td class="p-3">Fernando P. (Execução), DHO (Apoio)</td>
+                            <td class="p-3">Até Mês 10</td>
+                            <td class="p-3"><select class="status-select status-nao-iniciado"><option value="nao-iniciado" selected>Não Iniciado</option><option value="em-andamento">Em Andamento</option><option value="concluido">Concluído</option></select></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3"><b>(10%)</b> Iniciar sessões de Coaching Executivo com foco em comunicação de alto impacto, influência e gestão de stakeholders, para modular a impaciência e a franqueza excessiva.</td>
+                            <td class="p-3 text-uisa-orange font-semibold">Comunicação e Influência</td>
+                            <td class="p-3">Relatório de progresso do coach e feedback 360° (início e fim do processo) mostrando evolução na percepção de pares e liderança.</td>
+                            <td class="p-3">Fernando P., DHO</td>
+                            <td class="p-3">Mês 2-12</td>
+                            <td class="p-3"><select class="status-select status-nao-iniciado"><option value="nao-iniciado" selected>Não Iniciado</option><option value="em-andamento">Em Andamento</option><option value="concluido">Concluído</option></select></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="progression-plan" class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-uisa-blue mb-8">Seção 5: Progressão Estratégica e Remuneração</h2>
+             <div class="bg-white rounded-lg shadow-md p-8">
+                <p class="text-center text-gray-600 mb-6">A progressão de Fernando está atrelada ao cumprimento dos marcos deste PDI. O objetivo é prepará-lo para uma posição de Gerente Júnior, com uma remuneração alvo entre R$ 22.000 e R$ 26.000, alinhado à nossa política de meritocracia e à pesquisa de mercado (Korn Ferry P50 para Gerente Nível 18: ~R$21.900/mês).</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="border-b-2 border-gray-200">
+                            <tr><th class="p-3">Marco do PDI</th><th class="p-3">Critério de Avaliação</th><th class="p-3">Ação de Reconhecimento (Conforme DOC. DGC.NP-004)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="p-3 font-semibold">Marco 1 (12 Meses)</td>
+                                <td class="p-3">Conclusão bem-sucedida do primeiro ano do PDI, com evolução comprovada nos gaps de planejamento e comunicação, validada na AVD e nos feedbacks formais.</td>
+                                <td class="p-3">Reajuste por mérito, avançando 1 *step* na faixa salarial, efetivado após 12 meses no cargo, conforme política de remuneração.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">Marco 2 (24 Meses)</td>
+                                <td class="p-3">Conclusão de todas as ações do PDI, com recomendação formal do Sponsor e Mentor, validação do DHO, e demonstração de prontidão para assumir maiores responsabilidades de gestão.</td>
+                                <td class="p-3">Promoção para a posição de Gerente Júnior, condicionada à disponibilidade de vaga e alinhada à performance demonstrada.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contingency-plan" class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-uisa-blue mb-8">Seção 6: Plano de Contingência e Mitigação de Riscos</h2>
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <div class="text-center">
+                    <p class="text-lg font-semibold text-red-700">Cenário de Risco Principal</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Atingimento da prontidão técnica sem o desenvolvimento da senioridade estratégica necessária em 24 meses (Gap Planejador/Analista).</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 border-t pt-6">
+                    <div>
+                        <h4 class="text-xl font-bold text-uisa-blue mb-3">Estratégia de Resposta Imediata</h4>
+                        <ul class="space-y-3 list-disc list-inside text-gray-600">
+                            <li><b>Ajuste de Rota (Mês 18):</b> Se a avaliação apontar um gap de senioridade, a meta de promoção é reavaliada para uma posição de Especialista ou a extensão do PDI é formalmente considerada.</li>
+                            <li><b>Mentoria Executiva Intensiva:</b> Intensificação da mentoria com Fábio e Rodrigo para acelerar o desenvolvimento da visão de negócio, planejamento de longo prazo e liderança situacional.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-uisa-blue mb-3">Ações para Mitigação de Impacto</h4>
+                        <ul class="space-y-3 list-disc list-inside text-gray-600">
+                             <li><b>Acompanhamento Rigoroso:</b> Checkpoints formais e rigorosos (6, 12 e 18 meses) com DHO, Sponsor e Mentores para correções de rota ágeis e feedback direto.</li>
+                            <li><b>Qualidade da Exposição:</b> Garantir que a participação em reuniões estratégicas seja ativa, com contribuições esperadas e preparação prévia, forçando a postura executiva.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="director-panel" class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-uisa-blue mb-2">Seção 7: Acompanhamento e Medição (DHO)</h2>
+            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-8">A Diretoria de Gente e Cultura é a guardiã deste PDI, monitorando o progresso através de métricas claras e reuniões de governança para assegurar o sucesso do plano.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-4">Adicionar Novo Registro de Acompanhamento</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="review-date" class="block text-sm font-medium text-gray-700">Data da Reunião</label>
+                            <input type="date" id="review-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-uisa-blue focus:ring-uisa-blue sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="readiness-level" class="block text-sm font-medium text-gray-700">Índice de Prontidão para Sucessão (IPS - Nota 1-5)</label>
+                            <input type="number" id="readiness-level" min="1" max="5" step="0.1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-uisa-blue focus:ring-uisa-blue sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="review-feedback" class="block text-sm font-medium text-gray-700">Pontos-Chave e Feedback</label>
+                            <textarea id="review-feedback" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-uisa-blue focus:ring-uisa-blue sm:text-sm"></textarea>
+                        </div>
+                        <button id="add-review-btn" class="w-full bg-uisa-green text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">Adicionar Registro</button>
+                    </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-4">Evolução do Índice de Prontidão (IPS)</h3>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="readinessChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div id="review-history" class="mt-8 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold mb-4">Histórico de Reuniões de Governança</h3>
+                <div id="history-container" class="space-y-4">
+                    </div>
+            </div>
+        </section>
+
+        <section id="anexo-a" class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-uisa-blue mb-8">Anexo A: Histórico e Perfil Comportamental - Fernando Pinto</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Trajetória, Perfil e Remuneração na UISA</h3>
+                    <p class="text-gray-600">Fernando Pinto é o Coordenador de Planejamento e Custos, admitido em 04/09/2024, reportando-se a Fabio Luiz Dal Posso (Diretor de Controladoria). Suas responsabilidades incluem a coordenação dos processos de custos, planejamento orçamentário e emissão de relatórios gerenciais. Na AVD Safra 24/25, foi classificado como "Forte Potencial" (AB).</p>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-700">Pontos Fortes (Perfil Profiler: Executor-Comunicador):</h4>
+                            <ul class="list-disc list-inside text-gray-600 mt-2">
+                                <li><b>Energia e Ação:</b> Pró-ativo, dinâmico e com alto senso de urgência. Atraído por desafios e orientado a resultados.</li>
+                                <li><b>Liderança e Influência:</b> Líder nato, confiante, motivado e com grande capacidade de persuadir e motivar equipes.</li>
+                                <li><b>Comunicação:</b> Ótimo comunicador, cativante e claro em sua fala. Consegue "ler" as pessoas e adaptar sua abordagem.</li>
+                                <li><b>Flexibilidade:</b> Adapta-se a situações desafiadoras, contornando regras e obstáculos para atingir seus objetivos.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-700">Pontos de Desenvolvimento (Gaps Identificados):</h4>
+                            <ul class="list-disc list-inside text-gray-600 mt-2">
+                                <li><b>Impaciência e Detalhes:</b> Pode ficar impaciente com processos ou pessoas mais lentas e tende a ignorar detalhes em prol da velocidade.</li>
+                                <li><b>Planejamento e Organização:</b> Prefere agir a planejar; a organização é mais mental do que formal, o que pode ser um risco em posições de maior complexidade.</li>
+                                <li><b>Foco excessivo em Tarefas:</b> Sua orientação a resultados pode fazê-lo parecer insensível ou ignorar os sentimentos e necessidades dos outros.</li>
+                                <li><b>Tédio e Compromisso:</b> Fica entediado com facilidade e pode abandonar projetos ou não honrar compromissos de longo prazo se perder o interesse.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Histórico de Remuneração</h3>
+                     <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="border-b-2 border-gray-200">
+                                <tr><th class="p-3">Data</th><th class="p-3">Evento</th><th class="p-3">Salário Mensal (R$)</th><th class="p-3">Observações</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b bg-green-50"><td class="p-3 font-semibold">Atual</td><td class="p-3">Salário Vigente</td><td class="p-3 font-bold">R$ 15.119,34</td><td class="p-3">Posição salarial atual.</td></tr>
+                                <tr><td class="p-3">04/09/2024</td><td class="p-3 font-semibold">Admissão</td><td class="p-3">R$ 15.119,34</td><td class="p-3">Salário inicial como Coordenador de Planejamento e Custos.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                     <div class="mt-6">
+                        <h4 class="text-lg font-semibold text-gray-700">Adiantamento de Férias</h4>
+                        <p class="text-gray-600 mt-2">A solicitação de adiantamento de 20 dias de férias para apoio financeiro deve ser formalizada junto ao departamento de RH, em alinhamento com o gestor direto (Fábio). A viabilidade dependerá da política interna da Companhia e da legislação vigente, a serem consultadas junto ao RH.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12 py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 UISA - Plano de Desenvolvimento Estratégico.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // Gráfico Radar de Competências
+            new Chart(document.getElementById('competencyRadarChart').getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: ['Execução & Foco em Resultado', 'Planejamento & Análise', 'Visão Estratégica de Negócio', 'Liderança & Influência', 'Comunicação & Relacionamento'],
+                    datasets: [{
+                        label: 'Fernando Pinto (Perfil Atual)',
+                        data: [8, 5, 5, 7, 8],
+                        backgroundColor: 'rgba(101, 179, 46, 0.2)',
+                        borderColor: '#65B32E',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#65B32E'
+                    }, {
+                        label: 'Gerente Jr. (Perfil-Alvo)',
+                        data: [9, 8, 8, 8, 9],
+                        backgroundColor: 'rgba(0, 45, 98, 0.2)',
+                        borderColor: '#002D62',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#002D62'
+                    }]
+                },
+                options: { animation: false, maintainAspectRatio: false, scales: { r: { angleLines: { color: '#E5E7EB' }, grid: { color: '#E5E7EB' }, pointLabels: { font: { size: 12, weight: 'bold', family: 'Poppins' }, color: '#374151' }, ticks: { beginAtZero: true, max: 10, stepSize: 2, backdropColor: 'rgba(255, 255, 255, 0.75)' }}}, plugins: { legend: { position: 'top', labels: { font: { family: 'Poppins' }}}}}
+            });
+
+            // Lógica de Cores para Status
+            document.querySelectorAll('.status-select').forEach(select => {
+                const updateColor = () => {
+                    select.className = 'status-select'; // Reset classes
+                    if (select.value === 'nao-iniciado') select.classList.add('status-nao-iniciado');
+                    else if (select.value === 'em-andamento') select.classList.add('status-em-andamento');
+                    else if (select.value === 'concluido') select.classList.add('status-concluido');
+                };
+                select.addEventListener('change', updateColor);
+                updateColor(); // Initial call
+            });
+
+            // Gráfico de Linha de Prontidão
+            const readinessData = {
+                labels: ['Início'],
+                datasets: [{
+                    label: 'Índice de Prontidão (IPS)',
+                    data: [1.5], // Initial readiness score
+                    borderColor: '#65B32E',
+                    backgroundColor: 'rgba(101, 179, 46, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            const readinessChart = new Chart(document.getElementById('readinessChart').getContext('2d'), {
+                type: 'line',
+                data: readinessData,
+                options: { animation: false, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 5, ticks: { stepSize: 1 }}}, plugins: { legend: { display: false }}}
+            });
+            
+            // Lógica do Painel de Acompanhamento
+            document.getElementById('add-review-btn').addEventListener('click', () => {
+                const dateInput = document.getElementById('review-date'), levelInput = document.getElementById('readiness-level'), feedbackInput = document.getElementById('review-feedback'), historyContainer = document.getElementById('history-container');
+                const [date, level, feedback] = [dateInput.value, levelInput.value, feedbackInput.value];
+                if (!date || !level || !feedback) { alert('Por favor, preencha todos os campos do registro.'); return; }
+                const [year, month, day] = date.split('-');
+                const formattedDate = `${day}/${month}/${year}`, quarterLabel = `Q${Math.ceil(month / 3)}/${year.substring(2)}`;
+                
+                readinessData.labels.push(quarterLabel);
+                readinessData.datasets[0].data.push(parseFloat(level));
+                readinessChart.update();
+
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'border-t border-gray-200 pt-4';
+                reviewCard.innerHTML = `<div class="flex justify-between items-center"><p class="font-bold text-gray-700">${formattedDate}</p><p class="font-bold text-uisa-green">IPS: ${level}</p></div><p class="mt-2 text-gray-600">${feedback}</p>`;
+                historyContainer.prepend(reviewCard); // Add to top
+                dateInput.value = ''; levelInput.value = ''; feedbackInput.value = '';
+            });
+        });
+    </script>
+</body>
+</html>

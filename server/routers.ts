@@ -48,6 +48,9 @@ import { positionsRouter } from "./routers/positionsRouter";
 import { jobDescriptionsRouter } from "./routers/jobDescriptionsRouter";
 import { jobDescriptionsPDFRouter } from "./routers/jobDescriptionsPDF";
 import { productivityRouter } from "./routers/productivityRouter";
+import { attachmentsRouter } from "./routers/attachmentsRouter";
+import { faceRecognitionRouter } from "./routers/faceRecognitionRouter";
+import { videoAnalysisRouter } from "./routers/videoAnalysisRouter";
 import { importRouter } from "./routers/importRouter";
 import { alertsRouter } from "./routers/alertsRouter";
 import { timeClockRouter } from "./routers/timeClockRouter";
@@ -235,6 +238,11 @@ export const appRouter = router({
   hierarchy: hierarchyRouter,
   htmlImport: htmlImportRouter,
   evaluationCycle: evaluationCycleRouter,
+  
+  // Novos routers - Melhorias no Sistema (12/12/2025)
+  attachments: attachmentsRouter,
+  faceRecognition: faceRecognitionRouter,
+  videoAnalysis: videoAnalysisRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

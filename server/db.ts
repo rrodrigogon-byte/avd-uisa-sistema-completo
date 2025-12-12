@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, or, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lte, or, sql, asc, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   auditLogs,
@@ -30,6 +30,16 @@ import {
   reportExports,
   successionCandidates,
   employeeHierarchy,
+  employeeAttachments,
+  type InsertEmployeeAttachment,
+  employeeFaceProfiles,
+  type InsertEmployeeFaceProfile,
+  videoAnalyses,
+  type InsertVideoAnalysis,
+  videoAnalysisHistory,
+  type InsertVideoAnalysisHistory,
+  fraudDetectionLogs,
+  type InsertFraudDetectionLog,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -2880,4 +2890,283 @@ export async function generateAutomaticPDI(evaluationId: number) {
     console.error("[Database] Failed to generate automatic PDI:", error);
     throw error;
   }
+}
+
+// ============================================================================
+// ANEXOS DE FUNCIONÁRIOS
+// ============================================================================
+
+/**
+ * Criar anexo de funcionário
+ */
+export async function createEmployeeAttachment(data: InsertEmployeeAttachment) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(employeeAttachments).values(data);
+  return result;
+}
+
+/**
+ * Listar anexos de um funcionário
+ */
+export async function getEmployeeAttachments(employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(employeeAttachments)
+    .where(eq(employeeAttachments.employeeId, employeeId))
+    .where(isNull(employeeAttachments.deletedAt));
+  
+  return result;
+}
+
+/**
+ * Deletar anexo (soft delete)
+ */
+export async function deleteEmployeeAttachment(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(employeeAttachments)
+    .set({ deletedAt: new Date() })
+    .where(eq(employeeAttachments.id, id));
+}
+
+// ============================================================================
+// PERFIS FACIAIS
+// ============================================================================
+
+/**
+ * Criar ou atualizar perfil facial de funcionário
+ */
+export async function upsertEmployeeFaceProfile(data: InsertEmployeeFaceProfile) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .insert(employeeFaceProfiles)
+    .values(data)
+    .onDuplicateKeyUpdate({
+      set: {
+        referencePhotoUrl: data.referencePhotoUrl,
+        referencePhotoKey: data.referencePhotoKey,
+        faceDescriptor: data.faceDescriptor,
+        faceEncoding: data.faceEncoding,
+        photoQuality: data.photoQuality,
+        confidenceScore: data.confidenceScore,
+        updatedAt: new Date(),
+      },
+    });
+  
+  return result;
+}
+
+/**
+ * Buscar perfil facial de funcionário
+ */
+export async function getEmployeeFaceProfile(employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(employeeFaceProfiles)
+    .where(eq(employeeFaceProfiles.employeeId, employeeId))
+    .where(eq(employeeFaceProfiles.isActive, true))
+    .limit(1);
+  
+  return result[0] || null;
+}
+
+// ============================================================================
+// ANÁLISES DE VÍDEO
+// ============================================================================
+
+/**
+ * Criar análise de vídeo
+ */
+export async function createVideoAnalysis(data: InsertVideoAnalysis) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(videoAnalyses).values(data);
+  return result;
+}
+
+/**
+ * Atualizar análise de vídeo
+ */
+export async function updateVideoAnalysis(id: number, data: Partial<InsertVideoAnalysis>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(videoAnalyses)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(videoAnalyses.id, id));
+}
+
+/**
+ * Buscar análises de vídeo de um funcionário
+ */
+export async function getEmployeeVideoAnalyses(employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(videoAnalyses)
+    .where(eq(videoAnalyses.employeeId, employeeId))
+    .orderBy(desc(videoAnalyses.createdAt));
+  
+  return result;
+}
+
+/**
+ * Buscar análise de vídeo por ID
+ */
+export async function getVideoAnalysisById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(videoAnalyses)
+    .where(eq(videoAnalyses.id, id))
+    .limit(1);
+  
+  return result[0] || null;
+}
+
+// ============================================================================
+// HISTÓRICO DE ANÁLISES (COMPARAÇÃO TEMPORAL)
+// ============================================================================
+
+/**
+ * Criar snapshot de análise para histórico
+ */
+export async function createVideoAnalysisSnapshot(data: InsertVideoAnalysisHistory) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(videoAnalysisHistory).values(data);
+  return result;
+}
+
+/**
+ * Buscar histórico de análises de um funcionário
+ */
+export async function getEmployeeAnalysisHistory(employeeId: number, limit = 10) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(videoAnalysisHistory)
+    .where(eq(videoAnalysisHistory.employeeId, employeeId))
+    .orderBy(desc(videoAnalysisHistory.snapshotDate))
+    .limit(limit);
+  
+  return result;
+}
+
+/**
+ * Comparar análises de um funcionário em dois períodos
+ */
+export async function compareEmployeeAnalyses(
+  employeeId: number,
+  startDate: Date,
+  endDate: Date
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(videoAnalysisHistory)
+    .where(eq(videoAnalysisHistory.employeeId, employeeId))
+    .where(
+      and(
+        gte(videoAnalysisHistory.snapshotDate, startDate),
+        lte(videoAnalysisHistory.snapshotDate, endDate)
+      )
+    )
+    .orderBy(asc(videoAnalysisHistory.snapshotDate));
+  
+  return result;
+}
+
+// ============================================================================
+// DETECÇÃO DE FRAUDES
+// ============================================================================
+
+/**
+ * Registrar detecção de fraude
+ */
+export async function createFraudDetectionLog(data: InsertFraudDetectionLog) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(fraudDetectionLogs).values(data);
+  return result;
+}
+
+/**
+ * Buscar logs de fraude de um funcionário
+ */
+export async function getEmployeeFraudLogs(employeeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(fraudDetectionLogs)
+    .where(eq(fraudDetectionLogs.employeeId, employeeId))
+    .orderBy(desc(fraudDetectionLogs.detectedAt));
+  
+  return result;
+}
+
+/**
+ * Buscar logs de fraude pendentes de revisão
+ */
+export async function getPendingFraudLogs() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db
+    .select()
+    .from(fraudDetectionLogs)
+    .where(eq(fraudDetectionLogs.status, "pendente_revisao"))
+    .orderBy(desc(fraudDetectionLogs.detectedAt));
+  
+  return result;
+}
+
+/**
+ * Atualizar status de log de fraude
+ */
+export async function updateFraudLogStatus(
+  id: number,
+  status: "confirmada" | "falso_positivo" | "resolvida",
+  reviewedBy: number,
+  reviewNotes?: string
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(fraudDetectionLogs)
+    .set({
+      status,
+      reviewedBy,
+      reviewedAt: new Date(),
+      reviewNotes,
+      updatedAt: new Date(),
+    })
+    .where(eq(fraudDetectionLogs.id, id));
 }

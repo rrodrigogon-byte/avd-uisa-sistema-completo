@@ -4155,3 +4155,233 @@ export const pirAnswers = mysqlTable("pirAnswers", {
 
 export type PirAnswer = typeof pirAnswers.$inferSelect;
 export type InsertPirAnswer = typeof pirAnswers.$inferInsert;
+
+// ============================================================================
+// TABELAS DE ANEXOS E DOCUMENTOS
+// ============================================================================
+
+/**
+ * Employee Attachments - Anexos dos funcionários
+ * Armazena documentos, certificados, fotos e outros arquivos dos funcionários
+ */
+export const employeeAttachments = mysqlTable("employeeAttachments", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Dados do arquivo
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileUrl: varchar("fileUrl", { length: 512 }).notNull(), // URL do arquivo no S3
+  fileKey: varchar("fileKey", { length: 512 }).notNull(), // Chave do arquivo no S3
+  fileType: varchar("fileType", { length: 100 }).notNull(), // MIME type
+  fileSize: int("fileSize").notNull(), // Tamanho em bytes
+  
+  // Categorização
+  category: mysqlEnum("category", [
+    "certificado",
+    "documento",
+    "foto",
+    "curriculo",
+    "diploma",
+    "comprovante",
+    "contrato",
+    "outro"
+  ]).notNull(),
+  description: text("description"),
+  
+  // Controle de acesso
+  isPublic: boolean("isPublic").default(false).notNull(), // Visível para todos?
+  visibleToEmployee: boolean("visibleToEmployee").default(true).notNull(),
+  visibleToManager: boolean("visibleToManager").default(true).notNull(),
+  visibleToHR: boolean("visibleToHR").default(true).notNull(),
+  
+  // Metadados
+  uploadedBy: int("uploadedBy").notNull(),
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  deletedAt: datetime("deletedAt"), // Soft delete
+});
+
+export type EmployeeAttachment = typeof employeeAttachments.$inferSelect;
+export type InsertEmployeeAttachment = typeof employeeAttachments.$inferInsert;
+
+// ============================================================================
+// TABELAS DE VALIDAÇÃO FACIAL E ANÁLISE DE VÍDEO
+// ============================================================================
+
+/**
+ * Employee Face Profiles - Perfis faciais dos funcionários
+ * Armazena dados de reconhecimento facial para validação de identidade
+ */
+export const employeeFaceProfiles = mysqlTable("employeeFaceProfiles", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull().unique(), // Um perfil por funcionário
+  
+  // Dados da foto de referência
+  referencePhotoUrl: varchar("referencePhotoUrl", { length: 512 }).notNull(),
+  referencePhotoKey: varchar("referencePhotoKey", { length: 512 }).notNull(),
+  
+  // Descritores faciais (JSON com dados do reconhecimento facial)
+  faceDescriptor: text("faceDescriptor").notNull(), // JSON com descritores
+  faceEncoding: text("faceEncoding"), // Encoding adicional se necessário
+  
+  // Qualidade da foto
+  photoQuality: mysqlEnum("photoQuality", ["baixa", "media", "alta", "excelente"]).default("media"),
+  confidenceScore: int("confidenceScore"), // 0-100
+  
+  // Status
+  isActive: boolean("isActive").default(true).notNull(),
+  verifiedBy: int("verifiedBy"), // Quem verificou o perfil
+  verifiedAt: datetime("verifiedAt"),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmployeeFaceProfile = typeof employeeFaceProfiles.$inferSelect;
+export type InsertEmployeeFaceProfile = typeof employeeFaceProfiles.$inferInsert;
+
+/**
+ * Video Analyses - Análises de vídeo PIR com IA
+ * Armazena resultados detalhados de análise de vídeos PIR
+ */
+export const videoAnalyses = mysqlTable("videoAnalyses", {
+  id: int("id").autoincrement().primaryKey(),
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Validação de identidade facial
+  faceValidationStatus: mysqlEnum("faceValidationStatus", [
+    "pendente",
+    "validado",
+    "falhou",
+    "sem_perfil",
+    "multiplas_faces",
+    "face_nao_detectada"
+  ]).default("pendente").notNull(),
+  faceMatchScore: int("faceMatchScore"), // 0-100 (similaridade com foto de referência)
+  faceValidationTimestamp: datetime("faceValidationTimestamp"),
+  faceValidationDetails: text("faceValidationDetails"), // JSON com detalhes
+  
+  // Análise de comportamento e linguagem corporal
+  eyeContactScore: int("eyeContactScore"), // 0-100
+  confidenceScore: int("confidenceScore"), // 0-100
+  clarityScore: int("clarityScore"), // 0-100 (clareza da fala)
+  enthusiasmScore: int("enthusiasmScore"), // 0-100
+  
+  // Análise de conteúdo (transcrição e análise semântica)
+  transcription: text("transcription"), // Transcrição completa do áudio
+  keyPoints: text("keyPoints"), // JSON com pontos-chave identificados
+  sentimentAnalysis: text("sentimentAnalysis"), // JSON com análise de sentimento
+  
+  // Competências identificadas
+  competenciesDetected: text("competenciesDetected"), // JSON com competências
+  strengthsIdentified: text("strengthsIdentified"), // JSON com pontos fortes
+  areasForImprovement: text("areasForImprovement"), // JSON com áreas de melhoria
+  
+  // Pontuação geral
+  overallScore: int("overallScore"), // 0-100
+  aiConfidence: int("aiConfidence"), // 0-100 (confiança da IA na análise)
+  
+  // Status da análise
+  analysisStatus: mysqlEnum("analysisStatus", [
+    "pendente",
+    "processando",
+    "concluida",
+    "erro",
+    "cancelada"
+  ]).default("pendente").notNull(),
+  errorMessage: text("errorMessage"),
+  
+  // Notificações
+  notificationSent: boolean("notificationSent").default(false).notNull(),
+  notificationSentAt: datetime("notificationSentAt"),
+  notifiedUsers: text("notifiedUsers"), // JSON com IDs dos usuários notificados
+  
+  // Metadados
+  analyzedBy: int("analyzedBy"), // ID do sistema ou usuário que iniciou análise
+  analyzedAt: datetime("analyzedAt"),
+  processingTimeSeconds: int("processingTimeSeconds"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VideoAnalysis = typeof videoAnalyses.$inferSelect;
+export type InsertVideoAnalysis = typeof videoAnalyses.$inferInsert;
+
+/**
+ * Video Analysis History - Histórico de análises para comparação temporal
+ * Permite comparar evolução do funcionário ao longo do tempo
+ */
+export const videoAnalysisHistory = mysqlTable("videoAnalysisHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  analysisId: int("analysisId").notNull(), // Referência a videoAnalyses
+  
+  // Snapshot dos dados para comparação temporal
+  snapshotDate: datetime("snapshotDate").notNull(),
+  overallScore: int("overallScore"),
+  eyeContactScore: int("eyeContactScore"),
+  confidenceScore: int("confidenceScore"),
+  clarityScore: int("clarityScore"),
+  enthusiasmScore: int("enthusiasmScore"),
+  
+  // Competências no momento
+  competenciesSnapshot: text("competenciesSnapshot"), // JSON
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type VideoAnalysisHistory = typeof videoAnalysisHistory.$inferSelect;
+export type InsertVideoAnalysisHistory = typeof videoAnalysisHistory.$inferInsert;
+
+/**
+ * Fraud Detection Logs - Logs de detecção de fraude
+ * Registra todas as tentativas de fraude detectadas
+ */
+export const fraudDetectionLogs = mysqlTable("fraudDetectionLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  videoAnalysisId: int("videoAnalysisId"),
+  
+  // Tipo de fraude detectada
+  fraudType: mysqlEnum("fraudType", [
+    "multiplas_faces",
+    "face_nao_correspondente",
+    "ausencia_face",
+    "mudanca_pessoa",
+    "video_manipulado",
+    "outro"
+  ]).notNull(),
+  
+  // Detalhes
+  description: text("description"),
+  severity: mysqlEnum("severity", ["baixa", "media", "alta", "critica"]).default("media").notNull(),
+  confidenceLevel: int("confidenceLevel"), // 0-100
+  evidenceData: text("evidenceData"), // JSON com evidências
+  
+  // Ação tomada
+  actionTaken: text("actionTaken"),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: datetime("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "pendente_revisao",
+    "confirmada",
+    "falso_positivo",
+    "resolvida"
+  ]).default("pendente_revisao").notNull(),
+  
+  // Metadados
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FraudDetectionLog = typeof fraudDetectionLogs.$inferSelect;
+export type InsertFraudDetectionLog = typeof fraudDetectionLogs.$inferInsert;
