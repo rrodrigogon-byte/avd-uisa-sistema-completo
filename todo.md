@@ -3546,3 +3546,74 @@ Focar 100% no Google Cloud Platform (GCP) para todas as integrações de APIs, e
 - [ ] Criar testes automatizados para validar parser
 - [ ] Adicionar logs detalhados de parsing para debug
 - [ ] Implementar preview visual do PDI importado
+
+
+## 🆕 NOVAS FUNCIONALIDADES SOLICITADAS (12/12/2025)
+
+### 1. Integração GCP Vision API - Reconhecimento Facial
+- [x] Configurar credenciais GCP Vision API no sistema
+- [x] Criar helper para comunicação com GCP Vision API
+- [ ] Implementar captura de foto facial no cadastro de funcionários
+- [ ] Implementar validação de identidade facial durante avaliações PIR
+- [x] Armazenar embeddings faciais no banco de dados
+- [x] Criar procedure tRPC para validação facial
+- [ ] Implementar componente React de captura facial
+- [ ] Adicionar validação facial no fluxo de avaliação PIR
+- [ ] Criar testes automatizados para reconhecimento facial
+
+### 2. Página de Análise Temporal Avançada
+- [x] Criar tabela de análises temporais no schema
+- [x] Implementar helpers de banco de dados para análises
+- [x] Criar procedures tRPC para comparações temporais
+- [ ] Desenvolver página dedicada de Análise Temporal
+- [ ] Implementar dashboard com gráficos de tendências PIR
+- [ ] Criar comparação lado-a-lado de múltiplos funcionários
+- [ ] Implementar filtros de período (mensal, trimestral, anual)
+- [ ] Adicionar seleção múltipla de funcionários
+- [ ] Criar visualizações de evolução individual
+- [ ] Implementar exportação de relatórios comparativos em PDF
+- [ ] Adicionar estatísticas agregadas por departamento
+- [ ] Criar gráficos de dispersão e correlação
+
+### 3. Sistema de Notificações Automáticas
+- [x] Criar tabela de regras de notificação no schema
+- [x] Implementar sistema de monitoramento de anexos
+- [ ] Criar trigger para detectar novos anexos
+- [x] Implementar detecção de mudanças significativas em PIR
+- [ ] Criar templates de e-mail para notificações
+- [ ] Implementar envio automático de e-mails para gestores
+- [ ] Adicionar configuração de limites de mudança PIR
+- [ ] Criar dashboard de notificações enviadas
+- [ ] Implementar preferências de notificação por usuário
+- [ ] Adicionar notificações in-app além de e-mail
+- [ ] Criar testes automatizados para sistema de notificações
+
+### 4. Melhorias no Perfil do Funcionário
+- [ ] Adicionar seção detalhada de histórico PIR
+- [ ] Implementar visualização de anexos por avaliação
+- [ ] Criar timeline de eventos do funcionário
+- [ ] Adicionar indicadores visuais de tendências
+- [ ] Implementar comparação com média do departamento
+- [ ] Adicionar alertas visuais para mudanças significativas
+
+### 5. Integração e Testes
+- [ ] Integrar reconhecimento facial com avaliações PIR
+- [ ] Testar fluxo completo de avaliação com validação facial
+- [ ] Testar sistema de notificações automáticas
+- [ ] Validar exportação de relatórios de análise temporal
+- [ ] Criar testes end-to-end para novos fluxos
+- [ ] Validar performance com múltiplos funcionários
+
+### 6. Navegação e Rotas
+- [ ] Adicionar rota para página de Análise Temporal
+- [ ] Atualizar menu do DashboardLayout
+- [ ] Adicionar breadcrumbs para nova página
+- [ ] Criar atalhos de teclado para análise temporal
+
+
+## 📥 IMPORTAÇÃO DE FUNCIONÁRIOS (12/12/2025)
+- [x] Criar script de importação do Excel
+- [x] Processar 3.116 funcionários do arquivo Funcionarios.xlsx
+- [x] Criar departamentos e cargos automaticamente
+- [x] Mapear campos TOTVS para schema do banco
+- [x] Executar importação em massa

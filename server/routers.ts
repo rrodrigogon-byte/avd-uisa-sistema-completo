@@ -98,6 +98,10 @@ import { evaluationProcessesRouter } from "./routers/evaluationProcessesRouter";
 import { formBuilderRouter } from "./routers/formBuilderRouter";
 import { consolidatedReportsRouter } from "./routers/consolidatedReportsRouter";
 import { emailNotificationsRouter } from "./routers/emailNotificationsRouter";
+import { faceRecognitionAdvancedRouter } from "./routers/faceRecognitionAdvancedRouter";
+import { temporalAnalysisRouter } from "./routers/temporalAnalysisRouter";
+import { autoNotificationsRouter } from "./routers/autoNotificationsRouter";
+import { pdfExportRouter } from "./routers/pdfExportRouter";
 import { emailMonitoringRouter } from "./routers/emailMonitoringRouter";
 import { employeeImportRouter } from "./routers/employeeImportRouter";
 import { hierarchyRouter } from "./routers/hierarchyRouter";
@@ -242,7 +246,11 @@ export const appRouter = router({
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,
   faceRecognition: faceRecognitionRouter,
+  faceRecognitionAdvanced: faceRecognitionAdvancedRouter,
   videoAnalysis: videoAnalysisRouter,
+  temporalAnalysis: temporalAnalysisRouter,
+  autoNotifications: autoNotificationsRouter,
+  pdfExport: pdfExportRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

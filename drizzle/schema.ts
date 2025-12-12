@@ -4385,3 +4385,460 @@ export const fraudDetectionLogs = mysqlTable("fraudDetectionLogs", {
 
 export type FraudDetectionLog = typeof fraudDetectionLogs.$inferSelect;
 export type InsertFraudDetectionLog = typeof fraudDetectionLogs.$inferInsert;
+
+// ============================================================================
+// TABELAS DE RECONHECIMENTO FACIAL GCP VISION
+// ============================================================================
+
+/**
+ * Face Embeddings - Embeddings faciais para reconhecimento
+ * Armazena os descritores faciais gerados pelo GCP Vision API
+ */
+export const faceEmbeddings = mysqlTable("faceEmbeddings", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull().unique(),
+  
+  // Dados faciais do GCP Vision
+  gcpFaceDescriptor: text("gcpFaceDescriptor").notNull(), // JSON com landmarks e features
+  gcpFaceId: varchar("gcpFaceId", { length: 255 }), // ID único do GCP
+  
+  // Imagens de referência
+  primaryPhotoUrl: varchar("primaryPhotoUrl", { length: 512 }).notNull(),
+  secondaryPhotoUrl: varchar("secondaryPhotoUrl", { length: 512 }), // Foto adicional para melhor precisão
+  
+  // Qualidade da captura
+  faceQualityScore: int("faceQualityScore"), // 0-100
+  lightingQuality: mysqlEnum("lightingQuality", ["ruim", "aceitavel", "boa", "excelente"]),
+  faceAngle: varchar("faceAngle", { length: 50 }), // frontal, perfil, etc
+  
+  // Metadados
+  registeredBy: int("registeredBy").notNull(),
+  registeredAt: timestamp("registeredAt").defaultNow().notNull(),
+  lastValidatedAt: datetime("lastValidatedAt"),
+  validationCount: int("validationCount").default(0).notNull(),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FaceEmbedding = typeof faceEmbeddings.$inferSelect;
+export type InsertFaceEmbedding = typeof faceEmbeddings.$inferInsert;
+
+/**
+ * Face Validation History - Histórico de validações faciais
+ * Registra todas as tentativas de validação facial
+ */
+export const faceValidationHistory = mysqlTable("faceValidationHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  pirAssessmentId: int("pirAssessmentId"), // Se foi durante avaliação PIR
+  
+  // Dados da validação
+  validationPhotoUrl: varchar("validationPhotoUrl", { length: 512 }).notNull(),
+  matchScore: int("matchScore").notNull(), // 0-100 (confiança da correspondência)
+  matchResult: mysqlEnum("matchResult", ["sucesso", "falha", "inconclusivo"]).notNull(),
+  
+  // Detalhes técnicos do GCP Vision
+  gcpResponseData: text("gcpResponseData"), // JSON com resposta completa do GCP
+  facesDetected: int("facesDetected").default(1).notNull(),
+  primaryFaceConfidence: int("primaryFaceConfidence"), // 0-100
+  
+  // Contexto da validação
+  validationType: mysqlEnum("validationType", [
+    "cadastro_inicial",
+    "avaliacao_pir",
+    "atualizacao_perfil",
+    "verificacao_manual"
+  ]).notNull(),
+  
+  // Resultado e ações
+  approved: boolean("approved").notNull(),
+  rejectionReason: text("rejectionReason"),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: datetime("reviewedAt"),
+  
+  // Metadados
+  validatedAt: timestamp("validatedAt").defaultNow().notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type FaceValidationHistory = typeof faceValidationHistory.$inferSelect;
+export type InsertFaceValidationHistory = typeof faceValidationHistory.$inferInsert;
+
+// ============================================================================
+// TABELAS DE ANÁLISE TEMPORAL AVANÇADA
+// ============================================================================
+
+/**
+ * Temporal Analysis Configs - Configurações de análises temporais
+ * Define períodos e parâmetros para análises comparativas
+ */
+export const temporalAnalysisConfigs = mysqlTable("temporalAnalysisConfigs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificação
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  
+  // Tipo de análise
+  analysisType: mysqlEnum("analysisType", [
+    "individual",
+    "comparativa",
+    "departamento",
+    "organizacional"
+  ]).notNull(),
+  
+  // Período de análise
+  periodType: mysqlEnum("periodType", [
+    "mensal",
+    "trimestral",
+    "semestral",
+    "anual",
+    "customizado"
+  ]).notNull(),
+  startDate: datetime("startDate").notNull(),
+  endDate: datetime("endDate").notNull(),
+  
+  // Funcionários incluídos
+  employeeIds: text("employeeIds"), // JSON array de IDs
+  departmentIds: text("departmentIds"), // JSON array de departamentos
+  includeAllActive: boolean("includeAllActive").default(false).notNull(),
+  
+  // Métricas a analisar
+  metricsToAnalyze: text("metricsToAnalyze").notNull(), // JSON com métricas selecionadas
+  includeGoals: boolean("includeGoals").default(true).notNull(),
+  includePir: boolean("includePir").default(true).notNull(),
+  include360: boolean("include360").default(true).notNull(),
+  includeCompetencies: boolean("includeCompetencies").default(true).notNull(),
+  
+  // Configurações de comparação
+  compareWithPreviousPeriod: boolean("compareWithPreviousPeriod").default(true).notNull(),
+  compareWithDepartmentAvg: boolean("compareWithDepartmentAvg").default(true).notNull(),
+  compareWithOrgAvg: boolean("compareWithOrgAvg").default(true).notNull(),
+  
+  // Limites para alertas
+  significantChangeThreshold: int("significantChangeThreshold").default(15).notNull(), // % de mudança
+  criticalChangeThreshold: int("criticalChangeThreshold").default(30).notNull(),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TemporalAnalysisConfig = typeof temporalAnalysisConfigs.$inferSelect;
+export type InsertTemporalAnalysisConfig = typeof temporalAnalysisConfigs.$inferInsert;
+
+/**
+ * Temporal Analysis Results - Resultados de análises temporais
+ * Armazena os resultados calculados das análises
+ */
+export const temporalAnalysisResults = mysqlTable("temporalAnalysisResults", {
+  id: int("id").autoincrement().primaryKey(),
+  configId: int("configId").notNull(),
+  
+  // Dados da análise
+  analysisDate: datetime("analysisDate").notNull(),
+  periodLabel: varchar("periodLabel", { length: 100 }).notNull(), // Ex: "Q1 2025"
+  
+  // Resultados agregados
+  totalEmployeesAnalyzed: int("totalEmployeesAnalyzed").notNull(),
+  averagePirScore: int("averagePirScore"),
+  averageGoalCompletion: int("averageGoalCompletion"),
+  average360Score: int("average360Score"),
+  
+  // Tendências identificadas
+  trendsData: text("trendsData").notNull(), // JSON com tendências detalhadas
+  significantChanges: text("significantChanges"), // JSON com mudanças significativas
+  topPerformers: text("topPerformers"), // JSON com top performers
+  needsAttention: text("needsAttention"), // JSON com funcionários que precisam atenção
+  
+  // Comparações
+  previousPeriodComparison: text("previousPeriodComparison"), // JSON
+  departmentComparison: text("departmentComparison"), // JSON
+  organizationalComparison: text("organizationalComparison"), // JSON
+  
+  // Estatísticas
+  improvementRate: int("improvementRate"), // % de funcionários que melhoraram
+  declineRate: int("declineRate"), // % de funcionários que pioraram
+  stableRate: int("stableRate"), // % de funcionários estáveis
+  
+  // Insights e recomendações
+  insights: text("insights"), // JSON com insights gerados
+  recommendations: text("recommendations"), // JSON com recomendações
+  
+  // Status
+  status: mysqlEnum("status", [
+    "processando",
+    "concluido",
+    "erro"
+  ]).default("processando").notNull(),
+  errorMessage: text("errorMessage"),
+  
+  // Metadados
+  generatedBy: int("generatedBy"),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  processingTimeSeconds: int("processingTimeSeconds"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TemporalAnalysisResult = typeof temporalAnalysisResults.$inferSelect;
+export type InsertTemporalAnalysisResult = typeof temporalAnalysisResults.$inferInsert;
+
+/**
+ * Employee Temporal Snapshots - Snapshots temporais de funcionários
+ * Armazena estado do funcionário em momentos específicos para comparação
+ */
+export const employeeTemporalSnapshots = mysqlTable("employeeTemporalSnapshots", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  analysisResultId: int("analysisResultId"),
+  
+  // Momento do snapshot
+  snapshotDate: datetime("snapshotDate").notNull(),
+  periodLabel: varchar("periodLabel", { length: 100 }).notNull(),
+  
+  // Dados do funcionário no momento
+  positionId: int("positionId"),
+  departmentId: int("departmentId"),
+  
+  // Métricas PIR
+  pirScore: int("pirScore"),
+  pirAnswers: text("pirAnswers"), // JSON com respostas
+  pirCompletionDate: datetime("pirCompletionDate"),
+  
+  // Metas SMART
+  totalGoals: int("totalGoals").default(0).notNull(),
+  completedGoals: int("completedGoals").default(0).notNull(),
+  goalCompletionRate: int("goalCompletionRate"),
+  
+  // Avaliação 360°
+  score360: int("score360"),
+  evaluation360Data: text("evaluation360Data"), // JSON
+  
+  // Competências
+  competenciesData: text("competenciesData"), // JSON com níveis de competências
+  
+  // Análise de vídeo (se disponível)
+  videoAnalysisScore: int("videoAnalysisScore"),
+  videoAnalysisData: text("videoAnalysisData"), // JSON
+  
+  // Comparação com período anterior
+  changeFromPrevious: int("changeFromPrevious"), // % de mudança
+  changeType: mysqlEnum("changeType", ["melhoria", "declinio", "estavel"]),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmployeeTemporalSnapshot = typeof employeeTemporalSnapshots.$inferSelect;
+export type InsertEmployeeTemporalSnapshot = typeof employeeTemporalSnapshots.$inferInsert;
+
+// ============================================================================
+// TABELAS DE NOTIFICAÇÕES AUTOMÁTICAS
+// ============================================================================
+
+/**
+ * Notification Rules - Regras de notificação automática
+ * Define quando e como enviar notificações
+ */
+export const notificationRules = mysqlTable("notificationRules", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificação
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  
+  // Tipo de evento que dispara a notificação
+  triggerEvent: mysqlEnum("triggerEvent", [
+    "novo_anexo",
+    "mudanca_pir_significativa",
+    "mudanca_pir_critica",
+    "meta_concluida",
+    "meta_atrasada",
+    "avaliacao_360_concluida",
+    "novo_feedback",
+    "competencia_atualizada",
+    "pdi_atualizado"
+  ]).notNull(),
+  
+  // Condições para disparo
+  conditions: text("conditions").notNull(), // JSON com condições específicas
+  
+  // Limites para mudanças PIR
+  pirChangeThreshold: int("pirChangeThreshold"), // % de mudança mínima
+  pirChangeDirection: mysqlEnum("pirChangeDirection", ["qualquer", "melhoria", "declinio"]),
+  
+  // Destinatários
+  notifyEmployee: boolean("notifyEmployee").default(false).notNull(),
+  notifyDirectManager: boolean("notifyDirectManager").default(true).notNull(),
+  notifyHR: boolean("notifyHR").default(false).notNull(),
+  notifyCustomEmails: text("notifyCustomEmails"), // JSON array de emails
+  
+  // Canais de notificação
+  sendEmail: boolean("sendEmail").default(true).notNull(),
+  sendInApp: boolean("sendInApp").default(true).notNull(),
+  sendPush: boolean("sendPush").default(false).notNull(),
+  
+  // Template de mensagem
+  emailSubjectTemplate: varchar("emailSubjectTemplate", { length: 500 }),
+  emailBodyTemplate: text("emailBodyTemplate"),
+  inAppMessageTemplate: text("inAppMessageTemplate"),
+  
+  // Frequência e limites
+  maxNotificationsPerDay: int("maxNotificationsPerDay").default(10).notNull(),
+  cooldownMinutes: int("cooldownMinutes").default(60).notNull(), // Tempo mínimo entre notificações
+  
+  // Período de atividade
+  activeFrom: datetime("activeFrom"),
+  activeUntil: datetime("activeUntil"),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NotificationRule = typeof notificationRules.$inferSelect;
+export type InsertNotificationRule = typeof notificationRules.$inferInsert;
+
+/**
+ * Notification Queue - Fila de notificações a serem enviadas
+ * Gerencia o envio assíncrono de notificações
+ */
+export const notificationQueue = mysqlTable("notificationQueue", {
+  id: int("id").autoincrement().primaryKey(),
+  ruleId: int("ruleId"),
+  
+  // Dados do evento que disparou
+  triggerEvent: varchar("triggerEvent", { length: 100 }).notNull(),
+  eventData: text("eventData").notNull(), // JSON com dados do evento
+  
+  // Destinatário
+  recipientUserId: int("recipientUserId"),
+  recipientEmail: varchar("recipientEmail", { length: 320 }),
+  recipientName: varchar("recipientName", { length: 255 }),
+  
+  // Conteúdo da notificação
+  subject: varchar("subject", { length: 500 }).notNull(),
+  body: text("body").notNull(),
+  
+  // Canal
+  channel: mysqlEnum("channel", ["email", "in_app", "push"]).notNull(),
+  
+  // Prioridade
+  priority: mysqlEnum("priority", ["baixa", "normal", "alta", "urgente"]).default("normal").notNull(),
+  
+  // Status de envio
+  status: mysqlEnum("status", [
+    "pendente",
+    "processando",
+    "enviado",
+    "falha",
+    "cancelado"
+  ]).default("pendente").notNull(),
+  
+  // Tentativas de envio
+  attempts: int("attempts").default(0).notNull(),
+  maxAttempts: int("maxAttempts").default(3).notNull(),
+  lastAttemptAt: datetime("lastAttemptAt"),
+  nextAttemptAt: datetime("nextAttemptAt"),
+  
+  // Resultado
+  sentAt: datetime("sentAt"),
+  errorMessage: text("errorMessage"),
+  
+  // Metadados
+  scheduledFor: datetime("scheduledFor"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NotificationQueueItem = typeof notificationQueue.$inferSelect;
+export type InsertNotificationQueueItem = typeof notificationQueue.$inferInsert;
+
+/**
+ * Notification History - Histórico de notificações enviadas
+ * Registra todas as notificações enviadas para auditoria
+ */
+export const notificationHistory = mysqlTable("notificationHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  queueId: int("queueId"),
+  ruleId: int("ruleId"),
+  
+  // Dados do envio
+  recipientUserId: int("recipientUserId"),
+  recipientEmail: varchar("recipientEmail", { length: 320 }),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  body: text("body").notNull(),
+  channel: varchar("channel", { length: 50 }).notNull(),
+  
+  // Resultado
+  status: mysqlEnum("status", ["enviado", "falha"]).notNull(),
+  errorMessage: text("errorMessage"),
+  
+  // Interação do usuário
+  opened: boolean("opened").default(false).notNull(),
+  openedAt: datetime("openedAt"),
+  clicked: boolean("clicked").default(false).notNull(),
+  clickedAt: datetime("clickedAt"),
+  
+  // Metadados
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type NotificationHistoryItem = typeof notificationHistory.$inferSelect;
+export type InsertNotificationHistoryItem = typeof notificationHistory.$inferInsert;
+
+/**
+ * User Notification Preferences - Preferências de notificação por usuário
+ * Permite usuários controlarem quais notificações receber
+ */
+export const userNotificationPreferences = mysqlTable("userNotificationPreferences", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  
+  // Preferências por tipo de evento
+  notifyNewAttachment: boolean("notifyNewAttachment").default(true).notNull(),
+  notifyPirChanges: boolean("notifyPirChanges").default(true).notNull(),
+  notifyGoalUpdates: boolean("notifyGoalUpdates").default(true).notNull(),
+  notify360Completion: boolean("notify360Completion").default(true).notNull(),
+  notifyFeedback: boolean("notifyFeedback").default(true).notNull(),
+  notifyPdiUpdates: boolean("notifyPdiUpdates").default(true).notNull(),
+  
+  // Preferências por canal
+  emailEnabled: boolean("emailEnabled").default(true).notNull(),
+  inAppEnabled: boolean("inAppEnabled").default(true).notNull(),
+  pushEnabled: boolean("pushEnabled").default(false).notNull(),
+  
+  // Horários de notificação (quiet hours)
+  quietHoursEnabled: boolean("quietHoursEnabled").default(false).notNull(),
+  quietHoursStart: varchar("quietHoursStart", { length: 5 }), // HH:MM
+  quietHoursEnd: varchar("quietHoursEnd", { length: 5 }), // HH:MM
+  
+  // Frequência
+  digestMode: boolean("digestMode").default(false).notNull(), // Agrupar notificações
+  digestFrequency: mysqlEnum("digestFrequency", ["diario", "semanal"]),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserNotificationPreference = typeof userNotificationPreferences.$inferSelect;
+export type InsertUserNotificationPreference = typeof userNotificationPreferences.$inferInsert;

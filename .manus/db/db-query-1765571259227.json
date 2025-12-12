@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `faceEmbeddings` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `employeeId` INT NOT NULL UNIQUE,\n  `gcpFaceDescriptor` TEXT NOT NULL,\n  `gcpFaceId` VARCHAR(255),\n  `primaryPhotoUrl` VARCHAR(512) NOT NULL,\n  `secondaryPhotoUrl` VARCHAR(512),\n  `faceQualityScore` INT,\n  `lightingQuality` ENUM('ruim', 'aceitavel', 'boa', 'excelente'),\n  `faceAngle` VARCHAR(50),\n  `registeredBy` INT NOT NULL,\n  `registeredAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `lastValidatedAt` DATETIME,\n  `validationCount` INT DEFAULT 0 NOT NULL,\n  `active` BOOLEAN DEFAULT TRUE NOT NULL,\n  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `faceEmbeddings` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `employeeId` INT NOT NULL UNIQUE,\n  `gcpFaceDescriptor` TEXT NOT NULL,\n  `gcpFaceId` VARCHAR(255),\n  `primaryPhotoUrl` VARCHAR(512) NOT NULL,\n  `secondaryPhotoUrl` VARCHAR(512),\n  `faceQualityScore` INT,\n  `lightingQuality` ENUM('ruim', 'aceitavel', 'boa', 'excelente'),\n  `faceAngle` VARCHAR(50),\n  `registeredBy` INT NOT NULL,\n  `registeredAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `lastValidatedAt` DATETIME,\n  `validationCount` INT DEFAULT 0 NOT NULL,\n  `active` BOOLEAN DEFAULT TRUE NOT NULL,\n  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 204
+}

@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lte, or, sql, asc, isNull } from "drizzle-orm";
+import { and, desc, eq, gte, lte, or, sql, asc, isNull, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   auditLogs,
@@ -3169,4 +3169,599 @@ export async function updateFraudLogStatus(
       updatedAt: new Date(),
     })
     .where(eq(fraudDetectionLogs.id, id));
+}
+
+// ============================================================================
+// RECONHECIMENTO FACIAL GCP VISION
+// ============================================================================
+
+import {
+  faceEmbeddings,
+  type FaceEmbedding,
+  type InsertFaceEmbedding,
+  faceValidationHistory,
+  type FaceValidationHistory,
+  type InsertFaceValidationHistory,
+} from "../drizzle/schema";
+
+/**
+ * Criar ou atualizar embedding facial de funcionário
+ */
+export async function upsertFaceEmbedding(data: InsertFaceEmbedding) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const existing = await db
+    .select()
+    .from(faceEmbeddings)
+    .where(eq(faceEmbeddings.employeeId, data.employeeId))
+    .limit(1);
+  
+  if (existing.length > 0) {
+    await db
+      .update(faceEmbeddings)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(faceEmbeddings.employeeId, data.employeeId));
+    
+    return existing[0].id;
+  } else {
+    const result = await db.insert(faceEmbeddings).values(data);
+    return result[0].insertId;
+  }
+}
+
+/**
+ * Buscar embedding facial de funcionário
+ */
+export async function getFaceEmbedding(employeeId: number): Promise<FaceEmbedding | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db
+    .select()
+    .from(faceEmbeddings)
+    .where(eq(faceEmbeddings.employeeId, employeeId))
+    .limit(1);
+  
+  return result[0];
+}
+
+/**
+ * Registrar validação facial
+ */
+export async function createFaceValidation(data: InsertFaceValidationHistory) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(faceValidationHistory).values(data);
+  
+  // Atualizar contador de validações no embedding
+  if (data.approved) {
+    await db
+      .update(faceEmbeddings)
+      .set({
+        lastValidatedAt: new Date(),
+        validationCount: sql`${faceEmbeddings.validationCount} + 1`,
+      })
+      .where(eq(faceEmbeddings.employeeId, data.employeeId));
+  }
+  
+  return result[0].insertId;
+}
+
+/**
+ * Buscar histórico de validações de um funcionário
+ */
+export async function getFaceValidationHistory(employeeId: number, limit = 20): Promise<FaceValidationHistory[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(faceValidationHistory)
+    .where(eq(faceValidationHistory.employeeId, employeeId))
+    .orderBy(desc(faceValidationHistory.validatedAt))
+    .limit(limit);
+}
+
+/**
+ * Buscar validações por avaliação PIR
+ */
+export async function getFaceValidationsByPIR(pirAssessmentId: number): Promise<FaceValidationHistory[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(faceValidationHistory)
+    .where(eq(faceValidationHistory.pirAssessmentId, pirAssessmentId))
+    .orderBy(desc(faceValidationHistory.validatedAt));
+}
+
+// ============================================================================
+// ANÁLISE TEMPORAL AVANÇADA
+// ============================================================================
+
+import {
+  temporalAnalysisConfigs,
+  type TemporalAnalysisConfig,
+  type InsertTemporalAnalysisConfig,
+  temporalAnalysisResults,
+  type TemporalAnalysisResult,
+  type InsertTemporalAnalysisResult,
+  employeeTemporalSnapshots,
+  type EmployeeTemporalSnapshot,
+  type InsertEmployeeTemporalSnapshot,
+} from "../drizzle/schema";
+
+/**
+ * Criar configuração de análise temporal
+ */
+export async function createTemporalAnalysisConfig(data: InsertTemporalAnalysisConfig) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(temporalAnalysisConfigs).values(data);
+  return result[0].insertId;
+}
+
+/**
+ * Listar configurações de análise temporal
+ */
+export async function listTemporalAnalysisConfigs(activeOnly = true): Promise<TemporalAnalysisConfig[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const query = db.select().from(temporalAnalysisConfigs);
+  
+  if (activeOnly) {
+    return await query.where(eq(temporalAnalysisConfigs.active, true));
+  }
+  
+  return await query;
+}
+
+/**
+ * Buscar configuração de análise por ID
+ */
+export async function getTemporalAnalysisConfig(id: number): Promise<TemporalAnalysisConfig | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db
+    .select()
+    .from(temporalAnalysisConfigs)
+    .where(eq(temporalAnalysisConfigs.id, id))
+    .limit(1);
+  
+  return result[0];
+}
+
+/**
+ * Atualizar configuração de análise
+ */
+export async function updateTemporalAnalysisConfig(id: number, data: Partial<InsertTemporalAnalysisConfig>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(temporalAnalysisConfigs)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(temporalAnalysisConfigs.id, id));
+}
+
+/**
+ * Criar resultado de análise temporal
+ */
+export async function createTemporalAnalysisResult(data: InsertTemporalAnalysisResult) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(temporalAnalysisResults).values(data);
+  return result[0].insertId;
+}
+
+/**
+ * Buscar resultados de análise por configuração
+ */
+export async function getTemporalAnalysisResults(configId: number, limit = 10): Promise<TemporalAnalysisResult[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(temporalAnalysisResults)
+    .where(eq(temporalAnalysisResults.configId, configId))
+    .orderBy(desc(temporalAnalysisResults.analysisDate))
+    .limit(limit);
+}
+
+/**
+ * Buscar resultado de análise por ID
+ */
+export async function getTemporalAnalysisResult(id: number): Promise<TemporalAnalysisResult | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db
+    .select()
+    .from(temporalAnalysisResults)
+    .where(eq(temporalAnalysisResults.id, id))
+    .limit(1);
+  
+  return result[0];
+}
+
+/**
+ * Atualizar status de resultado de análise
+ */
+export async function updateTemporalAnalysisStatus(
+  id: number,
+  status: "processando" | "concluido" | "erro",
+  errorMessage?: string
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(temporalAnalysisResults)
+    .set({
+      status,
+      errorMessage,
+      updatedAt: new Date(),
+    })
+    .where(eq(temporalAnalysisResults.id, id));
+}
+
+/**
+ * Criar snapshot temporal de funcionário
+ */
+export async function createEmployeeSnapshot(data: InsertEmployeeTemporalSnapshot) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(employeeTemporalSnapshots).values(data);
+  return result[0].insertId;
+}
+
+/**
+ * Buscar snapshots de funcionário
+ */
+export async function getEmployeeSnapshots(employeeId: number, limit = 12): Promise<EmployeeTemporalSnapshot[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(employeeTemporalSnapshots)
+    .where(eq(employeeTemporalSnapshots.employeeId, employeeId))
+    .orderBy(desc(employeeTemporalSnapshots.snapshotDate))
+    .limit(limit);
+}
+
+/**
+ * Comparar múltiplos funcionários em um período
+ */
+export async function compareEmployeesInPeriod(
+  employeeIds: number[],
+  startDate: Date,
+  endDate: Date
+): Promise<EmployeeTemporalSnapshot[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(employeeTemporalSnapshots)
+    .where(
+      and(
+        inArray(employeeTemporalSnapshots.employeeId, employeeIds),
+        gte(employeeTemporalSnapshots.snapshotDate, startDate),
+        lte(employeeTemporalSnapshots.snapshotDate, endDate)
+      )
+    )
+    .orderBy(
+      employeeTemporalSnapshots.employeeId,
+      desc(employeeTemporalSnapshots.snapshotDate)
+    );
+}
+
+// ============================================================================
+// NOTIFICAÇÕES AUTOMÁTICAS
+// ============================================================================
+
+import {
+  notificationRules,
+  type NotificationRule,
+  type InsertNotificationRule,
+  notificationQueue,
+  type NotificationQueueItem,
+  type InsertNotificationQueueItem,
+  notificationHistory,
+  type NotificationHistoryItem,
+  type InsertNotificationHistoryItem,
+  userNotificationPreferences,
+  type UserNotificationPreference,
+  type InsertUserNotificationPreference,
+} from "../drizzle/schema";
+
+/**
+ * Criar regra de notificação
+ */
+export async function createNotificationRule(data: InsertNotificationRule) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(notificationRules).values(data);
+  return result[0].insertId;
+}
+
+/**
+ * Listar regras de notificação ativas
+ */
+export async function getActiveNotificationRules(): Promise<NotificationRule[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const now = new Date();
+  
+  return await db
+    .select()
+    .from(notificationRules)
+    .where(
+      and(
+        eq(notificationRules.active, true),
+        or(
+          isNull(notificationRules.activeFrom),
+          lte(notificationRules.activeFrom, now)
+        ),
+        or(
+          isNull(notificationRules.activeUntil),
+          gte(notificationRules.activeUntil, now)
+        )
+      )
+    );
+}
+
+/**
+ * Buscar regras por tipo de evento
+ */
+export async function getNotificationRulesByEvent(
+  triggerEvent: string
+): Promise<NotificationRule[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(notificationRules)
+    .where(
+      and(
+        eq(notificationRules.triggerEvent, triggerEvent as any),
+        eq(notificationRules.active, true)
+      )
+    );
+}
+
+/**
+ * Adicionar notificação à fila
+ */
+export async function enqueueNotification(data: InsertNotificationQueueItem) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(notificationQueue).values(data);
+  return result[0].insertId;
+}
+
+/**
+ * Buscar notificações pendentes na fila
+ */
+export async function getPendingNotifications(limit = 50): Promise<NotificationQueueItem[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const now = new Date();
+  
+  return await db
+    .select()
+    .from(notificationQueue)
+    .where(
+      and(
+        eq(notificationQueue.status, "pendente"),
+        or(
+          isNull(notificationQueue.scheduledFor),
+          lte(notificationQueue.scheduledFor, now)
+        ),
+        or(
+          isNull(notificationQueue.nextAttemptAt),
+          lte(notificationQueue.nextAttemptAt, now)
+        )
+      )
+    )
+    .orderBy(notificationQueue.priority, notificationQueue.createdAt)
+    .limit(limit);
+}
+
+/**
+ * Atualizar status de notificação na fila
+ */
+export async function updateNotificationQueueStatus(
+  id: number,
+  status: "processando" | "enviado" | "falha" | "cancelado",
+  errorMessage?: string
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const updates: any = {
+    status,
+    updatedAt: new Date(),
+  };
+  
+  if (status === "processando") {
+    updates.attempts = sql`${notificationQueue.attempts} + 1`;
+    updates.lastAttemptAt = new Date();
+  } else if (status === "enviado") {
+    updates.sentAt = new Date();
+  } else if (status === "falha") {
+    updates.errorMessage = errorMessage;
+    // Calcular próxima tentativa com backoff exponencial
+    const nextAttempt = new Date();
+    nextAttempt.setMinutes(nextAttempt.getMinutes() + Math.pow(2, updates.attempts || 1) * 5);
+    updates.nextAttemptAt = nextAttempt;
+  }
+  
+  await db
+    .update(notificationQueue)
+    .set(updates)
+    .where(eq(notificationQueue.id, id));
+}
+
+/**
+ * Registrar notificação no histórico
+ */
+export async function createNotificationHistory(data: InsertNotificationHistoryItem) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(notificationHistory).values(data);
+  return result[0].insertId;
+}
+
+/**
+ * Buscar histórico de notificações de um usuário
+ */
+export async function getUserNotificationHistory(
+  userId: number,
+  limit = 50
+): Promise<NotificationHistoryItem[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(notificationHistory)
+    .where(eq(notificationHistory.recipientUserId, userId))
+    .orderBy(desc(notificationHistory.sentAt))
+    .limit(limit);
+}
+
+/**
+ * Marcar notificação como lida
+ */
+export async function markNotificationAsOpened(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(notificationHistory)
+    .set({
+      opened: true,
+      openedAt: new Date(),
+    })
+    .where(eq(notificationHistory.id, id));
+}
+
+/**
+ * Buscar ou criar preferências de notificação do usuário
+ */
+export async function getUserNotificationPreferences(
+  userId: number
+): Promise<UserNotificationPreference> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const existing = await db
+    .select()
+    .from(userNotificationPreferences)
+    .where(eq(userNotificationPreferences.userId, userId))
+    .limit(1);
+  
+  if (existing.length > 0) {
+    return existing[0];
+  }
+  
+  // Criar preferências padrão
+  const result = await db.insert(userNotificationPreferences).values({
+    userId,
+  });
+  
+  const created = await db
+    .select()
+    .from(userNotificationPreferences)
+    .where(eq(userNotificationPreferences.userId, userId))
+    .limit(1);
+  
+  return created[0];
+}
+
+/**
+ * Atualizar preferências de notificação
+ */
+export async function updateUserNotificationPreferences(
+  userId: number,
+  data: Partial<InsertUserNotificationPreference>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db
+    .update(userNotificationPreferences)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(userNotificationPreferences.userId, userId));
+}
+
+/**
+ * Verificar se usuário deve receber notificação
+ */
+export async function shouldNotifyUser(
+  userId: number,
+  eventType: string,
+  channel: "email" | "in_app" | "push"
+): Promise<boolean> {
+  const prefs = await getUserNotificationPreferences(userId);
+  
+  // Verificar se canal está habilitado
+  if (channel === "email" && !prefs.emailEnabled) return false;
+  if (channel === "in_app" && !prefs.inAppEnabled) return false;
+  if (channel === "push" && !prefs.pushEnabled) return false;
+  
+  // Verificar quiet hours
+  if (prefs.quietHoursEnabled && prefs.quietHoursStart && prefs.quietHoursEnd) {
+    const now = new Date();
+    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    if (currentTime >= prefs.quietHoursStart && currentTime <= prefs.quietHoursEnd) {
+      return false;
+    }
+  }
+  
+  // Verificar preferências por tipo de evento
+  const eventPrefs: Record<string, keyof UserNotificationPreference> = {
+    novo_anexo: 'notifyNewAttachment',
+    mudanca_pir_significativa: 'notifyPirChanges',
+    mudanca_pir_critica: 'notifyPirChanges',
+    meta_concluida: 'notifyGoalUpdates',
+    meta_atrasada: 'notifyGoalUpdates',
+    avaliacao_360_concluida: 'notify360Completion',
+    novo_feedback: 'notifyFeedback',
+    pdi_atualizado: 'notifyPdiUpdates',
+  };
+  
+  const prefKey = eventPrefs[eventType];
+  if (prefKey && prefs[prefKey] === false) {
+    return false;
+  }
+  
+  return true;
 }

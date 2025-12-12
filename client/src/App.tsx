@@ -27,6 +27,8 @@ import TestMonitoringDashboard from "./pages/TestMonitoringDashboard";
 import PsychometricResults from "./pages/PsychometricResults";
 import TeamDISCProfiles from "./pages/TeamDISCProfiles";
 import TeamProfiles from "./pages/TeamProfiles";
+import FaceRegistration from "./pages/FaceRegistration";
+import TemporalAnalysis from "./pages/TemporalAnalysis";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -238,6 +240,8 @@ function Router() {
       <Route path="/gestor" component={DashboardGestor} />
       <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />
       <Route path="/configuracoes/notificacoes" component={NotificacoesConfig} />
+      <Route path="/reconhecimento-facial/cadastro" component={FaceRegistration} />
+      <Route path="/analise-temporal" component={TemporalAnalysis} />
       {/* Rotas de metas - específicas ANTES das parametrizadas */}
       <Route path={"/metas"} component={MetasSMART} />
       <Route path={"/metas/criar"} component={CriarMetaSMART} />
