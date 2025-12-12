@@ -3748,3 +3748,79 @@ A maioria dos testes falhando são relacionados a:
 
 ### Conclusão
 O sistema está **pronto para uso em produção** com alta cobertura de testes (88.4%). Os testes falhando são principalmente relacionados a configurações externas (SMTP) e não afetam a funcionalidade core do sistema.
+
+
+## 🚨 CORREÇÃO URGENTE - PIR DASHBOARD E SISTEMA DE TESTES (12/12/2025)
+
+### Problema Reportado pelo Usuário
+- [ ] PIR Dashboard fica carregando infinitamente ("pensando e pensando")
+- [ ] Não há interface visível para enviar testes PIR para funcionários/candidatos
+- [ ] Usuário solicitou verificação completa de todas as pendências do PIR e outros testes
+
+### Investigação Realizada
+- [x] Identificado que PIR Dashboard está em loop infinito de loading
+- [x] Causa raiz: setState sendo chamado no render phase (linhas 82-84 de PIRDashboard.tsx)
+- [x] Violação de regras do React causando re-render infinito
+- [x] Verificado que interface de envio de testes EXISTE (EnviarTestes.tsx)
+- [x] Rotas registradas: /testes/enviar e /testes-psicometricos/enviar
+- [x] Procedure backend psychometric.sendTestInvite está implementado e funcional
+
+### Correções a Implementar
+
+#### 1. PIR Dashboard - Corrigir Loop Infinito
+- [x] Mover setState de selectedCycleId para useEffect
+- [x] Adicionar array de dependências correto [cycles, selectedCycleId]
+- [x] Adicionar tratamento de erro quando query falha
+- [x] Adicionar estado vazio quando não há ciclos cadastrados
+- [x] Validar que dados existem antes de renderizar gráficos
+- [ ] Testar que dashboard carrega sem loop infinito (BLOQUEADO: erro 500 no backend)
+- [ ] Corrigir erro 500 em getCycleStats (erro de Drizzle ORM)
+
+#### 2. Sistema de Envio de Testes - Validar Acessibilidade
+- [x] Verificar se há link para /testes/enviar no menu de navegação (CONFIRMADO: Desenvolvimento → Testes Psicométricos → Enviar)
+- [x] Interface existe e está acessível com todos os tipos de teste incluindo PIR
+- [x] Suporta envio individual, equipe, departamento, diretoria e centro de custos
+- [ ] Testar envio de teste PIR para email de teste
+- [ ] Verificar se email é recebido com link correto
+- [ ] Testar que link do teste funciona
+- [ ] Completar teste e verificar que resultado é salvo
+- [ ] Verificar que resultado aparece no perfil do funcionário
+
+#### 3. Validar Todos os Tipos de Teste
+- [ ] Testar envio de DISC
+- [ ] Testar envio de Big Five
+- [ ] Testar envio de MBTI
+- [ ] Testar envio de Inteligência Emocional
+- [ ] Testar envio de VARK
+- [ ] Testar envio de Liderança
+- [ ] Testar envio de Âncoras de Carreira
+- [ ] Testar envio de PIR
+- [ ] Validar que todos os templates de email estão corretos
+
+#### 4. Fluxo Completo de Testes
+- [ ] Admin acessa página de envio de testes
+- [ ] Admin seleciona tipo de teste
+- [ ] Admin insere emails de funcionários
+- [ ] Sistema envia emails com sucesso
+- [ ] Funcionário recebe email
+- [ ] Funcionário clica no link e teste carrega
+- [ ] Funcionário completa teste
+- [ ] Resultado é salvo no banco de dados
+- [ ] Resultado aparece no perfil do funcionário
+- [ ] RH consegue visualizar resultados
+- [ ] Dashboard PIR mostra estatísticas corretas
+
+#### 5. Testes Automatizados
+- [ ] Criar teste para PIR Dashboard (verificar que não há loop infinito)
+- [ ] Criar teste para envio de convites de teste
+- [ ] Criar teste para salvamento de resultados
+- [ ] Criar teste para exibição de resultados no perfil
+- [ ] Validar que todos os testes passam (100%)
+
+### Melhorias Adicionais
+- [ ] Adicionar mensagem clara quando não há ciclos cadastrados
+- [ ] Melhorar mensagens de erro no dashboard
+- [ ] Adicionar loading states apropriados
+- [ ] Adicionar tooltips explicativos na interface de envio
+- [ ] Criar documentação de uso para RH
+- [ ] Adicionar notificações quando teste é concluído

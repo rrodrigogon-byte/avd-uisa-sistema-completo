@@ -50,6 +50,7 @@ import {
   AlertCircle,
   Filter,
 } from "lucide-react";
+import { useEffect } from "react";
 
 const COLORS = {
   excepcional: "#10b981",
@@ -64,32 +65,92 @@ export default function PIRDashboard() {
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
 
   // Buscar ciclos disponíveis
-  const { data: cycles } = trpc.cycles.list.useQuery();
+  const { data: cycles, isLoading: loadingCycles } = trpc.cycles.list.useQuery();
 
   // Buscar estatísticas do ciclo selecionado
-  const { data: stats, isLoading } = trpc.evaluationCycle.getCycleStats.useQuery(
+  const { data: stats, isLoading: loadingStats, error: statsError } = trpc.evaluationCycle.getCycleStats.useQuery(
     { cycleId: selectedCycleId || 0 },
     { enabled: !!selectedCycleId }
   );
 
   // Buscar quartis
-  const { data: quartiles } = trpc.evaluationCycle.calculateCycleQuartiles.useQuery(
+  const { data: quartiles, error: quartilesError } = trpc.evaluationCycle.calculateCycleQuartiles.useQuery(
     { cycleId: selectedCycleId || 0 },
     { enabled: !!selectedCycleId }
   );
 
-  // Selecionar primeiro ciclo por padrão
-  if (cycles && cycles.length > 0 && !selectedCycleId) {
-    setSelectedCycleId(cycles[0].id);
-  }
+  // Selecionar primeiro ciclo por padrão usando useEffect
+  useEffect(() => {
+    console.log('[PIRDashboard] useEffect - cycles:', cycles?.length, 'selectedCycleId:', selectedCycleId);
+    if (cycles && cycles.length > 0 && !selectedCycleId) {
+      console.log('[PIRDashboard] Setting first cycle:', cycles[0].id);
+      setSelectedCycleId(cycles[0].id);
+    }
+  }, [cycles, selectedCycleId]);
 
-  if (isLoading || !stats) {
+  console.log('[PIRDashboard] Render - loadingCycles:', loadingCycles, 'loadingStats:', loadingStats, 'cycles:', cycles?.length, 'selectedCycleId:', selectedCycleId);
+
+  // Loading state
+  console.log('[PIRDashboard] Checking loading state - loadingCycles:', loadingCycles, 'loadingStats:', loadingStats);
+  if (loadingCycles || loadingStats) {
     return (
       <div className="container py-8">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Carregando dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (statsError || quartilesError) {
+    return (
+      <div className="container py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <p className="text-lg font-semibold mb-2">Erro ao carregar dashboard</p>
+            <p className="text-muted-foreground">
+              {statsError?.message || quartilesError?.message || "Ocorreu um erro inesperado"}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state - no cycles
+  console.log('[PIRDashboard] Checking empty state - cycles:', cycles?.length);
+  if (!cycles || cycles.length === 0) {
+    return (
+      <div className="container py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center max-w-md">
+            <Target className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Nenhum ciclo cadastrado</h2>
+            <p className="text-muted-foreground mb-6">
+              Para visualizar o dashboard PIR, é necessário criar pelo menos um ciclo de avaliação.
+            </p>
+            <Button onClick={() => window.location.href = '/desenvolvimento/ciclos'}>
+              Criar Primeiro Ciclo
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No stats yet
+  if (!stats) {
+    return (
+      <div className="container py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando estatísticas...</p>
           </div>
         </div>
       </div>
