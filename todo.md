@@ -2751,3 +2751,21 @@ Adicionar uma seção dedicada no menu de desenvolvimento para visualizar perfis
 - [x] **Exportação de Relatórios** - Permitir exportar resultados filtrados em PDF/Excel com gráficos comparativos de desempenho ao longo do tempo
 - [x] **Análise de Evolução** - Adicionar gráficos de linha mostrando a evolução das pontuações dos testes ao longo do tempo para identificar padrões de desenvolvimento
 - [x] **Notificações Automáticas** - Implementar alertas quando novos testes são concluídos e lembretes para testes pendentes há mais de 7 dias
+
+
+## ✅ CORREÇÕES CONCLUÍDAS - 11/12/2025
+
+### Problema 1: Testes Antigos Concluídos Aparecem Como Pendentes
+- [x] Investigar testes de âncora de carreira concluídos antes da correção
+- [x] Identificar outros testes concluídos que não aparecem no sistema
+- [x] Verificar tabelas testResults e psychometricTests
+- [x] Corrigir registros diretamente no banco de dados (script de migração criado)
+- [x] Validar que testes aparecem corretamente após correção (18/18 testes OK)
+
+### Problema 2: Erro ao Cadastrar Novo Funcionário
+- [x] Investigar erro de validação: birthDate e hireDate (expected string, received Date)
+- [x] Investigar erro: positionId (expected number, received undefined)
+- [x] Corrigir validação de datas no formulário de cadastro (FuncionariosGerenciar.tsx)
+- [x] Corrigir campo positionId obrigatório (validação adicionada)
+- [x] Testar cadastro de funcionário com sucesso
+- [x] Criar testes automatizados para validar correção (employee-create.test.ts)

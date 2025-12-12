@@ -119,19 +119,26 @@ export default function FuncionariosGerenciar() {
       return;
     }
 
+    // Validar que positionId é um número válido
+    const positionIdNum = parseInt(formData.positionId);
+    if (isNaN(positionIdNum)) {
+      toast.error("Cargo inválido");
+      return;
+    }
+
     createMutation.mutate({
       employeeCode: formData.employeeCode,
       name: formData.name,
       email: formData.email,
-      cpf: formData.cpf || undefined,
-      birthDate: formData.birthDate || undefined,
+      cpf: formData.cpf && formData.cpf.trim() !== "" ? formData.cpf : undefined,
+      birthDate: formData.birthDate && formData.birthDate.trim() !== "" ? formData.birthDate : undefined,
       hireDate: formData.hireDate,
       departmentId: parseInt(formData.departmentId),
-      positionId: parseInt(formData.positionId),
+      positionId: positionIdNum,
       managerId: formData.managerId ? parseInt(formData.managerId) : undefined,
       salary: formData.salary ? Math.round(parseFloat(formData.salary) * 100) : undefined,
-      phone: formData.phone || undefined,
-      address: formData.address || undefined,
+      phone: formData.phone && formData.phone.trim() !== "" ? formData.phone : undefined,
+      address: formData.address && formData.address.trim() !== "" ? formData.address : undefined,
     });
   };
 

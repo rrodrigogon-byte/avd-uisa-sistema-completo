@@ -1,0 +1,190 @@
+{
+  "query": "\n-- Buscar todos os testes psicométricos concluídos\nSELECT \n  pt.id,\n  pt.testType,\n  pt.employeeId,\n  e.name as employeeName,\n  e.employeeCode,\n  pt.completedAt,\n  pt.createdAt,\n  CASE \n    WHEN pt.responses IS NOT NULL THEN 'completed'\n    ELSE 'pending'\n  END as status\nFROM psychometricTests pt\nLEFT JOIN employees e ON pt.employeeId = e.id\nWHERE pt.completedAt IS NOT NULL\nORDER BY pt.completedAt DESC\nLIMIT 50;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute \n-- Buscar todos os testes psicométricos concluídos\nSELECT \n  pt.id,\n  pt.testType,\n  pt.employeeId,\n  e.name as employeeName,\n  e.employeeCode,\n  pt.completedAt,\n  pt.createdAt,\n  CASE \n    WHEN pt.responses IS NOT NULL THEN 'completed'\n    ELSE 'pending'\n  END as status\nFROM psychometricTests pt\nLEFT JOIN employees e ON pt.employeeId = e.id\nWHERE pt.completedAt IS NOT NULL\nORDER BY pt.completedAt DESC\nLIMIT 50;\n",
+  "rows": [
+    {
+      "id": "180008",
+      "testType": "careeranchors",
+      "employeeId": "690001",
+      "employeeName": "JOSE ARIMATEA DE ANGELO CALSAVERINI",
+      "employeeCode": "UISA8001266",
+      "completedAt": "2025-12-12 00:39:05",
+      "createdAt": "2025-12-12 00:39:04",
+      "status": "completed"
+    },
+    {
+      "id": "180007",
+      "testType": "careeranchors",
+      "employeeId": "690001",
+      "employeeName": "JOSE ARIMATEA DE ANGELO CALSAVERINI",
+      "employeeCode": "UISA8001266",
+      "completedAt": "2025-12-12 00:37:24",
+      "createdAt": "2025-12-12 00:37:23",
+      "status": "completed"
+    },
+    {
+      "id": "180006",
+      "testType": "careeranchors",
+      "employeeId": "690008",
+      "employeeName": "RODRIGO RIBEIRO GONCALVES",
+      "employeeCode": "UISA892106",
+      "completedAt": "2025-12-12 00:10:45",
+      "createdAt": "2025-12-12 00:10:45",
+      "status": "completed"
+    },
+    {
+      "id": "180005",
+      "testType": "bigfive",
+      "employeeId": "690001",
+      "employeeName": "JOSE ARIMATEA DE ANGELO CALSAVERINI",
+      "employeeCode": "UISA8001266",
+      "completedAt": "2025-12-11 23:36:50",
+      "createdAt": "2025-12-11 23:36:49",
+      "status": "completed"
+    },
+    {
+      "id": "180004",
+      "testType": "disc",
+      "employeeId": "690001",
+      "employeeName": "JOSE ARIMATEA DE ANGELO CALSAVERINI",
+      "employeeCode": "UISA8001266",
+      "completedAt": "2025-12-11 23:36:48",
+      "createdAt": "2025-12-11 23:36:48",
+      "status": "completed"
+    },
+    {
+      "id": "180003",
+      "testType": "bigfive",
+      "employeeId": "690001",
+      "employeeName": "JOSE ARIMATEA DE ANGELO CALSAVERINI",
+      "employeeCode": "UISA8001266",
+      "completedAt": "2025-12-11 23:36:10",
+      "createdAt": "2025-12-11 23:36:09",
+      "status": "completed"
+    },
+    {
+      "id": "180002",
+      "testType": "bigfive",
+      "employeeId": "690001",
+      "employeeName": "JOSE ARIMATEA DE ANGELO CALSAVERINI",
+      "employeeCode": "UISA8001266",
+      "completedAt": "2025-12-11 23:35:31",
+      "createdAt": "2025-12-11 23:35:30",
+      "status": "completed"
+    },
+    {
+      "id": "180001",
+      "testType": "careeranchors",
+      "employeeId": "690008",
+      "employeeName": "RODRIGO RIBEIRO GONCALVES",
+      "employeeCode": "UISA892106",
+      "completedAt": "2025-12-11 23:21:19",
+      "createdAt": "2025-12-11 23:21:19",
+      "status": "completed"
+    },
+    {
+      "id": "150005",
+      "testType": "vark",
+      "employeeId": "692706",
+      "employeeName": "BERNARDO GUIMARAES MENDES",
+      "employeeCode": "UISA8000446",
+      "completedAt": "2025-12-11 18:30:06",
+      "createdAt": "2025-12-11 18:30:05",
+      "status": "completed"
+    },
+    {
+      "id": "150004",
+      "testType": "ie",
+      "employeeId": "692706",
+      "employeeName": "BERNARDO GUIMARAES MENDES",
+      "employeeCode": "UISA8000446",
+      "completedAt": "2025-12-11 18:15:49",
+      "createdAt": "2025-12-11 18:15:49",
+      "status": "completed"
+    },
+    {
+      "id": "150003",
+      "testType": "mbti",
+      "employeeId": "692706",
+      "employeeName": "BERNARDO GUIMARAES MENDES",
+      "employeeCode": "UISA8000446",
+      "completedAt": "2025-12-11 17:55:10",
+      "createdAt": "2025-12-11 17:55:10",
+      "status": "completed"
+    },
+    {
+      "id": "150002",
+      "testType": "disc",
+      "employeeId": "692706",
+      "employeeName": "BERNARDO GUIMARAES MENDES",
+      "employeeCode": "UISA8000446",
+      "completedAt": "2025-12-11 17:44:18",
+      "createdAt": "2025-12-11 17:44:17",
+      "status": "completed"
+    },
+    {
+      "id": "150001",
+      "testType": "bigfive",
+      "employeeId": "692706",
+      "employeeName": "BERNARDO GUIMARAES MENDES",
+      "employeeCode": "UISA8000446",
+      "completedAt": "2025-12-11 17:22:46",
+      "createdAt": "2025-12-11 17:22:45",
+      "status": "completed"
+    },
+    {
+      "id": "120001",
+      "testType": "mbti",
+      "employeeId": "91654",
+      "employeeName": "NULL",
+      "employeeCode": "NULL",
+      "completedAt": "2025-12-08 20:54:10",
+      "createdAt": "2025-12-08 20:54:09",
+      "status": "completed"
+    },
+    {
+      "id": "90001",
+      "testType": "bigfive",
+      "employeeId": "90897",
+      "employeeName": "NULL",
+      "employeeCode": "NULL",
+      "completedAt": "2025-11-25 20:44:17",
+      "createdAt": "2025-11-25 20:44:17",
+      "status": "completed"
+    },
+    {
+      "id": "60001",
+      "testType": "disc",
+      "employeeId": "90897",
+      "employeeName": "NULL",
+      "employeeCode": "NULL",
+      "completedAt": "2025-11-21 01:37:01",
+      "createdAt": "2025-11-21 01:37:01",
+      "status": "completed"
+    },
+    {
+      "id": "30001",
+      "testType": "disc",
+      "employeeId": "90897",
+      "employeeName": "NULL",
+      "employeeCode": "NULL",
+      "completedAt": "2025-11-19 23:32:24",
+      "createdAt": "2025-11-19 23:32:23",
+      "status": "completed"
+    },
+    {
+      "id": "1",
+      "testType": "disc",
+      "employeeId": "90897",
+      "employeeName": "NULL",
+      "employeeCode": "NULL",
+      "completedAt": "2025-11-19 11:28:06",
+      "createdAt": "2025-11-19 11:28:05",
+      "status": "completed"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttestType\temployeeId\temployeeName\temployeeCode\tcompletedAt\tcreatedAt\tstatus\n180008\tcareeranchors\t690001\tJOSE ARIMATEA DE ANGELO CALSAVERINI\tUISA8001266\t2025-12-12 00:39:05\t2025-12-12 00:39:04\tcompleted\n180007\tcareeranchors\t690001\tJOSE ARIMATEA DE ANGELO CALSAVERINI\tUISA8001266\t2025-12-12 00:37:24\t2025-12-12 00:37:23\tcompleted\n180006\tcareeranchors\t690008\tRODRIGO RIBEIRO GONCALVES\tUISA892106\t2025-12-12 00:10:45\t2025-12-12 00:10:45\tcompleted\n180005\tbigfive\t690001\tJOSE ARIMATEA DE ANGELO CALSAVERINI\tUISA8001266\t2025-12-11 23:36:50\t2025-12-11 23:36:49\tcompleted\n180004\tdisc\t690001\tJOSE ARIMATEA DE ANGELO CALSAVERINI\tUISA8001266\t2025-12-11 23:36:48\t2025-12-11 23:36:48\tcompleted\n180003\tbigfive\t690001\tJOSE ARIMATEA DE ANGELO CALSAVERINI\tUISA8001266\t2025-12-11 23:36:10\t2025-12-11 23:36:09\tcompleted\n180002\tbigfive\t690001\tJOSE ARIMATEA DE ANGELO CALSAVERINI\tUISA8001266\t2025-12-11 23:35:31\t2025-12-11 23:35:30\tcompleted\n180001\tcareeranchors\t690008\tRODRIGO RIBEIRO GONCALVES\tUISA892106\t2025-12-11 23:21:19\t2025-12-11 23:21:19\tcompleted\n150005\tvark\t692706\tBERNARDO GUIMARAES MENDES\tUISA8000446\t2025-12-11 18:30:06\t2025-12-11 18:30:05\tcompleted\n150004\tie\t692706\tBERNARDO GUIMARAES MENDES\tUISA8000446\t2025-12-11 18:15:49\t2025-12-11 18:15:49\tcompleted\n150003\tmbti\t692706\tBERNARDO GUIMARAES MENDES\tUISA8000446\t2025-12-11 17:55:10\t2025-12-11 17:55:10\tcompleted\n150002\tdisc\t692706\tBERNARDO GUIMARAES MENDES\tUISA8000446\t2025-12-11 17:44:18\t2025-12-11 17:44:17\tcompleted\n150001\tbigfive\t692706\tBERNARDO GUIMARAES MENDES\tUISA8000446\t2025-12-11 17:22:46\t2025-12-11 17:22:45\tcompleted\n120001\tmbti\t91654\tNULL\tNULL\t2025-12-08 20:54:10\t2025-12-08 20:54:09\tcompleted\n90001\tbigfive\t90897\tNULL\tNULL\t2025-11-25 20:44:17\t2025-11-25 20:44:17\tcompleted\n60001\tdisc\t90897\tNULL\tNULL\t2025-11-21 01:37:01\t2025-11-21 01:37:01\tcompleted\n30001\tdisc\t90897\tNULL\tNULL\t2025-11-19 23:32:24\t2025-11-19 23:32:23\tcompleted\n1\tdisc\t90897\tNULL\tNULL\t2025-11-19 11:28:06\t2025-11-19 11:28:05\tcompleted\n",
+  "stderr": "",
+  "execution_time_ms": 50
+}
