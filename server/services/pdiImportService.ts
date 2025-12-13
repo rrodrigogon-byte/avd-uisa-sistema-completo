@@ -397,7 +397,7 @@ export class PDIImportParser {
       const result = await db
         .select()
         .from(employees)
-        .where(eq(employees.registrationNumber, row.matricula))
+        .where(eq(employees.employeeCode, row.matricula))
         .limit(1);
       if (result.length > 0) return result[0].id;
     }
@@ -523,7 +523,7 @@ export class PDIImportParser {
       const importErrors: ValidationError[] = [];
       
       // Processar cada grupo (PDI)
-      for (const [key, rows] of pdiGroups.entries()) {
+      for (const [key, rows] of Array.from(pdiGroups.entries())) {
         const firstRow = rows[0];
         
         try {

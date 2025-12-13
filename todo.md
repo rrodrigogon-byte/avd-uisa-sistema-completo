@@ -321,3 +321,28 @@
 - [ ] Implementar notificações para gestores sobre conclusão de processos
 - [ ] Criar página de configuração de notificações
 - [ ] Adicionar histórico de notificações enviadas
+
+
+## ✅ CORREÇÃO CONCLUÍDA - DASHBOARD PIR (13/12/2025)
+
+### Problema Identificado e Resolvido
+- [x] Rota `/avd/passo2-pir` não existia no App.tsx (erro 404)
+- [x] DashboardLayout usava rota incorreta para Passo 2: PIR
+- [x] Rota correta é `/avd/processo/passo2/:processId?`
+- [x] Verificado que não há outros links quebrados no sistema
+
+### Correções Realizadas
+- [x] Corrigido link do Passo 2 no DashboardLayout (linha 123)
+- [x] Verificados todos os links de navegação do Processo AVD
+- [x] Testada navegação completa dos 5 passos
+- [x] Verificado que TestPIR não tem problemas de carregamento infinito
+- [x] Corrigido erro TypeScript em pdiImportService.ts (registrationNumber → employeeCode)
+- [x] Corrigido erro TypeScript em pdiImportService.ts (iteração de Map com Array.from)
+- [x] Corrigido erro TypeScript em videoAnalysis.ts (tipo de content)
+
+### Status Atual
+- [x] Dashboard PIR funcionando corretamente
+- [x] Navegação entre passos operacional
+- [x] Breadcrumbs de progresso implementados
+- [x] Formulários carregando dados automaticamente
+- [x] Validações de campos obrigatórios funcionando

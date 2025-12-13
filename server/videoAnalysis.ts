@@ -313,7 +313,8 @@ Inclua:
       throw new Error("Resposta vazia da IA");
     }
 
-    const analysis: VideoAnalysisResult = JSON.parse(content);
+    const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
+    const analysis: VideoAnalysisResult = JSON.parse(contentStr);
     
     return analysis;
   } catch (error) {
