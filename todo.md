@@ -248,3 +248,51 @@
 
 - [x] Investigar erro 500 ao salvar sucessor - possível problema no backend com validação de dados
 - [x] Corrigir erro ao salvar sucessores - problema de inconsistência de enum readinessLevel
+
+
+## 🐛 CORREÇÃO URGENTE - ERRO DE RELOAD INFINITO (12/12/2025)
+
+- [x] Identificar queries com referências instáveis causando reload infinito
+- [x] Corrigir objetos/arrays criados em render que causam novas referências
+- [x] Estabilizar inputs de queries com useState/useEffect no DashboardGestor
+- [ ] Testar todas as páginas para verificar se erro foi corrigido
+
+## 🚀 IMPLEMENTAÇÃO DE PRÓXIMOS PASSOS PENDENTES
+
+### Integração Completa dos 5 Passos
+- [x] Implementar fluxo sequencial obrigatório entre passos - Componente AVDStepGuard criado
+- [x] Adicionar validações de conclusão antes de avançar para próximo passo - Validação no AVDStepGuard
+- [ ] Garantir persistência automática de dados entre passos
+- [x] Implementar breadcrumbs com indicador de progresso visual - Componente AVDProgressBreadcrumbs criado
+- [x] Adicionar proteção de rotas (não permitir pular passos sem completar anterior) - AVDStepGuard implementado
+
+### Dashboard e Relatórios Visuais
+- [ ] Implementar visualização de status de todos os colaboradores no dashboard admin
+- [ ] Adicionar gráficos interativos nos relatórios consolidados
+- [ ] Criar exportação visual para PDF dos relatórios
+- [ ] Implementar dashboard de analytics avançado com métricas de desempenho
+
+### Sistema de Notificações Automáticas
+- [ ] Implementar job automático de envio de lembretes por email
+- [ ] Adicionar alertas de prazos para conclusão de passos
+- [ ] Criar lembretes automáticos para passos pendentes
+- [ ] Notificar gestores sobre conclusão de processos de suas equipes
+
+### Gestão de Usuários e Hierarquia
+- [ ] Criar página de gestão de usuários
+- [ ] Implementar gestão de departamentos e hierarquias organizacionais
+- [ ] Adicionar funcionalidade de atribuição de gestores a colaboradores
+- [ ] Implementar controle de acesso granular por perfil
+
+### Melhorias de UX e Performance
+- [ ] Otimizar queries de carregamento dos passos com cache
+- [ ] Implementar loading states consistentes em todas as operações
+- [ ] Melhorar responsividade mobile de todos os formulários
+- [ ] Adicionar animações e transições suaves entre passos
+- [ ] Implementar feedback visual consistente (toasts, confirmações)
+
+### Funcionalidades Avançadas
+- [ ] Adicionar funcionalidade de comparação entre períodos/ciclos
+- [ ] Implementar histórico completo de avaliações por colaborador
+- [ ] Criar sistema de metas e acompanhamento de objetivos
+- [ ] Adicionar funcionalidade de calibração de avaliações entre gestores

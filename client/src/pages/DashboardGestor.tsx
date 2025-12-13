@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,8 +71,11 @@ export default function DashboardGestor() {
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [groupBy, setGroupBy] = useState<'day' | 'week' | 'month' | 'quarter'>('month');
 
-  // Calcular datas baseado no filtro de período
-  const { startDate, endDate } = useMemo(() => {
+  // Calcular datas baseado no filtro de período - usando useState para evitar reload infinito
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+
+  useEffect(() => {
     const end = new Date();
     const start = new Date();
     
@@ -96,10 +99,8 @@ export default function DashboardGestor() {
         start.setMonth(start.getMonth() - 3);
     }
     
-    return {
-      startDate: start.toISOString().split('T')[0],
-      endDate: end.toISOString().split('T')[0],
-    };
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(end.toISOString().split('T')[0]);
   }, [periodFilter]);
 
   // Queries
