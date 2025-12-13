@@ -1065,6 +1065,12 @@ export const testResults = mysqlTable("testResults", {
   // Dados brutos para análises futuras
   rawData: text("rawData"), // JSON com dados completos do teste
   
+  // Validação pelo gestor
+  validationStatus: mysqlEnum("validationStatus", ["pendente", "aprovado", "reprovado"]).default("pendente").notNull(),
+  validatedBy: int("validatedBy"), // ID do gestor que validou
+  validatedAt: datetime("validatedAt"),
+  validationComments: text("validationComments"), // Comentários do gestor
+  
   // Metadados
   completedAt: datetime("completedAt").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

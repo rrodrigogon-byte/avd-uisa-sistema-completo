@@ -622,6 +622,280 @@ export const psychometricTestsRouter = router({
     .query(async ({ input }) => {
       return await getTestResultsByEmployee(input.employeeId);
     }),
+
+  /**
+   * Listar testes pendentes de validação
+   */
+  listPendingValidation: protectedProcedure.query(async () => {
+    const { getDb } = await import("../db");
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
+
+    const { testResults, employees } = await import("../../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+
+    const pendingTests = await db
+      .select({
+        id: testResults.id,
+        testType: testResults.testType,
+        profileType: testResults.profileType,
+        completedAt: testResults.completedAt,
+        employeeId: testResults.employeeId,
+        employeeName: employees.name,
+        employeeEmail: employees.email,
+      })
+      .from(testResults)
+      .leftJoin(employees, eq(testResults.employeeId, employees.id))
+      .where(eq(testResults.validationStatus, "pendente"))
+      .orderBy(testResults.completedAt);
+
+    return pendingTests;
+  }),
+
+  /**
+   * Listar testes validados
+   */
+  listValidatedTests: protectedProcedure
+    .input(
+      z.object({
+        status: z.enum(["aprovado", "reprovado"]).optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { getDb } = await import("../db");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { testResults, employees, users } = await import("../../drizzle/schema");
+      const { eq, and, or } = await import("drizzle-orm");
+
+      let whereCondition;
+      if (input.status) {
+        whereCondition = eq(testResults.validationStatus, input.status);
+      } else {
+        whereCondition = or(
+          eq(testResults.validationStatus, "aprovado"),
+          eq(testResults.validationStatus, "reprovado")
+        );
+      }
+
+      const validatedTests = await db
+        .select({
+          id: testResults.id,
+          testType: testResults.testType,
+          profileType: testResults.profileType,
+          completedAt: testResults.completedAt,
+          validationStatus: testResults.validationStatus,
+          validatedAt: testResults.validatedAt,
+          validationComments: testResults.validationComments,
+          employeeId: testResults.employeeId,
+          employeeName: employees.name,
+          employeeEmail: employees.email,
+          validatedBy: testResults.validatedBy,
+          validatorName: users.name,
+        })
+        .from(testResults)
+        .leftJoin(employees, eq(testResults.employeeId, employees.id))
+        .leftJoin(users, eq(testResults.validatedBy, users.id))
+        .where(whereCondition)
+        .orderBy(testResults.validatedAt);
+
+      return validatedTests;
+    }),
+
+  /**
+   * Validar teste (aprovar ou reprovar)
+   */
+  validateTest: protectedProcedure
+    .input(
+      z.object({
+        testResultId: z.number(),
+        status: z.enum(["aprovado", "reprovado"]),
+        comments: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { getDb } = await import("../db");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { testResults, employees } = await import("../../drizzle/schema");
+      const { eq } = await import("drizzle-orm");
+
+      // Buscar teste e funcionário
+      const [test] = await db
+        .select({
+          id: testResults.id,
+          testType: testResults.testType,
+          employeeId: testResults.employeeId,
+          employeeName: employees.name,
+          employeeEmail: employees.email,
+        })
+        .from(testResults)
+        .leftJoin(employees, eq(testResults.employeeId, employees.id))
+        .where(eq(testResults.id, input.testResultId))
+        .limit(1);
+
+      if (!test) {
+        throw new Error("Teste não encontrado");
+      }
+
+      // Atualizar status de validação
+      await db
+        .update(testResults)
+        .set({
+          validationStatus: input.status,
+          validatedAt: new Date(),
+          validatedBy: ctx.user.id,
+          validationComments: input.comments || null,
+        })
+        .where(eq(testResults.id, input.testResultId));
+
+      // Enviar email ao funcionário
+      if (test.employeeEmail) {
+        const statusText = input.status === "aprovado" ? "aprovado" : "reprovado";
+        const subject = `Teste ${test.testType.toUpperCase()} ${statusText}`;
+        const html = `
+          <h2>Olá ${test.employeeName || "Colaborador"},</h2>
+          <p>Seu teste <strong>${test.testType.toUpperCase()}</strong> foi ${statusText}.</p>
+          ${input.comments ? `<p><strong>Comentários:</strong> ${input.comments}</p>` : ""}
+          <p>Acesse o sistema para mais detalhes.</p>
+        `;
+
+        try {
+          await sendEmail({
+            to: test.employeeEmail,
+            subject,
+            html,
+          });
+        } catch (error) {
+          console.error("Erro ao enviar email de validação:", error);
+          // Não falha a operação se o email falhar
+        }
+      }
+
+      return { success: true };
+    }),
+
+  /**
+   * Validar múltiplos testes em lote
+   */
+  validateTestsBatch: protectedProcedure
+    .input(
+      z.object({
+        testResultIds: z.array(z.number()).min(1),
+        status: z.enum(["aprovado", "reprovado"]),
+        comments: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { getDb } = await import("../db");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { testResults, employees } = await import("../../drizzle/schema");
+      const { eq, inArray } = await import("drizzle-orm");
+
+      // Buscar todos os testes e funcionários
+      const tests = await db
+        .select({
+          id: testResults.id,
+          testType: testResults.testType,
+          employeeId: testResults.employeeId,
+          employeeName: employees.name,
+          employeeEmail: employees.email,
+        })
+        .from(testResults)
+        .leftJoin(employees, eq(testResults.employeeId, employees.id))
+        .where(inArray(testResults.id, input.testResultIds));
+
+      if (tests.length === 0) {
+        throw new Error("Nenhum teste encontrado");
+      }
+
+      // Atualizar status de validação em lote
+      await db
+        .update(testResults)
+        .set({
+          validationStatus: input.status,
+          validatedAt: new Date(),
+          validatedBy: ctx.user.id,
+          validationComments: input.comments || null,
+        })
+        .where(inArray(testResults.id, input.testResultIds));
+
+      // Enviar emails aos funcionários de forma assíncrona
+      const emailPromises = tests
+        .filter((test) => test.employeeEmail)
+        .map(async (test) => {
+          const statusText = input.status === "aprovado" ? "aprovado" : "reprovado";
+          const subject = `Teste ${test.testType.toUpperCase()} ${statusText}`;
+          const html = `
+            <h2>Olá ${test.employeeName || "Colaborador"},</h2>
+            <p>Seu teste <strong>${test.testType.toUpperCase()}</strong> foi ${statusText}.</p>
+            ${input.comments ? `<p><strong>Comentários:</strong> ${input.comments}</p>` : ""}
+            <p>Acesse o sistema para mais detalhes.</p>
+          `;
+
+          try {
+            await sendEmail({
+              to: test.employeeEmail,
+              subject,
+              html,
+            });
+          } catch (error) {
+            console.error(`Erro ao enviar email para ${test.employeeEmail}:`, error);
+          }
+        });
+
+      // Aguardar todos os emails serem enviados (sem bloquear a resposta)
+      Promise.all(emailPromises).catch((err) =>
+        console.error("Erro ao enviar emails em lote:", err)
+      );
+
+      return {
+        success: true,
+        processedCount: tests.length,
+      };
+    }),
+
+  /**
+   * Obter estatísticas de validação
+   */
+  getValidationStats: protectedProcedure.query(async () => {
+    const { getDb } = await import("../db");
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
+
+    const { testResults } = await import("../../drizzle/schema");
+    const { eq, count } = await import("drizzle-orm");
+
+    const [pendingCount] = await db
+      .select({ count: count() })
+      .from(testResults)
+      .where(eq(testResults.validationStatus, "pendente"));
+
+    const [approvedCount] = await db
+      .select({ count: count() })
+      .from(testResults)
+      .where(eq(testResults.validationStatus, "aprovado"));
+
+    const [rejectedCount] = await db
+      .select({ count: count() })
+      .from(testResults)
+      .where(eq(testResults.validationStatus, "reprovado"));
+
+    const [totalCount] = await db
+      .select({ count: count() })
+      .from(testResults);
+
+    return {
+      pending: pendingCount?.count || 0,
+      approved: approvedCount?.count || 0,
+      rejected: rejectedCount?.count || 0,
+      total: totalCount?.count || 0,
+    };
+  }),
 });
 
 /**

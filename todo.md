@@ -3874,3 +3874,126 @@ O sistema está **pronto para uso em produção** com alta cobertura de testes (
 - `testsValidated` (BOOLEAN) - Indica se testes foram validados
 - `testsValidatedAt` (DATETIME) - Data/hora da validação
 - `testsValidatedBy` (INT) - ID do usuário que validou
+
+
+## 🎯 NOVAS FUNCIONALIDADES - VALIDAÇÃO E DASHBOARD DE TESTES (12/12/2025)
+
+### UI de Validação de Testes no Painel do Gestor
+- [x] Criar página de validação de testes psicométricos
+- [x] Implementar visualização detalhada das respostas dos funcionários
+- [x] Adicionar botões de aprovar/reprovar testes
+- [x] Implementar feedback visual de validação (aprovado/reprovado)
+- [x] Adicionar comentários do gestor na validação
+- [x] Enviar notificação ao funcionário após validação
+
+### Dashboard de Testes Pendentes e Validados
+- [x] Criar componente de dashboard de testes
+- [x] Mostrar lista de testes pendentes de validação
+- [x] Mostrar lista de testes já validados
+- [x] Adicionar filtros e busca
+- [x] Implementar estatísticas de testesbusca por nome de funcionário ou teste
+- [ ] Adicionar estatísticas de testes (total, pendentes, validados, reprovados)
+- [ ] Criar gráficos de evolução de testes
+
+### Teste End-to-End Completo
+- [x] Criar script de teste vitest para fluxo completo
+- [x] Testar criação de avaliação psicométrica
+- [x] Testar envio de convite por email
+- [x] Testar conclusão de teste por funcionário
+- [x] Testar validação pelo gestor
+- [x] Verificar envio de email de notificação de resultado
+- [x] Validar que teste aparece no perfil do funcionário
+
+### Melhorias de UX
+- [ ] Adicionar indicadores visuais de status (pendente, validado, reprovado)
+- [ ] Implementar notificações em tempo real para novos testes
+- [ ] Adicionar atalhos de teclado para validação rápida
+- [ ] Criar modal de confirmação antes de validar/reprovar
+
+
+## 🚀 MELHORIAS SUGERIDAS - SISTEMA DE VALIDAÇÃO DE TESTES (12/12/2025)
+
+### Contexto
+Sistema atual possui:
+- [x] Interface de validação com tabs (pendentes/validados)
+- [x] Aprovação/reprovação individual com comentários
+- [x] Estatísticas em tempo real
+- [x] Envio automático de email após validação
+- [x] Dashboard analítico com filtros avançados
+- [x] 9 testes end-to-end (100% passando)
+
+### 1. Gráficos de Evolução Temporal
+- [ ] Implementar gráfico de linha mostrando tendência de aprovação/reprovação ao longo do tempo
+- [ ] Adicionar filtros de período (última semana, último mês, último trimestre, último ano)
+- [ ] Mostrar comparativo entre diferentes tipos de testes (DISC, Big Five, MBTI, etc.)
+- [ ] Adicionar gráfico de barras com volume de testes por período
+- [ ] Implementar gráfico de pizza com distribuição de status (aprovado/reprovado/pendente)
+- [ ] Adicionar legendas e tooltips interativos nos gráficos
+- [ ] Permitir exportar gráficos como imagem (PNG/SVG)
+
+### 2. Validação em Lote
+- [ ] Adicionar checkbox de seleção múltipla na tabela de testes pendentes
+- [ ] Implementar checkbox "Selecionar Todos" no cabeçalho da tabela
+- [ ] Adicionar botão "Aprovar Selecionados" com ícone de check
+- [ ] Adicionar botão "Reprovar Selecionados" com ícone de X
+- [ ] Implementar modal de confirmação para ações em lote
+- [ ] Permitir adicionar comentário único para todos os testes selecionados
+- [ ] Mostrar contador de testes selecionados
+- [x] Implementar procedure tRPC `validateTestsBatch` para processar múltiplos testes
+- [ ] Adicionar loading state durante processamento em lote
+- [ ] Mostrar toast de sucesso com quantidade de testes processados
+- [x] Enviar emails em lote de forma assíncrona
+- [x] Adicionar logs de auditoria para validações em lote
+
+### 3. Relatório de Validação Exportável
+- [ ] Criar procedure tRPC `generateValidationReport` para gerar relatório
+- [ ] Implementar geração de relatório em PDF com logo e cabeçalho
+- [ ] Implementar geração de relatório em Excel com múltiplas abas
+- [ ] Adicionar filtros de período (data início/fim)
+- [ ] Adicionar filtro por tipo de teste
+- [ ] Adicionar filtro por status (aprovado/reprovado/todos)
+- [ ] Incluir gráficos de estatísticas no relatório PDF
+- [ ] Incluir tabela detalhada com todos os testes no período
+- [ ] Adicionar seção de resumo executivo no relatório
+- [ ] Implementar botão "Exportar Relatório" na interface
+- [ ] Adicionar modal de configuração de relatório (formato, período, filtros)
+- [ ] Permitir download direto do relatório gerado
+- [ ] Adicionar preview do relatório antes de gerar
+- [ ] Implementar cache de relatórios gerados recentemente
+- [ ] Adicionar logs de auditoria para geração de relatórios
+
+### 4. Melhorias de UX/UI
+- [ ] Adicionar animações de transição entre tabs
+- [ ] Implementar skeleton loading para tabelas
+- [ ] Adicionar tooltips explicativos em botões e ações
+- [ ] Implementar paginação avançada com opções de itens por página
+- [ ] Adicionar ordenação por colunas (nome, data, tipo, status)
+- [ ] Implementar filtros salvos (favoritos do usuário)
+- [ ] Adicionar atalhos de teclado para ações comuns
+- [ ] Implementar modo de visualização compacta/expandida
+
+### 5. Notificações e Alertas
+- [ ] Implementar notificação em tempo real quando novo teste chega para validação
+- [ ] Adicionar badge com contador de testes pendentes no menu
+- [ ] Enviar email diário com resumo de testes pendentes
+- [ ] Implementar alertas para testes pendentes há mais de X dias
+- [ ] Adicionar notificação push no navegador para novos testes
+
+### 6. Testes Automatizados para Novas Features
+- [ ] Criar testes para gráficos de evolução temporal
+- [ ] Criar testes para validação em lote
+- [ ] Criar testes para geração de relatórios PDF
+- [ ] Criar testes para geração de relatórios Excel
+- [ ] Criar testes para filtros avançados
+- [ ] Validar que todos os testes continuam passando após implementações
+
+## 📊 PROGRESSO DAS MELHORIAS
+
+- Gráficos de Evolução: 0/7 (0%)
+- Validação em Lote: 0/12 (0%)
+- Relatório Exportável: 0/15 (0%)
+- Melhorias de UX/UI: 0/8 (0%)
+- Notificações: 0/5 (0%)
+- Testes Automatizados: 0/6 (0%)
+
+**TOTAL: 0/53 tarefas concluídas (0%)**

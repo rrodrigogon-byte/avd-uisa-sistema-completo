@@ -29,6 +29,8 @@ import TeamDISCProfiles from "./pages/TeamDISCProfiles";
 import TeamProfiles from "./pages/TeamProfiles";
 import FaceRegistration from "./pages/FaceRegistration";
 import TemporalAnalysis from "./pages/TemporalAnalysis";
+import ValidacaoTestes from "./pages/ValidacaoTestes";
+import DashboardTestes from "./pages/DashboardTestes";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -390,6 +392,8 @@ function Router() {
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/admin" component={PsychometricTestsAdmin} />
       <Route path="/testes-psicometricos/meus-resultados" component={PsychometricResults} />
+      <Route path="/validacao-testes" component={ValidacaoTestes} />
+      <Route path="/dashboard-testes" component={DashboardTestes} />
       <Route path="/teste/:token" component={TestResponse} />
       <Route path="/descricao-cargos/importar" component={ImportadorDescricoesCargo} />
       <Route path="/descricao-cargos" component={DescricaoCargos} />
