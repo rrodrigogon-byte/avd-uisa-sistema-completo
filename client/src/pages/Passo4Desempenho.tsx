@@ -10,6 +10,8 @@ import { Loader2, TrendingUp, ArrowLeft, ArrowRight, Award, Target, Brain } from
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
+import AVDStepGuard from "@/components/AVDStepGuard";
+import AVDProgressBreadcrumbs from "@/components/AVDProgressBreadcrumbs";
 
 /**
  * Passo 4: Avaliação de Desempenho Consolidada
@@ -182,8 +184,17 @@ export default function Passo4Desempenho() {
     ratingColor = "default";
   }
 
+  const completedSteps = [1, 2, 3];
+
   return (
-    <div className="container mx-auto py-8 max-w-5xl">
+    <AVDStepGuard currentStep={4} processId={processId || 0}>
+      <AVDProgressBreadcrumbs 
+        currentStep={4} 
+        completedSteps={completedSteps} 
+        processId={processId || 0}
+      />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto py-8 max-w-5xl">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
@@ -391,6 +402,8 @@ export default function Passo4Desempenho() {
           )}
         </Button>
       </div>
-    </div>
+        </div>
+      </div>
+    </AVDStepGuard>
   );
 }

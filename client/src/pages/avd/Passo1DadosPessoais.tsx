@@ -10,6 +10,8 @@ import { ArrowRight, Building2, Calendar, Mail, Phone, User, Briefcase, MapPin, 
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
+import AVDStepGuard from "@/components/AVDStepGuard";
+import AVDProgressBreadcrumbs from "@/components/AVDProgressBreadcrumbs";
 
 /**
  * Passo 1: Dados Pessoais e Profissionais
@@ -138,36 +140,17 @@ export default function Passo1DadosPessoais() {
     );
   }
 
+  const numericProcessId = processId ? parseInt(processId, 10) : 0;
+
   return (
-    <div className="container max-w-5xl py-8">
-      {/* Breadcrumb e Progresso */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-          <span>Processo AVD</span>
-          <span>/</span>
-          <span className="text-foreground font-medium">Passo 1: Dados Pessoais</span>
-        </div>
-        
-        {/* Indicador de Progresso */}
-        <div className="flex items-center gap-2 mb-6">
-          {[1, 2, 3, 4, 5].map((step) => (
-            <div key={step} className="flex items-center flex-1">
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold transition-all ${
-                step === 1 
-                  ? "bg-primary text-primary-foreground shadow-lg scale-110" 
-                  : "bg-muted text-muted-foreground"
-              }`}>
-                {step}
-              </div>
-              {step < 5 && (
-                <div className={`flex-1 h-1 mx-2 rounded ${
-                  step < 1 ? "bg-primary" : "bg-muted"
-                }`} />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+    <AVDStepGuard currentStep={1} processId={numericProcessId}>
+      <AVDProgressBreadcrumbs 
+        currentStep={1} 
+        completedSteps={[]} 
+        processId={numericProcessId}
+      />
+      
+      <div className="container max-w-5xl py-8">
 
       {/* Cabeçalho */}
       <div className="mb-8">
@@ -440,5 +423,6 @@ export default function Passo1DadosPessoais() {
         </div>
       </form>
     </div>
+    </AVDStepGuard>
   );
 }

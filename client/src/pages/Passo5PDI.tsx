@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { Loader2, Target, ArrowLeft, Plus, Trash2, CheckCircle2, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import AVDStepGuard from "@/components/AVDStepGuard";
+import AVDProgressBreadcrumbs from "@/components/AVDProgressBreadcrumbs";
 
 /**
  * Passo 5: Plano de Desenvolvimento Individual (PDI)
@@ -245,8 +247,17 @@ export default function Passo5PDI() {
     treinamento_formal: '10% - Treinamento Formal',
   };
 
+  const completedSteps = [1, 2, 3, 4];
+
   return (
-    <div className="container mx-auto py-8 max-w-5xl">
+    <AVDStepGuard currentStep={5} processId={processId || 0}>
+      <AVDProgressBreadcrumbs 
+        currentStep={5} 
+        completedSteps={completedSteps} 
+        processId={processId || 0}
+      />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto py-8 max-w-5xl">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
@@ -539,6 +550,8 @@ export default function Passo5PDI() {
           Adicione pelo menos uma ação de desenvolvimento para concluir o PDI
         </p>
       )}
-    </div>
+        </div>
+      </div>
+    </AVDStepGuard>
   );
 }
