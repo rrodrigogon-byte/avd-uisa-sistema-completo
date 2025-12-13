@@ -14,8 +14,8 @@ export interface PIRScores {
   IP: number; // Interesse em Pessoas
   ID: number; // Interesse em Dados
   IC: number; // Interesse em Coisas
-  RM: number; // Reação a Mudanças
-  RP: number; // Reação a Pressão
+  ES: number; // Estabilidade
+  FL: number; // Flexibilidade
   AU: number; // Autonomia
 }
 
@@ -44,8 +44,8 @@ export function calculateRawScores(responses: PIRResponse[]): PIRScores {
     IP: 0,
     ID: 0,
     IC: 0,
-    RM: 0,
-    RP: 0,
+    ES: 0,
+    FL: 0,
     AU: 0,
   };
 
@@ -71,8 +71,8 @@ export function normalizeScores(rawScores: PIRScores): PIRScores {
     IP: Math.round((rawScores.IP / maxScore) * 100),
     ID: Math.round((rawScores.ID / maxScore) * 100),
     IC: Math.round((rawScores.IC / maxScore) * 100),
-    RM: Math.round((rawScores.RM / maxScore) * 100),
-    RP: Math.round((rawScores.RP / maxScore) * 100),
+    ES: Math.round((rawScores.ES / maxScore) * 100),
+    FL: Math.round((rawScores.FL / maxScore) * 100),
     AU: Math.round((rawScores.AU / maxScore) * 100),
   };
 }
@@ -91,8 +91,8 @@ export function classifyScores(normalizedScores: PIRScores): Record<keyof PIRSco
     IP: classify(normalizedScores.IP),
     ID: classify(normalizedScores.ID),
     IC: classify(normalizedScores.IC),
-    RM: classify(normalizedScores.RM),
-    RP: classify(normalizedScores.RP),
+    ES: classify(normalizedScores.ES),
+    FL: classify(normalizedScores.FL),
     AU: classify(normalizedScores.AU),
   };
 }
@@ -124,8 +124,8 @@ export function getProfileType(normalizedScores: PIRScores, classifications: Rec
     IP: 'Orientado a Pessoas',
     ID: 'Orientado a Dados',
     IC: 'Orientado a Coisas',
-    RM: 'Adaptável',
-    RP: 'Resiliente',
+    ES: 'Estável',
+    FL: 'Flexível',
     AU: 'Autônomo',
   };
 
@@ -167,15 +167,15 @@ export function generateProfileDescription(
       Médio: 'Você consegue realizar atividades práticas quando necessário, mantendo equilíbrio entre trabalho manual e conceitual.',
       Baixo: 'Você prefere atividades mais conceituais e abstratas a trabalhos manuais. Sente-se mais confortável com ideias e conceitos do que com objetos físicos.',
     },
-    RM: {
-      Alto: 'Você é altamente adaptável e flexível. Lida bem com mudanças, novidades e situações inesperadas. Possui abertura para experimentar novas abordagens e aprender rapidamente.',
-      Médio: 'Você consegue se adaptar a mudanças quando necessário, mas prefere algum nível de estabilidade. Equilibra bem inovação e procedimentos estabelecidos.',
-      Baixo: 'Você prefere ambientes estáveis e previsíveis. Pode sentir desconforto com mudanças frequentes e valoriza procedimentos bem estabelecidos.',
+    ES: {
+      Alto: 'Você valoriza estabilidade e previsibilidade. Prefere ambientes estruturados com rotinas bem definidas. Sente-se mais confortável com processos estabelecidos e segurança no trabalho.',
+      Médio: 'Você equilibra bem estabilidade e mudança. Consegue trabalhar tanto em ambientes estruturados quanto em situações que exigem alguma flexibilidade.',
+      Baixo: 'Você se sente confortável com mudanças e novidades. Pode se sentir entediado com rotinas muito rígidas e prefere ambientes dinâmicos.',
     },
-    RP: {
-      Alto: 'Você mantém alta performance sob pressão. Consegue tomar decisões rápidas e eficazes em situações de estresse, mantendo a calma e o foco mesmo em momentos críticos.',
-      Médio: 'Você consegue lidar com pressão moderada, mas pode precisar de estratégias de gerenciamento de estresse em situações muito intensas.',
-      Baixo: 'Você prefere ambientes de trabalho mais tranquilos e com menos pressão. Pode se sentir sobrecarregado em situações de alta demanda ou estresse.',
+    FL: {
+      Alto: 'Você é altamente flexível e adaptável. Lida bem com mudanças, imprevistos e situações ambíguas. Consegue trabalhar bem sob pressão e prazos apertados, mantendo múltiplas responsabilidades.',
+      Médio: 'Você consegue se adaptar quando necessário, mas prefere ter algum nível de planejamento. Equilibra bem flexibilidade e estrutura.',
+      Baixo: 'Você prefere seguir planos bem definidos e evita improvisar. Pode se sentir desconfortável com muita ambiguidade ou mudanças frequentes nos planos.',
     },
     AU: {
       Alto: 'Você é altamente independente e autogerido. Prefere trabalhar com autonomia, tomando suas próprias decisões e gerenciando seu tempo e métodos de trabalho.',
@@ -205,8 +205,8 @@ export function generateStrengths(classifications: Record<keyof PIRScores, 'Baix
     IP: '• Excelente em trabalho em equipe e colaboração\n• Alta capacidade de comunicação e empatia\n• Facilidade para construir relacionamentos\n• Habilidade para ensinar e desenvolver outras pessoas',
     ID: '• Forte capacidade analítica e lógica\n• Atenção aos detalhes e precisão\n• Habilidade para organizar e estruturar informações\n• Facilidade com tecnologia e sistemas',
     IC: '• Habilidades práticas e manuais desenvolvidas\n• Capacidade de gerar resultados tangíveis\n• Facilidade com ferramentas e equipamentos\n• Pensamento prático e orientado a soluções',
-    RM: '• Alta adaptabilidade e flexibilidade\n• Abertura para inovação e mudanças\n• Capacidade de aprendizado rápido\n• Facilidade para lidar com situações novas',
-    RP: '• Excelente desempenho sob pressão\n• Capacidade de tomar decisões rápidas\n• Resiliência e controle emocional\n• Habilidade para priorizar em momentos críticos',
+    ES: '• Valorização de estabilidade e segurança\n• Capacidade de manter consistência e confiabilidade\n• Habilidade para seguir processos estabelecidos\n• Preferência por ambientes estruturados',
+    FL: '• Alta flexibilidade e adaptabilidade\n• Capacidade de lidar com mudanças e imprevistos\n• Habilidade para trabalhar sob pressão\n• Facilidade para gerenciar múltiplas responsabilidades',
     AU: '• Alta autonomia e autogestão\n• Capacidade de trabalhar independentemente\n• Iniciativa e proatividade\n• Habilidade para gerenciar tempo e recursos',
   };
 
@@ -228,8 +228,8 @@ export function generateDevelopmentAreas(classifications: Record<keyof PIRScores
     IP: '• Desenvolver habilidades de comunicação interpessoal\n• Praticar trabalho em equipe e colaboração\n• Buscar oportunidades de networking\n• Trabalhar empatia e escuta ativa',
     ID: '• Desenvolver pensamento analítico e lógico\n• Praticar organização e atenção aos detalhes\n• Aprimorar habilidades com dados e tecnologia\n• Buscar cursos de análise e metodologias estruturadas',
     IC: '• Desenvolver habilidades práticas e manuais\n• Buscar atividades que gerem resultados tangíveis\n• Explorar ferramentas e tecnologias físicas\n• Praticar resolução prática de problemas',
-    RM: '• Trabalhar adaptabilidade e flexibilidade\n• Praticar saída da zona de conforto\n• Buscar experiências novas e desafiadoras\n• Desenvolver abertura para mudanças',
-    RP: '• Desenvolver técnicas de gerenciamento de estresse\n• Praticar tomada de decisão sob pressão\n• Trabalhar resiliência emocional\n• Buscar atividades que desenvolvam controle emocional',
+    ES: '• Desenvolver tolerância à mudança\n• Praticar saída da zona de conforto gradualmente\n• Buscar experiências que desafiem rotinas estabelecidas\n• Trabalhar abertura para novas abordagens',
+    FL: '• Desenvolver flexibilidade mental\n• Praticar improvisação e adaptação\n• Trabalhar tolerância à ambiguidade\n• Buscar situações que exijam ajustes rápidos',
     AU: '• Desenvolver autonomia e autogestão\n• Praticar tomada de decisão independente\n• Trabalhar organização pessoal e gestão do tempo\n• Buscar projetos que exijam iniciativa própria',
   };
 
@@ -253,8 +253,8 @@ export function generateWorkStyle(normalizedScores: PIRScores): string {
     IP: 'Você trabalha melhor em ambientes colaborativos, com interação frequente com colegas e clientes. Prefere projetos que envolvam trabalho em equipe e comunicação constante. Ambientes sociais e dinâmicos potencializam sua produtividade.',
     ID: 'Você trabalha melhor em ambientes organizados e estruturados, com acesso a dados e informações. Prefere tarefas que exijam análise, planejamento e atenção aos detalhes. Ambientes que valorizam precisão e lógica potencializam sua produtividade.',
     IC: 'Você trabalha melhor em ambientes práticos, com acesso a ferramentas e equipamentos. Prefere tarefas que gerem resultados tangíveis e concretos. Ambientes que valorizam habilidades manuais e técnicas potencializam sua produtividade.',
-    RM: 'Você trabalha melhor em ambientes dinâmicos e inovadores, com variedade e mudanças. Prefere projetos desafiadores que exijam adaptação e criatividade. Ambientes que valorizam flexibilidade e inovação potencializam sua produtividade.',
-    RP: 'Você trabalha melhor em ambientes desafiadores e acelerados, com prazos e metas claras. Prefere situações que exijam decisões rápidas e alta performance. Ambientes que valorizam resiliência e resultados sob pressão potencializam sua produtividade.',
+    ES: 'Você trabalha melhor em ambientes estáveis e previsíveis, com processos bem definidos. Prefere tarefas com rotinas estabelecidas e segurança. Ambientes que valorizam consistência e confiabilidade potencializam sua produtividade.',
+    FL: 'Você trabalha melhor em ambientes dinâmicos e flexíveis, com variedade e mudanças. Prefere situações que exijam adaptação rápida e improvisação. Ambientes que valorizam flexibilidade e capacidade de ajuste potencializam sua produtividade.',
     AU: 'Você trabalha melhor em ambientes que oferecem autonomia e liberdade. Prefere projetos onde possa definir seus próprios métodos e horários. Ambientes que valorizam iniciativa e autogestão potencializam sua produtividade.',
   };
 
@@ -279,12 +279,12 @@ export function generateCareerRecommendations(normalizedScores: PIRScores, class
     recommendations.push('**Áreas recomendadas:** Engenharia, Manutenção, Produção, Construção Civil, Design de Produto, Tecnologia da Informação (Hardware), Mecânica, Eletrônica');
   }
 
-  if (classifications.RM === 'Alto') {
-    recommendations.push('**Áreas recomendadas:** Startups, Consultoria, Gestão de Projetos, Inovação, Transformação Digital, Gestão de Mudanças, Desenvolvimento de Negócios');
+  if (classifications.ES === 'Alto') {
+    recommendations.push('**Áreas recomendadas:** Administração Pública, Bancos, Segurança, Qualidade, Compliance, Auditoria, Processos Operacionais');
   }
 
-  if (classifications.RP === 'Alto') {
-    recommendations.push('**Áreas recomendadas:** Gestão de Crises, Operações, Emergência Médica, Forças Armadas, Bombeiros, Gestão de Riscos, Trading, Jornalismo');
+  if (classifications.FL === 'Alto') {
+    recommendations.push('**Áreas recomendadas:** Startups, Consultoria, Gestão de Projetos, Inovação, Transformação Digital, Gestão de Mudanças, Desenvolvimento de Negócios');
   }
 
   if (classifications.AU === 'Alto') {
@@ -296,8 +296,12 @@ export function generateCareerRecommendations(normalizedScores: PIRScores, class
     recommendations.push('\n**Combinação especial:** Seu perfil combina habilidades interpessoais e analíticas, ideal para Gestão de Pessoas, Consultoria de RH, Psicologia Organizacional ou Business Partner.');
   }
 
-  if (classifications.RM === 'Alto' && classifications.RP === 'Alto') {
-    recommendations.push('\n**Combinação especial:** Seu perfil combina adaptabilidade e resiliência, ideal para Gestão de Mudanças, Liderança em Ambientes Dinâmicos ou Gestão de Crises.');
+  if (classifications.ES === 'Alto' && classifications.FL === 'Baixo') {
+    recommendations.push('\n**Combinação especial:** Seu perfil combina estabilidade e preferência por estrutura, ideal para Áreas de Compliance, Auditoria, Qualidade ou Processos.');
+  }
+
+  if (classifications.ES === 'Baixo' && classifications.FL === 'Alto') {
+    recommendations.push('\n**Combinação especial:** Seu perfil combina abertura à mudança e alta flexibilidade, ideal para Startups, Inovação, Gestão de Mudanças ou Consultoria.');
   }
 
   return recommendations.length > 0 ? recommendations.join('\n\n') : 'Explore diferentes áreas para identificar aquela que mais se alinha aos seus interesses e valores pessoais.';
@@ -360,11 +364,11 @@ function generateMotivators(classifications: Record<keyof PIRScores, 'Baixo' | '
   if (classifications.IC === 'Alto') {
     motivators.push('• Criar resultados tangíveis e ver o impacto prático do trabalho');
   }
-  if (classifications.RM === 'Alto') {
-    motivators.push('• Enfrentar novos desafios e aprender constantemente');
+  if (classifications.ES === 'Alto') {
+    motivators.push('• Trabalhar em ambientes estáveis com processos bem definidos');
   }
-  if (classifications.RP === 'Alto') {
-    motivators.push('• Superar desafios difíceis e alcançar metas ambiciosas');
+  if (classifications.FL === 'Alto') {
+    motivators.push('• Enfrentar novos desafios e se adaptar a mudanças constantemente');
   }
   if (classifications.AU === 'Alto') {
     motivators.push('• Ter liberdade para tomar decisões e controlar seu trabalho');
@@ -388,11 +392,11 @@ function generateStressors(classifications: Record<keyof PIRScores, 'Baixo' | 'M
   if (classifications.IC === 'Baixo') {
     stressors.push('• Trabalhos manuais ou que exigem habilidades técnicas práticas');
   }
-  if (classifications.RM === 'Baixo') {
-    stressors.push('• Mudanças frequentes e ambientes imprevisíveis');
+  if (classifications.ES === 'Baixo') {
+    stressors.push('• Ambientes muito rígidos e rotinas repetitivas');
   }
-  if (classifications.RP === 'Baixo') {
-    stressors.push('• Prazos apertados e situações de alta pressão');
+  if (classifications.FL === 'Baixo') {
+    stressors.push('• Mudanças frequentes e situações ambíguas');
   }
   if (classifications.AU === 'Baixo') {
     stressors.push('• Falta de orientação clara e necessidade de tomar decisões sozinho');
@@ -416,11 +420,11 @@ function generateTeamContribution(normalizedScores: PIRScores, classifications: 
   if (classifications.IC === 'Alto') {
     contributions.push('Você contribui para a equipe com soluções práticas, habilidades técnicas e foco em resultados tangíveis.');
   }
-  if (classifications.RM === 'Alto') {
-    contributions.push('Você contribui para a equipe trazendo flexibilidade, inovação e capacidade de adaptação a mudanças.');
+  if (classifications.ES === 'Alto') {
+    contributions.push('Você contribui para a equipe trazendo estabilidade, confiabilidade e consistência na execução de processos.');
   }
-  if (classifications.RP === 'Alto') {
-    contributions.push('Você contribui para a equipe mantendo a calma em crises, tomando decisões rápidas e liderando em momentos críticos.');
+  if (classifications.FL === 'Alto') {
+    contributions.push('Você contribui para a equipe trazendo flexibilidade, capacidade de adaptação e habilidade para lidar com imprevistos.');
   }
   if (classifications.AU === 'Alto') {
     contributions.push('Você contribui para a equipe com iniciativa, proatividade e capacidade de trabalhar independentemente.');

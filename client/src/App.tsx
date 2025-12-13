@@ -138,6 +138,9 @@ import MinhasAvaliacoes from "./pages/avd/MinhasAvaliacoes";
 import FormularioAvaliacao from "./pages/avd/FormularioAvaliacao";
 import DashboardAVD from "./pages/avd/DashboardAVD";
 import RelatorioCompliance from "./pages/avd/RelatorioCompliance";
+import Passo3Competencias from "./pages/Passo3Competencias";
+import Passo4Desempenho from "./pages/Passo4Desempenho";
+import Passo5PDI from "./pages/Passo5PDI";
 import Relatorio360Consolidado from "./pages/Relatorio360Consolidado";
 import Ciclos360VisaoGeral from "./pages/Ciclos360VisaoGeral";
 import Ciclos360Detalhes from "./pages/Ciclos360Detalhes";
@@ -457,6 +460,9 @@ function Router() {
       <Route path="/avd/avaliar/:id" component={FormularioAvaliacao} />
       <Route path="/avd/dashboard" component={DashboardAVD} />
       <Route path="/avd/compliance" component={RelatorioCompliance} />
+      <Route path="/avd/passo3/:processId/:employeeId" component={Passo3Competencias} />
+      <Route path="/avd/passo4/:processId/:employeeId" component={Passo4Desempenho} />
+      <Route path="/avd/passo5/:processId/:employeeId" component={Passo5PDI} />
       
       {/* Rotas Testes Geriátricos */}
       <Route path="/geriatric/patients" component={Patients} />

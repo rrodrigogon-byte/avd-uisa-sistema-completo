@@ -4854,3 +4854,285 @@ export const userNotificationPreferences = mysqlTable("userNotificationPreferenc
 
 export type UserNotificationPreference = typeof userNotificationPreferences.$inferSelect;
 export type InsertUserNotificationPreference = typeof userNotificationPreferences.$inferInsert;
+
+// ============================================================================
+// SISTEMA AVD UISA - FLUXO DE AVALIAÇÃO EM 5 PASSOS
+// ============================================================================
+
+/**
+ * AVD Assessment Processes - Processos de Avaliação AVD
+ * Gerencia o fluxo completo de avaliação em 5 passos
+ */
+export const avdAssessmentProcesses = mysqlTable("avdAssessmentProcesses", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Status do processo
+  status: mysqlEnum("status", ["em_andamento", "concluido", "cancelado"]).default("em_andamento").notNull(),
+  currentStep: int("currentStep").default(1).notNull(), // 1-5
+  
+  // Datas de conclusão de cada passo
+  step1CompletedAt: datetime("step1CompletedAt"), // Perfil Profissional
+  step2CompletedAt: datetime("step2CompletedAt"), // PIR
+  step3CompletedAt: datetime("step3CompletedAt"), // Avaliação de Competências
+  step4CompletedAt: datetime("step4CompletedAt"), // Avaliação de Desempenho
+  step5CompletedAt: datetime("step5CompletedAt"), // PDI
+  
+  // IDs dos registros de cada passo
+  step1Id: int("step1Id"), // ID do perfil profissional
+  step2Id: int("step2Id"), // ID do teste PIR
+  step3Id: int("step3Id"), // ID da avaliação de competências
+  step4Id: int("step4Id"), // ID da avaliação de desempenho
+  step5Id: int("step5Id"), // ID do PDI
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type AvdAssessmentProcess = typeof avdAssessmentProcesses.$inferSelect;
+export type InsertAvdAssessmentProcess = typeof avdAssessmentProcesses.$inferInsert;
+
+/**
+ * AVD Competency Assessments - Avaliações de Competências (Passo 3)
+ * Avalia competências comportamentais e técnicas em escala 1-5
+ */
+export const avdCompetencyAssessments = mysqlTable("avdCompetencyAssessments", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId").notNull(), // Referência ao processo AVD
+  employeeId: int("employeeId").notNull(),
+  
+  // Tipo de avaliação
+  assessmentType: mysqlEnum("assessmentType", ["autoavaliacao", "avaliacao_gestor", "avaliacao_pares"]).default("autoavaliacao").notNull(),
+  evaluatorId: int("evaluatorId"), // ID do avaliador (null para autoavaliação)
+  
+  // Status
+  status: mysqlEnum("status", ["em_andamento", "concluida"]).default("em_andamento").notNull(),
+  
+  // Pontuação geral
+  overallScore: int("overallScore"), // Média ponderada de todas as competências (0-100)
+  
+  // Observações gerais
+  comments: text("comments"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type AvdCompetencyAssessment = typeof avdCompetencyAssessments.$inferSelect;
+export type InsertAvdCompetencyAssessment = typeof avdCompetencyAssessments.$inferInsert;
+
+/**
+ * AVD Competency Assessment Items - Itens de Avaliação de Competências
+ * Cada item representa a avaliação de uma competência específica
+ */
+export const avdCompetencyAssessmentItems = mysqlTable("avdCompetencyAssessmentItems", {
+  id: int("id").autoincrement().primaryKey(),
+  assessmentId: int("assessmentId").notNull(),
+  competencyId: int("competencyId").notNull(), // Referência à tabela de competências
+  
+  // Avaliação
+  score: int("score").notNull(), // 1-5
+  comments: text("comments"),
+  
+  // Exemplos de comportamentos observados
+  behaviorExamples: text("behaviorExamples"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AvdCompetencyAssessmentItem = typeof avdCompetencyAssessmentItems.$inferSelect;
+export type InsertAvdCompetencyAssessmentItem = typeof avdCompetencyAssessmentItems.$inferInsert;
+
+/**
+ * AVD Performance Assessments - Avaliações de Desempenho (Passo 4)
+ * Consolida dados dos passos anteriores e gera avaliação final
+ */
+export const avdPerformanceAssessments = mysqlTable("avdPerformanceAssessments", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Pontuações dos passos anteriores
+  profileScore: int("profileScore"), // Pontuação do Perfil Profissional (0-100)
+  pirScore: int("pirScore"), // Pontuação do PIR (0-100)
+  competencyScore: int("competencyScore"), // Pontuação de Competências (0-100)
+  
+  // Pesos de cada dimensão (%)
+  profileWeight: int("profileWeight").default(20).notNull(),
+  pirWeight: int("pirWeight").default(20).notNull(),
+  competencyWeight: int("competencyWeight").default(60).notNull(),
+  
+  // Pontuação final ponderada
+  finalScore: int("finalScore").notNull(), // 0-100
+  
+  // Classificação final
+  performanceRating: mysqlEnum("performanceRating", [
+    "insatisfatorio",
+    "abaixo_expectativas",
+    "atende_expectativas",
+    "supera_expectativas",
+    "excepcional"
+  ]).notNull(),
+  
+  // Análise de gaps
+  strengthsAnalysis: text("strengthsAnalysis"), // JSON com pontos fortes identificados
+  gapsAnalysis: text("gapsAnalysis"), // JSON com gaps identificados
+  
+  // Recomendações
+  developmentRecommendations: text("developmentRecommendations"),
+  careerRecommendations: text("careerRecommendations"),
+  
+  // Observações do avaliador
+  evaluatorComments: text("evaluatorComments"),
+  evaluatorId: int("evaluatorId"),
+  
+  // Status
+  status: mysqlEnum("status", ["em_andamento", "concluida", "aprovada"]).default("em_andamento").notNull(),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+  approvedAt: datetime("approvedAt"),
+  approvedBy: int("approvedBy"),
+});
+
+export type AvdPerformanceAssessment = typeof avdPerformanceAssessments.$inferSelect;
+export type InsertAvdPerformanceAssessment = typeof avdPerformanceAssessments.$inferInsert;
+
+/**
+ * AVD Development Plans - Planos de Desenvolvimento Individual (Passo 5)
+ * PDI gerado com base nos gaps identificados na avaliação
+ */
+export const avdDevelopmentPlans = mysqlTable("avdDevelopmentPlans", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  performanceAssessmentId: int("performanceAssessmentId").notNull(),
+  
+  // Informações do plano
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Período
+  startDate: datetime("startDate").notNull(),
+  endDate: datetime("endDate").notNull(),
+  
+  // Objetivos gerais
+  objectives: text("objectives"), // JSON com objetivos do PDI
+  
+  // Status
+  status: mysqlEnum("status", [
+    "rascunho",
+    "aguardando_aprovacao",
+    "aprovado",
+    "em_andamento",
+    "concluido",
+    "cancelado"
+  ]).default("rascunho").notNull(),
+  
+  // Aprovação
+  approvedBy: int("approvedBy"),
+  approvedAt: datetime("approvedAt"),
+  approvalComments: text("approvalComments"),
+  
+  // Progresso geral
+  overallProgress: int("overallProgress").default(0).notNull(), // 0-100
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type AvdDevelopmentPlan = typeof avdDevelopmentPlans.$inferSelect;
+export type InsertAvdDevelopmentPlan = typeof avdDevelopmentPlans.$inferInsert;
+
+/**
+ * AVD Development Actions - Ações de Desenvolvimento
+ * Ações específicas do PDI para desenvolver competências
+ */
+export const avdDevelopmentActions = mysqlTable("avdDevelopmentActions", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  competencyId: int("competencyId"), // Competência a ser desenvolvida
+  
+  // Informações da ação
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Tipo de ação (Modelo 70-20-10)
+  actionType: mysqlEnum("actionType", [
+    "experiencia_pratica", // 70%
+    "mentoria_feedback", // 20%
+    "treinamento_formal" // 10%
+  ]).notNull(),
+  
+  // Categoria específica
+  category: varchar("category", { length: 100 }), // ex: "projeto", "job_rotation", "curso_online"
+  
+  // Responsável e prazos
+  responsibleId: int("responsibleId"), // Quem vai apoiar/acompanhar
+  dueDate: datetime("dueDate").notNull(),
+  
+  // Métricas de sucesso
+  successMetrics: text("successMetrics"),
+  expectedOutcome: text("expectedOutcome"),
+  
+  // Status e progresso
+  status: mysqlEnum("status", [
+    "nao_iniciada",
+    "em_andamento",
+    "concluida",
+    "cancelada",
+    "atrasada"
+  ]).default("nao_iniciada").notNull(),
+  progress: int("progress").default(0).notNull(), // 0-100
+  
+  // Evidências de conclusão
+  evidences: text("evidences"), // JSON com links, documentos, etc
+  
+  // Avaliação da ação
+  effectiveness: int("effectiveness"), // 1-5 (efetividade da ação após conclusão)
+  feedback: text("feedback"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type AvdDevelopmentAction = typeof avdDevelopmentActions.$inferSelect;
+export type InsertAvdDevelopmentAction = typeof avdDevelopmentActions.$inferInsert;
+
+/**
+ * AVD Development Action Progress - Acompanhamento de Ações
+ * Registra o progresso e atualizações das ações
+ */
+export const avdDevelopmentActionProgress = mysqlTable("avdDevelopmentActionProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  actionId: int("actionId").notNull(),
+  
+  // Atualização de progresso
+  progressPercent: int("progressPercent").notNull(), // 0-100
+  comments: text("comments"),
+  
+  // Evidências
+  evidenceUrl: varchar("evidenceUrl", { length: 512 }),
+  evidenceType: varchar("evidenceType", { length: 50 }), // "documento", "foto", "link", etc
+  
+  // Quem registrou
+  registeredBy: int("registeredBy").notNull(),
+  registeredAt: timestamp("registeredAt").defaultNow().notNull(),
+});
+
+export type AvdDevelopmentActionProgress = typeof avdDevelopmentActionProgress.$inferSelect;
+export type InsertAvdDevelopmentActionProgress = typeof avdDevelopmentActionProgress.$inferInsert;

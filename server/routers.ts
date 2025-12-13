@@ -28,6 +28,7 @@ import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
 import { pdiHtmlImportRouter } from "./pdiHtmlImportRouter";
 import { pdiExportRouter } from "./pdiExportRouter";
 import { pdiReportExportRouter } from "./pdiReportExport";
+import { avdRouter } from "./avdRouter";
 import { competencyValidationRouter } from "./competencyValidationRouter";
 import { evaluation360Router } from "./evaluation360Router";
 import { reportBuilderRouter } from "./reportBuilderRouter";
@@ -221,6 +222,7 @@ export const appRouter = router({
   search: searchRouter,
   users: usersRouter,
   avdUisa: avdUisaRouter,
+  avd: avdRouter,
   pendencias: pendenciasRouter,
   
   // Novos routers - Três próximos passos
