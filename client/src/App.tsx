@@ -143,6 +143,8 @@ import ProcessoDashboard from "./pages/avd/ProcessoDashboard";
 import Passo3Competencias from "./pages/Passo3Competencias";
 import Passo4Desempenho from "./pages/Passo4Desempenho";
 import Passo5PDI from "./pages/Passo5PDI";
+import DashboardAdminAVD from "./pages/avd/DashboardAdminAVD";
+import ProcessoDetalhes from "./pages/avd/ProcessoDetalhes";
 import Relatorio360Consolidado from "./pages/Relatorio360Consolidado";
 import Ciclos360VisaoGeral from "./pages/Ciclos360VisaoGeral";
 import Ciclos360Detalhes from "./pages/Ciclos360Detalhes";
@@ -469,6 +471,10 @@ function Router() {
       <Route path="/avd/processo/passo3/:processId?" component={Passo3Competencias} />
       <Route path="/avd/processo/passo4/:processId?" component={Passo4Desempenho} />
       <Route path="/avd/processo/passo5/:processId?" component={Passo5PDI} />
+      
+      {/* Dashboard Administrativo AVD */}
+      <Route path="/avd/admin" component={DashboardAdminAVD} />
+      <Route path="/avd/processo/detalhes/:processId" component={ProcessoDetalhes} />
       
       {/* Rotas antigas (manter compatibilidade) */}
       <Route path="/avd/passo3/:processId/:employeeId" component={Passo3Competencias} />

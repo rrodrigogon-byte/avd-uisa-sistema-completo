@@ -17,8 +17,9 @@ import {
   competencies,
   employees,
   psychometricTests,
+  notifications,
 } from "../drizzle/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, lte, gte, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const avdRouter = router({
@@ -598,5 +599,463 @@ export const avdRouter = router({
         completedSteps,
         status: process.status,
       };
+    }),
+
+  // ============================================================================
+  // DASHBOARD ADMINISTRATIVO
+  // ============================================================================
+
+  /**
+   * Listar todos os processos AVD (Admin/RH)
+   */
+  listAllProcesses: protectedProcedure
+    .input(z.object({
+      status: z.enum(['em_andamento', 'concluido', 'cancelado']).optional(),
+      departmentId: z.number().optional(),
+      limit: z.number().default(50),
+      offset: z.number().default(0),
+    }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== 'admin' && ctx.user.role !== 'rh') {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      }
+
+      const conditions = [];
+      if (input.status) {
+        conditions.push(eq(avdAssessmentProcesses.status, input.status));
+      }
+
+      const processes = await db.select({
+        process: avdAssessmentProcesses,
+        employee: employees,
+      })
+        .from(avdAssessmentProcesses)
+        .leftJoin(employees, eq(avdAssessmentProcesses.employeeId, employees.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(avdAssessmentProcesses.updatedAt))
+        .limit(input.limit)
+        .offset(input.offset);
+
+      return processes;
+    }),
+
+  /**
+   * Obter estatísticas do dashboard administrativo
+   */
+  getAdminStats: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== 'admin' && ctx.user.role !== 'rh') {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      }
+
+      // Total de processos em andamento
+      const [inProgress] = await db.select({ count: sql<number>`count(*)` })
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.status, 'em_andamento'));
+
+      // Total de processos concluídos
+      const [completed] = await db.select({ count: sql<number>`count(*)` })
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.status, 'concluido'));
+
+      // Processos por passo
+      const byStep = await db.select({
+        step: avdAssessmentProcesses.currentStep,
+        count: sql<number>`count(*)`,
+      })
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.status, 'em_andamento'))
+        .groupBy(avdAssessmentProcesses.currentStep);
+
+      return {
+        totalInProgress: inProgress.count,
+        totalCompleted: completed.count,
+        byStep: byStep.map(s => ({ step: s.step, count: s.count })),
+      };
+    }),
+
+  /**
+   * Obter detalhes completos de um processo (Admin/RH)
+   */
+  getProcessDetails: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== 'admin' && ctx.user.role !== 'rh') {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      }
+
+      // Buscar processo
+      const [process] = await db.select()
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.id, input.processId))
+        .limit(1);
+
+      if (!process) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Processo não encontrado" });
+      }
+
+      // Buscar dados do funcionário
+      const [employee] = await db.select()
+        .from(employees)
+        .where(eq(employees.id, process.employeeId))
+        .limit(1);
+
+      // Buscar avaliação de competências
+      const [competencyAssessment] = await db.select()
+        .from(avdCompetencyAssessments)
+        .where(eq(avdCompetencyAssessments.processId, input.processId))
+        .limit(1);
+
+      // Buscar avaliação de desempenho
+      const [performanceAssessment] = await db.select()
+        .from(avdPerformanceAssessments)
+        .where(eq(avdPerformanceAssessments.processId, input.processId))
+        .limit(1);
+
+      // Buscar PDI
+      const [developmentPlan] = await db.select()
+        .from(avdDevelopmentPlans)
+        .where(eq(avdDevelopmentPlans.processId, input.processId))
+        .limit(1);
+
+      return {
+        process,
+        employee,
+        competencyAssessment,
+        performanceAssessment,
+        developmentPlan,
+      };
+    }),
+
+  // ============================================================================
+  // SISTEMA DE NOTIFICAÇÕES
+  // ============================================================================
+
+  /**
+   * Enviar notificação de início de processo
+   */
+  sendProcessStartNotification: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+      employeeId: z.number(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar dados do funcionário
+      const [employee] = await db.select()
+        .from(employees)
+        .where(eq(employees.id, input.employeeId))
+        .limit(1);
+
+      if (!employee || !employee.userId) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Funcionário não encontrado" });
+      }
+
+      // Criar notificação
+      await db.insert(notifications).values({
+        userId: employee.userId,
+        type: 'avd_process_started',
+        title: 'Processo AVD Iniciado',
+        message: `Seu processo de Avaliação de Desempenho foi iniciado. Acesse o sistema para começar.`,
+        link: `/avd/processo/dashboard`,
+        read: false,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Enviar notificação de passo concluído
+   */
+  sendStepCompletedNotification: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+      employeeId: z.number(),
+      step: z.number().min(1).max(5),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [employee] = await db.select()
+        .from(employees)
+        .where(eq(employees.id, input.employeeId))
+        .limit(1);
+
+      if (!employee || !employee.userId) {
+        return { success: false };
+      }
+
+      const stepNames = {
+        1: 'Dados Pessoais',
+        2: 'PIR',
+        3: 'Competências',
+        4: 'Desempenho',
+        5: 'PDI',
+      };
+
+      const stepName = stepNames[input.step as keyof typeof stepNames];
+      const nextStep = input.step + 1;
+
+      let message = `Parabéns! Você concluiu o passo ${input.step}: ${stepName}.`;
+      if (nextStep <= 5) {
+        message += ` Continue para o próximo passo.`;
+      } else {
+        message += ` Processo AVD concluído com sucesso!`;
+      }
+
+      await db.insert(notifications).values({
+        userId: employee.userId,
+        type: 'avd_step_completed',
+        title: `Passo ${input.step} Concluído`,
+        message,
+        link: `/avd/processo/dashboard`,
+        read: false,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Enviar lembrete de passo pendente
+   */
+  sendStepReminderNotification: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+      employeeId: z.number(),
+      currentStep: z.number().min(1).max(5),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [employee] = await db.select()
+        .from(employees)
+        .where(eq(employees.id, input.employeeId))
+        .limit(1);
+
+      if (!employee || !employee.userId) {
+        return { success: false };
+      }
+
+      const stepNames = {
+        1: 'Dados Pessoais',
+        2: 'PIR',
+        3: 'Competências',
+        4: 'Desempenho',
+        5: 'PDI',
+      };
+
+      const stepName = stepNames[input.currentStep as keyof typeof stepNames];
+
+      await db.insert(notifications).values({
+        userId: employee.userId,
+        type: 'avd_step_reminder',
+        title: 'Lembrete: Processo AVD Pendente',
+        message: `Você tem o passo ${input.currentStep}: ${stepName} pendente. Não esqueça de concluir sua avaliação.`,
+        link: `/avd/processo/passo${input.currentStep}`,
+        read: false,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Listar processos com prazos próximos (para envio de lembretes)
+   */
+  getProcessesNeedingReminders: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== 'admin' && ctx.user.role !== 'rh') {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      }
+
+      // Buscar processos em andamento há mais de 7 dias sem atualização
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const processes = await db.select({
+        process: avdAssessmentProcesses,
+        employee: employees,
+      })
+        .from(avdAssessmentProcesses)
+        .leftJoin(employees, eq(avdAssessmentProcesses.employeeId, employees.id))
+        .where(
+          and(
+            eq(avdAssessmentProcesses.status, 'em_andamento'),
+            lte(avdAssessmentProcesses.updatedAt, sevenDaysAgo)
+          )
+        )
+        .orderBy(avdAssessmentProcesses.updatedAt);
+
+      return processes;
+    }),
+
+  // ============================================================================
+  // RELATÓRIOS E EXPORTAÇÃO
+  // ============================================================================
+
+  /**
+   * Gerar relatório consolidado de processos
+   */
+  generateConsolidatedReport: protectedProcedure
+    .input(z.object({
+      startDate: z.date().optional(),
+      endDate: z.date().optional(),
+      departmentId: z.number().optional(),
+      status: z.enum(['em_andamento', 'concluido', 'cancelado']).optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== 'admin' && ctx.user.role !== 'rh') {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      }
+
+      const conditions = [];
+      if (input.status) {
+        conditions.push(eq(avdAssessmentProcesses.status, input.status));
+      }
+      if (input.startDate) {
+        conditions.push(gte(avdAssessmentProcesses.createdAt, input.startDate));
+      }
+      if (input.endDate) {
+        conditions.push(lte(avdAssessmentProcesses.createdAt, input.endDate));
+      }
+
+      // Buscar processos com dados relacionados
+      const processes = await db.select({
+        process: avdAssessmentProcesses,
+        employee: employees,
+      })
+        .from(avdAssessmentProcesses)
+        .leftJoin(employees, eq(avdAssessmentProcesses.employeeId, employees.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(avdAssessmentProcesses.createdAt));
+
+      // Para cada processo, buscar avaliações
+      const detailedProcesses = await Promise.all(
+        processes.map(async (item) => {
+          const [competencyAssessment] = await db.select()
+            .from(avdCompetencyAssessments)
+            .where(eq(avdCompetencyAssessments.processId, item.process.id))
+            .limit(1);
+
+          const [performanceAssessment] = await db.select()
+            .from(avdPerformanceAssessments)
+            .where(eq(avdPerformanceAssessments.processId, item.process.id))
+            .limit(1);
+
+          const [developmentPlan] = await db.select()
+            .from(avdDevelopmentPlans)
+            .where(eq(avdDevelopmentPlans.processId, item.process.id))
+            .limit(1);
+
+          return {
+            ...item,
+            competencyAssessment,
+            performanceAssessment,
+            developmentPlan,
+          };
+        })
+      );
+
+      // Calcular estatísticas do relatório
+      const totalProcesses = detailedProcesses.length;
+      const completedProcesses = detailedProcesses.filter(
+        (p) => p.process.status === 'concluido'
+      ).length;
+      const inProgressProcesses = detailedProcesses.filter(
+        (p) => p.process.status === 'em_andamento'
+      ).length;
+
+      // Média de pontuação de desempenho
+      const performanceScores = detailedProcesses
+        .filter((p) => p.performanceAssessment)
+        .map((p) => p.performanceAssessment!.finalScore);
+      const avgPerformanceScore =
+        performanceScores.length > 0
+          ? Math.round(
+              performanceScores.reduce((sum, score) => sum + score, 0) /
+                performanceScores.length
+            )
+          : 0;
+
+      return {
+        summary: {
+          totalProcesses,
+          completedProcesses,
+          inProgressProcesses,
+          avgPerformanceScore,
+          completionRate:
+            totalProcesses > 0
+              ? Math.round((completedProcesses / totalProcesses) * 100)
+              : 0,
+        },
+        processes: detailedProcesses,
+        generatedAt: new Date(),
+      };
+    }),
+
+  /**
+   * Obter dados para exportação em CSV/Excel
+   */
+  getExportData: protectedProcedure
+    .input(z.object({
+      status: z.enum(['em_andamento', 'concluido', 'cancelado']).optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar permissão
+      if (ctx.user.role !== 'admin' && ctx.user.role !== 'rh') {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado" });
+      }
+
+      const conditions = [];
+      if (input.status) {
+        conditions.push(eq(avdAssessmentProcesses.status, input.status));
+      }
+
+      const processes = await db.select({
+        processId: avdAssessmentProcesses.id,
+        employeeName: employees.nome,
+        employeeChapa: employees.chapa,
+        employeeCargo: employees.cargo,
+        employeeDepartamento: employees.departamento,
+        status: avdAssessmentProcesses.status,
+        currentStep: avdAssessmentProcesses.currentStep,
+        createdAt: avdAssessmentProcesses.createdAt,
+        updatedAt: avdAssessmentProcesses.updatedAt,
+        completedAt: avdAssessmentProcesses.completedAt,
+      })
+        .from(avdAssessmentProcesses)
+        .leftJoin(employees, eq(avdAssessmentProcesses.employeeId, employees.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(avdAssessmentProcesses.createdAt));
+
+      return processes;
     }),
 });
