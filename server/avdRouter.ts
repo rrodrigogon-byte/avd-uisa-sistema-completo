@@ -500,4 +500,103 @@ export const avdRouter = router({
 
       return { success: true };
     }),
+
+  /**
+   * Salvar dados de um passo do processo
+   */
+  saveProcessData: protectedProcedure
+    .input(z.object({
+      processId: z.string().optional(),
+      step: z.number().min(1).max(5),
+      data: z.record(z.any()),
+      employeeId: z.number(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      let processId = input.processId ? parseInt(input.processId) : null;
+
+      // Se não tem processId, criar novo processo
+      if (!processId) {
+        const [result] = await db.insert(avdAssessmentProcesses).values({
+          employeeId: input.employeeId,
+          status: 'em_andamento',
+          currentStep: input.step,
+          createdBy: ctx.user.id,
+        });
+        processId = result.insertId;
+      } else {
+        // Atualizar passo atual se for maior
+        const [process] = await db.select()
+          .from(avdAssessmentProcesses)
+          .where(eq(avdAssessmentProcesses.id, processId))
+          .limit(1);
+
+        if (process && input.step > process.currentStep) {
+          await db.update(avdAssessmentProcesses)
+            .set({ currentStep: input.step })
+            .where(eq(avdAssessmentProcesses.id, processId));
+        }
+      }
+
+      // Salvar dados do passo (pode ser implementado em tabela específica se necessário)
+      // Por enquanto, apenas retornar o processId para navegação
+
+      return { processId: processId.toString() };
+    }),
+
+  /**
+   * Buscar dados salvos de um passo
+   */
+  getProcessData: protectedProcedure
+    .input(z.object({
+      processId: z.string(),
+      step: z.number().min(1).max(5),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Por enquanto retornar null, pode ser implementado depois
+      // se houver necessidade de salvar dados intermediários
+      return { data: null };
+    }),
+
+  /**
+   * Buscar progresso do processo AVD
+   */
+  getProcessProgress: protectedProcedure
+    .input(z.object({
+      employeeId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [process] = await db.select()
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.employeeId, input.employeeId))
+        .orderBy(desc(avdAssessmentProcesses.createdAt))
+        .limit(1);
+
+      if (!process) {
+        return {
+          processId: null,
+          currentStep: 1,
+          completedSteps: 0,
+          status: 'nao_iniciado' as const,
+        };
+      }
+
+      // Calcular passos completados baseado no currentStep
+      const completedSteps = process.currentStep > 1 ? process.currentStep - 1 : 0;
+
+      return {
+        processId: process.id.toString(),
+        currentStep: process.currentStep,
+        completedSteps,
+        status: process.status,
+      };
+    }),
 });

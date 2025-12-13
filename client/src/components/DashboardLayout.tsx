@@ -113,6 +113,21 @@ const menuItems = [
     ],
   },
   
+  // 📋 PROCESSO AVD (5 PASSOS)
+  {
+    icon: ClipboardList,
+    label: "Processo AVD",
+    isSection: true,
+    children: [
+      { icon: UserIcon, label: "Passo 1: Dados Pessoais", path: "/avd/processo/passo1" },
+      { icon: Brain, label: "Passo 2: PIR", path: "/avd/processo/passo2" },
+      { icon: Award, label: "Passo 3: Competências", path: "/avd/processo/passo3" },
+      { icon: TrendingUp, label: "Passo 4: Desempenho", path: "/avd/processo/passo4" },
+      { icon: Lightbulb, label: "Passo 5: PDI", path: "/avd/processo/passo5" },
+      { icon: BarChart, label: "Acompanhamento", path: "/avd/processo/dashboard" },
+    ],
+  },
+  
   // 🎯 METAS E PERFORMANCE
   {
     icon: Target,

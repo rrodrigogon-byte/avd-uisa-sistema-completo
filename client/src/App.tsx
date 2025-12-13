@@ -138,6 +138,8 @@ import MinhasAvaliacoes from "./pages/avd/MinhasAvaliacoes";
 import FormularioAvaliacao from "./pages/avd/FormularioAvaliacao";
 import DashboardAVD from "./pages/avd/DashboardAVD";
 import RelatorioCompliance from "./pages/avd/RelatorioCompliance";
+import Passo1DadosPessoais from "./pages/avd/Passo1DadosPessoais";
+import ProcessoDashboard from "./pages/avd/ProcessoDashboard";
 import Passo3Competencias from "./pages/Passo3Competencias";
 import Passo4Desempenho from "./pages/Passo4Desempenho";
 import Passo5PDI from "./pages/Passo5PDI";
@@ -460,6 +462,15 @@ function Router() {
       <Route path="/avd/avaliar/:id" component={FormularioAvaliacao} />
       <Route path="/avd/dashboard" component={DashboardAVD} />
       <Route path="/avd/compliance" component={RelatorioCompliance} />
+      {/* Processo AVD - 5 Passos */}
+      <Route path="/avd/processo/dashboard" component={ProcessoDashboard} />
+      <Route path="/avd/processo/passo1/:processId?" component={Passo1DadosPessoais} />
+      <Route path="/avd/processo/passo2/:processId?" component={TestPIR} />
+      <Route path="/avd/processo/passo3/:processId?" component={Passo3Competencias} />
+      <Route path="/avd/processo/passo4/:processId?" component={Passo4Desempenho} />
+      <Route path="/avd/processo/passo5/:processId?" component={Passo5PDI} />
+      
+      {/* Rotas antigas (manter compatibilidade) */}
       <Route path="/avd/passo3/:processId/:employeeId" component={Passo3Competencias} />
       <Route path="/avd/passo4/:processId/:employeeId" component={Passo4Desempenho} />
       <Route path="/avd/passo5/:processId/:employeeId" component={Passo5PDI} />
