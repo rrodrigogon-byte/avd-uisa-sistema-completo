@@ -681,10 +681,10 @@ export const successionCandidates = mysqlTable("successionCandidates", {
   
   // Nível de Prontidão (conforme modal)
   readinessLevel: mysqlEnum("readinessLevel", [
-    "pronto_ate_12_meses",
-    "pronto_12_24_meses",
-    "pronto_24_36_meses",
-    "pronto_mais_36_meses"
+    "imediato",
+    "1_ano",
+    "2_3_anos",
+    "mais_3_anos"
   ]).notNull(),
   
   // Prioridade (1 = mais alta)

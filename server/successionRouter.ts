@@ -215,10 +215,10 @@ export const successionRouter = router({
         employeeId: z.number(),
         // Nível de Prontidão (conforme modal)
         readinessLevel: z.enum([
-          "pronto_ate_12_meses",
-          "pronto_12_24_meses",
-          "pronto_24_36_meses",
-          "pronto_mais_36_meses"
+          "imediato",
+          "1_ano",
+          "2_3_anos",
+          "mais_3_anos"
         ]),
         // Prioridade
         priority: z.number().default(1),
@@ -272,10 +272,10 @@ export const successionRouter = router({
       z.object({
         id: z.number(),
         readinessLevel: z.enum([
-          "pronto_ate_12_meses",
-          "pronto_12_24_meses",
-          "pronto_24_36_meses",
-          "pronto_mais_36_meses"
+          "imediato",
+          "1_ano",
+          "2_3_anos",
+          "mais_3_anos"
         ]).optional(),
         priority: z.number().optional(),
         performance: z.enum(["baixo", "medio", "alto"]).optional(),
@@ -365,7 +365,7 @@ export const successionRouter = router({
               z.object({
                 employeeName: z.string(),
                 employeeCode: z.string(),
-                readinessLevel: z.enum(["pronto_ate_12_meses", "pronto_12_24_meses", "pronto_24_36_meses", "pronto_mais_36_meses"]),
+                readinessLevel: z.enum(["imediato", "1_ano", "2_3_anos", "mais_3_anos"]),
                 priority: z.number(),
               })
             ),
@@ -919,7 +919,7 @@ export const successionRouter = router({
       const candidates = await query;
 
       const totalSuccessors = candidates.length;
-      const readyNow = candidates.filter((c) => c.readinessLevel === "pronto_ate_12_meses").length;
+      const readyNow = candidates.filter((c) => c.readinessLevel === "imediato").length;
       const highRisk = candidates.filter(
         (c) => c.riskLevel === "alto" || c.riskLevel === "critico"
       ).length;

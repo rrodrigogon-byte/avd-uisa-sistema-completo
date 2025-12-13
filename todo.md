@@ -245,3 +245,6 @@
 - [ ] Criar job automático de envio de lembretes por email
 - [ ] Implementar dashboard de analytics avançado
 - [ ] Adicionar funcionalidade de comparação entre períodos
+
+- [x] Investigar erro 500 ao salvar sucessor - possível problema no backend com validação de dados
+- [x] Corrigir erro ao salvar sucessores - problema de inconsistência de enum readinessLevel
