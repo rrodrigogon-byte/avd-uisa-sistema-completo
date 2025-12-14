@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_TITLE, getLoginUrl } from "@/const";
-import { FileText, ClipboardList, Bell, BarChart3, ArrowRight } from "lucide-react";
+import { FileText, ClipboardList, Bell, BarChart3, ArrowRight, Target, Briefcase, LayoutDashboard } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Home() {
@@ -108,7 +108,19 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <Link href="/dashboard">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <LayoutDashboard className="h-10 w-10 text-primary mb-2" />
+                <CardTitle>Dashboard</CardTitle>
+                <CardDescription>
+                  Visão geral e gráficos
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
           <Link href="/templates">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
@@ -152,6 +164,32 @@ export default function Home() {
                 <CardTitle>Relatórios</CardTitle>
                 <CardDescription>
                   Relatórios gerenciais
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link href="/pir">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <Target className="h-10 w-10 text-primary mb-2" />
+                <CardTitle>PIR</CardTitle>
+                <CardDescription>
+                  Plano Individual de Resultados
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/job-descriptions">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <Briefcase className="h-10 w-10 text-primary mb-2" />
+                <CardTitle>Descrições de Cargo</CardTitle>
+                <CardDescription>
+                  Consultar descrições UISA
                 </CardDescription>
               </CardHeader>
             </Card>

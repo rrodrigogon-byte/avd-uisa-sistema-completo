@@ -105,3 +105,60 @@
 - [ ] Documentar APIs tRPC disponíveis
 - [ ] Criar checkpoint final
 - [ ] Preparar instruções de uso para o usuário
+
+## 7. Formulários de Criação/Edição - NOVA FUNCIONALIDADE
+- [x] Formulário completo de criação de template com validação
+- [ ] Formulário completo de edição de template com validação
+- [x] Formulário completo de criação de avaliação com validação
+- [ ] Formulário completo de edição de avaliação com validação
+- [x] Validação de campos obrigatórios em todos os formulários
+- [x] Feedback visual de erros de validação
+
+## 8. Visualizações de Dados com Chart.js - NOVA FUNCIONALIDADE
+- [x] Integrar Chart.js no projeto
+- [x] Gráfico de desempenho individual nos relatórios
+- [x] Gráfico de evolução temporal de avaliações
+- [ ] Gráfico de comparação entre equipes
+- [x] Gráfico de distribuição de scores
+- [x] Dashboard com múltiplos gráficos interativos
+
+## 9. Sistema de Notificações Automáticas - NOVA FUNCIONALIDADE
+- [x] Implementar cron job para lembretes de prazos de avaliação
+- [x] Implementar cron job para notificação de novas avaliações
+- [x] Implementar cron job para lembretes de PIR pendentes
+- [x] Sistema de agendamento de notificações
+- [x] Logs de notificações enviadas
+
+## 10. PIR - Plano Individual de Resultados - NOVA FUNCIONALIDADE
+- [x] Schema do banco de dados para PIR
+- [x] Schema para metas e indicadores do PIR
+- [x] Schema para acompanhamento de progresso
+- [x] Router tRPC para PIR (CRUD completo)
+- [x] Página de listagem de PIRs
+- [ ] Formulário de criação/edição de PIR
+- [ ] Página de visualização detalhada de PIR
+- [ ] Sistema de acompanhamento de metas
+- [ ] Integração PIR com avaliações de desempenho
+- [ ] Relatórios de PIR com gráficos
+
+## 11. Descrição de Cargo UISA - NOVA FUNCIONALIDADE
+- [x] Schema do banco de dados para descrições de cargo
+- [x] Schema para competências técnicas
+- [x] Schema para competências comportamentais
+- [x] Schema para requisitos e responsabilidades
+- [x] Schema para histórico de alterações
+- [x] Router tRPC para descrições de cargo (CRUD completo)
+- [x] Página de listagem de descrições de cargo
+- [ ] Formulário dinâmico de criação/edição de descrição de cargo
+- [ ] Página de visualização detalhada de descrição de cargo
+- [ ] Sistema de versionamento de descrições
+- [ ] Vinculação de descrições de cargo com avaliações
+- [ ] Comparação entre versões de descrições
+
+## 12. Integridades e Processos - NOVA FUNCIONALIDADE
+- [ ] Validação de integridade entre PIR e avaliações
+- [ ] Validação de integridade entre descrição de cargo e avaliações
+- [ ] Processo automático de criação de PIR baseado em avaliação
+- [ ] Processo de atualização de descrição de cargo
+- [ ] Workflow de aprovação de PIR
+- [ ] Workflow de aprovação de descrição de cargo

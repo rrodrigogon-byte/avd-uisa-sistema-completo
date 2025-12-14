@@ -210,6 +210,305 @@ export const appRouter = router({
     }),
   }),
 
+  // PIR - Plano Individual de Resultados
+  pir: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role === 'admin') {
+        const asUser = await db.getPirsByUser(ctx.user.id);
+        const asManager = await db.getPirsByManager(ctx.user.id);
+        return { asUser, asManager };
+      }
+      const asUser = await db.getPirsByUser(ctx.user.id);
+      return { asUser, asManager: [] };
+    }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const pir = await db.getPirById(input.id);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND', message: 'PIR não encontrado' });
+        const isOwner = pir.userId === ctx.user.id;
+        const isManager = pir.managerId === ctx.user.id;
+        const isAdmin = ctx.user.role === 'admin';
+        if (!isOwner && !isManager && !isAdmin) {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        return pir;
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        userId: z.number(),
+        title: z.string().min(1, 'Título é obrigatório'),
+        description: z.string().optional(),
+        period: z.string().min(1, 'Período é obrigatório'),
+        evaluationId: z.number().optional(),
+        startDate: z.date(),
+        endDate: z.date(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createPir({ ...input, managerId: ctx.user.id, status: 'draft' });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        status: z.enum(['draft', 'active', 'completed', 'cancelled']).optional(),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, ...data } = input;
+        const pir = await db.getPirById(id);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (pir.managerId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        const updateData: any = { ...data };
+        if (data.status === 'active' && !pir.approvedAt) updateData.approvedAt = new Date();
+        await db.updatePir(id, updateData);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const pir = await db.getPirById(input.id);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (pir.managerId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        await db.deletePir(input.id);
+        return { success: true };
+      }),
+
+    // Metas do PIR
+    createGoal: protectedProcedure
+      .input(z.object({
+        pirId: z.number(),
+        title: z.string().min(1, 'Título é obrigatório'),
+        description: z.string().optional(),
+        weight: z.number().min(0).max(100),
+        targetValue: z.number().optional(),
+        unit: z.string().optional(),
+        deadline: z.date().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const pir = await db.getPirById(input.pirId);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (pir.managerId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        return await db.createPirGoal(input);
+      }),
+
+    getGoals: protectedProcedure
+      .input(z.object({ pirId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getPirGoalsByPirId(input.pirId);
+      }),
+
+    updateGoal: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        weight: z.number().min(0).max(100).optional(),
+        currentValue: z.number().optional(),
+        status: z.enum(['not_started', 'in_progress', 'completed', 'blocked']).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updatePirGoal(id, data);
+        return { success: true };
+      }),
+
+    deleteGoal: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deletePirGoal(input.id);
+        return { success: true };
+      }),
+
+    // Progresso das metas
+    recordProgress: protectedProcedure
+      .input(z.object({
+        goalId: z.number(),
+        value: z.number(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createPirProgress({ ...input, recordedBy: ctx.user.id });
+      }),
+
+    getProgress: protectedProcedure
+      .input(z.object({ goalId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getPirProgressByGoalId(input.goalId);
+      }),
+  }),
+
+  // Descrições de Cargo
+  jobDescription: router({
+    list: publicProcedure.query(async () => {
+      return await db.getActiveJobDescriptions();
+    }),
+
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const jobDesc = await db.getJobDescriptionById(input.id);
+        if (!jobDesc) throw new TRPCError({ code: 'NOT_FOUND', message: 'Descrição de cargo não encontrada' });
+        return jobDesc;
+      }),
+
+    getByCode: publicProcedure
+      .input(z.object({ code: z.string() }))
+      .query(async ({ input }) => {
+        return await db.getJobDescriptionsByCode(input.code);
+      }),
+
+    create: adminProcedure
+      .input(z.object({
+        title: z.string().min(1, 'Título é obrigatório'),
+        code: z.string().min(1, 'Código é obrigatório'),
+        department: z.string().optional(),
+        level: z.string().optional(),
+        summary: z.string().optional(),
+        mission: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createJobDescription({ ...input, createdBy: ctx.user.id });
+      }),
+
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        department: z.string().optional(),
+        level: z.string().optional(),
+        summary: z.string().optional(),
+        mission: z.string().optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateJobDescription(id, data);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteJobDescription(input.id);
+        return { success: true };
+      }),
+
+    // Responsabilidades
+    addResponsibility: adminProcedure
+      .input(z.object({
+        jobDescriptionId: z.number(),
+        description: z.string().min(1),
+        displayOrder: z.number().default(0),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createJobResponsibility(input);
+      }),
+
+    getResponsibilities: publicProcedure
+      .input(z.object({ jobDescriptionId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getJobResponsibilitiesByJobId(input.jobDescriptionId);
+      }),
+
+    deleteResponsibility: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteJobResponsibility(input.id);
+        return { success: true };
+      }),
+
+    // Competências Técnicas
+    addTechnicalCompetency: adminProcedure
+      .input(z.object({
+        jobDescriptionId: z.number(),
+        name: z.string().min(1),
+        description: z.string().optional(),
+        requiredLevel: z.number().min(1).max(5),
+        displayOrder: z.number().default(0),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createTechnicalCompetency(input);
+      }),
+
+    getTechnicalCompetencies: publicProcedure
+      .input(z.object({ jobDescriptionId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getTechnicalCompetenciesByJobId(input.jobDescriptionId);
+      }),
+
+    deleteTechnicalCompetency: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteTechnicalCompetency(input.id);
+        return { success: true };
+      }),
+
+    // Competências Comportamentais
+    addBehavioralCompetency: adminProcedure
+      .input(z.object({
+        jobDescriptionId: z.number(),
+        name: z.string().min(1),
+        description: z.string().optional(),
+        requiredLevel: z.number().min(1).max(5),
+        displayOrder: z.number().default(0),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createBehavioralCompetency(input);
+      }),
+
+    getBehavioralCompetencies: publicProcedure
+      .input(z.object({ jobDescriptionId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getBehavioralCompetenciesByJobId(input.jobDescriptionId);
+      }),
+
+    deleteBehavioralCompetency: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteBehavioralCompetency(input.id);
+        return { success: true };
+      }),
+
+    // Requisitos
+    addRequirement: adminProcedure
+      .input(z.object({
+        jobDescriptionId: z.number(),
+        type: z.enum(['education', 'experience', 'certification', 'other']),
+        description: z.string().min(1),
+        isRequired: z.boolean().default(true),
+        displayOrder: z.number().default(0),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createJobRequirement(input);
+      }),
+
+    getRequirements: publicProcedure
+      .input(z.object({ jobDescriptionId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getJobRequirementsByJobId(input.jobDescriptionId);
+      }),
+
+    deleteRequirement: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteJobRequirement(input.id);
+        return { success: true };
+      }),
+  }),
+
   // Relatórios
   report: router({
     list: protectedProcedure.query(async ({ ctx }) => {

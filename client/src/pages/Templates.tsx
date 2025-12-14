@@ -4,10 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { trpc } from "@/lib/trpc";
 import { FileText, Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 
 export default function Templates() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
+  const [, setLocation] = useLocation();
   
   const { data: templates, isLoading, refetch } = trpc.template.list.useQuery();
   const deleteMutation = trpc.template.delete.useMutation({
@@ -41,7 +43,7 @@ export default function Templates() {
           </p>
         </div>
         {isAdmin && (
-          <Button onClick={() => toast.info('Funcionalidade em desenvolvimento')}>
+          <Button onClick={() => setLocation('/templates/new')}>
             <Plus className="mr-2 h-4 w-4" />
             Novo Template
           </Button>

@@ -17,7 +17,15 @@ import {
   NotificationLog,
   reports,
   InsertReport,
-  Report
+  Report,
+  pirs,
+  pirGoals,
+  pirProgress,
+  jobDescriptions,
+  jobResponsibilities,
+  technicalCompetencies,
+  behavioralCompetencies,
+  jobRequirements
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -353,4 +361,300 @@ export async function deleteReport(id: number): Promise<void> {
   if (!db) throw new Error("Database not available");
 
   await db.delete(reports).where(eq(reports.id, id));
+}
+
+// ============================================================================
+// PIR FUNCTIONS
+// ============================================================================
+
+export async function createPir(pir: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(pirs).values(pir);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(pirs).where(eq(pirs.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getPirById(id: number): Promise<any> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(pirs).where(eq(pirs.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getPirsByUser(userId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(pirs)
+    .where(eq(pirs.userId, userId))
+    .orderBy(desc(pirs.createdAt));
+}
+
+export async function getPirsByManager(managerId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(pirs)
+    .where(eq(pirs.managerId, managerId))
+    .orderBy(desc(pirs.createdAt));
+}
+
+export async function updatePir(id: number, data: any): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(pirs).set(data).where(eq(pirs.id, id));
+}
+
+export async function deletePir(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(pirs).where(eq(pirs.id, id));
+}
+
+// ============================================================================
+// PIR GOAL FUNCTIONS
+// ============================================================================
+
+export async function createPirGoal(goal: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(pirGoals).values(goal);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(pirGoals).where(eq(pirGoals.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getPirGoalsByPirId(pirId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(pirGoals)
+    .where(eq(pirGoals.pirId, pirId))
+    .orderBy(desc(pirGoals.createdAt));
+}
+
+export async function updatePirGoal(id: number, data: any): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(pirGoals).set(data).where(eq(pirGoals.id, id));
+}
+
+export async function deletePirGoal(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(pirGoals).where(eq(pirGoals.id, id));
+}
+
+// ============================================================================
+// PIR PROGRESS FUNCTIONS
+// ============================================================================
+
+export async function createPirProgress(progress: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(pirProgress).values(progress);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(pirProgress).where(eq(pirProgress.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getPirProgressByGoalId(goalId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(pirProgress)
+    .where(eq(pirProgress.goalId, goalId))
+    .orderBy(desc(pirProgress.recordedAt));
+}
+
+// ============================================================================
+// JOB DESCRIPTION FUNCTIONS
+// ============================================================================
+
+export async function createJobDescription(jobDesc: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(jobDescriptions).values(jobDesc);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(jobDescriptions).where(eq(jobDescriptions.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getJobDescriptionById(id: number): Promise<any> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(jobDescriptions).where(eq(jobDescriptions.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getActiveJobDescriptions(): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(jobDescriptions)
+    .where(eq(jobDescriptions.isActive, true))
+    .orderBy(desc(jobDescriptions.createdAt));
+}
+
+export async function getJobDescriptionsByCode(code: string): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(jobDescriptions)
+    .where(eq(jobDescriptions.code, code))
+    .orderBy(desc(jobDescriptions.version));
+}
+
+export async function updateJobDescription(id: number, data: any): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(jobDescriptions).set(data).where(eq(jobDescriptions.id, id));
+}
+
+export async function deleteJobDescription(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(jobDescriptions).where(eq(jobDescriptions.id, id));
+}
+
+// ============================================================================
+// JOB RESPONSIBILITY FUNCTIONS
+// ============================================================================
+
+export async function createJobResponsibility(resp: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(jobResponsibilities).values(resp);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(jobResponsibilities).where(eq(jobResponsibilities.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getJobResponsibilitiesByJobId(jobDescriptionId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(jobResponsibilities)
+    .where(eq(jobResponsibilities.jobDescriptionId, jobDescriptionId))
+    .orderBy(jobResponsibilities.displayOrder);
+}
+
+export async function deleteJobResponsibility(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(jobResponsibilities).where(eq(jobResponsibilities.id, id));
+}
+
+// ============================================================================
+// TECHNICAL COMPETENCY FUNCTIONS
+// ============================================================================
+
+export async function createTechnicalCompetency(comp: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(technicalCompetencies).values(comp);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(technicalCompetencies).where(eq(technicalCompetencies.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getTechnicalCompetenciesByJobId(jobDescriptionId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(technicalCompetencies)
+    .where(eq(technicalCompetencies.jobDescriptionId, jobDescriptionId))
+    .orderBy(technicalCompetencies.displayOrder);
+}
+
+export async function deleteTechnicalCompetency(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(technicalCompetencies).where(eq(technicalCompetencies.id, id));
+}
+
+// ============================================================================
+// BEHAVIORAL COMPETENCY FUNCTIONS
+// ============================================================================
+
+export async function createBehavioralCompetency(comp: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(behavioralCompetencies).values(comp);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(behavioralCompetencies).where(eq(behavioralCompetencies.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getBehavioralCompetenciesByJobId(jobDescriptionId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(behavioralCompetencies)
+    .where(eq(behavioralCompetencies.jobDescriptionId, jobDescriptionId))
+    .orderBy(behavioralCompetencies.displayOrder);
+}
+
+export async function deleteBehavioralCompetency(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(behavioralCompetencies).where(eq(behavioralCompetencies.id, id));
+}
+
+// ============================================================================
+// JOB REQUIREMENT FUNCTIONS
+// ============================================================================
+
+export async function createJobRequirement(req: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(jobRequirements).values(req);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(jobRequirements).where(eq(jobRequirements.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getJobRequirementsByJobId(jobDescriptionId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(jobRequirements)
+    .where(eq(jobRequirements.jobDescriptionId, jobDescriptionId))
+    .orderBy(jobRequirements.displayOrder);
+}
+
+export async function deleteJobRequirement(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(jobRequirements).where(eq(jobRequirements.id, id));
 }

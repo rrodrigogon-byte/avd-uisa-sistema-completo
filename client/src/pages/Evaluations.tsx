@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { ClipboardList, Plus, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 
 const statusColors = {
   draft: 'bg-gray-500',
@@ -23,6 +24,7 @@ const statusLabels = {
 
 export default function Evaluations() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
   const { data, isLoading } = trpc.evaluation.list.useQuery();
 
   if (isLoading) {
@@ -48,7 +50,7 @@ export default function Evaluations() {
             Gerencie suas avaliações recebidas e realizadas
           </p>
         </div>
-        <Button onClick={() => toast.info('Funcionalidade em desenvolvimento')}>
+        <Button onClick={() => setLocation('/evaluations/new')}>
           <Plus className="mr-2 h-4 w-4" />
           Nova Avaliação
         </Button>

@@ -139,3 +139,193 @@ export const reports = mysqlTable("reports", {
 
 export type Report = typeof reports.$inferSelect;
 export type InsertReport = typeof reports.$inferInsert;
+
+/**
+ * PIR - Plano Individual de Resultados
+ */
+export const pirs = mysqlTable("pirs", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID do usuário dono do PIR */
+  userId: int("userId").notNull(),
+  /** Título do PIR */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Descrição geral do PIR */
+  description: text("description"),
+  /** Período de vigência (ex: "2024", "2024-Q1") */
+  period: varchar("period", { length: 100 }).notNull(),
+  /** Status do PIR */
+  status: mysqlEnum("status", ["draft", "active", "completed", "cancelled"]).default("draft").notNull(),
+  /** ID da avaliação que originou o PIR (se aplicável) */
+  evaluationId: int("evaluationId"),
+  /** ID do gestor responsável */
+  managerId: int("managerId").notNull(),
+  /** Data de início */
+  startDate: timestamp("startDate").notNull(),
+  /** Data de término */
+  endDate: timestamp("endDate").notNull(),
+  approvedAt: timestamp("approvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Pir = typeof pirs.$inferSelect;
+export type InsertPir = typeof pirs.$inferInsert;
+
+/**
+ * Metas do PIR
+ */
+export const pirGoals = mysqlTable("pirGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID do PIR */
+  pirId: int("pirId").notNull(),
+  /** Título da meta */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Descrição detalhada */
+  description: text("description"),
+  /** Peso da meta no PIR (0-100) */
+  weight: int("weight").notNull(),
+  /** Meta numérica (se aplicável) */
+  targetValue: int("targetValue"),
+  /** Unidade de medida (ex: "vendas", "clientes", "%") */
+  unit: varchar("unit", { length: 50 }),
+  /** Valor atual alcançado */
+  currentValue: int("currentValue").default(0),
+  /** Status da meta */
+  status: mysqlEnum("status", ["not_started", "in_progress", "completed", "blocked"]).default("not_started").notNull(),
+  /** Data limite */
+  deadline: timestamp("deadline"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirGoal = typeof pirGoals.$inferSelect;
+export type InsertPirGoal = typeof pirGoals.$inferInsert;
+
+/**
+ * Acompanhamento de progresso das metas
+ */
+export const pirProgress = mysqlTable("pirProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID da meta */
+  goalId: int("goalId").notNull(),
+  /** Valor registrado */
+  value: int("value").notNull(),
+  /** Comentários sobre o progresso */
+  comments: text("comments"),
+  /** Usuário que registrou */
+  recordedBy: int("recordedBy").notNull(),
+  recordedAt: timestamp("recordedAt").defaultNow().notNull(),
+});
+
+export type PirProgress = typeof pirProgress.$inferSelect;
+export type InsertPirProgress = typeof pirProgress.$inferInsert;
+
+/**
+ * Descrições de Cargo
+ */
+export const jobDescriptions = mysqlTable("jobDescriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Título do cargo */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Código/referência do cargo */
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  /** Departamento */
+  department: varchar("department", { length: 100 }),
+  /** Nível hierárquico */
+  level: varchar("level", { length: 50 }),
+  /** Resumo do cargo */
+  summary: text("summary"),
+  /** Missão do cargo */
+  mission: text("mission"),
+  /** Versão da descrição */
+  version: int("version").default(1).notNull(),
+  /** Indica se é a versão ativa */
+  isActive: boolean("isActive").default(true).notNull(),
+  /** ID da versão anterior (para histórico) */
+  previousVersionId: int("previousVersionId"),
+  /** Usuário que criou/atualizou */
+  createdBy: int("createdBy").notNull(),
+  approvedBy: int("approvedBy"),
+  approvedAt: timestamp("approvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type JobDescription = typeof jobDescriptions.$inferSelect;
+export type InsertJobDescription = typeof jobDescriptions.$inferInsert;
+
+/**
+ * Responsabilidades do cargo
+ */
+export const jobResponsibilities = mysqlTable("jobResponsibilities", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID da descrição de cargo */
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  /** Descrição da responsabilidade */
+  description: text("description").notNull(),
+  /** Ordem de exibição */
+  displayOrder: int("displayOrder").default(0).notNull(),
+});
+
+export type JobResponsibility = typeof jobResponsibilities.$inferSelect;
+export type InsertJobResponsibility = typeof jobResponsibilities.$inferInsert;
+
+/**
+ * Competências Técnicas
+ */
+export const technicalCompetencies = mysqlTable("technicalCompetencies", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID da descrição de cargo */
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  /** Nome da competência */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** Descrição detalhada */
+  description: text("description"),
+  /** Nível requerido (1-5) */
+  requiredLevel: int("requiredLevel").notNull(),
+  /** Ordem de exibição */
+  displayOrder: int("displayOrder").default(0).notNull(),
+});
+
+export type TechnicalCompetency = typeof technicalCompetencies.$inferSelect;
+export type InsertTechnicalCompetency = typeof technicalCompetencies.$inferInsert;
+
+/**
+ * Competências Comportamentais
+ */
+export const behavioralCompetencies = mysqlTable("behavioralCompetencies", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID da descrição de cargo */
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  /** Nome da competência */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** Descrição detalhada */
+  description: text("description"),
+  /** Nível requerido (1-5) */
+  requiredLevel: int("requiredLevel").notNull(),
+  /** Ordem de exibição */
+  displayOrder: int("displayOrder").default(0).notNull(),
+});
+
+export type BehavioralCompetency = typeof behavioralCompetencies.$inferSelect;
+export type InsertBehavioralCompetency = typeof behavioralCompetencies.$inferInsert;
+
+/**
+ * Requisitos do Cargo
+ */
+export const jobRequirements = mysqlTable("jobRequirements", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID da descrição de cargo */
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  /** Tipo de requisito */
+  type: mysqlEnum("type", ["education", "experience", "certification", "other"]).notNull(),
+  /** Descrição do requisito */
+  description: text("description").notNull(),
+  /** Indica se é obrigatório */
+  isRequired: boolean("isRequired").default(true).notNull(),
+  /** Ordem de exibição */
+  displayOrder: int("displayOrder").default(0).notNull(),
+});
+
+export type JobRequirement = typeof jobRequirements.$inferSelect;
+export type InsertJobRequirement = typeof jobRequirements.$inferInsert;
