@@ -5296,3 +5296,929 @@ export const permissionChangeRequests = mysqlTable("permissionChangeRequests", {
 
 export type PermissionChangeRequest = typeof permissionChangeRequests.$inferSelect;
 export type InsertPermissionChangeRequest = typeof permissionChangeRequests.$inferInsert;
+
+
+// ============================================================================
+// INTEGRAÇÃO CBO - CLASSIFICAÇÃO BRASILEIRA DE OCUPAÇÕES
+// ============================================================================
+
+/**
+ * Cache local de cargos CBO
+ * Armazena dados da API CBO para busca rápida e offline
+ */
+export const cboCargos = mysqlTable("cboCargos", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Código CBO (formato: 9999-99)
+  codigoCBO: varchar("codigoCBO", { length: 10 }).notNull().unique(),
+  
+  // Título do cargo
+  titulo: varchar("titulo", { length: 500 }).notNull(),
+  
+  // Descrição sumária
+  descricaoSumaria: text("descricaoSumaria"),
+  
+  // Formação e experiência
+  formacao: text("formacao"),
+  experiencia: text("experiencia"),
+  
+  // Condições gerais de exercício
+  condicoesExercicio: text("condicoesExercicio"),
+  
+  // Recursos de trabalho
+  recursosTrabalho: json("recursosTrabalho"), // Array de strings
+  
+  // Atividades principais
+  atividadesPrincipais: json("atividadesPrincipais"), // Array de strings
+  
+  // Competências pessoais
+  competenciasPessoais: json("competenciasPessoais"), // Array de strings
+  
+  // Família ocupacional
+  familiaOcupacional: varchar("familiaOcupacional", { length: 255 }),
+  
+  // Sinônimos
+  sinonimos: json("sinonimos"), // Array de strings
+  
+  // Metadados
+  ultimaAtualizacao: datetime("ultimaAtualizacao"),
+  fonteDados: varchar("fonteDados", { length: 255 }).default("API CBO"),
+  
+  // Estatísticas de uso
+  vezesUtilizado: int("vezesUtilizado").default(0).notNull(),
+  ultimoUso: datetime("ultimoUso"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CBOCargo = typeof cboCargos.$inferSelect;
+export type InsertCBOCargo = typeof cboCargos.$inferInsert;
+
+/**
+ * Histórico de buscas CBO
+ * Rastreia buscas para melhorar sugestões
+ */
+export const cboSearchHistory = mysqlTable("cboSearchHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  userId: int("userId").notNull(),
+  searchTerm: varchar("searchTerm", { length: 255 }).notNull(),
+  codigoCBOSelecionado: varchar("codigoCBOSelecionado", { length: 10 }),
+  
+  resultadosEncontrados: int("resultadosEncontrados").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CBOSearchHistory = typeof cboSearchHistory.$inferSelect;
+export type InsertCBOSearchHistory = typeof cboSearchHistory.$inferInsert;
+
+// ============================================================================
+// FLUXO DE APROVAÇÃO DE DESCRIÇÃO DE CARGOS - 4 NÍVEIS
+// ============================================================================
+
+/**
+ * Workflow de aprovação de descrição de cargos
+ * Estende o sistema existente para 4 níveis
+ */
+export const jobDescriptionWorkflow = mysqlTable("jobDescriptionWorkflow", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  
+  // Status geral do workflow
+  status: mysqlEnum("status", [
+    "draft",
+    "pending_cs_specialist",  // Nível 1: Especialista C&S
+    "pending_direct_leader",  // Nível 2: Líder Direto
+    "pending_hr_manager",     // Nível 3: Gerente RH
+    "pending_gai_director",   // Nível 4: Diretor GAI
+    "approved",
+    "rejected"
+  ]).default("draft").notNull(),
+  
+  // Nível atual de aprovação (1-4)
+  currentLevel: int("currentLevel").default(1).notNull(),
+  
+  // Aprovadores designados para cada nível
+  csSpecialistId: int("csSpecialistId"), // Nível 1
+  directLeaderId: int("directLeaderId"), // Nível 2
+  hrManagerId: int("hrManagerId"),       // Nível 3
+  gaiDirectorId: int("gaiDirectorId"),   // Nível 4
+  
+  // Datas de aprovação de cada nível
+  csSpecialistApprovedAt: datetime("csSpecialistApprovedAt"),
+  directLeaderApprovedAt: datetime("directLeaderApprovedAt"),
+  hrManagerApprovedAt: datetime("hrManagerApprovedAt"),
+  gaiDirectorApprovedAt: datetime("gaiDirectorApprovedAt"),
+  
+  // Comentários de cada nível
+  csSpecialistComments: text("csSpecialistComments"),
+  directLeaderComments: text("directLeaderComments"),
+  hrManagerComments: text("hrManagerComments"),
+  gaiDirectorComments: text("gaiDirectorComments"),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type JobDescriptionWorkflow = typeof jobDescriptionWorkflow.$inferSelect;
+export type InsertJobDescriptionWorkflow = typeof jobDescriptionWorkflow.$inferInsert;
+
+/**
+ * Histórico de ações no workflow
+ * Rastreia todas as mudanças de status
+ */
+export const jobDescriptionWorkflowHistory = mysqlTable("jobDescriptionWorkflowHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  workflowId: int("workflowId").notNull(),
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  
+  // Ação realizada
+  action: mysqlEnum("action", [
+    "created",
+    "submitted",
+    "approved",
+    "rejected",
+    "returned",
+    "cancelled"
+  ]).notNull(),
+  
+  // Nível em que a ação ocorreu
+  level: int("level").notNull(),
+  
+  // Usuário que realizou a ação
+  userId: int("userId").notNull(),
+  userName: varchar("userName", { length: 255 }),
+  userRole: varchar("userRole", { length: 100 }),
+  
+  // Comentários
+  comments: text("comments"),
+  
+  // Status anterior e novo
+  previousStatus: varchar("previousStatus", { length: 50 }),
+  newStatus: varchar("newStatus", { length: 50 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type JobDescriptionWorkflowHistory = typeof jobDescriptionWorkflowHistory.$inferSelect;
+export type InsertJobDescriptionWorkflowHistory = typeof jobDescriptionWorkflowHistory.$inferInsert;
+
+/**
+ * Aprovações em lote
+ * Permite aprovar múltiplas descrições de cargos de uma vez
+ */
+export const batchApprovals = mysqlTable("batchApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificador do lote
+  batchId: varchar("batchId", { length: 100 }).notNull().unique(),
+  
+  // Aprovador
+  approverId: int("approverId").notNull(),
+  approverName: varchar("approverName", { length: 255 }),
+  
+  // Nível de aprovação
+  approvalLevel: int("approvalLevel").notNull(),
+  
+  // Descrições de cargos no lote
+  jobDescriptionIds: json("jobDescriptionIds").notNull(), // Array de IDs
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "processing", "completed", "failed"]).default("pending").notNull(),
+  
+  // Resultados
+  totalItems: int("totalItems").notNull(),
+  approvedCount: int("approvedCount").default(0).notNull(),
+  rejectedCount: int("rejectedCount").default(0).notNull(),
+  failedCount: int("failedCount").default(0).notNull(),
+  
+  // Comentário geral do lote
+  batchComments: text("batchComments"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type BatchApproval = typeof batchApprovals.$inferSelect;
+export type InsertBatchApproval = typeof batchApprovals.$inferInsert;
+
+// ============================================================================
+// PIR DE INTEGRIDADE APRIMORADO
+// ============================================================================
+
+/**
+ * Categorias de testes de integridade
+ */
+export const integrityTestCategories = mysqlTable("integrityTestCategories", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  name: varchar("name", { length: 255 }).notNull(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  description: text("description"),
+  
+  // Peso da categoria no cálculo final
+  weight: int("weight").default(1).notNull(),
+  
+  active: boolean("active").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type IntegrityTestCategory = typeof integrityTestCategories.$inferSelect;
+export type InsertIntegrityTestCategory = typeof integrityTestCategories.$inferInsert;
+
+/**
+ * Questões de testes de integridade e ética
+ */
+export const integrityQuestions = mysqlTable("integrityQuestions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  categoryId: int("categoryId").notNull(),
+  
+  // Texto da questão
+  questionText: text("questionText").notNull(),
+  
+  // Tipo de questão
+  questionType: mysqlEnum("questionType", [
+    "likert_scale",      // Escala Likert 1-5
+    "multiple_choice",   // Múltipla escolha
+    "true_false",        // Verdadeiro/Falso
+    "scenario"           // Cenário situacional
+  ]).notNull(),
+  
+  // Opções de resposta (para múltipla escolha)
+  options: json("options"), // Array de {value, label, score}
+  
+  // Resposta esperada (para validação cruzada)
+  expectedAnswer: varchar("expectedAnswer", { length: 50 }),
+  
+  // Indicadores
+  measuresEthics: boolean("measuresEthics").default(false).notNull(),
+  measuresIntegrity: boolean("measuresIntegrity").default(false).notNull(),
+  measuresHonesty: boolean("measuresHonesty").default(false).notNull(),
+  measuresReliability: boolean("measuresReliability").default(false).notNull(),
+  
+  // Questão de verificação cruzada
+  isCrossValidation: boolean("isCrossValidation").default(false).notNull(),
+  relatedQuestionId: int("relatedQuestionId"), // ID da questão relacionada
+  
+  // Detecção de respostas socialmente desejáveis
+  socialDesirabilityFlag: boolean("socialDesirabilityFlag").default(false).notNull(),
+  
+  active: boolean("active").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type IntegrityQuestion = typeof integrityQuestions.$inferSelect;
+export type InsertIntegrityQuestion = typeof integrityQuestions.$inferInsert;
+
+/**
+ * Respostas dos testes de integridade
+ */
+export const integrityResponses = mysqlTable("integrityResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  questionId: int("questionId").notNull(),
+  
+  // Resposta do candidato
+  response: text("response").notNull(),
+  responseValue: int("responseValue"), // Valor numérico da resposta
+  
+  // Tempo de resposta (em segundos)
+  responseTime: int("responseTime"),
+  
+  // Flags de análise
+  isInconsistent: boolean("isInconsistent").default(false).notNull(),
+  isSociallyDesirable: boolean("isSociallyDesirable").default(false).notNull(),
+  
+  // Pontuação
+  score: int("score"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type IntegrityResponse = typeof integrityResponses.$inferSelect;
+export type InsertIntegrityResponse = typeof integrityResponses.$inferInsert;
+
+/**
+ * Análise de padrões de respostas
+ */
+export const responsePatternAnalysis = mysqlTable("responsePatternAnalysis", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  
+  // Indicadores de consistência
+  consistencyScore: int("consistencyScore"), // 0-100
+  inconsistentResponsesCount: int("inconsistentResponsesCount").default(0).notNull(),
+  
+  // Indicadores de desejabilidade social
+  socialDesirabilityScore: int("socialDesirabilityScore"), // 0-100
+  socialDesirableResponsesCount: int("socialDesirableResponsesCount").default(0).notNull(),
+  
+  // Indicadores de tempo
+  averageResponseTime: int("averageResponseTime"), // Em segundos
+  tooFastResponsesCount: int("tooFastResponsesCount").default(0).notNull(),
+  tooSlowResponsesCount: int("tooSlowResponsesCount").default(0).notNull(),
+  
+  // Padrões identificados
+  patternsDetected: json("patternsDetected"), // Array de padrões
+  
+  // Flags de alerta
+  hasInconsistencies: boolean("hasInconsistencies").default(false).notNull(),
+  hasSocialDesirability: boolean("hasSocialDesirability").default(false).notNull(),
+  hasAnomalousTimings: boolean("hasAnomalousTimings").default(false).notNull(),
+  
+  // Confiabilidade geral
+  reliabilityScore: int("reliabilityScore"), // 0-100
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ResponsePatternAnalysis = typeof responsePatternAnalysis.$inferSelect;
+export type InsertResponsePatternAnalysis = typeof responsePatternAnalysis.$inferInsert;
+
+/**
+ * Indicadores de ética e integridade
+ */
+export const ethicsIndicators = mysqlTable("ethicsIndicators", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  
+  // Scores por dimensão
+  ethicsScore: int("ethicsScore"), // 0-100
+  integrityScore: int("integrityScore"), // 0-100
+  honestyScore: int("honestyScore"), // 0-100
+  reliabilityScore: int("reliabilityScore"), // 0-100
+  
+  // Score geral
+  overallScore: int("overallScore"), // 0-100
+  
+  // Classificação
+  classification: mysqlEnum("classification", [
+    "muito_baixo",
+    "baixo",
+    "medio",
+    "alto",
+    "muito_alto"
+  ]),
+  
+  // Recomendação
+  recommendation: text("recommendation"),
+  
+  // Alertas
+  alerts: json("alerts"), // Array de alertas
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EthicsIndicator = typeof ethicsIndicators.$inferSelect;
+export type InsertEthicsIndicator = typeof ethicsIndicators.$inferInsert;
+
+// ============================================================================
+// SISTEMA DE GRAVAÇÃO E ANÁLISE DE VÍDEOS
+// ============================================================================
+
+/**
+ * Gravações de vídeo durante testes PIR
+ */
+export const pirVideoRecordings = mysqlTable("pirVideoRecordings", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  
+  // Arquivo de vídeo
+  videoUrl: varchar("videoUrl", { length: 512 }).notNull(),
+  videoS3Key: varchar("videoS3Key", { length: 512 }).notNull(),
+  
+  // Metadados do vídeo
+  duration: int("duration"), // Duração em segundos
+  fileSize: int("fileSize"), // Tamanho em bytes
+  format: varchar("format", { length: 50 }), // mp4, webm, etc
+  resolution: varchar("resolution", { length: 50 }), // 1920x1080, etc
+  
+  // Status de processamento
+  processingStatus: mysqlEnum("processingStatus", [
+    "uploaded",
+    "processing",
+    "completed",
+    "failed"
+  ]).default("uploaded").notNull(),
+  
+  // Timestamps de questões
+  questionTimestamps: json("questionTimestamps"), // Array de {questionId, startTime, endTime}
+  
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  processedAt: datetime("processedAt"),
+});
+
+export type PIRVideoRecording = typeof pirVideoRecordings.$inferSelect;
+export type InsertPIRVideoRecording = typeof pirVideoRecordings.$inferInsert;
+
+/**
+ * Análise de micro-expressões faciais
+ */
+export const facialMicroExpressions = mysqlTable("facialMicroExpressions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  videoRecordingId: int("videoRecordingId").notNull(),
+  questionId: int("questionId"),
+  
+  // Timestamp no vídeo
+  timestamp: int("timestamp").notNull(), // Em segundos
+  
+  // Expressão detectada
+  expression: mysqlEnum("expression", [
+    "neutral",
+    "happiness",
+    "sadness",
+    "anger",
+    "fear",
+    "disgust",
+    "surprise",
+    "contempt"
+  ]).notNull(),
+  
+  // Intensidade (0-100)
+  intensity: int("intensity").notNull(),
+  
+  // Confiança da detecção (0-100)
+  confidence: int("confidence").notNull(),
+  
+  // Duração da expressão
+  duration: int("duration"), // Em milissegundos
+  
+  // Flag de micro-expressão (< 500ms)
+  isMicroExpression: boolean("isMicroExpression").default(false).notNull(),
+  
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+});
+
+export type FacialMicroExpression = typeof facialMicroExpressions.$inferSelect;
+export type InsertFacialMicroExpression = typeof facialMicroExpressions.$inferInsert;
+
+/**
+ * Análise de linguagem corporal
+ */
+export const bodyLanguageAnalysis = mysqlTable("bodyLanguageAnalysis", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  videoRecordingId: int("videoRecordingId").notNull(),
+  questionId: int("questionId"),
+  
+  // Timestamp no vídeo
+  timestamp: int("timestamp").notNull(),
+  
+  // Comportamentos detectados
+  headMovement: varchar("headMovement", { length: 50 }), // nod, shake, tilt, etc
+  eyeContact: mysqlEnum("eyeContact", ["direct", "averted", "looking_away", "closed"]),
+  posture: mysqlEnum("posture", ["upright", "slouched", "leaning_forward", "leaning_back"]),
+  handGestures: varchar("handGestures", { length: 255 }), // touching_face, fidgeting, etc
+  
+  // Indicadores de nervosismo
+  nervousnessIndicators: json("nervousnessIndicators"), // Array de indicadores
+  nervousnessScore: int("nervousnessScore"), // 0-100
+  
+  // Indicadores de confiança
+  confidenceIndicators: json("confidenceIndicators"),
+  confidenceScore: int("confidenceScore"), // 0-100
+  
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+});
+
+export type BodyLanguageAnalysis = typeof bodyLanguageAnalysis.$inferSelect;
+export type InsertBodyLanguageAnalysis = typeof bodyLanguageAnalysis.$inferInsert;
+
+/**
+ * Análise de comportamento verbal
+ */
+export const verbalBehaviorAnalysis = mysqlTable("verbalBehaviorAnalysis", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  videoRecordingId: int("videoRecordingId").notNull(),
+  questionId: int("questionId"),
+  
+  // Transcrição de áudio (se disponível)
+  transcription: text("transcription"),
+  
+  // Análise de tom de voz
+  tonePitch: varchar("tonePitch", { length: 50 }), // high, medium, low
+  toneVariation: int("toneVariation"), // 0-100
+  speakingRate: int("speakingRate"), // Palavras por minuto
+  
+  // Pausas
+  pauseCount: int("pauseCount").default(0).notNull(),
+  averagePauseDuration: int("averagePauseDuration"), // Em milissegundos
+  longestPause: int("longestPause"), // Em milissegundos
+  
+  // Hesitações
+  hesitationCount: int("hesitationCount").default(0).notNull(),
+  fillerWordsCount: int("fillerWordsCount").default(0).notNull(), // "uhm", "ah", etc
+  
+  // Indicadores emocionais
+  emotionalTone: mysqlEnum("emotionalTone", [
+    "neutral",
+    "positive",
+    "negative",
+    "anxious",
+    "confident"
+  ]),
+  
+  // Confiança na análise
+  analysisConfidence: int("analysisConfidence"), // 0-100
+  
+  analyzedAt: timestamp("analyzedAt").defaultNow().notNull(),
+});
+
+export type VerbalBehaviorAnalysis = typeof verbalBehaviorAnalysis.$inferSelect;
+export type InsertVerbalBehaviorAnalysis = typeof verbalBehaviorAnalysis.$inferInsert;
+
+/**
+ * Marcações de momentos relevantes no vídeo
+ */
+export const videoMarkers = mysqlTable("videoMarkers", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  videoRecordingId: int("videoRecordingId").notNull(),
+  
+  // Timestamp
+  timestamp: int("timestamp").notNull(),
+  
+  // Tipo de marcação
+  markerType: mysqlEnum("markerType", [
+    "inconsistency",
+    "high_stress",
+    "deception_indicator",
+    "confidence_peak",
+    "notable_expression",
+    "manual_note"
+  ]).notNull(),
+  
+  // Descrição
+  description: text("description"),
+  
+  // Severidade/Importância
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  
+  // Criado automaticamente ou manualmente
+  isAutomatic: boolean("isAutomatic").default(true).notNull(),
+  createdBy: int("createdBy"), // ID do usuário (se manual)
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type VideoMarker = typeof videoMarkers.$inferSelect;
+export type InsertVideoMarker = typeof videoMarkers.$inferInsert;
+
+/**
+ * Relatório consolidado de análise de vídeo
+ */
+export const videoAnalysisReports = mysqlTable("videoAnalysisReports", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  pirAssessmentId: int("pirAssessmentId").notNull(),
+  videoRecordingId: int("videoRecordingId").notNull(),
+  
+  // Scores consolidados
+  overallBehaviorScore: int("overallBehaviorScore"), // 0-100
+  facialExpressionScore: int("facialExpressionScore"), // 0-100
+  bodyLanguageScore: int("bodyLanguageScore"), // 0-100
+  verbalBehaviorScore: int("verbalBehaviorScore"), // 0-100
+  
+  // Indicadores de alerta
+  deceptionIndicators: json("deceptionIndicators"),
+  stressIndicators: json("stressIndicators"),
+  inconsistencyIndicators: json("inconsistencyIndicators"),
+  
+  // Contadores
+  totalMicroExpressions: int("totalMicroExpressions").default(0).notNull(),
+  totalMarkers: int("totalMarkers").default(0).notNull(),
+  criticalMarkersCount: int("criticalMarkersCount").default(0).notNull(),
+  
+  // Resumo executivo
+  executiveSummary: text("executiveSummary"),
+  
+  // Recomendações
+  recommendations: json("recommendations"),
+  
+  // Confiabilidade da análise
+  analysisReliability: int("analysisReliability"), // 0-100
+  
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VideoAnalysisReport = typeof videoAnalysisReports.$inferSelect;
+export type InsertVideoAnalysisReport = typeof videoAnalysisReports.$inferInsert;
+
+// ============================================================================
+// SISTEMA DE ENVIO DE EMAILS E TEMPLATES
+// ============================================================================
+
+/**
+ * Templates de email para avaliações
+ */
+export const emailTemplates = mysqlTable("emailTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificador único do template
+  templateCode: varchar("templateCode", { length: 100 }).notNull().unique(),
+  
+  // Nome e descrição
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Tipo de template
+  templateType: mysqlEnum("templateType", [
+    "evaluation_invitation",
+    "evaluation_reminder",
+    "evaluation_completed",
+    "approval_request",
+    "approval_reminder",
+    "approval_completed",
+    "pir_invitation",
+    "pir_results",
+    "general_notification"
+  ]).notNull(),
+  
+  // Conteúdo do email
+  subject: varchar("subject", { length: 500 }).notNull(),
+  bodyHtml: text("bodyHtml").notNull(),
+  bodyText: text("bodyText"),
+  
+  // Variáveis disponíveis
+  availableVariables: json("availableVariables"), // Array de variáveis
+  
+  // Configurações
+  fromName: varchar("fromName", { length: 255 }),
+  replyTo: varchar("replyTo", { length: 320 }),
+  
+  active: boolean("active").default(true).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
+
+/**
+ * Envios de email agendados
+ */
+export const scheduledEmails = mysqlTable("scheduledEmails", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  templateId: int("templateId").notNull(),
+  
+  // Destinatários
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  recipientName: varchar("recipientName", { length: 255 }),
+  recipientUserId: int("recipientUserId"),
+  
+  // Dados para substituição de variáveis
+  templateData: json("templateData").notNull(),
+  
+  // Agendamento
+  scheduledFor: datetime("scheduledFor").notNull(),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "pending",
+    "sending",
+    "sent",
+    "failed",
+    "cancelled"
+  ]).default("pending").notNull(),
+  
+  // Tentativas
+  attempts: int("attempts").default(0).notNull(),
+  maxAttempts: int("maxAttempts").default(3).notNull(),
+  lastAttemptAt: datetime("lastAttemptAt"),
+  
+  // Resultado
+  sentAt: datetime("sentAt"),
+  errorMessage: text("errorMessage"),
+  
+  // Rastreamento
+  trackingId: varchar("trackingId", { length: 100 }).unique(),
+  opened: boolean("opened").default(false).notNull(),
+  openedAt: datetime("openedAt"),
+  clicked: boolean("clicked").default(false).notNull(),
+  clickedAt: datetime("clickedAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ScheduledEmail = typeof scheduledEmails.$inferSelect;
+export type InsertScheduledEmail = typeof scheduledEmails.$inferInsert;
+
+/**
+ * Envios em lote de emails
+ */
+export const batchEmailSends = mysqlTable("batchEmailSends", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificador do lote
+  batchId: varchar("batchId", { length: 100 }).notNull().unique(),
+  
+  templateId: int("templateId").notNull(),
+  
+  // Informações do lote
+  totalRecipients: int("totalRecipients").notNull(),
+  sentCount: int("sentCount").default(0).notNull(),
+  failedCount: int("failedCount").default(0).notNull(),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "pending",
+    "processing",
+    "completed",
+    "partially_completed",
+    "failed"
+  ]).default("pending").notNull(),
+  
+  // Agendamento
+  scheduledFor: datetime("scheduledFor"),
+  
+  // Criado por
+  createdBy: int("createdBy").notNull(),
+  createdByName: varchar("createdByName", { length: 255 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  startedAt: datetime("startedAt"),
+  completedAt: datetime("completedAt"),
+});
+
+export type BatchEmailSend = typeof batchEmailSends.$inferSelect;
+export type InsertBatchEmailSend = typeof batchEmailSends.$inferInsert;
+
+/**
+ * Log detalhado de envios de email
+ */
+export const emailSendLogs = mysqlTable("emailSendLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  scheduledEmailId: int("scheduledEmailId"),
+  batchEmailId: int("batchEmailId"),
+  
+  // Informações do email
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["sent", "failed", "bounced", "complained"]).notNull(),
+  
+  // Detalhes do envio
+  messageId: varchar("messageId", { length: 255 }),
+  errorMessage: text("errorMessage"),
+  
+  // Rastreamento
+  opened: boolean("opened").default(false).notNull(),
+  openedAt: datetime("openedAt"),
+  clicked: boolean("clicked").default(false).notNull(),
+  clickedAt: datetime("clickedAt"),
+  
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+});
+
+export type EmailSendLog = typeof emailSendLogs.$inferSelect;
+export type InsertEmailSendLog = typeof emailSendLogs.$inferInsert;
+
+// ============================================================================
+// RELATÓRIOS DETALHADOS DO PIR
+// ============================================================================
+
+/**
+ * Relatórios individuais detalhados do PIR
+ */
+export const pirDetailedReports = mysqlTable("pirDetailedReports", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  pirAssessmentId: int("pirAssessmentId").notNull().unique(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Scores consolidados
+  behavioralProfileScore: int("behavioralProfileScore"), // 0-100
+  integrityScore: int("integrityScore"), // 0-100
+  ethicsScore: int("ethicsScore"), // 0-100
+  videoAnalysisScore: int("videoAnalysisScore"), // 0-100
+  overallScore: int("overallScore"), // 0-100
+  
+  // Perfil comportamental
+  dominantDimension: varchar("dominantDimension", { length: 50 }),
+  dimensionScores: json("dimensionScores"), // {IP, ID, IC, ES, FL, AU}
+  
+  // Análise de integridade
+  integrityIndicators: json("integrityIndicators"),
+  ethicsIndicators: json("ethicsIndicators"),
+  consistencyAnalysis: json("consistencyAnalysis"),
+  
+  // Análise de vídeo
+  videoAnalysisSummary: json("videoAnalysisSummary"),
+  criticalMarkers: json("criticalMarkers"),
+  
+  // Comparação com perfil ideal do cargo
+  positionId: int("positionId"),
+  positionTitle: varchar("positionTitle", { length: 255 }),
+  fitScore: int("fitScore"), // 0-100 - compatibilidade com o cargo
+  fitAnalysis: json("fitAnalysis"),
+  
+  // Compatibilidade com cultura organizacional
+  culturalFitScore: int("culturalFitScore"), // 0-100
+  culturalFitAnalysis: json("culturalFitAnalysis"),
+  
+  // Pontos fortes e áreas de desenvolvimento
+  strengths: json("strengths"), // Array de pontos fortes
+  developmentAreas: json("developmentAreas"), // Array de áreas a desenvolver
+  
+  // Sugestões de desenvolvimento
+  developmentSuggestions: json("developmentSuggestions"),
+  
+  // Recomendações
+  hiringRecommendation: mysqlEnum("hiringRecommendation", [
+    "highly_recommended",
+    "recommended",
+    "recommended_with_reservations",
+    "not_recommended",
+    "strongly_not_recommended"
+  ]),
+  recommendationRationale: text("recommendationRationale"),
+  
+  // Alertas e flags
+  alerts: json("alerts"),
+  redFlags: json("redFlags"),
+  
+  // Relatório em PDF
+  reportPdfUrl: varchar("reportPdfUrl", { length: 512 }),
+  reportPdfS3Key: varchar("reportPdfS3Key", { length: 512 }),
+  
+  // Metadados
+  generatedBy: int("generatedBy"),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PIRDetailedReport = typeof pirDetailedReports.$inferSelect;
+export type InsertPIRDetailedReport = typeof pirDetailedReports.$inferInsert;
+
+/**
+ * Relatórios consolidados por departamento/equipe
+ */
+export const pirConsolidatedReports = mysqlTable("pirConsolidatedReports", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Escopo do relatório
+  reportType: mysqlEnum("reportType", ["department", "position", "team", "company"]).notNull(),
+  departmentId: int("departmentId"),
+  positionId: int("positionId"),
+  
+  // Período
+  periodStart: datetime("periodStart").notNull(),
+  periodEnd: datetime("periodEnd").notNull(),
+  
+  // Estatísticas gerais
+  totalAssessments: int("totalAssessments").notNull(),
+  averageOverallScore: int("averageOverallScore"),
+  averageIntegrityScore: int("averageIntegrityScore"),
+  averageEthicsScore: int("averageEthicsScore"),
+  
+  // Distribuição de scores
+  scoreDistribution: json("scoreDistribution"),
+  
+  // Análise de tendências
+  trends: json("trends"),
+  
+  // Comparações
+  departmentComparisons: json("departmentComparisons"),
+  positionComparisons: json("positionComparisons"),
+  
+  // Insights
+  keyInsights: json("keyInsights"),
+  recommendations: json("recommendations"),
+  
+  // Relatório em PDF
+  reportPdfUrl: varchar("reportPdfUrl", { length: 512 }),
+  reportPdfS3Key: varchar("reportPdfS3Key", { length: 512 }),
+  
+  generatedBy: int("generatedBy").notNull(),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+});
+
+export type PIRConsolidatedReport = typeof pirConsolidatedReports.$inferSelect;
+export type InsertPIRConsolidatedReport = typeof pirConsolidatedReports.$inferInsert;

@@ -113,6 +113,9 @@ import { testNotificationsRouter } from "./routers/testNotificationsRouter";
 import { htmlImportRouter } from "./routers/htmlImportRouter";
 import { pirDashboardRouter } from "./routers/pirDashboardRouter";
 import { accessControlRouter } from "./accessControlRouter";
+import { cboRouter } from "./routers/cboRouter";
+import { jobDescriptionWorkflowRouter } from "./routers/jobDescriptionWorkflowRouter";
+import { integrityRouter } from "./routers/integrityRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -252,6 +255,11 @@ export const appRouter = router({
   pir: pirRouter,
   pirExport: pirExportRouter,
   accessControl: accessControlRouter,
+  
+  // Novos routers - Sistema de Cargos CBO e Aprovações (14/12/2025)
+  cbo: cboRouter,
+  jobDescriptionWorkflow: jobDescriptionWorkflowRouter,
+  integrity: integrityRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

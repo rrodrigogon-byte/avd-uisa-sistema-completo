@@ -931,3 +931,150 @@
 - [ ] Impedir cadastro de funcionários duplicados (validar por chapa)
 - [ ] Validar formato de email
 - [ ] Validar campos obrigatórios (chapa, nome, cargo, departamento)
+
+
+## 🆕 NOVOS REQUISITOS - SISTEMA DE CARGOS E PIR APRIMORADO (14/12/2025)
+
+### Sistema de Busca de Cargos com Integração CBO
+- [x] Criar tabela cboCargos para cache local de cargos CBO
+- [x] Criar tabela cboSearchHistory para rastreamento de buscas
+- [ ] Implementar busca de cargos na base CBO (Classificação Brasileira de Ocupações)
+- [ ] Criar integração com API CBO para busca e importação de dados
+- [ ] Implementar preenchimento automático de líder/hierarquia ao selecionar cargo
+- [ ] Adicionar sugestões inteligentes de cargos baseadas em histórico
+- [ ] Implementar validação de dados CBO importados
+
+### Fluxo de Aprovação de Descrição de Cargos (4 Níveis)
+- [x] Criar tabela jobDescriptionWorkflow para workflow de 4 níveis
+- [x] Criar tabela jobDescriptionWorkflowHistory para histórico de ações
+- [x] Criar tabela batchApprovals para aprovações em lote
+- [ ] Implementar aprovação em 4 níveis:
+  - [ ] Nível 1: Especialista C&S (Cargos e Salários)
+  - [ ] Nível 2: Líder Direto
+  - [ ] Nível 3: Gerente RH
+  - [ ] Nível 4: Diretor GAI
+- [ ] Implementar aprovação individual de descrições de cargos
+- [ ] Implementar aprovação em lote (múltiplas descrições de uma vez)
+- [ ] Criar histórico de aprovações com comentários
+- [ ] Implementar notificações automáticas para cada nível de aprovação
+- [ ] Criar dashboard de acompanhamento de aprovações pendentes
+- [ ] Adicionar funcionalidade de rejeição com motivo
+- [ ] Implementar reenvio após correções
+
+### Formulário Dinâmico de Descrição de Cargos
+- [ ] Criar formulário dinâmico para descrição de cargos
+- [ ] Permitir que Líder cadastre novas competências diretamente no formulário
+- [ ] Permitir que C&S cadastre novas escolaridades diretamente no formulário
+- [ ] Implementar campos customizáveis por tipo de cargo
+- [ ] Adicionar validação de campos obrigatórios
+- [ ] Implementar preview da descrição de cargo formatada
+- [ ] Criar salvamento automático de rascunho
+- [ ] Adicionar sugestões de competências baseadas no cargo CBO
+- [ ] Implementar duplicação de descrições de cargos similares
+
+### PIR de Integridade Aprimorado
+- [x] Criar tabela integrityTestCategories para categorias de testes
+- [x] Criar tabela integrityQuestions para questões de ética e integridade
+- [x] Criar tabela integrityResponses para respostas dos testes
+- [x] Criar tabela responsePatternAnalysis para análise de padrões
+- [x] Criar tabela ethicsIndicators para indicadores de ética
+- [ ] Expandir testes comportamentais do PIR
+- [ ] Adicionar testes de ética e integridade
+- [ ] Implementar análise de padrões de respostas inconsistentes
+- [ ] Criar indicadores de confiabilidade das respostas
+- [ ] Adicionar questões de verificação cruzada
+- [ ] Implementar detecção de respostas socialmente desejáveis
+- [ ] Criar relatório detalhado com indicadores de ética
+
+### Sistema de Gravação e Análise de Vídeos
+- [x] Criar tabela pirVideoRecordings para gravações de vídeo
+- [x] Criar tabela facialMicroExpressions para análise facial
+- [x] Criar tabela bodyLanguageAnalysis para linguagem corporal
+- [x] Criar tabela verbalBehaviorAnalysis para comportamento verbal
+- [x] Criar tabela videoMarkers para marcações de momentos relevantes
+- [x] Criar tabela videoAnalysisReports para relatórios consolidados
+- [ ] Implementar gravação de vídeo durante testes PIR
+- [ ] Criar upload de vídeos para S3
+- [ ] Implementar análise de micro-expressões faciais (se disponível)
+- [ ] Adicionar análise de linguagem corporal
+- [ ] Implementar detecção de padrões de comportamento verbal
+- [ ] Criar marcação automática de momentos relevantes
+- [ ] Implementar visualização sincronizada de vídeo e respostas
+- [ ] Adicionar análise de tom de voz e pausas
+- [ ] Criar relatório consolidado de análise de vídeo
+
+### Sistema de Envio de Avaliações por Email
+- [x] Criar tabela emailTemplates para templates de email
+- [x] Criar tabela scheduledEmails para envios agendados
+- [x] Criar tabela batchEmailSends para envios em lote
+- [x] Criar tabela emailSendLogs para log detalhado
+- [ ] Criar templates de email para envio de avaliações
+- [ ] Implementar envio de link de avaliação para funcionários
+- [ ] Adicionar lembretes automáticos para avaliações pendentes
+- [ ] Criar sistema de tracking de abertura de emails
+- [ ] Implementar confirmação de conclusão de avaliação
+- [ ] Adicionar envio de resultados para gestores
+- [ ] Criar log completo de emails enviados
+- [ ] Implementar agendamento de envios em lote
+
+### Relatórios Detalhados do PIR
+- [x] Criar tabela pirDetailedReports para relatórios individuais
+- [x] Criar tabela pirConsolidatedReports para relatórios consolidados
+- [ ] Criar relatório individual detalhado do PIR
+- [ ] Adicionar gráficos de perfil comportamental
+- [ ] Implementar comparação com perfil ideal do cargo
+- [ ] Criar indicadores de ética e integridade
+- [ ] Adicionar análise de compatibilidade com cultura organizacional
+- [ ] Implementar sugestões de desenvolvimento baseadas no PIR
+- [ ] Criar exportação de relatório em PDF profissional
+- [ ] Adicionar relatórios consolidados por departamento/equipe
+
+### Integração e Testes
+- [ ] Integrar sistema de cargos CBO com fluxo de aprovação
+- [ ] Integrar PIR aprimorado com sistema de vídeos
+- [ ] Integrar envio de emails com todo o fluxo AVD
+- [ ] Criar testes automatizados para novos módulos
+- [ ] Testar fluxo completo de aprovação de cargos
+- [ ] Testar gravação e análise de vídeos
+- [ ] Validar envio de emails e notificações
+- [ ] Testar geração de relatórios detalhados
+
+
+## ✅ PROGRESSO - ROUTERS tRPC CRIADOS (14/12/2025)
+
+### Routers Implementados
+- [x] **cboRouter** - Integração CBO com busca, cache e sugestões
+  - search - Busca cargos no cache local
+  - getByCodigo - Busca cargo específico por código CBO
+  - importCargo - Importa cargo da API CBO
+  - getSuggestions - Sugestões baseadas em histórico
+  - getTopCargos - Cargos mais utilizados
+  - updateCache - Atualiza cache de cargo
+  - searchApi - Busca direta na API CBO
+
+- [x] **jobDescriptionWorkflowRouter** - Workflow de aprovação 4 níveis
+  - create - Cria workflow de aprovação
+  - getByJobDescriptionId - Obtém workflow por ID
+  - approve - Aprova em nível específico (1-4)
+  - reject - Rejeita descrição de cargo
+  - getHistory - Histórico completo do workflow
+  - getPendingApprovals - Pendências por nível
+  - createBatch - Cria lote de aprovações
+  - processBatch - Processa aprovação em lote
+  - listMyBatches - Lista lotes do usuário
+  - getApprovalStats - Estatísticas de aprovações
+
+- [x] **integrityRouter** - Testes de integridade e ética PIR
+  - createCategory - Cria categoria de teste
+  - listCategories - Lista categorias ativas
+  - createQuestion - Cria questão de integridade
+  - listQuestionsByCategory - Lista questões por categoria
+  - listAllQuestions - Lista todas as questões
+  - saveResponse - Salva resposta individual
+  - saveMultipleResponses - Salva múltiplas respostas
+  - getResponses - Obtém respostas de avaliação
+  - analyzePatterns - Analisa padrões de respostas
+  - calculateEthics - Calcula indicadores de ética
+  - getCompleteAnalysis - Análise completa
+  - checkCrossValidation - Verifica respostas cruzadas
+  - processCompleteAnalysis - Processa análise completa (padrões + ética + validação)
