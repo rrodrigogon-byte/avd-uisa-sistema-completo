@@ -163,6 +163,12 @@ export const pirDashboardRouter = router({
       });
 
       // Calcular média por dimensão para cada avaliação
+      if (!answersByAssessment || Object.keys(answersByAssessment).length === 0) {
+        return {
+          IP: 0, ID: 0, IC: 0, ES: 0, FL: 0, AU: 0
+        };
+      }
+
       Object.values(answersByAssessment).forEach(assessmentAnswers => {
         const dimensionSums: Record<string, { sum: number; count: number }> = {
           IP: { sum: 0, count: 0 },
@@ -313,7 +319,7 @@ export const pirDashboardRouter = router({
     const pos = await db
       .select()
       .from(positions)
-      .orderBy(positions.name);
+      .orderBy(positions.title);
 
     return pos;
   }),
