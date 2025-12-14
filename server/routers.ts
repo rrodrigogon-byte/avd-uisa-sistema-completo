@@ -48,6 +48,8 @@ import { pulseRouter } from "./routers/pulseRouter";
 import { positionsRouter } from "./routers/positionsRouter";
 import { jobDescriptionsRouter } from "./routers/jobDescriptionsRouter";
 import { jobDescriptionsPDFRouter } from "./routers/jobDescriptionsPDF";
+import { pirRouter } from "./pirRouter";
+import { pirExportRouter } from "./pirExportRouter";
 import { productivityRouter } from "./routers/productivityRouter";
 import { attachmentsRouter } from "./routers/attachmentsRouter";
 import { faceRecognitionRouter } from "./routers/faceRecognitionRouter";
@@ -246,6 +248,8 @@ export const appRouter = router({
   htmlImport: htmlImportRouter,
   evaluationCycle: evaluationCycleRouter,
   pirDashboard: pirDashboardRouter,
+  pir: pirRouter,
+  pirExport: pirExportRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

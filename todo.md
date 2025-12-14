@@ -594,3 +594,44 @@
 - [x] Validar inversão de pontuação em questões reverse
 - [x] Validar classificação (Baixo/Médio/Alto)
 - [x] Validar identificação de dimensão dominante
+
+
+## 🚀 PRÓXIMOS PASSOS - FUNCIONALIDADES AVANÇADAS (13/12/2025)
+
+### População de Dados de Teste
+- [x] Criar script de seed para gerar avaliações PIR de exemplo
+- [x] Gerar dados realistas com diferentes cenários (alto/médio/baixo desempenho)
+- [x] Popular dados para múltiplos ciclos/períodos de avaliação
+- [x] Criar dados de teste para todos os 5 passos do processo AVD
+- [x] Validar dashboards com dados de teste populados
+
+### Comparação Temporal de PIR
+- [x] Criar schema para armazenar histórico de avaliações PIR
+- [x] Implementar endpoint tRPC para buscar avaliações por período
+- [x] Desenvolver componente de seleção de períodos (dropdown de ciclos)
+- [x] Criar visualização comparativa com gráficos de evolução temporal
+- [x] Implementar análise de tendências e insights automáticos
+- [x] Adicionar comparação lado a lado de resultados PIR
+- [x] Criar gráficos de linha mostrando evolução das dimensões
+
+### Exportação Avançada de Relatórios
+- [x] Implementar exportação para Excel com formatação profissional
+- [x] Adicionar exportação para CSV de dados consolidados
+- [x] Incluir gráficos nas exportações Excel (charts integrados)
+- [x] Criar relatórios consolidados por equipe/departamento
+- [x] Adicionar análises estatísticas nos relatórios (média, desvio padrão, percentis)
+- [x] Implementar exportação de PDI em PDF formatado
+- [x] Criar template de relatório executivo consolidado
+
+### Melhorias Técnicas
+- [ ] Escrever testes vitest para novos endpoints de seed
+- [ ] Adicionar testes para comparação temporal
+- [ ] Testar exportação de relatórios em diferentes formatos
+- [ ] Otimizar queries de histórico com índices apropriados
+- [ ] Implementar cache para dados de comparação temporal
+
+### Documentação
+- [ ] Documentar estrutura de dados PIR e histórico
+- [ ] Criar guia de uso do sistema de comparação temporal
+- [ ] Documentar processo de seed de dados
+- [ ] Criar manual de exportação de relatórios

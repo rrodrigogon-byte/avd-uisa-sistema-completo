@@ -29,6 +29,8 @@ import TeamDISCProfiles from "./pages/TeamDISCProfiles";
 import TeamProfiles from "./pages/TeamProfiles";
 import FaceRegistration from "./pages/FaceRegistration";
 import TemporalAnalysis from "./pages/TemporalAnalysis";
+import PIRComparacao from "./pages/PIRComparacao";
+import PIRExportacao from "./pages/PIRExportacao";
 import ValidacaoTestes from "./pages/ValidacaoTestes";
 import DashboardTestes from "./pages/DashboardTestes";
 import { Route, Switch } from "wouter";
@@ -394,6 +396,8 @@ function Router() {
       <Route path="/teste-pir/:token" component={TestPIR} />
       <Route path="/pir/dashboard" component={PIRDashboard} />
       <Route path="/pir/relatorio/:employeeId" component={PIRReport} />
+      <Route path="/pir/comparacao" component={PIRComparacao} />
+      <Route path="/pir/exportacao" component={PIRExportacao} />
       <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
