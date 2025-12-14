@@ -509,10 +509,18 @@ export const avdRouter = router({
     .input(z.object({
       processId: z.string().optional(),
       step: z.number().min(1).max(5),
-      data: z.record(z.any()),
+      data: z.record(z.string(), z.any()).optional().default({}),
       employeeId: z.number(),
     }))
     .mutation(async ({ ctx, input }) => {
+      console.log('[AVD] saveProcessData chamado:', {
+        userId: ctx.user.id,
+        processId: input.processId,
+        step: input.step,
+        employeeId: input.employeeId,
+        dataKeys: Object.keys(input.data || {}),
+      });
+
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -525,9 +533,19 @@ export const avdRouter = router({
           status: 'em_andamento',
           currentStep: input.step,
           createdBy: ctx.user.id,
+          step1Data: input.step === 1 ? input.data : null,
+          step2Data: input.step === 2 ? input.data : null,
+          step3Data: input.step === 3 ? input.data : null,
+          step4Data: input.step === 4 ? input.data : null,
+          step5Data: input.step === 5 ? input.data : null,
         });
         processId = result.insertId;
       } else {
+        // Atualizar processo existente
+        const updateData: any = {
+          updatedAt: new Date(),
+        };
+
         // Atualizar passo atual se for maior
         const [process] = await db.select()
           .from(avdAssessmentProcesses)
@@ -535,16 +553,22 @@ export const avdRouter = router({
           .limit(1);
 
         if (process && input.step > process.currentStep) {
-          await db.update(avdAssessmentProcesses)
-            .set({ currentStep: input.step })
-            .where(eq(avdAssessmentProcesses.id, processId));
+          updateData.currentStep = input.step;
         }
+
+        // Salvar dados do passo específico
+        if (input.step === 1) updateData.step1Data = input.data;
+        if (input.step === 2) updateData.step2Data = input.data;
+        if (input.step === 3) updateData.step3Data = input.data;
+        if (input.step === 4) updateData.step4Data = input.data;
+        if (input.step === 5) updateData.step5Data = input.data;
+
+        await db.update(avdAssessmentProcesses)
+          .set(updateData)
+          .where(eq(avdAssessmentProcesses.id, processId));
       }
 
-      // Salvar dados do passo (pode ser implementado em tabela específica se necessário)
-      // Por enquanto, apenas retornar o processId para navegação
-
-      return { processId: processId.toString() };
+      return { processId: processId.toString(), success: true };
     }),
 
   /**
@@ -559,9 +583,25 @@ export const avdRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      // Por enquanto retornar null, pode ser implementado depois
-      // se houver necessidade de salvar dados intermediários
-      return { data: null };
+      const processIdNum = parseInt(input.processId);
+      const [process] = await db.select()
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.id, processIdNum))
+        .limit(1);
+
+      if (!process) {
+        return { data: null };
+      }
+
+      // Retornar dados do passo específico
+      let stepData = null;
+      if (input.step === 1) stepData = process.step1Data;
+      if (input.step === 2) stepData = process.step2Data;
+      if (input.step === 3) stepData = process.step3Data;
+      if (input.step === 4) stepData = process.step4Data;
+      if (input.step === 5) stepData = process.step5Data;
+
+      return { data: stepData };
     }),
 
   /**
