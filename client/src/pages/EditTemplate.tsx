@@ -48,9 +48,9 @@ export default function EditTemplate() {
       setName(template.name);
       setDescription(template.description || "");
       
-      if (template.competencies && typeof template.competencies === 'string') {
+      if (template.structure && typeof template.structure === 'string') {
         try {
-          const parsed = JSON.parse(template.competencies);
+          const parsed = JSON.parse(template.structure);
           if (Array.isArray(parsed)) {
             setCompetencies(parsed.map((c, idx) => ({
               ...c,
@@ -127,7 +127,7 @@ export default function EditTemplate() {
       id: templateId,
       name,
       description,
-      competencies: JSON.stringify(competencies),
+      structure: JSON.stringify(competencies),
     });
   };
 

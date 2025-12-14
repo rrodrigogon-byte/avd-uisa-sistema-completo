@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayout";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,8 +41,11 @@ export default function Dashboard() {
   const { data: evaluations, isLoading: loadingEvaluations } = trpc.evaluation.list.useQuery();
   const { data: pirData, isLoading: loadingPirs } = trpc.pir.list.useQuery();
   const { data: performanceData, isLoading: loadingPerformance } = trpc.analytics.performanceEvolution.useQuery({});
-  const { data: competencyData, isLoading: loadingCompetency } = trpc.analytics.competencyComparison.useQuery({});
-  const { data: departmentData, isLoading: loadingDepartment } = trpc.analytics.departmentDistribution.useQuery({});
+  const { data: competencyData, isLoading: loadingCompetency } = trpc.analytics.competencyComparison.useQuery(
+    { jobDescriptionId: 1 },
+    { enabled: false }
+  );
+  const { data: departmentData, isLoading: loadingDepartment } = trpc.analytics.departmentDistribution.useQuery();
 
   const myEvaluations = evaluations?.asEvaluated || [];
   const myPirs = pirData?.asUser || [];
@@ -166,7 +170,8 @@ export default function Dashboard() {
     : 'N/A';
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <DashboardLayout>
+      <div className="p-6">
       <div className="container max-w-7xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
@@ -238,7 +243,7 @@ export default function Dashboard() {
             <CardContent>
               {loadingPerformance ? (
                 <Skeleton className="h-[300px] w-full" />
-              ) : performanceData && performanceData.labels.length > 0 ? (
+              ) : performanceData && Array.isArray(performanceData) && performanceData.length > 0 ? (
                 <PerformanceEvolutionChart data={performanceData} />
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -256,7 +261,7 @@ export default function Dashboard() {
             <CardContent>
               {loadingCompetency ? (
                 <Skeleton className="h-[300px] w-full" />
-              ) : competencyData && competencyData.labels.length > 0 ? (
+              ) : competencyData && (competencyData.technical.length > 0 || competencyData.behavioral.length > 0) ? (
                 <CompetencyRadarChart data={competencyData} />
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -274,7 +279,7 @@ export default function Dashboard() {
             <CardContent>
               {loadingDepartment ? (
                 <Skeleton className="h-[300px] w-full" />
-              ) : departmentData && departmentData.labels.length > 0 ? (
+              ) : departmentData && Array.isArray(departmentData) && departmentData.length > 0 ? (
                 <DepartmentDistributionChart data={departmentData} />
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -403,6 +408,7 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

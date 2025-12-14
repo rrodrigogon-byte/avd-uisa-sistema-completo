@@ -105,7 +105,7 @@ export function PerformanceEvolutionChart({
           label: function(context) {
             const label = context.dataset.label || '';
             const value = context.parsed.y;
-            return `${label}: ${value.toFixed(1)} pontos`;
+            return `${label}: ${value !== null ? value.toFixed(1) : '0'} pontos`;
           },
           afterLabel: function(context) {
             const index = context.dataIndex;

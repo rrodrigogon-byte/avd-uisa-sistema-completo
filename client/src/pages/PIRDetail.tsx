@@ -42,7 +42,7 @@ export default function PIRDetail() {
   const employee = { name: 'Colaborador' };
 
   const { data: approvalHistory } = trpc.pir.getApprovalHistory.useQuery(
-    { id: pirId! },
+    { pirId: pirId! },
     { enabled: !!pirId }
   );
 
@@ -50,7 +50,7 @@ export default function PIRDetail() {
     onSuccess: () => {
       toast.success('PIR enviado para análise com sucesso!');
       utils.pir.getById.invalidate({ id: pirId! });
-      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ pirId: pirId! });
     },
     onError: (error) => {
       toast.error(error.message || 'Erro ao enviar PIR para análise');
@@ -61,7 +61,7 @@ export default function PIRDetail() {
     onSuccess: () => {
       toast.success('PIR aprovado com sucesso!');
       utils.pir.getById.invalidate({ id: pirId! });
-      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ pirId: pirId! });
       setApprovalDialogOpen(false);
     },
     onError: (error) => {
@@ -73,7 +73,7 @@ export default function PIRDetail() {
     onSuccess: () => {
       toast.success('PIR rejeitado');
       utils.pir.getById.invalidate({ id: pirId! });
-      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ pirId: pirId! });
       setApprovalDialogOpen(false);
     },
     onError: (error) => {
@@ -85,7 +85,7 @@ export default function PIRDetail() {
     onSuccess: () => {
       toast.success('PIR reaberto para edição');
       utils.pir.getById.invalidate({ id: pirId! });
-      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ pirId: pirId! });
     },
     onError: (error) => {
       toast.error(error.message || 'Erro ao reabrir PIR');

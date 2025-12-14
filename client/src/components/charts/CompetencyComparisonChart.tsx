@@ -130,7 +130,7 @@ export function CompetencyComparisonChart({
         pointLabels: {
           font: {
             size: 12,
-            weight: '500',
+            weight: 500 as any,
           },
           color: '#374151',
         },

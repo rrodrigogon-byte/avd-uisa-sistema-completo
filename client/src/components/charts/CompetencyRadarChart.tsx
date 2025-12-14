@@ -20,9 +20,8 @@ ChartJS.register(
 );
 
 interface CompetencyData {
-  labels: string[];
-  technical: number[];
-  behavioral: number[];
+  technical: Array<{ name: string; currentLevel: number; requiredLevel: number }>;
+  behavioral: Array<{ name: string; currentLevel: number; requiredLevel: number }>;
 }
 
 interface CompetencyRadarChartProps {
@@ -63,12 +62,21 @@ export function CompetencyRadarChart({ data }: CompetencyRadarChartProps) {
     },
   };
 
+  // Combinar todas as competências para labels
+  const allCompetencies = [
+    ...data.technical.map(c => c.name),
+    ...data.behavioral.map(c => c.name)
+  ];
+
   const chartData = {
-    labels: data.labels,
+    labels: allCompetencies,
     datasets: [
       {
-        label: 'Competências Técnicas',
-        data: data.technical,
+        label: 'Nível Atual',
+        data: [
+          ...data.technical.map(c => c.currentLevel),
+          ...data.behavioral.map(c => c.currentLevel)
+        ],
         backgroundColor: 'rgba(59, 130, 246, 0.2)',
         borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 2,
@@ -78,8 +86,11 @@ export function CompetencyRadarChart({ data }: CompetencyRadarChartProps) {
         pointHoverBorderColor: 'rgba(59, 130, 246, 1)',
       },
       {
-        label: 'Competências Comportamentais',
-        data: data.behavioral,
+        label: 'Nível Requerido',
+        data: [
+          ...data.technical.map(c => c.requiredLevel),
+          ...data.behavioral.map(c => c.requiredLevel)
+        ],
         backgroundColor: 'rgba(16, 185, 129, 0.2)',
         borderColor: 'rgba(16, 185, 129, 1)',
         borderWidth: 2,

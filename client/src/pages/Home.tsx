@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { APP_TITLE, getLoginUrl } from "@/const";
 import { FileText, ClipboardList, Bell, BarChart3, ArrowRight, Target, Briefcase, LayoutDashboard } from "lucide-react";
 import { Link } from "wouter";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -97,7 +98,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <DashboardLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -196,6 +197,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

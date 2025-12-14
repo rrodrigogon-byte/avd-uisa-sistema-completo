@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
@@ -20,8 +21,11 @@ const reportTypeLabels = {
 export default function Reports() {
   const { data: reports, isLoading, refetch } = trpc.report.list.useQuery();
   const { data: performanceData, isLoading: loadingPerformance } = trpc.analytics.performanceEvolution.useQuery({});
-  const { data: competencyData, isLoading: loadingCompetency } = trpc.analytics.competencyComparison.useQuery({});
-  const { data: departmentData, isLoading: loadingDepartment } = trpc.analytics.departmentDistribution.useQuery({});
+  const { data: competencyData, isLoading: loadingCompetency } = trpc.analytics.competencyComparison.useQuery(
+    { jobDescriptionId: 1 }, // TODO: Permitir seleção de cargo
+    { enabled: false } // Desabilitado por enquanto até implementar seletor
+  );
+  const { data: departmentData, isLoading: loadingDepartment } = trpc.analytics.departmentDistribution.useQuery();
   const { data: evaluations, isLoading: loadingEvaluations } = trpc.evaluation.list.useQuery();
   
   const deleteMutation = trpc.report.delete.useMutation({
@@ -46,7 +50,8 @@ export default function Reports() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Relatórios Gerenciais</h1>
@@ -75,7 +80,7 @@ export default function Reports() {
             <CardContent>
               {loadingPerformance ? (
                 <Skeleton className="h-[300px] w-full" />
-              ) : performanceData && performanceData.labels.length > 0 ? (
+              ) : performanceData && Array.isArray(performanceData) && performanceData.length > 0 ? (
                 <PerformanceEvolutionChart data={performanceData} />
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -96,7 +101,7 @@ export default function Reports() {
             <CardContent>
               {loadingCompetency ? (
                 <Skeleton className="h-[300px] w-full" />
-              ) : competencyData && competencyData.labels.length > 0 ? (
+              ) : competencyData && (competencyData.technical.length > 0 || competencyData.behavioral.length > 0) ? (
                 <CompetencyRadarChart data={competencyData} />
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -117,7 +122,7 @@ export default function Reports() {
             <CardContent>
               {loadingDepartment ? (
                 <Skeleton className="h-[300px] w-full" />
-              ) : departmentData && departmentData.labels.length > 0 ? (
+              ) : departmentData && Array.isArray(departmentData) && departmentData.length > 0 ? (
                 <DepartmentDistributionChart data={departmentData} />
               ) : (
                 <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -236,6 +241,7 @@ export default function Reports() {
         </div>
       )}
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

@@ -8,6 +8,7 @@ import { trpc } from "@/lib/trpc";
 import { Bell, Settings, History, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export default function Notifications() {
   const { data: settings, refetch: refetchSettings } = trpc.notification.getSettings.useQuery();
@@ -45,7 +46,8 @@ export default function Notifications() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Notificações</h1>
         <p className="text-muted-foreground">
@@ -146,8 +148,8 @@ export default function Notifications() {
                 <Label>Frequência de lembretes</Label>
                 <Select
                   value={localSettings?.reminderFrequency || 'weekly'}
-                  onValueChange={(value: 'daily' | 'weekly') =>
-                    setLocalSettings((prev) => prev ? { ...prev, reminderFrequency: value } : prev)
+                  onValueChange={(value) =>
+                    setLocalSettings((prev) => prev ? { ...prev, reminderFrequency: value as 'daily' | 'weekly' } : prev)
                   }
                 >
                   <SelectTrigger>
@@ -227,6 +229,7 @@ export default function Notifications() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

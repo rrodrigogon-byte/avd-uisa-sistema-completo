@@ -37,7 +37,8 @@ export default function EditEvaluation() {
     { enabled: !!evaluationId }
   );
 
-  const { data: employees } = trpc.employee.list.useQuery();
+  // Employee list não está implementado no router
+  const employees: any[] = [];
   const { data: templates } = trpc.template.list.useQuery();
 
   const updateMutation = trpc.evaluation.update.useMutation({
@@ -52,14 +53,14 @@ export default function EditEvaluation() {
 
   useEffect(() => {
     if (evaluation) {
-      setEmployeeId(evaluation.employeeId);
+      setEmployeeId(evaluation.evaluatedUserId);
       setTemplateId(evaluation.templateId);
       setPeriod(evaluation.period);
       setComments(evaluation.comments || "");
 
-      if (evaluation.scores && typeof evaluation.scores === 'string') {
+      if (evaluation.responses && typeof evaluation.responses === 'string') {
         try {
-          const parsed = JSON.parse(evaluation.scores);
+          const parsed = JSON.parse(evaluation.responses);
           if (Array.isArray(parsed)) {
             setCompetencyScores(parsed);
           }
@@ -73,9 +74,9 @@ export default function EditEvaluation() {
   useEffect(() => {
     if (templateId && templates) {
       const selectedTemplate = templates.find((t) => t.id === templateId);
-      if (selectedTemplate?.competencies && typeof selectedTemplate.competencies === 'string') {
+      if (selectedTemplate?.structure && typeof selectedTemplate.structure === 'string') {
         try {
-          const parsed = JSON.parse(selectedTemplate.competencies);
+          const parsed = JSON.parse(selectedTemplate.structure);
           if (Array.isArray(parsed)) {
             const existingScores = competencyScores.reduce((acc, score) => {
               acc[score.name] = score.score;
@@ -113,7 +114,7 @@ export default function EditEvaluation() {
       0
     );
 
-    return totalWeight > 0 ? (weightedSum / totalWeight).toFixed(2) : "0.00";
+    return totalWeight > 0 ? parseFloat((weightedSum / totalWeight).toFixed(2)) : 0;
   };
 
   const validate = () => {
@@ -154,11 +155,8 @@ export default function EditEvaluation() {
 
     updateMutation.mutate({
       id: evaluationId,
-      employeeId: employeeId!,
-      templateId: templateId!,
-      period,
-      scores: JSON.stringify(competencyScores),
-      finalScore: parseFloat(calculateFinalScore()),
+      responses: JSON.stringify(competencyScores),
+      score: calculateFinalScore(),
       comments,
     });
   };
@@ -223,7 +221,7 @@ export default function EditEvaluation() {
                     <SelectValue placeholder="Selecione o colaborador" />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees?.map((emp) => (
+                    {employees?.map((emp: any) => (
                       <SelectItem key={emp.id} value={emp.id.toString()}>
                         {emp.name}
                       </SelectItem>

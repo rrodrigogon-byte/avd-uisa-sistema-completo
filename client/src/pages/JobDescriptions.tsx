@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayout";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,7 +129,8 @@ export default function JobDescriptions() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <DashboardLayout>
+      <div className="p-6">
       <div className="container max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -220,6 +222,7 @@ export default function JobDescriptions() {
           </div>
         ) : null}
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

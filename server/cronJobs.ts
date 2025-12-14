@@ -145,7 +145,7 @@ const checkPirDeadlines = cron.schedule('0 */6 * * *', async () => {
       .leftJoin(users, eq(pirs.userId, users.id))
       .where(
         and(
-          eq(pirs.status, 'active'),
+          eq(pirs.status, 'ativo'),
           gte(pirs.endDate, sevenDaysFromNow),
           lte(pirs.endDate, eightDaysFromNow)
         )

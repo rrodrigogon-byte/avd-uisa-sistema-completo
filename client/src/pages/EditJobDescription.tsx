@@ -58,7 +58,8 @@ export default function EditJobDescription() {
     { enabled: !!jobDescId }
   );
 
-  const { data: positions } = trpc.position.list.useQuery();
+  // Position list não está implementado no router
+  const positions: any[] = [];
 
   const updateMutation = trpc.jobDescription.update.useMutation({
     onSuccess: () => {
@@ -72,7 +73,7 @@ export default function EditJobDescription() {
 
   useEffect(() => {
     if (jobDesc) {
-      setPositionId(jobDesc.positionId);
+      // positionId não existe no schema - title já vem do jobDesc
       setSummary(jobDesc.summary || "");
       setVersion(jobDesc.version);
       setIsActive(jobDesc.isActive);
@@ -265,13 +266,7 @@ export default function EditJobDescription() {
 
     updateMutation.mutate({
       id: jobDescId,
-      positionId: positionId!,
       summary,
-      version,
-      responsibilities: JSON.stringify(responsibilities),
-      technicalCompetencies: JSON.stringify(technicalCompetencies),
-      behavioralCompetencies: JSON.stringify(behavioralCompetencies),
-      requirements: JSON.stringify(requirements),
       isActive,
     });
   };
@@ -340,7 +335,7 @@ export default function EditJobDescription() {
                       <SelectValue placeholder="Selecione o cargo" />
                     </SelectTrigger>
                     <SelectContent>
-                      {positions?.map((pos) => (
+                      {positions?.map((pos: any) => (
                         <SelectItem key={pos.id} value={pos.id.toString()}>
                           {pos.name}
                         </SelectItem>

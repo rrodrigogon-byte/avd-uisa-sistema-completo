@@ -48,13 +48,11 @@ export default function JobDescriptionDetail() {
     { enabled: !!jobDescId }
   );
 
-  const { data: position } = trpc.position.getById.useQuery(
-    { id: jobDesc?.positionId || 0 },
-    { enabled: !!jobDesc?.positionId }
-  );
+  // Position não está implementado no router ainda
+  const position = { name: jobDesc?.title || 'Cargo' };
 
   const { data: approvalHistory } = trpc.jobDescription.getApprovalHistory.useQuery(
-    { id: jobDescId! },
+    { jobDescriptionId: jobDescId! },
     { enabled: !!jobDescId }
   );
 
@@ -62,7 +60,7 @@ export default function JobDescriptionDetail() {
     onSuccess: () => {
       toast.success('Descrição de Cargo enviada para análise com sucesso!');
       utils.jobDescription.getById.invalidate({ id: jobDescId! });
-      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ jobDescriptionId: jobDescId! });
     },
     onError: (error) => {
       toast.error(error.message || 'Erro ao enviar Descrição de Cargo para análise');
@@ -73,7 +71,7 @@ export default function JobDescriptionDetail() {
     onSuccess: () => {
       toast.success('Descrição de Cargo aprovada com sucesso!');
       utils.jobDescription.getById.invalidate({ id: jobDescId! });
-      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ jobDescriptionId: jobDescId! });
       setApprovalDialogOpen(false);
     },
     onError: (error) => {
@@ -85,7 +83,7 @@ export default function JobDescriptionDetail() {
     onSuccess: () => {
       toast.success('Descrição de Cargo rejeitada');
       utils.jobDescription.getById.invalidate({ id: jobDescId! });
-      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ jobDescriptionId: jobDescId! });
       setApprovalDialogOpen(false);
     },
     onError: (error) => {
@@ -97,7 +95,7 @@ export default function JobDescriptionDetail() {
     onSuccess: () => {
       toast.success('Descrição de Cargo reaberta para edição');
       utils.jobDescription.getById.invalidate({ id: jobDescId! });
-      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ jobDescriptionId: jobDescId! });
     },
     onError: (error) => {
       toast.error(error.message || 'Erro ao reabrir Descrição de Cargo');
@@ -275,7 +273,7 @@ export default function JobDescriptionDetail() {
                   Descrição de Cargo UISA
                 </CardTitle>
                 <CardDescription className="mt-2 text-lg">
-                  {position?.name || "Carregando..."}
+                  {jobDesc.title}
                 </CardDescription>
               </div>
               <div className="flex gap-2">
@@ -472,7 +470,9 @@ export default function JobDescriptionDetail() {
         onOpenChange={setApprovalDialogOpen}
         type={approvalType}
         onConfirm={handleApprovalConfirm}
-        isPending={approvalType === 'approve' ? approveMutation.isPending : rejectMutation.isPending}
+        title={approvalType === 'approve' ? 'Aprovar Descrição de Cargo' : 'Rejeitar Descrição de Cargo'}
+        description={approvalType === 'approve' ? 'Tem certeza que deseja aprovar esta descrição de cargo?' : 'Por favor, informe o motivo da rejeição'}
+        isLoading={approvalType === 'approve' ? approveMutation.isPending : rejectMutation.isPending}
       />
     </div>
   );

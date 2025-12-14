@@ -273,3 +273,62 @@
 - [ ] Adicionar validações completas em todos os formulários
 - [ ] Implementar debouncing em campos de busca
 - [ ] Adicionar confirmação antes de ações destrutivas (delete)
+
+## 25. CORREÇÕES CRÍTICAS - FASE 1 (URGENTE)
+- [x] Corrigir 57 erros TypeScript em comparações de enum do Drizzle ORM (TODOS CORRIGIDOS!)
+- [ ] Adicionar foreign keys explícitas no schema do banco de dados
+- [ ] Criar página JobDescriptionForm.tsx completa
+- [ ] Registrar rota de JobDescriptionForm em App.tsx
+
+## 26. PÁGINAS DE DETALHES - FASE 2 (ALTA PRIORIDADE)
+- [ ] Criar EvaluationDetail.tsx com visualização completa
+- [ ] Criar TemplateDetail.tsx com estrutura do template
+- [ ] Criar ReportDetail.tsx com dados do relatório
+- [ ] Adicionar navegação para detalhes em todas as listagens
+
+## 27. MELHORIAS DE UX - FASE 3 (MÉDIA PRIORIDADE)
+- [ ] Adicionar filtros completos na listagem de Descrições de Cargo
+- [ ] Adicionar filtros na listagem de Avaliações
+- [ ] Adicionar filtros na listagem de Templates
+- [ ] Implementar confirmação antes de deletar em todas as páginas
+- [ ] Adicionar debouncing em todos os campos de busca
+- [ ] Padronizar loading states em todas as páginas
+- [ ] Padronizar empty states em todas as listagens
+
+## 28. INTEGRAÇÃO DE GRÁFICOS - FASE 4 (MÉDIA PRIORIDADE)
+- [ ] Integrar todos os gráficos Chart.js no Dashboard principal
+- [ ] Integrar gráficos na página de Relatórios
+- [ ] Adicionar seletor de período para filtrar dados dos gráficos
+- [ ] Implementar exportação de gráficos como PNG
+
+## 29. TESTES COMPLETOS - FASE 5 (BAIXA PRIORIDADE)
+- [ ] Escrever testes vitest para analytics router
+- [ ] Escrever testes para notificações automáticas (cron jobs)
+- [ ] Escrever testes de integração frontend-backend
+- [ ] Validar todos os workflows de aprovação com testes
+
+## 30. PROCESSOS AVANÇADOS - FASE 6 (FUTURO)
+- [ ] Implementar criação automática de PIR baseado em avaliação
+- [ ] Implementar validações de integridade entre PIR e avaliações
+- [ ] Implementar versionamento de descrições de cargo
+- [ ] Implementar comparação entre versões de descrições
+- [ ] Implementar vinculação de descrições de cargo com avaliações
+
+## 31. ERRO CRÍTICO - CORREÇÃO IMEDIATA
+- [x] Corrigir erro "Cannot read properties of undefined (reading 'length')" nos gráficos
+- [x] Adicionar verificações de undefined antes de acessar propriedades de dados
+- [x] Adicionar Array.isArray() em Dashboard e Reports
+
+## 32. MENU COMPLETO - CORREÇÃO IMEDIATA
+- [x] Verificar se todos os 7 módulos estão visíveis no menu lateral
+- [x] Garantir que todas as rotas estão registradas em App.tsx
+- [x] Adicionar DashboardLayout à página Home para menu consistente
+
+
+## 33. CORREÇÕES INCREMENTAIS - SEGURAS
+- [x] Verificar quais páginas usam DashboardLayout
+- [x] Adicionar DashboardLayout a Dashboard, Templates, Evaluations, PIR, JobDescriptions, Notifications, Reports
+- [x] Testar cada página após adicionar DashboardLayout
+- [x] Corrigir verificações de undefined nos gráficos (Dashboard e Reports) - Já estava correto
+- [x] Array.isArray() já implementado antes de .length
+- [x] Criar testes vitest para validação do sistema

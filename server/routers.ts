@@ -167,7 +167,7 @@ export const appRouter = router({
           notifyPendingReminders: true,
           notifyOnStatusChange: true,
           reminderDaysBefore: 7,
-          reminderFrequency: 'weekly' as const,
+          reminderFrequency: 'weekly' as 'daily' | 'weekly',
         };
       }
       return settings;
@@ -811,7 +811,7 @@ export const appRouter = router({
     // Gráfico de distribuição por departamento
     departmentDistribution: adminProcedure
       .query(async () => {
-        const database = await getDb();
+        const database = await db.getDb();
         if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         
         const { evaluations, jobDescriptions } = await import('../drizzle/schema');

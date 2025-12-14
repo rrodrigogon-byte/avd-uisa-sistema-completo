@@ -89,8 +89,8 @@ export default function FilterBar({
                 <PopoverContent className="w-auto p-0" align="start">
                   <CalendarComponent
                     mode="range"
-                    selected={dateRange}
-                    onSelect={(range) => onDateRangeChange(range || {})}
+                    selected={dateRange as any}
+                    onSelect={(range) => onDateRangeChange(range as any || {})}
                     numberOfMonths={2}
                     locale={ptBR}
                   />
@@ -143,7 +143,7 @@ export default function FilterBar({
               {Object.entries(activeFilters).map(([key, value]) => {
                 if (value === 'todos') return null;
                 const filter = filters.find(f => f.key === key);
-                const option = filter?.options.find(o => o.value === value);
+                const option = filter?.options?.find(o => o.value === value);
                 return (
                   <Badge key={key} variant="secondary" className="gap-1">
                     {filter?.label}: {option?.label || value}

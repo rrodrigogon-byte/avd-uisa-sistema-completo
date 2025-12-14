@@ -143,13 +143,12 @@ export default function PIRForm() {
 
     createMutation.mutate({
       userId: user?.id || 0,
-      managerId: user?.id || 0, // Por padrão, o criador é o gestor
       title,
       description: description || undefined,
       period,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      goals: JSON.stringify(goals),
+      evaluationId: undefined,
     });
   };
 

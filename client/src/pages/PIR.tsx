@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayout";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,9 @@ export default function PIR() {
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+
+  const myPirs = pirData?.asUser || [];
+  const managedPirs = pirData?.asManager || [];
 
   // Extrair departamentos únicos dos PIRs
   const departments = useMemo(() => {
@@ -85,9 +89,6 @@ export default function PIR() {
       </div>
     );
   }
-
-  const myPirs = pirData?.asUser || [];
-  const managedPirs = pirData?.asManager || [];
 
   const filteredMyPirs = useMemo(() => {
     return myPirs.filter((pir: any) => {
@@ -168,7 +169,8 @@ export default function PIR() {
 
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <DashboardLayout>
+      <div className="p-6">
       <div className="container max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -275,6 +277,7 @@ export default function PIR() {
           </section>
         )}
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
