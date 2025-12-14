@@ -1,9 +1,0 @@
-{
-  "query": "SET FOREIGN_KEY_CHECKS = 0; \nTRUNCATE TABLE employeeBadges;\nTRUNCATE TABLE badges;\nTRUNCATE TABLE nineBoxPositions;\nTRUNCATE TABLE performanceEvaluations;\nTRUNCATE TABLE pdiPlans;\nTRUNCATE TABLE goals;\nTRUNCATE TABLE employees;\nTRUNCATE TABLE positions;\nTRUNCATE TABLE departments;\nTRUNCATE TABLE evaluationCycles;\nSET FOREIGN_KEY_CHECKS = 1;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SET FOREIGN_KEY_CHECKS = 0; \nTRUNCATE TABLE employeeBadges;\nTRUNCATE TABLE badges;\nTRUNCATE TABLE nineBoxPositions;\nTRUNCATE TABLE performanceEvaluations;\nTRUNCATE TABLE pdiPlans;\nTRUNCATE TABLE goals;\nTRUNCATE TABLE employees;\nTRUNCATE TABLE positions;\nTRUNCATE TABLE departments;\nTRUNCATE TABLE evaluationCycles;\nSET FOREIGN_KEY_CHECKS = 1;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1900
-}

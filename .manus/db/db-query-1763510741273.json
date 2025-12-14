@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO users (openId, name, email, role, createdAt, updatedAt, lastSignedIn) VALUES\n('rodrigo.goncalves', 'Rodrigo Gonçalves', 'rodrigo.goncalves@uisa.com.br', 'admin', NOW(), NOW(), NOW()),\n('lucas.silva', 'Lucas Silva', 'lucas.silva@uisa.com.br', 'admin', NOW(), NOW(), NOW())\nON DUPLICATE KEY UPDATE role = 'admin', updatedAt = NOW();",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute INSERT INTO users (openId, name, email, role, createdAt, updatedAt, lastSignedIn) VALUES\n('rodrigo.goncalves', 'Rodrigo Gonçalves', 'rodrigo.goncalves@uisa.com.br', 'admin', NOW(), NOW(), NOW()),\n('lucas.silva', 'Lucas Silva', 'lucas.silva@uisa.com.br', 'admin', NOW(), NOW(), NOW())\nON DUPLICATE KEY UPDATE role = 'admin', updatedAt = NOW();",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 65
-}

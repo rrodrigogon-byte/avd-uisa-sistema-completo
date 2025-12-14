@@ -1,9 +1,0 @@
-{
-  "query": "ALTER TABLE employees \nADD COLUMN IF NOT EXISTS personalEmail VARCHAR(320),\nADD COLUMN IF NOT EXISTS corporateEmail VARCHAR(320),\nADD COLUMN IF NOT EXISTS chapa VARCHAR(50),\nADD COLUMN IF NOT EXISTS codSecao VARCHAR(100),\nADD COLUMN IF NOT EXISTS secao VARCHAR(255),\nADD COLUMN IF NOT EXISTS codFuncao VARCHAR(50),\nADD COLUMN IF NOT EXISTS funcao VARCHAR(255),\nADD COLUMN IF NOT EXISTS situacao VARCHAR(50),\nADD COLUMN IF NOT EXISTS gerencia VARCHAR(255),\nADD COLUMN IF NOT EXISTS diretoria VARCHAR(255),\nADD COLUMN IF NOT EXISTS cargo VARCHAR(255),\nADD COLUMN IF NOT EXISTS telefone VARCHAR(50)",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE employees \nADD COLUMN IF NOT EXISTS personalEmail VARCHAR(320),\nADD COLUMN IF NOT EXISTS corporateEmail VARCHAR(320),\nADD COLUMN IF NOT EXISTS chapa VARCHAR(50),\nADD COLUMN IF NOT EXISTS codSecao VARCHAR(100),\nADD COLUMN IF NOT EXISTS secao VARCHAR(255),\nADD COLUMN IF NOT EXISTS codFuncao VARCHAR(50),\nADD COLUMN IF NOT EXISTS funcao VARCHAR(255),\nADD COLUMN IF NOT EXISTS situacao VARCHAR(50),\nADD COLUMN IF NOT EXISTS gerencia VARCHAR(255),\nADD COLUMN IF NOT EXISTS diretoria VARCHAR(255),\nADD COLUMN IF NOT EXISTS cargo VARCHAR(255),\nADD COLUMN IF NOT EXISTS telefone VARCHAR(50)",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 4077
-}

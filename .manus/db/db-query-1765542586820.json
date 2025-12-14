@@ -1,9 +1,0 @@
-{
-  "query": "ALTER TABLE `testResults` \nADD COLUMN `testType_new` ENUM('disc', 'bigfive', 'mbti', 'ie', 'vark', 'leadership', 'careeranchors', 'pir') NOT NULL AFTER `testType`;\n\nUPDATE `testResults` SET `testType_new` = `testType`;\n\nALTER TABLE `testResults` DROP COLUMN `testType`;\nALTER TABLE `testResults` CHANGE COLUMN `testType_new` `testType` ENUM('disc', 'bigfive', 'mbti', 'ie', 'vark', 'leadership', 'careeranchors', 'pir') NOT NULL;\n\nALTER TABLE `testResults` \nMODIFY COLUMN `employeeId` INT NULL;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE `testResults` \nADD COLUMN `testType_new` ENUM('disc', 'bigfive', 'mbti', 'ie', 'vark', 'leadership', 'careeranchors', 'pir') NOT NULL AFTER `testType`;\n\nUPDATE `testResults` SET `testType_new` = `testType`;\n\nALTER TABLE `testResults` DROP COLUMN `testType`;\nALTER TABLE `testResults` CHANGE COLUMN `testType_new` `testType` ENUM('disc', 'bigfive', 'mbti', 'ie', 'vark', 'leadership', 'careeranchors', 'pir') NOT NULL;\n\nALTER TABLE `testResults` \nMODIFY COLUMN `employeeId` INT NULL;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1267
-}
