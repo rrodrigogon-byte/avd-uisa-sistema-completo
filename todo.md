@@ -875,3 +875,59 @@
 - [ ] Implementar lazy loading de submenus se necessário
 - [ ] Garantir que animações são suaves (60fps)
 - [ ] Testar performance em dispositivos de baixo desempenho
+
+
+## 📋 SISTEMA DE DESCRIÇÃO DE CARGOS UISA (13/12/2025)
+
+### Busca e Integração CBO
+- [ ] Implementar busca de cargos por nome/código
+- [ ] Integrar API do CBO (Classificação Brasileira de Ocupações)
+- [ ] Buscar CBO automaticamente para cada cargo cadastrado
+- [ ] Preencher automaticamente líder com base na hierarquia cadastrada
+- [ ] Preencher automaticamente dados hierárquicos do cargo
+
+### Fluxo de Aprovação em 4 Níveis
+- [ ] Criar perfil "Diretor GAI" e atrelar a Rodrigo Ribeiro Gonçalves
+- [ ] Implementar workflow de aprovação:
+  - [ ] Nível 1: Especialista C&S valida e confirma
+  - [ ] Nível 2: Líder Direto complementa e aprova
+  - [ ] Nível 3: Gerente RH aprova (individual ou lote)
+  - [ ] Nível 4: Diretor GAI aprova (individual ou lote)
+- [ ] Criar tabela de aprovações de descrição de cargos
+- [ ] Implementar notificações por email em cada etapa
+- [ ] Criar dashboard de acompanhamento de aprovações
+
+### Formulário Dinâmico
+- [ ] Permitir líder cadastrar novas competências no formulário
+- [ ] Permitir C&S cadastrar novas escolaridades
+- [ ] Adicionar campos dinâmicos customizáveis
+- [ ] Implementar flags e seleções para todos os campos
+- [ ] Criar interface de gerenciamento de campos customizados
+
+### Interface de Aprovação
+- [ ] Criar página de aprovação individual de cargo
+- [ ] Criar página de aprovação em lote (Gerente RH e Diretor GAI)
+- [ ] Implementar filtros por status (pendente, aprovado, rejeitado)
+- [ ] Adicionar histórico de aprovações por cargo
+
+
+## 👥 GESTÃO DE FUNCIONÁRIOS - MELHORIAS (13/12/2025)
+
+### Limpeza de Duplicados
+- [x] Analisar funcionários duplicados no banco - **1.454 duplicados encontrados**
+- [x] Identificar padrão correto: `chapa | nome | email | cargo | departamento | status`
+- [x] Criar script de limpeza de duplicados - **clean-duplicate-employees.mjs**
+- [x] Manter apenas registros com padrão completo - **Priorizados registros com chapa, cargo, depto**
+- [x] Executar limpeza no banco de dados - **1.471 registros deletados**
+
+### Melhorias no Cadastro
+- [x] Adicionar botão toggle Ativo/Inativo - **Implementado com Badge clicável**
+- [x] Estilizar toggle (verde quando ativo, cinza quando inativo) - **Verde para ativo, cinza para inativo**
+- [x] Corrigir botão Deletar (não está funcionando) - **Procedure delete adicionado**
+- [x] Corrigir botão Editar (não traz todos os dados dos funcionários) - **Todos os campos carregados**
+- [x] Validar que todos os campos são carregados no formulário de edição - **OK**
+
+### Validações
+- [ ] Impedir cadastro de funcionários duplicados (validar por chapa)
+- [ ] Validar formato de email
+- [ ] Validar campos obrigatórios (chapa, nome, cargo, departamento)

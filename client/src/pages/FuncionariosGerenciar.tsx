@@ -78,15 +78,25 @@ export default function FuncionariosGerenciar() {
     },
   });
 
-  const deleteMutation = trpc.employees.deactivate.useMutation({
+  const deleteMutation = trpc.employees.delete.useMutation({
     onSuccess: () => {
-      toast.success("Funcionário desativado com sucesso!");
+      toast.success("Funcionário deletado com sucesso!");
       setIsDeleteDialogOpen(false);
       setSelectedEmployee(null);
       refetch();
     },
     onError: (error: any) => {
-      toast.error(`Erro ao desativar: ${error.message}`);
+      toast.error(`Erro ao deletar: ${error.message}`);
+    },
+  });
+
+  const toggleStatusMutation = trpc.employees.toggleStatus.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Funcionário ${data.newStatus === "ativo" ? "ativado" : "desativado"} com sucesso!`);
+      refetch();
+    },
+    onError: (error: any) => {
+      toast.error(`Erro ao alterar status: ${error.message}`);
     },
   });
 
@@ -180,20 +190,24 @@ export default function FuncionariosGerenciar() {
   const handleEdit = (employee: any) => {
     setSelectedEmployee(employee);
     setFormData({
-      employeeCode: employee.employee.employeeCode,
-      name: employee.employee.name,
-      email: employee.employee.email,
+      employeeCode: employee.employee.employeeCode || employee.employee.chapa || "",
+      name: employee.employee.name || "",
+      email: employee.employee.email || "",
       cpf: employee.employee.cpf || "",
       birthDate: employee.employee.birthDate ? new Date(employee.employee.birthDate).toISOString().split('T')[0] : "",
       hireDate: employee.employee.hireDate ? new Date(employee.employee.hireDate).toISOString().split('T')[0] : "",
-      departmentId: employee.employee.departmentId?.toString() || "",
-      positionId: employee.employee.positionId?.toString() || "",
+      departmentId: employee.employee.departmentId?.toString() || employee.departmentId?.toString() || "",
+      positionId: employee.employee.positionId?.toString() || employee.positionId?.toString() || "",
       managerId: employee.employee.managerId?.toString() || "",
       salary: employee.employee.salary ? (employee.employee.salary / 100).toFixed(2) : "",
       phone: employee.employee.phone || "",
       address: employee.employee.address || "",
     });
     setIsEditDialogOpen(true);
+  };
+
+  const handleToggleStatus = (employee: any) => {
+    toggleStatusMutation.mutate({ id: employee.employee.id });
   };
 
   const handleDelete = (employee: any) => {
@@ -372,7 +386,18 @@ export default function FuncionariosGerenciar() {
                           {formatSalary(emp.employee.salary)}
                         </TableCell>
                         <TableCell>
-                          {getStatusBadge(emp.employee.status)}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleToggleStatus(emp)}
+                            className={emp.employee.status === "ativo" ? "text-green-600 hover:text-green-700" : "text-gray-400 hover:text-gray-500"}
+                          >
+                            {emp.employee.status === "ativo" ? (
+                              <Badge variant="default" className="bg-green-600 hover:bg-green-700">Ativo</Badge>
+                            ) : (
+                              <Badge variant="secondary" className="bg-gray-400">Inativo</Badge>
+                            )}
+                          </Button>
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
@@ -380,6 +405,7 @@ export default function FuncionariosGerenciar() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleEdit(emp)}
+                              title="Editar funcionário"
                             >
                               <Pencil className="h-4 w-4" />
                             </Button>
@@ -387,7 +413,8 @@ export default function FuncionariosGerenciar() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDelete(emp)}
-                              disabled={emp.employee.status === "desligado"}
+                              title="Deletar funcionário permanentemente"
+                              className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>

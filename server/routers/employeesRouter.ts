@@ -198,6 +198,80 @@ export const employeesRouter = router({
     }),
 
   /**
+   * Deletar funcionário permanentemente
+   */
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      // Verificar permissão
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores podem deletar funcionários permanentemente",
+        });
+      }
+
+      const { getDb } = await import("../db");
+      const { employees } = await import("../../drizzle/schema");
+      const { eq } = await import("drizzle-orm");
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      await database.delete(employees).where(eq(employees.id, input.id));
+
+      await logEmployeeAudit({
+        employeeId: input.id,
+        action: "deletado",
+        changedBy: ctx.user.id,
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Alternar status do funcionário (ativo/desligado)
+   */
+  toggleStatus: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      // Verificar permissão
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores e RH podem alterar status de funcionários",
+        });
+      }
+
+      const { getDb } = await import("../db");
+      const { employees } = await import("../../drizzle/schema");
+      const { eq } = await import("drizzle-orm");
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar funcionário atual
+      const [employee] = await database.select().from(employees).where(eq(employees.id, input.id));
+      
+      if (!employee) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Funcionário não encontrado",
+        });
+      }
+
+      // Alternar status
+      const newStatus = employee.status === "ativo" ? "desligado" : "ativo";
+      await database.update(employees).set({ status: newStatus }).where(eq(employees.id, input.id));
+
+      await logEmployeeAudit({
+        employeeId: input.id,
+        action: newStatus === "ativo" ? "reativado" : "desativado",
+        changedBy: ctx.user.id,
+      });
+
+      return { success: true, newStatus };
+    }),
+
+  /**
    * Desativar funcionário
    */
   deactivate: protectedProcedure
