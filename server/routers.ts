@@ -3878,11 +3878,19 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       const database = await getDb();
       if (!database) return [];
 
-      // Buscar colaborador do usuário
-      const employee = await database.select()
+      // Buscar colaborador do usuário (primeiro por userId, depois por email)
+      let employee = await database.select()
         .from(employees)
         .where(eq(employees.userId, ctx.user.id))
         .limit(1);
+
+      // Se não encontrou por userId, buscar por email
+      if (employee.length === 0 && ctx.user.email) {
+        employee = await database.select()
+          .from(employees)
+          .where(eq(employees.email, ctx.user.email))
+          .limit(1);
+      }
 
       if (employee.length === 0) return [];
 

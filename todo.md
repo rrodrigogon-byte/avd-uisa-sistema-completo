@@ -512,3 +512,11 @@
 - Exportadas tabelas necessárias (`performanceEvaluations`, `employees`) do `db.ts`
 - Exportados operadores do Drizzle ORM (`eq`, `and`, `or`, `desc`, `asc`, `gte`, `lte`, `sql`)
 - Dashboard PIR agora carrega corretamente sem erros
+
+
+## 🐛 CORREÇÃO URGENTE - RESULTADOS PIR COMO ANEXO (13/12/2025)
+
+- [x] Investigar por que resultados PIR não aparecem como anexo na página "Meus Resultados"
+- [x] Verificar lógica de busca de anexos PIR no backend
+- [x] Corrigir exibição dos resultados PIR na interface - Implementado fallback por email
+- [x] Testar fluxo completo de visualização de resultados PIR - Funcionando corretamente
