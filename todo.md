@@ -1172,3 +1172,336 @@
 - [x] Integrar Testes de Integridade com PIR - adicionar botão no dashboard do PIR para aplicar testes
   - Adicionado botão "Testes de Integridade" no header do PIRDashboard
   - Botão redireciona para /integridade/testes
+
+
+---
+
+# 🔴 ANÁLISE URGENTE - PIR INTEGRADO E WORKFLOW DE DESCRIÇÕES DE CARGOS (14/12/2025)
+
+## 📋 SITUAÇÃO ATUAL
+
+### ✅ O que já existe no sistema:
+- [x] Estrutura de banco de dados para PIR (pirAssessments, pirQuestions, pirAnswers)
+- [x] Tabelas de jobDescriptions com workflow básico
+- [x] Sistema de aprovações de descrições de cargos (jobDescriptionApprovals)
+- [x] Router básico para PIR (pirRouter.ts)
+- [x] Routers para job descriptions (jobDescriptionsRouter.ts, jobDescriptionWorkflowRouter.ts)
+- [x] Estrutura de hierarquia organizacional (departments, employees)
+- [x] Sistema de roles (admin, rh, gestor, colaborador)
+- [x] TestPIR.tsx implementado e funcionando
+
+### ❌ GAPS CRÍTICOS IDENTIFICADOS:
+
+## 🚨 PROBLEMA 1: PIR NÃO ESTÁ VISÍVEL NO MENU PRINCIPAL
+
+**Status:** PIR existe mas não está acessível facilmente
+
+### Ações Necessárias:
+- [ ] Adicionar item "PIR Integrado" no menu principal do DashboardLayout
+- [ ] Criar seção separada para PIR (não apenas dentro do Processo AVD)
+- [ ] Adicionar rota `/pir` com dashboard de gestão de PIR
+- [ ] Criar página `/pir/convites` para enviar PIR para funcionários/candidatos
+- [ ] Criar página `/pir/resultados` para visualizar resultados consolidados
+
+## 🚨 PROBLEMA 2: FALTA SISTEMA DE ENVIO DE PIR PARA FUNCIONÁRIOS/CANDIDATOS
+
+**Status:** PIR só funciona dentro do processo AVD, não pode ser enviado individualmente
+
+### Funcionalidades Faltantes:
+- [ ] Sistema de convites com token único para PIR
+- [ ] Envio de e-mail com link personalizado para responder PIR
+- [ ] Página pública para responder PIR (sem necessidade de login)
+- [ ] Validação de token e expiração de convites
+- [ ] Suporte para candidatos externos (sem vínculo com employees)
+
+### Implementação Necessária:
+
+#### 1. Nova tabela no schema: `pirInvitations`
+```typescript
+export const pirInvitations = mysqlTable("pirInvitations", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId"), // Null para candidatos externos
+  candidateEmail: varchar("candidateEmail", { length: 320 }),
+  candidateName: varchar("candidateName", { length: 255 }),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "expired"]).default("pending").notNull(),
+  expiresAt: datetime("expiresAt").notNull(),
+  sentAt: datetime("sentAt"),
+  completedAt: datetime("completedAt"),
+  pirAssessmentId: int("pirAssessmentId"), // Vinculado após conclusão
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+```
+
+#### 2. Procedures tRPC necessárias:
+- [ ] `pir.createInvitation(employeeId?, candidateEmail?, candidateName?)` - Cria convite e gera token
+- [ ] `pir.sendInvitationEmail(invitationId)` - Envia e-mail com link único
+- [ ] `pir.getInvitationByToken(token)` - Valida token e retorna dados
+- [ ] `pir.submitPIRPublic(token, answers, videoUrl)` - Submete PIR via token público
+- [ ] `pir.listInvitations(filters)` - Lista convites enviados
+- [ ] `pir.resendInvitation(invitationId)` - Reenvia convite
+
+#### 3. Páginas frontend necessárias:
+- [ ] `/pir/convites` - Gerenciar envio de convites
+- [ ] `/pir/responder/:token` - Página pública para responder PIR (sem login)
+- [ ] `/pir/resultados` - Dashboard de resultados consolidados
+
+## 🚨 PROBLEMA 3: WORKFLOW DE DESCRIÇÕES DE CARGOS INCOMPLETO
+
+**Status:** Workflow existe mas não segue a hierarquia solicitada
+
+### Workflow Atual (Incorreto):
+1. Ocupante → Superior Imediato → Gerente RH
+
+### Workflow Solicitado (Correto):
+1. **Líder Imediato** ajusta e aprova descrições de sua equipe
+2. **Alexsandra Oliveira** (RH - Cargos e Salários) aprova
+3. **André** (Gerente de RH) aprova
+4. **Rodrigo Ribeiro Gonçalves** (Diretor) aprova final
+
+### Problemas Identificados:
+- [ ] Não há campo `managerId` (líder imediato) na tabela employees
+- [ ] Workflow não tem 4 níveis obrigatórios sequenciais
+- [ ] Não há controle de visibilidade por hierarquia de liderança
+- [ ] Líder não pode visualizar apenas descrições de sua equipe
+- [ ] Campos não são dinâmicos (adicionar/remover/reordenar)
+
+### Implementação Necessária:
+
+#### 1. Atualizar schema - Adicionar hierarquia:
+```typescript
+// Adicionar em employees:
+managerId: int("managerId"), // Líder imediato
+managerName: varchar("managerName", { length: 255 }),
+
+// Nova tabela para hierarquia completa:
+export const leadershipHierarchy = mysqlTable("leadershipHierarchy", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  managerId: int("managerId"),
+  level: int("level").notNull(), // 1=Diretor, 2=Gerente, 3=Coordenador, etc
+  path: varchar("path", { length: 500 }), // "1/5/23/45" para queries hierárquicas
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+```
+
+#### 2. Atualizar jobDescriptionApprovals - 4 níveis obrigatórios:
+```typescript
+export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  
+  // Nível 1: Líder Imediato
+  level1ApproverId: int("level1ApproverId").notNull(),
+  level1ApproverName: varchar("level1ApproverName", { length: 255 }),
+  level1Status: mysqlEnum("level1Status", ["pending", "approved", "rejected"]).default("pending"),
+  level1Comments: text("level1Comments"),
+  level1ApprovedAt: datetime("level1ApprovedAt"),
+  
+  // Nível 2: Alexsandra Oliveira (RH C&S)
+  level2ApproverId: int("level2ApproverId").notNull(),
+  level2ApproverName: varchar("level2ApproverName", { length: 255 }),
+  level2Status: mysqlEnum("level2Status", ["pending", "approved", "rejected"]).default("pending"),
+  level2Comments: text("level2Comments"),
+  level2ApprovedAt: datetime("level2ApprovedAt"),
+  
+  // Nível 3: André (Gerente RH)
+  level3ApproverId: int("level3ApproverId").notNull(),
+  level3ApproverName: varchar("level3ApproverName", { length: 255 }),
+  level3Status: mysqlEnum("level3Status", ["pending", "approved", "rejected"]).default("pending"),
+  level3Comments: text("level3Comments"),
+  level3ApprovedAt: datetime("level3ApprovedAt"),
+  
+  // Nível 4: Rodrigo Ribeiro Gonçalves (Diretor)
+  level4ApproverId: int("level4ApproverId").notNull(),
+  level4ApproverName: varchar("level4ApproverName", { length: 255 }),
+  level4Status: mysqlEnum("level4Status", ["pending", "approved", "rejected"]).default("pending"),
+  level4Comments: text("level4Comments"),
+  level4ApprovedAt: datetime("level4ApprovedAt"),
+  
+  currentLevel: int("currentLevel").default(1).notNull(),
+  overallStatus: mysqlEnum("overallStatus", ["pending", "approved", "rejected"]).default("pending"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+```
+
+#### 3. Procedures tRPC necessárias:
+- [ ] `hierarchy.getSubordinates(managerId)` - Retorna equipe direta e indireta
+- [ ] `hierarchy.getLeadershipPath(employeeId)` - Retorna caminho hierárquico completo
+- [ ] `jobDescriptions.getByLeadership(userId)` - Filtra por hierarquia (líder vê apenas sua equipe)
+- [ ] `jobDescriptions.createWorkflow(jobDescId)` - Cria workflow com 4 níveis obrigatórios
+- [ ] `jobDescriptions.approveLevel(approvalId, level, comments)` - Aprova nível específico
+- [ ] `jobDescriptions.rejectLevel(approvalId, level, comments)` - Rejeita e retorna ao criador
+- [ ] `jobDescriptions.getPendingApprovals(userId)` - Aprovações pendentes do usuário
+- [ ] `jobDescriptions.updateDynamicFields(jobDescId, fields)` - Atualiza campos dinâmicos
+- [ ] `jobDescriptions.reorderItems(jobDescId, type, newOrder)` - Reordena responsabilidades/conhecimentos/competências
+
+#### 4. Páginas frontend necessárias:
+- [ ] `/descricoes-cargos` - Listagem filtrada por hierarquia
+- [ ] `/descricoes-cargos/nova` - Criar nova descrição
+- [ ] `/descricoes-cargos/:id` - Visualizar/editar descrição
+- [ ] `/descricoes-cargos/:id/aprovar` - Interface de aprovação com 4 níveis
+- [ ] `/minhas-aprovacoes` - Dashboard de aprovações pendentes do líder
+
+#### 5. Componentes necessários:
+- [ ] `DynamicFieldList` - Adicionar/remover/reordenar campos com drag-and-drop
+- [ ] `ApprovalWorkflowTimeline` - Visualizar progresso dos 4 níveis de aprovação
+- [ ] `HierarchyFilter` - Filtro de visibilidade por hierarquia
+- [ ] `BatchApproval` - Aprovar múltiplas descrições em lote
+
+## 🎯 PLANO DE IMPLEMENTAÇÃO PRIORITÁRIO
+
+### FASE 1: Modelo de Dados (URGENTE)
+- [ ] Adicionar campo `managerId` em employees
+- [ ] Criar tabela `leadershipHierarchy`
+- [ ] Criar tabela `pirInvitations`
+- [ ] Atualizar `jobDescriptionApprovals` com 4 níveis
+- [ ] Executar `pnpm db:push`
+
+### FASE 2: Backend - PIR Integrado (ALTA PRIORIDADE)
+- [ ] Implementar procedures de convites PIR
+- [ ] Implementar envio de e-mail com template personalizado
+- [ ] Implementar validação de token público
+- [ ] Implementar submissão de PIR via token
+- [ ] Implementar dashboard de resultados PIR
+
+### FASE 3: Backend - Workflow de Descrições (ALTA PRIORIDADE)
+- [ ] Implementar queries hierárquicas
+- [ ] Implementar workflow de 4 níveis obrigatórios
+- [ ] Implementar controle de visibilidade por liderança
+- [ ] Implementar procedures de campos dinâmicos
+- [ ] Implementar aprovação em lote
+
+### FASE 4: Frontend - PIR Integrado (MÉDIA PRIORIDADE)
+- [ ] Adicionar "PIR Integrado" no menu
+- [ ] Criar página de gestão de convites
+- [ ] Criar página pública de resposta ao PIR
+- [ ] Criar dashboard de resultados
+- [ ] Implementar envio de convites em lote
+
+### FASE 5: Frontend - Descrições de Cargos (MÉDIA PRIORIDADE)
+- [ ] Criar listagem com filtro hierárquico
+- [ ] Implementar formulário com campos dinâmicos
+- [ ] Criar interface de aprovação com 4 níveis
+- [ ] Implementar dashboard de aprovações pendentes
+- [ ] Adicionar drag-and-drop para reordenação
+
+### FASE 6: Testes e Validação (BAIXA PRIORIDADE)
+- [ ] Testar workflow completo de aprovação hierárquica
+- [ ] Testar controle de visibilidade por liderança
+- [ ] Testar envio e resposta de PIR
+- [ ] Testar campos dinâmicos
+- [ ] Testar aprovação em lote
+
+## 📝 APROVADORES FIXOS A CONFIGURAR
+
+**Estes usuários devem ser criados/configurados no sistema:**
+
+1. **Alexsandra Oliveira** - RH Cargos e Salários
+   - Role: `rh`
+   - Flag especial: `isSalaryLead: true`
+   - Nível de aprovação: 2
+
+2. **André** - Gerente de RH
+   - Role: `rh`
+   - Cargo: Gerente de RH
+   - Nível de aprovação: 3
+
+3. **Rodrigo Ribeiro Gonçalves** - Diretor
+   - Role: `admin` ou `gestor` (nível diretor)
+   - Cargo: Diretor
+   - Nível de aprovação: 4
+
+## 🔑 REGRAS DE NEGÓCIO CRÍTICAS
+
+### PIR Integrado:
+1. Token de convite deve expirar em 7 dias (configurável)
+2. Token só pode ser usado uma vez
+3. Candidatos externos não precisam ter cadastro no sistema
+4. Vídeo é obrigatório para conclusão do PIR
+5. Resultados só ficam visíveis após conclusão completa
+
+### Workflow de Descrições:
+1. Aprovação deve ser **sequencial** (não pode pular níveis)
+2. Rejeição em qualquer nível retorna ao criador
+3. Líder só pode ver descrições de sua equipe (direta e indireta)
+4. Admin e RH podem ver todas as descrições
+5. Campos dinâmicos devem permitir reordenação via drag-and-drop
+6. Histórico completo de alterações deve ser mantido
+
+## 📊 MÉTRICAS DE SUCESSO
+
+- [ ] PIR acessível em menos de 2 cliques do menu principal
+- [ ] Tempo de envio de convite PIR < 30 segundos
+- [ ] Taxa de conclusão de PIR > 80%
+- [ ] Workflow de aprovação completo em < 5 dias úteis
+- [ ] 100% de descrições com 4 níveis de aprovação
+- [ ] 0 descrições visíveis fora da hierarquia do líder
+
+
+---
+
+# 🔥 TAREFAS URGENTES - PRIORIDADE MÁXIMA (14/12/2025)
+
+## 1. MIGRAÇÃO DO BANCO DE DADOS
+- [ ] Aplicar migração com novas tabelas (leadershipHierarchy, pirInvitations, jobDescriptionApprovals reestruturada)
+- [ ] Validar que migração foi aplicada com sucesso
+- [ ] Verificar integridade dos dados após migração
+
+## 2. PIR DE INTEGRIDADE - ADICIONAR AO MENU E FINALIZAR
+- [ ] Adicionar item "PIR de Integridade" no menu principal do DashboardLayout
+- [ ] Criar rota `/integridade/pir` para teste PIR de Integridade
+- [ ] Implementar página completa de PIR de Integridade com metodologia
+- [ ] Adicionar questionário completo de integridade
+- [ ] Implementar cálculo de resultados e dimensões de integridade
+- [ ] Criar visualização de resultados (gráficos, relatórios)
+
+## 3. PÁGINAS DE TESTES DE INTEGRIDADE (3 PÁGINAS)
+- [ ] Criar página `/integridade/testes` - Listagem e aplicação de testes
+  - [ ] Formulário para criar novo teste de integridade
+  - [ ] Listagem de testes aplicados
+  - [ ] Filtros por status, data, candidato
+- [ ] Criar página `/integridade/resultados` - Visualização de resultados
+  - [ ] Dashboard de resultados consolidados
+  - [ ] Gráficos de distribuição de scores
+  - [ ] Comparação entre candidatos
+- [ ] Criar página `/integridade/analises` - Análises consolidadas
+  - [ ] Análise estatística de resultados
+  - [ ] Tendências e padrões
+  - [ ] Exportação de relatórios
+
+## 4. PÁGINA DE APROVAÇÃO DE CARGOS
+- [ ] Criar página `/aprovacoes/cargos` - Aprovações de descrições de cargo
+  - [ ] Listagem de descrições pendentes de aprovação
+  - [ ] Filtro por nível de aprovação (1, 2, 3, 4)
+  - [ ] Interface de aprovação/rejeição com comentários
+  - [ ] Timeline visual do workflow de 4 níveis
+  - [ ] Histórico completo de aprovações
+  - [ ] Aprovação em lote
+
+## 5. PROCEDURES tRPC - BACKEND
+### PIR de Integridade:
+- [ ] `integrity.createTest(data)` - Criar teste de integridade
+- [ ] `integrity.listTests(filters)` - Listar testes aplicados
+- [ ] `integrity.getTestById(id)` - Buscar teste específico
+- [ ] `integrity.submitAnswers(testId, answers)` - Submeter respostas
+- [ ] `integrity.calculateResults(testId)` - Calcular resultados
+- [ ] `integrity.getResults(testId)` - Buscar resultados
+- [ ] `integrity.getAnalytics(filters)` - Análises consolidadas
+
+### Aprovações de Cargos:
+- [ ] `jobDescriptions.getPendingApprovals(userId, level)` - Aprovações pendentes por nível
+- [ ] `jobDescriptions.approveLevel(approvalId, level, comments)` - Aprovar nível específico
+- [ ] `jobDescriptions.rejectLevel(approvalId, level, comments)` - Rejeitar e retornar
+- [ ] `jobDescriptions.getApprovalHistory(jobDescId)` - Histórico completo
+- [ ] `jobDescriptions.batchApprove(approvalIds, level, comments)` - Aprovação em lote
+- [ ] `jobDescriptions.getByLeadership(userId)` - Filtrar por hierarquia
+
+## 6. ATUALIZAR MENU DO DASHBOARDLAYOUT
+- [ ] Adicionar seção "Testes de Integridade" com 3 submenus
+- [ ] Adicionar item "PIR de Integridade" em destaque
+- [ ] Adicionar seção "Aprovações" com submenu "Descrições de Cargos"
+- [ ] Reorganizar menu para melhor navegação

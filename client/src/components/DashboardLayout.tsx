@@ -268,6 +268,7 @@ const menuItems = [
     label: "Integridade",
     isSection: true,
     children: [
+      { icon: Brain, label: "PIR de Integridade", path: "/pir/integridade" },
       { icon: Shield, label: "Testes Disponíveis", path: "/integridade/testes" },
       { icon: FileSearch, label: "Resultados", path: "/integridade/resultados" },
       { icon: BarChart, label: "Análises", path: "/integridade/analises" },

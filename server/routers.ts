@@ -118,6 +118,8 @@ import { jobDescriptionWorkflowRouter } from "./routers/jobDescriptionWorkflowRo
 import { integrityRouter } from "./routers/integrityRouter";
 import { jobDescriptionsApprovalsRouter } from "./routers/jobDescriptionsApprovalsRouter";
 import { integrityTestsRouter } from "./routers/integrityTestsRouter";
+import { integrityPIRRouter } from "./routers/integrityPIRRouter";
+import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovalsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -266,6 +268,10 @@ export const appRouter = router({
   // Novos routers - Dashboard de Aprovações e Testes de Integridade (14/12/2025)
   jobDescriptionsApprovals: jobDescriptionsApprovalsRouter,
   integrityTests: integrityTestsRouter,
+  
+  // Novos routers - PIR de Integridade e Aprovações de Cargos com 4 níveis (14/12/2025)
+  integrityPIR: integrityPIRRouter,
+  jobDescriptionApprovals: jobDescriptionApprovalsRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

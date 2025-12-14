@@ -2325,29 +2325,67 @@ export type JobCompetency = typeof jobCompetencies.$inferSelect;
 export type InsertJobCompetency = typeof jobCompetencies.$inferInsert;
 
 /**
- * Aprovações de Descrição de Cargo - Workflow 3 níveis
+ * Hierarquia de Liderança - Estrutura organizacional completa
+ * Permite queries hierárquicas eficientes usando path-based queries
+ */
+export const leadershipHierarchy = mysqlTable("leadershipHierarchy", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  managerId: int("managerId"), // Líder imediato (null para CEO/Diretor)
+  managerName: varchar("managerName", { length: 255 }),
+  level: int("level").notNull(), // 1=Diretor, 2=Gerente, 3=Coordenador, 4=Supervisor, 5=Operacional
+  path: varchar("path", { length: 500 }), // Caminho completo na hierarquia (ex: "1/5/23/45")
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LeadershipHierarchy = typeof leadershipHierarchy.$inferSelect;
+export type InsertLeadershipHierarchy = typeof leadershipHierarchy.$inferInsert;
+
+/**
+ * Aprovações de Descrição de Cargo - Workflow 4 níveis obrigatórios
+ * Fluxo: Líder Imediato → Alexsandra Oliveira (RH C&S) → André (Gerente RH) → Rodrigo (Diretor)
  */
 export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
   id: int("id").autoincrement().primaryKey(),
-  
   jobDescriptionId: int("jobDescriptionId").notNull(),
   
-  // Nível de aprovação
-  approvalLevel: mysqlEnum("approvalLevel", ["occupant", "manager", "hr"]).notNull(), // Ocupante do Cargo, Superior Imediato, Gerente de RH
+  // Nível 1: Líder Imediato
+  level1ApproverId: int("level1ApproverId").notNull(),
+  level1ApproverName: varchar("level1ApproverName", { length: 255 }),
+  level1Status: mysqlEnum("level1Status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  level1Comments: text("level1Comments"),
+  level1ApprovedAt: datetime("level1ApprovedAt"),
   
-  // Aprovador
-  approverId: int("approverId").notNull(),
-  approverName: varchar("approverName", { length: 255 }).notNull(),
+  // Nível 2: Alexsandra Oliveira (RH Cargos e Salários)
+  level2ApproverId: int("level2ApproverId").notNull(),
+  level2ApproverName: varchar("level2ApproverName", { length: 255 }),
+  level2Status: mysqlEnum("level2Status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  level2Comments: text("level2Comments"),
+  level2ApprovedAt: datetime("level2ApprovedAt"),
   
-  // Status da aprovação
-  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  // Nível 3: André (Gerente de RH)
+  level3ApproverId: int("level3ApproverId").notNull(),
+  level3ApproverName: varchar("level3ApproverName", { length: 255 }),
+  level3Status: mysqlEnum("level3Status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  level3Comments: text("level3Comments"),
+  level3ApprovedAt: datetime("level3ApprovedAt"),
   
-  // Comentários
-  comments: text("comments"),
+  // Nível 4: Rodrigo Ribeiro Gonçalves (Diretor)
+  level4ApproverId: int("level4ApproverId").notNull(),
+  level4ApproverName: varchar("level4ApproverName", { length: 255 }),
+  level4Status: mysqlEnum("level4Status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  level4Comments: text("level4Comments"),
+  level4ApprovedAt: datetime("level4ApprovedAt"),
   
-  // Datas
+  // Controle do workflow
+  currentLevel: int("currentLevel").default(1).notNull(), // Nível atual de aprovação (1-4)
+  overallStatus: mysqlEnum("overallStatus", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  
+  // Auditoria
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  decidedAt: datetime("decidedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  completedAt: datetime("completedAt"), // Data de conclusão do workflow completo
 });
 
 export type JobDescriptionApproval = typeof jobDescriptionApprovals.$inferSelect;
@@ -4167,6 +4205,48 @@ export const pirAnswers = mysqlTable("pirAnswers", {
 
 export type PirAnswer = typeof pirAnswers.$inferSelect;
 export type InsertPirAnswer = typeof pirAnswers.$inferInsert;
+
+/**
+ * PIR Invitations - Convites para responder PIR
+ * Permite envio de PIR para funcionários e candidatos externos via link único
+ */
+export const pirInvitations = mysqlTable("pirInvitations", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Destinatário (funcionário OU candidato externo)
+  employeeId: int("employeeId"), // Null para candidatos externos
+  candidateEmail: varchar("candidateEmail", { length: 320 }),
+  candidateName: varchar("candidateName", { length: 255 }),
+  candidatePhone: varchar("candidatePhone", { length: 50 }),
+  
+  // Token único para acesso
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  
+  // Status do convite
+  status: mysqlEnum("status", ["pending", "sent", "in_progress", "completed", "expired"]).default("pending").notNull(),
+  
+  // Controle de validade
+  expiresAt: datetime("expiresAt").notNull(),
+  sentAt: datetime("sentAt"),
+  startedAt: datetime("startedAt"), // Quando começou a responder
+  completedAt: datetime("completedAt"),
+  
+  // Vínculo com avaliação PIR (após conclusão)
+  pirAssessmentId: int("pirAssessmentId"),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdByName: varchar("createdByName", { length: 255 }),
+  purpose: varchar("purpose", { length: 255 }), // Ex: "Processo Seletivo", "Avaliação Anual"
+  notes: text("notes"), // Observações internas
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirInvitation = typeof pirInvitations.$inferSelect;
+export type InsertPirInvitation = typeof pirInvitations.$inferInsert;
 
 // ============================================================================
 // TABELAS DE ANEXOS E DOCUMENTOS

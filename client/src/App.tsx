@@ -31,6 +31,11 @@ import FaceRegistration from "./pages/FaceRegistration";
 import TemporalAnalysis from "./pages/TemporalAnalysis";
 import PIRComparacao from "./pages/PIRComparacao";
 import PIRExportacao from "./pages/PIRExportacao";
+import PIRIntegridade from "./pages/PIRIntegridade";
+import IntegridadeTestes from "./pages/IntegridadeTestes";
+import IntegridadeResultados from "./pages/IntegridadeResultados";
+import IntegridadeAnalises from "./pages/IntegridadeAnalises";
+import AprovacoesCargos from "./pages/AprovacoesCargos";
 import ValidacaoTestes from "./pages/ValidacaoTestes";
 import DashboardTestes from "./pages/DashboardTestes";
 import { Route, Switch } from "wouter";
@@ -402,6 +407,15 @@ function Router() {
       <Route path="/pir/relatorio/:employeeId" component={PIRReport} />
       <Route path="/pir/comparacao" component={PIRComparacao} />
       <Route path="/pir/exportacao" component={PIRExportacao} />
+      <Route path="/pir/integridade" component={PIRIntegridade} />
+      
+      {/* Rotas de Integridade - 3 páginas */}
+      <Route path="/integridade/testes" component={IntegridadeTestes} />
+      <Route path="/integridade/resultados" component={IntegridadeResultados} />
+      <Route path="/integridade/analises" component={IntegridadeAnalises} />
+      
+      {/* Rota de Aprovações de Cargos com workflow de 4 níveis */}
+      <Route path="/aprovacoes/cargos" component={AprovacoesCargos} />
       <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
