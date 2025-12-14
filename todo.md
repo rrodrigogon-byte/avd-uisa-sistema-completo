@@ -348,6 +348,24 @@
 - [x] Validações de campos obrigatórios funcionando
 
 
+## 🐛 CORREÇÃO CRÍTICA - RESULTADOS DE TESTES PSICOMÉTRICOS E PIR (13/12/2025)
+
+### Problema: Resultados dos Testes Não Aparecem
+- [x] Corrigir exibição de resultados dos testes psicométricos (página vazia)
+- [x] Implementar busca de dados dos testes completados no backend (procedure getTests)
+- [x] Adicionar gráficos de visualização dos resultados DISC (radar chart)
+- [x] Adicionar gráficos de visualização dos resultados Big Five (bar chart)
+- [x] Implementar aba "Visão Geral" com resumo dos resultados
+- [x] Adicionar aba "Recomendações" com sugestões personalizadas
+
+### Problema: Dashboard PIR Sem Dados
+- [x] Corrigir dashboard PIR para exibir dados reais das avaliações
+- [x] Implementar gráficos no dashboard PIR (distribuição de notas por dimensão)
+- [x] Adicionar gráfico de evolução temporal das avaliações PIR
+- [x] Implementar filtros avançados (departamento, cargo, ciclo)
+- [x] Adicionar funcionalidade de exportação de relatórios (window.print para PDF)
+- [ ] Criar dados de teste para validação dos cálculos PIR
+
 ## 🐛 CORREÇÕES URGENTES - PAGINAÇÃO E PIR (13/12/2025)
 
 ### Problema de Paginação de Funcionários

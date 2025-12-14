@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { AlertCircle, Award, Brain, CheckCircle, Download, TrendingUp, User } from "lucide-react";
+import { AlertCircle, Award, Brain, CheckCircle, Download, TrendingUp, User, Lightbulb } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import {
@@ -28,9 +28,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default function PsychometricResults() {
   const { user, loading: authLoading } = useAuth();
   const [, navigate] = useLocation();
-  const [selectedEmployee, setSelectedEmployee] = useState<number | null>(null);
 
-  // Buscar testes do usuário logado ou de um funcionário específico
+  // Buscar testes do usuário logado
   const { data: tests, isLoading } = trpc.psychometric.getTests.useQuery(undefined, {
     enabled: !!user,
   });
@@ -65,25 +64,26 @@ export default function PsychometricResults() {
 
   // Pegar o teste mais recente
   const latestTest = tests[0];
-  const profile = latestTest.profile;
+  const profile = latestTest.profile || {};
 
-  // Preparar dados para gráficos
+  // Preparar dados para gráficos DISC
   const discData = profile.disc
     ? [
-        { trait: "Dominância", value: profile.disc.d, fullMark: 100 },
-        { trait: "Influência", value: profile.disc.i, fullMark: 100 },
-        { trait: "Estabilidade", value: profile.disc.s, fullMark: 100 },
-        { trait: "Conformidade", value: profile.disc.c, fullMark: 100 },
+        { trait: "Dominância", value: profile.disc.d || 0, fullMark: 100 },
+        { trait: "Influência", value: profile.disc.i || 0, fullMark: 100 },
+        { trait: "Estabilidade", value: profile.disc.s || 0, fullMark: 100 },
+        { trait: "Conformidade", value: profile.disc.c || 0, fullMark: 100 },
       ]
     : [];
 
+  // Preparar dados para gráficos Big Five
   const bigFiveData = profile.bigFive
     ? [
-        { name: "Abertura", value: profile.bigFive.o },
-        { name: "Conscienciosidade", value: profile.bigFive.c },
-        { name: "Extroversão", value: profile.bigFive.e },
-        { name: "Amabilidade", value: profile.bigFive.a },
-        { name: "Neuroticismo", value: profile.bigFive.n },
+        { name: "Abertura", value: profile.bigFive.o || 0 },
+        { name: "Conscienciosidade", value: profile.bigFive.c || 0 },
+        { name: "Extroversão", value: profile.bigFive.e || 0 },
+        { name: "Amabilidade", value: profile.bigFive.a || 0 },
+        { name: "Neuroticismo", value: profile.bigFive.n || 0 },
       ]
     : [];
 
@@ -91,10 +91,10 @@ export default function PsychometricResults() {
   const getDominantDISC = () => {
     if (!profile.disc) return null;
     const traits = [
-      { name: "D - Dominância", value: profile.disc.d, color: "bg-red-500" },
-      { name: "I - Influência", value: profile.disc.i, color: "bg-yellow-500" },
-      { name: "S - Estabilidade", value: profile.disc.s, color: "bg-green-500" },
-      { name: "C - Conformidade", value: profile.disc.c, color: "bg-blue-500" },
+      { name: "D - Dominância", value: profile.disc.d || 0, color: "bg-red-500" },
+      { name: "I - Influência", value: profile.disc.i || 0, color: "bg-yellow-500" },
+      { name: "S - Estabilidade", value: profile.disc.s || 0, color: "bg-green-500" },
+      { name: "C - Conformidade", value: profile.disc.c || 0, color: "bg-blue-500" },
     ];
     return traits.reduce((max, trait) => (trait.value > max.value ? trait : max));
   };
@@ -103,7 +103,7 @@ export default function PsychometricResults() {
 
   // Interpretações e recomendações
   const getInterpretation = () => {
-    if (!profile.disc) return null;
+    if (!profile.disc && !latestTest.profileType) return null;
 
     const interpretations: Record<string, { title: string; description: string; strengths: string[]; improvements: string[] }> = {
       D: {
@@ -172,11 +172,16 @@ export default function PsychometricResults() {
       },
     };
 
-    const dominant = dominantTrait?.name.charAt(0) || "D";
+    const dominant = dominantTrait?.name.charAt(0) || latestTest.profileType?.charAt(0) || "D";
     return interpretations[dominant];
   };
 
   const interpretation = getInterpretation();
+
+  // Função para exportar PDF
+  const handleExportPDF = () => {
+    window.print();
+  };
 
   return (
     <div className="container py-8 space-y-6">
@@ -188,7 +193,7 @@ export default function PsychometricResults() {
             Análise detalhada do seu perfil comportamental e de personalidade
           </p>
         </div>
-        <Button variant="outline" onClick={() => window.print()}>
+        <Button variant="outline" onClick={handleExportPDF}>
           <Download className="h-4 w-4 mr-2" />
           Exportar PDF
         </Button>
@@ -243,22 +248,22 @@ export default function PsychometricResults() {
               </Card>
             )}
 
-            {/* MBTI */}
-            {profile.mbti && (
+            {/* Tipo de Perfil */}
+            {(profile.mbti || latestTest.profileType) && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Brain className="h-5 w-5" />
-                    Tipo MBTI
+                    Tipo de Perfil
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-4">
                     <Badge variant="secondary" className="text-2xl px-6 py-3">
-                      {profile.mbti}
+                      {profile.mbti || latestTest.profileType}
                     </Badge>
                     <p className="text-sm text-muted-foreground">
-                      Tipo de personalidade Myers-Briggs
+                      {latestTest.profileDescription || "Tipo de personalidade identificado"}
                     </p>
                   </div>
                 </CardContent>
@@ -279,32 +284,38 @@ export default function PsychometricResults() {
                     <TrendingUp className="h-4 w-4 text-green-500" />
                     Pontos Fortes
                   </h4>
-                  <ul className="space-y-1">
-                    {interpretation.strengths.map((strength, i) => (
-                      <li key={i} className="text-sm flex items-start gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>{strength}</span>
-                      </li>
+                  <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                    {interpretation.strengths.map((strength, idx) => (
+                      <li key={idx}>{strength}</li>
                     ))}
                   </ul>
                 </div>
-
                 <Separator />
-
                 <div>
                   <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-amber-500" />
+                    <Lightbulb className="h-4 w-4 text-blue-500" />
                     Áreas de Desenvolvimento
                   </h4>
-                  <ul className="space-y-1">
-                    {interpretation.improvements.map((improvement, i) => (
-                      <li key={i} className="text-sm flex items-start gap-2">
-                        <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <span>{improvement}</span>
-                      </li>
+                  <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                    {interpretation.improvements.map((improvement, idx) => (
+                      <li key={idx}>{improvement}</li>
                     ))}
                   </ul>
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Características Adicionais */}
+          {latestTest.interpretation && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Interpretação Detalhada</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.interpretation}
+                </p>
               </CardContent>
             </Card>
           )}
@@ -313,68 +324,125 @@ export default function PsychometricResults() {
         {/* DISC */}
         <TabsContent value="disc" className="space-y-4">
           {profile.disc ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Análise DISC</CardTitle>
-                <CardDescription>
-                  Perfil comportamental baseado em Dominância, Influência, Estabilidade e Conformidade
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <RadarChart data={discData}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="trait" />
-                    <PolarRadiusAxis angle={90} domain={[0, 100]} />
-                    <Radar
-                      name="Perfil DISC"
-                      dataKey="value"
-                      stroke="hsl(var(--primary))"
-                      fill="hsl(var(--primary))"
-                      fillOpacity={0.6}
-                    />
-                    <Tooltip />
-                  </RadarChart>
-                </ResponsiveContainer>
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Perfil DISC</CardTitle>
+                  <CardDescription>
+                    Análise do seu comportamento em quatro dimensões principais
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <RadarChart data={discData}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="trait" />
+                      <PolarRadiusAxis angle={90} domain={[0, 100]} />
+                      <Radar
+                        name="Intensidade"
+                        dataKey="value"
+                        stroke="#8884d8"
+                        fill="#8884d8"
+                        fillOpacity={0.6}
+                      />
+                      <Tooltip />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="w-12 h-12 rounded-full bg-red-500 mx-auto mb-2 flex items-center justify-center text-white font-bold text-xl">
-                      D
+              <div className="grid gap-4 md:grid-cols-2">
+                {/* Dominância */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-red-500"></div>
+                      Dominância (D)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Intensidade</span>
+                        <Badge variant="secondary">{profile.disc.d}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Orientação para resultados, competitividade e tomada de decisão rápida.
+                      </p>
                     </div>
-                    <p className="font-semibold">Dominância</p>
-                    <p className="text-2xl font-bold text-primary">{profile.disc.d}%</p>
-                  </div>
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="w-12 h-12 rounded-full bg-yellow-500 mx-auto mb-2 flex items-center justify-center text-white font-bold text-xl">
-                      I
+                  </CardContent>
+                </Card>
+
+                {/* Influência */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
+                      Influência (I)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Intensidade</span>
+                        <Badge variant="secondary">{profile.disc.i}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Habilidade de comunicação, persuasão e construção de relacionamentos.
+                      </p>
                     </div>
-                    <p className="font-semibold">Influência</p>
-                    <p className="text-2xl font-bold text-primary">{profile.disc.i}%</p>
-                  </div>
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="w-12 h-12 rounded-full bg-green-500 mx-auto mb-2 flex items-center justify-center text-white font-bold text-xl">
-                      S
+                  </CardContent>
+                </Card>
+
+                {/* Estabilidade */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                      Estabilidade (S)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Intensidade</span>
+                        <Badge variant="secondary">{profile.disc.s}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Paciência, cooperação e preferência por ambientes estáveis.
+                      </p>
                     </div>
-                    <p className="font-semibold">Estabilidade</p>
-                    <p className="text-2xl font-bold text-primary">{profile.disc.s}%</p>
-                  </div>
-                  <div className="text-center p-4 border rounded-lg">
-                    <div className="w-12 h-12 rounded-full bg-blue-500 mx-auto mb-2 flex items-center justify-center text-white font-bold text-xl">
-                      C
+                  </CardContent>
+                </Card>
+
+                {/* Conformidade */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-blue-500"></div>
+                      Conformidade (C)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Intensidade</span>
+                        <Badge variant="secondary">{profile.disc.c}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Atenção aos detalhes, precisão e seguimento de procedimentos.
+                      </p>
                     </div>
-                    <p className="font-semibold">Conformidade</p>
-                    <p className="text-2xl font-bold text-primary">{profile.disc.c}%</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
           ) : (
             <Alert>
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Teste DISC não realizado</AlertTitle>
+              <AlertTitle>Dados DISC não disponíveis</AlertTitle>
               <AlertDescription>
-                Complete o teste DISC para ver sua análise comportamental.
+                Os resultados do perfil DISC não foram encontrados para este teste.
               </AlertDescription>
             </Alert>
           )}
@@ -383,65 +451,126 @@ export default function PsychometricResults() {
         {/* Big Five */}
         <TabsContent value="bigfive" className="space-y-4">
           {profile.bigFive ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Análise Big Five</CardTitle>
-                <CardDescription>
-                  Os cinco grandes traços de personalidade
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={bigFiveData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" fill="hsl(var(--primary))" name="Pontuação" />
-                  </BarChart>
-                </ResponsiveContainer>
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Modelo Big Five</CardTitle>
+                  <CardDescription>
+                    Os cinco grandes traços de personalidade
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={bigFiveData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis domain={[0, 100]} />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="value" fill="#8884d8" name="Pontuação" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Abertura ({profile.bigFive.o}%)</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Curiosidade intelectual, criatividade e preferência por novidades
-                    </p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Conscienciosidade ({profile.bigFive.c}%)</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Organização, responsabilidade e orientação para objetivos
-                    </p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Extroversão ({profile.bigFive.e}%)</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Sociabilidade, assertividade e busca por estimulação
-                    </p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-2">Amabilidade ({profile.bigFive.a}%)</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Cooperação, empatia e consideração pelos outros
-                    </p>
-                  </div>
-                  <div className="p-4 border rounded-lg col-span-1 md:col-span-2">
-                    <h4 className="font-semibold mb-2">Neuroticismo ({profile.bigFive.n}%)</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Estabilidade emocional e tendência a experienciar emoções negativas
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <div className="grid gap-4 md:grid-cols-2">
+                {/* Abertura */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Abertura (O)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.bigFive.o}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Curiosidade intelectual, criatividade e abertura para novas experiências.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Conscienciosidade */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Conscienciosidade (C)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.bigFive.c}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Organização, responsabilidade e orientação para objetivos.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Extroversão */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Extroversão (E)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.bigFive.e}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Sociabilidade, assertividade e busca por estimulação social.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Amabilidade */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Amabilidade (A)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.bigFive.a}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Empatia, cooperação e preocupação com o bem-estar dos outros.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Neuroticismo */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Neuroticismo (N)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.bigFive.n}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Estabilidade emocional e capacidade de lidar com estresse.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
           ) : (
             <Alert>
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Teste Big Five não realizado</AlertTitle>
+              <AlertTitle>Dados Big Five não disponíveis</AlertTitle>
               <AlertDescription>
-                Complete o teste Big Five para ver sua análise de personalidade.
+                Os resultados do modelo Big Five não foram encontrados para este teste.
               </AlertDescription>
             </Alert>
           )}
@@ -449,61 +578,149 @@ export default function PsychometricResults() {
 
         {/* Recomendações */}
         <TabsContent value="recommendations" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recomendações de Desenvolvimento</CardTitle>
-              <CardDescription>
-                Sugestões personalizadas baseadas no seu perfil psicométrico
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {interpretation && (
-                <>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-3">Ações Recomendadas</h3>
-                    <div className="space-y-3">
-                      {interpretation.improvements.map((improvement, i) => (
-                        <div key={i} className="flex items-start gap-3 p-3 bg-muted rounded-lg">
-                          <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold flex-shrink-0">
-                            {i + 1}
-                          </div>
-                          <div>
-                            <p className="font-medium">{improvement}</p>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              Trabalhe nesta área para maximizar seu potencial
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div>
-                    <h3 className="font-semibold text-lg mb-3">Aproveite Seus Pontos Fortes</h3>
-                    <div className="space-y-2">
-                      {interpretation.strengths.map((strength, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                          <span>{strength}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <Separator />
-
-              <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-                <p className="text-sm">
-                  <strong>Próximos Passos:</strong> Converse com seu gestor ou RH para criar um Plano de Desenvolvimento Individual (PDI) 
-                  personalizado baseado nestes resultados.
+          {/* Estilo de Trabalho */}
+          {latestTest.workStyle && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Estilo de Trabalho</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.workStyle}
                 </p>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Estilo de Comunicação */}
+          {latestTest.communicationStyle && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Estilo de Comunicação</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.communicationStyle}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Estilo de Liderança */}
+          {latestTest.leadershipStyle && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Estilo de Liderança</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.leadershipStyle}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Motivadores */}
+          {latestTest.motivators && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Motivadores</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.motivators}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Estressores */}
+          {latestTest.stressors && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Estressores</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.stressors}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Contribuição para Equipe */}
+          {latestTest.teamContribution && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Contribuição para Equipe</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.teamContribution}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Recomendações de Carreira */}
+          {latestTest.careerRecommendations && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Recomendações de Carreira</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.careerRecommendations}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Pontos Fortes */}
+          {latestTest.strengths && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                  Pontos Fortes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.strengths}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Áreas de Desenvolvimento */}
+          {latestTest.developmentAreas && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-blue-500" />
+                  Áreas de Desenvolvimento
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {latestTest.developmentAreas}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {!latestTest.workStyle && !latestTest.communicationStyle && !latestTest.leadershipStyle && 
+           !latestTest.motivators && !latestTest.stressors && !latestTest.teamContribution && 
+           !latestTest.careerRecommendations && !latestTest.strengths && !latestTest.developmentAreas && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Recomendações não disponíveis</AlertTitle>
+              <AlertDescription>
+                As recomendações personalizadas não foram geradas para este teste.
+              </AlertDescription>
+            </Alert>
+          )}
         </TabsContent>
       </Tabs>
     </div>

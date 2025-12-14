@@ -551,6 +551,72 @@ export const psychometricTestsRouter = router({
   }),
 
   /**
+   * Buscar testes completados do usuário logado
+   */
+  getTests: protectedProcedure.query(async ({ ctx }) => {
+    const { getDb } = await import("../db");
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const { testResults, employees } = await import("../../drizzle/schema");
+    const { eq, desc } = await import("drizzle-orm");
+
+    // Buscar employee_id do usuário logado
+    const [employee] = await db
+      .select({ id: employees.id })
+      .from(employees)
+      .where(eq(employees.openId, ctx.user.openId))
+      .limit(1);
+
+    if (!employee) {
+      return [];
+    }
+
+    // Buscar todos os resultados de testes do funcionário
+    const results = await db
+      .select()
+      .from(testResults)
+      .where(eq(testResults.employeeId, employee.id))
+      .orderBy(desc(testResults.completedAt));
+
+    // Formatar resultados com perfil consolidado
+    return results.map((result) => {
+      // Parsear scores JSON se existir
+      let parsedScores: any = {};
+      if (result.scores) {
+        try {
+          parsedScores = typeof result.scores === 'string' ? JSON.parse(result.scores) : result.scores;
+        } catch (e) {
+          console.error('Erro ao parsear scores:', e);
+        }
+      }
+
+      return {
+        id: result.id,
+        testType: result.testType,
+        completedAt: result.completedAt,
+        profile: {
+          disc: parsedScores.disc || null,
+          bigFive: parsedScores.bigFive || null,
+          mbti: result.profileType || null,
+        },
+        interpretation: result.interpretation,
+        profileType: result.profileType,
+        profileDescription: result.profileDescription,
+        strengths: result.strengths,
+        developmentAreas: result.developmentAreas,
+        workStyle: result.workStyle,
+        communicationStyle: result.communicationStyle,
+        leadershipStyle: result.leadershipStyle,
+        motivators: result.motivators,
+        stressors: result.stressors,
+        teamContribution: result.teamContribution,
+        careerRecommendations: result.careerRecommendations,
+      };
+    });
+  }),
+
+  /**
    * Buscar perfil consolidado de um funcionário (para integração com outros módulos)
    */
   getEmployeeProfile: publicProcedure
