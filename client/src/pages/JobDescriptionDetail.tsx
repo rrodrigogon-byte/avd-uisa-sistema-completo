@@ -4,10 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Edit, Briefcase, Target, Brain, GraduationCap, Loader2 } from "lucide-react";
+import { ArrowLeft, Edit, Briefcase, Target, Brain, GraduationCap, Loader2, CheckCircle, XCircle, RotateCcw, Send } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useState } from "react";
+import { toast } from "sonner";
+import StatusBadge from "@/components/StatusBadge";
+import ApprovalDialog from "@/components/ApprovalDialog";
+import ApprovalHistory from "@/components/ApprovalHistory";
 
 interface Responsibility {
   description: string;
@@ -32,7 +37,11 @@ export default function JobDescriptionDetail() {
   const [, params] = useRoute("/job-descriptions/:id");
   const jobDescId = params?.id ? parseInt(params.id) : null;
   const [, navigate] = useLocation();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
+  const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
+  const [approvalType, setApprovalType] = useState<'approve' | 'reject'>('approve');
+
+  const utils = trpc.useUtils();
 
   const { data: jobDesc, isLoading } = trpc.jobDescription.getById.useQuery(
     { id: jobDescId! },
@@ -43,6 +52,75 @@ export default function JobDescriptionDetail() {
     { id: jobDesc?.positionId || 0 },
     { enabled: !!jobDesc?.positionId }
   );
+
+  const { data: approvalHistory } = trpc.jobDescription.getApprovalHistory.useQuery(
+    { id: jobDescId! },
+    { enabled: !!jobDescId }
+  );
+
+  const submitForApprovalMutation = trpc.jobDescription.submitForApproval.useMutation({
+    onSuccess: () => {
+      toast.success('Descrição de Cargo enviada para análise com sucesso!');
+      utils.jobDescription.getById.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao enviar Descrição de Cargo para análise');
+    },
+  });
+
+  const approveMutation = trpc.jobDescription.approve.useMutation({
+    onSuccess: () => {
+      toast.success('Descrição de Cargo aprovada com sucesso!');
+      utils.jobDescription.getById.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+      setApprovalDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao aprovar Descrição de Cargo');
+    },
+  });
+
+  const rejectMutation = trpc.jobDescription.reject.useMutation({
+    onSuccess: () => {
+      toast.success('Descrição de Cargo rejeitada');
+      utils.jobDescription.getById.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+      setApprovalDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao rejeitar Descrição de Cargo');
+    },
+  });
+
+  const reopenMutation = trpc.jobDescription.reopen.useMutation({
+    onSuccess: () => {
+      toast.success('Descrição de Cargo reaberta para edição');
+      utils.jobDescription.getById.invalidate({ id: jobDescId! });
+      utils.jobDescription.getApprovalHistory.invalidate({ id: jobDescId! });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao reabrir Descrição de Cargo');
+    },
+  });
+
+  const handleApprovalAction = (type: 'approve' | 'reject') => {
+    setApprovalType(type);
+    setApprovalDialogOpen(true);
+  };
+
+  const handleApprovalConfirm = (comments?: string) => {
+    if (approvalType === 'approve') {
+      approveMutation.mutate({ id: jobDescId!, comments });
+    } else {
+      rejectMutation.mutate({ id: jobDescId!, comments: comments || '' });
+    }
+  };
+
+  const isAdmin = user?.role === 'admin';
+  const canApprove = isAdmin && jobDesc?.status === 'em_analise';
+  const canSubmit = jobDesc?.status === 'rascunho';
+  const canReopen = isAdmin && jobDesc?.status === 'rejeitado';
 
   if (authLoading || isLoading) {
     return (
@@ -138,10 +216,54 @@ export default function JobDescriptionDetail() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-        <Button onClick={() => navigate(`/job-descriptions/edit/${jobDesc.id}`)}>
-          <Edit className="h-4 w-4 mr-2" />
-          Editar Descrição
-        </Button>
+        <div className="flex gap-2">
+          {canSubmit && (
+            <Button
+              onClick={() => submitForApprovalMutation.mutate({ id: jobDescId! })}
+              disabled={submitForApprovalMutation.isPending}
+              variant="default"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              Enviar para Análise
+            </Button>
+          )}
+          {canApprove && (
+            <>
+              <Button
+                onClick={() => handleApprovalAction('approve')}
+                disabled={approveMutation.isPending}
+                variant="default"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Aprovar
+              </Button>
+              <Button
+                onClick={() => handleApprovalAction('reject')}
+                disabled={rejectMutation.isPending}
+                variant="destructive"
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Rejeitar
+              </Button>
+            </>
+          )}
+          {canReopen && (
+            <Button
+              onClick={() => reopenMutation.mutate({ id: jobDescId! })}
+              disabled={reopenMutation.isPending}
+              variant="outline"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reabrir
+            </Button>
+          )}
+          {jobDesc.status === 'rascunho' && (
+            <Button onClick={() => navigate(`/job-descriptions/edit/${jobDesc.id}`)}>
+              <Edit className="h-4 w-4 mr-2" />
+              Editar Descrição
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-6">
@@ -156,9 +278,12 @@ export default function JobDescriptionDetail() {
                   {position?.name || "Carregando..."}
                 </CardDescription>
               </div>
-              <Badge variant={jobDesc.isActive ? "default" : "secondary"}>
-                {jobDesc.isActive ? "Ativa" : "Inativa"}
-              </Badge>
+              <div className="flex gap-2">
+                <StatusBadge status={jobDesc.status || 'rascunho'} />
+                <Badge variant={jobDesc.isActive ? "default" : "secondary"}>
+                  {jobDesc.isActive ? "Ativa" : "Inativa"}
+                </Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -329,7 +454,26 @@ export default function JobDescriptionDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {approvalHistory && approvalHistory.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Histórico de Aprovações</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ApprovalHistory history={approvalHistory} />
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      <ApprovalDialog
+        open={approvalDialogOpen}
+        onOpenChange={setApprovalDialogOpen}
+        type={approvalType}
+        onConfirm={handleApprovalConfirm}
+        isPending={approvalType === 'approve' ? approveMutation.isPending : rejectMutation.isPending}
+      />
     </div>
   );
 }

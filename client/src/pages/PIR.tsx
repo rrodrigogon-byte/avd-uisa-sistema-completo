@@ -17,19 +17,48 @@ export default function PIR() {
   
   const [filters, setFilters] = useState<Record<string, string>>({
     status: 'todos',
+    department: 'todos',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+
+  // Extrair departamentos únicos dos PIRs
+  const departments = useMemo(() => {
+    const allPirs = [...myPirs, ...managedPirs];
+    const uniqueDepts = new Set(
+      allPirs
+        .map((pir: any) => pir.department)
+        .filter((dept: any) => dept && dept.trim() !== '')
+    );
+    return Array.from(uniqueDepts).sort().map((dept: any) => ({
+      value: dept,
+      label: dept,
+    }));
+  }, [myPirs, managedPirs]);
 
   const filterConfigs: FilterConfig[] = [
     {
       key: 'status',
       label: 'Status',
+      type: 'select',
       options: [
         { value: 'rascunho', label: 'Rascunho' },
         { value: 'em_analise', label: 'Em Análise' },
         { value: 'aprovado', label: 'Aprovado' },
         { value: 'rejeitado', label: 'Rejeitado' },
       ],
+    },
+    {
+      key: 'department',
+      label: 'Departamento',
+      type: 'select',
+      options: departments,
+    },
+    {
+      key: 'dateRange',
+      label: 'Período',
+      type: 'dateRange',
+      placeholder: 'Selecionar período',
     },
   ];
 
@@ -38,8 +67,9 @@ export default function PIR() {
   };
 
   const handleClearFilters = () => {
-    setFilters({ status: 'todos' });
+    setFilters({ status: 'todos', department: 'todos' });
     setSearchQuery('');
+    setDateRange({});
   };
 
   if (isLoading) {
@@ -66,24 +96,8 @@ export default function PIR() {
         return false;
       }
       
-      // Filtro de busca
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        return (
-          pir.title?.toLowerCase().includes(query) ||
-          pir.period?.toLowerCase().includes(query) ||
-          pir.description?.toLowerCase().includes(query)
-        );
-      }
-      
-      return true;
-    });
-  }, [myPirs, filters, searchQuery]);
-
-  const filteredManagedPirs = useMemo(() => {
-    return managedPirs.filter((pir: any) => {
-      // Filtro de status
-      if (filters.status !== 'todos' && pir.status !== filters.status) {
+      // Filtro de departamento
+      if (filters.department !== 'todos' && pir.department !== filters.department) {
         return false;
       }
       
@@ -93,8 +107,58 @@ export default function PIR() {
         return (
           pir.title?.toLowerCase().includes(query) ||
           pir.period?.toLowerCase().includes(query) ||
-          pir.description?.toLowerCase().includes(query)
+          pir.description?.toLowerCase().includes(query) ||
+          pir.department?.toLowerCase().includes(query)
         );
+      }
+      
+      // Filtro de período
+      if (dateRange.from || dateRange.to) {
+        const pirDate = new Date(pir.createdAt);
+        if (dateRange.from && pirDate < dateRange.from) return false;
+        if (dateRange.to) {
+          const endOfDay = new Date(dateRange.to);
+          endOfDay.setHours(23, 59, 59, 999);
+          if (pirDate > endOfDay) return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [myPirs, filters, searchQuery, dateRange]);
+
+  const filteredManagedPirs = useMemo(() => {
+    return managedPirs.filter((pir: any) => {
+      // Filtro de status
+      if (filters.status !== 'todos' && pir.status !== filters.status) {
+        return false;
+      }
+      
+      // Filtro de departamento
+      if (filters.department !== 'todos' && pir.department !== filters.department) {
+        return false;
+      }
+      
+      // Filtro de busca
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        return (
+          pir.title?.toLowerCase().includes(query) ||
+          pir.period?.toLowerCase().includes(query) ||
+          pir.description?.toLowerCase().includes(query) ||
+          pir.department?.toLowerCase().includes(query)
+        );
+      }
+      
+      // Filtro de período
+      if (dateRange.from || dateRange.to) {
+        const pirDate = new Date(pir.createdAt);
+        if (dateRange.from && pirDate < dateRange.from) return false;
+        if (dateRange.to) {
+          const endOfDay = new Date(dateRange.to);
+          endOfDay.setHours(23, 59, 59, 999);
+          if (pirDate > endOfDay) return false;
+        }
       }
       
       return true;
@@ -111,7 +175,7 @@ export default function PIR() {
             <h1 className="text-3xl font-bold text-foreground">PIR - Plano Individual de Resultados</h1>
             <p className="text-muted-foreground mt-2">Gerencie seus planos e acompanhe o progresso das metas</p>
           </div>
-          <Button onClick={() => toast.info("Funcionalidade em desenvolvimento")}>
+          <Button onClick={() => setLocation("/pir/new")}>
             <Plus className="w-4 h-4 mr-2" />
             Novo PIR
           </Button>
@@ -128,6 +192,8 @@ export default function PIR() {
             onSearchChange={setSearchQuery}
             searchPlaceholder="Buscar PIRs..."
             resultCount={filteredMyPirs.length + filteredManagedPirs.length}
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
           />
         </div>
 

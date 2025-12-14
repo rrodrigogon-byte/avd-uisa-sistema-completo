@@ -1,8 +1,12 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { X, Search } from "lucide-react";
+import { X, Search, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export interface FilterOption {
   value: string;
@@ -12,7 +16,8 @@ export interface FilterOption {
 export interface FilterConfig {
   key: string;
   label: string;
-  options: FilterOption[];
+  type?: 'select' | 'dateRange';
+  options?: FilterOption[];
   placeholder?: string;
 }
 
@@ -25,6 +30,8 @@ interface FilterBarProps {
   onSearchChange?: (value: string) => void;
   searchPlaceholder?: string;
   resultCount?: number;
+  dateRange?: { from?: Date; to?: Date };
+  onDateRangeChange?: (range: { from?: Date; to?: Date }) => void;
 }
 
 export default function FilterBar({
@@ -36,6 +43,8 @@ export default function FilterBar({
   onSearchChange,
   searchPlaceholder = "Buscar...",
   resultCount,
+  dateRange,
+  onDateRangeChange,
 }: FilterBarProps) {
   const activeFilterCount = Object.values(activeFilters).filter(v => v !== 'todos').length;
 
@@ -56,25 +65,60 @@ export default function FilterBar({
         )}
 
         {/* Filtros */}
-        {filters.map((filter) => (
-          <Select
-            key={filter.key}
-            value={activeFilters[filter.key] || 'todos'}
-            onValueChange={(value) => onFilterChange(filter.key, value)}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={filter.placeholder || filter.label} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos</SelectItem>
-              {filter.options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ))}
+        {filters.map((filter) => {
+          if (filter.type === 'dateRange' && onDateRangeChange) {
+            return (
+              <Popover key={filter.key}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[240px] justify-start text-left font-normal">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })} -{" "}
+                          {format(dateRange.to, "dd/MM/yyyy", { locale: ptBR })}
+                        </>
+                      ) : (
+                        format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })
+                      )
+                    ) : (
+                      <span>{filter.placeholder || filter.label}</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={(range) => onDateRangeChange(range || {})}
+                    numberOfMonths={2}
+                    locale={ptBR}
+                  />
+                </PopoverContent>
+              </Popover>
+            );
+          }
+          
+          return (
+            <Select
+              key={filter.key}
+              value={activeFilters[filter.key] || 'todos'}
+              onValueChange={(value) => onFilterChange(filter.key, value)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={filter.placeholder || filter.label} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos</SelectItem>
+                {filter.options?.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          );
+        })}
 
         {/* Botão limpar filtros */}
         {activeFilterCount > 0 && (

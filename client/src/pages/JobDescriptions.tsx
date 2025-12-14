@@ -1,15 +1,117 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Briefcase, FileText, Building } from "lucide-react";
+import FilterBar, { FilterConfig } from "@/components/FilterBar";
+import { useLocation } from "wouter";
+import StatusBadge from "@/components/StatusBadge";
 import { toast } from "sonner";
 
 export default function JobDescriptions() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
   const { data: jobDescriptions, isLoading } = trpc.jobDescription.list.useQuery();
+  
+  const [filters, setFilters] = useState<Record<string, string>>({
+    status: 'todos',
+    department: 'todos',
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+
+  // Extrair departamentos únicos das descrições de cargo
+  const departments = useMemo(() => {
+    if (!jobDescriptions) return [];
+    const uniqueDepts = new Set(
+      jobDescriptions
+        .map((job: any) => job.department)
+        .filter((dept: any) => dept && dept.trim() !== '')
+    );
+    return Array.from(uniqueDepts).sort().map((dept: any) => ({
+      value: dept,
+      label: dept,
+    }));
+  }, [jobDescriptions]);
+
+  const filterConfigs: FilterConfig[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: 'rascunho', label: 'Rascunho' },
+        { value: 'em_analise', label: 'Em Análise' },
+        { value: 'aprovado', label: 'Aprovado' },
+        { value: 'rejeitado', label: 'Rejeitado' },
+        { value: 'arquivado', label: 'Arquivado' },
+      ],
+    },
+    {
+      key: 'department',
+      label: 'Departamento',
+      type: 'select',
+      options: departments,
+    },
+    {
+      key: 'dateRange',
+      label: 'Período',
+      type: 'dateRange',
+      placeholder: 'Selecionar período',
+    },
+  ];
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ status: 'todos', department: 'todos' });
+    setSearchQuery('');
+    setDateRange({});
+  };
+
+  const filteredJobDescriptions = useMemo(() => {
+    if (!jobDescriptions) return [];
+    
+    return jobDescriptions.filter((job: any) => {
+      // Filtro de status
+      if (filters.status !== 'todos' && job.status !== filters.status) {
+        return false;
+      }
+      
+      // Filtro de departamento
+      if (filters.department !== 'todos' && job.department !== filters.department) {
+        return false;
+      }
+      
+      // Filtro de busca
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        return (
+          job.title?.toLowerCase().includes(query) ||
+          job.code?.toLowerCase().includes(query) ||
+          job.department?.toLowerCase().includes(query) ||
+          job.summary?.toLowerCase().includes(query)
+        );
+      }
+      
+      // Filtro de período
+      if (dateRange.from || dateRange.to) {
+        const jobDate = new Date(job.createdAt);
+        if (dateRange.from && jobDate < dateRange.from) return false;
+        if (dateRange.to) {
+          const endOfDay = new Date(dateRange.to);
+          endOfDay.setHours(23, 59, 59, 999);
+          if (jobDate > endOfDay) return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [jobDescriptions, filters, searchQuery, dateRange]);
 
   if (isLoading) {
     return (
@@ -41,7 +143,30 @@ export default function JobDescriptions() {
           )}
         </div>
 
-        {jobDescriptions && jobDescriptions.length === 0 ? (
+        <FilterBar
+          filters={filterConfigs}
+          activeFilters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder="Buscar por título, código, departamento..."
+          resultCount={filteredJobDescriptions.length}
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+        />
+
+        {filteredJobDescriptions.length === 0 && jobDescriptions && jobDescriptions.length > 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">Nenhuma descrição de cargo encontrada com os filtros aplicados</p>
+              <Button variant="outline" className="mt-4" onClick={handleClearFilters}>
+                Limpar Filtros
+              </Button>
+            </CardContent>
+          </Card>
+        ) : jobDescriptions && jobDescriptions.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
               <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -53,9 +178,9 @@ export default function JobDescriptions() {
               )}
             </CardContent>
           </Card>
-        ) : (
+        ) : filteredJobDescriptions.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {jobDescriptions?.map((job: any) => (
+            {filteredJobDescriptions.map((job: any) => (
               <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation(`/job-descriptions/${job.id}`)}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -65,7 +190,10 @@ export default function JobDescriptions() {
                         <span className="font-mono text-xs">{job.code}</span>
                       </CardDescription>
                     </div>
-                    <Badge variant="default">v{job.version}</Badge>
+                    <div className="flex flex-col gap-1">
+                      <StatusBadge status={job.status || 'rascunho'} />
+                      <Badge variant="default">v{job.version}</Badge>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -90,7 +218,7 @@ export default function JobDescriptions() {
               </Card>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

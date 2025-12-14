@@ -20,6 +20,7 @@ import JobDescriptionDetail from "./pages/JobDescriptionDetail";
 import EditJobDescription from "./pages/EditJobDescription";
 import EditTemplate from "./pages/EditTemplate";
 import EditEvaluation from "./pages/EditEvaluation";
+import PIRForm from "./pages/PIRForm";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -36,6 +37,7 @@ function Router() {
       <Route path={"/notifications"} component={Notifications} />
       <Route path={"/reports"} component={Reports} />
       <Route path={"/pir"} component={PIR} />
+      <Route path={"/pir/new"} component={PIRForm} />
       <Route path={"/pir/:id"} component={PIRDetail} />
       <Route path={"/pir/edit/:id"} component={EditPIR} />
       <Route path={"/job-descriptions"} component={JobDescriptions} />

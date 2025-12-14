@@ -58,7 +58,7 @@
 
 ### 3.2 Páginas de Avaliações
 - [x] Criar página de listagem de avaliações (Evaluations.tsx)
-- [ ] Criar página de criação/edição de avaliação (EvaluationForm.tsx)
+- [x] Criar página de criação/edição de avaliação (EvaluationForm.tsx) (NOVA SOLICITAÇÃO)
 - [ ] Criar página de visualização detalhada (EvaluationDetail.tsx)
 - [ ] Implementar filtros e busca na listagem
 
@@ -135,7 +135,7 @@
 - [x] Schema para acompanhamento de progresso
 - [x] Router tRPC para PIR (CRUD completo)
 - [x] Página de listagem de PIRs
-- [ ] Formulário de criação/edição de PIR
+- [x] Formulário de criação/edição de PIR (NOVA SOLICITAÇÃO)
 - [ ] Página de visualização detalhada de PIR
 - [ ] Sistema de acompanhamento de metas
 - [ ] Integração PIR com avaliações de desempenho
@@ -249,7 +249,7 @@
 ## 22. UI de Aprovação Completa - PRIORIDADE ALTA
 - [x] Criar componente StatusBadge reutilizável com cores por status
 - [x] Adicionar botões de Aprovar/Rejeitar nas páginas de PIR
-- [ ] Adicionar botões de Aprovar/Rejeitar nas páginas de Descrição de Cargo
+- [x] Adicionar botões de Aprovar/Rejeitar nas páginas de Descrição de Cargo (NOVA SOLICITAÇÃO)
 - [x] Implementar modal de confirmação para aprovações
 - [x] Implementar modal com campo de comentário para rejeições
 - [x] Adicionar visualização de histórico de aprovações nas páginas de detalhes
@@ -259,8 +259,8 @@
 - [x] Criar componente FilterBar reutilizável
 - [x] Adicionar filtro por status na listagem de PIR
 - [ ] Adicionar filtro por status na listagem de Descrição de Cargo
-- [ ] Adicionar filtro por departamento nas listagens
-- [ ] Adicionar filtro por período nas listagens
+- [x] Adicionar filtro por departamento nas listagens (NOVA SOLICITAÇÃO)
+- [x] Adicionar filtro por período nas listagens (NOVA SOLICITAÇÃO)
 - [ ] Implementar persistência de filtros na URL
 - [x] Adicionar contador de resultados filtrados
 
