@@ -3886,37 +3886,125 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
       if (employee.length === 0) return [];
 
-      const tests = await database.select()
+      // Buscar testes da tabela antiga (psychometricTests)
+      const oldTests = await database.select()
         .from(psychometricTests)
         .where(eq(psychometricTests.employeeId, employee[0].id))
         .orderBy(desc(psychometricTests.completedAt));
 
-      return tests.map(test => {
+      // Buscar testes da tabela nova (testResults) - onde o PIR é salvo
+      const newTests = await database.select()
+        .from(testResults)
+        .where(
+          and(
+            eq(testResults.employeeId, employee[0].id),
+            sql`${testResults.completedAt} IS NOT NULL`
+          )
+        )
+        .orderBy(desc(testResults.completedAt));
+
+      // Mapear testes antigos com perfil
+      const mappedOldTests = oldTests.map(test => {
         // Reconstruir perfil a partir dos campos individuais
-        let profile: any = null;
+        let profile: any = {};
         if (test.testType === "disc") {
           profile = {
-            D: test.discDominance ? test.discDominance / 20 : 0,
-            I: test.discInfluence ? test.discInfluence / 20 : 0,
-            S: test.discSteadiness ? test.discSteadiness / 20 : 0,
-            C: test.discCompliance ? test.discCompliance / 20 : 0,
+            disc: {
+              d: test.discDominance || 0,
+              i: test.discInfluence || 0,
+              s: test.discSteadiness || 0,
+              c: test.discCompliance || 0,
+            },
             dominantProfile: test.discProfile,
           };
         } else if (test.testType === "bigfive") {
           profile = {
-            O: test.bigFiveOpenness ? test.bigFiveOpenness / 20 : 0,
-            C: test.bigFiveConscientiousness ? test.bigFiveConscientiousness / 20 : 0,
-            E: test.bigFiveExtraversion ? test.bigFiveExtraversion / 20 : 0,
-            A: test.bigFiveAgreeableness ? test.bigFiveAgreeableness / 20 : 0,
-            N: test.bigFiveNeuroticism ? test.bigFiveNeuroticism / 20 : 0,
+            bigFive: {
+              o: test.bigFiveOpenness || 0,
+              c: test.bigFiveConscientiousness || 0,
+              e: test.bigFiveExtraversion || 0,
+              a: test.bigFiveAgreeableness || 0,
+              n: test.bigFiveNeuroticism || 0,
+            },
           };
+        } else if (test.testType === "pir") {
+          // PIR na tabela antiga pode ter profile como JSON ou estar vazio
+          try {
+            profile = test.profile ? JSON.parse(test.profile as string) : {};
+          } catch (e) {
+            console.error("Erro ao parsear profile do PIR (tabela antiga):", e);
+            profile = {};
+          }
         } else if (test.testType === "mbti" || test.testType === "ie" || test.testType === "vark") {
-          // Para novos testes, retornar profile vazio por enquanto
-          // TODO: Implementar cálculo de perfil para MBTI, IE e VARK
           profile = {};
         }
-        return { ...test, profile };
+        return { 
+          ...test, 
+          profile,
+          id: test.id,
+          testType: test.testType,
+          completedAt: test.completedAt,
+        };
       });
+
+      // Mapear testes novos (PIR e outros)
+      const mappedNewTests = newTests.map(test => {
+        let profile: any = {};
+        
+        // Para PIR, parsear o scores JSON
+        if (test.testType === "pir") {
+          try {
+            const scores = test.scores ? JSON.parse(test.scores) : {};
+            profile = {
+              pir: scores,
+              profileType: test.profileType || null,
+              profileDescription: test.profileDescription || null,
+              strengths: test.strengths || null,
+              developmentAreas: test.developmentAreas || null,
+            };
+          } catch (e) {
+            console.error("Erro ao parsear scores do PIR:", e);
+            // Mesmo com erro, retornar estrutura básica
+            profile = {
+              pir: {},
+              profileType: test.profileType || null,
+              profileDescription: test.profileDescription || null,
+              strengths: test.strengths || null,
+              developmentAreas: test.developmentAreas || null,
+            };
+          }
+        } else if (test.scores) {
+          try {
+            profile = JSON.parse(test.scores);
+          } catch (e) {
+            console.error("Erro ao parsear scores:", e);
+            profile = {};
+          }
+        }
+
+        return {
+          id: test.id,
+          testType: test.testType,
+          completedAt: test.completedAt,
+          profile,
+          profileType: test.profileType,
+          profileDescription: test.profileDescription,
+          strengths: test.strengths,
+          developmentAreas: test.developmentAreas,
+          workStyle: test.workStyle,
+          communicationStyle: test.communicationStyle,
+        };
+      });
+
+      // Combinar e ordenar por data de conclusão
+      const allTests = [...mappedOldTests, ...mappedNewTests];
+      allTests.sort((a, b) => {
+        const dateA = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+        const dateB = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+        return dateB - dateA; // Mais recente primeiro
+      });
+
+      return allTests;
     }),
 
     // Enviar convite para teste psicométrico por email

@@ -629,8 +629,8 @@ export async function listEmployees(filters?: {
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(positions, eq(employees.positionId, positions.id))
-    .where(and(...conditions))
-    .limit(100); // Limitar a 100 resultados para performance
+    .where(and(...conditions));
+    // Removido limite de 100 - retornar todos os funcionários
 
   // Retornar estrutura com objetos aninhados para compatibilidade com o frontend
   // Filtrar apenas registros com ID válido para evitar erros no frontend

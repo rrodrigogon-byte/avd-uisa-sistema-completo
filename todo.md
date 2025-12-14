@@ -348,7 +348,20 @@
 - [x] Validações de campos obrigatórios funcionando
 
 
-## 🚨 CORREÇÕES URGENTES PIR - ERRO VALIDAÇÃO ZOD (13/12/2025)
+## 🐛 CORREÇÕES URGENTES - PAGINAÇÃO E PIR (13/12/2025)
+
+### Problema de Paginação de Funcionários
+- [x] Corrigir limitação de 100 funcionários na listagem (deve mostrar todos)
+- [x] Investigar query de listagem de funcionários
+- [x] Implementar paginação adequada ou remover limite - **LIMITE REMOVIDO**
+
+### Problema de Resultados PIR
+- [x] Corrigir exibição de resultados PIR (mostra "Nenhum teste encontrado")
+- [x] Investigar query de busca de resultados PIR - **PROBLEMA: busca apenas tabela antiga**
+- [x] Verificar se dados estão sendo salvos corretamente - **DADOS ESTÃO NA TABELA testResults**
+- [x] Modificar procedure getTests para buscar em ambas as tabelas (psychometricTests + testResults)
+
+## 🐛 CORREÇÕES URGENTES PIR - ERRO VALIDAÇÃO ZOD (13/12/2025)
 
 ### Erro Crítico no Passo 1 PIR
 - [x] Corrigir erro "Cannot read properties of undefined (reading '_zod')" ao salvar passo 1 PIR
