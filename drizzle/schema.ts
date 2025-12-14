@@ -153,8 +153,8 @@ export const pirs = mysqlTable("pirs", {
   description: text("description"),
   /** Período de vigência (ex: "2024", "2024-Q1") */
   period: varchar("period", { length: 100 }).notNull(),
-  /** Status do PIR */
-  status: mysqlEnum("status", ["draft", "active", "completed", "cancelled"]).default("draft").notNull(),
+  /** Status do PIR - workflow de aprovação */
+  status: mysqlEnum("status", ["rascunho", "em_analise", "aprovado", "rejeitado", "ativo", "concluido", "cancelado"]).default("rascunho").notNull(),
   /** ID da avaliação que originou o PIR (se aplicável) */
   evaluationId: int("evaluationId"),
   /** ID do gestor responsável */
@@ -163,7 +163,18 @@ export const pirs = mysqlTable("pirs", {
   startDate: timestamp("startDate").notNull(),
   /** Data de término */
   endDate: timestamp("endDate").notNull(),
+  /** ID do aprovador */
+  approvedBy: int("approvedBy"),
+  /** Data de aprovação */
   approvedAt: timestamp("approvedAt"),
+  /** ID do rejeitador */
+  rejectedBy: int("rejectedBy"),
+  /** Data de rejeição */
+  rejectedAt: timestamp("rejectedAt"),
+  /** Comentários da aprovação/rejeição */
+  approvalComments: text("approvalComments"),
+  /** Data de submissão para análise */
+  submittedAt: timestamp("submittedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -221,6 +232,29 @@ export type PirProgress = typeof pirProgress.$inferSelect;
 export type InsertPirProgress = typeof pirProgress.$inferInsert;
 
 /**
+ * Histórico de Aprovações de PIR
+ */
+export const pirApprovalHistory = mysqlTable("pirApprovalHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID do PIR */
+  pirId: int("pirId").notNull(),
+  /** Ação realizada */
+  action: mysqlEnum("action", ["submetido", "aprovado", "rejeitado", "reaberto"]).notNull(),
+  /** ID do usuário que realizou a ação */
+  performedBy: int("performedBy").notNull(),
+  /** Comentários sobre a ação */
+  comments: text("comments"),
+  /** Status anterior */
+  previousStatus: varchar("previousStatus", { length: 50 }),
+  /** Novo status */
+  newStatus: varchar("newStatus", { length: 50 }).notNull(),
+  performedAt: timestamp("performedAt").defaultNow().notNull(),
+});
+
+export type PirApprovalHistory = typeof pirApprovalHistory.$inferSelect;
+export type InsertPirApprovalHistory = typeof pirApprovalHistory.$inferInsert;
+
+/**
  * Descrições de Cargo
  */
 export const jobDescriptions = mysqlTable("jobDescriptions", {
@@ -239,14 +273,26 @@ export const jobDescriptions = mysqlTable("jobDescriptions", {
   mission: text("mission"),
   /** Versão da descrição */
   version: int("version").default(1).notNull(),
+  /** Status da descrição - workflow de aprovação */
+  status: mysqlEnum("status", ["rascunho", "em_analise", "aprovado", "rejeitado", "arquivado"]).default("rascunho").notNull(),
   /** Indica se é a versão ativa */
-  isActive: boolean("isActive").default(true).notNull(),
+  isActive: boolean("isActive").default(false).notNull(),
   /** ID da versão anterior (para histórico) */
   previousVersionId: int("previousVersionId"),
   /** Usuário que criou/atualizou */
   createdBy: int("createdBy").notNull(),
+  /** ID do aprovador */
   approvedBy: int("approvedBy"),
+  /** Data de aprovação */
   approvedAt: timestamp("approvedAt"),
+  /** ID do rejeitador */
+  rejectedBy: int("rejectedBy"),
+  /** Data de rejeição */
+  rejectedAt: timestamp("rejectedAt"),
+  /** Comentários da aprovação/rejeição */
+  approvalComments: text("approvalComments"),
+  /** Data de submissão para análise */
+  submittedAt: timestamp("submittedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -329,3 +375,26 @@ export const jobRequirements = mysqlTable("jobRequirements", {
 
 export type JobRequirement = typeof jobRequirements.$inferSelect;
 export type InsertJobRequirement = typeof jobRequirements.$inferInsert;
+
+/**
+ * Histórico de Aprovações de Descrição de Cargo
+ */
+export const jobDescriptionApprovalHistory = mysqlTable("jobDescriptionApprovalHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID da descrição de cargo */
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  /** Ação realizada */
+  action: mysqlEnum("action", ["submetido", "aprovado", "rejeitado", "reaberto", "arquivado"]).notNull(),
+  /** ID do usuário que realizou a ação */
+  performedBy: int("performedBy").notNull(),
+  /** Comentários sobre a ação */
+  comments: text("comments"),
+  /** Status anterior */
+  previousStatus: varchar("previousStatus", { length: 50 }),
+  /** Novo status */
+  newStatus: varchar("newStatus", { length: 50 }).notNull(),
+  performedAt: timestamp("performedAt").defaultNow().notNull(),
+});
+
+export type JobDescriptionApprovalHistory = typeof jobDescriptionApprovalHistory.$inferSelect;
+export type InsertJobDescriptionApprovalHistory = typeof jobDescriptionApprovalHistory.$inferInsert;

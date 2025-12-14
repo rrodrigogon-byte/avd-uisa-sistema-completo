@@ -1,7 +1,8 @@
 import cron from 'node-cron';
 import { getDb } from './db';
 import * as db from './db';
-import { users, evaluations, pirs } from '../drizzle/schema';
+import { users, evaluations, pirs, notificationSettings, notificationLogs } from '../drizzle/schema';
+import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { notifyOwner } from './_core/notification';
 
 /**
@@ -30,6 +31,22 @@ async function sendNotification(userId: number, type: any, title: string, conten
   }
 }
 
+// Função auxiliar para calcular data com offset de dias
+function getDateWithOffset(days: number): Date {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
+// Função auxiliar para formatar data
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('pt-BR', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
+}
+
 // Job 1: Verificar avaliações pendentes (executa diariamente às 9h)
 const checkPendingEvaluations = cron.schedule('0 9 * * *', async () => {
   console.log('[CronJob] Checking pending evaluations...');
@@ -41,36 +58,70 @@ const checkPendingEvaluations = cron.schedule('0 9 * * *', async () => {
       return;
     }
 
-    // Buscar todas as avaliações em rascunho ou enviadas há mais de 7 dias
-    const allUsers = await database.select().from(users);
+    // Buscar avaliações em rascunho criadas há mais de 23 dias (faltam 7 dias para 30)
+    const twentyThreeDaysAgo = getDateWithOffset(-23);
     
-    for (const user of allUsers) {
-      const settings = await db.getNotificationSettings(user.id);
-      
-      // Verificar se o usuário quer receber lembretes
-      if (!settings || !settings.notifyPendingReminders) continue;
+    const pendingEvaluations = await database
+      .select({
+        evaluation: evaluations,
+        evaluator: users,
+      })
+      .from(evaluations)
+      .leftJoin(users, eq(evaluations.evaluatorId, users.id))
+      .where(
+        and(
+          eq(evaluations.status, 'draft'),
+          lte(evaluations.createdAt, twentyThreeDaysAgo)
+        )
+      );
 
-      const evaluations = await db.getEvaluationsByEvaluator(user.id);
-      const pendingEvals = evaluations.filter((e: any) => e.status === 'draft');
+    for (const { evaluation, evaluator } of pendingEvaluations) {
+      if (!evaluator) continue;
 
-      if (pendingEvals.length > 0) {
-        await sendNotification(
-          user.id,
-          'reminder',
-          'Avaliações Pendentes',
-          `Você tem ${pendingEvals.length} avaliação(ões) pendente(s) para completar.`
+      // Verificar configurações de notificação
+      const settings = await db.getNotificationSettings(evaluator.id);
+      if (settings && !settings.notifyPendingReminders) continue;
+
+      // Verificar se já enviamos notificação nas últimas 24h
+      const oneDayAgo = getDateWithOffset(-1);
+      const recentNotifications = await database
+        .select()
+        .from(notificationLogs)
+        .where(
+          and(
+            eq(notificationLogs.userId, evaluator.id),
+            eq(notificationLogs.evaluationId, evaluation.id),
+            eq(notificationLogs.type, 'deadline_approaching'),
+            gte(notificationLogs.sentAt, oneDayAgo)
+          )
         );
-      }
+
+      if (recentNotifications.length > 0) continue;
+
+      // Enviar notificação
+      await sendNotification(
+        evaluator.id,
+        'deadline_approaching',
+        'Prazo de Avaliação Próximo',
+        `A avaliação do período "${evaluation.period}" está próxima do prazo. Complete e submeta a avaliação o quanto antes.`,
+        evaluation.id
+      );
+
+      // Notificar owner
+      await notifyOwner({
+        title: `Lembrete de Avaliação - ${evaluator.name}`,
+        content: `O avaliador ${evaluator.name} tem uma avaliação pendente do período "${evaluation.period}" próxima do prazo.`,
+      });
     }
 
-    console.log('[CronJob] Pending evaluations check completed');
+    console.log(`[CronJob] Pending evaluations check completed. ${pendingEvaluations.length} evaluations checked.`);
   } catch (error) {
     console.error('[CronJob] Error checking pending evaluations:', error);
   }
 });
 
-// Job 2: Verificar PIRs ativos próximos do prazo (executa semanalmente às segundas 10h)
-const checkPirDeadlines = cron.schedule('0 10 * * 1', async () => {
+// Job 2: Verificar PIRs ativos próximos do prazo (executa diariamente às 9h)
+const checkPirDeadlines = cron.schedule('0 9 * * *', async () => {
   console.log('[CronJob] Checking PIR deadlines...');
   
   try {
@@ -80,30 +131,65 @@ const checkPirDeadlines = cron.schedule('0 10 * * 1', async () => {
       return;
     }
 
-    const allUsers = await database.select().from(users);
+    const today = new Date();
+    const sevenDaysFromNow = getDateWithOffset(7);
+    const eightDaysFromNow = getDateWithOffset(8);
     
-    for (const user of allUsers) {
-      const pirs = await db.getPirsByUser(user.id);
-      const activePirs = pirs.filter((p: any) => p.status === 'active');
+    // Buscar PIRs ativos com prazo entre 7 e 8 dias
+    const upcomingPirs = await database
+      .select({
+        pir: pirs,
+        user: users,
+      })
+      .from(pirs)
+      .leftJoin(users, eq(pirs.userId, users.id))
+      .where(
+        and(
+          eq(pirs.status, 'active'),
+          gte(pirs.endDate, sevenDaysFromNow),
+          lte(pirs.endDate, eightDaysFromNow)
+        )
+      );
 
-      for (const pir of activePirs) {
-        const endDate = new Date(pir.endDate);
-        const today = new Date();
-        const daysUntilEnd = Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    for (const { pir, user } of upcomingPirs) {
+      if (!user) continue;
 
-        // Notificar se faltam 30, 15 ou 7 dias
-        if ([30, 15, 7].includes(daysUntilEnd)) {
-          await sendNotification(
-            user.id,
-            'deadline_approaching',
-            'PIR Próximo do Prazo',
-            `Seu PIR "${pir.title}" termina em ${daysUntilEnd} dias. Período: ${pir.period}`
-          );
-        }
-      }
+      // Verificar configurações de notificação
+      const settings = await db.getNotificationSettings(user.id);
+      if (settings && !settings.notifyPendingReminders) continue;
+
+      // Verificar se já enviamos notificação nas últimas 24h
+      const oneDayAgo = getDateWithOffset(-1);
+      const recentNotifications = await database
+        .select()
+        .from(notificationLogs)
+        .where(
+          and(
+            eq(notificationLogs.userId, user.id),
+            sql`${notificationLogs.content} LIKE ${`%PIR%${pir.id}%`}`,
+            eq(notificationLogs.type, 'deadline_approaching'),
+            gte(notificationLogs.sentAt, oneDayAgo)
+          )
+        );
+
+      if (recentNotifications.length > 0) continue;
+
+      // Enviar notificação
+      await sendNotification(
+        user.id,
+        'deadline_approaching',
+        'Prazo de PIR Próximo',
+        `Seu PIR "${pir.title}" do período "${pir.period}" está próximo do prazo final (${formatDate(pir.endDate)}). Verifique o progresso das suas metas.`
+      );
+
+      // Notificar owner
+      await notifyOwner({
+        title: `Lembrete de PIR - ${user.name}`,
+        content: `O PIR "${pir.title}" de ${user.name} está próximo do prazo (${formatDate(pir.endDate)}).`,
+      });
     }
 
-    console.log('[CronJob] PIR deadlines check completed');
+    console.log(`[CronJob] PIR deadlines check completed. ${upcomingPirs.length} PIRs checked.`);
   } catch (error) {
     console.error('[CronJob] Error checking PIR deadlines:', error);
   }
@@ -120,35 +206,56 @@ const checkNewEvaluations = cron.schedule('0 */6 * * *', async () => {
       return;
     }
 
-    const allUsers = await database.select().from(users);
+    // Buscar avaliações criadas nas últimas 6 horas
+    const sixHoursAgo = getDateWithOffset(0);
+    sixHoursAgo.setHours(sixHoursAgo.getHours() - 6);
     
-    for (const user of allUsers) {
-      const settings = await db.getNotificationSettings(user.id);
-      
-      if (!settings || !settings.notifyOnNewEvaluation) continue;
-
-      const evaluations = await db.getEvaluationsByEvaluatedUser(user.id);
-      
-      // Verificar avaliações criadas nas últimas 6 horas
-      const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
-      const newEvaluations = evaluations.filter((e: any) => 
-        new Date(e.createdAt) > sixHoursAgo && e.status === 'draft'
+    const newEvaluations = await database
+      .select({
+        evaluation: evaluations,
+        evaluator: users,
+      })
+      .from(evaluations)
+      .leftJoin(users, eq(evaluations.evaluatorId, users.id))
+      .where(
+        and(
+          eq(evaluations.status, 'draft'),
+          gte(evaluations.createdAt, sixHoursAgo)
+        )
       );
 
-      if (newEvaluations.length > 0) {
-        for (const evaluation of newEvaluations) {
-          await sendNotification(
-            user.id,
-            'new_evaluation',
-            'Nova Avaliação Atribuída',
-            `Uma nova avaliação foi criada para você. Período: ${evaluation.period}`,
-            evaluation.id
-          );
-        }
-      }
+    for (const { evaluation, evaluator } of newEvaluations) {
+      if (!evaluator) continue;
+
+      // Verificar configurações de notificação
+      const settings = await db.getNotificationSettings(evaluator.id);
+      if (settings && !settings.notifyOnNewEvaluation) continue;
+
+      // Verificar se já enviamos notificação para esta avaliação
+      const existingNotifications = await database
+        .select()
+        .from(notificationLogs)
+        .where(
+          and(
+            eq(notificationLogs.userId, evaluator.id),
+            eq(notificationLogs.evaluationId, evaluation.id),
+            eq(notificationLogs.type, 'new_evaluation')
+          )
+        );
+
+      if (existingNotifications.length > 0) continue;
+
+      // Enviar notificação
+      await sendNotification(
+        evaluator.id,
+        'new_evaluation',
+        'Nova Avaliação Atribuída',
+        `Você foi designado para avaliar um colaborador no período "${evaluation.period}". Acesse o sistema para preencher a avaliação.`,
+        evaluation.id
+      );
     }
 
-    console.log('[CronJob] New evaluations check completed');
+    console.log(`[CronJob] New evaluations check completed. ${newEvaluations.length} evaluations checked.`);
   } catch (error) {
     console.error('[CronJob] Error checking new evaluations:', error);
   }

@@ -193,3 +193,31 @@
 - [ ] Processo de atualização de descrição de cargo
 - [ ] Workflow de aprovação de PIR
 - [ ] Workflow de aprovação de descrição de cargo
+
+## 18. Melhorias Fase 2 - Notificações Automáticas
+- [x] Reativar e corrigir cron jobs existentes
+- [x] Implementar verificação de prazos de avaliação (7 dias antes)
+- [x] Implementar verificação de prazos de PIR (7 dias antes)
+- [ ] Adicionar interface de configuração de notificações no painel admin
+- [ ] Testar envio automático de notificações
+
+## 19. Melhorias Fase 2 - Gráficos Interativos
+- [x] Criar componente de gráfico de evolução de desempenho individual
+- [x] Criar componente de gráfico de comparação de competências
+- [x] Criar componente de gráfico de distribuição de notas por departamento
+- [ ] Integrar gráficos avançados na página de relatórios de avaliação
+- [ ] Integrar gráficos avançados na página de relatórios de PIR
+- [ ] Adicionar opções de exportação de gráficos (PNG/PDF)
+- [x] Implementar tooltips detalhados nos gráficos
+
+## 20. Melhorias Fase 2 - Workflow de Aprovação
+- [x] Adicionar campo de status ao schema de PIR (rascunho, em_analise, aprovado, rejeitado)
+- [x] Adicionar campo de status ao schema de Descrição de Cargo
+- [x] Adicionar campos de histórico de aprovação (aprovador, data, comentários)
+- [x] Criar procedimentos tRPC para submeter para aprovação
+- [x] Criar procedimentos tRPC para aprovar/rejeitar PIR
+- [x] Criar procedimentos tRPC para aprovar/rejeitar Descrição de Cargo
+- [ ] Implementar interface de aprovação para gestores
+- [ ] Implementar notificações de mudança de status
+- [x] Adicionar visualização de histórico de aprovações (backend)
+- [ ] Adicionar filtros por status nas listagens

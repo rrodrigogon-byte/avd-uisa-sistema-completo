@@ -21,11 +21,13 @@ import {
   pirs,
   pirGoals,
   pirProgress,
+  pirApprovalHistory,
   jobDescriptions,
   jobResponsibilities,
   technicalCompetencies,
   behavioralCompetencies,
-  jobRequirements
+  jobRequirements,
+  jobDescriptionApprovalHistory
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -657,4 +659,52 @@ export async function deleteJobRequirement(id: number): Promise<void> {
   if (!db) throw new Error("Database not available");
 
   await db.delete(jobRequirements).where(eq(jobRequirements.id, id));
+}
+
+// ============================================================================
+// PIR APPROVAL HISTORY FUNCTIONS
+// ============================================================================
+
+export async function createPirApprovalHistory(history: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(pirApprovalHistory).values(history);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(pirApprovalHistory).where(eq(pirApprovalHistory.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getPirApprovalHistory(pirId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(pirApprovalHistory)
+    .where(eq(pirApprovalHistory.pirId, pirId))
+    .orderBy(pirApprovalHistory.performedAt);
+}
+
+// ============================================================================
+// JOB DESCRIPTION APPROVAL HISTORY FUNCTIONS
+// ============================================================================
+
+export async function createJobDescriptionApprovalHistory(history: any): Promise<any> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(jobDescriptionApprovalHistory).values(history);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(jobDescriptionApprovalHistory).where(eq(jobDescriptionApprovalHistory.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getJobDescriptionApprovalHistory(jobDescriptionId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(jobDescriptionApprovalHistory)
+    .where(eq(jobDescriptionApprovalHistory.jobDescriptionId, jobDescriptionId))
+    .orderBy(jobDescriptionApprovalHistory.performedAt);
 }

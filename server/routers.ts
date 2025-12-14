@@ -348,6 +348,91 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await db.getPirProgressByGoalId(input.goalId);
       }),
+
+    // Workflow de aprovação
+    submitForApproval: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const pir = await db.getPirById(input.id);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND', message: 'PIR não encontrado' });
+        if (pir.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Apenas o proprietário pode submeter o PIR' });
+        }
+        if (pir.status !== 'rascunho') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas PIRs em rascunho podem ser submetidos' });
+        }
+        await db.updatePir(input.id, { status: 'em_analise', submittedAt: new Date() });
+        await db.createPirApprovalHistory({
+          pirId: input.id,
+          action: 'submetido',
+          performedBy: ctx.user.id,
+          previousStatus: 'rascunho',
+          newStatus: 'em_analise',
+        });
+        return { success: true };
+      }),
+
+    approve: protectedProcedure
+      .input(z.object({ id: z.number(), comments: z.string().optional() }))
+      .mutation(async ({ input, ctx }) => {
+        const pir = await db.getPirById(input.id);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND', message: 'PIR não encontrado' });
+        if (pir.managerId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Apenas o gestor responsável ou admin pode aprovar' });
+        }
+        if (pir.status !== 'em_analise') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas PIRs em análise podem ser aprovados' });
+        }
+        await db.updatePir(input.id, {
+          status: 'aprovado',
+          approvedBy: ctx.user.id,
+          approvedAt: new Date(),
+          approvalComments: input.comments,
+        });
+        await db.createPirApprovalHistory({
+          pirId: input.id,
+          action: 'aprovado',
+          performedBy: ctx.user.id,
+          comments: input.comments,
+          previousStatus: 'em_analise',
+          newStatus: 'aprovado',
+        });
+        return { success: true };
+      }),
+
+    reject: protectedProcedure
+      .input(z.object({ id: z.number(), comments: z.string().min(1, 'Comentários são obrigatórios para rejeição') }))
+      .mutation(async ({ input, ctx }) => {
+        const pir = await db.getPirById(input.id);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND', message: 'PIR não encontrado' });
+        if (pir.managerId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Apenas o gestor responsável ou admin pode rejeitar' });
+        }
+        if (pir.status !== 'em_analise') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas PIRs em análise podem ser rejeitados' });
+        }
+        await db.updatePir(input.id, {
+          status: 'rejeitado',
+          rejectedBy: ctx.user.id,
+          rejectedAt: new Date(),
+          approvalComments: input.comments,
+        });
+        await db.createPirApprovalHistory({
+          pirId: input.id,
+          action: 'rejeitado',
+          performedBy: ctx.user.id,
+          comments: input.comments,
+          previousStatus: 'em_analise',
+          newStatus: 'rejeitado',
+        });
+        return { success: true };
+      }),
+
+    getApprovalHistory: protectedProcedure
+      .input(z.object({ pirId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getPirApprovalHistory(input.pirId);
+      }),
   }),
 
   // Descrições de Cargo
@@ -506,6 +591,83 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await db.deleteJobRequirement(input.id);
         return { success: true };
+      }),
+
+    // Workflow de aprovação
+    submitForApproval: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const jobDesc = await db.getJobDescriptionById(input.id);
+        if (!jobDesc) throw new TRPCError({ code: 'NOT_FOUND', message: 'Descrição de cargo não encontrada' });
+        if (jobDesc.status !== 'rascunho') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas descrições em rascunho podem ser submetidas' });
+        }
+        await db.updateJobDescription(input.id, { status: 'em_analise', submittedAt: new Date() });
+        await db.createJobDescriptionApprovalHistory({
+          jobDescriptionId: input.id,
+          action: 'submetido',
+          performedBy: ctx.user.id,
+          previousStatus: 'rascunho',
+          newStatus: 'em_analise',
+        });
+        return { success: true };
+      }),
+
+    approve: adminProcedure
+      .input(z.object({ id: z.number(), comments: z.string().optional() }))
+      .mutation(async ({ input, ctx }) => {
+        const jobDesc = await db.getJobDescriptionById(input.id);
+        if (!jobDesc) throw new TRPCError({ code: 'NOT_FOUND', message: 'Descrição de cargo não encontrada' });
+        if (jobDesc.status !== 'em_analise') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas descrições em análise podem ser aprovadas' });
+        }
+        await db.updateJobDescription(input.id, {
+          status: 'aprovado',
+          isActive: true,
+          approvedBy: ctx.user.id,
+          approvedAt: new Date(),
+          approvalComments: input.comments,
+        });
+        await db.createJobDescriptionApprovalHistory({
+          jobDescriptionId: input.id,
+          action: 'aprovado',
+          performedBy: ctx.user.id,
+          comments: input.comments,
+          previousStatus: 'em_analise',
+          newStatus: 'aprovado',
+        });
+        return { success: true };
+      }),
+
+    reject: adminProcedure
+      .input(z.object({ id: z.number(), comments: z.string().min(1, 'Comentários são obrigatórios para rejeição') }))
+      .mutation(async ({ input, ctx }) => {
+        const jobDesc = await db.getJobDescriptionById(input.id);
+        if (!jobDesc) throw new TRPCError({ code: 'NOT_FOUND', message: 'Descrição de cargo não encontrada' });
+        if (jobDesc.status !== 'em_analise') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas descrições em análise podem ser rejeitadas' });
+        }
+        await db.updateJobDescription(input.id, {
+          status: 'rejeitado',
+          rejectedBy: ctx.user.id,
+          rejectedAt: new Date(),
+          approvalComments: input.comments,
+        });
+        await db.createJobDescriptionApprovalHistory({
+          jobDescriptionId: input.id,
+          action: 'rejeitado',
+          performedBy: ctx.user.id,
+          comments: input.comments,
+          previousStatus: 'em_analise',
+          newStatus: 'rejeitado',
+        });
+        return { success: true };
+      }),
+
+    getApprovalHistory: publicProcedure
+      .input(z.object({ jobDescriptionId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getJobDescriptionApprovalHistory(input.jobDescriptionId);
       }),
   }),
 
