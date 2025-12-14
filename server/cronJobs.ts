@@ -47,8 +47,8 @@ function formatDate(date: Date): string {
   });
 }
 
-// Job 1: Verificar avaliações pendentes (executa diariamente às 9h)
-const checkPendingEvaluations = cron.schedule('0 9 * * *', async () => {
+// Job 1: Verificar avaliações pendentes (executa a cada 6 horas)
+const checkPendingEvaluations = cron.schedule('0 */6 * * *', async () => {
   console.log('[CronJob] Checking pending evaluations...');
   
   try {
@@ -120,8 +120,8 @@ const checkPendingEvaluations = cron.schedule('0 9 * * *', async () => {
   }
 });
 
-// Job 2: Verificar PIRs ativos próximos do prazo (executa diariamente às 9h)
-const checkPirDeadlines = cron.schedule('0 9 * * *', async () => {
+// Job 2: Verificar PIRs ativos próximos do prazo (executa a cada 6 horas)
+const checkPirDeadlines = cron.schedule('0 */6 * * *', async () => {
   console.log('[CronJob] Checking PIR deadlines...');
   
   try {
@@ -314,8 +314,8 @@ export function startCronJobs() {
   
   console.log('[CronJobs] All cron jobs started successfully');
   console.log('[CronJobs] Schedule:');
-  console.log('  - Pending evaluations: Daily at 9:00 AM');
-  console.log('  - PIR deadlines: Weekly on Mondays at 10:00 AM');
+  console.log('  - Pending evaluations: Every 6 hours');
+  console.log('  - PIR deadlines: Every 6 hours');
   console.log('  - New evaluations: Every 6 hours');
   console.log('  - Admin report: Weekly on Fridays at 5:00 PM');
 }

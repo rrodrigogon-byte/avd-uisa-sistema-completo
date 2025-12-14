@@ -397,6 +397,13 @@ export const appRouter = router({
           previousStatus: 'em_analise',
           newStatus: 'aprovado',
         });
+        // Notificar usuário sobre aprovação
+        await db.createNotificationLog({
+          userId: pir.userId,
+          type: 'status_change',
+          title: 'PIR Aprovado',
+          content: `Seu PIR "${pir.title}" foi aprovado. ${input.comments || ''}`,
+        });
         return { success: true };
       }),
 
@@ -424,6 +431,40 @@ export const appRouter = router({
           comments: input.comments,
           previousStatus: 'em_analise',
           newStatus: 'rejeitado',
+        });
+        // Notificar usuário sobre rejeição
+        await db.createNotificationLog({
+          userId: pir.userId,
+          type: 'status_change',
+          title: 'PIR Rejeitado',
+          content: `Seu PIR "${pir.title}" foi rejeitado. Motivo: ${input.comments}`,
+        });
+        return { success: true };
+      }),
+
+    reopen: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const pir = await db.getPirById(input.id);
+        if (!pir) throw new TRPCError({ code: 'NOT_FOUND', message: 'PIR não encontrado' });
+        if (pir.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Apenas o proprietário ou admin pode reabrir' });
+        }
+        if (pir.status !== 'rejeitado') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas PIRs rejeitados podem ser reabertos' });
+        }
+        await db.updatePir(input.id, {
+          status: 'rascunho',
+          rejectedBy: null,
+          rejectedAt: null,
+          approvalComments: null,
+        });
+        await db.createPirApprovalHistory({
+          pirId: input.id,
+          action: 'reaberto',
+          performedBy: ctx.user.id,
+          previousStatus: 'rejeitado',
+          newStatus: 'rascunho',
         });
         return { success: true };
       }),
@@ -636,6 +677,13 @@ export const appRouter = router({
           previousStatus: 'em_analise',
           newStatus: 'aprovado',
         });
+        // Notificar criador sobre aprovação
+        await db.createNotificationLog({
+          userId: jobDesc.createdBy,
+          type: 'status_change',
+          title: 'Descrição de Cargo Aprovada',
+          content: `A descrição de cargo "${jobDesc.title}" foi aprovada. ${input.comments || ''}`,
+        });
         return { success: true };
       }),
 
@@ -661,6 +709,59 @@ export const appRouter = router({
           previousStatus: 'em_analise',
           newStatus: 'rejeitado',
         });
+        // Notificar criador sobre rejeição
+        await db.createNotificationLog({
+          userId: jobDesc.createdBy,
+          type: 'status_change',
+          title: 'Descrição de Cargo Rejeitada',
+          content: `A descrição de cargo "${jobDesc.title}" foi rejeitada. Motivo: ${input.comments}`,
+        });
+        return { success: true };
+      }),
+
+    reopen: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const jobDesc = await db.getJobDescriptionById(input.id);
+        if (!jobDesc) throw new TRPCError({ code: 'NOT_FOUND', message: 'Descrição de cargo não encontrada' });
+        if (jobDesc.status !== 'rejeitado') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas descrições rejeitadas podem ser reabertas' });
+        }
+        await db.updateJobDescription(input.id, {
+          status: 'rascunho',
+          rejectedBy: null,
+          rejectedAt: null,
+          approvalComments: null,
+        });
+        await db.createJobDescriptionApprovalHistory({
+          jobDescriptionId: input.id,
+          action: 'reaberto',
+          performedBy: ctx.user.id,
+          previousStatus: 'rejeitado',
+          newStatus: 'rascunho',
+        });
+        return { success: true };
+      }),
+
+    archive: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const jobDesc = await db.getJobDescriptionById(input.id);
+        if (!jobDesc) throw new TRPCError({ code: 'NOT_FOUND', message: 'Descrição de cargo não encontrada' });
+        if (jobDesc.status !== 'aprovado') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Apenas descrições aprovadas podem ser arquivadas' });
+        }
+        await db.updateJobDescription(input.id, {
+          status: 'arquivado',
+          isActive: false,
+        });
+        await db.createJobDescriptionApprovalHistory({
+          jobDescriptionId: input.id,
+          action: 'arquivado',
+          performedBy: ctx.user.id,
+          previousStatus: 'aprovado',
+          newStatus: 'arquivado',
+        });
         return { success: true };
       }),
 
@@ -668,6 +769,92 @@ export const appRouter = router({
       .input(z.object({ jobDescriptionId: z.number() }))
       .query(async ({ input }) => {
         return await db.getJobDescriptionApprovalHistory(input.jobDescriptionId);
+      }),
+  }),
+
+  // Analytics e Gráficos
+  analytics: router({
+    // Gráfico de evolução de desempenho
+    performanceEvolution: protectedProcedure
+      .input(z.object({ userId: z.number().optional() }))
+      .query(async ({ input, ctx }) => {
+        const userId = input.userId || ctx.user.id;
+        const evaluations = await db.getEvaluationsByEvaluatedUser(userId);
+        const approved = evaluations.filter((e: any) => e.status === 'approved' && e.score !== null);
+        return approved.map((e: any) => ({
+          period: e.period,
+          score: e.score,
+          date: e.approvedAt || e.createdAt,
+        }));
+      }),
+
+    // Gráfico de comparação de competências
+    competencyComparison: protectedProcedure
+      .input(z.object({ jobDescriptionId: z.number() }))
+      .query(async ({ input }) => {
+        const technical = await db.getTechnicalCompetenciesByJobId(input.jobDescriptionId);
+        const behavioral = await db.getBehavioralCompetenciesByJobId(input.jobDescriptionId);
+        return {
+          technical: technical.map((c: any) => ({
+            name: c.name,
+            currentLevel: Math.floor(Math.random() * 5) + 1, // TODO: Implementar lógica real
+            requiredLevel: c.requiredLevel,
+          })),
+          behavioral: behavioral.map((c: any) => ({
+            name: c.name,
+            currentLevel: Math.floor(Math.random() * 5) + 1, // TODO: Implementar lógica real
+            requiredLevel: c.requiredLevel,
+          })),
+        };
+      }),
+
+    // Gráfico de distribuição por departamento
+    departmentDistribution: adminProcedure
+      .query(async () => {
+        const database = await getDb();
+        if (!database) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+        
+        const { evaluations, jobDescriptions } = await import('../drizzle/schema');
+        const allEvaluations = await database.select().from(evaluations);
+        const allJobDescriptions = await database.select().from(jobDescriptions);
+        
+        // Agrupar por departamento
+        const deptMap = new Map<string, { scores: number[], count: number }>();
+        
+        for (const evaluation of allEvaluations) {
+          if (evaluation.status === 'approved' && evaluation.score !== null) {
+            // Encontrar departamento do usuário avaliado (simplificado)
+            const dept = 'Departamento Geral'; // TODO: Implementar lógica real de departamento
+            if (!deptMap.has(dept)) {
+              deptMap.set(dept, { scores: [], count: 0 });
+            }
+            const deptData = deptMap.get(dept)!;
+            deptData.scores.push(evaluation.score);
+            deptData.count++;
+          }
+        }
+        
+        // Adicionar departamentos das descrições de cargo
+        for (const job of allJobDescriptions) {
+          if (job.department && !deptMap.has(job.department)) {
+            deptMap.set(job.department, { scores: [], count: 0 });
+          }
+        }
+        
+        return Array.from(deptMap.entries()).map(([department, data]) => {
+          const averageScore = data.scores.length > 0
+            ? data.scores.reduce((a, b) => a + b, 0) / data.scores.length
+            : 0;
+          const minScore = data.scores.length > 0 ? Math.min(...data.scores) : 0;
+          const maxScore = data.scores.length > 0 ? Math.max(...data.scores) : 0;
+          return {
+            department,
+            averageScore,
+            evaluationCount: data.count,
+            minScore,
+            maxScore,
+          };
+        });
       }),
   }),
 

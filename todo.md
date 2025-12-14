@@ -195,29 +195,46 @@
 - [ ] Workflow de aprovação de descrição de cargo
 
 ## 18. Melhorias Fase 2 - Notificações Automáticas
-- [x] Reativar e corrigir cron jobs existentes
+- [x] Reativar e corrigir cron jobs existentes para executar a cada 6 horas
 - [x] Implementar verificação de prazos de avaliação (7 dias antes)
 - [x] Implementar verificação de prazos de PIR (7 dias antes)
-- [ ] Adicionar interface de configuração de notificações no painel admin
-- [ ] Testar envio automático de notificações
+- [x] Implementar cron job para relatório semanal de administradores
+- [x] Interface de configuração de notificações já existe na página Notifications
+- [ ] Testar envio automático de notificações com vitest
 
 ## 19. Melhorias Fase 2 - Gráficos Interativos
-- [x] Criar componente de gráfico de evolução de desempenho individual
-- [x] Criar componente de gráfico de comparação de competências
-- [x] Criar componente de gráfico de distribuição de notas por departamento
-- [ ] Integrar gráficos avançados na página de relatórios de avaliação
-- [ ] Integrar gráficos avançados na página de relatórios de PIR
+- [x] Instalar e configurar Chart.js e react-chartjs-2
+- [x] Criar componente de gráfico de linha: Evolução de Desempenho ao longo do tempo
+- [x] Criar componente de gráfico radar: Comparação de Competências (técnicas vs comportamentais)
+- [x] Criar componente de gráfico de barras: Distribuição por Departamento com estatísticas
+- [x] Criar procedimentos tRPC para obter dados dos gráficos (analytics router)
+- [x] Implementar tooltips detalhados com informações de cada ponto
+- [x] Estatísticas agregadas em cada gráfico (média, máximo, mínimo, gaps)
+- [ ] Integrar gráficos na página de Relatórios
+- [ ] Integrar gráficos na página de Dashboard
 - [ ] Adicionar opções de exportação de gráficos (PNG/PDF)
-- [x] Implementar tooltips detalhados nos gráficos
 
 ## 20. Melhorias Fase 2 - Workflow de Aprovação
 - [x] Adicionar campo de status ao schema de PIR (rascunho, em_analise, aprovado, rejeitado)
 - [x] Adicionar campo de status ao schema de Descrição de Cargo
 - [x] Adicionar campos de histórico de aprovação (aprovador, data, comentários)
-- [x] Criar procedimentos tRPC para submeter para aprovação
-- [x] Criar procedimentos tRPC para aprovar/rejeitar PIR
-- [x] Criar procedimentos tRPC para aprovar/rejeitar Descrição de Cargo
-- [ ] Implementar interface de aprovação para gestores
-- [ ] Implementar notificações de mudança de status
-- [x] Adicionar visualização de histórico de aprovações (backend)
+- [x] Criar tabelas de histórico (pirApprovalHistory, jobDescriptionApprovalHistory)
+- [x] Criar procedimentos tRPC para workflow de PIR:
+  - [x] submitPirForApproval (rascunho → em_analise)
+  - [x] approvePir (em_analise → aprovado)
+  - [x] rejectPir (em_analise → rejeitado)
+  - [x] reopenPir (rejeitado → rascunho)
+- [x] Criar procedimentos tRPC para workflow de Descrição de Cargo:
+  - [x] submitJobDescriptionForApproval (rascunho → em_analise)
+  - [x] approveJobDescription (em_analise → aprovado)
+  - [x] rejectJobDescription (em_analise → rejeitado)
+  - [x] reopenJobDescription (rejeitado → rascunho)
+  - [x] archiveJobDescription (aprovado → arquivado)
+- [x] Registrar todas as ações no histórico de aprovações
+- [x] Implementar notificações automáticas de mudança de status
+- [x] Procedimento getApprovalHistory para visualização do histórico
+- [ ] Implementar interface de aprovação para gestores na UI
+- [ ] Adicionar visualização de histórico de aprovações na UI
+- [ ] Adicionar badges de status visual nas listagens
 - [ ] Adicionar filtros por status nas listagens
+- [ ] Criar testes vitest para workflows de aprovação
