@@ -14,6 +14,8 @@ import { router, protectedProcedure } from "../_core/trpc";
 import * as db from "../db";
 import { sendEmail } from "../emailService";
 import { TRPCError } from "@trpc/server";
+import { performanceEvaluations, employees, evaluationCycles } from "../../drizzle/schema";
+import { eq, and, or, desc, asc, gte, lte, sql } from "drizzle-orm";
 
 export const evaluationCycleRouter = router({
   /**
@@ -59,8 +61,8 @@ export const evaluationCycleRouter = router({
           // Buscar funcionário por email
           const [employee] = await database
             .select()
-            .from(db.employees)
-            .where(db.eq(db.employees.email, email))
+            .from(employees)
+            .where(eq(employees.email, email))
             .limit(1);
 
           if (!employee) {
@@ -75,11 +77,11 @@ export const evaluationCycleRouter = router({
           // Buscar avaliação do funcionário no ciclo
           const [evaluation] = await database
             .select()
-            .from(db.performanceEvaluations)
+            .from(performanceEvaluations)
             .where(
-              db.and(
-                db.eq(db.performanceEvaluations.cycleId, input.cycleId),
-                db.eq(db.performanceEvaluations.employeeId, employee.id)
+              and(
+                eq(performanceEvaluations.cycleId, input.cycleId),
+                eq(performanceEvaluations.employeeId, employee.id)
               )
             )
             .limit(1);
@@ -306,19 +308,19 @@ export const evaluationCycleRouter = router({
         for (const email of input.emails) {
           const [employee] = await database
             .select()
-            .from(db.employees)
-            .where(db.eq(db.employees.email, email))
+            .from(employees)
+            .where(eq(employees.email, email))
             .limit(1);
 
           if (!employee) continue;
 
           const [evaluation] = await database
             .select()
-            .from(db.performanceEvaluations)
+            .from(performanceEvaluations)
             .where(
-              db.and(
-                db.eq(db.performanceEvaluations.cycleId, input.cycleId),
-                db.eq(db.performanceEvaluations.employeeId, employee.id)
+              and(
+                eq(performanceEvaluations.cycleId, input.cycleId),
+                eq(performanceEvaluations.employeeId, employee.id)
               )
             )
             .limit(1);
@@ -415,8 +417,8 @@ export const evaluationCycleRouter = router({
         // Buscar dados do funcionário
         const [employee] = await database
           .select()
-          .from(db.employees)
-          .where(db.eq(db.employees.id, evaluation.employeeId))
+          .from(employees)
+          .where(eq(employees.id, evaluation.employeeId))
           .limit(1);
 
         if (!employee) {
@@ -429,8 +431,8 @@ export const evaluationCycleRouter = router({
         // Buscar dados do ciclo
         const [cycle] = await database
           .select()
-          .from(db.evaluationCycles)
-          .where(db.eq(db.evaluationCycles.id, evaluation.cycleId))
+          .from(evaluationCycles)
+          .where(eq(evaluationCycles.id, evaluation.cycleId))
           .limit(1);
 
         if (!cycle) {
@@ -504,8 +506,8 @@ export const evaluationCycleRouter = router({
         // Buscar todas as avaliações do ciclo
         const evaluations = await database
           .select()
-          .from(db.performanceEvaluations)
-          .where(db.eq(db.performanceEvaluations.cycleId, input.cycleId));
+          .from(performanceEvaluations)
+          .where(eq(performanceEvaluations.cycleId, input.cycleId));
 
         // Calcular estatísticas
         const total = evaluations.length;

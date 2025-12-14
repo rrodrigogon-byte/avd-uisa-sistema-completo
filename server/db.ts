@@ -3792,3 +3792,15 @@ export async function shouldNotifyUser(
   
   return true;
 }
+
+// ============================================================================
+// EXPORTS DE TABELAS PARA USO EM ROUTERS
+// ============================================================================
+
+export { 
+  performanceEvaluations,
+  employees
+} from "../drizzle/schema";
+
+// Note: Drizzle operators (eq, and, or, desc, asc, gte, lte, sql) are already
+// imported at the top of this file and used throughout. No need to re-export.

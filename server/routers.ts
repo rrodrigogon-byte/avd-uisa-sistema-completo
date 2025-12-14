@@ -4575,6 +4575,10 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   
   // Router de Gestão de Ciclos de Avaliação (360°)
   evaluationCycles: evaluationCyclesRouter,
+  
+  // Router de Ciclo Completo de Avaliação (Dashboard PIR)
+  evaluationCycle: evaluationCycleRouter,
+  
   jobDescription: jobDescriptionRouter,
   cycles: cyclesRouter, // Alias para compatibilidade
   

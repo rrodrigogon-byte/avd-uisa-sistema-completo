@@ -499,3 +499,16 @@
 - [x] Navegação intuitiva e completa
 - [x] Performance otimizada
 
+
+## ✅ BUG RESOLVIDO - DASHBOARD PIR (13/12/2025)
+
+- [x] Corrigir erro no dashboard do PIR - "Erro ao carregar dashboard" e "Erro ao buscar estatísticas do ciclo"
+- [x] Investigar procedures tRPC relacionadas ao dashboard PIR
+- [x] Verificar se há problemas de queries ou dados faltantes
+- [x] Testar carregamento do dashboard após correção
+
+**Solução aplicada:**
+- Registrado `evaluationCycleRouter` no arquivo `routers.ts` principal
+- Exportadas tabelas necessárias (`performanceEvaluations`, `employees`) do `db.ts`
+- Exportados operadores do Drizzle ORM (`eq`, `and`, `or`, `desc`, `asc`, `gte`, `lte`, `sql`)
+- Dashboard PIR agora carrega corretamente sem erros
