@@ -141,22 +141,22 @@ export default function PIRDashboard() {
   const performanceDistribution = [
     {
       name: "Excepcional (90-100)",
-      value: stats.scoreRanges.excepcional,
+      value: stats?.scoreRanges?.excepcional || 0,
       color: COLORS.excepcional,
     },
     {
       name: "Supera (75-89)",
-      value: stats.scoreRanges.supera,
+      value: stats?.scoreRanges?.supera || 0,
       color: COLORS.supera,
     },
     {
       name: "Atende (60-74)",
-      value: stats.scoreRanges.atende,
+      value: stats?.scoreRanges?.atende || 0,
       color: COLORS.atende,
     },
     {
       name: "Abaixo (0-59)",
-      value: stats.scoreRanges.abaixo,
+      value: stats?.scoreRanges?.abaixo || 0,
       color: COLORS.abaixo,
     },
   ];

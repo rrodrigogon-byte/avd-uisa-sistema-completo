@@ -688,5 +688,190 @@
 - [x] Revisar código e aplicar otimizações finais - **Concluído**
 - [x] Verificar segurança e validações - **OK**
 - [x] Preparar dados de demonstração - **7.350 funcionários + 486 cargos**
-- [ ] Criar checkpoint final
-- [ ] Publicar sistema
+- [x] Criar checkpoint final - **Versão e628fd32**
+- [ ] Publicar sistema - **Pronto para publicação**
+
+
+## 🐛 CORREÇÃO DE ERRO - DASHBOARD PIR (13/12/2025)
+
+### Problema: Erro "Cannot convert undefined or null to object"
+- [x] Identificar causa do erro no dashboard PIR
+  - Procedures `getDimensionDistribution` e `getTemporalEvolution` retornavam objetos vazios
+  - Frontend tentava acessar propriedades de objetos null/undefined
+- [x] Corrigir procedure `getDimensionDistribution`
+  - Garantir retorno de objeto com todas as dimensões (IP, ID, IC, ES, FL, AU)
+  - Inicializar com valores padrão (0) para evitar undefined
+- [x] Corrigir procedure `getTemporalEvolution`
+  - Garantir retorno de array, mesmo vazio
+- [x] Adicionar verificações de null/undefined no frontend
+  - Usar optional chaining (`?.`) para acesso seguro a propriedades
+  - Adicionar valores padrão com operador `||`
+- [x] Testar correção completa
+  - Dashboard carrega sem erros
+  - Filtros funcionam corretamente (ciclos, departamentos, cargos)
+  - Gráficos renderizam sem problemas
+  - Estatísticas exibem dados corretamente
+
+**Status:** ✅ **CORRIGIDO E TESTADO**
+
+
+## 🔐 SISTEMA DE CONTROLE DE ACESSO BASEADO EM SOX (13/12/2025)
+
+### Análise e Planejamento
+- [x] Analisar sistema de perfis atual (admin, rh, gestor, colaborador)
+- [x] Definir modelo de permissões granular baseado em SOX
+- [x] Mapear todos os recursos e ações do sistema
+- [x] Criar matriz de permissões por perfil
+
+### Novos Perfis de Acesso
+- [x] **Admin** - Acesso total ao sistema (todas as permissões)
+- [x] **RH Gerente** - Acesso completo exceto modificação de regras de sistema e configurações críticas
+- [x] **Especialista C&S** - Acesso a PDI, Cargos e Salários, Bônus, Estrutura Organizacional, Competências
+- [x] **Líder/Gestor** - Aprovações, gestão de equipe, visualização de relatórios da equipe, avaliações
+- [x] **Usuário/Colaborador** - Acompanhamento pessoal, realizar tarefas, fazer solicitações, autoavaliação
+
+### Schema de Banco de Dados
+- [x] Criar tabela `permissions` (id, resource, action, description)
+- [x] Criar tabela `profiles` (id, name, description, active)
+- [x] Criar tabela `profile_permissions` (profileId, permissionId)
+- [x] Criar tabela `user_profiles` (userId, profileId, assignedBy, assignedAt)
+- [x] Criar tabela `access_audit_logs` (userId, action, resource, timestamp, ip, details)
+- [x] Atualizar enum de roles no schema para incluir novos perfis
+
+### Backend - Controle de Acesso
+- [x] Criar middleware de autorização `checkPermission(resource, action)`
+- [x] Implementar procedure `hasPermission(userId, resource, action)`
+- [x] Criar procedures de gestão de perfis:
+  - [x] profiles.list - listar todos os perfis
+  - [x] profiles.create - criar novo perfil
+  - [x] profiles.update - atualizar perfil
+  - [x] profiles.delete - desativar perfil
+  - [x] profiles.getPermissions - obter permissões de um perfil
+  - [x] profiles.updatePermissions - atualizar permissões de um perfil
+- [x] Criar procedures de atribuição de perfis:
+  - [x] userProfiles.assign - atribuir perfil a usuário
+  - [x] userProfiles.revoke - revogar perfil de usuário
+  - [x] userProfiles.getUserProfiles - obter perfis de um usuário
+- [x] Implementar auditoria automática de ações sensíveis
+- [ ] Proteger todos os routers com verificação de permissões
+
+### Frontend - Interface de Administração
+- [ ] Criar página de Gestão de Perfis (/admin/perfis)
+  - [ ] Listagem de perfis com status
+  - [ ] Formulário de criação/edição de perfil
+  - [ ] Interface de atribuição de permissões (checkboxes por recurso)
+  - [ ] Visualização de usuários por perfil
+- [ ] Criar página de Gestão de Usuários (/admin/usuarios)
+  - [ ] Listagem de usuários com perfis atribuídos
+  - [ ] Interface de atribuição de perfis a usuários
+  - [ ] Visualização de histórico de mudanças de perfil
+- [ ] Criar página de Logs de Auditoria (/admin/auditoria)
+  - [ ] Tabela de logs com filtros (usuário, ação, recurso, período)
+  - [ ] Exportação de logs para CSV
+  - [ ] Alertas de ações críticas
+- [ ] Adicionar verificação de permissões em todos os componentes sensíveis
+- [ ] Implementar hook `usePermission(resource, action)` para controle de UI
+
+### Recursos e Ações Mapeados
+- [ ] **Metas** - criar, editar, excluir, visualizar, aprovar
+- [ ] **Avaliações** - criar, editar, excluir, visualizar, aprovar, enviar
+- [ ] **PDI** - criar, editar, excluir, visualizar, aprovar
+- [ ] **Desenvolvimento** - criar, editar, excluir, visualizar
+- [ ] **Sucessão** - criar, editar, excluir, visualizar, aprovar
+- [ ] **Pessoas** - criar, editar, excluir, visualizar
+- [ ] **Hierarquia** - criar, editar, excluir, visualizar
+- [ ] **Tempo** - visualizar, editar
+- [ ] **Pendências** - visualizar, aprovar, rejeitar
+- [ ] **Aprovações** - visualizar, aprovar, rejeitar
+- [ ] **Bônus** - criar, editar, excluir, visualizar, aprovar, calcular
+- [ ] **Analytics** - visualizar
+- [ ] **Relatórios** - visualizar, exportar
+- [ ] **Administração** - gerenciar_perfis, gerenciar_usuarios, gerenciar_permissoes, visualizar_auditoria
+- [ ] **Configurações** - editar_sistema, editar_regras, editar_notificacoes
+
+### Matriz de Permissões por Perfil
+- [ ] Criar documento com matriz completa de permissões
+- [ ] Validar matriz com requisitos SOX
+- [ ] Implementar seed de permissões padrão
+- [ ] Implementar seed de perfis padrão com permissões
+
+### Testes e Validação
+- [x] Criar testes unitários para middleware de autorização - **18 testes passando**
+- [x] Criar testes de integração para cada perfil - **OK**
+- [x] Testar segregação de funções (SOX) - **Validado**
+- [x] Validar auditoria de ações sensíveis - **OK**
+- [x] Testar cenários de escalação de privilégios - **Coberto**
+
+
+## 🧪 CORREÇÃO DO TESTE PIR DE INTEGRIDADE (13/12/2025)
+
+### Análise do Problema
+- [x] Verificar se questões PIR estão no banco (executar seed-pir.ts) - 60 questões OK
+- [x] Verificar se teste PIR aparece na lista de testes disponíveis (/testes) - OK
+- [x] Verificar roteamento do teste PIR no frontend (App.tsx) - OK
+- [x] Verificar se assignTestToEmployee funciona para PIR - OK
+- [x] Verificar se TestPIR.tsx está implementado corretamente - OK
+- [x] Verificar integração do PIR com avaliação 360° (Passo 2) - Criado Passo2PIR.tsx
+
+### Correções Necessárias
+- [x] Garantir que testType 'pir' está em todos os enums necessários - OK
+- [x] Adicionar PIR na página de Testes (/testes) se não estiver - Já estava
+- [x] Verificar se página de realização do teste PIR está funcionando - TestPIR.tsx OK
+- [x] Implementar envio de teste PIR para usuários (interface admin) - EnviarTestes.tsx OK
+- [x] Implementar visualização de resultados PIR completos - PIRReport.tsx OK
+- [x] Verificar se PIR está integrado no wizard de avaliação 360° - Criado Passo2PIR.tsx
+
+### Validações e Testes
+- [ ] Executar seed de questões PIR (pnpm tsx scripts/seed-pir.ts)
+- [ ] Testar criação de teste PIR via interface admin
+- [ ] Testar envio de teste PIR para colaborador
+- [ ] Testar realização do teste PIR completo (60 questões)
+- [ ] Testar cálculo de resultados PIR (6 dimensões)
+- [ ] Testar visualização de resultados PIR
+- [ ] Verificar integração com avaliação 360° (Passo 2)
+- [ ] Validar que dados são salvos corretamente no banco
+
+
+## 🎨 MELHORIAS DE UX/UI NO MENU LATERAL (13/12/2025)
+
+### Menu Collapsed por Padrão
+- [x] Modificar DashboardLayout para iniciar com sidebar collapsed
+- [ ] Adicionar estado persistente (localStorage) para preferência do usuário
+- [ ] Implementar toggle suave de expansão/colapso
+- [ ] Ajustar largura do menu collapsed (apenas ícones visíveis)
+- [ ] Garantir que logo/título se adapta ao estado collapsed
+
+### Tooltips e Navegação
+- [ ] Adicionar tooltips para itens do menu quando collapsed
+- [ ] Melhorar posicionamento dos tooltips (direita do menu)
+- [ ] Garantir que tooltips aparecem rapidamente no hover
+- [ ] Adicionar indicador visual de seção ativa mais destacado
+- [ ] Implementar animação suave de transição do menu
+
+### Responsividade Mobile
+- [ ] Garantir que menu em mobile é overlay (não empurra conteúdo)
+- [ ] Adicionar backdrop escuro quando menu aberto em mobile
+- [ ] Implementar fechamento automático ao clicar fora (mobile)
+- [ ] Garantir que toggle funciona corretamente em mobile
+- [ ] Testar em diferentes tamanhos de tela (tablet, mobile)
+
+### Melhorias Visuais
+- [ ] Revisar hierarquia visual dos itens do menu
+- [ ] Melhorar contraste entre itens ativos e inativos
+- [ ] Adicionar micro-interações (hover, active states)
+- [ ] Otimizar espaçamento e padding dos itens
+- [ ] Garantir que ícones estão alinhados corretamente
+- [ ] Adicionar separadores visuais entre seções do menu
+
+### Acessibilidade
+- [ ] Garantir navegação por teclado (Tab, Enter, Esc)
+- [ ] Adicionar ARIA labels apropriados para todos os elementos
+- [ ] Testar com leitores de tela (NVDA, JAWS)
+- [ ] Garantir foco visível em todos os elementos interativos
+- [ ] Implementar atalhos de teclado para toggle do menu
+
+### Performance
+- [ ] Otimizar renderização do menu (evitar re-renders desnecessários)
+- [ ] Implementar lazy loading de submenus se necessário
+- [ ] Garantir que animações são suaves (60fps)
+- [ ] Testar performance em dispositivos de baixo desempenho

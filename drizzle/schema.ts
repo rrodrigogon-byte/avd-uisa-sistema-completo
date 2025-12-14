@@ -5136,3 +5136,163 @@ export const avdDevelopmentActionProgress = mysqlTable("avdDevelopmentActionProg
 
 export type AvdDevelopmentActionProgress = typeof avdDevelopmentActionProgress.$inferSelect;
 export type InsertAvdDevelopmentActionProgress = typeof avdDevelopmentActionProgress.$inferInsert;
+
+
+// ============================================================================
+// SISTEMA DE CONTROLE DE ACESSO BASEADO EM SOX
+// ============================================================================
+
+/**
+ * Permissions - Permissões do Sistema
+ * Define todas as permissões disponíveis (recursos + ações)
+ */
+export const permissions = mysqlTable("permissions", {
+  id: int("id").autoincrement().primaryKey(),
+  resource: varchar("resource", { length: 100 }).notNull(), // Ex: "metas", "avaliacoes", "pdi"
+  action: varchar("action", { length: 50 }).notNull(), // Ex: "criar", "editar", "excluir", "visualizar", "aprovar"
+  description: text("description"),
+  category: varchar("category", { length: 100 }), // Categoria para organização (ex: "Gestão de Pessoas", "Avaliações")
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Permission = typeof permissions.$inferSelect;
+export type InsertPermission = typeof permissions.$inferInsert;
+
+/**
+ * Profiles - Perfis de Acesso
+ * Define os perfis disponíveis no sistema
+ */
+export const profiles = mysqlTable("profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(), // Ex: "admin", "rh_gerente", "especialista_cs"
+  name: varchar("name", { length: 200 }).notNull(), // Nome amigável
+  description: text("description"),
+  level: int("level").notNull(), // Nível hierárquico (1=mais alto, 5=mais baixo)
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Profile = typeof profiles.$inferSelect;
+export type InsertProfile = typeof profiles.$inferInsert;
+
+/**
+ * Profile Permissions - Permissões por Perfil
+ * Relaciona perfis com suas permissões
+ */
+export const profilePermissions = mysqlTable("profilePermissions", {
+  id: int("id").autoincrement().primaryKey(),
+  profileId: int("profileId").notNull(),
+  permissionId: int("permissionId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ProfilePermission = typeof profilePermissions.$inferSelect;
+export type InsertProfilePermission = typeof profilePermissions.$inferInsert;
+
+/**
+ * User Profiles - Perfis Atribuídos aos Usuários
+ * Relaciona usuários com seus perfis
+ */
+export const userProfiles = mysqlTable("userProfiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  profileId: int("profileId").notNull(),
+  assignedBy: int("assignedBy").notNull(), // Quem atribuiu o perfil
+  assignedAt: timestamp("assignedAt").defaultNow().notNull(),
+  revokedBy: int("revokedBy"), // Quem revogou (se aplicável)
+  revokedAt: datetime("revokedAt"), // Quando foi revogado
+  active: boolean("active").default(true).notNull(),
+});
+
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type InsertUserProfile = typeof userProfiles.$inferInsert;
+
+/**
+ * Access Audit Logs - Logs de Auditoria de Acesso
+ * Registra todas as ações sensíveis para compliance SOX
+ */
+export const accessAuditLogs = mysqlTable("accessAuditLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  userName: varchar("userName", { length: 255 }),
+  userEmail: varchar("userEmail", { length: 320 }),
+  
+  // Ação realizada
+  action: varchar("action", { length: 100 }).notNull(), // Ex: "criar_meta", "aprovar_avaliacao", "editar_bonus"
+  resource: varchar("resource", { length: 100 }).notNull(), // Ex: "metas", "avaliacoes", "bonus"
+  resourceId: int("resourceId"), // ID do recurso afetado
+  
+  // Detalhes da ação
+  actionType: mysqlEnum("actionType", [
+    "create", "read", "update", "delete", 
+    "approve", "reject", "export", "import",
+    "login", "logout", "permission_change"
+  ]).notNull(),
+  
+  // Dados da requisição
+  ipAddress: varchar("ipAddress", { length: 45 }), // IPv4 ou IPv6
+  userAgent: text("userAgent"),
+  requestMethod: varchar("requestMethod", { length: 10 }), // GET, POST, PUT, DELETE
+  requestPath: varchar("requestPath", { length: 500 }),
+  
+  // Dados da mudança (para auditoria)
+  oldValue: text("oldValue"), // JSON com valores anteriores
+  newValue: text("newValue"), // JSON com novos valores
+  
+  // Status e resultado
+  success: boolean("success").notNull(),
+  errorMessage: text("errorMessage"),
+  
+  // Metadados
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  sessionId: varchar("sessionId", { length: 255 }),
+});
+
+export type AccessAuditLog = typeof accessAuditLogs.$inferSelect;
+export type InsertAccessAuditLog = typeof accessAuditLogs.$inferInsert;
+
+/**
+ * Permission Change Requests - Solicitações de Mudança de Permissões
+ * Para workflow de aprovação de mudanças de perfil (SOX compliance)
+ */
+export const permissionChangeRequests = mysqlTable("permissionChangeRequests", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Usuário afetado
+  targetUserId: int("targetUserId").notNull(),
+  targetUserName: varchar("targetUserName", { length: 255 }),
+  
+  // Mudança solicitada
+  changeType: mysqlEnum("changeType", ["add_profile", "remove_profile", "change_profile"]).notNull(),
+  currentProfileId: int("currentProfileId"), // Perfil atual (se aplicável)
+  requestedProfileId: int("requestedProfileId").notNull(), // Perfil solicitado
+  
+  // Justificativa
+  reason: text("reason").notNull(),
+  businessJustification: text("businessJustification"),
+  
+  // Solicitante
+  requestedBy: int("requestedBy").notNull(),
+  requestedByName: varchar("requestedByName", { length: 255 }),
+  requestedAt: timestamp("requestedAt").defaultNow().notNull(),
+  
+  // Aprovação
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "cancelled"]).default("pending").notNull(),
+  approvedBy: int("approvedBy"),
+  approvedByName: varchar("approvedByName", { length: 255 }),
+  approvedAt: datetime("approvedAt"),
+  approvalComments: text("approvalComments"),
+  
+  // Implementação
+  implementedBy: int("implementedBy"),
+  implementedAt: datetime("implementedAt"),
+  
+  // Metadados
+  expiresAt: datetime("expiresAt"), // Data de expiração da solicitação
+  priority: mysqlEnum("priority", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+});
+
+export type PermissionChangeRequest = typeof permissionChangeRequests.$inferSelect;
+export type InsertPermissionChangeRequest = typeof permissionChangeRequests.$inferInsert;

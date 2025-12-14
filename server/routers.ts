@@ -112,6 +112,7 @@ import { evaluationCycleRouter } from "./routers/evaluationCycleRouter";
 import { testNotificationsRouter } from "./routers/testNotificationsRouter";
 import { htmlImportRouter } from "./routers/htmlImportRouter";
 import { pirDashboardRouter } from "./routers/pirDashboardRouter";
+import { accessControlRouter } from "./accessControlRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -250,6 +251,7 @@ export const appRouter = router({
   pirDashboard: pirDashboardRouter,
   pir: pirRouter,
   pirExport: pirExportRouter,
+  accessControl: accessControlRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

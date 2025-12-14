@@ -122,6 +122,7 @@ import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
 import TestPIR from "./pages/TestPIR";
+import Passo2PIR from "./pages/Passo2PIR";
 import PIRDashboard from "./pages/PIRDashboard";
 import PIRReport from "./pages/PIRReport";
 import DetalhesResultadoTeste from "./pages/DetalhesResultadoTeste";
@@ -471,7 +472,7 @@ function Router() {
       {/* Processo AVD - 5 Passos */}
       <Route path="/avd/processo/dashboard" component={ProcessoDashboard} />
       <Route path="/avd/processo/passo1/:processId?" component={Passo1DadosPessoais} />
-      <Route path="/avd/processo/passo2/:processId?" component={TestPIR} />
+      <Route path="/avd/processo/passo2/:processId?" component={Passo2PIR} />
       <Route path="/avd/processo/passo3/:processId?" component={Passo3Competencias} />
       <Route path="/avd/processo/passo4/:processId?" component={Passo4Desempenho} />
       <Route path="/avd/processo/passo5/:processId?" component={Passo5PDI} />
