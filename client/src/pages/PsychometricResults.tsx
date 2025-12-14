@@ -87,6 +87,18 @@ export default function PsychometricResults() {
       ]
     : [];
 
+  // Preparar dados para gráficos PIR
+  const pirData = profile.pir?.normalizedScores
+    ? [
+        { dimension: "Interesse em Pessoas", value: profile.pir.normalizedScores.IP || 0, fullMark: 100 },
+        { dimension: "Interesse em Dados", value: profile.pir.normalizedScores.ID || 0, fullMark: 100 },
+        { dimension: "Interesse em Coisas", value: profile.pir.normalizedScores.IC || 0, fullMark: 100 },
+        { dimension: "Estabilidade", value: profile.pir.normalizedScores.ES || 0, fullMark: 100 },
+        { dimension: "Flexibilidade", value: profile.pir.normalizedScores.FL || 0, fullMark: 100 },
+        { dimension: "Autonomia", value: profile.pir.normalizedScores.AU || 0, fullMark: 100 },
+      ]
+    : [];
+
   // Determinar perfil DISC dominante
   const getDominantDISC = () => {
     if (!profile.disc) return null;
@@ -213,10 +225,11 @@ export default function PsychometricResults() {
       </Card>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="disc">DISC</TabsTrigger>
           <TabsTrigger value="bigfive">Big Five</TabsTrigger>
+          <TabsTrigger value="pir">PIR</TabsTrigger>
           <TabsTrigger value="recommendations">Recomendações</TabsTrigger>
         </TabsList>
 
@@ -571,6 +584,175 @@ export default function PsychometricResults() {
               <AlertTitle>Dados Big Five não disponíveis</AlertTitle>
               <AlertDescription>
                 Os resultados do modelo Big Five não foram encontrados para este teste.
+              </AlertDescription>
+            </Alert>
+          )}
+        </TabsContent>
+
+        {/* PIR */}
+        <TabsContent value="pir" className="space-y-4">
+          {profile.pir?.normalizedScores ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Perfil PIR - Perfil de Interesses e Reações</CardTitle>
+                  <CardDescription>
+                    Análise do seu perfil de interesses, estilo de trabalho e preferências comportamentais
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <RadarChart data={pirData}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="dimension" />
+                      <PolarRadiusAxis angle={90} domain={[0, 100]} />
+                      <Radar
+                        name="Intensidade"
+                        dataKey="value"
+                        stroke="#8884d8"
+                        fill="#8884d8"
+                        fillOpacity={0.6}
+                      />
+                      <Tooltip />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                {/* Interesse em Pessoas */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-blue-500" />
+                      Interesse em Pessoas (IP)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.pir.normalizedScores.IP}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Preferência por trabalhar com pessoas, ajudar, ensinar e colaborar.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Interesse em Dados */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Brain className="h-5 w-5 text-purple-500" />
+                      Interesse em Dados (ID)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.pir.normalizedScores.ID}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Preferência por análise, pesquisa, planejamento e trabalho com informações.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Interesse em Coisas */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Award className="h-5 w-5 text-green-500" />
+                      Interesse em Coisas (IC)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.pir.normalizedScores.IC}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Preferência por trabalho prático, manual, técnico e com resultados tangíveis.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Estabilidade */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-cyan-500" />
+                      Estabilidade (ES)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.pir.normalizedScores.ES}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Preferência por ambientes previsíveis, rotinas estabelecidas e processos claros.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Flexibilidade */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-orange-500" />
+                      Flexibilidade (FL)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.pir.normalizedScores.FL}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Preferência por mudanças, variedade, novos desafios e ambientes dinâmicos.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Autonomia */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Lightbulb className="h-5 w-5 text-yellow-500" />
+                      Autonomia (AU)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">Pontuação</span>
+                        <Badge variant="secondary">{profile.pir.normalizedScores.AU}%</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Preferência por independência, liberdade de decisão e controle sobre o próprio trabalho.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          ) : (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Dados PIR não disponíveis</AlertTitle>
+              <AlertDescription>
+                Os resultados do teste PIR não foram encontrados. Complete o teste PIR para ver seus resultados aqui.
               </AlertDescription>
             </Alert>
           )}
