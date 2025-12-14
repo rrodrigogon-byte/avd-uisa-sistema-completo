@@ -1078,3 +1078,67 @@
   - getCompleteAnalysis - Análise completa
   - checkCrossValidation - Verifica respostas cruzadas
   - processCompleteAnalysis - Processa análise completa (padrões + ética + validação)
+
+
+## 🚀 NOVAS FUNCIONALIDADES - EXPANSÃO DO SISTEMA (14/12/2025)
+
+### Dashboard de Aprovações de Descrições de Cargo
+- [x] Verificar schema existente - jobDescriptions e jobApprovals já existem
+- [ ] Analisar estrutura existente de jobDescriptions (linha 2213-2256)
+- [ ] Analisar estrutura existente de jobApprovals (se existir)
+- [ ] Implementar helpers de DB para job_descriptions (create, update, list, getById, updateStatus)
+- [ ] Implementar helpers de DB para job_approvals (create, list, bulkApprove)
+- [ ] Criar procedures tRPC para gestão de cargos (list, create, update, approve, bulkApprove)
+- [ ] Desenvolver componente ApprovalDashboard com tabela de cargos pendentes
+- [ ] Implementar filtros por nível, status e departamento
+- [ ] Adicionar funcionalidade de aprovação individual
+- [ ] Adicionar funcionalidade de aprovação em lote (bulk approval)
+- [ ] Criar modal de detalhes do cargo com histórico de aprovações
+- [ ] Adicionar rota no App.tsx para dashboard de aprovações
+
+### Formulário Dinâmico de Descrições de Cargo
+- [ ] Criar página JobDescriptionForm para criar/editar descrições
+- [ ] Implementar campos básicos (título, departamento, nível hierárquico)
+- [ ] Criar componente DynamicCompetencies para adicionar/remover competências
+- [ ] Criar componente DynamicEducation para adicionar/remover requisitos de escolaridade
+- [ ] Implementar validação de formulário com Zod
+- [ ] Adicionar editor de texto rico para descrição detalhada do cargo
+- [ ] Implementar salvamento de rascunho automático
+- [ ] Adicionar preview da descrição de cargo formatada
+- [ ] Criar página de listagem de todas as descrições de cargo
+- [ ] Implementar busca e filtros na listagem
+- [ ] Adicionar rotas no App.tsx para formulário e listagem
+
+### Expansão do PIR com Testes de Integridade/Ética
+- [x] Adicionar tabela `integrityTests` no schema (linha 6230+)
+- [x] Adicionar tabela `integrityTestResults` no schema (linha 6350+)
+- [ ] Aplicar migrations no banco de dados
+- [ ] Implementar helpers de DB para integrity_tests (create, list, getById)
+- [ ] Implementar helpers de DB para integrity_test_results (create, getByEmployee, list)
+- [ ] Criar procedures tRPC para testes de integridade (listTests, submitTest, getResults, getAnalysis)
+- [ ] Desenvolver componente IntegrityTestForm para aplicar testes
+- [ ] Criar visualização de perguntas com múltipla escolha/escala Likert
+- [ ] Implementar cálculo de score e análise comportamental automática
+- [ ] Criar página de visualização de resultados com gráficos (radar, barras)
+- [ ] Adicionar análise comportamental detalhada com insights de IA
+- [ ] Integrar testes de integridade no fluxo do PIR existente (Passo 2)
+- [ ] Adicionar seção de testes de integridade no dashboard de resultados
+- [ ] Criar relatório consolidado PIR + Integridade
+
+### Integração e Navegação
+- [ ] Adicionar seção "Gestão de Cargos" no DashboardLayout
+- [ ] Adicionar item "Dashboard de Aprovações" no menu
+- [ ] Adicionar item "Descrições de Cargo" no menu
+- [ ] Atualizar seção "Processo AVD" com link para testes de integridade
+- [ ] Implementar proteção de rotas (apenas admins podem aprovar cargos)
+- [ ] Adicionar breadcrumbs nas novas páginas
+
+### Testes e Validação
+- [ ] Testar fluxo completo de criação e aprovação de descrições de cargo
+- [ ] Testar aprovação individual e em lote
+- [ ] Testar formulário dinâmico com adição/remoção de campos
+- [ ] Testar aplicação de testes de integridade
+- [ ] Testar cálculo de scores e análise comportamental
+- [ ] Validar integração com PIR existente
+- [ ] Verificar responsividade em dispositivos móveis
+- [ ] Criar testes vitest para novas funcionalidades

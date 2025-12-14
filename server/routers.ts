@@ -116,6 +116,8 @@ import { accessControlRouter } from "./accessControlRouter";
 import { cboRouter } from "./routers/cboRouter";
 import { jobDescriptionWorkflowRouter } from "./routers/jobDescriptionWorkflowRouter";
 import { integrityRouter } from "./routers/integrityRouter";
+import { jobDescriptionsApprovalsRouter } from "./routers/jobDescriptionsApprovalsRouter";
+import { integrityTestsRouter } from "./routers/integrityTestsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -260,6 +262,10 @@ export const appRouter = router({
   cbo: cboRouter,
   jobDescriptionWorkflow: jobDescriptionWorkflowRouter,
   integrity: integrityRouter,
+  
+  // Novos routers - Dashboard de Aprovações e Testes de Integridade (14/12/2025)
+  jobDescriptionsApprovals: jobDescriptionsApprovalsRouter,
+  integrityTests: integrityTestsRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

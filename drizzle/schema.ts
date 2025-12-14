@@ -6222,3 +6222,111 @@ export const pirConsolidatedReports = mysqlTable("pirConsolidatedReports", {
 
 export type PIRConsolidatedReport = typeof pirConsolidatedReports.$inferSelect;
 export type InsertPIRConsolidatedReport = typeof pirConsolidatedReports.$inferInsert;
+
+// ============================================================================
+// TESTES DE INTEGRIDADE E ÉTICA (EXPANSÃO DO PIR)
+// ============================================================================
+
+/**
+ * Integrity Tests - Testes de Integridade
+ * Catálogo de testes de integridade e ética disponíveis
+ */
+export const integrityTests = mysqlTable("integrityTests", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Informações do teste
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Questões do teste (JSON array)
+  questions: json("questions").notNull(), // [{id, text, type, options, scoring}]
+  
+  // Regras de pontuação (JSON)
+  scoringRules: json("scoringRules").notNull(), // {dimensions, weights, thresholds}
+  
+  // Categorias avaliadas
+  categories: json("categories"), // ["ética", "integridade", "honestidade", "confiabilidade"]
+  
+  // Configurações
+  timeLimit: int("timeLimit"), // Tempo limite em minutos
+  randomizeQuestions: boolean("randomizeQuestions").default(false).notNull(),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type IntegrityTest = typeof integrityTests.$inferSelect;
+export type InsertIntegrityTest = typeof integrityTests.$inferInsert;
+
+/**
+ * Integrity Test Results - Resultados dos Testes de Integridade
+ * Armazena resultados e análises dos testes aplicados
+ */
+export const integrityTestResults = mysqlTable("integrityTestResults", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Vinculação
+  employeeId: int("employeeId").notNull(),
+  testId: int("testId").notNull(),
+  pirAssessmentId: int("pirAssessmentId"), // Vinculação com PIR (opcional)
+  
+  // Respostas (JSON array)
+  answers: json("answers").notNull(), // [{questionId, answer, responseTime}]
+  
+  // Pontuações
+  score: int("score").notNull(), // Pontuação geral (0-100)
+  dimensionScores: json("dimensionScores"), // Pontuações por dimensão
+  
+  // Análise comportamental (JSON)
+  behavioralAnalysis: json("behavioralAnalysis").notNull(), // {patterns, insights, recommendations}
+  
+  // Indicadores de alerta
+  alerts: json("alerts"), // Array de alertas identificados
+  redFlags: json("redFlags"), // Flags críticos
+  
+  // Classificação
+  classification: mysqlEnum("classification", [
+    "muito_baixo",
+    "baixo",
+    "medio",
+    "alto",
+    "muito_alto"
+  ]),
+  
+  // Recomendação
+  recommendation: text("recommendation"),
+  
+  // Tempo de conclusão
+  startedAt: datetime("startedAt").notNull(),
+  completedAt: datetime("completedAt").notNull(),
+  totalTime: int("totalTime"), // Tempo total em segundos
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type IntegrityTestResult = typeof integrityTestResults.$inferSelect;
+export type InsertIntegrityTestResult = typeof integrityTestResults.$inferInsert;
+
+/**
+ * Tabela de aprovações de descrições de cargo
+ * Gerencia o fluxo de aprovação individual e em lote
+ */
+export const jobApprovals = mysqlTable("jobApprovals", {
+  id: int("id").autoincrement().primaryKey(),
+  jobDescriptionId: int("jobDescriptionId").notNull(),
+  approverId: int("approverId").notNull(),
+  status: mysqlEnum("status", ["pendente", "aprovado", "rejeitado"]).default("pendente").notNull(),
+  comments: text("comments"),
+  requestedAt: timestamp("requestedAt").defaultNow().notNull(),
+  approvedAt: timestamp("approvedAt"),
+});
+
+export type JobApproval = typeof jobApprovals.$inferSelect;
+export type InsertJobApproval = typeof jobApprovals.$inferInsert;

@@ -246,6 +246,9 @@ import RelatoriosHierarquia from "./pages/RelatoriosHierarquia";
 import HierarquiaUISA from "./pages/HierarquiaUISA";
 import AnaliseEvolucao from "./pages/AnaliseEvolucao";
 import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
+import DashboardAprovacoesCargos from "./pages/job-descriptions/DashboardAprovacoes";
+import FormularioCargo from "./pages/job-descriptions/FormularioCargo";
+import TestesIntegridade from "./pages/integrity-tests/TestesIntegridade";
 
 function Router() {
   return (
@@ -505,6 +508,12 @@ function Router() {
       {/* Novos recursos - Exportação e Análise de Evolução */}
       <Route path="/relatorios/exportacao" component={ExportacaoRelatorios} />
       <Route path="/analytics/evolucao" component={AnaliseEvolucao} />
+      
+      {/* Novas rotas - Dashboard de Aprovações de Cargos e Testes de Integridade */}
+      <Route path="/job-descriptions/dashboard" component={DashboardAprovacoesCargos} />
+      <Route path="/job-descriptions/novo" component={FormularioCargo} />
+      <Route path="/job-descriptions/editar/:id" component={FormularioCargo} />
+      <Route path="/integrity-tests" component={TestesIntegridade} />
       
       {/* Passos 4, 5 e 6 - Resultados e Dashboard Admin */}
       <Route path="/resultados/:participantId" component={ResultadosIndividuais} />
