@@ -238,3 +238,38 @@
 - [ ] Adicionar badges de status visual nas listagens
 - [ ] Adicionar filtros por status nas listagens
 - [ ] Criar testes vitest para workflows de aprovação
+
+## 21. Integração Completa de Gráficos - PRIORIDADE ALTA
+- [x] Integrar todos os gráficos Chart.js na página Dashboard
+- [x] Integrar todos os gráficos Chart.js na página Relatórios
+- [ ] Adicionar seletor de período para filtrar dados dos gráficos
+- [x] Implementar loading states nos gráficos
+- [x] Adicionar empty states quando não houver dados
+
+## 22. UI de Aprovação Completa - PRIORIDADE ALTA
+- [x] Criar componente StatusBadge reutilizável com cores por status
+- [x] Adicionar botões de Aprovar/Rejeitar nas páginas de PIR
+- [ ] Adicionar botões de Aprovar/Rejeitar nas páginas de Descrição de Cargo
+- [x] Implementar modal de confirmação para aprovações
+- [x] Implementar modal com campo de comentário para rejeições
+- [x] Adicionar visualização de histórico de aprovações nas páginas de detalhes
+- [x] Atualizar listagens com badges de status
+
+## 23. Sistema de Filtros por Status - PRIORIDADE ALTA
+- [x] Criar componente FilterBar reutilizável
+- [x] Adicionar filtro por status na listagem de PIR
+- [ ] Adicionar filtro por status na listagem de Descrição de Cargo
+- [ ] Adicionar filtro por departamento nas listagens
+- [ ] Adicionar filtro por período nas listagens
+- [ ] Implementar persistência de filtros na URL
+- [x] Adicionar contador de resultados filtrados
+
+## 24. Correções de Erros e UX - PRIORIDADE ALTA
+- [ ] Corrigir navegação entre páginas (verificar todas as rotas)
+- [ ] Corrigir tipos TypeScript em todos os componentes
+- [ ] Melhorar feedback visual de loading em todas as páginas
+- [ ] Adicionar tratamento de erros em todos os formulários
+- [ ] Corrigir responsividade em dispositivos mobile
+- [ ] Adicionar validações completas em todos os formulários
+- [ ] Implementar debouncing em campos de busca
+- [ ] Adicionar confirmação antes de ações destrutivas (delete)

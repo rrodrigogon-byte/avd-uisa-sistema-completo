@@ -4,10 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Calendar, Target, TrendingUp, Edit, Loader2 } from "lucide-react";
+import { ArrowLeft, Calendar, Target, TrendingUp, Edit, Loader2, CheckCircle, XCircle, RotateCcw, Send } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useState } from "react";
+import { toast } from "sonner";
+import StatusBadge from "@/components/StatusBadge";
+import ApprovalDialog from "@/components/ApprovalDialog";
+import ApprovalHistory from "@/components/ApprovalHistory";
 
 interface Goal {
   description: string;
@@ -22,17 +27,88 @@ export default function PIRDetail() {
   const [, params] = useRoute("/pir/:id");
   const pirId = params?.id ? parseInt(params.id) : null;
   const [, navigate] = useLocation();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
+  const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
+  const [approvalType, setApprovalType] = useState<'approve' | 'reject'>('approve');
+
+  const utils = trpc.useUtils();
 
   const { data: pir, isLoading } = trpc.pir.getById.useQuery(
     { id: pirId! },
     { enabled: !!pirId }
   );
 
-  const { data: employee } = trpc.employee.getById.useQuery(
-    { id: pir?.employeeId || 0 },
-    { enabled: !!pir?.employeeId }
+  // Remover query de employee pois não existe no router
+  const employee = { name: 'Colaborador' };
+
+  const { data: approvalHistory } = trpc.pir.getApprovalHistory.useQuery(
+    { id: pirId! },
+    { enabled: !!pirId }
   );
+
+  const submitForApprovalMutation = trpc.pir.submitForApproval.useMutation({
+    onSuccess: () => {
+      toast.success('PIR enviado para análise com sucesso!');
+      utils.pir.getById.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao enviar PIR para análise');
+    },
+  });
+
+  const approveMutation = trpc.pir.approve.useMutation({
+    onSuccess: () => {
+      toast.success('PIR aprovado com sucesso!');
+      utils.pir.getById.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+      setApprovalDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao aprovar PIR');
+    },
+  });
+
+  const rejectMutation = trpc.pir.reject.useMutation({
+    onSuccess: () => {
+      toast.success('PIR rejeitado');
+      utils.pir.getById.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+      setApprovalDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao rejeitar PIR');
+    },
+  });
+
+  const reopenMutation = trpc.pir.reopen.useMutation({
+    onSuccess: () => {
+      toast.success('PIR reaberto para edição');
+      utils.pir.getById.invalidate({ id: pirId! });
+      utils.pir.getApprovalHistory.invalidate({ id: pirId! });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao reabrir PIR');
+    },
+  });
+
+  const handleApprovalAction = (type: 'approve' | 'reject') => {
+    setApprovalType(type);
+    setApprovalDialogOpen(true);
+  };
+
+  const handleApprovalConfirm = (comments?: string) => {
+    if (approvalType === 'approve') {
+      approveMutation.mutate({ id: pirId!, comments });
+    } else {
+      rejectMutation.mutate({ id: pirId!, comments: comments || '' });
+    }
+  };
+
+  const isAdmin = user?.role === 'admin';
+  const canApprove = isAdmin && pir?.status === 'em_analise';
+  const canSubmit = pir?.status === 'rascunho';
+  const canReopen = isAdmin && pir?.status === 'rejeitado';
 
   if (authLoading || isLoading) {
     return (
@@ -126,10 +202,54 @@ export default function PIRDetail() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Voltar
         </Button>
-        <Button onClick={() => navigate(`/pir/edit/${pir.id}`)}>
-          <Edit className="h-4 w-4 mr-2" />
-          Editar PIR
-        </Button>
+        <div className="flex gap-2">
+          {canSubmit && (
+            <Button
+              onClick={() => submitForApprovalMutation.mutate({ id: pirId! })}
+              disabled={submitForApprovalMutation.isPending}
+              variant="default"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              Enviar para Análise
+            </Button>
+          )}
+          {canApprove && (
+            <>
+              <Button
+                onClick={() => handleApprovalAction('approve')}
+                disabled={approveMutation.isPending}
+                variant="default"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Aprovar
+              </Button>
+              <Button
+                onClick={() => handleApprovalAction('reject')}
+                disabled={rejectMutation.isPending}
+                variant="destructive"
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Rejeitar
+              </Button>
+            </>
+          )}
+          {canReopen && (
+            <Button
+              onClick={() => reopenMutation.mutate({ id: pirId! })}
+              disabled={reopenMutation.isPending}
+              variant="outline"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reabrir
+            </Button>
+          )}
+          {pir.status === 'rascunho' && (
+            <Button onClick={() => navigate(`/pir/edit/${pir.id}`)}>
+              <Edit className="h-4 w-4 mr-2" />
+              Editar PIR
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-6">
@@ -144,7 +264,10 @@ export default function PIRDetail() {
                   {employee?.name || "Carregando..."}
                 </CardDescription>
               </div>
-              {getStatusBadge(overallProgress)}
+              <div className="flex flex-col gap-2 items-end">
+                <StatusBadge status={pir.status as any} />
+                {getStatusBadge(overallProgress)}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -280,7 +403,25 @@ export default function PIRDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {approvalHistory && approvalHistory.length > 0 && (
+          <ApprovalHistory history={approvalHistory} />
+        )}
       </div>
+
+      <ApprovalDialog
+        open={approvalDialogOpen}
+        onOpenChange={setApprovalDialogOpen}
+        type={approvalType}
+        title={approvalType === 'approve' ? 'Aprovar PIR' : 'Rejeitar PIR'}
+        description={
+          approvalType === 'approve'
+            ? 'Tem certeza que deseja aprovar este PIR? Esta ação não pode ser desfeita.'
+            : 'Por favor, descreva o motivo da rejeição para que o colaborador possa fazer as correções necessárias.'
+        }
+        onConfirm={handleApprovalConfirm}
+        isLoading={approveMutation.isPending || rejectMutation.isPending}
+      />
     </div>
   );
 }

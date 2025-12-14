@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,40 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Calendar, Target, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import FilterBar, { FilterConfig } from "@/components/FilterBar";
+import StatusBadge from "@/components/StatusBadge";
 
 export default function PIR() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { data: pirData, isLoading } = trpc.pir.list.useQuery();
+  
+  const [filters, setFilters] = useState<Record<string, string>>({
+    status: 'todos',
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filterConfigs: FilterConfig[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { value: 'rascunho', label: 'Rascunho' },
+        { value: 'em_analise', label: 'Em Análise' },
+        { value: 'aprovado', label: 'Aprovado' },
+        { value: 'rejeitado', label: 'Rejeitado' },
+      ],
+    },
+  ];
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ status: 'todos' });
+    setSearchQuery('');
+  };
 
   if (isLoading) {
     return (
@@ -30,16 +59,49 @@ export default function PIR() {
   const myPirs = pirData?.asUser || [];
   const managedPirs = pirData?.asManager || [];
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
-      draft: { variant: "outline", label: "Rascunho" },
-      active: { variant: "default", label: "Ativo" },
-      completed: { variant: "secondary", label: "Concluído" },
-      cancelled: { variant: "destructive", label: "Cancelado" },
-    };
-    const config = variants[status] || variants.draft;
-    return <Badge variant={config.variant}>{config.label}</Badge>;
-  };
+  const filteredMyPirs = useMemo(() => {
+    return myPirs.filter((pir: any) => {
+      // Filtro de status
+      if (filters.status !== 'todos' && pir.status !== filters.status) {
+        return false;
+      }
+      
+      // Filtro de busca
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        return (
+          pir.title?.toLowerCase().includes(query) ||
+          pir.period?.toLowerCase().includes(query) ||
+          pir.description?.toLowerCase().includes(query)
+        );
+      }
+      
+      return true;
+    });
+  }, [myPirs, filters, searchQuery]);
+
+  const filteredManagedPirs = useMemo(() => {
+    return managedPirs.filter((pir: any) => {
+      // Filtro de status
+      if (filters.status !== 'todos' && pir.status !== filters.status) {
+        return false;
+      }
+      
+      // Filtro de busca
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        return (
+          pir.title?.toLowerCase().includes(query) ||
+          pir.period?.toLowerCase().includes(query) ||
+          pir.description?.toLowerCase().includes(query)
+        );
+      }
+      
+      return true;
+    });
+  }, [managedPirs, filters, searchQuery]);
+
+
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -55,13 +117,27 @@ export default function PIR() {
           </Button>
         </div>
 
+        {/* Barra de Filtros */}
+        <div className="mb-6">
+          <FilterBar
+            filters={filterConfigs}
+            activeFilters={filters}
+            onFilterChange={handleFilterChange}
+            onClearFilters={handleClearFilters}
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+            searchPlaceholder="Buscar PIRs..."
+            resultCount={filteredMyPirs.length + filteredManagedPirs.length}
+          />
+        </div>
+
         {/* Meus PIRs */}
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Target className="w-6 h-6 text-primary" />
-            Meus PIRs
+            Meus PIRs ({filteredMyPirs.length})
           </h2>
-          {myPirs.length === 0 ? (
+          {filteredMyPirs.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
                 <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -73,12 +149,12 @@ export default function PIR() {
             </Card>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {myPirs.map((pir: any) => (
+              {filteredMyPirs.map((pir: any) => (
                 <Card key={pir.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation(`/pir/${pir.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg">{pir.title}</CardTitle>
-                      {getStatusBadge(pir.status)}
+                      <StatusBadge status={pir.status} />
                     </div>
                     <CardDescription>{pir.period}</CardDescription>
                   </CardHeader>
@@ -100,19 +176,19 @@ export default function PIR() {
         </section>
 
         {/* PIRs que eu gerencio */}
-        {managedPirs.length > 0 && (
+        {filteredManagedPirs.length > 0 && (
           <section>
             <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
               <TrendingUp className="w-6 h-6 text-primary" />
-              PIRs sob minha gestão
+              PIRs sob minha gestão ({filteredManagedPirs.length})
             </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {managedPirs.map((pir: any) => (
+              {filteredManagedPirs.map((pir: any) => (
                 <Card key={pir.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation(`/pir/${pir.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg">{pir.title}</CardTitle>
-                      {getStatusBadge(pir.status)}
+                      <StatusBadge status={pir.status} />
                     </div>
                     <CardDescription>{pir.period}</CardDescription>
                   </CardHeader>

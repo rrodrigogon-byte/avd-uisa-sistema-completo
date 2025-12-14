@@ -1,6 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart3, TrendingUp, Users, Target, FileText } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -16,6 +17,10 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { Bar, Line, Doughnut } from 'react-chartjs-2';
+import { PerformanceEvolutionChart } from "@/components/charts/PerformanceEvolutionChart";
+import { CompetencyRadarChart } from "@/components/charts/CompetencyRadarChart";
+import { DepartmentDistributionChart } from "@/components/charts/DepartmentDistributionChart";
+import PieChart from "@/components/charts/PieChart";
 
 // Registrar componentes do Chart.js
 ChartJS.register(
@@ -32,8 +37,11 @@ ChartJS.register(
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { data: evaluations } = trpc.evaluation.list.useQuery();
-  const { data: pirData } = trpc.pir.list.useQuery();
+  const { data: evaluations, isLoading: loadingEvaluations } = trpc.evaluation.list.useQuery();
+  const { data: pirData, isLoading: loadingPirs } = trpc.pir.list.useQuery();
+  const { data: performanceData, isLoading: loadingPerformance } = trpc.analytics.performanceEvolution.useQuery({});
+  const { data: competencyData, isLoading: loadingCompetency } = trpc.analytics.competencyComparison.useQuery({});
+  const { data: departmentData, isLoading: loadingDepartment } = trpc.analytics.departmentDistribution.useQuery({});
 
   const myEvaluations = evaluations?.asEvaluated || [];
   const myPirs = pirData?.asUser || [];
@@ -220,7 +228,91 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Gráficos */}
+        {/* Gráficos Analíticos Avançados */}
+        <div className="grid gap-6 md:grid-cols-2 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Evolução de Desempenho Geral</CardTitle>
+              <CardDescription>Tendência de scores ao longo do tempo</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingPerformance ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : performanceData && performanceData.labels.length > 0 ? (
+                <PerformanceEvolutionChart data={performanceData} />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Comparação de Competências</CardTitle>
+              <CardDescription>Análise de competências técnicas vs comportamentais</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingCompetency ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : competencyData && competencyData.labels.length > 0 ? (
+                <CompetencyRadarChart data={competencyData} />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Distribuição por Departamento</CardTitle>
+              <CardDescription>Estatísticas de avaliações por área</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingDepartment ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : departmentData && departmentData.labels.length > 0 ? (
+                <DepartmentDistributionChart data={departmentData} />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Status das Avaliações</CardTitle>
+              <CardDescription>Distribuição por estado de aprovação</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingEvaluations ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : myEvaluations && myEvaluations.length > 0 ? (
+                <PieChart
+                  title=""
+                  labels={['Rascunho', 'Em Análise', 'Aprovado', 'Rejeitado']}
+                  data={[
+                    myEvaluations.filter((e: any) => e.status === 'rascunho').length,
+                    myEvaluations.filter((e: any) => e.status === 'em_analise').length,
+                    myEvaluations.filter((e: any) => e.status === 'aprovado').length,
+                    myEvaluations.filter((e: any) => e.status === 'rejeitado').length,
+                  ]}
+                />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Gráficos Pessoais */}
         <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card>
             <CardHeader>

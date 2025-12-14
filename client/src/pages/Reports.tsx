@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import { BarChart3, Plus, Eye, Trash2, FileText } from "lucide-react";
+import { BarChart3, Plus, Eye, Trash2, FileText, TrendingUp, Users, Target } from "lucide-react";
 import { toast } from "sonner";
+import { PerformanceEvolutionChart } from "@/components/charts/PerformanceEvolutionChart";
+import { CompetencyRadarChart } from "@/components/charts/CompetencyRadarChart";
+import { DepartmentDistributionChart } from "@/components/charts/DepartmentDistributionChart";
+import BarChart from "@/components/charts/BarChart";
+import PieChart from "@/components/charts/PieChart";
 
 const reportTypeLabels = {
   performance_overview: 'Visão Geral de Desempenho',
@@ -13,6 +19,10 @@ const reportTypeLabels = {
 
 export default function Reports() {
   const { data: reports, isLoading, refetch } = trpc.report.list.useQuery();
+  const { data: performanceData, isLoading: loadingPerformance } = trpc.analytics.performanceEvolution.useQuery({});
+  const { data: competencyData, isLoading: loadingCompetency } = trpc.analytics.competencyComparison.useQuery({});
+  const { data: departmentData, isLoading: loadingDepartment } = trpc.analytics.departmentDistribution.useQuery({});
+  const { data: evaluations, isLoading: loadingEvaluations } = trpc.evaluation.list.useQuery();
   
   const deleteMutation = trpc.report.delete.useMutation({
     onSuccess: () => {
@@ -41,7 +51,7 @@ export default function Reports() {
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Relatórios Gerenciais</h1>
           <p className="text-muted-foreground">
-            Gere e visualize relatórios de desempenho
+            Análises e visualizações de dados de desempenho
           </p>
         </div>
         <Button onClick={() => toast.info('Funcionalidade em desenvolvimento')}>
@@ -50,7 +60,109 @@ export default function Reports() {
         </Button>
       </div>
 
-      {reports && reports.length === 0 ? (
+      {/* Gráficos Analíticos */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Análises de Desempenho</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Evolução de Desempenho
+              </CardTitle>
+              <CardDescription>Tendência de scores ao longo do tempo</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingPerformance ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : performanceData && performanceData.labels.length > 0 ? (
+                <PerformanceEvolutionChart data={performanceData} />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Comparação de Competências
+              </CardTitle>
+              <CardDescription>Análise de competências técnicas vs comportamentais</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingCompetency ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : competencyData && competencyData.labels.length > 0 ? (
+                <CompetencyRadarChart data={competencyData} />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Distribuição por Departamento
+              </CardTitle>
+              <CardDescription>Estatísticas de avaliações por área</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingDepartment ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : departmentData && departmentData.labels.length > 0 ? (
+                <DepartmentDistributionChart data={departmentData} />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Status das Avaliações
+              </CardTitle>
+              <CardDescription>Distribuição por estado de aprovação</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingEvaluations ? (
+                <Skeleton className="h-[300px] w-full" />
+              ) : evaluations && (evaluations.asEvaluator?.length || 0) + (evaluations.asEvaluated?.length || 0) > 0 ? (
+                <PieChart
+                  title=""
+                  labels={['Rascunho', 'Em Análise', 'Aprovado', 'Rejeitado']}
+                  data={[
+                    [...(evaluations.asEvaluator || []), ...(evaluations.asEvaluated || [])].filter((e: any) => e.status === 'rascunho').length,
+                    [...(evaluations.asEvaluator || []), ...(evaluations.asEvaluated || [])].filter((e: any) => e.status === 'em_analise').length,
+                    [...(evaluations.asEvaluator || []), ...(evaluations.asEvaluated || [])].filter((e: any) => e.status === 'aprovado').length,
+                    [...(evaluations.asEvaluator || []), ...(evaluations.asEvaluated || [])].filter((e: any) => e.status === 'rejeitado').length,
+                  ]}
+                />
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  Sem dados disponíveis
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+       {/* Relatórios Salvos */}
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Relatórios Salvos</h2>
+        {reports && reports.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -123,6 +235,7 @@ export default function Reports() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
