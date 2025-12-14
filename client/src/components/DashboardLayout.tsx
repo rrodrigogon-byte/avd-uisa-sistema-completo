@@ -258,6 +258,19 @@ const menuItems = [
       { icon: Gift, label: "Bônus", path: "/aprovacoes/bonus", badge: "bonus_pendentes" },
       { icon: Calendar, label: "Ciclos", path: "/aprovacoes/ciclos-avaliacao" },
       { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
+      { icon: Briefcase, label: "Descrições de Cargo", path: "/aprovacoes/cargos" },
+    ],
+  },
+  
+  // 🛡️ TESTES DE INTEGRIDADE
+  {
+    icon: Shield,
+    label: "Integridade",
+    isSection: true,
+    children: [
+      { icon: Shield, label: "Testes Disponíveis", path: "/integridade/testes" },
+      { icon: FileSearch, label: "Resultados", path: "/integridade/resultados" },
+      { icon: BarChart, label: "Análises", path: "/integridade/analises" },
     ],
   },
   

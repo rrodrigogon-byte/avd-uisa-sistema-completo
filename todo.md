@@ -1142,3 +1142,33 @@
 - [ ] Validar integração com PIR existente
 - [ ] Verificar responsividade em dispositivos móveis
 - [ ] Criar testes vitest para novas funcionalidades
+
+
+## 🔧 CORREÇÕES E MELHORIAS PENDENTES (14/12/2025)
+
+### Correção de Erro de Reload
+- [ ] Corrigir erro de reload ao visualizar perfis de funcionários (TypeError: Cannot read properties of undefined)
+
+### Navegação e Integração
+- [ ] Adicionar navegação no DashboardLayout para as três novas páginas (Aprovações, Testes de Integridade, Resultados)
+- [ ] Aplicar migrations no banco de dados (pnpm db:push) para criar novas tabelas
+- [ ] Integrar Testes de Integridade com PIR - adicionar botão no dashboard do PIR para aplicar testes
+
+## ✅ TAREFAS CONCLUÍDAS (14/12/2025)
+
+### Correção de Erro de Reload
+- [x] Corrigir erro de reload ao visualizar perfis de funcionários (TypeError: Cannot read properties of undefined)
+  - Adicionado optional chaining (?.) em todas as referências a employee.employee.name e outros campos
+  - Corrigido acesso a propriedades aninhadas para evitar erros de undefined
+
+### Navegação e Integração
+- [x] Adicionar navegação no DashboardLayout para as três novas páginas (Aprovações, Testes de Integridade, Resultados)
+  - Adicionada seção "Integridade" com links para Testes Disponíveis, Resultados e Análises
+  - Adicionado link "Descrições de Cargo" na seção de Aprovações
+- [x] Aplicar migrations no banco de dados (pnpm db:push) para criar novas tabelas
+  - Criada tabela integrityTests com campos de configuração de testes
+  - Criada tabela integrityTestResults com campos de resultados e análises
+  - Criada tabela jobApprovals com campos de aprovação de descrições de cargo
+- [x] Integrar Testes de Integridade com PIR - adicionar botão no dashboard do PIR para aplicar testes
+  - Adicionado botão "Testes de Integridade" no header do PIRDashboard
+  - Botão redireciona para /integridade/testes

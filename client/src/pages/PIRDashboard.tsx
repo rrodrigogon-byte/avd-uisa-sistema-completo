@@ -50,6 +50,7 @@ import {
   AlertCircle,
   Filter,
   Download,
+  Shield,
 } from "lucide-react";
 
 const COLORS = {
@@ -195,10 +196,16 @@ export default function PIRDashboard() {
             Análise consolidada das avaliações de Perfil de Identidade de Relacionamento
           </p>
         </div>
-        <Button variant="outline" onClick={() => window.print()}>
-          <Download className="h-4 w-4 mr-2" />
-          Exportar PDF
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="default" onClick={() => window.location.href = '/integridade/testes'}>
+            <Shield className="h-4 w-4 mr-2" />
+            Testes de Integridade
+          </Button>
+          <Button variant="outline" onClick={() => window.print()}>
+            <Download className="h-4 w-4 mr-2" />
+            Exportar PDF
+          </Button>
+        </div>
       </div>
 
       {/* Filtros */}
