@@ -98,12 +98,11 @@ export default function Evaluations() {
                   <CardContent>
                     <Button
                       variant="outline"
-                      size="sm"
                       className="w-full"
-                      onClick={() => toast.info('Funcionalidade em desenvolvimento')}
+                      onClick={() => setLocation(`/evaluations/edit/${evaluation.id}`)}
                     >
                       <Eye className="mr-2 h-4 w-4" />
-                      Ver Detalhes
+                      Editar Avaliação
                     </Button>
                   </CardContent>
                 </Card>

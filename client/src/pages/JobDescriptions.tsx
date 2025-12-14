@@ -56,7 +56,7 @@ export default function JobDescriptions() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {jobDescriptions?.map((job: any) => (
-              <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => toast.info("Detalhes da descrição em desenvolvimento")}>
+              <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation(`/job-descriptions/${job.id}`)}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">

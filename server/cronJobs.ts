@@ -35,14 +35,14 @@ const checkPendingEvaluations = cron.schedule('0 9 * * *', async () => {
   console.log('[CronJob] Checking pending evaluations...');
   
   try {
-    const getDb = await db.getDb();
-    if (!getDb) {
+    const database = await db.getDb();
+    if (!database) {
       console.warn('[CronJob] Database not available');
       return;
     }
 
     // Buscar todas as avaliações em rascunho ou enviadas há mais de 7 dias
-    const allUsers = await getDb.select().from(db.users);
+    const allUsers = await database.select().from(users);
     
     for (const user of allUsers) {
       const settings = await db.getNotificationSettings(user.id);
@@ -67,8 +67,6 @@ const checkPendingEvaluations = cron.schedule('0 9 * * *', async () => {
   } catch (error) {
     console.error('[CronJob] Error checking pending evaluations:', error);
   }
-}, {
-  scheduled: false // Não inicia automaticamente
 });
 
 // Job 2: Verificar PIRs ativos próximos do prazo (executa semanalmente às segundas 10h)
@@ -76,13 +74,13 @@ const checkPirDeadlines = cron.schedule('0 10 * * 1', async () => {
   console.log('[CronJob] Checking PIR deadlines...');
   
   try {
-    const getDb = await db.getDb();
-    if (!getDb) {
+    const database = await db.getDb();
+    if (!database) {
       console.warn('[CronJob] Database not available');
       return;
     }
 
-    const allUsers = await getDb.select().from(db.users);
+    const allUsers = await database.select().from(users);
     
     for (const user of allUsers) {
       const pirs = await db.getPirsByUser(user.id);
@@ -109,8 +107,6 @@ const checkPirDeadlines = cron.schedule('0 10 * * 1', async () => {
   } catch (error) {
     console.error('[CronJob] Error checking PIR deadlines:', error);
   }
-}, {
-  scheduled: false
 });
 
 // Job 3: Notificar sobre novas avaliações atribuídas (executa a cada 6 horas)
@@ -118,13 +114,13 @@ const checkNewEvaluations = cron.schedule('0 */6 * * *', async () => {
   console.log('[CronJob] Checking new evaluations...');
   
   try {
-    const getDb = await db.getDb();
-    if (!getDb) {
+    const database = await db.getDb();
+    if (!database) {
       console.warn('[CronJob] Database not available');
       return;
     }
 
-    const allUsers = await getDb.select().from(db.users);
+    const allUsers = await database.select().from(users);
     
     for (const user of allUsers) {
       const settings = await db.getNotificationSettings(user.id);
@@ -156,8 +152,6 @@ const checkNewEvaluations = cron.schedule('0 */6 * * *', async () => {
   } catch (error) {
     console.error('[CronJob] Error checking new evaluations:', error);
   }
-}, {
-  scheduled: false
 });
 
 // Job 4: Relatório semanal para administradores (executa às sextas 17h)
@@ -165,14 +159,14 @@ const weeklyAdminReport = cron.schedule('0 17 * * 5', async () => {
   console.log('[CronJob] Generating weekly admin report...');
   
   try {
-    const getDb = await db.getDb();
-    if (!getDb) {
+    const database = await db.getDb();
+    if (!database) {
       console.warn('[CronJob] Database not available');
       return;
     }
 
-    const allEvaluations = await getDb.select().from(db.evaluations);
-    const allPirs = await getDb.select().from(db.pirs);
+    const allEvaluations = await database.select().from(evaluations);
+    const allPirs = await database.select().from(pirs);
 
     const draftEvaluations = allEvaluations.filter((e: any) => e.status === 'draft').length;
     const submittedEvaluations = allEvaluations.filter((e: any) => e.status === 'submitted').length;
@@ -200,8 +194,6 @@ PIRs:
   } catch (error) {
     console.error('[CronJob] Error generating weekly report:', error);
   }
-}, {
-  scheduled: false
 });
 
 // Função para iniciar todos os cron jobs

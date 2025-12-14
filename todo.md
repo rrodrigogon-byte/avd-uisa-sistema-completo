@@ -162,3 +162,34 @@
 - [ ] Processo de atualização de descrição de cargo
 - [ ] Workflow de aprovação de PIR
 - [ ] Workflow de aprovação de descrição de cargo
+
+## 13. Formulários de Edição - PRIORIDADE ALTA
+- [x] Formulário de edição de Templates de Avaliação
+- [x] Formulário de edição de Avaliações
+- [x] Formulário de edição de PIR
+- [x] Formulário de edição de Descrição de Cargo
+
+## 14. Páginas de Detalhamento - PRIORIDADE ALTA
+- [x] Página de detalhes do PIR com todas as metas e informações relacionadas
+- [x] Página de detalhes da Descrição de Cargo com competências e requisitos completos
+
+## 15. Formulário Dinâmico de Cargo - PRIORIDADE ALTA
+- [x] Interface completa para adição dinâmica de responsabilidades
+- [x] Interface para adição dinâmica de competências técnicas
+- [x] Interface para adição dinâmica de competências comportamentais
+- [x] Interface para adição dinâmica de requisitos (formação, experiência, certificações)
+- [x] Validação completa do formulário de cargo
+- [x] Preview em tempo real das informações adicionadas
+
+## 16. Melhorias em Gráficos Chart.js
+- [ ] Gráfico de comparação entre equipes
+- [ ] Gráficos interativos com tooltips detalhados
+- [ ] Exportação de gráficos como imagem
+
+## 17. Processos e Integridades Completos
+- [ ] Validação de integridade entre PIR e avaliações
+- [ ] Validação de integridade entre descrição de cargo e avaliações
+- [ ] Processo automático de criação de PIR baseado em avaliação
+- [ ] Processo de atualização de descrição de cargo
+- [ ] Workflow de aprovação de PIR
+- [ ] Workflow de aprovação de descrição de cargo

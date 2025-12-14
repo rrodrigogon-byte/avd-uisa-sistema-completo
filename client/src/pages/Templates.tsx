@@ -80,7 +80,7 @@ export default function Templates() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => toast.info('Funcionalidade em desenvolvimento')}
+                        onClick={() => setLocation(`/templates/edit/${template.id}`)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>

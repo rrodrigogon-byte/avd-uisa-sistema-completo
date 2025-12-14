@@ -74,7 +74,7 @@ export default function PIR() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {myPirs.map((pir: any) => (
-                <Card key={pir.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => toast.info("Detalhes do PIR em desenvolvimento")}>
+                <Card key={pir.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation(`/pir/${pir.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg">{pir.title}</CardTitle>
@@ -108,7 +108,7 @@ export default function PIR() {
             </h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {managedPirs.map((pir: any) => (
-                <Card key={pir.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => toast.info("Detalhes do PIR em desenvolvimento")}>
+                <Card key={pir.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation(`/pir/${pir.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg">{pir.title}</CardTitle>

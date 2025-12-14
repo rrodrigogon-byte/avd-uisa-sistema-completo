@@ -13,7 +13,13 @@ import EvaluationForm from "./pages/EvaluationForm";
 import Notifications from "./pages/Notifications";
 import Reports from "./pages/Reports";
 import PIR from "./pages/PIR";
+import PIRDetail from "./pages/PIRDetail";
+import EditPIR from "./pages/EditPIR";
 import JobDescriptions from "./pages/JobDescriptions";
+import JobDescriptionDetail from "./pages/JobDescriptionDetail";
+import EditJobDescription from "./pages/EditJobDescription";
+import EditTemplate from "./pages/EditTemplate";
+import EditEvaluation from "./pages/EditEvaluation";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -23,12 +29,18 @@ function Router() {
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/templates"} component={Templates} />
       <Route path={"/templates/new"} component={TemplateForm} />
+      <Route path={"/templates/edit/:id"} component={EditTemplate} />
       <Route path={"/evaluations"} component={Evaluations} />
       <Route path={"/evaluations/new"} component={EvaluationForm} />
+      <Route path={"/evaluations/edit/:id"} component={EditEvaluation} />
       <Route path={"/notifications"} component={Notifications} />
       <Route path={"/reports"} component={Reports} />
       <Route path={"/pir"} component={PIR} />
+      <Route path={"/pir/:id"} component={PIRDetail} />
+      <Route path={"/pir/edit/:id"} component={EditPIR} />
       <Route path={"/job-descriptions"} component={JobDescriptions} />
+      <Route path={"/job-descriptions/:id"} component={JobDescriptionDetail} />
+      <Route path={"/job-descriptions/edit/:id"} component={EditJobDescription} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
