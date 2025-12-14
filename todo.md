@@ -1572,3 +1572,93 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
   - [ ] Cálculo de fator de proteção
   - [ ] Validação de vedação
   - [ ] Geração de certificados de aprovação
+
+
+## 🎯 NOVAS PRIORIDADES - EXPANSÃO DO SISTEMA (14/12/2025)
+
+### Prioridade 1: Implementar PIR Completo
+- [x] Criar tabela de programas no schema - Já existe: pirPrograms
+- [x] Criar tabela de testes com gravação de vídeo - Já existe: pirFitTests
+- [x] Criar tabela de respostas de testes com URLs de vídeo S3 - Já existe: pirVideoRecordings
+- [x] Criar tabela de treinamentos - Já existe: pirTrainings
+- [x] Criar tabela de participantes de treinamentos - Já existe: pirTrainingParticipants
+- [x] Criar tabela de exames médicos - Já existe: pirMedicalExams
+- [x] Criar tabela de resultados de exames - Integrado em pirMedicalExams
+- [x] Implementar router tRPC para CRUD de programas - pirProgramsRouter criado
+- [x] Implementar router tRPC para gestão de testes - pirTestsRouter criado
+- [x] Implementar router tRPC para gestão de treinamentos - pirTrainingsRouter criado
+- [x] Implementar router tRPC para gestão de exames médicos - pirMedicalExamsRouter criado
+- [x] Criar componente de gravação de vídeo via webcam - VideoRecorder.tsx já existe
+- [x] Implementar upload de vídeos para S3 - Integrado no pirTestsRouter
+- [x] Criar página de listagem de programas - PIRProgramsList.tsx criada
+- [ ] Criar página de criação/edição de programas
+- [ ] Criar página de aplicação de testes com gravação
+- [ ] Criar página de revisão de testes com reprodução de vídeos
+- [ ] Criar página de listagem de treinamentos
+- [ ] Criar página de criação/edição de treinamentos
+- [ ] Criar página de inscrição em treinamentos
+- [ ] Criar página de agendamento de exames médicos
+- [ ] Criar página de registro de resultados de exames
+- [ ] Adicionar alertas de vencimento de exames
+
+### Prioridade 2: Sistema de Workflow de Aprovações Multi-Nível
+- [ ] Criar tabela de workflows de aprovação no schema
+- [ ] Criar tabela de etapas de aprovação (4 níveis)
+- [ ] Criar tabela de histórico de aprovações
+- [ ] Criar tabela de configuração de aprovadores por nível
+- [ ] Implementar router tRPC para gestão de workflows
+- [ ] Implementar lógica de progressão entre níveis de aprovação
+- [ ] Implementar notificações para aprovadores pendentes
+- [ ] Criar página de configuração de workflows
+- [ ] Criar componente de visualização de status de aprovação
+- [ ] Criar página de aprovações pendentes por nível
+- [ ] Criar página de histórico de aprovações
+- [ ] Adicionar indicadores visuais de progresso de aprovação
+- [ ] Implementar ações de aprovar/rejeitar com comentários
+- [ ] Testar workflow completo com descrição de cargo de teste
+
+### Prioridade 3: Campos Dinâmicos em Descrições de Cargos
+- [x] Criar tabela de templates de campos no schema
+- [x] Criar tabela de valores de campos dinâmicos
+- [x] Criar tabela de tipos de campos (texto, número, data, seleção, etc)
+- [ ] Implementar router tRPC para gestão de campos dinâmicos
+- [ ] Criar componente de editor de campos dinâmicos
+- [ ] Implementar drag-and-drop para reordenação de campos
+- [ ] Adicionar funcionalidade de adicionar/remover campos
+- [ ] Implementar validação de campos obrigatórios
+- [ ] Criar página de configuração de templates de campos
+- [ ] Integrar campos dinâmicos em descrições de cargos
+- [ ] Adicionar preview de formulário com campos dinâmicos
+
+### Prioridade 4: Expansão de Cargos e Salários UISA
+- [ ] Expandir tabela de cargos com versionamento
+- [ ] Criar tabela de faixas salariais
+- [ ] Criar tabela de benefícios por cargo
+- [ ] Criar tabela de critérios de avaliação de cargos
+- [ ] Criar tabela de pontuações de cargos
+- [ ] Implementar router tRPC para gestão salarial
+- [ ] Implementar router tRPC para avaliação de cargos
+- [ ] Criar página de definição de faixas salariais
+- [ ] Criar página de gestão de benefícios
+- [ ] Criar página de definição de critérios de avaliação
+- [ ] Criar página de avaliação de cargos com pontuação
+- [ ] Adicionar cálculo automático de pontuação de cargos
+- [ ] Adicionar relatórios de equidade salarial
+- [ ] Implementar comparação entre versões de descrições
+- [ ] Criar sistema de templates de descrições de cargos
+
+### Testes End-to-End
+- [ ] Criar descrição de cargo de teste com campos dinâmicos
+- [ ] Submeter para aprovação nível 1
+- [ ] Testar aprovação nível 1 e progressão para nível 2
+- [ ] Testar aprovação nível 2 e progressão para nível 3
+- [ ] Testar aprovação nível 3 e progressão para nível 4
+- [ ] Testar aprovação nível 4 e finalização
+- [ ] Validar notificações em cada etapa
+- [ ] Testar rejeição e retorno para edição
+- [ ] Validar histórico completo de aprovações
+- [ ] Testar gravação de vídeo em Chrome
+- [ ] Testar gravação de vídeo em Firefox
+- [ ] Testar gravação de vídeo em Safari
+- [ ] Validar upload e reprodução de vídeos
+
