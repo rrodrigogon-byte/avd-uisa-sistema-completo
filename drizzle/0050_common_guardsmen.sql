@@ -1,1 +1,0 @@
-ALTER TABLE `evaluationTemplates` ADD `hierarchyLevel` enum('operacional','coordenacao','gerencia','diretoria');

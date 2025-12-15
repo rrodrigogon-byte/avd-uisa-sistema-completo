@@ -1,1 +1,0 @@
-ALTER TABLE `badges` ADD `code` varchar(50);
