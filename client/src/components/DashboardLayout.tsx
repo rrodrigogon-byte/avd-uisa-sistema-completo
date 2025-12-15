@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo, AlertCircle, Home, Sparkles, Users2, TrendingDown, FileBarChart, Database, Bell, Megaphone } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo, AlertCircle, Home, Sparkles, Users2, TrendingDown, FileBarChart, Database, Bell, Megaphone, FlaskConical } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -302,7 +302,10 @@ const menuItems = [
       { icon: Scale, label: "Benchmarking", path: "/benchmarking" },
       { icon: BarChart, label: "Relatórios", path: "/relatorios-produtividade" },
       { icon: GitBranch, label: "Testes A/B", path: "/admin/ab-tests" },
+      { icon: FlaskConical, label: "Experimentos A/B", path: "/admin/ab-experiments" },
       { icon: Star, label: "Pesquisa NPS", path: "/admin/nps" },
+      { icon: Clock, label: "Triggers NPS", path: "/admin/nps/scheduled-triggers" },
+      { icon: FileBarChart, label: "Relatório Consolidado", path: "/admin/nps/consolidated-report" },
     ],
   },
   

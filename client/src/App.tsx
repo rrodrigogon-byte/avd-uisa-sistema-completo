@@ -45,6 +45,9 @@ import AprovacoesCargos from "./pages/AprovacoesCargos";
 import ABTestDashboard from "./pages/ABTestDashboard";
 import NPSDashboard from "./pages/NPSDashboard";
 import ConsolidatedNpsReport from "./pages/ConsolidatedNpsReport";
+import AdminConsolidatedNpsReport from "./pages/admin/ConsolidatedNpsReport";
+import NpsScheduledTriggers from "./pages/admin/NpsScheduledTriggers";
+import AbTestExperiments from "./pages/admin/AbTestExperiments";
 import ValidacaoTestes from "./pages/ValidacaoTestes";
 import DashboardTestes from "./pages/DashboardTestes";
 import { Route, Switch } from "wouter";
@@ -553,7 +556,9 @@ function Router() {
       {/* Testes A/B e NPS */}
       <Route path="/admin/ab-tests" component={ABTestDashboard} />
       <Route path="/admin/nps" component={NPSDashboard} />
-      <Route path="/admin/nps/consolidated-report" component={ConsolidatedNpsReport} />
+      <Route path="/admin/nps/consolidated-report" component={AdminConsolidatedNpsReport} />
+      <Route path="/admin/nps/scheduled-triggers" component={NpsScheduledTriggers} />
+      <Route path="/admin/ab-experiments" component={AbTestExperiments} />
       
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />

@@ -1928,3 +1928,79 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Criar página de relatório consolidado no admin (/admin/nps/consolidated-report)
 - [x] Verificar integridade do PIR e identificar pendências
 
+
+
+## 🆕 NOVAS FUNCIONALIDADES (15/12/2025)
+
+### 1. Trigger Automático de NPS após PDI
+- [x] Criar schema de banco de dados para NPS
+  - [x] Tabela npsSurveys (pesquisas NPS)
+  - [x] Tabela npsResponses (respostas dos usuários)
+  - [x] Tabela npsScheduledTriggers (triggers agendados)
+  - [x] Tabela npsSettings (configurações de NPS)
+  - [x] Tabela npsDetractorAlerts (alertas de detratores)
+- [x] Implementar procedures tRPC no backend
+  - [x] nps.createSurvey - criar pesquisa NPS
+  - [x] nps.scheduleTrigger - agendar trigger após PDI
+  - [x] nps.processPendingTriggers - processar triggers pendentes
+  - [x] nps.submitResponse - submeter resposta NPS
+  - [x] nps.notifyDetractors - notificar admin sobre detratores
+- [ ] Implementar serviço de trigger automático
+  - [ ] Verificar PDIs concluídos
+  - [ ] Aplicar delay configurável
+  - [ ] Disparar pesquisa NPS
+  - [ ] Notificar admin sobre detratores (score 0-6)
+- [ ] Criar interface de configuração de NPS
+- [ ] Criar interface de resposta NPS para colaboradores
+- [ ] Criar dashboard de resultados NPS
+
+### 2. Experimento A/B para Layout
+- [x] Criar schema de banco de dados para A/B Testing
+  - [x] Tabela abExperiments (experimentos)
+  - [x] Tabela abVariants (variantes A e B)
+  - [x] Tabela abUserAssignments (atribuição de usuários)
+  - [x] Tabela abMetrics (métricas coletadas)
+  - [x] Tabela abLayoutConfigs (configurações de layout)
+  - [x] Tabela abTestResults (resultados consolidados)
+- [x] Implementar procedures tRPC no backend
+  - [x] abTest.createExperiment - criar experimento
+  - [x] abTest.assignUserToVariant - atribuir usuário aleatoriamente
+  - [x] abTest.getUserVariant - obter variante do usuário
+  - [x] abTest.recordMetric - registrar métrica
+  - [x] abTestMetrics.getComparison - comparação detalhada
+  - [x] abTestMetrics.getStepCompletionRates - taxas por etapa
+  - [x] abTestMetrics.getConversionFunnel - funil de conversão
+  - [ ] abTest.getExperimentResults - obter resultados comparativos
+- [ ] Implementar variantes de layout
+  - [ ] Variante A (controle): Layout atual
+  - [ ] Variante B: Layout moderno com cards e grade
+- [ ] Criar página de gestão de experimentos A/B
+- [x] Implementar métricas comparativas (tempo, conclusão, satisfação)
+- [x] Criar página /admin/ab-experiments com dashboard completo
+
+### 3. Relatório Consolidado NPS + Avaliação
+- [x] Criar procedures tRPC para relatório consolidado
+  - [x] consolidatedReport.getData - obter dados cruzados
+  - [x] consolidatedReport.getByDepartment - análise por departamento
+  - [x] consolidatedReport.getTrends - tendências temporais
+  - [x] consolidatedReport.checkPirIntegrity - verificar integridade PIR
+  - [x] consolidatedReport.exportCSV - exportar CSV
+  - [x] consolidatedReport.exportJSON - exportar JSON
+- [x] Implementar página /admin/nps/consolidated-report
+  - [x] Cruzamento de dados NPS com avaliações
+  - [x] Verificação de integridade do PIR com alertas
+  - [x] Tendências temporais com tabela de evolução
+  - [x] Export CSV e JSON funcional
+- [x] Implementar página /admin/nps/scheduled-triggers
+  - [x] Gerenciamento de triggers agendados
+  - [x] Alertas de detratores com ações
+  - [x] Configurações de NPS (delay, threshold)
+  - [ ] Análise por departamento
+  - [ ] Tendências temporais com gráficos
+  - [ ] Exportação CSV/JSON
+- [ ] Criar visualizações de dados
+  - [ ] Gráfico de correlação NPS x Performance
+  - [ ] Heatmap por departamento
+  - [ ] Timeline de tendências
+  - [ ] Alertas de risco
+

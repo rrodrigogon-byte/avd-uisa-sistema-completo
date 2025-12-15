@@ -6768,3 +6768,285 @@ export const npsResponses = mysqlTable("npsResponses", {
 
 export type NpsResponse = typeof npsResponses.$inferSelect;
 export type InsertNpsResponse = typeof npsResponses.$inferInsert;
+
+
+// ============================================================================
+// TABELAS DE TRIGGERS NPS AUTOMÁTICOS
+// ============================================================================
+
+/**
+ * Triggers NPS Agendados - Disparo automático após conclusão de PDI
+ */
+export const npsScheduledTriggers = mysqlTable("npsScheduledTriggers", {
+  id: int("id").autoincrement().primaryKey(),
+  surveyId: int("surveyId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  processId: int("processId").notNull(),
+  
+  // Configuração de delay
+  scheduledFor: datetime("scheduledFor").notNull(),
+  delayMinutes: int("delayMinutes").default(0),
+  
+  // Status do trigger
+  status: mysqlEnum("status", ["pending", "sent", "responded", "expired", "cancelled"]).default("pending").notNull(),
+  
+  // Rastreamento
+  sentAt: datetime("sentAt"),
+  respondedAt: datetime("respondedAt"),
+  responseId: int("responseId"),
+  
+  // Metadados
+  triggerReason: varchar("triggerReason", { length: 100 }).default("pdi_completed"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NpsScheduledTrigger = typeof npsScheduledTriggers.$inferSelect;
+export type InsertNpsScheduledTrigger = typeof npsScheduledTriggers.$inferInsert;
+
+/**
+ * Configurações de NPS - Configurações globais do sistema NPS
+ */
+export const npsSettings = mysqlTable("npsSettings", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Configuração de trigger automático
+  autoTriggerEnabled: boolean("autoTriggerEnabled").default(true),
+  defaultDelayMinutes: int("defaultDelayMinutes").default(1440), // 24 horas
+  reminderEnabled: boolean("reminderEnabled").default(true),
+  reminderDelayMinutes: int("reminderDelayMinutes").default(4320), // 72 horas
+  maxReminders: int("maxReminders").default(2),
+  
+  // Configuração de notificações de detratores
+  detractorAlertEnabled: boolean("detractorAlertEnabled").default(true),
+  detractorThreshold: int("detractorThreshold").default(6), // Score <= 6
+  alertRecipientEmails: text("alertRecipientEmails"), // JSON array de emails
+  
+  // Configuração de expiração
+  surveyExpirationDays: int("surveyExpirationDays").default(7),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NpsSettings = typeof npsSettings.$inferSelect;
+export type InsertNpsSettings = typeof npsSettings.$inferInsert;
+
+/**
+ * Alertas de Detratores NPS
+ */
+export const npsDetractorAlerts = mysqlTable("npsDetractorAlerts", {
+  id: int("id").autoincrement().primaryKey(),
+  responseId: int("responseId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  surveyId: int("surveyId").notNull(),
+  
+  // Detalhes do alerta
+  score: int("score").notNull(),
+  comment: text("comment"),
+  
+  // Status do alerta
+  status: mysqlEnum("status", ["new", "acknowledged", "in_progress", "resolved", "dismissed"]).default("new").notNull(),
+  
+  // Ações tomadas
+  acknowledgedBy: int("acknowledgedBy"),
+  acknowledgedAt: datetime("acknowledgedAt"),
+  resolvedBy: int("resolvedBy"),
+  resolvedAt: datetime("resolvedAt"),
+  resolutionNotes: text("resolutionNotes"),
+  
+  // Notificações
+  notificationSentAt: datetime("notificationSentAt"),
+  notificationRecipients: text("notificationRecipients"), // JSON array
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NpsDetractorAlert = typeof npsDetractorAlerts.$inferSelect;
+export type InsertNpsDetractorAlert = typeof npsDetractorAlerts.$inferInsert;
+
+// ============================================================================
+// TABELAS DE MÉTRICAS A/B TEST
+// ============================================================================
+
+/**
+ * Métricas de Experimentos A/B
+ */
+export const abTestMetrics = mysqlTable("abTestMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  experimentId: int("experimentId").notNull(),
+  variantId: int("variantId").notNull(),
+  userId: int("userId").notNull(),
+  
+  // Tipo de métrica
+  metricType: mysqlEnum("metricType", [
+    "page_view",
+    "time_on_page",
+    "step_completion",
+    "form_submission",
+    "error_count",
+    "satisfaction_rating",
+    "task_completion_time"
+  ]).notNull(),
+  
+  // Valores
+  metricValue: int("metricValue"), // Valor numérico (tempo em ms, contagem, etc)
+  metricLabel: varchar("metricLabel", { length: 100 }), // Label opcional
+  
+  // Contexto
+  pageUrl: varchar("pageUrl", { length: 500 }),
+  stepNumber: int("stepNumber"),
+  sessionId: varchar("sessionId", { length: 100 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AbTestMetric = typeof abTestMetrics.$inferSelect;
+export type InsertAbTestMetric = typeof abTestMetrics.$inferInsert;
+
+/**
+ * Configurações de Layout A/B
+ */
+export const abLayoutConfigs = mysqlTable("abLayoutConfigs", {
+  id: int("id").autoincrement().primaryKey(),
+  experimentId: int("experimentId").notNull(),
+  variantId: int("variantId").notNull(),
+  
+  // Configurações de layout
+  layoutType: mysqlEnum("layoutType", ["control", "cards", "grid", "wizard", "minimal"]).notNull(),
+  colorScheme: varchar("colorScheme", { length: 50 }),
+  fontFamily: varchar("fontFamily", { length: 100 }),
+  spacing: mysqlEnum("spacing", ["compact", "normal", "relaxed"]).default("normal"),
+  
+  // Componentes habilitados
+  showProgressBar: boolean("showProgressBar").default(true),
+  showStepNumbers: boolean("showStepNumbers").default(true),
+  showHelpTooltips: boolean("showHelpTooltips").default(false),
+  animationsEnabled: boolean("animationsEnabled").default(true),
+  
+  // CSS customizado
+  customCss: text("customCss"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AbLayoutConfig = typeof abLayoutConfigs.$inferSelect;
+export type InsertAbLayoutConfig = typeof abLayoutConfigs.$inferInsert;
+
+// ============================================================================
+// TABELAS DE RELATÓRIO CONSOLIDADO
+// ============================================================================
+
+/**
+ * Cache de Relatórios Consolidados NPS + Avaliação
+ */
+export const consolidatedReportCache = mysqlTable("consolidatedReportCache", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Período do relatório
+  periodStart: datetime("periodStart").notNull(),
+  periodEnd: datetime("periodEnd").notNull(),
+  
+  // Filtros aplicados
+  departmentId: int("departmentId"),
+  positionId: int("positionId"),
+  
+  // Dados agregados (JSON)
+  npsData: json("npsData"), // Estatísticas NPS
+  performanceData: json("performanceData"), // Estatísticas de performance
+  correlationData: json("correlationData"), // Correlações NPS x Performance
+  departmentBreakdown: json("departmentBreakdown"), // Análise por departamento
+  trends: json("trends"), // Tendências temporais
+  
+  // Alertas de integridade
+  integrityAlerts: json("integrityAlerts"), // Alertas de problemas no PIR
+  riskIndicators: json("riskIndicators"), // Indicadores de risco
+  
+  // Metadados
+  generatedBy: int("generatedBy").notNull(),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  expiresAt: datetime("expiresAt").notNull(),
+});
+
+export type ConsolidatedReportCache = typeof consolidatedReportCache.$inferSelect;
+export type InsertConsolidatedReportCache = typeof consolidatedReportCache.$inferInsert;
+
+/**
+ * Alertas de Integridade do PIR
+ */
+export const pirIntegrityAlerts = mysqlTable("pirIntegrityAlerts", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Tipo de alerta
+  alertType: mysqlEnum("alertType", [
+    "missing_dimensions",
+    "inconsistent_scores",
+    "incomplete_assessment",
+    "outlier_detected",
+    "data_mismatch"
+  ]).notNull(),
+  
+  // Severidade
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  
+  // Detalhes
+  description: text("description").notNull(),
+  affectedFields: text("affectedFields"), // JSON array de campos afetados
+  expectedValue: varchar("expectedValue", { length: 255 }),
+  actualValue: varchar("actualValue", { length: 255 }),
+  
+  // Status
+  status: mysqlEnum("status", ["open", "investigating", "resolved", "false_positive"]).default("open").notNull(),
+  
+  // Resolução
+  resolvedBy: int("resolvedBy"),
+  resolvedAt: datetime("resolvedAt"),
+  resolutionNotes: text("resolutionNotes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirIntegrityAlert = typeof pirIntegrityAlerts.$inferSelect;
+export type InsertPirIntegrityAlert = typeof pirIntegrityAlerts.$inferInsert;
+
+/**
+ * Histórico de Exportações de Relatórios
+ */
+export const reportExportHistory = mysqlTable("reportExportHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Tipo de relatório
+  reportType: mysqlEnum("reportType", [
+    "nps_consolidated",
+    "performance_summary",
+    "department_analysis",
+    "trend_analysis",
+    "integrity_report"
+  ]).notNull(),
+  
+  // Formato de exportação
+  exportFormat: mysqlEnum("exportFormat", ["csv", "json", "pdf", "xlsx"]).notNull(),
+  
+  // Filtros aplicados
+  filters: json("filters"),
+  
+  // Arquivo gerado
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileSize: int("fileSize"),
+  fileUrl: varchar("fileUrl", { length: 500 }),
+  
+  // Usuário
+  exportedBy: int("exportedBy").notNull(),
+  exportedAt: timestamp("exportedAt").defaultNow().notNull(),
+  
+  // Expiração do arquivo
+  expiresAt: datetime("expiresAt"),
+});
+
+export type ReportExportHistory = typeof reportExportHistory.$inferSelect;
+export type InsertReportExportHistory = typeof reportExportHistory.$inferInsert;

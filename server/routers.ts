@@ -129,6 +129,8 @@ import { npsRouter } from "./routers/npsRouter";
 import { npsTriggerRouter } from "./routers/npsTriggerRouter";
 import { abTestLayoutRouter } from "./routers/abTestLayoutRouter";
 import { consolidatedNpsReportRouter } from "./routers/consolidatedNpsReportRouter";
+import { npsScheduledTriggerRouter } from "./routers/npsScheduledTriggerRouter";
+import { abTestMetricsRouter } from "./routers/abTestMetricsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -294,6 +296,10 @@ export const appRouter = router({
   npsTrigger: npsTriggerRouter,
   abTestLayout: abTestLayoutRouter,
   consolidatedNpsReport: consolidatedNpsReportRouter,
+  
+  // Novos routers - NPS Agendado e Métricas A/B (15/12/2025)
+  npsScheduledTrigger: npsScheduledTriggerRouter,
+  abTestMetrics: abTestMetricsRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,
