@@ -36,10 +36,6 @@ export const users = mysqlTable("users", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-  // Reconhecimento facial
-  faceDescriptor: text("faceDescriptor"), // JSON com descritores faciais
-  facePhotoUrl: varchar("facePhotoUrl", { length: 512 }),
-  faceRegisteredAt: datetime("faceRegisteredAt"),
 });
 
 export type User = typeof users.$inferSelect;

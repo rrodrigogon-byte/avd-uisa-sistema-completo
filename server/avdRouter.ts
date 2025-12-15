@@ -21,6 +21,13 @@ import {
 } from "../drizzle/schema";
 import { eq, and, desc, lte, gte, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { 
+  employeeExists, 
+  assertExists,
+  logCreate,
+  logError,
+  type AuditContext 
+} from "./integrity";
 
 export const avdRouter = router({
   // ============================================================================
@@ -38,30 +45,68 @@ export const avdRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      // Verificar se já existe processo em andamento
-      const existingProcess = await db.select()
-        .from(avdAssessmentProcesses)
-        .where(
-          and(
-            eq(avdAssessmentProcesses.employeeId, input.employeeId),
-            eq(avdAssessmentProcesses.status, 'em_andamento')
+      try {
+        // Validar integridade: verificar se colaborador existe
+        await assertExists(
+          "Colaborador",
+          () => employeeExists(input.employeeId)
+        );
+
+        // Verificar se já existe processo em andamento
+        const existingProcess = await db.select()
+          .from(avdAssessmentProcesses)
+          .where(
+            and(
+              eq(avdAssessmentProcesses.employeeId, input.employeeId),
+              eq(avdAssessmentProcesses.status, 'em_andamento')
+            )
           )
-        )
-        .limit(1);
+          .limit(1);
 
-      if (existingProcess.length > 0) {
-        return existingProcess[0];
+        if (existingProcess.length > 0) {
+          return existingProcess[0];
+        }
+
+        // Criar novo processo
+        const [result] = await db.insert(avdAssessmentProcesses).values({
+          employeeId: input.employeeId,
+          status: 'em_andamento',
+          currentStep: 1,
+          createdBy: ctx.user.id,
+        });
+
+        const processId = result.insertId;
+
+        // Auditoria: registrar criação do processo
+        const auditContext: AuditContext = {
+          userId: ctx.user.id,
+          userName: ctx.user.name || undefined,
+          userEmail: ctx.user.email || undefined,
+          action: "create_avd_process",
+          resource: "avd_assessment_process",
+          resourceId: processId,
+        };
+        
+        await logCreate(auditContext, {
+          employeeId: input.employeeId,
+          status: 'em_andamento',
+          currentStep: 1,
+        });
+
+        return { id: processId };
+      } catch (error) {
+        // Auditoria: registrar erro
+        const auditContext: AuditContext = {
+          userId: ctx.user.id,
+          userName: ctx.user.name || undefined,
+          userEmail: ctx.user.email || undefined,
+          action: "create_avd_process",
+          resource: "avd_assessment_process",
+        };
+        
+        await logError(auditContext, error instanceof Error ? error.message : "Unknown error");
+        throw error;
       }
-
-      // Criar novo processo
-      const [result] = await db.insert(avdAssessmentProcesses).values({
-        employeeId: input.employeeId,
-        status: 'em_andamento',
-        currentStep: 1,
-        createdBy: ctx.user.id,
-      });
-
-      return { id: result.insertId };
     }),
 
   /**

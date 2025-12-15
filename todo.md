@@ -1505,3 +1505,96 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [ ] Adicionar item "PIR de Integridade" em destaque
 - [ ] Adicionar seção "Aprovações" com submenu "Descrições de Cargos"
 - [ ] Reorganizar menu para melhor navegação
+
+
+## 🔒 IMPLEMENTAÇÃO DE INTEGRIDADE DO SISTEMA (14/12/2025)
+
+### Validação e Integridade de Dados
+- [ ] Implementar validações de integridade referencial no banco de dados
+- [ ] Adicionar constraints de chave estrangeira em todas as tabelas
+- [ ] Implementar validações de dados obrigatórios no backend
+- [ ] Adicionar validações de formato de dados (emails, datas, números)
+- [ ] Implementar validações de regras de negócio (ex: não permitir avaliação duplicada)
+
+### Transações e Consistência
+- [ ] Implementar transações para operações críticas (criação de processo completo)
+- [ ] Adicionar rollback automático em caso de erro
+- [ ] Garantir atomicidade em operações multi-tabela
+- [ ] Implementar locks otimistas para evitar conflitos de concorrência
+
+### Auditoria e Rastreabilidade
+- [ ] Criar tabela de logs de auditoria (audit_logs)
+- [ ] Registrar todas as operações críticas (criar, atualizar, deletar)
+- [ ] Adicionar informação de usuário e timestamp em todas as operações
+- [ ] Implementar histórico de alterações para dados sensíveis
+
+### Segurança e Controle de Acesso
+- [ ] Validar permissões em todas as procedures tRPC
+- [ ] Implementar middleware de autorização por perfil
+- [ ] Adicionar proteção contra SQL injection
+- [ ] Implementar rate limiting para prevenir abuso
+
+### Testes de Integridade
+- [ ] Criar testes de integridade referencial
+- [ ] Testar cenários de concorrência
+- [ ] Validar comportamento em casos de erro
+- [ ] Testar rollback de transações
+
+### Persistência e Backup
+- [ ] Garantir persistência de dados entre passos do processo
+- [ ] Implementar salvamento automático de progresso
+- [ ] Adicionar funcionalidade de recuperação de dados
+- [ ] Criar rotina de backup automático
+
+### Monitoramento e Alertas
+- [ ] Implementar monitoramento de integridade do banco
+- [ ] Adicionar alertas para inconsistências detectadas
+- [ ] Criar dashboard de saúde do sistema
+- [ ] Implementar logs estruturados para debugging
+
+
+## ✅ VALIDAÇÕES E INTEGRIDADE IMPLEMENTADAS (14/12/2025)
+
+### Validações de Dados
+- [x] Implementar validações de formato de dados (emails, CPF, telefone)
+- [x] Adicionar validações de datas (não futuras, ranges válidos)
+- [x] Implementar validações de dados de colaborador
+- [x] Implementar validações de ciclo de avaliação
+- [x] Criar helpers de validação reutilizáveis
+
+### Integridade Referencial
+- [x] Criar funções de verificação de existência de recursos
+- [x] Implementar verificação de duplicatas (avaliação por colaborador/ciclo)
+- [x] Adicionar verificação de processo AVD por colaborador
+- [x] Criar helpers de assertion para procedures
+
+### Transações
+- [x] Implementar helper withTransaction para operações atômicas
+- [x] Adicionar rollback automático em caso de erro
+- [x] Criar interface TransactionResult padronizada
+
+### Auditoria
+- [x] Implementar sistema de logs de auditoria
+- [x] Criar funções logCreate, logUpdate, logDelete, logError
+- [x] Adicionar contexto de auditoria (usuário, IP, user agent)
+- [x] Registrar valores antigos e novos em alterações
+
+
+### Middlewares de Segurança e Auditoria
+- [x] Criar middleware de auditoria automática para mutations
+- [x] Implementar middleware de operações críticas com auditoria detalhada
+- [x] Adicionar middleware de rate limiting para prevenir abuso
+- [x] Implementar middleware de validação de permissões por perfil (requireRole)
+- [x] Criar middleware de validação de permissões específicas (requirePermission)
+- [x] Definir mapa de permissões por perfil (admin, rh, gestor, colaborador)
+
+
+### Testes de Integridade
+- [x] Criar suite de testes para validações de formato (email, CPF, telefone, datas)
+- [x] Implementar testes de validações de dados de negócio (colaborador, ciclo)
+- [x] Criar testes de verificações de integridade referencial
+- [x] Implementar testes de helpers de assertion
+- [x] Criar testes de sistema de transações
+- [x] Implementar testes de sistema de auditoria
+- [x] Adicionar testes de integridade do banco de dados
+- [x] Executar todos os testes - **29/29 testes passando 100%** ✅

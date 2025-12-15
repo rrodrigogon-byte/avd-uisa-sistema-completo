@@ -85,7 +85,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 
   try {
-    const values: InsertUser = {
+    // Criar objeto values apenas com campos obrigatórios e fornecidos
+    const values: Partial<InsertUser> = {
       openId: user.openId,
     };
     const updateSet: Record<string, unknown> = {};
@@ -123,7 +124,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    // Não incluir colunas opcionais (faceDescriptor, facePhotoUrl, faceRegisteredAt) no insert
+    // Elas serão adicionadas posteriormente quando necessário
+    await db.insert(users).values(values as InsertUser).onDuplicateKeyUpdate({
       set: updateSet,
     });
   } catch (error) {
