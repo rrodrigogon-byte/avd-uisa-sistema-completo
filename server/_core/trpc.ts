@@ -20,7 +20,7 @@ const requireUser = t.middleware(async opts => {
   return next({
     ctx: {
       ...ctx,
-      user: ctx.user,
+      user: ctx.user as NonNullable<typeof ctx.user>,
     },
   });
 });
@@ -33,6 +33,42 @@ export const adminProcedure = t.procedure.use(
 
     if (!ctx.user || ctx.user.role !== 'admin') {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);
+
+// Procedure para RH (admin ou rh)
+export const rhProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'rh')) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito a RH" });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);
+
+// Procedure para Gestores (admin, rh ou gestor)
+export const gestorProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || !['admin', 'rh', 'gestor'].includes(ctx.user.role)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito a gestores" });
     }
 
     return next({

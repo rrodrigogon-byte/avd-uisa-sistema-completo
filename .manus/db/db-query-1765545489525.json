@@ -1,0 +1,32 @@
+{
+  "query": "\nSELECT \n  ti.id as invitation_id,\n  ti.employeeId,\n  ti.status as invitation_status,\n  ti.testType,\n  ti.completedAt as invitation_completed,\n  tr.id as result_id,\n  tr.completedAt as result_completed,\n  e.email,\n  e.name\nFROM testInvitations ti\nLEFT JOIN employees e ON ti.employeeId = e.id\nLEFT JOIN testResults tr ON tr.invitationId = ti.id\nWHERE e.email = 'rodrigo.goncalves@uisa.com.br'\nORDER BY ti.createdAt DESC\nLIMIT 5;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute \nSELECT \n  ti.id as invitation_id,\n  ti.employeeId,\n  ti.status as invitation_status,\n  ti.testType,\n  ti.completedAt as invitation_completed,\n  tr.id as result_id,\n  tr.completedAt as result_completed,\n  e.email,\n  e.name\nFROM testInvitations ti\nLEFT JOIN employees e ON ti.employeeId = e.id\nLEFT JOIN testResults tr ON tr.invitationId = ti.id\nWHERE e.email = 'rodrigo.goncalves@uisa.com.br'\nORDER BY ti.createdAt DESC\nLIMIT 5;\n",
+  "rows": [
+    {
+      "invitation_id": "14",
+      "employeeId": "690008",
+      "invitation_status": "concluido",
+      "testType": "careeranchors",
+      "invitation_completed": "2025-12-12 00:10:45",
+      "result_id": "16",
+      "result_completed": "2025-12-12 00:10:45",
+      "email": "rodrigo.goncalves@uisa.com.br",
+      "name": "RODRIGO RIBEIRO GONCALVES"
+    },
+    {
+      "invitation_id": "13",
+      "employeeId": "690008",
+      "invitation_status": "concluido",
+      "testType": "careeranchors",
+      "invitation_completed": "2025-12-11 23:21:19",
+      "result_id": "15",
+      "result_completed": "2025-12-11 23:21:19",
+      "email": "rodrigo.goncalves@uisa.com.br",
+      "name": "RODRIGO RIBEIRO GONCALVES"
+    }
+  ],
+  "messages": [],
+  "stdout": "invitation_id\temployeeId\tinvitation_status\ttestType\tinvitation_completed\tresult_id\tresult_completed\temail\tname\n14\t690008\tconcluido\tcareeranchors\t2025-12-12 00:10:45\t16\t2025-12-12 00:10:45\trodrigo.goncalves@uisa.com.br\tRODRIGO RIBEIRO GONCALVES\n13\t690008\tconcluido\tcareeranchors\t2025-12-11 23:21:19\t15\t2025-12-11 23:21:19\trodrigo.goncalves@uisa.com.br\tRODRIGO RIBEIRO GONCALVES\n",
+  "stderr": "",
+  "execution_time_ms": 59
+}

@@ -1,0 +1,178 @@
+{
+  "query": "DESCRIBE bonusPolicies",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute DESCRIBE bonusPolicies",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": "auto_increment"
+    },
+    {
+      "Field": "name",
+      "Type": "varchar(200)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "description",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "positionId",
+      "Type": "int(11)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "departmentId",
+      "Type": "int(11)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "salaryMultiplier",
+      "Type": "decimal(5,2)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "minMultiplier",
+      "Type": "decimal(5,2)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "0.5",
+      "Extra": ""
+    },
+    {
+      "Field": "maxMultiplier",
+      "Type": "decimal(5,2)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "2.0",
+      "Extra": ""
+    },
+    {
+      "Field": "minPerformanceRating",
+      "Type": "enum('abaixo_expectativas','atende_expectativas','supera_expectativas','excepcional')",
+      "Null": "YES",
+      "Key": "",
+      "Default": "atende_expectativas",
+      "Extra": ""
+    },
+    {
+      "Field": "minTenureMonths",
+      "Type": "int(11)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "6",
+      "Extra": ""
+    },
+    {
+      "Field": "requiresGoalCompletion",
+      "Type": "tinyint(1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "1",
+      "Extra": ""
+    },
+    {
+      "Field": "minGoalCompletionRate",
+      "Type": "int(11)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "70",
+      "Extra": ""
+    },
+    {
+      "Field": "validFrom",
+      "Type": "datetime",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "validUntil",
+      "Type": "datetime",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "active",
+      "Type": "tinyint(1)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "1",
+      "Extra": ""
+    },
+    {
+      "Field": "approvalStatus",
+      "Type": "enum('pendente','aprovado','rejeitado')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "pendente",
+      "Extra": ""
+    },
+    {
+      "Field": "approvedBy",
+      "Type": "int(11)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "approvedAt",
+      "Type": "datetime",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "createdBy",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "createdAt",
+      "Type": "datetime",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": ""
+    },
+    {
+      "Field": "updatedAt",
+      "Type": "datetime",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint(11)\tNO\tPRI\tNULL\tauto_increment\nname\tvarchar(200)\tNO\t\tNULL\t\ndescription\ttext\tYES\t\tNULL\t\npositionId\tint(11)\tYES\t\tNULL\t\ndepartmentId\tint(11)\tYES\t\tNULL\t\nsalaryMultiplier\tdecimal(5,2)\tNO\t\tNULL\t\nminMultiplier\tdecimal(5,2)\tYES\t\t0.5\t\nmaxMultiplier\tdecimal(5,2)\tYES\t\t2.0\t\nminPerformanceRating\tenum('abaixo_expectativas','atende_expectativas','supera_expectativas','excepcional')\tYES\t\tatende_expectativas\t\nminTenureMonths\tint(11)\tYES\t\t6\t\nrequiresGoalCompletion\ttinyint(1)\tYES\t\t1\t\nminGoalCompletionRate\tint(11)\tYES\t\t70\t\nvalidFrom\tdatetime\tNO\t\tNULL\t\nvalidUntil\tdatetime\tYES\t\tNULL\t\nactive\ttinyint(1)\tNO\t\t1\t\napprovalStatus\tenum('pendente','aprovado','rejeitado')\tNO\t\tpendente\t\napprovedBy\tint(11)\tYES\t\tNULL\t\napprovedAt\tdatetime\tYES\t\tNULL\t\ncreatedBy\tint(11)\tNO\t\tNULL\t\ncreatedAt\tdatetime\tNO\t\tCURRENT_TIMESTAMP\t\nupdatedAt\tdatetime\tNO\t\tCURRENT_TIMESTAMP\tDEFAULT_GENERATED on update CURRENT_TIMESTAMP\n",
+  "stderr": "",
+  "execution_time_ms": 94
+}

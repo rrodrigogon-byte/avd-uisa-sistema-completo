@@ -43,15 +43,21 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
+  /* UISA Brand Colors */
+  --uisa-orange: oklch(0.68 0.18 50); /* #F39200 - Laranja principal */
+  --uisa-blue-dark: oklch(0.35 0.08 250); /* #1E3A5F - Azul navy */
+  --uisa-blue-light: oklch(0.65 0.12 240); /* #4A9FD8 - Azul claro */
+  --uisa-gray-dark: oklch(0.32 0.01 260); /* #3D4852 - Cinza escuro */
+  
+  --primary: var(--uisa-orange);
+  --primary-foreground: oklch(1 0 0);
+  --sidebar-primary: var(--uisa-blue-dark);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --chart-1: var(--uisa-blue-light);
+  --chart-2: var(--uisa-blue-dark);
+  --chart-3: var(--uisa-orange);
+  --chart-4: oklch(0.55 0.12 240);
+  --chart-5: oklch(0.45 0.08 250);
   --radius: 0.65rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.235 0.015 65);
@@ -79,10 +85,10 @@
 }
 
 .dark {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
+  --primary: var(--uisa-orange);
+  --primary-foreground: oklch(0.1 0 0);
+  --sidebar-primary: var(--uisa-blue-dark);
+  --sidebar-primary-foreground: oklch(1 0 0);
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.85 0.005 65);
   --card: oklch(0.21 0.006 285.885);
@@ -119,12 +125,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -142,11 +142,25 @@
 @layer components {
   /**
    * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /**
+   * Customized .container behavior:
+   * - Auto-centers with mx-auto
+   * - Adds responsive horizontal padding
+   * - No need to add mx-auto or px-* manually
    *
    * Usage: <div className="container">...</div>
    *
@@ -179,5 +193,81 @@
       padding-right: 2rem;
       max-width: 1280px; /* Standard content width */
     }
+  }
+
+  /* Melhorias de UX para scroll e interações */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/20 rounded-lg;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-lg;
+    transition: background-color 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/60;
+  }
+
+  /* Melhor foco para acessibilidade */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+    transition: box-shadow 0.2s ease;
+  }
+
+  /* Transições suaves globais */
+  button, a, input, select, textarea {
+    transition: all 0.2s ease;
+  }
+
+  /* Feedback visual em botões */
+  button:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* Animação de entrada suave */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* Animação shimmer para skeleton loaders */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+  }
+
+  /* Melhor contraste para textos */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground;
+    font-weight: 600;
+  }
+
+  /* Espaçamento consistente */
+  p + p {
+    margin-top: 1rem;
   }
 }

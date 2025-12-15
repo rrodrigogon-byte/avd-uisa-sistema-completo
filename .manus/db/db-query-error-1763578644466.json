@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE successionCandidates \nADD COLUMN performanceRating ENUM('baixo', 'medio', 'alto', 'excepcional') AFTER priority,\nADD COLUMN potentialRating ENUM('baixo', 'medio', 'alto', 'excepcional') AFTER performanceRating,\nADD COLUMN nineBoxPosition VARCHAR(100) AFTER potentialRating,\nADD COLUMN gapAnalysis TEXT AFTER nineBoxPosition,\nADD COLUMN developmentActions TEXT AFTER gapAnalysis;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE successionCandidates \nADD COLUMN performanceRating ENUM('baixo', 'medio', 'alto', 'excepcional') AFTER priority,\nADD COLUMN potentialRating ENUM('baixo', 'medio', 'alto', 'excepcional') AFTER performanceRating,\nADD COLUMN nineBoxPosition VARCHAR(100) AFTER potentialRating,\nADD COLUMN gapAnalysis TEXT AFTER nineBoxPosition,\nADD COLUMN developmentActions TEXT AFTER gapAnalysis;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'performancerating' in 'successionCandidates'"
+  ]
+}

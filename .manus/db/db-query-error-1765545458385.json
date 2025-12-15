@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT \n  tr.id,\n  tr.employeeId,\n  tr.testId,\n  tr.status,\n  tr.completedAt,\n  tr.score,\n  e.email,\n  e.name\nFROM testResults tr\nLEFT JOIN employees e ON tr.employeeId = e.id\nWHERE e.email = 'rodrigo.goncalves@uisa.com.br'\nORDER BY tr.createdAt DESC\nLIMIT 5;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute \nSELECT \n  tr.id,\n  tr.employeeId,\n  tr.testId,\n  tr.status,\n  tr.completedAt,\n  tr.score,\n  e.email,\n  e.name\nFROM testResults tr\nLEFT JOIN employees e ON tr.employeeId = e.id\nWHERE e.email = 'rodrigo.goncalves@uisa.com.br'\nORDER BY tr.createdAt DESC\nLIMIT 5;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 2: Unknown column 'tr.testid' in 'field list'"
+  ]
+}

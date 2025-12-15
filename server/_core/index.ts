@@ -7,6 +7,10 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { setupWebSocket } from "../websocket";
+import { startCronJobs } from "../cron";
+import { startEmailQueueProcessor } from "./emailQueue";
+import { startEmailScheduler } from "./emailScheduler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -30,6 +34,12 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+  
+  // Setup WebSocket
+  const io = setupWebSocket(server);
+  
+  // Make io available in app context
+  app.set('io', io);
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -60,12 +70,14 @@ async function startServer() {
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
     
-    // Iniciar cron jobs para notificações automáticas
-    import('../cronJobs').then(({ startCronJobs }) => {
-      startCronJobs();
-    }).catch(err => {
-      console.error('[Server] Failed to start cron jobs:', err);
-    });
+    // Iniciar cron jobs
+    startCronJobs();
+    
+    // Iniciar processador de fila de e-mails
+    startEmailQueueProcessor();
+    
+    // Iniciar agendador de emails automáticos
+    startEmailScheduler();
   });
 }
 

@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE pushNotificationLogs MODIFY COLUMN status ENUM('sent', 'opened', 'failed') NOT NULL DEFAULT 'sent'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE pushNotificationLogs MODIFY COLUMN status ENUM('sent', 'opened', 'failed') NOT NULL DEFAULT 'sent'",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1265 (01000) at line 1: Data truncated for column 'status', value is 'aberta'"
+  ]
+}
