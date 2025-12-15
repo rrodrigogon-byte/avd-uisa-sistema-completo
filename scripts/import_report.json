@@ -1,0 +1,24 @@
+{
+  "data_geracao": "2025-12-15T16:18:39.800564",
+  "arquivo_origem": "/home/ubuntu/upload/funcionarioscomahierarquia.xlsx",
+  "estatisticas": {
+    "total_registros": 3659,
+    "funcionarios_unicos": 3159,
+    "empresas": 4,
+    "departamentos": 189,
+    "cargos": 405,
+    "lideres": 125
+  },
+  "empresas": [
+    "USINAS ITAMARATI",
+    "FELIZ TERRA AGRICOLA LTDA",
+    "GEO ENERGETICA PARTICIPACOES S.A.",
+    "GUANABARA COMERCIO DE PRODUTOS ALIMENTICIOS LTDA."
+  ],
+  "hierarquia": {
+    "presidentes": 3,
+    "diretores": 10,
+    "gestores": 29,
+    "coordenadores": 83
+  }
+}

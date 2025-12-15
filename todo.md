@@ -2033,3 +2033,27 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 4. **Problema de Props**: `AVDProgressBreadcrumbs` requeria `completedSteps`
    - Solução: Passar array de passos concluídos baseado em `step*CompletedAt`
 
+
+
+## 🔄 CARGA DE FUNCIONÁRIOS E HIERARQUIAS (15/12/2025)
+
+### Análise do Arquivo Excel
+- [x] Analisar estrutura do arquivo funcionarioscomahierarquia.xlsx
+- [x] Identificar 3659 registros (3159 funcionários únicos)
+- [x] Mapear 24 colunas de dados
+- [x] Identificar 4 empresas, 184 seções, 404 funções
+- [x] Identificar hierarquia: 3 presidentes, 10 diretores, 29 gestores, 83 coordenadores
+
+### Importação de Dados
+- [x] Criar script de importação Python para processar Excel
+- [x] Importar empresas no banco de dados
+- [x] Importar seções/departamentos no banco de dados (189 seções)
+- [x] Importar funções/cargos no banco de dados (405 cargos)
+- [x] Importar funcionários com relacionamentos hierárquicos (3157 do Excel)
+- [x] Validar integridade dos dados importados
+- [x] Tratar duplicatas (858 registros com chapa duplicada)
+
+### Validação Pós-Importação
+- [x] Verificar contagem de registros importados (3157 funcionários, 189 departamentos, 405 cargos)
+- [x] Validar relacionamentos hierárquicos (3132 funcionários com gestor definido)
+- [x] Testar consultas de funcionários por hierarquia (diretoria: 10, gerência: 23, coordenação: 52, supervisão: 231, operacional: 2842)
