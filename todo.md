@@ -2102,3 +2102,125 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Criar metas por departamento Qualidade (4 metas)
 - [x] Criar metas por departamento Manutenção (4 metas)
 - [x] Criar metas por departamento SSMA (4 metas)
+
+
+## 🆕 NOVAS FUNCIONALIDADES - BENCHMARK E MELHORES PRÁTICAS (15/12/2025)
+
+### Vincular Competências aos Cargos
+- [ ] Criar tabela positionCompetencies para vincular competências a cargos
+- [ ] Definir níveis mínimos exigidos para cada competência por cargo
+- [ ] Implementar procedures tRPC para gestão de competências por cargo
+  - [ ] positionCompetencies.create - vincular competência a cargo
+  - [ ] positionCompetencies.list - listar competências por cargo
+  - [ ] positionCompetencies.update - atualizar nível mínimo
+  - [ ] positionCompetencies.delete - remover vínculo
+- [ ] Criar página de gestão de competências por cargo
+  - [ ] Seleção de cargo
+  - [ ] Lista de competências disponíveis
+  - [ ] Definição de nível mínimo (1-5) para cada competência
+  - [ ] Visualização de matriz cargo x competência
+- [ ] Integrar com avaliação de competências para calcular gaps
+
+### Criar Metas Individuais
+- [ ] Criar tabela individualGoals para metas individuais
+- [ ] Implementar desdobramento de metas departamentais em individuais
+- [ ] Implementar procedures tRPC para gestão de metas individuais
+  - [ ] individualGoals.create - criar meta individual
+  - [ ] individualGoals.list - listar metas por colaborador
+  - [ ] individualGoals.update - atualizar meta
+  - [ ] individualGoals.delete - remover meta
+  - [ ] individualGoals.updateProgress - atualizar progresso
+- [ ] Criar página de gestão de metas individuais
+  - [ ] Formulário de criação de meta (SMART)
+  - [ ] Vínculo com meta departamental (opcional)
+  - [ ] Definição de peso da meta
+  - [ ] Acompanhamento de progresso
+  - [ ] Histórico de atualizações
+- [ ] Integrar metas individuais com avaliação de desempenho
+
+### Configurar Pesos de Avaliação
+- [ ] Criar tabela evaluationWeights para pesos de avaliação
+- [ ] Implementar configuração de pesos por ciclo/período
+- [ ] Implementar procedures tRPC para gestão de pesos
+  - [ ] evaluationWeights.create - criar configuração de pesos
+  - [ ] evaluationWeights.get - obter pesos ativos
+  - [ ] evaluationWeights.update - atualizar pesos
+  - [ ] evaluationWeights.getHistory - histórico de configurações
+- [ ] Criar página de configuração de pesos
+  - [ ] Peso para competências (%)
+  - [ ] Peso para metas individuais (%)
+  - [ ] Peso para metas departamentais (%)
+  - [ ] Peso para PIR (%)
+  - [ ] Validação de soma = 100%
+- [ ] Integrar pesos no cálculo final da avaliação de desempenho
+
+### Melhorias de Benchmark e Boas Práticas
+- [ ] Implementar comparativo de desempenho entre colaboradores do mesmo cargo
+- [ ] Criar indicadores de benchmark por departamento
+- [ ] Adicionar visualização de distribuição de notas (curva normal)
+- [ ] Implementar ranking de desempenho por área
+- [ ] Criar alertas para colaboradores abaixo do nível mínimo
+
+
+
+## 🆕 NOVAS FUNCIONALIDADES IMPLEMENTADAS (15/12/2025)
+
+### Competências por Cargo
+- [x] Criar tabela position_competencies no banco de dados
+- [x] Implementar router positionCompetencies com CRUD completo
+- [x] Criar página CompetenciasPorCargo.tsx com interface de gestão
+- [x] Definir níveis mínimos exigidos (1-5) para cada competência por cargo
+- [x] Implementar análise de gaps de competências
+- [x] Adicionar pesos para cada competência no cargo
+- [x] Integrar com sistema de avaliação de desempenho
+
+### Metas Individuais
+- [x] Criar tabela individual_goals no banco de dados
+- [x] Criar tabela individual_goal_progress para histórico de progresso
+- [x] Implementar router individualGoals com CRUD completo
+- [x] Criar página MetasIndividuais.tsx com interface de gestão
+- [x] Desdobrar metas departamentais em metas individuais
+- [x] Implementar critérios SMART para metas
+- [x] Adicionar workflow de aprovação de metas
+- [x] Implementar acompanhamento de progresso com histórico
+
+### Metas Departamentais
+- [x] Criar tabela department_goals no banco de dados
+- [x] Implementar router departmentGoals com CRUD completo
+- [x] Vincular metas departamentais com metas individuais
+- [x] Calcular progresso departamental a partir das metas individuais
+
+### Pesos de Avaliação
+- [x] Criar tabela evaluation_weights no banco de dados
+- [x] Criar tabela evaluation_weights_history para histórico
+- [x] Implementar router evaluationWeights com CRUD completo
+- [x] Criar página PesosAvaliacao.tsx com interface de configuração
+- [x] Definir pesos por escopo (global, departamento, cargo)
+- [x] Implementar validação de soma = 100%
+- [x] Calcular nota final ponderada automaticamente
+- [x] Manter histórico de alterações de pesos
+
+### Benchmark de Desempenho
+- [x] Criar tabela performance_benchmarks no banco de dados
+- [x] Criar tabela performance_alerts para alertas
+- [x] Implementar router performanceBenchmark com funcionalidades avançadas
+- [x] Criar página BenchmarkDesempenho.tsx com dashboard completo
+- [x] Calcular percentis (P25, P50, P75, P90)
+- [x] Implementar ranking de desempenho
+- [x] Comparar colaborador com benchmarks (organização, departamento, cargo)
+- [x] Gerar alertas automáticos de desempenho
+- [x] Classificar posição relativa (top 10%, top 25%, etc.)
+
+### Testes Automatizados
+- [x] Criar suite de testes goalsAndWeights.test.ts
+- [x] Testar cálculos de progresso de metas
+- [x] Testar validação de pesos (soma = 100%)
+- [x] Testar cálculo de gaps de competências
+- [x] Testar cálculo de percentis e benchmarks
+- [x] Testar classificação de posição relativa
+- [x] **20 testes passando 100%**
+
+### Integração no Sistema
+- [x] Adicionar rotas no App.tsx para novas páginas
+- [x] Adicionar itens de menu no DashboardLayout
+- [x] Registrar novos routers no arquivo principal routers.ts

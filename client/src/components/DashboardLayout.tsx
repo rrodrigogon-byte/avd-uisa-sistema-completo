@@ -342,6 +342,10 @@ const menuItems = [
       { icon: Mail, label: "Emails Admin/RH", path: "/admin/emails-admin-rh" },
       { icon: LineChart, label: "Métricas Email", path: "/admin/email-metrics" },
       { icon: Upload, label: "Importar UISA", path: "/admin/import-uisa" },
+      { icon: Briefcase, label: "Competências por Cargo", path: "/admin/competencias-por-cargo" },
+      { icon: Target, label: "Metas Individuais", path: "/admin/metas-individuais" },
+      { icon: Scale, label: "Pesos de Avaliação", path: "/admin/pesos-avaliacao" },
+      { icon: BarChart3, label: "Benchmark Desempenho", path: "/admin/benchmark-desempenho" },
     ],
   },
   

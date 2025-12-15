@@ -131,6 +131,11 @@ import { abTestLayoutRouter } from "./routers/abTestLayoutRouter";
 import { consolidatedNpsReportRouter } from "./routers/consolidatedNpsReportRouter";
 import { npsScheduledTriggerRouter } from "./routers/npsScheduledTriggerRouter";
 import { abTestMetricsRouter } from "./routers/abTestMetricsRouter";
+import { individualGoalsRouter } from "./routers/individualGoalsRouter";
+import { departmentGoalsRouter } from "./routers/departmentGoalsRouter";
+import { evaluationWeightsRouter } from "./routers/evaluationWeightsRouter";
+import { positionCompetenciesRouter } from "./routers/positionCompetenciesRouter";
+import { performanceBenchmarkRouter } from "./routers/performanceBenchmarkRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -300,6 +305,13 @@ export const appRouter = router({
   // Novos routers - NPS Agendado e Métricas A/B (15/12/2025)
   npsScheduledTrigger: npsScheduledTriggerRouter,
   abTestMetrics: abTestMetricsRouter,
+  
+  // Novos routers - Metas Individuais, Pesos de Avaliação e Benchmark (15/12/2025)
+  individualGoals: individualGoalsRouter,
+  departmentGoals: departmentGoalsRouter,
+  evaluationWeights: evaluationWeightsRouter,
+  positionCompetencies: positionCompetenciesRouter,
+  performanceBenchmark: performanceBenchmarkRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

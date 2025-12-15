@@ -50,6 +50,10 @@ import NpsScheduledTriggers from "./pages/admin/NpsScheduledTriggers";
 import AbTestExperiments from "./pages/admin/AbTestExperiments";
 import ValidacaoTestes from "./pages/ValidacaoTestes";
 import DashboardTestes from "./pages/DashboardTestes";
+import CompetenciasPorCargo from "./pages/CompetenciasPorCargo";
+import MetasIndividuais from "./pages/MetasIndividuais";
+import PesosAvaliacao from "./pages/PesosAvaliacao";
+import BenchmarkDesempenho from "./pages/BenchmarkDesempenho";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -558,6 +562,12 @@ function Router() {
       <Route path="/admin/nps" component={NPSDashboard} />
       <Route path="/admin/nps/consolidated-report" component={AdminConsolidatedNpsReport} />
       <Route path="/admin/nps/scheduled-triggers" component={NpsScheduledTriggers} />
+      
+      {/* Competências por Cargo, Metas Individuais e Pesos de Avaliação */}
+      <Route path="/admin/competencias-por-cargo" component={CompetenciasPorCargo} />
+      <Route path="/admin/metas-individuais" component={MetasIndividuais} />
+      <Route path="/admin/pesos-avaliacao" component={PesosAvaliacao} />
+      <Route path="/admin/benchmark-desempenho" component={BenchmarkDesempenho} />
       <Route path="/admin/ab-experiments" component={AbTestExperiments} />
       
       <Route path={"/"} component={Home} />

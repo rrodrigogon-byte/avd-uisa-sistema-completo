@@ -7050,3 +7050,394 @@ export const reportExportHistory = mysqlTable("reportExportHistory", {
 
 export type ReportExportHistory = typeof reportExportHistory.$inferSelect;
 export type InsertReportExportHistory = typeof reportExportHistory.$inferInsert;
+
+
+// ============================================================================
+// TABELAS DE METAS INDIVIDUAIS E PESOS DE AVALIAÇÃO
+// ============================================================================
+
+/**
+ * Metas Individuais - Desdobramento de metas departamentais para colaboradores
+ * Permite criar metas SMART vinculadas ou independentes
+ */
+export const individualGoals = mysqlTable("individualGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Vinculação
+  employeeId: int("employeeId").notNull(),
+  departmentGoalId: int("departmentGoalId"), // Meta departamental de origem (opcional)
+  cycleId: int("cycleId"), // Ciclo de avaliação
+  
+  // Informações da meta
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Critérios SMART
+  specific: text("specific"), // Específico - O que exatamente será alcançado?
+  measurable: text("measurable"), // Mensurável - Como será medido?
+  achievable: text("achievable"), // Alcançável - É realista?
+  relevant: text("relevant"), // Relevante - Por que é importante?
+  timeBound: text("timeBound"), // Temporal - Quando será alcançado?
+  
+  // Métricas
+  targetValue: int("targetValue"), // Valor alvo (ex: 100)
+  currentValue: int("currentValue").default(0), // Valor atual
+  unit: varchar("unit", { length: 50 }), // Unidade de medida (%, R$, unidades, etc.)
+  
+  // Peso e prioridade
+  weight: int("weight").default(10).notNull(), // Peso da meta no cálculo (0-100)
+  priority: mysqlEnum("priority", ["baixa", "media", "alta", "critica"]).default("media").notNull(),
+  
+  // Datas
+  startDate: datetime("startDate"),
+  dueDate: datetime("dueDate"),
+  completedAt: datetime("completedAt"),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "rascunho",
+    "pendente_aprovacao",
+    "aprovada",
+    "em_andamento",
+    "concluida",
+    "cancelada",
+    "atrasada"
+  ]).default("rascunho").notNull(),
+  
+  // Progresso
+  progressPercent: int("progressPercent").default(0).notNull(), // 0-100
+  
+  // Aprovação
+  approvedBy: int("approvedBy"),
+  approvedAt: datetime("approvedAt"),
+  rejectionReason: text("rejectionReason"),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type IndividualGoal = typeof individualGoals.$inferSelect;
+export type InsertIndividualGoal = typeof individualGoals.$inferInsert;
+
+/**
+ * Histórico de Progresso de Metas Individuais
+ * Registra atualizações de progresso ao longo do tempo
+ */
+export const individualGoalProgress = mysqlTable("individualGoalProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  goalId: int("goalId").notNull(),
+  
+  // Valores
+  previousValue: int("previousValue"),
+  newValue: int("newValue").notNull(),
+  previousPercent: int("previousPercent"),
+  newPercent: int("newPercent").notNull(),
+  
+  // Comentário
+  comment: text("comment"),
+  evidence: text("evidence"), // Link ou descrição de evidência
+  
+  // Quem registrou
+  recordedBy: int("recordedBy").notNull(),
+  recordedAt: timestamp("recordedAt").defaultNow().notNull(),
+});
+
+export type IndividualGoalProgress = typeof individualGoalProgress.$inferSelect;
+export type InsertIndividualGoalProgress = typeof individualGoalProgress.$inferInsert;
+
+/**
+ * Metas Departamentais - Metas do departamento para desdobramento
+ */
+export const departmentGoals = mysqlTable("departmentGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  departmentId: int("departmentId").notNull(),
+  cycleId: int("cycleId"), // Ciclo de avaliação
+  
+  // Informações
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Métricas
+  targetValue: int("targetValue"),
+  currentValue: int("currentValue").default(0),
+  unit: varchar("unit", { length: 50 }),
+  
+  // Peso
+  weight: int("weight").default(10).notNull(),
+  
+  // Datas
+  startDate: datetime("startDate"),
+  dueDate: datetime("dueDate"),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "rascunho",
+    "aprovada",
+    "em_andamento",
+    "concluida",
+    "cancelada"
+  ]).default("rascunho").notNull(),
+  
+  progressPercent: int("progressPercent").default(0).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DepartmentGoal = typeof departmentGoals.$inferSelect;
+export type InsertDepartmentGoal = typeof departmentGoals.$inferInsert;
+
+/**
+ * Configuração de Pesos de Avaliação
+ * Define os pesos de cada componente no cálculo final da avaliação de desempenho
+ */
+export const evaluationWeightConfigs = mysqlTable("evaluationWeightConfigs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificação
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Escopo (pode ser global, por departamento ou por cargo)
+  scope: mysqlEnum("scope", ["global", "departamento", "cargo"]).default("global").notNull(),
+  departmentId: int("departmentId"), // Se scope = departamento
+  positionId: int("positionId"), // Se scope = cargo
+  
+  // Pesos dos componentes (devem somar 100%)
+  competenciesWeight: int("competenciesWeight").default(40).notNull(), // Peso das competências
+  individualGoalsWeight: int("individualGoalsWeight").default(30).notNull(), // Peso das metas individuais
+  departmentGoalsWeight: int("departmentGoalsWeight").default(15).notNull(), // Peso das metas departamentais
+  pirWeight: int("pirWeight").default(15).notNull(), // Peso do PIR
+  
+  // Pesos adicionais opcionais
+  feedbackWeight: int("feedbackWeight").default(0), // Peso do feedback 360
+  behaviorWeight: int("behaviorWeight").default(0), // Peso de comportamento
+  
+  // Período de vigência
+  validFrom: datetime("validFrom").notNull(),
+  validUntil: datetime("validUntil"),
+  
+  // Status
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvaluationWeightConfig = typeof evaluationWeightConfigs.$inferSelect;
+export type InsertEvaluationWeightConfig = typeof evaluationWeightConfigs.$inferInsert;
+
+/**
+ * Histórico de Configurações de Pesos
+ * Mantém registro de todas as alterações nas configurações
+ */
+export const evaluationWeightHistory = mysqlTable("evaluationWeightHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  configId: int("configId").notNull(),
+  
+  // Valores anteriores
+  previousWeights: json("previousWeights").$type<{
+    competenciesWeight: number;
+    individualGoalsWeight: number;
+    departmentGoalsWeight: number;
+    pirWeight: number;
+    feedbackWeight: number;
+    behaviorWeight: number;
+  }>(),
+  
+  // Novos valores
+  newWeights: json("newWeights").$type<{
+    competenciesWeight: number;
+    individualGoalsWeight: number;
+    departmentGoalsWeight: number;
+    pirWeight: number;
+    feedbackWeight: number;
+    behaviorWeight: number;
+  }>(),
+  
+  // Motivo da alteração
+  changeReason: text("changeReason"),
+  
+  // Quem alterou
+  changedBy: int("changedBy").notNull(),
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+});
+
+export type EvaluationWeightHistory = typeof evaluationWeightHistory.$inferSelect;
+export type InsertEvaluationWeightHistory = typeof evaluationWeightHistory.$inferInsert;
+
+/**
+ * Benchmark de Desempenho
+ * Armazena métricas de benchmark para comparação
+ */
+export const performanceBenchmarks = mysqlTable("performanceBenchmarks", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Escopo do benchmark
+  scope: mysqlEnum("scope", ["organizacao", "departamento", "cargo"]).notNull(),
+  departmentId: int("departmentId"),
+  positionId: int("positionId"),
+  
+  // Período
+  periodStart: datetime("periodStart").notNull(),
+  periodEnd: datetime("periodEnd").notNull(),
+  
+  // Métricas agregadas
+  avgCompetencyScore: int("avgCompetencyScore"), // Média de competências (0-100)
+  avgGoalCompletion: int("avgGoalCompletion"), // Média de conclusão de metas (0-100)
+  avgOverallScore: int("avgOverallScore"), // Média geral (0-100)
+  
+  // Distribuição (percentis)
+  p25Score: int("p25Score"), // 25º percentil
+  p50Score: int("p50Score"), // Mediana
+  p75Score: int("p75Score"), // 75º percentil
+  p90Score: int("p90Score"), // 90º percentil
+  
+  // Estatísticas
+  totalEmployees: int("totalEmployees").notNull(),
+  evaluatedEmployees: int("evaluatedEmployees").notNull(),
+  
+  // Distribuição por classificação
+  abaixoExpectativas: int("abaixoExpectativas").default(0),
+  atendeExpectativas: int("atendeExpectativas").default(0),
+  superaExpectativas: int("superaExpectativas").default(0),
+  excepcional: int("excepcional").default(0),
+  
+  // Metadados
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PerformanceBenchmark = typeof performanceBenchmarks.$inferSelect;
+export type InsertPerformanceBenchmark = typeof performanceBenchmarks.$inferInsert;
+
+/**
+ * Alertas de Desempenho
+ * Alertas para colaboradores abaixo do nível mínimo esperado
+ */
+export const performanceAlerts = mysqlTable("performanceAlerts", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  employeeId: int("employeeId").notNull(),
+  cycleId: int("cycleId"),
+  
+  // Tipo de alerta
+  alertType: mysqlEnum("alertType", [
+    "competencia_abaixo_minimo",
+    "meta_atrasada",
+    "desempenho_geral_baixo",
+    "gap_critico",
+    "sem_avaliacao"
+  ]).notNull(),
+  
+  // Severidade
+  severity: mysqlEnum("severity", ["info", "warning", "critical"]).default("warning").notNull(),
+  
+  // Detalhes
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Referências
+  competencyId: int("competencyId"), // Se for alerta de competência
+  goalId: int("goalId"), // Se for alerta de meta
+  
+  // Valores
+  expectedValue: int("expectedValue"),
+  actualValue: int("actualValue"),
+  gapValue: int("gapValue"),
+  
+  // Status
+  status: mysqlEnum("status", ["aberto", "em_analise", "resolvido", "ignorado"]).default("aberto").notNull(),
+  
+  // Resolução
+  resolvedBy: int("resolvedBy"),
+  resolvedAt: datetime("resolvedAt"),
+  resolutionNotes: text("resolutionNotes"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PerformanceAlert = typeof performanceAlerts.$inferSelect;
+export type InsertPerformanceAlert = typeof performanceAlerts.$inferInsert;
+
+// Relations para as novas tabelas
+export const individualGoalsRelations = relations(individualGoals, ({ one, many }) => ({
+  employee: one(employees, {
+    fields: [individualGoals.employeeId],
+    references: [employees.id],
+  }),
+  departmentGoal: one(departmentGoals, {
+    fields: [individualGoals.departmentGoalId],
+    references: [departmentGoals.id],
+  }),
+  progress: many(individualGoalProgress),
+}));
+
+export const individualGoalProgressRelations = relations(individualGoalProgress, ({ one }) => ({
+  goal: one(individualGoals, {
+    fields: [individualGoalProgress.goalId],
+    references: [individualGoals.id],
+  }),
+}));
+
+export const departmentGoalsRelations = relations(departmentGoals, ({ one, many }) => ({
+  department: one(departments, {
+    fields: [departmentGoals.departmentId],
+    references: [departments.id],
+  }),
+  individualGoals: many(individualGoals),
+}));
+
+export const evaluationWeightConfigsRelations = relations(evaluationWeightConfigs, ({ one, many }) => ({
+  department: one(departments, {
+    fields: [evaluationWeightConfigs.departmentId],
+    references: [departments.id],
+  }),
+  position: one(positions, {
+    fields: [evaluationWeightConfigs.positionId],
+    references: [positions.id],
+  }),
+  history: many(evaluationWeightHistory),
+}));
+
+export const evaluationWeightHistoryRelations = relations(evaluationWeightHistory, ({ one }) => ({
+  config: one(evaluationWeightConfigs, {
+    fields: [evaluationWeightHistory.configId],
+    references: [evaluationWeightConfigs.id],
+  }),
+}));
+
+export const performanceBenchmarksRelations = relations(performanceBenchmarks, ({ one }) => ({
+  department: one(departments, {
+    fields: [performanceBenchmarks.departmentId],
+    references: [departments.id],
+  }),
+  position: one(positions, {
+    fields: [performanceBenchmarks.positionId],
+    references: [positions.id],
+  }),
+}));
+
+export const performanceAlertsRelations = relations(performanceAlerts, ({ one }) => ({
+  employee: one(employees, {
+    fields: [performanceAlerts.employeeId],
+    references: [employees.id],
+  }),
+  competency: one(competencies, {
+    fields: [performanceAlerts.competencyId],
+    references: [competencies.id],
+  }),
+  goal: one(individualGoals, {
+    fields: [performanceAlerts.goalId],
+    references: [individualGoals.id],
+  }),
+}));
