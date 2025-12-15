@@ -1,8 +1,0 @@
-{
-  "query": "ALTER TABLE employees \nADD COLUMN costCenter VARCHAR(100),\nADD INDEX idx_costCenter (costCenter);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE employees \nADD COLUMN costCenter VARCHAR(100),\nADD INDEX idx_costCenter (costCenter);",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1072 (42000) at line 1: column does not exist: costCenter"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "query": "ALTER TABLE `pdiReviews` ADD COLUMN `reviewerRole` varchar(100) AFTER `reviewerId`;\nALTER TABLE `pdiReviews` ADD COLUMN `overallProgress` int AFTER `reviewDate`;\nALTER TABLE `pdiReviews` ADD COLUMN `strengths` text AFTER `overallProgress`;\nALTER TABLE `pdiReviews` ADD COLUMN `improvements` text AFTER `strengths`;\nALTER TABLE `pdiReviews` ADD COLUMN `nextSteps` text AFTER `improvements`;\nALTER TABLE `pdiReviews` CHANGE COLUMN `recommendations` `recommendation` text;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE `pdiReviews` ADD COLUMN `reviewerRole` varchar(100) AFTER `reviewerId`;\nALTER TABLE `pdiReviews` ADD COLUMN `overallProgress` int AFTER `reviewDate`;\nALTER TABLE `pdiReviews` ADD COLUMN `strengths` text AFTER `overallProgress`;\nALTER TABLE `pdiReviews` ADD COLUMN `improvements` text AFTER `strengths`;\nALTER TABLE `pdiReviews` ADD COLUMN `nextSteps` text AFTER `improvements`;\nALTER TABLE `pdiReviews` CHANGE COLUMN `recommendations` `recommendation` text;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 2361
-}

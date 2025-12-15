@@ -29,41 +29,6 @@
       "when": 1765742055802,
       "tag": "0003_brave_daimon_hellstrom",
       "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1765744532726,
-      "tag": "0004_futuristic_dracula",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1765750338269,
-      "tag": "0005_aberrant_mordo",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1765762619771,
-      "tag": "0006_fantastic_sleeper",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1765763287925,
-      "tag": "0007_glorious_blink",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1765763646707,
-      "tag": "0008_illegal_dakota_north",
-      "breakpoints": true
     }
   ]
 }

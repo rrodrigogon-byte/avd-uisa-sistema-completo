@@ -1,1 +1,0 @@
-ALTER TABLE `employees` ADD `costCenter` varchar(100);
