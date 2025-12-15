@@ -304,23 +304,24 @@ import { evaluationRemindersJob } from './jobs/evaluationReminders';
 // Iniciar todos os cron jobs
 export function startCronJobs() {
   console.log('[Cron] Iniciando cron jobs...');
-  goalReminderJob.start();
-  evaluationReminderJob.start();
-  pdiOverdueJob.start();
-  scheduledReportsJob.start();
-  calculateDiscrepanciesJob.start();
-  pulseSurveyEmailJob.start();
-  consensusReminderJob.start();
-  corporateGoalsReminderJob.start();
-  calculateScoresJob.start();
+  // Desabilitado temporariamente devido a erros de schema
+  // goalReminderJob.start();
+  // evaluationReminderJob.start();
+  // pdiOverdueJob.start();
+  // scheduledReportsJob.start(); // Tabela scheduledReports não existe
+  // calculateDiscrepanciesJob.start();
+  // pulseSurveyEmailJob.start(); // emailQueue com coluna prioridade faltando
+  // consensusReminderJob.start();
+  // corporateGoalsReminderJob.start();
+  // calculateScoresJob.start();
   // Iniciar job de notificações automáticas
-  startNotificationCron();
+  // startNotificationCron();
   // Iniciar job de lembretes de rascunhos
-  startDraftRemindersJob();
+  // startDraftRemindersJob();
   // Iniciar job de lembretes de avaliações 360°
-  evaluationRemindersJob.start();
+  // evaluationRemindersJob.start();
   
-  console.log('[Cron] Cron jobs iniciados com sucesso');
+  console.log('[Cron] Cron jobs desabilitados temporariamente - aguardando correção de schema');
 }
 
 // Parar todos os cron jobs

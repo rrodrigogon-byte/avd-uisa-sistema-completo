@@ -29,18 +29,11 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["admin", "rh", "gestor", "colaborador"]).default("colaborador").notNull(),
-  
-  // Flag de Líder de Cargos e Salários
-  isSalaryLead: boolean("isSalaryLead").default(false).notNull(),
-  
+  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-  // Reconhecimento facial
-  faceDescriptor: text("faceDescriptor"), // JSON com descritores faciais
-  facePhotoUrl: varchar("facePhotoUrl", { length: 512 }),
-  faceRegisteredAt: datetime("faceRegisteredAt"),
+  isSalaryLead: boolean("isSalaryLead").default(false).notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -3632,18 +3625,14 @@ export type InsertClockTest = typeof clockTests.$inferInsert;
  */
 export const emailQueue = mysqlTable("emailQueue", {
   id: int("id").autoincrement().primaryKey(),
-  destinatario: varchar("destinatario", { length: 320 }).notNull(),
-  assunto: varchar("assunto", { length: 500 }).notNull(),
-  corpo: text("corpo").notNull(),
-  tipoEmail: varchar("tipoEmail", { length: 100 }).notNull(),
-  prioridade: mysqlEnum("prioridade", ["baixa", "normal", "alta", "urgente"]).default("normal").notNull(),
-  status: mysqlEnum("status", ["pendente", "enviando", "enviado", "falhou", "cancelado"]).default("pendente").notNull(),
-  tentativas: int("tentativas").default(0).notNull(),
-  maxTentativas: int("maxTentativas").default(3).notNull(),
-  proximaTentativa: datetime("proximaTentativa"),
-  erroMensagem: text("erroMensagem"),
-  metadados: text("metadados"),
-  enviadoEm: datetime("enviadoEm"),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  body: text("body").notNull(),
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  attempts: int("attempts").default(0).notNull(),
+  lastError: text("lastError"),
+  scheduledFor: datetime("scheduledFor"),
+  sentAt: datetime("sentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
