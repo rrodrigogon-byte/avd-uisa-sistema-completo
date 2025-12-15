@@ -1674,3 +1674,34 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Rotas integradas no App.tsx
 - [x] Menu integrado no DashboardLayout
 
+
+
+## 🆕 MELHORIAS SOLICITADAS (15/12/2025)
+
+### Expansão do Banco de Questões PIR Integridade
+- [x] Adicionar mais questões ao PIR Integridade (mínimo 10 por dimensão) - **60 questões totais**
+  - [x] Dimensão Honestidade - 10 questões
+  - [x] Dimensão Confiabilidade - 10 questões
+  - [x] Dimensão Resiliência Ética - 10 questões
+  - [x] Dimensão Responsabilidade - 10 questões
+  - [x] Dimensão Justiça - 10 questões
+  - [x] Dimensão Coragem Moral - 10 questões
+- [x] Implementar interface de gestão de questões PIR Integridade - Já existe via pirIntegrityRouter
+- [x] Validar que novas questões seguem padrão de avaliação - Cenários situacionais com 4 opções
+
+### Sistema de Alertas Automáticos para Gestores
+- [x] Criar sistema de alertas para risco alto/crítico no PIR - pirRiskAlertsRouter implementado
+- [x] Implementar notificação automática para gestores - sendRiskAlert mutation
+- [x] Criar procedure para identificar colaboradores em risco - listHighRiskEmployees
+- [x] Implementar dashboard de alertas para gestores - getRiskStatsByDepartment
+- [x] Configurar níveis de alerta (alto, crítico) - Suporte para high e critical
+- [x] Criar histórico de alertas enviados - Via tabela notifications
+
+### Relatórios Comparativos por Departamento
+- [x] Criar procedure para análise comparativa por departamento - pirDepartmentReportsRouter
+- [x] Implementar página de relatórios comparativos - getDepartmentComparison, getDepartmentDetails
+- [x] Adicionar gráficos de comparação entre departamentos - getDimensionComparison, getDepartmentRanking
+- [x] Criar métricas de integridade organizacional - getOrganizationMetrics com healthIndex
+- [x] Implementar exportação de relatórios comparativos - exportComparisonReport (JSON/CSV)
+- [x] Adicionar filtros por período e tipo de análise - Suporte a startDate/endDate em todas queries
+
