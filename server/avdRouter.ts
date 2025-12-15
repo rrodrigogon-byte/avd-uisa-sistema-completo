@@ -601,12 +601,33 @@ export const avdRouter = router({
           updateData.currentStep = input.step;
         }
 
-        // Salvar dados do passo específico
-        if (input.step === 1) updateData.step1Data = input.data;
-        if (input.step === 2) updateData.step2Data = input.data;
-        if (input.step === 3) updateData.step3Data = input.data;
-        if (input.step === 4) updateData.step4Data = input.data;
-        if (input.step === 5) updateData.step5Data = input.data;
+        // Salvar dados do passo específico e marcar como concluído
+        if (input.step === 1) {
+          updateData.step1Data = input.data;
+          updateData.step1CompletedAt = new Date();
+          updateData.currentStep = 2; // Avançar para o próximo passo
+        }
+        if (input.step === 2) {
+          updateData.step2Data = input.data;
+          updateData.step2CompletedAt = new Date();
+          updateData.currentStep = 3;
+        }
+        if (input.step === 3) {
+          updateData.step3Data = input.data;
+          updateData.step3CompletedAt = new Date();
+          updateData.currentStep = 4;
+        }
+        if (input.step === 4) {
+          updateData.step4Data = input.data;
+          updateData.step4CompletedAt = new Date();
+          updateData.currentStep = 5;
+        }
+        if (input.step === 5) {
+          updateData.step5Data = input.data;
+          updateData.step5CompletedAt = new Date();
+          updateData.status = 'concluido';
+          updateData.completedAt = new Date();
+        }
 
         await db.update(avdAssessmentProcesses)
           .set(updateData)
@@ -1294,5 +1315,46 @@ export const avdRouter = router({
         .orderBy(desc(avdAssessmentProcesses.createdAt));
 
       return processes;
+    }),
+
+  /**
+   * Criar funcionário para o usuário atual
+   * Usado quando o usuário não tem um funcionário associado
+   */
+  createEmployeeForCurrentUser: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Verificar se já existe funcionário para este usuário
+      const [existingEmployee] = await db.select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      if (existingEmployee) {
+        return existingEmployee;
+      }
+
+      // Criar novo funcionário
+      const employeeCode = `EMP-${ctx.user.id}-${Date.now()}`;
+      const [result] = await db.insert(employees).values({
+        userId: ctx.user.id,
+        employeeCode,
+        name: ctx.user.name || 'Usuário',
+        email: ctx.user.email || null,
+        status: 'ativo',
+        active: true,
+        gamificationPoints: 0,
+        gamificationLevel: 'Bronze',
+      });
+
+      // Buscar o funcionário criado
+      const [newEmployee] = await db.select()
+        .from(employees)
+        .where(eq(employees.id, result.insertId))
+        .limit(1);
+
+      return newEmployee;
     }),
 });

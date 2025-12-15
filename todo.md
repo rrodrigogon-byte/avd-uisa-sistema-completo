@@ -2004,3 +2004,32 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
   - [ ] Timeline de tendências
   - [ ] Alertas de risco
 
+
+
+## 🔧 CORREÇÕES REALIZADAS (15/12/2025)
+
+### Correção do Erro PIR (Passo 2) - "This page is currently unavailable"
+- [x] Diagnosticar problema: Página PIR não estava carregando
+- [x] Identificar causa raiz: Usuário logado não tinha funcionário associado
+- [x] Criar procedure `createEmployeeForCurrentUser` no avdRouter
+- [x] Atualizar ProcessoDashboard para mostrar botão de criar perfil quando necessário
+- [x] Corrigir procedure `getProcessById` no avdUisaRouter
+- [x] Adicionar procedures `getPirAssessmentByProcess`, `savePirAssessment`, `completeStep`
+- [x] Corrigir prop `completedSteps` no componente Passo2PIR
+- [x] Corrigir lógica de `saveProcessData` para marcar passos como concluídos automaticamente
+- [x] Popular tabela `testQuestions` com 60 questões PIR (6 dimensões: D, I, S, C, A, E)
+- [x] Testar fluxo completo: Dashboard → Iniciar Avaliação → Passo 1 → Passo 2 (PIR)
+
+### Detalhes Técnicos da Correção
+1. **Problema de Funcionário**: Usuário logado não tinha registro na tabela `employees`
+   - Solução: Botão "Criar Meu Perfil" que cria funcionário automaticamente
+
+2. **Problema de Processo**: Passo 1 não marcava como concluído ao salvar
+   - Solução: Atualizar `saveProcessData` para setar `step1CompletedAt` e `currentStep = 2`
+
+3. **Problema de Questões**: Tabela `testQuestions` estava vazia
+   - Solução: Script `seed-pir-questions.mjs` para popular 60 questões PIR
+
+4. **Problema de Props**: `AVDProgressBreadcrumbs` requeria `completedSteps`
+   - Solução: Passar array de passos concluídos baseado em `step*CompletedAt`
+

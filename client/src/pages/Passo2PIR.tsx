@@ -230,7 +230,11 @@ export default function Passo2PIR() {
       
       <div className="container mx-auto py-6 space-y-6">
         {/* Breadcrumbs */}
-        <AVDProgressBreadcrumbs processId={processId!} currentStep={2} />
+        <AVDProgressBreadcrumbs 
+          processId={processId!} 
+          currentStep={process?.currentStep || 2} 
+          completedSteps={process?.step1CompletedAt ? [1] : []}
+        />
 
         {/* Header */}
         <div className="flex items-center gap-4">

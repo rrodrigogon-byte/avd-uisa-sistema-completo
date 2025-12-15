@@ -16,7 +16,8 @@ import {
   AlertCircle,
   Play,
   RefreshCw,
-  Loader2
+  Loader2,
+  UserPlus
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -30,7 +31,7 @@ export default function ProcessoDashboard() {
   const { user } = useAuth();
 
   // Buscar dados do funcionário
-  const { data: employeeData, isLoading: loadingEmployee } = trpc.employees.getByUserId.useQuery(
+  const { data: employeeData, isLoading: loadingEmployee, refetch: refetchEmployee } = trpc.employees.getByUserId.useQuery(
     { userId: user?.id || 0 },
     { enabled: !!user?.id }
   );
@@ -40,6 +41,17 @@ export default function ProcessoDashboard() {
     { employeeId: employeeData?.id || 0 },
     { enabled: !!employeeData?.id }
   );
+
+  // Mutation para criar funcionário automaticamente
+  const createEmployeeForUser = trpc.avd.createEmployeeForCurrentUser.useMutation({
+    onSuccess: () => {
+      toast.success("Perfil de funcionário criado com sucesso!");
+      refetchEmployee();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao criar perfil: ${error.message}`);
+    },
+  });
 
   // Mutation para criar ou obter processo
   const getOrCreateProcess = trpc.avd.getOrCreateProcess.useMutation({
@@ -115,6 +127,10 @@ export default function ProcessoDashboard() {
     return "pending";
   };
 
+  const handleCreateEmployee = () => {
+    createEmployeeForUser.mutate();
+  };
+
   const handleStartProcess = () => {
     if (!employeeData?.id) {
       toast.error("Erro: Dados do funcionário não encontrados");
@@ -139,6 +155,60 @@ export default function ProcessoDashboard() {
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Carregando progresso...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Se o usuário não tem funcionário associado, mostrar tela para criar
+  if (!employeeData) {
+    return (
+      <div className="container max-w-4xl py-8">
+        <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+              <AlertCircle className="h-6 w-6" />
+              Perfil de Funcionário Necessário
+            </CardTitle>
+            <CardDescription className="text-amber-600 dark:text-amber-300">
+              Para iniciar o processo de avaliação, é necessário ter um perfil de funcionário associado à sua conta.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center justify-center py-8 space-y-6">
+              <div className="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
+                <UserPlus className="h-10 w-10 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="text-center max-w-md">
+                <h3 className="text-lg font-semibold mb-2">Bem-vindo ao Sistema AVD!</h3>
+                <p className="text-muted-foreground mb-4">
+                  Clique no botão abaixo para criar automaticamente seu perfil de funcionário 
+                  e começar o processo de avaliação de desempenho.
+                </p>
+                <p className="text-sm text-muted-foreground mb-6">
+                  <strong>Usuário:</strong> {user?.name || user?.email || 'Não identificado'}
+                </p>
+              </div>
+              <Button 
+                size="lg" 
+                onClick={handleCreateEmployee}
+                disabled={createEmployeeForUser.isPending}
+                className="bg-amber-600 hover:bg-amber-700"
+              >
+                {createEmployeeForUser.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Criando Perfil...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Criar Meu Perfil de Funcionário
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -306,15 +376,15 @@ export default function ProcessoDashboard() {
                         handleStepClick(step.id);
                       }}
                     >
-                      {status === "completed" ? "Revisar" : "Continuar"}
+                      {status === "current" ? "Continuar" : "Revisar"}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   )}
-                  
+
                   {!isAccessible && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <AlertCircle className="h-4 w-4" />
-                      {isProcessStarted ? "Bloqueado" : "Não iniciado"}
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      <span className="text-sm">Não iniciado</span>
                     </div>
                   )}
                 </div>
@@ -323,44 +393,6 @@ export default function ProcessoDashboard() {
           );
         })}
       </div>
-
-      {/* Informações Adicionais */}
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Informações Importantes</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-            <div>
-              <p className="font-medium">Progresso Sequencial</p>
-              <p className="text-sm text-muted-foreground">
-                Os passos devem ser completados em ordem. Você pode revisar passos anteriores a qualquer momento.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div>
-              <p className="font-medium">Salvamento Automático</p>
-              <p className="text-sm text-muted-foreground">
-                Seus dados são salvos automaticamente ao avançar para o próximo passo.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
-            <div>
-              <p className="font-medium">Prazo de Conclusão</p>
-              <p className="text-sm text-muted-foreground">
-                Recomendamos completar todo o processo em até 7 dias corridos.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

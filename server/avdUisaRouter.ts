@@ -734,4 +734,166 @@ export const avdUisaRouter = router({
         count: e.count,
       }));
     }),
+
+  // ============================================================================
+  // PROCESSO AVD - INTEGRAÇÃO COM PASSOS
+  // ============================================================================
+
+  /**
+   * Buscar processo AVD por ID
+   */
+  getProcessById: protectedProcedure
+    .input(z.object({ processId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { avdAssessmentProcesses } = await import("../drizzle/schema");
+      
+      const [process] = await db.select()
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.id, input.processId))
+        .limit(1);
+
+      return process || null;
+    }),
+
+  /**
+   * Buscar avaliação PIR por processo
+   */
+  getPirAssessmentByProcess: protectedProcedure
+    .input(z.object({ processId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { pirAssessments, pirAnswers } = await import("../drizzle/schema");
+      
+      const [assessment] = await db.select()
+        .from(pirAssessments)
+        .where(eq(pirAssessments.processId, input.processId))
+        .limit(1);
+
+      if (!assessment) return null;
+
+      const answers = await db.select()
+        .from(pirAnswers)
+        .where(eq(pirAnswers.assessmentId, assessment.id));
+
+      return { ...assessment, answers };
+    }),
+
+  /**
+   * Salvar avaliação PIR
+   */
+  savePirAssessment: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+      responses: z.array(z.object({
+        questionId: z.number(),
+        response: z.number(),
+      })),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { pirAssessments, pirAnswers, avdAssessmentProcesses } = await import("../drizzle/schema");
+
+      // Verificar se processo existe
+      const [process] = await db.select()
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.id, input.processId))
+        .limit(1);
+
+      if (!process) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Processo não encontrado" });
+      }
+
+      // Buscar ou criar assessment
+      let [assessment] = await db.select()
+        .from(pirAssessments)
+        .where(eq(pirAssessments.processId, input.processId))
+        .limit(1);
+
+      if (!assessment) {
+        const [result] = await db.insert(pirAssessments).values({
+          processId: input.processId,
+          employeeId: process.employeeId,
+          status: 'em_andamento',
+        });
+        [assessment] = await db.select()
+          .from(pirAssessments)
+          .where(eq(pirAssessments.id, result.insertId))
+          .limit(1);
+      }
+
+      // Salvar respostas
+      for (const response of input.responses) {
+        // Verificar se já existe resposta
+        const [existing] = await db.select()
+          .from(pirAnswers)
+          .where(and(
+            eq(pirAnswers.assessmentId, assessment.id),
+            eq(pirAnswers.questionId, response.questionId)
+          ))
+          .limit(1);
+
+        if (existing) {
+          await db.update(pirAnswers)
+            .set({ response: response.response, updatedAt: new Date() })
+            .where(eq(pirAnswers.id, existing.id));
+        } else {
+          await db.insert(pirAnswers).values({
+            assessmentId: assessment.id,
+            questionId: response.questionId,
+            response: response.response,
+          });
+        }
+      }
+
+      return { success: true, assessmentId: assessment.id };
+    }),
+
+  /**
+   * Completar passo do processo AVD
+   */
+  completeStep: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+      step: z.number().min(1).max(5),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const { avdAssessmentProcesses } = await import("../drizzle/schema");
+
+      const updateData: Record<string, any> = {
+        updatedAt: new Date(),
+      };
+
+      // Marcar data de conclusão do passo
+      const stepCompletedField = `step${input.step}CompletedAt`;
+      updateData[stepCompletedField] = new Date();
+
+      // Avançar para o próximo passo
+      if (input.step < 5) {
+        updateData.currentStep = input.step + 1;
+      } else {
+        updateData.currentStep = 5;
+        updateData.status = 'concluido';
+        updateData.completedAt = new Date();
+      }
+
+      await db.update(avdAssessmentProcesses)
+        .set(updateData)
+        .where(eq(avdAssessmentProcesses.id, input.processId));
+
+      return { 
+        success: true, 
+        nextStep: input.step < 5 ? input.step + 1 : null,
+        processCompleted: input.step === 5,
+      };
+    }),
 });
