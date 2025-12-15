@@ -329,3 +329,87 @@ export const jobRequirements = mysqlTable("jobRequirements", {
 
 export type JobRequirement = typeof jobRequirements.$inferSelect;
 export type InsertJobRequirement = typeof jobRequirements.$inferInsert;
+
+/**
+ * Departamentos da organização
+ */
+export const departments = mysqlTable("departments", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Nome do departamento */
+  name: varchar("name", { length: 255 }).notNull().unique(),
+  /** Código do departamento */
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  /** Descrição */
+  description: text("description"),
+  /** ID do departamento pai (para hierarquia de departamentos) */
+  parentDepartmentId: int("parentDepartmentId"),
+  /** ID do gestor do departamento */
+  managerId: int("managerId"),
+  /** Indica se está ativo */
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Department = typeof departments.$inferSelect;
+export type InsertDepartment = typeof departments.$inferInsert;
+
+/**
+ * Cargos/Posições na organização
+ */
+export const positions = mysqlTable("positions", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Título do cargo */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Código do cargo */
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  /** Nível hierárquico (1=mais alto, 10=mais baixo) */
+  level: int("level").notNull(),
+  /** Descrição */
+  description: text("description"),
+  /** ID da descrição de cargo detalhada (se existir) */
+  jobDescriptionId: int("jobDescriptionId"),
+  /** Indica se está ativo */
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Position = typeof positions.$inferSelect;
+export type InsertPosition = typeof positions.$inferInsert;
+
+/**
+ * Funcionários da organização
+ */
+export const employees = mysqlTable("employees", {
+  id: int("id").autoincrement().primaryKey(),
+  /** ID do usuário vinculado (se tiver acesso ao sistema) */
+  userId: int("userId").unique(),
+  /** Nome completo */
+  fullName: varchar("fullName", { length: 255 }).notNull(),
+  /** Email corporativo */
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  /** Matrícula/ID funcional */
+  employeeId: varchar("employeeId", { length: 50 }).notNull().unique(),
+  /** ID do departamento */
+  departmentId: int("departmentId").notNull(),
+  /** ID do cargo */
+  positionId: int("positionId").notNull(),
+  /** ID do supervisor direto */
+  supervisorId: int("supervisorId"),
+  /** Data de admissão */
+  hireDate: timestamp("hireDate").notNull(),
+  /** Data de demissão (se aplicável) */
+  terminationDate: timestamp("terminationDate"),
+  /** Status do funcionário */
+  status: mysqlEnum("status", ["active", "on_leave", "terminated"]).default("active").notNull(),
+  /** Telefone */
+  phone: varchar("phone", { length: 20 }),
+  /** Localização/escritório */
+  location: varchar("location", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Employee = typeof employees.$inferSelect;
+export type InsertEmployee = typeof employees.$inferInsert;

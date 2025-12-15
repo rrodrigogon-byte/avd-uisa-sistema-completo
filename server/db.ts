@@ -1,4 +1,4 @@
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, isNull, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -25,7 +25,16 @@ import {
   jobResponsibilities,
   technicalCompetencies,
   behavioralCompetencies,
-  jobRequirements
+  jobRequirements,
+  employees,
+  InsertEmployee,
+  Employee,
+  departments,
+  InsertDepartment,
+  Department,
+  positions,
+  InsertPosition,
+  Position
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -657,4 +666,270 @@ export async function deleteJobRequirement(id: number): Promise<void> {
   if (!db) throw new Error("Database not available");
 
   await db.delete(jobRequirements).where(eq(jobRequirements.id, id));
+}
+
+// ============================================================================
+// DEPARTMENT FUNCTIONS
+// ============================================================================
+
+export async function createDepartment(department: InsertDepartment): Promise<Department> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(departments).values(department);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(departments).where(eq(departments.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getDepartmentById(id: number): Promise<Department | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(departments).where(eq(departments.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllDepartments(): Promise<Department[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(departments)
+    .where(eq(departments.isActive, true))
+    .orderBy(departments.name);
+}
+
+export async function updateDepartment(id: number, data: Partial<InsertDepartment>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(departments).set(data).where(eq(departments.id, id));
+}
+
+export async function deleteDepartment(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Soft delete
+  await db.update(departments).set({ isActive: false }).where(eq(departments.id, id));
+}
+
+// ============================================================================
+// POSITION FUNCTIONS
+// ============================================================================
+
+export async function createPosition(position: InsertPosition): Promise<Position> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(positions).values(position);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(positions).where(eq(positions.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getPositionById(id: number): Promise<Position | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(positions).where(eq(positions.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllPositions(): Promise<Position[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(positions)
+    .where(eq(positions.isActive, true))
+    .orderBy(positions.level, positions.title);
+}
+
+export async function updatePosition(id: number, data: Partial<InsertPosition>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(positions).set(data).where(eq(positions.id, id));
+}
+
+export async function deletePosition(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Soft delete
+  await db.update(positions).set({ isActive: false }).where(eq(positions.id, id));
+}
+
+// ============================================================================
+// EMPLOYEE FUNCTIONS
+// ============================================================================
+
+export async function createEmployee(employee: InsertEmployee): Promise<Employee> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Validate supervisor hierarchy (prevent circular references)
+  if (employee.supervisorId) {
+    const hasCircular = await checkCircularHierarchy(employee.supervisorId, null);
+    if (hasCircular) {
+      throw new Error("Circular hierarchy detected");
+    }
+  }
+
+  const result = await db.insert(employees).values(employee);
+  const insertId = Number(result[0].insertId);
+  
+  const created = await db.select().from(employees).where(eq(employees.id, insertId)).limit(1);
+  return created[0];
+}
+
+export async function getEmployeeById(id: number): Promise<Employee | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(employees).where(eq(employees.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getEmployeeByUserId(userId: number): Promise<Employee | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(employees).where(eq(employees.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllEmployees(): Promise<Employee[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(employees)
+    .where(eq(employees.status, "active"))
+    .orderBy(employees.fullName);
+}
+
+export async function getEmployeesByDepartment(departmentId: number): Promise<Employee[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(employees)
+    .where(and(
+      eq(employees.departmentId, departmentId),
+      eq(employees.status, "active")
+    ))
+    .orderBy(employees.fullName);
+}
+
+export async function getEmployeesBySupervisor(supervisorId: number): Promise<Employee[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(employees)
+    .where(and(
+      eq(employees.supervisorId, supervisorId),
+      eq(employees.status, "active")
+    ))
+    .orderBy(employees.fullName);
+}
+
+export async function updateEmployee(id: number, data: Partial<InsertEmployee>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Validate supervisor hierarchy if changing supervisor
+  if (data.supervisorId !== undefined) {
+    const hasCircular = await checkCircularHierarchy(data.supervisorId, id);
+    if (hasCircular) {
+      throw new Error("Circular hierarchy detected");
+    }
+  }
+
+  await db.update(employees).set(data).where(eq(employees.id, id));
+}
+
+export async function deleteEmployee(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Soft delete
+  await db.update(employees).set({ 
+    status: "terminated",
+    terminationDate: new Date()
+  }).where(eq(employees.id, id));
+}
+
+/**
+ * Check for circular hierarchy in supervisor chain
+ * @param supervisorId - ID of the proposed supervisor
+ * @param employeeId - ID of the employee (null for new employees)
+ * @returns true if circular hierarchy detected
+ */
+async function checkCircularHierarchy(supervisorId: number | null, employeeId: number | null): Promise<boolean> {
+  if (!supervisorId || !employeeId) return false;
+  
+  const db = await getDb();
+  if (!db) return false;
+
+  let currentId: number | null = supervisorId;
+  const visited = new Set<number>();
+
+  // Traverse up the hierarchy
+  while (currentId) {
+    if (currentId === employeeId) {
+      return true; // Circular reference found
+    }
+    
+    if (visited.has(currentId)) {
+      return true; // Loop detected
+    }
+    
+    visited.add(currentId);
+    
+    const supervisor = await getEmployeeById(currentId);
+    currentId = supervisor?.supervisorId || null;
+  }
+
+  return false;
+}
+
+/**
+ * Get employee hierarchy tree starting from a given employee
+ */
+export async function getEmployeeHierarchy(employeeId: number): Promise<any> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const employee = await getEmployeeById(employeeId);
+  if (!employee) return null;
+
+  const subordinates = await getEmployeesBySupervisor(employeeId);
+  
+  return {
+    ...employee,
+    subordinates: await Promise.all(
+      subordinates.map(sub => getEmployeeHierarchy(sub.id))
+    )
+  };
+}
+
+/**
+ * Get all employees in hierarchical structure
+ */
+export async function getOrganizationHierarchy(): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Get all top-level employees (those without supervisors)
+  const topLevel = await db.select().from(employees)
+    .where(and(
+      isNull(employees.supervisorId),
+      eq(employees.status, "active")
+    ))
+    .orderBy(employees.fullName);
+
+  return await Promise.all(
+    topLevel.map(emp => getEmployeeHierarchy(emp.id))
+  );
 }

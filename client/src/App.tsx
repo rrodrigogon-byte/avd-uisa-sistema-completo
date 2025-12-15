@@ -14,6 +14,10 @@ import Notifications from "./pages/Notifications";
 import Reports from "./pages/Reports";
 import PIR from "./pages/PIR";
 import JobDescriptions from "./pages/JobDescriptions";
+import Employees from "./pages/Employees";
+import Departments from "./pages/Departments";
+import Positions from "./pages/Positions";
+import Organogram from "./pages/Organogram";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -29,6 +33,10 @@ function Router() {
       <Route path={"/reports"} component={Reports} />
       <Route path={"/pir"} component={PIR} />
       <Route path={"/job-descriptions"} component={JobDescriptions} />
+      <Route path={"/employees"} component={Employees} />
+      <Route path={"/departments"} component={Departments} />
+      <Route path={"/positions"} component={Positions} />
+      <Route path={"/organogram"} component={Organogram} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

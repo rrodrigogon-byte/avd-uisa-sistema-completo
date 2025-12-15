@@ -162,3 +162,29 @@
 - [ ] Processo de atualização de descrição de cargo
 - [ ] Workflow de aprovação de PIR
 - [ ] Workflow de aprovação de descrição de cargo
+
+
+## 🎯 NOVA FUNCIONALIDADE: PIR Integridade Completo (15/12/2025)
+- [ ] Analisar sistema PIR atual e metodologia
+- [ ] Pesquisar melhores práticas de avaliação PIR
+- [ ] Criar plano detalhado de implementação com todas as funcionalidades
+- [ ] Apresentar plano para aprovação do usuário
+- [ ] Implementar backend (schema, procedures, cálculos)
+- [ ] Implementar frontend (interface, visualizações, relatórios)
+- [ ] Criar testes automatizados
+- [ ] Validar com dados reais
+
+
+## 🔧 CORREÇÕES URGENTES: Funcionários e Hierarquias (15/12/2025)
+- [x] Analisar schema atual de employees e identificar problemas
+- [x] Corrigir relacionamento supervisor/subordinado no schema
+- [x] Adicionar campos obrigatórios faltantes (departamento, cargo, etc)
+- [x] Implementar validação de hierarquia circular
+- [x] Atualizar procedures tRPC para employees (create, update, list)
+- [x] Corrigir formulário de cadastro de funcionários
+- [x] Implementar listagem de funcionários com hierarquia
+- [x] Criar visualização de organograma hierárquico
+- [ ] Adicionar filtros por departamento/cargo
+- [x] Testar relacionamentos hierárquicos e integridade dos dados
+- [x] Popular dados de teste com script de seed
+- [x] Validar estrutura hierárquica completa

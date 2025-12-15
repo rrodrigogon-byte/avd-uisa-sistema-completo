@@ -509,6 +509,192 @@ export const appRouter = router({
       }),
   }),
 
+  // Departamentos
+  department: router({
+    list: protectedProcedure.query(async () => {
+      return await db.getAllDepartments();
+    }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const department = await db.getDepartmentById(input.id);
+        if (!department) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Departamento não encontrado' });
+        }
+        return department;
+      }),
+
+    create: adminProcedure
+      .input(z.object({
+        name: z.string().min(1, 'Nome é obrigatório'),
+        code: z.string().min(1, 'Código é obrigatório'),
+        description: z.string().optional(),
+        parentDepartmentId: z.number().optional(),
+        managerId: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createDepartment(input);
+      }),
+
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        code: z.string().optional(),
+        description: z.string().optional(),
+        parentDepartmentId: z.number().optional(),
+        managerId: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateDepartment(id, data);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteDepartment(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // Cargos/Posições
+  position: router({
+    list: protectedProcedure.query(async () => {
+      return await db.getAllPositions();
+    }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const position = await db.getPositionById(input.id);
+        if (!position) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Cargo não encontrado' });
+        }
+        return position;
+      }),
+
+    create: adminProcedure
+      .input(z.object({
+        title: z.string().min(1, 'Título é obrigatório'),
+        code: z.string().min(1, 'Código é obrigatório'),
+        level: z.number().min(1).max(10),
+        description: z.string().optional(),
+        jobDescriptionId: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createPosition(input);
+      }),
+
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        code: z.string().optional(),
+        level: z.number().optional(),
+        description: z.string().optional(),
+        jobDescriptionId: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updatePosition(id, data);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deletePosition(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // Funcionários
+  employee: router({
+    list: protectedProcedure.query(async () => {
+      return await db.getAllEmployees();
+    }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const employee = await db.getEmployeeById(input.id);
+        if (!employee) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Funcionário não encontrado' });
+        }
+        return employee;
+      }),
+
+    getByDepartment: protectedProcedure
+      .input(z.object({ departmentId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getEmployeesByDepartment(input.departmentId);
+      }),
+
+    getBySupervisor: protectedProcedure
+      .input(z.object({ supervisorId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getEmployeesBySupervisor(input.supervisorId);
+      }),
+
+    getHierarchy: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getEmployeeHierarchy(input.employeeId);
+      }),
+
+    getOrganizationHierarchy: protectedProcedure.query(async () => {
+      return await db.getOrganizationHierarchy();
+    }),
+
+    create: adminProcedure
+      .input(z.object({
+        userId: z.number().optional(),
+        fullName: z.string().min(1, 'Nome completo é obrigatório'),
+        email: z.string().email('Email inválido'),
+        employeeId: z.string().min(1, 'Matrícula é obrigatória'),
+        departmentId: z.number({ required_error: 'Departamento é obrigatório' }),
+        positionId: z.number({ required_error: 'Cargo é obrigatório' }),
+        supervisorId: z.number().optional(),
+        hireDate: z.date({ required_error: 'Data de admissão é obrigatória' }),
+        phone: z.string().optional(),
+        location: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createEmployee(input);
+      }),
+
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        userId: z.number().optional(),
+        fullName: z.string().optional(),
+        email: z.string().email().optional(),
+        employeeId: z.string().optional(),
+        departmentId: z.number().optional(),
+        positionId: z.number().optional(),
+        supervisorId: z.number().optional(),
+        hireDate: z.date().optional(),
+        phone: z.string().optional(),
+        location: z.string().optional(),
+        status: z.enum(['active', 'on_leave', 'terminated']).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateEmployee(id, data);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteEmployee(input.id);
+        return { success: true };
+      }),
+  }),
+
   // Relatórios
   report: router({
     list: protectedProcedure.query(async ({ ctx }) => {
