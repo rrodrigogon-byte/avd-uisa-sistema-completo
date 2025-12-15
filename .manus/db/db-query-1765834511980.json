@@ -1,0 +1,5010 @@
+{
+  "query": "SELECT id, name, email, cargo, funcao, gerencia, diretoria, managerId \nFROM employees \nWHERE active = 1 \nAND (\n  cargo LIKE '%Analista%' OR cargo LIKE '%analista%' OR\n  cargo LIKE '%Especialista%' OR cargo LIKE '%especialista%' OR\n  cargo LIKE '%Lider%' OR cargo LIKE '%Líder%' OR cargo LIKE '%lider%' OR cargo LIKE '%líder%' OR\n  cargo LIKE '%Supervisor%' OR cargo LIKE '%supervisor%' OR\n  cargo LIKE '%Coordenador%' OR cargo LIKE '%coordenador%' OR\n  cargo LIKE '%Gerente%' OR cargo LIKE '%gerente%' OR\n  cargo LIKE '%Diretor%' OR cargo LIKE '%diretor%' OR\n  cargo LIKE '%Presidente%' OR cargo LIKE '%presidente%' OR\n  funcao LIKE '%Analista%' OR funcao LIKE '%analista%' OR\n  funcao LIKE '%Especialista%' OR funcao LIKE '%especialista%' OR\n  funcao LIKE '%Lider%' OR funcao LIKE '%Líder%' OR funcao LIKE '%lider%' OR funcao LIKE '%líder%' OR\n  funcao LIKE '%Supervisor%' OR funcao LIKE '%supervisor%' OR\n  funcao LIKE '%Coordenador%' OR funcao LIKE '%coordenador%' OR\n  funcao LIKE '%Gerente%' OR funcao LIKE '%gerente%' OR\n  funcao LIKE '%Diretor%' OR funcao LIKE '%diretor%' OR\n  funcao LIKE '%Presidente%' OR funcao LIKE '%presidente%'\n)\nORDER BY diretoria, gerencia, name\nLIMIT 500;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, email, cargo, funcao, gerencia, diretoria, managerId \nFROM employees \nWHERE active = 1 \nAND (\n  cargo LIKE '%Analista%' OR cargo LIKE '%analista%' OR\n  cargo LIKE '%Especialista%' OR cargo LIKE '%especialista%' OR\n  cargo LIKE '%Lider%' OR cargo LIKE '%Líder%' OR cargo LIKE '%lider%' OR cargo LIKE '%líder%' OR\n  cargo LIKE '%Supervisor%' OR cargo LIKE '%supervisor%' OR\n  cargo LIKE '%Coordenador%' OR cargo LIKE '%coordenador%' OR\n  cargo LIKE '%Gerente%' OR cargo LIKE '%gerente%' OR\n  cargo LIKE '%Diretor%' OR cargo LIKE '%diretor%' OR\n  cargo LIKE '%Presidente%' OR cargo LIKE '%presidente%' OR\n  funcao LIKE '%Analista%' OR funcao LIKE '%analista%' OR\n  funcao LIKE '%Especialista%' OR funcao LIKE '%especialista%' OR\n  funcao LIKE '%Lider%' OR funcao LIKE '%Líder%' OR funcao LIKE '%lider%' OR funcao LIKE '%líder%' OR\n  funcao LIKE '%Supervisor%' OR funcao LIKE '%supervisor%' OR\n  funcao LIKE '%Coordenador%' OR funcao LIKE '%coordenador%' OR\n  funcao LIKE '%Gerente%' OR funcao LIKE '%gerente%' OR\n  funcao LIKE '%Diretor%' OR funcao LIKE '%diretor%' OR\n  funcao LIKE '%Presidente%' OR funcao LIKE '%presidente%'\n)\nORDER BY diretoria, gerencia, name\nLIMIT 500;",
+  "rows": [
+    {
+      "id": "1910",
+      "name": "ABIMAEL TIAGO GOMES MOURA",
+      "email": "abimael.moura@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2295",
+      "name": "ABISAIR FERREIRA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "130",
+      "name": "ABNER PEREIRA DE CARVALHO NETO",
+      "email": "abner.neto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Manutenção Elétrica",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2061",
+      "name": "ADAILTO FERREIRA BISPO",
+      "email": "adailto.bispo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2264",
+      "name": "ADALBERTO AUGUSTO DOS SANTOS",
+      "email": "adalberto.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1713",
+      "name": "ADAO ALVES DA SILVA",
+      "email": "adao.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Operações",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1701"
+    },
+    {
+      "id": "2301",
+      "name": "ADELSON FERREIRA PERALTA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1823",
+      "name": "ADEMIR ANACLETO",
+      "email": "ademir.anacleto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1818"
+    },
+    {
+      "id": "75",
+      "name": "ADENILSON PEREIRA DOS SANTOS",
+      "email": "adenilson.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Seguros SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1594"
+    },
+    {
+      "id": "2037",
+      "name": "ADILSON ALMEIDA ALVES",
+      "email": "adilson.almeida@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1972",
+      "name": "ADILSON DIAS ALVES",
+      "email": "adilson.alves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1816",
+      "name": "ADILSON SILVEIRA",
+      "email": "adilson.silveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Utilidades",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2265",
+      "name": "ADMILSON DIAS MENDES",
+      "email": "admilson.mendes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1879",
+      "name": "ADRIANA DO CARMO OLIVEIRA",
+      "email": "adriana.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1937",
+      "name": "ADRIANO DA SILVA CUNHA",
+      "email": "adriano.cunha@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Abastecimento Combustível",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "1917",
+      "name": "ADRIELLEN CAROLINE GOMES DA SILVA",
+      "email": "adriellen.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Microbiologia",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1395",
+      "name": "ADSON ALENCAR ALVES",
+      "email": "adson.alves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista TI - SAP",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1705"
+    },
+    {
+      "id": "1756",
+      "name": "AGENOR JOSE MINETO JUNIOR",
+      "email": "agenor.mineto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "1760",
+      "name": "AGNALDO APARECIDO DE LIMA",
+      "email": "agnaldo.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2048",
+      "name": "AILTON DIEGO DA ROSA",
+      "email": "ailton.rosa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1959",
+      "name": "ALAN APOLINARIO DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2023",
+      "name": "ALBERT DARLAN GOMES PINTO",
+      "email": "albert.pinto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1882",
+      "name": "ALCIONE DE PAULA SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2826",
+      "name": "ALEANDRO BORGES DE ALFENAS",
+      "email": "aleandro.alfenas@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico de Manutenção Elétrica Externa Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "188",
+      "name": "ALESSANDRE DOS SANTOS",
+      "email": "alessandre.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico Manutenção Elétrica Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "130"
+    },
+    {
+      "id": "2296",
+      "name": "ALESSANDRO GOMES DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "128",
+      "name": "ALEX FELIX DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder de Caldeiraria",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "44"
+    },
+    {
+      "id": "3094",
+      "name": "ALEX SANDRO PEREIRA DE LIMA",
+      "email": "Alex.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Facilities",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "127",
+      "name": "ALEXANDER ALVES DE CARVALHO",
+      "email": "alexander.carvalho@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Caldeiraria",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "44"
+    },
+    {
+      "id": "1911",
+      "name": "ALEXANDRA PINHEIRO VOLTOLINI CAETANO",
+      "email": "alexandra_1975voltolini@gmail.com",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Agricola II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1391"
+    },
+    {
+      "id": "1928",
+      "name": "ALEXANDRE ABREU PEREIRA DA SILVA",
+      "email": "alexandre.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1754"
+    },
+    {
+      "id": "1842",
+      "name": "ALEXANDRE CARLOS DE LIMA",
+      "email": "alexandre.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Lubrificador Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "2119",
+      "name": "ALEXANDRE OLIVEIRA CALEGARI",
+      "email": "alexandre.calegari@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1599"
+    },
+    {
+      "id": "1762",
+      "name": "ALEXANDRE WESLLEY DOS SANTOS ROMEIROS",
+      "email": "alexandre.romeiros@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Extração",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "1888",
+      "name": "ALEXIA MARIA AMORIM DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2568",
+      "name": "ALEXSANDRA TAVARES SOBRAL DE OLIVEIRA",
+      "email": "alexsandra.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Estrutura e Remuneração SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "2034",
+      "name": "ALFREDO EZEQUIEL DOS SANTOS NETO",
+      "email": "alfredo.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1703",
+      "name": "ALINE CARVALHO ROMAO",
+      "email": "aline.romao@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Impostos Diretos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "2572",
+      "name": "ALINE MELLO BRANDAO FELTRIN",
+      "email": "aline.feltrin@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Jurídico, Compliance e Governança Corporativa",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "2020",
+      "name": "ALISON RODRIGO DA SILVA PEREIRA",
+      "email": "alison.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2056"
+    },
+    {
+      "id": "1369",
+      "name": "ALLAN VITOR ALVES LIMA DE CARVALHO",
+      "email": "allan.carvalho@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Fiscal PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "2044",
+      "name": "ALTAIR DELLA JUSTINA",
+      "email": "altair.justina@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "3127",
+      "name": "ALTAMIR JOSE SANTANA",
+      "email": "altamir.santana@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Geração de Vapor Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "3018",
+      "name": "AMANDA PINHEIRO RODRIGUES",
+      "email": "amanda.rodrigues@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Segurança do Trabalho",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "557"
+    },
+    {
+      "id": "1934",
+      "name": "ANA PAULA BARBOSA FERREIRA RAMOS",
+      "email": "ana.ramos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administrativo",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "2131",
+      "name": "ANDERSON SILVA SANTOS",
+      "email": "anderson.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2590",
+      "name": "ANDRE OLIVEIRA DE AZEVEDO",
+      "email": "andre.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Operações Logísticas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "516"
+    },
+    {
+      "id": "1428",
+      "name": "ANDRE ROGERIO SBARDELLINI CARDOSO",
+      "email": "andre.sbardellini@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo de Recursos Humanos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "1954",
+      "name": "ANDREA MATOS LIMA ANDRADE",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "1750",
+      "name": "ANDREIA COSTA TITO DA SILVA",
+      "email": "andreia.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Comercial JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "1697",
+      "name": "ANDRESSA AGUILAR BARBOSA COSTA",
+      "email": "andressa.costa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Planejamento e Custos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1853"
+    },
+    {
+      "id": "1982",
+      "name": "ANDRIELI APOLINARIO DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1987",
+      "name": "ANISIO VITURINO DOS SANTOS FILHO",
+      "email": "anisio.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2115",
+      "name": "ANTHONY KAIO DE ARAUJO ASSIS",
+      "email": "anthony.assis@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "2065",
+      "name": "ANTONIO AILTON BORGES SORIANO",
+      "email": "antonio.soriano@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2053",
+      "name": "ANTONIO DA SILVA",
+      "email": "antonio.s@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2129",
+      "name": "ANTONIO MARCOS PEREIRA DA SILVA",
+      "email": "antonio.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2291",
+      "name": "ANTONIO MARQUES DE ARAUJO GOUVEIA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2028",
+      "name": "APARECIDO ANTONIO SANTANA",
+      "email": "aparecido.santana@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2052"
+    },
+    {
+      "id": "2066",
+      "name": "APARECIDO DA COSTA FURTADO",
+      "email": "aparecido.furtado@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1331",
+      "name": "ARIANY DANTAS DUARTE PERALTA",
+      "email": "ariany.duarte@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Financeiro PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "1433",
+      "name": "ARILDES RODRIGUES BARBOSA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador de Máquinas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2056"
+    },
+    {
+      "id": "2050",
+      "name": "ARNORES BARBOSA PEREIRA",
+      "email": "arnores.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1336",
+      "name": "Administração Industrial",
+      "email": "3130",
+      "cargo": "NULL",
+      "funcao": "Diretor Presidente",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "NULL"
+    },
+    {
+      "id": "1695",
+      "name": "BARBARA FRANCA DIAS",
+      "email": "barbara.dias@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Planejamento e Custos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1853"
+    },
+    {
+      "id": "3055",
+      "name": "BERNARDO GUIMARAES MENDES",
+      "email": "bernardo.mendes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Comunicação Corporativa",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "1936",
+      "name": "BIANCA LORENA DA SILVA BRITO",
+      "email": "bianca.brito@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administrativo",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "523"
+    },
+    {
+      "id": "3019",
+      "name": "BRENDO FERREIRA E SILVA",
+      "email": "brendo.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Segurança do Trabalho",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "557"
+    },
+    {
+      "id": "1871",
+      "name": "BRUNA FRANCIELE MODENA",
+      "email": "bruna.modena@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Controle de Qualidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "550"
+    },
+    {
+      "id": "2049",
+      "name": "BRUNO ALVES",
+      "email": "bruno.alves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2581",
+      "name": "BRUNO BERTELINI PAES",
+      "email": "bruno.paes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Trade Marketing",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "120",
+      "name": "BRUNO HENRIQUE NOGUEIRA",
+      "email": "bruno.nogueira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Fabricação de Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "1817",
+      "name": "BRUNO RAFAEL BAZALIA DE ANDRADE",
+      "email": "bruno.andrade@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Utilidades",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "2863",
+      "name": "CAETANO HENRIQUE GROSSI",
+      "email": "caetano.grossi@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Sustentabilidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "2611",
+      "name": "CAMILA AZAMBUJA SOMMER DUTRA",
+      "email": "camila.dutra@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Jurídico",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2572"
+    },
+    {
+      "id": "1285",
+      "name": "CAMILA LAYANE DA SILVA",
+      "email": "camila.layane@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "1396",
+      "name": "CAMILO CIOL",
+      "email": "camilo.ciol@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista TI - SAP",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1705"
+    },
+    {
+      "id": "1815",
+      "name": "CARLOS ALBERTO DOS SANTOS CAMARGO",
+      "email": "carlos.camargo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Mecânica Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "72",
+      "name": "CARLOS ALEXANDRE ALVES",
+      "email": "carlos.alexandre@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Manutenção Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "3012",
+      "name": "CARLOS EDUARDO DE MESQUITA JUNIOR",
+      "email": "carlos.mesquita@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Suprimentos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "2011",
+      "name": "CARLOS HENRIQUE RODRIGUES SANTOS",
+      "email": "carlos.henrique@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1955",
+      "name": "CARLOS ROBERTO DOS SANTOS",
+      "email": "Endereçoeletrônico@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "3011",
+      "name": "CAROLINE ANDRESSA MENDES SILVA",
+      "email": "caroline.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Atração, Seleção e Desenvolvimento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "528",
+      "name": "CASSIO PALHANO FERREIRA",
+      "email": "cassio.palhano@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Produção Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1599"
+    },
+    {
+      "id": "1926",
+      "name": "CICERO ALVES DOS SANTOS",
+      "email": "Cicero.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1754"
+    },
+    {
+      "id": "1964",
+      "name": "CICERO FIRMO DE MORAIS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2069",
+      "name": "CICERO ILARIO DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Pesquisa e Desenvolvimento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2068"
+    },
+    {
+      "id": "2058",
+      "name": "CICERO LEANDRO DA SILVA",
+      "email": "cicero.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2059"
+    },
+    {
+      "id": "2041",
+      "name": "CICERO MEDEIROS GOMES",
+      "email": "cicero.gomes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "71",
+      "name": "CICERO ROMERO DA SILVA LIMA",
+      "email": "cicero.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Manutenção Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "556",
+      "name": "CINTIA MICHELLE LIMA DE BARROS IGNACIO",
+      "email": "cintia.ignacio@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Controle Processos e Qualidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "550"
+    },
+    {
+      "id": "2051",
+      "name": "CLAUBERSON ANDREOTTI SOARES",
+      "email": "clauberson.soares@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2009",
+      "name": "CLAUDEANDERSON TENORIO DA SILVA",
+      "email": "claudeanderson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2051"
+    },
+    {
+      "id": "2993",
+      "name": "CLAUDEMIR DO CARMO",
+      "email": "claudemir.carmo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Plantio",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1912",
+      "name": "CLAUDINEI RODRIGUES DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Agricola II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1391"
+    },
+    {
+      "id": "1810",
+      "name": "CLAUDIO SENA DE OLIVEIRA",
+      "email": "claudio.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "1327",
+      "name": "CLAUDIONOR DA SILVA SOARES JUNIOR",
+      "email": "CLAUDIONOR.SOARES@UISA.COM.BR",
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "2126",
+      "name": "CLEITON MENDES DE MAGALHAES",
+      "email": "cleiton.magalhaes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2268",
+      "name": "CLEITON RENATO ROMAO DOS SANTOS",
+      "email": "cleiton.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1867",
+      "name": "CLEOCIMAR FREIRE COSTA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2898"
+    },
+    {
+      "id": "1965",
+      "name": "CLEONICE RODRIGUES GONCALVES",
+      "email": "Endereçoeletrônico@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "1923",
+      "name": "CLEOSMAR DA COSTA",
+      "email": "cleosmar.costa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2000",
+      "name": "CLEUVIS NERES DE SOUZA",
+      "email": "cleuvis.souza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2046"
+    },
+    {
+      "id": "3057",
+      "name": "CRISTIANE BATISTA DE SOUZA",
+      "email": "cristiane.souza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Governança em Tecnologia PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "1891",
+      "name": "CRISTIANE COSTA TAVARES",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1883",
+      "name": "CRISTIANE DOS SANTOS MARTINS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1999",
+      "name": "CRISTIANO BARBOSA DE LIMA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2049"
+    },
+    {
+      "id": "2008",
+      "name": "CRISTIANO SABINO DE SOUZA",
+      "email": "cristiano.sabino@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2049"
+    },
+    {
+      "id": "1284",
+      "name": "DAIELLY DOMINGUES ARCANJO",
+      "email": "daielly.domingues@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "73",
+      "name": "DAMARCO SOARES DA SILVA",
+      "email": "DAMARCO.SILVA@UISA.COM.BR",
+      "cargo": "NULL",
+      "funcao": "Especialista de Manutenção Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "130"
+    },
+    {
+      "id": "1900",
+      "name": "DANIEL DE OLIVEIRA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2035",
+      "name": "DANIEL DOS ANJOS",
+      "email": "daniel.anjos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1925",
+      "name": "DANIEL PAULINO DA SILVA",
+      "email": "daniel.paulino@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Caldeireiro Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "53"
+    },
+    {
+      "id": "3016",
+      "name": "DANIEL VIEIRA DOS SANTOS",
+      "email": "daniel.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Logística Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2566",
+      "name": "DANILO EUGENIO DOS SANTOS",
+      "email": "danilo.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Qualidade Agrícola",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1856"
+    },
+    {
+      "id": "2569",
+      "name": "DANILO MIRANDOLA BERALDI",
+      "email": "danilo.beraldi@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Controle Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "1753",
+      "name": "DANILO SOARES DA SILVA",
+      "email": "DANILO.SOARES@UISA.COM.BR",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Confiabilidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "2133",
+      "name": "DAVI PADILHA DA LUZ",
+      "email": "davi.luz@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1439",
+      "name": "DAVID DE SOUZA FONTAINHA",
+      "email": "david.fontainha@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Automação",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "2596",
+      "name": "DAYANA THALIA GREGORIO ALVES",
+      "email": "dayana.gregorio@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Tributário SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "1986",
+      "name": "DEILTON GONCALVES DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "3056",
+      "name": "DELAIS SILVA SOUZA DE OLIVEIRA",
+      "email": "delais.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Comunicação e Eventos Corporativos JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3055"
+    },
+    {
+      "id": "1908",
+      "name": "DENNER LIMA VAQUEIRO DA COSTA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1993",
+      "name": "DEUSMAR FERREIRA DA CUNHA",
+      "email": "Endereçoeletrônico@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1701",
+      "name": "DEYVELON NARCIZO SILVA NUNES",
+      "email": "deyvelon.nunes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Armazenamento e Carregamento Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "516"
+    },
+    {
+      "id": "1881",
+      "name": "DIEGO CAMARGO DE FREITAS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "494",
+      "name": "DILAMAR JUNIOR BUSNELLO",
+      "email": "dilamar.busnello@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Segurança da Informação JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3010"
+    },
+    {
+      "id": "93",
+      "name": "DILSON FERREIRA DOS SANTOS",
+      "email": "dilson.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Tributos e Operações Fiscais",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "131"
+    },
+    {
+      "id": "2302",
+      "name": "DISAEL DA SILVA RONDON",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1953",
+      "name": "DIVO ALVES DE SANTANA",
+      "email": "divo.santana@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2988",
+      "name": "DOUGLAS ARVANI MACEDO",
+      "email": "douglas.macedo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "3129",
+      "name": "DOUGLAS NASCIMENTO DE BARROS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Geração de Vapor Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "1763",
+      "name": "DOUGLAS SANTOS DA SILVA",
+      "email": "douglas.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Utilidades",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "1434",
+      "name": "EBSON MARTINS DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador de Máquinas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2056"
+    },
+    {
+      "id": "2135",
+      "name": "EDE WILSON OGUSUKU",
+      "email": "ede.ogusuku@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Automação",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "2578",
+      "name": "EDELAINE DA SILVA ASSUNCAO",
+      "email": "edelaine.assuncao@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Atração e Seleção PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3011"
+    },
+    {
+      "id": "2841",
+      "name": "EDER AUGUSTO MORISCO",
+      "email": "eder.morisco@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico de Instrumentação Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1855"
+    },
+    {
+      "id": "1699",
+      "name": "EDEVAL BERTOLDO",
+      "email": "edeval.bertoldo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Planejamento de Produção Agroindustrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1599"
+    },
+    {
+      "id": "1973",
+      "name": "EDEVALDO DA SILVA ARCANJO",
+      "email": "edevaldo.arcanjo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1997"
+    },
+    {
+      "id": "2036",
+      "name": "EDILSON MARTINS FERREIRA",
+      "email": "edilson.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2052"
+    },
+    {
+      "id": "2062",
+      "name": "EDINALDO LIRA DA LUZ",
+      "email": "ednaldo.luz@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2061"
+    },
+    {
+      "id": "2015",
+      "name": "EDINEY TEIXEIRA DE SOUZA",
+      "email": "ediney.souza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1436",
+      "name": "EDIVALDO DUARTE DA SILVA",
+      "email": "Endereçoeletrônico@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador de Máquinas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1996",
+      "name": "EDIVALDO RODRIGUES DA SILVA",
+      "email": "edivaldo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2755",
+      "name": "EDNALDO SILVA LIMA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1758"
+    },
+    {
+      "id": "2016",
+      "name": "EDSON DE QUEIROZ",
+      "email": "edson.queiroz@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2052"
+    },
+    {
+      "id": "1916",
+      "name": "EDUARDO DA SILVA BANDIERA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Controle de Qualidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1594",
+      "name": "EDUARDO VASCONCELOS GERSCOVICH",
+      "email": "eduardo.gerscovich@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Estruturação Financeira e RI",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "132"
+    },
+    {
+      "id": "520",
+      "name": "EDVALDO DOS SANTOS CAMPOS",
+      "email": "edvaldo.campos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Contábil SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "2052",
+      "name": "EDVALDO FERREIRA DA SILVA",
+      "email": "edvaldo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "3130",
+      "name": "EDVALDO MAYCON ZANETI DE GOUVEIA",
+      "email": "edvaldo.gouveia@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Agricultura de Precisão/Geoprocessamento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1399",
+      "name": "EDVALDO NUNES TAVARES DE ALMEIDA",
+      "email": "edvaldo.tavares@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Projetos PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2571"
+    },
+    {
+      "id": "115",
+      "name": "EDVAN PEREIRA ALMEIDA",
+      "email": "edvan.almeida@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Fabricação de Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "2070",
+      "name": "EGIDIO VENTURIN",
+      "email": "egidio.venturin@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Pesquisa e Desenvolvimento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1391",
+      "name": "ELCYANNA BATISTA FEU",
+      "email": "elcyana.feu@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Produção Agentes Biológicos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2293",
+      "name": "ELENILDO DOS SANTOS LOPES",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2266"
+    },
+    {
+      "id": "2299",
+      "name": "ELIABES DA SILVA SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "77",
+      "name": "ELIANDRA CRISTINA ALCANTARA DUARTE",
+      "email": "eliandra.duarte@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Contratos PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2611"
+    },
+    {
+      "id": "1878",
+      "name": "ELIANE DA SILVA DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "549",
+      "name": "ELIAS RODRIGUES LEAL",
+      "email": "elias.leal@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Civil",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "1894",
+      "name": "ELIEL RODRIGUES DO NASCIMENTO",
+      "email": "eliel.nascimentos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1905",
+      "name": "ELISANDRO DA COSTA",
+      "email": "elisandrocosta@hotmail.com",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1899",
+      "name": "ELISMAR ARANTES COELHO DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1748",
+      "name": "ELIZABETE MARIA DE LIMA",
+      "email": "elizabete.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Logística PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2590"
+    },
+    {
+      "id": "2987",
+      "name": "ELIZEU ALVES DE OLIVEIRA",
+      "email": "elizeu.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "44",
+      "name": "ELTON BENTO DE LIMA",
+      "email": "elton.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Caldeiraria",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "2079",
+      "name": "ELVES PEDRO DOS SANTOS",
+      "email": "elves.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Manutenção Civil",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1390"
+    },
+    {
+      "id": "2018",
+      "name": "ELVIS BRUNO DA SILVA PEREIRA",
+      "email": "elvis.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2056"
+    },
+    {
+      "id": "1813",
+      "name": "EMERSON CANDIDO DA SILVA",
+      "email": "emerson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "2127",
+      "name": "EMERSON MEDEIROS GOMES",
+      "email": "emerson.gomes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1390",
+      "name": "EMIDIO LUIZ DE CARVALHO NETO",
+      "email": "emidio.neto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Manutenção Civil",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "557",
+      "name": "ERICA CRUZ DA SILVA",
+      "email": "erica.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Segurança Trabalho",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1600"
+    },
+    {
+      "id": "3017",
+      "name": "ERIKA RAQUEL COSTA PORTO",
+      "email": "erika.porto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Segurança do Trabalho",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "557"
+    },
+    {
+      "id": "2013",
+      "name": "ERIVALDO SALUSTIANO DA SILVA",
+      "email": "erivaldo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "83",
+      "name": "ERIVELTON DIONNY GOMES LIMA DA SILVA",
+      "email": "erivelton.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Colheita Mecanizada e Transporte",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2003",
+      "name": "ESTEFANIO DE QUEIROZ SILVA",
+      "email": "estefanio.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2046"
+    },
+    {
+      "id": "2076",
+      "name": "EUKENIA DURAN KESTRING CONRADO",
+      "email": "eukenia.conrado@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de S&OP",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "2266",
+      "name": "EVALDO CONRRADO LEMES",
+      "email": "evaldo.lemes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2577",
+      "name": "EVELYN LORRAINE MACEDO DA SILVA",
+      "email": "evelyn.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Atração e Seleção JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3011"
+    },
+    {
+      "id": "1295",
+      "name": "EVERALDO DE ARAUJO JUNIOR",
+      "email": "everaldo.junior@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "49",
+      "name": "EVERTON DA ROCHA OLIVEIRA",
+      "email": "everton.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Projetos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2571"
+    },
+    {
+      "id": "2078",
+      "name": "EVERTON PEDRO DOS SANTOS",
+      "email": "everton.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Manutenção Civil",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1390"
+    },
+    {
+      "id": "3128",
+      "name": "EVILASIO GALLEGO NETTO",
+      "email": "evilasio.netto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Geração de Vapor Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "78",
+      "name": "FABIO DE SOUZA LEITE",
+      "email": "fabio.leite@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Estrutura, Remuneração e Administração de Pessoal",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "1920",
+      "name": "FABIO FERREIRA DA SILVA",
+      "email": "fabio.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "3015",
+      "name": "FABIO JUNIOR MOREIRA DE LIMA",
+      "email": "fabio.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Confiabilidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1753"
+    },
+    {
+      "id": "131",
+      "name": "FABIO LUIZ DAL POSSO",
+      "email": "fabio.posso@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Diretor de Controladoria",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "84",
+      "name": "FABIO LUIZ DAL POSSO",
+      "email": "fabio.posso@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo de Controladoria",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "131"
+    },
+    {
+      "id": "2270",
+      "name": "FABIO SILVA DE ARAUJO",
+      "email": "fabio.araujo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Técnico de Manutenção Automotiva II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "45",
+      "name": "FAUSTO HENRIQUE RONCHETE DA SILVA",
+      "email": "fausto.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Estruturação Financeira e RI",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1594"
+    },
+    {
+      "id": "1427",
+      "name": "FELIPE HENRIQUE DA SILVA",
+      "email": "felipe.henrique@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de PCM",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "1853",
+      "name": "FERNANDO PINTO",
+      "email": "fernando.fpinto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Custos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "131"
+    },
+    {
+      "id": "522",
+      "name": "FERNANDO RAPHAEL MODESTO DE OLIVEIRA",
+      "email": "fernando.modesto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Filial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "471"
+    },
+    {
+      "id": "1966",
+      "name": "FERNANDO TRIBUTINO",
+      "email": "fernando.tributino@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "60",
+      "name": "FLAVIO MARCIO LOPES FERREIRA",
+      "email": "flavio.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Tratos Culturais",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2072",
+      "name": "FRANCIELI RAIANY DA SILVA FONSECA",
+      "email": "francieli.fonseca@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Pesquisa e Desenvolvimento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2068"
+    },
+    {
+      "id": "1325",
+      "name": "FRANCISCA GOMES DA LUZ",
+      "email": "francisca.luz@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "1700",
+      "name": "FRANCISCO CLODOALDO CONCEICAO DA SILVA",
+      "email": "francisco.conceicao@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Armazenamento e Carregamento Etanol",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "550"
+    },
+    {
+      "id": "1293",
+      "name": "FRANCISCO DE SOUZA DUARTE",
+      "email": "francisco.duarte@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1864",
+      "name": "FRANCISCO GASPAR FERREIRA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2898"
+    },
+    {
+      "id": "31",
+      "name": "Fernando Henrique",
+      "email": "NULL",
+      "cargo": "Gerente de Operações",
+      "funcao": "NULL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "NULL"
+    },
+    {
+      "id": "30",
+      "name": "Fernando Pinto",
+      "email": "NULL",
+      "cargo": "Coordenador de Planejamento e Custos",
+      "funcao": "NULL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "NULL"
+    },
+    {
+      "id": "2292",
+      "name": "GABRIEL DA ROCHA LIRA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2592",
+      "name": "GABRIELLA ALINE SAMPAIO DA SILVA",
+      "email": "gabriella.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Tributário JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "2575",
+      "name": "GERALDO JOSE DA SILVA",
+      "email": "geraldo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Agricultura e Precisão/Geoprocessamento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1423",
+      "name": "GESICA AVELINO CAPISTRANO",
+      "email": "gesica.capistrano@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Logística JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2590"
+    },
+    {
+      "id": "1983",
+      "name": "GEUSILEI RODRIGUES",
+      "email": "geusilei.rodrigues@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2034"
+    },
+    {
+      "id": "2017",
+      "name": "GIDEAO PRAXEDES DOS SANTOS DE OLIVEIRA",
+      "email": "gideao.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2051"
+    },
+    {
+      "id": "2029",
+      "name": "GILBERTO MARQUES DA SILVA",
+      "email": "gilberto.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1819",
+      "name": "GILBERTO MENEGUELLI MOREIRA",
+      "email": "gilberto.moreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "1880",
+      "name": "GILCSON RUAN DOS SANTOS BORGES",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1918",
+      "name": "GILMAR ALVES",
+      "email": "gilmar.alves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "82",
+      "name": "GILMAR BENO FERREIRA",
+      "email": "gilmar.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1596",
+      "name": "GILMARA MENDES CARVALHO VIEIRA",
+      "email": "gilmara.carvalho@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Suprimentos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "70"
+    },
+    {
+      "id": "1924",
+      "name": "GILVAN ALVES DE ANDRADE",
+      "email": "gilvan.andrade@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Caldeireiro Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "53",
+      "name": "GIOVANA TENDOLO DE ALMEIDA",
+      "email": "giovana.almeida@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Manutenção Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "1938",
+      "name": "GIOVANE ROCHA GUEDES",
+      "email": "giovane.guedes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Almoxarifado",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "1889",
+      "name": "GISELE DA SILVA TEIXEIRA DE LIMA",
+      "email": "gisele.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2136",
+      "name": "GISELE FERNANDES ARRUDA DE LIMA",
+      "email": "gisele.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Comunicação Interna PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3055"
+    },
+    {
+      "id": "1332",
+      "name": "GIULIAN DA SILVA JESUS",
+      "email": "giulian.jesus@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Financeiro SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "2630",
+      "name": "GIVANILDO DE SOUZA LAURENTINO",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Tratamento de Água Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "2567",
+      "name": "GLEIDSON ITALO DANTAS DOS SANTOS",
+      "email": "gleidson.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Qualidade Agrícola",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2075"
+    },
+    {
+      "id": "519",
+      "name": "GLICIA OLIVEIRA DIAS",
+      "email": "glicia.dias@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Contábil SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "1907",
+      "name": "GUDIOSSON ROMAO DA SILVA",
+      "email": "0876364@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "52",
+      "name": "GUILHERME DE PAIVA E SILVA",
+      "email": "guilherme.paiva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Manutenção Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "2080",
+      "name": "GUSTAVO BARBOSA PEREIRA",
+      "email": "gustavo.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Infraestrutura",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "385"
+    },
+    {
+      "id": "1980",
+      "name": "GUSTAVO DOS SANTOS OLIVEIRA",
+      "email": "gustavo.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "121",
+      "name": "GUSTAVO FELIPE SENA LEVENHAGEM",
+      "email": "gustavo.levenhagem@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Comercial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "471"
+    },
+    {
+      "id": "2057",
+      "name": "GUSTAVO SANTIAGO DE MELO",
+      "email": "gustavo.melo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1969",
+      "name": "HERNANDES MARTINHO DA SILVA",
+      "email": "hernandes.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Controle Agrícola e Fornecedores",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2075"
+    },
+    {
+      "id": "2631",
+      "name": "HIAGO DOS SANTOS COSTA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Tratamento de Água Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "1745",
+      "name": "IASNAIA DA SILVA",
+      "email": "iasnaia.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Planejamento Agroindustrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1705",
+      "name": "IGOR ARAUJO GARCIA",
+      "email": "igor.garcia@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Sistemas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "385"
+    },
+    {
+      "id": "1906",
+      "name": "IGOR CESAR SALES BEZERRA",
+      "email": "0871788@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2122",
+      "name": "INACIO ELIAS DOS SANTOS",
+      "email": "inacio.elias@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2121",
+      "name": "INALDO ESTEVAM DOS SANTOS",
+      "email": "inaldo.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2901",
+      "name": "INGRID MURIELLY WEISHEIMER",
+      "email": "ingrid.weisheimer@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "1956",
+      "name": "IRACEMA VIEIRA DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2059",
+      "name": "ISMAEL DE JESUS ANDRADE",
+      "email": "ismael.andrade@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "48",
+      "name": "ISRAEL CARDOSO DOS SANTOS",
+      "email": "israel.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Serviços Gerais",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1390"
+    },
+    {
+      "id": "3095",
+      "name": "ITAMAR SOARES DE LIMA",
+      "email": "itamar.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico de Cogeração de Energia Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "130"
+    },
+    {
+      "id": "2038",
+      "name": "IVANILDO LIMEIRA DA SILVA",
+      "email": "ivanildo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1957",
+      "name": "IZAC DOS SANTOS CARVALHO JUNIOR",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2298",
+      "name": "JACKSON JOSE CARDOSO DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2066"
+    },
+    {
+      "id": "2077",
+      "name": "JACYR DA SILVA COSTA FILHO",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Presidente do Conselho",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "1989",
+      "name": "JADSON FAUSTINO DA SILVA",
+      "email": "jadson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2580",
+      "name": "JAIANI GODRIM DOS SANTOS",
+      "email": "jaiani.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Desenvolvimento Humano PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3011"
+    },
+    {
+      "id": "2006",
+      "name": "JAILSON GOMES DE ARAUJO",
+      "email": "jailson.araujo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "118",
+      "name": "JAILTON SANTOS SILVA",
+      "email": "jailton.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Fabricação de Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "1915",
+      "name": "JAKELINE DIONIZIO FERREIRA",
+      "email": "jakeline.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Controle de Qualidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2022",
+      "name": "JAMILDO GOMES DA SILVA",
+      "email": "jamildo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1820",
+      "name": "JAMILSON DA CRUZ SILVA",
+      "email": "jamilson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1754"
+    },
+    {
+      "id": "187",
+      "name": "JANDERSON MORENO",
+      "email": "janderson.moreno@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico Manutenção Elétrica Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "130"
+    },
+    {
+      "id": "1599",
+      "name": "JARI DE SOUZA",
+      "email": "jari.souza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Diretor Agroindustrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "523",
+      "name": "JEAN CARLI DA SILVA",
+      "email": "jean.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Filial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "471"
+    },
+    {
+      "id": "1922",
+      "name": "JEFFERSON ANDREOTTI SOARES",
+      "email": "jefferson.soares@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1595",
+      "name": "JEFFERSON DOUGLAS DA SILVA",
+      "email": "jefferson.douglas@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Estruturação Financeira e RI SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "45"
+    },
+    {
+      "id": "2045",
+      "name": "JEFFERSON ROBERTO KAGUEYAMA",
+      "email": "jefferson.roberto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2071",
+      "name": "JENNY QUESIA RODRIGUES DE ALENCAR",
+      "email": "jenny.alencar@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Pesquisa e Desenvolvimento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2067",
+      "name": "JESSE SOUSA FERREIRA",
+      "email": "jesse.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1893",
+      "name": "JESSIKA CONCEICAO CAMPOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2629",
+      "name": "JESSIVALDO ARAUJO ALVES",
+      "email": "jessivaldo.alves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Tratamento de Água Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "2007",
+      "name": "JHON LORRAN VERAS VIANA",
+      "email": "jhon.viana@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2046"
+    },
+    {
+      "id": "1904",
+      "name": "JOAES PEREIRA DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "3093",
+      "name": "JOAO BOSCO LEMOS JUNIOR",
+      "email": "joao.lemos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Agrícola",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1599"
+    },
+    {
+      "id": "1869",
+      "name": "JOAO FELIX",
+      "email": "joao.felix@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Comboista Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1861",
+      "name": "JOAO LAURENTINO",
+      "email": "joao.laurentino@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2898"
+    },
+    {
+      "id": "186",
+      "name": "JOAO PEDRO DO NASCIMENTO",
+      "email": "joao.nascimento@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico Manutenção Elétrica Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "130"
+    },
+    {
+      "id": "1976",
+      "name": "JOAO VITOR MENDES MAGALHAES",
+      "email": "joao.magalhaes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2032"
+    },
+    {
+      "id": "2040",
+      "name": "JOAQUIM LUIZ FERREIRA",
+      "email": "joaquim.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1968",
+      "name": "JOILSON DJALMA DA SILVA",
+      "email": "joilson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "1930",
+      "name": "JONAS CERQUEIRA COSTA",
+      "email": "jonas.costa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1754"
+    },
+    {
+      "id": "1440",
+      "name": "JONAS DA SILVA FONSECA",
+      "email": "jonas.fonseca@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Infraestrutura PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "385"
+    },
+    {
+      "id": "2753",
+      "name": "JOSE ALTINO MOTA",
+      "email": "jose.mota@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1758"
+    },
+    {
+      "id": "1981",
+      "name": "JOSE ANDERSON MARTINS DE OLIVEIRA",
+      "email": "jose.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1988",
+      "name": "JOSE APARECIDO BATISTA DE ANDRADE",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2754",
+      "name": "JOSE APARECIDO BORGES ARCANJO",
+      "email": "jose.arcanjo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1758"
+    },
+    {
+      "id": "1290",
+      "name": "JOSE APARECIDO MACEDO",
+      "email": "jose.macedo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "119",
+      "name": "JOSE CARDOSO DE VAZ JUNIOR",
+      "email": "jose-junior1984@hotmail.com",
+      "cargo": "NULL",
+      "funcao": "Líder de Fabricação de Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "1960",
+      "name": "JOSE CARLOS DOS SANTOS SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "1985",
+      "name": "JOSE CARLOS ROBERTO DE SOUZA",
+      "email": "jose.carlos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1863",
+      "name": "JOSE DE RIBAMAR CHAVIER DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2898"
+    },
+    {
+      "id": "2002",
+      "name": "JOSE EDUARDO PAULINO GOMES",
+      "email": "jose.gomes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2096",
+      "name": "JOSE ELIAS DA ROCHA SOUZA",
+      "email": "jose.rocha@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "2828",
+      "name": "JOSE FELIX JUNIOR",
+      "email": "jose.felixjr@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico de Manutenção Elétrica Externa Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "472",
+      "name": "JOSE FERNANDO MAZUCA FILHO",
+      "email": "jose.mazuca@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Diretor Presidente",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "NULL"
+    },
+    {
+      "id": "2001",
+      "name": "JOSE FRANCISCO FERREIRA DOS SANTOS",
+      "email": "jose.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2053"
+    },
+    {
+      "id": "1426",
+      "name": "JOSE GERALDO ALCANTARA DE ALMEIDA",
+      "email": "jose.almeida@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de PCM",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "2064",
+      "name": "JOSE GOMES CAMARGO",
+      "email": "jose.camargo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2061"
+    },
+    {
+      "id": "2033",
+      "name": "JOSE HAROLDO DA SILVA",
+      "email": "jose.haroldo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2132",
+      "name": "JOSE JAIR DA SILVA",
+      "email": "jose.jair@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2101",
+      "name": "JOSE LUIZ QUEIROZ DA COSTA",
+      "email": "jose.costa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Controle Interno e Compliance",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2572"
+    },
+    {
+      "id": "1963",
+      "name": "JOSE MARCOS PEREIRA DE SOUZA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "1601",
+      "name": "JOSE OTAVIO FARIAS FLORES",
+      "email": "jose.flores@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento e Custos JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1852"
+    },
+    {
+      "id": "2060",
+      "name": "JOSE RAMON BARBOZA DA SILVA",
+      "email": "jose.barbosa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2061"
+    },
+    {
+      "id": "2099",
+      "name": "JOSE RICARDO DA SILVA",
+      "email": "jose.ricardo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "1818",
+      "name": "JOSE ROBERTO DE SOUZA",
+      "email": "jose.rsouza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1754"
+    },
+    {
+      "id": "2752",
+      "name": "JOSE RODRIGUES DA SILVA",
+      "email": "jose.rsilva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1758"
+    },
+    {
+      "id": "1967",
+      "name": "JOSE SIVALDO DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "2134",
+      "name": "JOSE VALDE DE ARAUJO",
+      "email": "jose.araujo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2042",
+      "name": "JOSE VALDIR DA SILVA",
+      "email": "jose.valdir@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1868",
+      "name": "JOSE VICTOR TOMAZ DO CARMO",
+      "email": "jose.carmo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Agrícola",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1371"
+    },
+    {
+      "id": "3014",
+      "name": "JOSE VITAL DE ALMEIDA",
+      "email": "jose.vital@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Planej. Contr. Manut. Agroindustrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1895",
+      "name": "JOSE WEDSON ROBERTO DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1755",
+      "name": "JOSE WHALIRIS FLORENCIO RODRIGUES",
+      "email": "jose.rodrigues@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "1397",
+      "name": "JOSEMEIRE AVELINO CAPISTRANO",
+      "email": "josemeire.capistrano@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista TI - SAP",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1705"
+    },
+    {
+      "id": "2665",
+      "name": "JOSIEL JOSE DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1819"
+    },
+    {
+      "id": "1865",
+      "name": "JOSINALDO DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2898"
+    },
+    {
+      "id": "1994",
+      "name": "JOSINALDO MARTINS DE LIMA",
+      "email": "josinaldo.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2046"
+    },
+    {
+      "id": "2027",
+      "name": "JOSIVALDO DINIZ DOS SANTOS",
+      "email": "josivaldo.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2051"
+    },
+    {
+      "id": "2614",
+      "name": "JOVENILDO QUIRINO DA SILVA",
+      "email": "jovenildo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Borracheiro Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1328",
+      "name": "JULIA SILVA DE OLIVEIRA",
+      "email": "julia.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "1597",
+      "name": "JULIANO DA SILVA CONCEICAO",
+      "email": "juliano.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Suprimentos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2952"
+    },
+    {
+      "id": "1886",
+      "name": "JULIANO JOSE DE ALMEIDA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2667",
+      "name": "JULIO CESAR RIBEIRO LEITE",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "2591",
+      "name": "KAICK LOPES LIMA",
+      "email": "kaick.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Tributário JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "1292",
+      "name": "KAREN LIMA VAQUEIRO DA COSTA",
+      "email": "karen.vaqueiro@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2100",
+      "name": "KARINA DA SILVA GONCALVES",
+      "email": "karina.goncalves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Contábil",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "1422",
+      "name": "LANAN TANNAN DA SILVA ALMEIDA",
+      "email": "lanan.tannan@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Faturamento JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "3090",
+      "name": "LARISSA SOARES SOUSA PINHEIRO",
+      "email": "larissa.sousa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administrativo",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3088"
+    },
+    {
+      "id": "2074",
+      "name": "LEANDERSON DA SILVA TAVARES DE ALMEIDA",
+      "email": "leanderson.almeida@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Processos Industriais JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "1371",
+      "name": "LEANDRO MOREIRA DA MOTTA",
+      "email": "leandro.motta@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Controle Agrícola",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2075"
+    },
+    {
+      "id": "1824",
+      "name": "LEIA CARDOSO FERNANDES",
+      "email": "leia.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Impostos Indiretos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "521",
+      "name": "LEIDIANY FERNANDES DA SILVA",
+      "email": "leidiany.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Contábil SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "2903",
+      "name": "LEOMAR MARIA ZUZA DOS SANTOS",
+      "email": "leomar.zuza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "1855",
+      "name": "LEONARDO HERMOGENES DOS SANTOS",
+      "email": "leonardo.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Instrumentação",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2135"
+    },
+    {
+      "id": "2904",
+      "name": "LEONARDO RAMINELLI VAL TORKAR",
+      "email": "leonardo.torkar@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Planejamento Estratégico e Novos Negócios",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "132"
+    },
+    {
+      "id": "58",
+      "name": "LEONE SANTOS FIGUEREDO",
+      "email": "leone.figueredo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Controles Internos PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2101"
+    },
+    {
+      "id": "1939",
+      "name": "LEONIZARD DE ARAUJO MORAES",
+      "email": "leonizard.moraes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Almoxarifado",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "1394",
+      "name": "LIDINEIA SANTANA SANTOS",
+      "email": "lidineia.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor Armazenamento e Carregamento de Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1701"
+    },
+    {
+      "id": "2570",
+      "name": "LILIANE ADRIANA HARTWIG",
+      "email": "adriana.hartwig@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Conteúdo ESG",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "1696",
+      "name": "LINDJALMA DOS SANTOS",
+      "email": "lindjalma.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Planejamento e Custos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1852"
+    },
+    {
+      "id": "1370",
+      "name": "LIVIA MOURA DA SILVA",
+      "email": "livia.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Comercial PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "1890",
+      "name": "LORAINE GABRIELI DA SILVA",
+      "email": "loraine.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1933",
+      "name": "LUANA REGINA DA SILVA",
+      "email": "luana.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administrativo",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "133"
+    },
+    {
+      "id": "570",
+      "name": "LUCAS ALVES DA SILVA",
+      "email": "lucas.alves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Suprimentos SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2952"
+    },
+    {
+      "id": "2005",
+      "name": "LUCAS ARANTES FEITOZA",
+      "email": "lucas.feitoza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2046"
+    },
+    {
+      "id": "1870",
+      "name": "LUCAS DIAS BORBOREMA",
+      "email": "lucas.borborema@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Comboista Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "385",
+      "name": "LUCAS DOS PASSOS SILVA",
+      "email": "lucas.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Tecnologia da Informação",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "1984",
+      "name": "LUCAS HENRIQUE DA SILVA",
+      "email": "lucas.henrique@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "517",
+      "name": "LUCAS PEREIRA DOURADO BASTOS",
+      "email": "lucas.bastos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Suprimentos JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "2068",
+      "name": "LUCIA FERREIRA REZENDE",
+      "email": "lucia.rezende@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Pesquisa e Desenvolvimento",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1852",
+      "name": "LUCIANEI ZANCHETTIN",
+      "email": "lucianei.zanchettin@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Custos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "131"
+    },
+    {
+      "id": "1437",
+      "name": "LUCIANO DOS SANTOS SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador de Máquinas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1862",
+      "name": "LUCIANO LEMES DE MORAIS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2898"
+    },
+    {
+      "id": "1751",
+      "name": "LUCILEIDE OLIVEIRA SANTOS",
+      "email": "lucileide.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Comercial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "1932",
+      "name": "LUCIMARIO SANTOS FIGUEREDO",
+      "email": "lucimario.figueredo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administrativo",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "133"
+    },
+    {
+      "id": "1759",
+      "name": "LUDIO FRANCISCO DE SOUZA",
+      "email": "ludio.souza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "46",
+      "name": "LUIS GUSTAVO BARBOSA DA SILVA",
+      "email": "luis.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista em Projetos Mecânicos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2571"
+    },
+    {
+      "id": "1758",
+      "name": "LUIS MAURO SANTOS SILVA",
+      "email": "luis.mauro@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "1940",
+      "name": "LUIZ ALBERTO PEREZ MONTERO",
+      "email": "luiz.monteiro@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Almoxarifado",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "2094",
+      "name": "LUIZ ALVES DOS SANTOS",
+      "email": "luiz.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Elétrica Externa",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2900",
+      "name": "LUIZ CARLOS MACHADO FILHO",
+      "email": "luiz.carlos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Sustentabilidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2863"
+    },
+    {
+      "id": "2031",
+      "name": "LUIZ FERNANDO GALDINO DA SILVA",
+      "email": "luiz.galdino@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2571",
+      "name": "LUIZ GUILHERME FAUSTINO DE MELO",
+      "email": "luiz.melo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Engenharia e Projetos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "117",
+      "name": "MAILSON DA CRUZ SILVA",
+      "email": "mailson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Fabricação de Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2024",
+      "name": "MANOEL AUGUSTO DA SILVA",
+      "email": "manoel.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1435",
+      "name": "MANOEL FRANCISCO DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador de Máquinas Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2056"
+    },
+    {
+      "id": "1992",
+      "name": "MARCELO ALVES PEREIRA",
+      "email": "marcelo.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "3088",
+      "name": "MARCELO DE BARROS CAMARGO",
+      "email": "marcelo.debarros@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Filial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "471"
+    },
+    {
+      "id": "2026",
+      "name": "MARCELO GOMES DE OLIVEIRA",
+      "email": "marcelo.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "43",
+      "name": "MARCIA EDWVIGES",
+      "email": "marcia.edwviges@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Agricola Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1391"
+    },
+    {
+      "id": "2579",
+      "name": "MARCIA SILVA DE MELO",
+      "email": "marcia.melo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Desenvolvimento Humano JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3011"
+    },
+    {
+      "id": "2012",
+      "name": "MARCIEL BATISTA DE MOURA",
+      "email": "marciel.moura@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2050"
+    },
+    {
+      "id": "1761",
+      "name": "MARCILIO ANDRE ALVES PEREIRA",
+      "email": "marciliocelo@gmail.com",
+      "cargo": "NULL",
+      "funcao": "Especialista de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "2898",
+      "name": "MARCIO ALEX SAIA",
+      "email": "marcio.saia@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Extração",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "1600",
+      "name": "MARCIO BORTOLOTTO",
+      "email": "marcio.bortolotto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Saúde e Segurança do Trabalho",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "2668",
+      "name": "MARCOS ADRIANO VASCONCELOS PEREIRA",
+      "email": "marcos.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1819"
+    },
+    {
+      "id": "1747",
+      "name": "MARCOS ANTONIO VICENTE E SILVA",
+      "email": "marcos.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Logística PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "2595",
+      "name": "MARCOS AURELIO DE BRITO",
+      "email": "marcos.brito@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Tributário SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "133",
+      "name": "MARCOS LIMA BATISTA",
+      "email": "marcos.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Excelência Operacional",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "1814",
+      "name": "MARCOS SILVA DOS SANTOS",
+      "email": "marcos.ssantos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "2025",
+      "name": "MARCOS VINICIUS DA SILVA SANTOS",
+      "email": "marcos.vinicius@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1902",
+      "name": "MARIA APARECIDA SILVA DE ARAUJO",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1424",
+      "name": "MARIA EVERLANE MATIAS DA SILVA",
+      "email": "maria.matias@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Logística JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2590"
+    },
+    {
+      "id": "2574",
+      "name": "MARIA GEANE MONTEIRO DA SILVA",
+      "email": "geane.monteiro@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Secretária Diretoria",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "1903",
+      "name": "MARIA JANE BARBOSA COIMBRA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2112",
+      "name": "MARIA LUCIA DOS SANTOS",
+      "email": "maria.lucia@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "1913",
+      "name": "MARIA ODETE PEREIRA DOS SANTOS",
+      "email": "maria.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Agricola II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1391"
+    },
+    {
+      "id": "2852",
+      "name": "MARIANY GOMES COSTA DOS SANTOS",
+      "email": "mariany.costa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Controles Industriais JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "1764",
+      "name": "MARINELSON DIAS MACIEL",
+      "email": "marinelson.maciel@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Utilidades",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1816"
+    },
+    {
+      "id": "2594",
+      "name": "MARTA MELO DE LIMA FIGUEREDO",
+      "email": "marta.figueredo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Tributário PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "1935",
+      "name": "MARY DOS SANTOS MALCHER",
+      "email": "mary.malcher@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Administrativo",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "522"
+    },
+    {
+      "id": "1892",
+      "name": "MATEUS HENRIQUE LOPES COSTA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2124",
+      "name": "MATEUS HUGO SANTOS LOPES",
+      "email": "mateus.lopes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "493",
+      "name": "MATHEUS CARMO DE MATOS PINHO",
+      "email": "matheus.pinho@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Sistemas JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1705"
+    },
+    {
+      "id": "1704",
+      "name": "MATHEUS DO NASCIMENTO BATISTA",
+      "email": "matheus.batista@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Sistemas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1705"
+    },
+    {
+      "id": "2125",
+      "name": "MATHEUS FELIPE DE AZEVEDO FELIX",
+      "email": "matheus.felix@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "2593",
+      "name": "MAURICIO GARCIA MARQUES",
+      "email": "mauricio.marques@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Tributário PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "1997",
+      "name": "MAURICIO ROCHA DA SILVA",
+      "email": "mauricio.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2030",
+      "name": "MAURO ARAUJO DE MEDEIROS",
+      "email": "mauro.medeiros@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2840",
+      "name": "MAURO SERGIO DOS SANTOS",
+      "email": "mauro.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Técnico de Instrumentação Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1855"
+    },
+    {
+      "id": "2014",
+      "name": "MAX CRISTIAN MARINHO DE MELO",
+      "email": "max.melo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2046"
+    },
+    {
+      "id": "1901",
+      "name": "MAYLON BRUNO SANTANA COSTA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2056",
+      "name": "MAYRON FELINTO TORRES COELHO",
+      "email": "mayron.coelho@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1330",
+      "name": "MIRELLA LIMA DA SILVA CORREA",
+      "email": "mirella.correa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Financeiro PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "1811",
+      "name": "MOISES DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "1897",
+      "name": "MOISES LOPES SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1746",
+      "name": "MURILO SEABRA DA SILVA",
+      "email": "murilo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Cadeia de Suprimentos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "70",
+      "name": "NADIA FERNANDA DE ALMEIDA CARVALHO",
+      "email": "nadia.carvalho@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Compras - Materiais e Insumos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "1998",
+      "name": "NATALINO ARAUJO SOUSA",
+      "email": "natalino.sousa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "129",
+      "name": "NATANAEL CHAGAS FURTADO FERREIRA",
+      "email": "natanael.ferreira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Design JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1705"
+    },
+    {
+      "id": "1757",
+      "name": "NATANAEL LOPES DA SILVA",
+      "email": "natanael.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2010",
+      "name": "NATHAN DOS SANTOS TIGRE",
+      "email": "nathan.tigre@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2047"
+    },
+    {
+      "id": "2123",
+      "name": "NAYRAN GIUSSEP SILVA DE OLIVEIRA",
+      "email": "nayran.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1702",
+      "name": "NEIVANILDO GOMES DE SOUZA CONSERVA",
+      "email": "neivanildo.conserva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Serviços Topográficos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "1952",
+      "name": "NELSON DE BORBA",
+      "email": "Endereçoeletrônico@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "1821",
+      "name": "NERICO TECEDOR",
+      "email": "nerico.tecedor@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1756"
+    },
+    {
+      "id": "2269",
+      "name": "NIVALCYR OLIVEIRA RAMOS DOS SANTOS",
+      "email": "nivalcyr.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2573",
+      "name": "NIVALDO NUNES DE MOURA DE NETO",
+      "email": "nivaldo.neto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Custos Industriais",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "134"
+    },
+    {
+      "id": "2111",
+      "name": "ODETE CRISTINA DE CARVALHO",
+      "email": "odete.carvalho@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "74",
+      "name": "OSCAR MIGUEL ONIQUES DOS SANTOS",
+      "email": "oscar.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Manutenção Industrial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2119"
+    },
+    {
+      "id": "516",
+      "name": "OSVALDO HENRIQUE PAULETTI",
+      "email": "henrique.pauletti@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente de Logística",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "471"
+    },
+    {
+      "id": "3092",
+      "name": "PABLO RESENDE OLIVEIRA",
+      "email": "pablo.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento Estratégico e Novos Negócios",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "132"
+    },
+    {
+      "id": "1979",
+      "name": "PATRICK JUNIOR BORGES CAMPOS DE BARROS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "471",
+      "name": "PAULO CESAR LEITE",
+      "email": "paulo.leite@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Diretor Comercial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "1425",
+      "name": "PAULO DE FARIA JUNIOR",
+      "email": "paulo.junior@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Engenharia e Projetos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2571"
+    },
+    {
+      "id": "1974",
+      "name": "PAULO GONCALVES DA SILVA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1961",
+      "name": "PAULO ROBERTO CANDIDO DOS SANTOS JUNIOR",
+      "email": "paulo.candido@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1921",
+      "name": "PAULO ROBERTO DA SILVA FERNANDES",
+      "email": "paulo.fernandes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1962",
+      "name": "PEDRO HENRIQUE PEREIRA MENDES",
+      "email": "pedro.mendes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2576",
+      "name": "PEDRO HENRIQUE SOUZA SILVA",
+      "email": "pedro.henrique@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Atração e Seleção JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3011"
+    },
+    {
+      "id": "2098",
+      "name": "PEDRO PAULO SANTOS PEREIRA",
+      "email": "PEDRO.PEREIRA@UISA.COM.BR",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "1977",
+      "name": "RAFAEL JOSE DOS SANTOS SILVA",
+      "email": "rafael.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1927",
+      "name": "RAFAELA DE JESUS SANTANA",
+      "email": "rafaela.santana@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1754"
+    },
+    {
+      "id": "1329",
+      "name": "RAIANY SUELLEN SILVA SALES",
+      "email": "raiany.sales@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Financeiro JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1698"
+    },
+    {
+      "id": "2054",
+      "name": "RANDERSON SILVA E SILVA",
+      "email": "randerson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2118",
+      "name": "RAQUEL NOGUEIRA MACIEL",
+      "email": "raquel.maciel@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "1866",
+      "name": "REGINALDO ANDRADE DE SOUZA",
+      "email": "reginaldo.souza@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2898"
+    },
+    {
+      "id": "3198",
+      "name": "RENATA DOS SANTOS",
+      "email": "RENATA.SANTOS2310@HOTMAIL.COM",
+      "cargo": "NULL",
+      "funcao": "Analista Operacional",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "NULL"
+    },
+    {
+      "id": "2565",
+      "name": "RENATO BRACELAR BATISTA",
+      "email": "renato.batista@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Qualidade Agrícola",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2075"
+    },
+    {
+      "id": "2952",
+      "name": "RENATO GIDEAN CUSTODIO RESENDE",
+      "email": "renato.resende@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Compras - Serviços e Projetos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "2613",
+      "name": "REYTTER VIEIRA DE FREITAS",
+      "email": "reytter.freitas@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Comercial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "1991",
+      "name": "RICARDO ALBUQUERQUE DA SILVA",
+      "email": "ricardo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2612",
+      "name": "RICARDO DE AZEVEDO VILELLA",
+      "email": "ricardo.vilella@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Comercial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "2114",
+      "name": "RICARDO RODRIGUES DE OLIVEIRA",
+      "email": "RICARDO.OLIVEIRA@UISA.COM.BR",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "2853",
+      "name": "RICARDO SOARES FONSECA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista de Controles Industriais PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1429",
+      "name": "RICARDO SOUZA DE LIMA",
+      "email": "ricardo.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Motorista Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "189",
+      "name": "RITA DE CASSIA COSTA FRUTUOSO",
+      "email": "rita.frutuoso@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Gestão de Benefícios JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "78"
+    },
+    {
+      "id": "2063",
+      "name": "ROBERTO ALEXANDRE DE LIRA",
+      "email": "roberto.lira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2061"
+    },
+    {
+      "id": "1970",
+      "name": "ROBSON BELO DE AMORIM",
+      "email": "robson.amorim@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "571",
+      "name": "ROBSON DA SILVA AMORIM",
+      "email": "robson.samorim@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Suprimentos SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "1990",
+      "name": "ROBSON SANTOS DA SILVA",
+      "email": "robson.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2991",
+      "name": "RODRIGO ALVES DE ALMEIDA",
+      "email": "rodrigo.almeida@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Laboratório Automotivo I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "3010",
+      "name": "RODRIGO DA SILVA DIAS",
+      "email": "rodrigo.dias@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Governança em Tecnologia",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "385"
+    },
+    {
+      "id": "2032",
+      "name": "RODRIGO MENDES CRUZ",
+      "email": "rodrigo.cruz@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2039"
+    },
+    {
+      "id": "134",
+      "name": "RODRIGO RIBEIRO GONCALVES",
+      "email": "rodrigo.goncalves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Diretor de Gente, Inovação e Administração",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "1430",
+      "name": "ROGERIO BORGES",
+      "email": "rogerio.borges@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Motorista Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "116",
+      "name": "ROGERIO DA SILVA CUNHA",
+      "email": "rogerio.cunha@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Fabricação de Açúcar",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "50",
+      "name": "ROGERIO MONTEIRO DA SILVA",
+      "email": "rogerio.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Projetos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2571"
+    },
+    {
+      "id": "2300",
+      "name": "RONALDO ALVES JUNIOR",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2066"
+    },
+    {
+      "id": "1941",
+      "name": "RONE CARLOS DA GUIA DIAS",
+      "email": "rone.dias@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Almoxarifado",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "1294",
+      "name": "RONIVALDO RODRIGUES DA SILVA",
+      "email": "ronivaldo.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1714",
+      "name": "ROSANGELA ALMEIDA DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder de Operações",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1701"
+    },
+    {
+      "id": "518",
+      "name": "ROSENI FERNANDES BORGES",
+      "email": "roseni.borges@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Suprimentos JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3012"
+    },
+    {
+      "id": "2046",
+      "name": "RUAN JUNIOR ALVES MARQUES",
+      "email": "ruan.marques@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2073",
+      "name": "RUBENS EDUARDO PEREIRA DA SILVA",
+      "email": "rubens.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Processos Industriais JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "549"
+    },
+    {
+      "id": "76",
+      "name": "SAMARA DE ARAUJO PINHEIRO",
+      "email": "samara.pinheiro@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Contratos JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2611"
+    },
+    {
+      "id": "1958",
+      "name": "SAMUEL MARQUES DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2055"
+    },
+    {
+      "id": "1825",
+      "name": "SAMUEL PEREIRA DA SILVA",
+      "email": "samuel.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista de Impostos Indiretos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "93"
+    },
+    {
+      "id": "2039",
+      "name": "SANDOVAL BERTULINO GUIMARAES",
+      "email": "sandoval.guimaraes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1754",
+      "name": "SANDRO KATUFICO URYU",
+      "email": "sandro.uryu@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Empacotamento e Saneantes",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "1978",
+      "name": "SENIVAN SILVA DE ARAUJO GOMES",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1995",
+      "name": "SERGIO ROBERTO DE SOUZA",
+      "email": "sergio.roberto@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1428"
+    },
+    {
+      "id": "3171",
+      "name": "SERGIO SPINELLI SILVA JUNIOR",
+      "email": "Endereçoeletrônico@uisanet.com.br",
+      "cargo": "NULL",
+      "funcao": "Diretor",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "2075",
+      "name": "SERGIO YGULA",
+      "email": "sergio.ygula@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Originação e Parceria Agrícola",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1599"
+    },
+    {
+      "id": "2899",
+      "name": "SIDINEI NEVES DOS SANTOS",
+      "email": "sidinei.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Torneiro Mecânico Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "1975",
+      "name": "SIDNEI PATRICK DE ALENCAR ALVES",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2015"
+    },
+    {
+      "id": "2043",
+      "name": "SIDNEI SILVA SANTOS",
+      "email": "sidnei.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1752",
+      "name": "SILAS MARQUES",
+      "email": "silas.marques@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Comercial",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "1812",
+      "name": "SILVANO MANOEL ORLANDO",
+      "email": "silvano.orlando@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "52"
+    },
+    {
+      "id": "51",
+      "name": "SILVIA DA SILVA SOBRINHO",
+      "email": "silvia.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Saúde Ocupacional",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1600"
+    },
+    {
+      "id": "2303",
+      "name": "SIMONE AQUINO DE MORAIS",
+      "email": "Endereçoeletrônico@uisanet.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder de Limpeza",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1754"
+    },
+    {
+      "id": "1856",
+      "name": "SINESIO DIAS DE OLIVEIRA",
+      "email": "sinesio.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador Originação de Cana e Relacionamento com Fornecedores",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2075"
+    },
+    {
+      "id": "2294",
+      "name": "SIVALDO CORREIA LIMA",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2055",
+      "name": "SOLISVALDO DOS SANTOS MELO",
+      "email": "solisvaldo.melo@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "550",
+      "name": "SORLETI APARECIDA DE OLIVEIRA",
+      "email": "sorleti.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Garantia da Qualidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1599"
+    },
+    {
+      "id": "1929",
+      "name": "TALINE DE JESUS OLIVEIRA ALVES",
+      "email": "taline.alves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2117",
+      "name": "TAMARA ACUNHA LINS",
+      "email": "tamara.lins@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "2902",
+      "name": "TAYOMARA LETICIANA GONCALVES TRINDADE",
+      "email": "tayomara.trindade@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "1885",
+      "name": "THAIS DA SILVA LOPES",
+      "email": "thais.lopes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2004",
+      "name": "THALLYS FERNANDO DE LIMA",
+      "email": "thallys.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2046"
+    },
+    {
+      "id": "2116",
+      "name": "THAMIRES DE ALENCAR PEREIRA",
+      "email": "thamires.alencar@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "1931",
+      "name": "THAMIRIS DOMINGUES SILVA KAGUEYAMA",
+      "email": "thamiris.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Compliance PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2101"
+    },
+    {
+      "id": "1914",
+      "name": "THAMIRYS AMANCIO XAVIER DE LIMA",
+      "email": "thamirys.lima@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Controle de Qualidade",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "1887",
+      "name": "THAUAN JEFFERSON NASCIMENTO DOS SANTOS",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "59",
+      "name": "THIAGO DA CUNHA LOPES",
+      "email": "thiago.lopes@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Coordenador de Tratos Culturais",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "2128",
+      "name": "THIAGO DE FREITAS MEDRADO",
+      "email": "thiago.medrado@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1699"
+    },
+    {
+      "id": "1822",
+      "name": "THIAGO DINIZ DUARTE",
+      "email": "thiago.duarte@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Supervisor de Produção",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "528"
+    },
+    {
+      "id": "2666",
+      "name": "TIAGO GUEDES",
+      "email": "NULL",
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "117"
+    },
+    {
+      "id": "2097",
+      "name": "TIAGO RODRIGO ZACARIAS DA SILVA",
+      "email": "tiago.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo PL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "132",
+      "name": "TOMAZ CARRARO PEREIRA",
+      "email": "tomaz.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Diretor de Finanças e Relações com Investidores",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "472"
+    },
+    {
+      "id": "85",
+      "name": "TOMAZ CARRARO PEREIRA",
+      "email": "tomaz.pereira@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo de Planejamento Estratégico e Novos Negócios",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "132"
+    },
+    {
+      "id": "3013",
+      "name": "UIARA GONZAGA ARIABO CALOMEZORE",
+      "email": "uiara.calomezore@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista de Comunidades e Povos Tradicionais JR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2900"
+    },
+    {
+      "id": "2021",
+      "name": "ULISSES RIBEIRO",
+      "email": "ulisses.ribeiro@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3093"
+    },
+    {
+      "id": "1598",
+      "name": "VAGNER RODRIGUES DA SILVA",
+      "email": "vagner.silva@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Suprimentos",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2952"
+    },
+    {
+      "id": "2992",
+      "name": "VALDEVINO FERREIRA DA COSTA",
+      "email": "valdevino.costa@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo SR",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "3014"
+    },
+    {
+      "id": "1919",
+      "name": "VALDINEI BECKER GONCALVES",
+      "email": "valdinei.goncalves@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial Líder",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "1871"
+    },
+    {
+      "id": "2989",
+      "name": "VALDINEY DE CAMPOS",
+      "email": "valdiney.campos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Especialista Key Account",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "121"
+    },
+    {
+      "id": "1971",
+      "name": "VALMIR GOMES DOS SANTOS",
+      "email": "valmir.santos@uisa.com.br",
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "managerId": "2030"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tcargo\tfuncao\tgerencia\tdiretoria\tmanagerId\n1910\tABIMAEL TIAGO GOMES MOURA\tabimael.moura@uisa.com.br\tNULL\tAnalista Laboratorio Industrial III\tNULL\tNULL\t1871\n2295\tABISAIR FERREIRA\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n130\tABNER PEREIRA DE CARVALHO NETO\tabner.neto@uisa.com.br\tNULL\tCoordenador de Manutenção Elétrica\tNULL\tNULL\t528\n2061\tADAILTO FERREIRA BISPO\tadailto.bispo@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t3093\n2264\tADALBERTO AUGUSTO DOS SANTOS\tadalberto.santos@uisa.com.br\tNULL\tMecânico de Manutenção Automotiva Líder\tNULL\tNULL\t3093\n1713\tADAO ALVES DA SILVA\tadao.silva@uisa.com.br\tNULL\tLíder de Operações\tNULL\tNULL\t1701\n2301\tADELSON FERREIRA PERALTA\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n1823\tADEMIR ANACLETO\tademir.anacleto@uisa.com.br\tNULL\tSupervisor de Manutenção\tNULL\tNULL\t1818\n75\tADENILSON PEREIRA DOS SANTOS\tadenilson.santos@uisa.com.br\tNULL\tAnalista de Seguros SR\tNULL\tNULL\t1594\n2037\tADILSON ALMEIDA ALVES\tadilson.almeida@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1972\tADILSON DIAS ALVES\tadilson.alves@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n1816\tADILSON SILVEIRA\tadilson.silveira@uisa.com.br\tNULL\tSupervisor de Utilidades\tNULL\tNULL\t528\n2265\tADMILSON DIAS MENDES\tadmilson.mendes@uisa.com.br\tNULL\tMecânico de Manutenção Automotiva Líder\tNULL\tNULL\t3093\n1879\tADRIANA DO CARMO OLIVEIRA\tadriana.oliveira@uisa.com.br\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n1937\tADRIANO DA SILVA CUNHA\tadriano.cunha@uisa.com.br\tNULL\tLíder Abastecimento Combustível\tNULL\tNULL\t3012\n1917\tADRIELLEN CAROLINE GOMES DA SILVA\tadriellen.silva@uisa.com.br\tNULL\tAnalista de Microbiologia\tNULL\tNULL\t1871\n1395\tADSON ALENCAR ALVES\tadson.alves@uisa.com.br\tNULL\tEspecialista TI - SAP\tNULL\tNULL\t1705\n1756\tAGENOR JOSE MINETO JUNIOR\tagenor.mineto@uisa.com.br\tNULL\tCoordenador de Produção\tNULL\tNULL\t528\n1760\tAGNALDO APARECIDO DE LIMA\tagnaldo.lima@uisa.com.br\tNULL\tEspecialista de Produção\tNULL\tNULL\t528\n2048\tAILTON DIEGO DA ROSA\tailton.rosa@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1959\tALAN APOLINARIO DA SILVA\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n2023\tALBERT DARLAN GOMES PINTO\talbert.pinto@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1882\tALCIONE DE PAULA SANTOS\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n2826\tALEANDRO BORGES DE ALFENAS\taleandro.alfenas@uisa.com.br\tNULL\tTécnico de Manutenção Elétrica Externa Líder\tNULL\tNULL\t3093\n188\tALESSANDRE DOS SANTOS\talessandre.santos@uisa.com.br\tNULL\tTécnico Manutenção Elétrica Industrial Líder\tNULL\tNULL\t130\n2296\tALESSANDRO GOMES DA SILVA\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n128\tALEX FELIX DA SILVA\tNULL\tNULL\tLíder de Caldeiraria\tNULL\tNULL\t44\n3094\tALEX SANDRO PEREIRA DE LIMA\tAlex.lima@uisa.com.br\tNULL\tLíder de Facilities\tNULL\tNULL\t78\n127\tALEXANDER ALVES DE CARVALHO\talexander.carvalho@uisa.com.br\tNULL\tLíder de Caldeiraria\tNULL\tNULL\t44\n1911\tALEXANDRA PINHEIRO VOLTOLINI CAETANO\talexandra_1975voltolini@gmail.com\tNULL\tAnalista Laboratorio Agricola II\tNULL\tNULL\t1391\n1928\tALEXANDRE ABREU PEREIRA DA SILVA\talexandre.pereira@uisa.com.br\tNULL\tOperador Empacotamento Açúcar Líder\tNULL\tNULL\t1754\n1842\tALEXANDRE CARLOS DE LIMA\talexandre.lima@uisa.com.br\tNULL\tLubrificador Industrial Líder\tNULL\tNULL\t52\n2119\tALEXANDRE OLIVEIRA CALEGARI\talexandre.calegari@uisa.com.br\tNULL\tGerente Executivo Industrial\tNULL\tNULL\t1599\n1762\tALEXANDRE WESLLEY DOS SANTOS ROMEIROS\talexandre.romeiros@uisa.com.br\tNULL\tEspecialista de Extração\tNULL\tNULL\t528\n1888\tALEXIA MARIA AMORIM DA SILVA\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n2568\tALEXSANDRA TAVARES SOBRAL DE OLIVEIRA\talexsandra.oliveira@uisa.com.br\tNULL\tAnalista Estrutura e Remuneração SR\tNULL\tNULL\t78\n2034\tALFREDO EZEQUIEL DOS SANTOS NETO\talfredo.santos@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1703\tALINE CARVALHO ROMAO\taline.romao@uisa.com.br\tNULL\tEspecialista de Impostos Diretos\tNULL\tNULL\t1698\n2572\tALINE MELLO BRANDAO FELTRIN\taline.feltrin@uisa.com.br\tNULL\tGerente Executivo Jurídico, Compliance e Governança Corporativa\tNULL\tNULL\t472\n2020\tALISON RODRIGO DA SILVA PEREIRA\talison.pereira@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2056\n1369\tALLAN VITOR ALVES LIMA DE CARVALHO\tallan.carvalho@uisa.com.br\tNULL\tAnalista Fiscal PL\tNULL\tNULL\t93\n2044\tALTAIR DELLA JUSTINA\taltair.justina@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n3127\tALTAMIR JOSE SANTANA\taltamir.santana@uisa.com.br\tNULL\tOperador Geração de Vapor Líder\tNULL\tNULL\t1816\n3018\tAMANDA PINHEIRO RODRIGUES\tamanda.rodrigues@uisa.com.br\tNULL\tEspecialista de Segurança do Trabalho\tNULL\tNULL\t557\n1934\tANA PAULA BARBOSA FERREIRA RAMOS\tana.ramos@uisa.com.br\tNULL\tAnalista Administrativo\tNULL\tNULL\t78\n2131\tANDERSON SILVA SANTOS\tanderson.santos@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n2590\tANDRE OLIVEIRA DE AZEVEDO\tandre.oliveira@uisa.com.br\tNULL\tCoordenador de Operações Logísticas\tNULL\tNULL\t516\n1428\tANDRE ROGERIO SBARDELLINI CARDOSO\tandre.sbardellini@uisa.com.br\tNULL\tGerente Executivo de Recursos Humanos\tNULL\tNULL\t134\n1954\tANDREA MATOS LIMA ANDRADE\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n1750\tANDREIA COSTA TITO DA SILVA\tandreia.silva@uisa.com.br\tNULL\tAnalista Comercial JR\tNULL\tNULL\t121\n1697\tANDRESSA AGUILAR BARBOSA COSTA\tandressa.costa@uisa.com.br\tNULL\tEspecialista Planejamento e Custos\tNULL\tNULL\t1853\n1982\tANDRIELI APOLINARIO DA SILVA\tNULL\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n1987\tANISIO VITURINO DOS SANTOS FILHO\tanisio.santos@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n2115\tANTHONY KAIO DE ARAUJO ASSIS\tanthony.assis@uisa.com.br\tNULL\tAnalista PCM Automotivo JR\tNULL\tNULL\t3014\n2065\tANTONIO AILTON BORGES SORIANO\tantonio.soriano@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t3093\n2053\tANTONIO DA SILVA\tantonio.s@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n2129\tANTONIO MARCOS PEREIRA DA SILVA\tantonio.pereira@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n2291\tANTONIO MARQUES DE ARAUJO GOUVEIA\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n2028\tAPARECIDO ANTONIO SANTANA\taparecido.santana@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2052\n2066\tAPARECIDO DA COSTA FURTADO\taparecido.furtado@uisa.com.br\tNULL\tCoordenador Manutenção Automotiva\tNULL\tNULL\t3093\n1331\tARIANY DANTAS DUARTE PERALTA\tariany.duarte@uisa.com.br\tNULL\tAnalista Financeiro PL\tNULL\tNULL\t1698\n1433\tARILDES RODRIGUES BARBOSA\tNULL\tNULL\tOperador de Máquinas Líder\tNULL\tNULL\t2056\n2050\tARNORES BARBOSA PEREIRA\tarnores.pereira@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1336\tAdministração Industrial\t3130\tNULL\tDiretor Presidente\tNULL\tNULL\tNULL\n1695\tBARBARA FRANCA DIAS\tbarbara.dias@uisa.com.br\tNULL\tEspecialista Planejamento e Custos\tNULL\tNULL\t1853\n3055\tBERNARDO GUIMARAES MENDES\tbernardo.mendes@uisa.com.br\tNULL\tCoordenador de Comunicação Corporativa\tNULL\tNULL\t134\n1936\tBIANCA LORENA DA SILVA BRITO\tbianca.brito@uisa.com.br\tNULL\tAnalista Administrativo\tNULL\tNULL\t523\n3019\tBRENDO FERREIRA E SILVA\tbrendo.ferreira@uisa.com.br\tNULL\tAnalista de Segurança do Trabalho\tNULL\tNULL\t557\n1871\tBRUNA FRANCIELE MODENA\tbruna.modena@uisa.com.br\tNULL\tCoordenador Controle de Qualidade\tNULL\tNULL\t550\n2049\tBRUNO ALVES\tbruno.alves@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n2581\tBRUNO BERTELINI PAES\tbruno.paes@uisa.com.br\tNULL\tEspecialista de Trade Marketing\tNULL\tNULL\t121\n120\tBRUNO HENRIQUE NOGUEIRA\tbruno.nogueira@uisa.com.br\tNULL\tLíder de Fabricação de Açúcar\tNULL\tNULL\t117\n1817\tBRUNO RAFAEL BAZALIA DE ANDRADE\tbruno.andrade@uisa.com.br\tNULL\tSupervisor de Utilidades\tNULL\tNULL\t1816\n2863\tCAETANO HENRIQUE GROSSI\tcaetano.grossi@uisa.com.br\tNULL\tGerente de Sustentabilidade\tNULL\tNULL\t472\n2611\tCAMILA AZAMBUJA SOMMER DUTRA\tcamila.dutra@uisa.com.br\tNULL\tCoordenador Jurídico\tNULL\tNULL\t2572\n1285\tCAMILA LAYANE DA SILVA\tcamila.layane@uisa.com.br\tNULL\tAnalista Administração de Pessoal PL\tNULL\tNULL\t78\n1396\tCAMILO CIOL\tcamilo.ciol@uisa.com.br\tNULL\tEspecialista TI - SAP\tNULL\tNULL\t1705\n1815\tCARLOS ALBERTO DOS SANTOS CAMARGO\tcarlos.camargo@uisa.com.br\tNULL\tSupervisor de Manutenção Mecânica Industrial\tNULL\tNULL\t52\n72\tCARLOS ALEXANDRE ALVES\tcarlos.alexandre@uisa.com.br\tNULL\tEspecialista de Manutenção Industrial\tNULL\tNULL\t52\n3012\tCARLOS EDUARDO DE MESQUITA JUNIOR\tcarlos.mesquita@uisa.com.br\tNULL\tGerente Executivo Suprimentos\tNULL\tNULL\t472\n2011\tCARLOS HENRIQUE RODRIGUES SANTOS\tcarlos.henrique@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1955\tCARLOS ROBERTO DOS SANTOS\tEndereçoeletrônico@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t1428\n3011\tCAROLINE ANDRESSA MENDES SILVA\tcaroline.silva@uisa.com.br\tNULL\tCoordenador de Atração, Seleção e Desenvolvimento\tNULL\tNULL\t1428\n528\tCASSIO PALHANO FERREIRA\tcassio.palhano@uisa.com.br\tNULL\tGerente de Produção Industrial\tNULL\tNULL\t1599\n1926\tCICERO ALVES DOS SANTOS\tCicero.santos@uisa.com.br\tNULL\tOperador Empacotamento Açúcar Líder\tNULL\tNULL\t1754\n1964\tCICERO FIRMO DE MORAIS\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n2069\tCICERO ILARIO DOS SANTOS\tNULL\tNULL\tLíder Pesquisa e Desenvolvimento\tNULL\tNULL\t2068\n2058\tCICERO LEANDRO DA SILVA\tcicero.silva@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t2059\n2041\tCICERO MEDEIROS GOMES\tcicero.gomes@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n71\tCICERO ROMERO DA SILVA LIMA\tcicero.lima@uisa.com.br\tNULL\tEspecialista de Manutenção Industrial\tNULL\tNULL\t52\n556\tCINTIA MICHELLE LIMA DE BARROS IGNACIO\tcintia.ignacio@uisa.com.br\tNULL\tSupervisor de Controle Processos e Qualidade\tNULL\tNULL\t550\n2051\tCLAUBERSON ANDREOTTI SOARES\tclauberson.soares@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n2009\tCLAUDEANDERSON TENORIO DA SILVA\tclaudeanderson.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2051\n2993\tCLAUDEMIR DO CARMO\tclaudemir.carmo@uisa.com.br\tNULL\tCoordenador de Plantio\tNULL\tNULL\t3093\n1912\tCLAUDINEI RODRIGUES DOS SANTOS\tNULL\tNULL\tAnalista Laboratorio Agricola II\tNULL\tNULL\t1391\n1810\tCLAUDIO SENA DE OLIVEIRA\tclaudio.oliveira@uisa.com.br\tNULL\tMecânico de Manutenção Industrial Líder\tNULL\tNULL\t52\n1327\tCLAUDIONOR DA SILVA SOARES JUNIOR\tCLAUDIONOR.SOARES@UISA.COM.BR\tNULL\tAnalista Administração de Pessoal SR\tNULL\tNULL\t78\n2126\tCLEITON MENDES DE MAGALHAES\tcleiton.magalhaes@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n2268\tCLEITON RENATO ROMAO DOS SANTOS\tcleiton.santos@uisa.com.br\tNULL\tMecânico de Manutenção Automotiva Líder\tNULL\tNULL\t3093\n1867\tCLEOCIMAR FREIRE COSTA\tNULL\tNULL\tOperador Extração de Caldo Líder\tNULL\tNULL\t2898\n1965\tCLEONICE RODRIGUES GONCALVES\tEndereçoeletrônico@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t1428\n1923\tCLEOSMAR DA COSTA\tcleosmar.costa@uisa.com.br\tNULL\tAnalista Laboratorio Industrial Líder\tNULL\tNULL\t1871\n2000\tCLEUVIS NERES DE SOUZA\tcleuvis.souza@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2046\n3057\tCRISTIANE BATISTA DE SOUZA\tcristiane.souza@uisa.com.br\tNULL\tAnalista de Governança em Tecnologia PL\tNULL\tNULL\t1428\n1891\tCRISTIANE COSTA TAVARES\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n1883\tCRISTIANE DOS SANTOS MARTINS\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n1999\tCRISTIANO BARBOSA DE LIMA\tNULL\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2049\n2008\tCRISTIANO SABINO DE SOUZA\tcristiano.sabino@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2049\n1284\tDAIELLY DOMINGUES ARCANJO\tdaielly.domingues@uisa.com.br\tNULL\tAnalista Administração de Pessoal PL\tNULL\tNULL\t78\n73\tDAMARCO SOARES DA SILVA\tDAMARCO.SILVA@UISA.COM.BR\tNULL\tEspecialista de Manutenção Industrial\tNULL\tNULL\t130\n1900\tDANIEL DE OLIVEIRA SILVA\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n2035\tDANIEL DOS ANJOS\tdaniel.anjos@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1925\tDANIEL PAULINO DA SILVA\tdaniel.paulino@uisa.com.br\tNULL\tCaldeireiro Líder\tNULL\tNULL\t53\n3016\tDANIEL VIEIRA DOS SANTOS\tdaniel.santos@uisa.com.br\tNULL\tCoordenador de Logística Industrial\tNULL\tNULL\t528\n2566\tDANILO EUGENIO DOS SANTOS\tdanilo.santos@uisa.com.br\tNULL\tLíder de Qualidade Agrícola\tNULL\tNULL\t1856\n2569\tDANILO MIRANDOLA BERALDI\tdanilo.beraldi@uisa.com.br\tNULL\tCoordenador de Planejamento e Controle Industrial\tNULL\tNULL\t134\n1753\tDANILO SOARES DA SILVA\tDANILO.SOARES@UISA.COM.BR\tNULL\tCoordenador de Confiabilidade\tNULL\tNULL\t2119\n2133\tDAVI PADILHA DA LUZ\tdavi.luz@uisa.com.br\tNULL\tAnalista de Operações Agrícolas Líder\tNULL\tNULL\t1699\n1439\tDAVID DE SOUZA FONTAINHA\tdavid.fontainha@uisa.com.br\tNULL\tEspecialista de Automação\tNULL\tNULL\t134\n2596\tDAYANA THALIA GREGORIO ALVES\tdayana.gregorio@uisa.com.br\tNULL\tAnalista Tributário SR\tNULL\tNULL\t93\n1986\tDEILTON GONCALVES DA SILVA\tNULL\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n3056\tDELAIS SILVA SOUZA DE OLIVEIRA\tdelais.oliveira@uisa.com.br\tNULL\tAnalista de Comunicação e Eventos Corporativos JR\tNULL\tNULL\t3055\n1908\tDENNER LIMA VAQUEIRO DA COSTA\tNULL\tNULL\tAnalista Laboratorio Industrial III\tNULL\tNULL\t1871\n1993\tDEUSMAR FERREIRA DA CUNHA\tEndereçoeletrônico@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1701\tDEYVELON NARCIZO SILVA NUNES\tdeyvelon.nunes@uisa.com.br\tNULL\tCoordenador de Armazenamento e Carregamento Açúcar\tNULL\tNULL\t516\n1881\tDIEGO CAMARGO DE FREITAS\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n494\tDILAMAR JUNIOR BUSNELLO\tdilamar.busnello@uisa.com.br\tNULL\tAnalista de Segurança da Informação JR\tNULL\tNULL\t3010\n93\tDILSON FERREIRA DOS SANTOS\tdilson.ferreira@uisa.com.br\tNULL\tGerente de Tributos e Operações Fiscais\tNULL\tNULL\t131\n2302\tDISAEL DA SILVA RONDON\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n1953\tDIVO ALVES DE SANTANA\tdivo.santana@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n2988\tDOUGLAS ARVANI MACEDO\tdouglas.macedo@uisa.com.br\tNULL\tAnalista de Sustentabilidade SR\tNULL\tNULL\t2900\n3129\tDOUGLAS NASCIMENTO DE BARROS\tNULL\tNULL\tOperador Geração de Vapor Líder\tNULL\tNULL\t1816\n1763\tDOUGLAS SANTOS DA SILVA\tdouglas.silva@uisa.com.br\tNULL\tEspecialista de Utilidades\tNULL\tNULL\t1816\n1434\tEBSON MARTINS DA SILVA\tNULL\tNULL\tOperador de Máquinas Líder\tNULL\tNULL\t2056\n2135\tEDE WILSON OGUSUKU\tede.ogusuku@uisa.com.br\tNULL\tGerente de Automação\tNULL\tNULL\t134\n2578\tEDELAINE DA SILVA ASSUNCAO\tedelaine.assuncao@uisa.com.br\tNULL\tAnalista de Atração e Seleção PL\tNULL\tNULL\t3011\n2841\tEDER AUGUSTO MORISCO\teder.morisco@uisa.com.br\tNULL\tTécnico de Instrumentação Líder\tNULL\tNULL\t1855\n1699\tEDEVAL BERTOLDO\tedeval.bertoldo@uisa.com.br\tNULL\tGerente de Planejamento de Produção Agroindustrial\tNULL\tNULL\t1599\n1973\tEDEVALDO DA SILVA ARCANJO\tedevaldo.arcanjo@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t1997\n2036\tEDILSON MARTINS FERREIRA\tedilson.ferreira@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2052\n2062\tEDINALDO LIRA DA LUZ\tednaldo.luz@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t2061\n2015\tEDINEY TEIXEIRA DE SOUZA\tediney.souza@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1436\tEDIVALDO DUARTE DA SILVA\tEndereçoeletrônico@uisa.com.br\tNULL\tOperador de Máquinas Líder\tNULL\tNULL\t3093\n1996\tEDIVALDO RODRIGUES DA SILVA\tedivaldo.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n2755\tEDNALDO SILVA LIMA\tNULL\tNULL\tOperador Fabricação de Etanol Líder\tNULL\tNULL\t1758\n2016\tEDSON DE QUEIROZ\tedson.queiroz@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2052\n1916\tEDUARDO DA SILVA BANDIERA\tNULL\tNULL\tAnalista Controle de Qualidade\tNULL\tNULL\t1871\n1594\tEDUARDO VASCONCELOS GERSCOVICH\teduardo.gerscovich@uisa.com.br\tNULL\tGerente de Estruturação Financeira e RI\tNULL\tNULL\t132\n520\tEDVALDO DOS SANTOS CAMPOS\tedvaldo.campos@uisa.com.br\tNULL\tAnalista Contábil SR\tNULL\tNULL\t1698\n2052\tEDVALDO FERREIRA DA SILVA\tedvaldo.silva@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n3130\tEDVALDO MAYCON ZANETI DE GOUVEIA\tedvaldo.gouveia@uisa.com.br\tNULL\tCoordenador Agricultura de Precisão/Geoprocessamento\tNULL\tNULL\t1699\n1399\tEDVALDO NUNES TAVARES DE ALMEIDA\tedvaldo.tavares@uisa.com.br\tNULL\tAnalista de Projetos PL\tNULL\tNULL\t2571\n115\tEDVAN PEREIRA ALMEIDA\tedvan.almeida@uisa.com.br\tNULL\tLíder de Fabricação de Açúcar\tNULL\tNULL\t117\n2070\tEGIDIO VENTURIN\tegidio.venturin@uisa.com.br\tNULL\tCoordenador de Pesquisa e Desenvolvimento\tNULL\tNULL\t1699\n1391\tELCYANNA BATISTA FEU\telcyana.feu@uisa.com.br\tNULL\tCoordenador Produção Agentes Biológicos\tNULL\tNULL\t1699\n2293\tELENILDO DOS SANTOS LOPES\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t2266\n2299\tELIABES DA SILVA SANTOS\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n77\tELIANDRA CRISTINA ALCANTARA DUARTE\teliandra.duarte@uisa.com.br\tNULL\tAnalista de Contratos PL\tNULL\tNULL\t2611\n1878\tELIANE DA SILVA DOS SANTOS\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n549\tELIAS RODRIGUES LEAL\telias.leal@uisa.com.br\tNULL\tSupervisor de Manutenção Civil\tNULL\tNULL\t2119\n1894\tELIEL RODRIGUES DO NASCIMENTO\teliel.nascimentos@uisa.com.br\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n1905\tELISANDRO DA COSTA\telisandrocosta@hotmail.com\tNULL\tAnalista Laboratorio Industrial III\tNULL\tNULL\t1871\n1899\tELISMAR ARANTES COELHO DA SILVA\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n1748\tELIZABETE MARIA DE LIMA\telizabete.lima@uisa.com.br\tNULL\tAnalista de Logística PL\tNULL\tNULL\t2590\n2987\tELIZEU ALVES DE OLIVEIRA\telizeu.oliveira@uisa.com.br\tNULL\tAnalista de Sustentabilidade SR\tNULL\tNULL\t2900\n44\tELTON BENTO DE LIMA\telton.lima@uisa.com.br\tNULL\tCoordenador de Caldeiraria\tNULL\tNULL\t2119\n2079\tELVES PEDRO DOS SANTOS\telves.santos@uisa.com.br\tNULL\tLíder de Manutenção Civil\tNULL\tNULL\t1390\n2018\tELVIS BRUNO DA SILVA PEREIRA\telvis.pereira@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2056\n1813\tEMERSON CANDIDO DA SILVA\temerson.silva@uisa.com.br\tNULL\tMecânico de Manutenção Industrial Líder\tNULL\tNULL\t52\n2127\tEMERSON MEDEIROS GOMES\temerson.gomes@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n1390\tEMIDIO LUIZ DE CARVALHO NETO\temidio.neto@uisa.com.br\tNULL\tCoordenador de Manutenção Civil\tNULL\tNULL\t2119\n557\tERICA CRUZ DA SILVA\terica.silva@uisa.com.br\tNULL\tCoordenador Segurança Trabalho\tNULL\tNULL\t1600\n3017\tERIKA RAQUEL COSTA PORTO\terika.porto@uisa.com.br\tNULL\tEspecialista de Segurança do Trabalho\tNULL\tNULL\t557\n2013\tERIVALDO SALUSTIANO DA SILVA\terivaldo.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n83\tERIVELTON DIONNY GOMES LIMA DA SILVA\terivelton.silva@uisa.com.br\tNULL\tCoordenador de Colheita Mecanizada e Transporte\tNULL\tNULL\t3093\n2003\tESTEFANIO DE QUEIROZ SILVA\testefanio.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2046\n2076\tEUKENIA DURAN KESTRING CONRADO\teukenia.conrado@uisa.com.br\tNULL\tCoordenador de S&OP\tNULL\tNULL\t3012\n2266\tEVALDO CONRRADO LEMES\tevaldo.lemes@uisa.com.br\tNULL\tMecânico de Manutenção Automotiva Líder\tNULL\tNULL\t3093\n2577\tEVELYN LORRAINE MACEDO DA SILVA\tevelyn.silva@uisa.com.br\tNULL\tAnalista de Atração e Seleção JR\tNULL\tNULL\t3011\n1295\tEVERALDO DE ARAUJO JUNIOR\teveraldo.junior@uisa.com.br\tNULL\tAnalista de Planejamento Controle Agrícola SR\tNULL\tNULL\t1699\n49\tEVERTON DA ROCHA OLIVEIRA\teverton.oliveira@uisa.com.br\tNULL\tEspecialista de Projetos\tNULL\tNULL\t2571\n2078\tEVERTON PEDRO DOS SANTOS\teverton.santos@uisa.com.br\tNULL\tLíder de Manutenção Civil\tNULL\tNULL\t1390\n3128\tEVILASIO GALLEGO NETTO\tevilasio.netto@uisa.com.br\tNULL\tOperador Geração de Vapor Líder\tNULL\tNULL\t1816\n78\tFABIO DE SOUZA LEITE\tfabio.leite@uisa.com.br\tNULL\tCoordenador Estrutura, Remuneração e Administração de Pessoal\tNULL\tNULL\t1428\n1920\tFABIO FERREIRA DA SILVA\tfabio.silva@uisa.com.br\tNULL\tAnalista Laboratorio Industrial Líder\tNULL\tNULL\t1871\n3015\tFABIO JUNIOR MOREIRA DE LIMA\tfabio.lima@uisa.com.br\tNULL\tEspecialista de Confiabilidade\tNULL\tNULL\t1753\n131\tFABIO LUIZ DAL POSSO\tfabio.posso@uisa.com.br\tNULL\tDiretor de Controladoria\tNULL\tNULL\t472\n84\tFABIO LUIZ DAL POSSO\tfabio.posso@uisa.com.br\tNULL\tGerente Executivo de Controladoria\tNULL\tNULL\t131\n2270\tFABIO SILVA DE ARAUJO\tfabio.araujo@uisa.com.br\tNULL\tAnalista Técnico de Manutenção Automotiva II\tNULL\tNULL\t3014\n45\tFAUSTO HENRIQUE RONCHETE DA SILVA\tfausto.silva@uisa.com.br\tNULL\tCoordenador de Estruturação Financeira e RI\tNULL\tNULL\t1594\n1427\tFELIPE HENRIQUE DA SILVA\tfelipe.henrique@uisa.com.br\tNULL\tSupervisor de PCM\tNULL\tNULL\t3014\n1853\tFERNANDO PINTO\tfernando.fpinto@uisa.com.br\tNULL\tCoordenador de Planejamento e Custos\tNULL\tNULL\t131\n522\tFERNANDO RAPHAEL MODESTO DE OLIVEIRA\tfernando.modesto@uisa.com.br\tNULL\tGerente de Filial\tNULL\tNULL\t471\n1966\tFERNANDO TRIBUTINO\tfernando.tributino@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t3093\n60\tFLAVIO MARCIO LOPES FERREIRA\tflavio.ferreira@uisa.com.br\tNULL\tCoordenador de Tratos Culturais\tNULL\tNULL\t3093\n2072\tFRANCIELI RAIANY DA SILVA FONSECA\tfrancieli.fonseca@uisa.com.br\tNULL\tAnalista de Pesquisa e Desenvolvimento\tNULL\tNULL\t2068\n1325\tFRANCISCA GOMES DA LUZ\tfrancisca.luz@uisa.com.br\tNULL\tAnalista Administração de Pessoal JR\tNULL\tNULL\t78\n1700\tFRANCISCO CLODOALDO CONCEICAO DA SILVA\tfrancisco.conceicao@uisa.com.br\tNULL\tCoordenador de Armazenamento e Carregamento Etanol\tNULL\tNULL\t550\n1293\tFRANCISCO DE SOUZA DUARTE\tfrancisco.duarte@uisa.com.br\tNULL\tAnalista de Planejamento Controle Agrícola PL\tNULL\tNULL\t1699\n1864\tFRANCISCO GASPAR FERREIRA\tNULL\tNULL\tOperador Extração de Caldo Líder\tNULL\tNULL\t2898\n31\tFernando Henrique\tNULL\tGerente de Operações\tNULL\tNULL\tNULL\tNULL\n30\tFernando Pinto\tNULL\tCoordenador de Planejamento e Custos\tNULL\tNULL\tNULL\tNULL\n2292\tGABRIEL DA ROCHA LIRA\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n2592\tGABRIELLA ALINE SAMPAIO DA SILVA\tgabriella.silva@uisa.com.br\tNULL\tAnalista Tributário JR\tNULL\tNULL\t93\n2575\tGERALDO JOSE DA SILVA\tgeraldo.silva@uisa.com.br\tNULL\tEspecialista Agricultura e Precisão/Geoprocessamento\tNULL\tNULL\t1699\n1423\tGESICA AVELINO CAPISTRANO\tgesica.capistrano@uisa.com.br\tNULL\tAnalista de Logística JR\tNULL\tNULL\t2590\n1983\tGEUSILEI RODRIGUES\tgeusilei.rodrigues@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t2034\n2017\tGIDEAO PRAXEDES DOS SANTOS DE OLIVEIRA\tgideao.oliveira@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2051\n2029\tGILBERTO MARQUES DA SILVA\tgilberto.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1819\tGILBERTO MENEGUELLI MOREIRA\tgilberto.moreira@uisa.com.br\tNULL\tSupervisor de Produção\tNULL\tNULL\t117\n1880\tGILCSON RUAN DOS SANTOS BORGES\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n1918\tGILMAR ALVES\tgilmar.alves@uisa.com.br\tNULL\tAnalista Laboratorio Industrial Líder\tNULL\tNULL\t1871\n82\tGILMAR BENO FERREIRA\tgilmar.ferreira@uisa.com.br\tNULL\tEspecialista de Manutenção Automotiva\tNULL\tNULL\t3093\n1596\tGILMARA MENDES CARVALHO VIEIRA\tgilmara.carvalho@uisa.com.br\tNULL\tEspecialista Suprimentos\tNULL\tNULL\t70\n1924\tGILVAN ALVES DE ANDRADE\tgilvan.andrade@uisa.com.br\tNULL\tCaldeireiro Líder\tNULL\tNULL\t3093\n53\tGIOVANA TENDOLO DE ALMEIDA\tgiovana.almeida@uisa.com.br\tNULL\tCoordenador de Manutenção Industrial\tNULL\tNULL\t2119\n1938\tGIOVANE ROCHA GUEDES\tgiovane.guedes@uisa.com.br\tNULL\tLíder Almoxarifado\tNULL\tNULL\t1428\n1889\tGISELE DA SILVA TEIXEIRA DE LIMA\tgisele.silva@uisa.com.br\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n2136\tGISELE FERNANDES ARRUDA DE LIMA\tgisele.lima@uisa.com.br\tNULL\tAnalista de Comunicação Interna PL\tNULL\tNULL\t3055\n1332\tGIULIAN DA SILVA JESUS\tgiulian.jesus@uisa.com.br\tNULL\tAnalista Financeiro SR\tNULL\tNULL\t1698\n2630\tGIVANILDO DE SOUZA LAURENTINO\tNULL\tNULL\tOperador Tratamento de Água Líder\tNULL\tNULL\t1816\n2567\tGLEIDSON ITALO DANTAS DOS SANTOS\tgleidson.santos@uisa.com.br\tNULL\tLíder de Qualidade Agrícola\tNULL\tNULL\t2075\n519\tGLICIA OLIVEIRA DIAS\tglicia.dias@uisa.com.br\tNULL\tAnalista Contábil SR\tNULL\tNULL\t1698\n1907\tGUDIOSSON ROMAO DA SILVA\t0876364@uisa.com.br\tNULL\tAnalista Laboratorio Industrial III\tNULL\tNULL\t1871\n52\tGUILHERME DE PAIVA E SILVA\tguilherme.paiva@uisa.com.br\tNULL\tCoordenador de Manutenção Industrial\tNULL\tNULL\t2119\n2080\tGUSTAVO BARBOSA PEREIRA\tgustavo.pereira@uisa.com.br\tNULL\tEspecialista de Infraestrutura\tNULL\tNULL\t385\n1980\tGUSTAVO DOS SANTOS OLIVEIRA\tgustavo.santos@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t2055\n121\tGUSTAVO FELIPE SENA LEVENHAGEM\tgustavo.levenhagem@uisa.com.br\tNULL\tGerente Executivo Comercial\tNULL\tNULL\t471\n2057\tGUSTAVO SANTIAGO DE MELO\tgustavo.melo@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1969\tHERNANDES MARTINHO DA SILVA\thernandes.silva@uisa.com.br\tNULL\tSupervisor de Controle Agrícola e Fornecedores\tNULL\tNULL\t2075\n2631\tHIAGO DOS SANTOS COSTA\tNULL\tNULL\tOperador Tratamento de Água Líder\tNULL\tNULL\t1816\n1745\tIASNAIA DA SILVA\tiasnaia.silva@uisa.com.br\tNULL\tEspecialista de Planejamento Agroindustrial\tNULL\tNULL\t1699\n1705\tIGOR ARAUJO GARCIA\tigor.garcia@uisa.com.br\tNULL\tCoordenador de Sistemas\tNULL\tNULL\t385\n1906\tIGOR CESAR SALES BEZERRA\t0871788@uisa.com.br\tNULL\tAnalista Laboratorio Industrial III\tNULL\tNULL\t1871\n2122\tINACIO ELIAS DOS SANTOS\tinacio.elias@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n2121\tINALDO ESTEVAM DOS SANTOS\tinaldo.santos@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n2901\tINGRID MURIELLY WEISHEIMER\tingrid.weisheimer@uisa.com.br\tNULL\tAnalista de Sustentabilidade JR\tNULL\tNULL\t2900\n1956\tIRACEMA VIEIRA DA SILVA\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n2059\tISMAEL DE JESUS ANDRADE\tismael.andrade@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t3093\n48\tISRAEL CARDOSO DOS SANTOS\tisrael.santos@uisa.com.br\tNULL\tLíder de Serviços Gerais\tNULL\tNULL\t1390\n3095\tITAMAR SOARES DE LIMA\titamar.lima@uisa.com.br\tNULL\tTécnico de Cogeração de Energia Líder\tNULL\tNULL\t130\n2038\tIVANILDO LIMEIRA DA SILVA\tivanildo.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1957\tIZAC DOS SANTOS CARVALHO JUNIOR\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n2298\tJACKSON JOSE CARDOSO DA SILVA\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t2066\n2077\tJACYR DA SILVA COSTA FILHO\tNULL\tNULL\tPresidente do Conselho\tNULL\tNULL\t472\n1989\tJADSON FAUSTINO DA SILVA\tjadson.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n2580\tJAIANI GODRIM DOS SANTOS\tjaiani.santos@uisa.com.br\tNULL\tAnalista de Desenvolvimento Humano PL\tNULL\tNULL\t3011\n2006\tJAILSON GOMES DE ARAUJO\tjailson.araujo@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n118\tJAILTON SANTOS SILVA\tjailton.silva@uisa.com.br\tNULL\tLíder de Fabricação de Açúcar\tNULL\tNULL\t117\n1915\tJAKELINE DIONIZIO FERREIRA\tjakeline.ferreira@uisa.com.br\tNULL\tAnalista Controle de Qualidade\tNULL\tNULL\t1871\n2022\tJAMILDO GOMES DA SILVA\tjamildo.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1820\tJAMILSON DA CRUZ SILVA\tjamilson.silva@uisa.com.br\tNULL\tSupervisor de Produção\tNULL\tNULL\t1754\n187\tJANDERSON MORENO\tjanderson.moreno@uisa.com.br\tNULL\tTécnico Manutenção Elétrica Industrial Líder\tNULL\tNULL\t130\n1599\tJARI DE SOUZA\tjari.souza@uisa.com.br\tNULL\tDiretor Agroindustrial\tNULL\tNULL\t472\n523\tJEAN CARLI DA SILVA\tjean.silva@uisa.com.br\tNULL\tGerente de Filial\tNULL\tNULL\t471\n1922\tJEFFERSON ANDREOTTI SOARES\tjefferson.soares@uisa.com.br\tNULL\tAnalista Laboratorio Industrial Líder\tNULL\tNULL\t1871\n1595\tJEFFERSON DOUGLAS DA SILVA\tjefferson.douglas@uisa.com.br\tNULL\tAnalista de Estruturação Financeira e RI SR\tNULL\tNULL\t45\n2045\tJEFFERSON ROBERTO KAGUEYAMA\tjefferson.roberto@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n2071\tJENNY QUESIA RODRIGUES DE ALENCAR\tjenny.alencar@uisa.com.br\tNULL\tAnalista de Pesquisa e Desenvolvimento\tNULL\tNULL\t1699\n2067\tJESSE SOUSA FERREIRA\tjesse.ferreira@uisa.com.br\tNULL\tCoordenador Manutenção Automotiva\tNULL\tNULL\t3093\n1893\tJESSIKA CONCEICAO CAMPOS\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n2629\tJESSIVALDO ARAUJO ALVES\tjessivaldo.alves@uisa.com.br\tNULL\tOperador Tratamento de Água Líder\tNULL\tNULL\t1816\n2007\tJHON LORRAN VERAS VIANA\tjhon.viana@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2046\n1904\tJOAES PEREIRA DOS SANTOS\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n3093\tJOAO BOSCO LEMOS JUNIOR\tjoao.lemos@uisa.com.br\tNULL\tGerente Executivo Agrícola\tNULL\tNULL\t1599\n1869\tJOAO FELIX\tjoao.felix@uisa.com.br\tNULL\tComboista Líder\tNULL\tNULL\t3093\n1861\tJOAO LAURENTINO\tjoao.laurentino@uisa.com.br\tNULL\tOperador Extração de Caldo Líder\tNULL\tNULL\t2898\n186\tJOAO PEDRO DO NASCIMENTO\tjoao.nascimento@uisa.com.br\tNULL\tTécnico Manutenção Elétrica Industrial Líder\tNULL\tNULL\t130\n1976\tJOAO VITOR MENDES MAGALHAES\tjoao.magalhaes@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t2032\n2040\tJOAQUIM LUIZ FERREIRA\tjoaquim.ferreira@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1968\tJOILSON DJALMA DA SILVA\tjoilson.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n1930\tJONAS CERQUEIRA COSTA\tjonas.costa@uisa.com.br\tNULL\tOperador Empacotamento Açúcar Líder\tNULL\tNULL\t1754\n1440\tJONAS DA SILVA FONSECA\tjonas.fonseca@uisa.com.br\tNULL\tAnalista de Infraestrutura PL\tNULL\tNULL\t385\n2753\tJOSE ALTINO MOTA\tjose.mota@uisa.com.br\tNULL\tOperador Fabricação de Etanol Líder\tNULL\tNULL\t1758\n1981\tJOSE ANDERSON MARTINS DE OLIVEIRA\tjose.oliveira@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n1988\tJOSE APARECIDO BATISTA DE ANDRADE\tNULL\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t2055\n2754\tJOSE APARECIDO BORGES ARCANJO\tjose.arcanjo@uisa.com.br\tNULL\tOperador Fabricação de Etanol Líder\tNULL\tNULL\t1758\n1290\tJOSE APARECIDO MACEDO\tjose.macedo@uisa.com.br\tNULL\tAnalista de Planejamento Controle Agrícola JR\tNULL\tNULL\t1699\n119\tJOSE CARDOSO DE VAZ JUNIOR\tjose-junior1984@hotmail.com\tNULL\tLíder de Fabricação de Açúcar\tNULL\tNULL\t117\n1960\tJOSE CARLOS DOS SANTOS SILVA\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n1985\tJOSE CARLOS ROBERTO DE SOUZA\tjose.carlos@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n1863\tJOSE DE RIBAMAR CHAVIER DA SILVA\tNULL\tNULL\tOperador Extração de Caldo Líder\tNULL\tNULL\t2898\n2002\tJOSE EDUARDO PAULINO GOMES\tjose.gomes@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n2096\tJOSE ELIAS DA ROCHA SOUZA\tjose.rocha@uisa.com.br\tNULL\tAnalista PCM Automotivo PL\tNULL\tNULL\t3014\n2828\tJOSE FELIX JUNIOR\tjose.felixjr@uisa.com.br\tNULL\tTécnico de Manutenção Elétrica Externa Líder\tNULL\tNULL\t3093\n472\tJOSE FERNANDO MAZUCA FILHO\tjose.mazuca@uisa.com.br\tNULL\tDiretor Presidente\tNULL\tNULL\tNULL\n2001\tJOSE FRANCISCO FERREIRA DOS SANTOS\tjose.ferreira@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2053\n1426\tJOSE GERALDO ALCANTARA DE ALMEIDA\tjose.almeida@uisa.com.br\tNULL\tSupervisor de PCM\tNULL\tNULL\t2119\n2064\tJOSE GOMES CAMARGO\tjose.camargo@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t2061\n2033\tJOSE HAROLDO DA SILVA\tjose.haroldo@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2055\n2132\tJOSE JAIR DA SILVA\tjose.jair@uisa.com.br\tNULL\tAnalista de Operações Agrícolas Líder\tNULL\tNULL\t1699\n2101\tJOSE LUIZ QUEIROZ DA COSTA\tjose.costa@uisa.com.br\tNULL\tCoordenador de Controle Interno e Compliance\tNULL\tNULL\t2572\n1963\tJOSE MARCOS PEREIRA DE SOUZA\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n1601\tJOSE OTAVIO FARIAS FLORES\tjose.flores@uisa.com.br\tNULL\tAnalista de Planejamento e Custos JR\tNULL\tNULL\t1852\n2060\tJOSE RAMON BARBOZA DA SILVA\tjose.barbosa@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t2061\n2099\tJOSE RICARDO DA SILVA\tjose.ricardo@uisa.com.br\tNULL\tAnalista PCM Automotivo PL\tNULL\tNULL\t3014\n1818\tJOSE ROBERTO DE SOUZA\tjose.rsouza@uisa.com.br\tNULL\tSupervisor de Produção\tNULL\tNULL\t1754\n2752\tJOSE RODRIGUES DA SILVA\tjose.rsilva@uisa.com.br\tNULL\tOperador Fabricação de Etanol Líder\tNULL\tNULL\t1758\n1967\tJOSE SIVALDO DA SILVA\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n2134\tJOSE VALDE DE ARAUJO\tjose.araujo@uisa.com.br\tNULL\tAnalista de Operações Agrícolas Líder\tNULL\tNULL\t1699\n2042\tJOSE VALDIR DA SILVA\tjose.valdir@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1868\tJOSE VICTOR TOMAZ DO CARMO\tjose.carmo@uisa.com.br\tNULL\tEspecialista Agrícola\tNULL\tNULL\t1371\n3014\tJOSE VITAL DE ALMEIDA\tjose.vital@uisa.com.br\tNULL\tCoordenador Planej. Contr. Manut. Agroindustrial\tNULL\tNULL\t3093\n1895\tJOSE WEDSON ROBERTO DOS SANTOS\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n1755\tJOSE WHALIRIS FLORENCIO RODRIGUES\tjose.rodrigues@uisa.com.br\tNULL\tCoordenador de Produção\tNULL\tNULL\t528\n1397\tJOSEMEIRE AVELINO CAPISTRANO\tjosemeire.capistrano@uisa.com.br\tNULL\tEspecialista TI - SAP\tNULL\tNULL\t1705\n2665\tJOSIEL JOSE DA SILVA\tNULL\tNULL\tOperador Trat. Caldo/Fábrica de Açúcar Líder\tNULL\tNULL\t1819\n1865\tJOSINALDO DA SILVA\tNULL\tNULL\tOperador Extração de Caldo Líder\tNULL\tNULL\t2898\n1994\tJOSINALDO MARTINS DE LIMA\tjosinaldo.lima@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2046\n2027\tJOSIVALDO DINIZ DOS SANTOS\tjosivaldo.santos@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2051\n2614\tJOVENILDO QUIRINO DA SILVA\tjovenildo.silva@uisa.com.br\tNULL\tBorracheiro Líder\tNULL\tNULL\t3093\n1328\tJULIA SILVA DE OLIVEIRA\tjulia.oliveira@uisa.com.br\tNULL\tAnalista Administração de Pessoal SR\tNULL\tNULL\t78\n1597\tJULIANO DA SILVA CONCEICAO\tjuliano.silva@uisa.com.br\tNULL\tEspecialista Suprimentos\tNULL\tNULL\t2952\n1886\tJULIANO JOSE DE ALMEIDA\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n2667\tJULIO CESAR RIBEIRO LEITE\tNULL\tNULL\tOperador Trat. Caldo/Fábrica de Açúcar Líder\tNULL\tNULL\t117\n2591\tKAICK LOPES LIMA\tkaick.lima@uisa.com.br\tNULL\tAnalista Tributário JR\tNULL\tNULL\t93\n1292\tKAREN LIMA VAQUEIRO DA COSTA\tkaren.vaqueiro@uisa.com.br\tNULL\tAnalista de Planejamento Controle Agrícola JR\tNULL\tNULL\t1699\n2100\tKARINA DA SILVA GONCALVES\tkarina.goncalves@uisa.com.br\tNULL\tEspecialista Contábil\tNULL\tNULL\t1698\n1422\tLANAN TANNAN DA SILVA ALMEIDA\tlanan.tannan@uisa.com.br\tNULL\tAnalista de Faturamento JR\tNULL\tNULL\t93\n3090\tLARISSA SOARES SOUSA PINHEIRO\tlarissa.sousa@uisa.com.br\tNULL\tAnalista Administrativo\tNULL\tNULL\t3088\n2074\tLEANDERSON DA SILVA TAVARES DE ALMEIDA\tleanderson.almeida@uisa.com.br\tNULL\tAnalista de Processos Industriais JR\tNULL\tNULL\t117\n1371\tLEANDRO MOREIRA DA MOTTA\tleandro.motta@uisa.com.br\tNULL\tCoordenador de Planejamento e Controle Agrícola\tNULL\tNULL\t2075\n1824\tLEIA CARDOSO FERNANDES\tleia.silva@uisa.com.br\tNULL\tEspecialista de Impostos Indiretos\tNULL\tNULL\t93\n521\tLEIDIANY FERNANDES DA SILVA\tleidiany.silva@uisa.com.br\tNULL\tAnalista Contábil SR\tNULL\tNULL\t1698\n2903\tLEOMAR MARIA ZUZA DOS SANTOS\tleomar.zuza@uisa.com.br\tNULL\tAnalista de Sustentabilidade PL\tNULL\tNULL\t2900\n1855\tLEONARDO HERMOGENES DOS SANTOS\tleonardo.santos@uisa.com.br\tNULL\tSupervisor de Instrumentação\tNULL\tNULL\t2135\n2904\tLEONARDO RAMINELLI VAL TORKAR\tleonardo.torkar@uisa.com.br\tNULL\tEspecialista de Planejamento Estratégico e Novos Negócios\tNULL\tNULL\t132\n58\tLEONE SANTOS FIGUEREDO\tleone.figueredo@uisa.com.br\tNULL\tAnalista de Controles Internos PL\tNULL\tNULL\t2101\n1939\tLEONIZARD DE ARAUJO MORAES\tleonizard.moraes@uisa.com.br\tNULL\tLíder Almoxarifado\tNULL\tNULL\t3012\n1394\tLIDINEIA SANTANA SANTOS\tlidineia.santos@uisa.com.br\tNULL\tSupervisor Armazenamento e Carregamento de Açúcar\tNULL\tNULL\t1701\n2570\tLILIANE ADRIANA HARTWIG\tadriana.hartwig@uisa.com.br\tNULL\tAnalista de Conteúdo ESG\tNULL\tNULL\t2900\n1696\tLINDJALMA DOS SANTOS\tlindjalma.santos@uisa.com.br\tNULL\tEspecialista Planejamento e Custos\tNULL\tNULL\t1852\n1370\tLIVIA MOURA DA SILVA\tlivia.silva@uisa.com.br\tNULL\tAnalista Comercial PL\tNULL\tNULL\t121\n1890\tLORAINE GABRIELI DA SILVA\tloraine.silva@uisa.com.br\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n1933\tLUANA REGINA DA SILVA\tluana.silva@uisa.com.br\tNULL\tAnalista Administrativo\tNULL\tNULL\t133\n570\tLUCAS ALVES DA SILVA\tlucas.alves@uisa.com.br\tNULL\tAnalista de Suprimentos SR\tNULL\tNULL\t2952\n2005\tLUCAS ARANTES FEITOZA\tlucas.feitoza@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2046\n1870\tLUCAS DIAS BORBOREMA\tlucas.borborema@uisa.com.br\tNULL\tComboista Líder\tNULL\tNULL\t1428\n385\tLUCAS DOS PASSOS SILVA\tlucas.silva@uisa.com.br\tNULL\tGerente Tecnologia da Informação\tNULL\tNULL\t134\n1984\tLUCAS HENRIQUE DA SILVA\tlucas.henrique@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n517\tLUCAS PEREIRA DOURADO BASTOS\tlucas.bastos@uisa.com.br\tNULL\tAnalista de Suprimentos JR\tNULL\tNULL\t3012\n2068\tLUCIA FERREIRA REZENDE\tlucia.rezende@uisa.com.br\tNULL\tSupervisor de Pesquisa e Desenvolvimento\tNULL\tNULL\t1699\n1852\tLUCIANEI ZANCHETTIN\tlucianei.zanchettin@uisa.com.br\tNULL\tCoordenador de Planejamento e Custos\tNULL\tNULL\t131\n1437\tLUCIANO DOS SANTOS SILVA\tNULL\tNULL\tOperador de Máquinas Líder\tNULL\tNULL\t3093\n1862\tLUCIANO LEMES DE MORAIS\tNULL\tNULL\tOperador Extração de Caldo Líder\tNULL\tNULL\t2898\n1751\tLUCILEIDE OLIVEIRA SANTOS\tlucileide.santos@uisa.com.br\tNULL\tEspecialista Comercial\tNULL\tNULL\t121\n1932\tLUCIMARIO SANTOS FIGUEREDO\tlucimario.figueredo@uisa.com.br\tNULL\tAnalista Administrativo\tNULL\tNULL\t133\n1759\tLUDIO FRANCISCO DE SOUZA\tludio.souza@uisa.com.br\tNULL\tEspecialista de Produção\tNULL\tNULL\t528\n46\tLUIS GUSTAVO BARBOSA DA SILVA\tluis.silva@uisa.com.br\tNULL\tEspecialista em Projetos Mecânicos\tNULL\tNULL\t2571\n1758\tLUIS MAURO SANTOS SILVA\tluis.mauro@uisa.com.br\tNULL\tEspecialista de Produção\tNULL\tNULL\t528\n1940\tLUIZ ALBERTO PEREZ MONTERO\tluiz.monteiro@uisa.com.br\tNULL\tLíder Almoxarifado\tNULL\tNULL\t3012\n2094\tLUIZ ALVES DOS SANTOS\tluiz.santos@uisa.com.br\tNULL\tSupervisor de Manutenção Elétrica Externa\tNULL\tNULL\t3093\n2900\tLUIZ CARLOS MACHADO FILHO\tluiz.carlos@uisa.com.br\tNULL\tCoordenador de Sustentabilidade\tNULL\tNULL\t2863\n2031\tLUIZ FERNANDO GALDINO DA SILVA\tluiz.galdino@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n2571\tLUIZ GUILHERME FAUSTINO DE MELO\tluiz.melo@uisa.com.br\tNULL\tCoordenador de Engenharia e Projetos\tNULL\tNULL\t2119\n117\tMAILSON DA CRUZ SILVA\tmailson.silva@uisa.com.br\tNULL\tLíder de Fabricação de Açúcar\tNULL\tNULL\t528\n2024\tMANOEL AUGUSTO DA SILVA\tmanoel.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1435\tMANOEL FRANCISCO DA SILVA\tNULL\tNULL\tOperador de Máquinas Líder\tNULL\tNULL\t2056\n1992\tMARCELO ALVES PEREIRA\tmarcelo.pereira@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n3088\tMARCELO DE BARROS CAMARGO\tmarcelo.debarros@uisa.com.br\tNULL\tGerente de Filial\tNULL\tNULL\t471\n2026\tMARCELO GOMES DE OLIVEIRA\tmarcelo.oliveira@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n43\tMARCIA EDWVIGES\tmarcia.edwviges@uisa.com.br\tNULL\tAnalista Laboratorio Agricola Líder\tNULL\tNULL\t1391\n2579\tMARCIA SILVA DE MELO\tmarcia.melo@uisa.com.br\tNULL\tAnalista de Desenvolvimento Humano JR\tNULL\tNULL\t3011\n2012\tMARCIEL BATISTA DE MOURA\tmarciel.moura@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2050\n1761\tMARCILIO ANDRE ALVES PEREIRA\tmarciliocelo@gmail.com\tNULL\tEspecialista de Produção\tNULL\tNULL\t117\n2898\tMARCIO ALEX SAIA\tmarcio.saia@uisa.com.br\tNULL\tCoordenador de Extração\tNULL\tNULL\t528\n1600\tMARCIO BORTOLOTTO\tmarcio.bortolotto@uisa.com.br\tNULL\tGerente de Saúde e Segurança do Trabalho\tNULL\tNULL\t134\n2668\tMARCOS ADRIANO VASCONCELOS PEREIRA\tmarcos.pereira@uisa.com.br\tNULL\tOperador Trat. Caldo/Fábrica de Açúcar Líder\tNULL\tNULL\t1819\n1747\tMARCOS ANTONIO VICENTE E SILVA\tmarcos.silva@uisa.com.br\tNULL\tAnalista de Logística PL\tNULL\tNULL\t78\n2595\tMARCOS AURELIO DE BRITO\tmarcos.brito@uisa.com.br\tNULL\tAnalista Tributário SR\tNULL\tNULL\t93\n133\tMARCOS LIMA BATISTA\tmarcos.lima@uisa.com.br\tNULL\tSupervisor de Excelência Operacional\tNULL\tNULL\t528\n1814\tMARCOS SILVA DOS SANTOS\tmarcos.ssantos@uisa.com.br\tNULL\tMecânico de Manutenção Industrial Líder\tNULL\tNULL\t52\n2025\tMARCOS VINICIUS DA SILVA SANTOS\tmarcos.vinicius@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1902\tMARIA APARECIDA SILVA DE ARAUJO\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n1424\tMARIA EVERLANE MATIAS DA SILVA\tmaria.matias@uisa.com.br\tNULL\tAnalista de Logística JR\tNULL\tNULL\t2590\n2574\tMARIA GEANE MONTEIRO DA SILVA\tgeane.monteiro@uisa.com.br\tNULL\tSecretária Diretoria\tNULL\tNULL\t472\n1903\tMARIA JANE BARBOSA COIMBRA\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n2112\tMARIA LUCIA DOS SANTOS\tmaria.lucia@uisa.com.br\tNULL\tAnalista PCM Automotivo JR\tNULL\tNULL\t3014\n1913\tMARIA ODETE PEREIRA DOS SANTOS\tmaria.pereira@uisa.com.br\tNULL\tAnalista Laboratorio Agricola II\tNULL\tNULL\t1391\n2852\tMARIANY GOMES COSTA DOS SANTOS\tmariany.costa@uisa.com.br\tNULL\tAnalista de Controles Industriais JR\tNULL\tNULL\t1816\n1764\tMARINELSON DIAS MACIEL\tmarinelson.maciel@uisa.com.br\tNULL\tEspecialista de Utilidades\tNULL\tNULL\t1816\n2594\tMARTA MELO DE LIMA FIGUEREDO\tmarta.figueredo@uisa.com.br\tNULL\tAnalista Tributário PL\tNULL\tNULL\t93\n1935\tMARY DOS SANTOS MALCHER\tmary.malcher@uisa.com.br\tNULL\tAnalista Administrativo\tNULL\tNULL\t522\n1892\tMATEUS HENRIQUE LOPES COSTA\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n2124\tMATEUS HUGO SANTOS LOPES\tmateus.lopes@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n493\tMATHEUS CARMO DE MATOS PINHO\tmatheus.pinho@uisa.com.br\tNULL\tAnalista de Sistemas JR\tNULL\tNULL\t1705\n1704\tMATHEUS DO NASCIMENTO BATISTA\tmatheus.batista@uisa.com.br\tNULL\tCoordenador de Sistemas\tNULL\tNULL\t1705\n2125\tMATHEUS FELIPE DE AZEVEDO FELIX\tmatheus.felix@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n2593\tMAURICIO GARCIA MARQUES\tmauricio.marques@uisa.com.br\tNULL\tAnalista Tributário PL\tNULL\tNULL\t93\n1997\tMAURICIO ROCHA DA SILVA\tmauricio.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n2030\tMAURO ARAUJO DE MEDEIROS\tmauro.medeiros@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n2840\tMAURO SERGIO DOS SANTOS\tmauro.santos@uisa.com.br\tNULL\tTécnico de Instrumentação Líder\tNULL\tNULL\t1855\n2014\tMAX CRISTIAN MARINHO DE MELO\tmax.melo@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2046\n1901\tMAYLON BRUNO SANTANA COSTA\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n2056\tMAYRON FELINTO TORRES COELHO\tmayron.coelho@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1330\tMIRELLA LIMA DA SILVA CORREA\tmirella.correa@uisa.com.br\tNULL\tAnalista Financeiro PL\tNULL\tNULL\t1698\n1811\tMOISES DOS SANTOS\tNULL\tNULL\tMecânico de Manutenção Industrial Líder\tNULL\tNULL\t52\n1897\tMOISES LOPES SILVA\tNULL\tNULL\tAnalista Laboratorio Industrial II\tNULL\tNULL\t1871\n1746\tMURILO SEABRA DA SILVA\tmurilo.silva@uisa.com.br\tNULL\tCoordenador de Cadeia de Suprimentos\tNULL\tNULL\t3012\n70\tNADIA FERNANDA DE ALMEIDA CARVALHO\tnadia.carvalho@uisa.com.br\tNULL\tCoordenador de Compras - Materiais e Insumos\tNULL\tNULL\t3012\n1998\tNATALINO ARAUJO SOUSA\tnatalino.sousa@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n129\tNATANAEL CHAGAS FURTADO FERREIRA\tnatanael.ferreira@uisa.com.br\tNULL\tAnalista de Design JR\tNULL\tNULL\t1705\n1757\tNATANAEL LOPES DA SILVA\tnatanael.silva@uisa.com.br\tNULL\tCoordenador de Produção\tNULL\tNULL\t528\n2010\tNATHAN DOS SANTOS TIGRE\tnathan.tigre@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2047\n2123\tNAYRAN GIUSSEP SILVA DE OLIVEIRA\tnayran.oliveira@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n1702\tNEIVANILDO GOMES DE SOUZA CONSERVA\tneivanildo.conserva@uisa.com.br\tNULL\tEspecialista Serviços Topográficos\tNULL\tNULL\t2900\n1952\tNELSON DE BORBA\tEndereçoeletrônico@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t1428\n1821\tNERICO TECEDOR\tnerico.tecedor@uisa.com.br\tNULL\tSupervisor de Produção\tNULL\tNULL\t1756\n2269\tNIVALCYR OLIVEIRA RAMOS DOS SANTOS\tnivalcyr.santos@uisa.com.br\tNULL\tMecânico de Manutenção Automotiva Líder\tNULL\tNULL\t3093\n2573\tNIVALDO NUNES DE MOURA DE NETO\tnivaldo.neto@uisa.com.br\tNULL\tCoordenador de Planejamento e Custos Industriais\tNULL\tNULL\t134\n2111\tODETE CRISTINA DE CARVALHO\todete.carvalho@uisa.com.br\tNULL\tAnalista PCM Automotivo JR\tNULL\tNULL\t3014\n74\tOSCAR MIGUEL ONIQUES DOS SANTOS\toscar.santos@uisa.com.br\tNULL\tEspecialista de Manutenção Industrial\tNULL\tNULL\t2119\n516\tOSVALDO HENRIQUE PAULETTI\thenrique.pauletti@uisa.com.br\tNULL\tGerente de Logística\tNULL\tNULL\t471\n3092\tPABLO RESENDE OLIVEIRA\tpablo.oliveira@uisa.com.br\tNULL\tCoordenador de Planejamento Estratégico e Novos Negócios\tNULL\tNULL\t132\n1979\tPATRICK JUNIOR BORGES CAMPOS DE BARROS\tNULL\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n471\tPAULO CESAR LEITE\tpaulo.leite@uisa.com.br\tNULL\tDiretor Comercial\tNULL\tNULL\t472\n1425\tPAULO DE FARIA JUNIOR\tpaulo.junior@uisa.com.br\tNULL\tGerente Engenharia e Projetos\tNULL\tNULL\t2571\n1974\tPAULO GONCALVES DA SILVA\tNULL\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n1961\tPAULO ROBERTO CANDIDO DOS SANTOS JUNIOR\tpaulo.candido@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t3093\n1921\tPAULO ROBERTO DA SILVA FERNANDES\tpaulo.fernandes@uisa.com.br\tNULL\tAnalista Laboratorio Industrial Líder\tNULL\tNULL\t1871\n1962\tPEDRO HENRIQUE PEREIRA MENDES\tpedro.mendes@uisa.com.br\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t3093\n2576\tPEDRO HENRIQUE SOUZA SILVA\tpedro.henrique@uisa.com.br\tNULL\tAnalista de Atração e Seleção JR\tNULL\tNULL\t3011\n2098\tPEDRO PAULO SANTOS PEREIRA\tPEDRO.PEREIRA@UISA.COM.BR\tNULL\tAnalista PCM Automotivo PL\tNULL\tNULL\t3014\n1977\tRAFAEL JOSE DOS SANTOS SILVA\trafael.santos@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n1927\tRAFAELA DE JESUS SANTANA\trafaela.santana@uisa.com.br\tNULL\tOperador Empacotamento Açúcar Líder\tNULL\tNULL\t1754\n1329\tRAIANY SUELLEN SILVA SALES\traiany.sales@uisa.com.br\tNULL\tAnalista Financeiro JR\tNULL\tNULL\t1698\n2054\tRANDERSON SILVA E SILVA\tranderson.silva@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n2118\tRAQUEL NOGUEIRA MACIEL\traquel.maciel@uisa.com.br\tNULL\tAnalista PCM Automotivo JR\tNULL\tNULL\t3014\n1866\tREGINALDO ANDRADE DE SOUZA\treginaldo.souza@uisa.com.br\tNULL\tOperador Extração de Caldo Líder\tNULL\tNULL\t2898\n3198\tRENATA DOS SANTOS\tRENATA.SANTOS2310@HOTMAIL.COM\tNULL\tAnalista Operacional\tNULL\tNULL\tNULL\n2565\tRENATO BRACELAR BATISTA\trenato.batista@uisa.com.br\tNULL\tLíder de Qualidade Agrícola\tNULL\tNULL\t2075\n2952\tRENATO GIDEAN CUSTODIO RESENDE\trenato.resende@uisa.com.br\tNULL\tCoordenador de Compras - Serviços e Projetos\tNULL\tNULL\t3012\n2613\tREYTTER VIEIRA DE FREITAS\treytter.freitas@uisa.com.br\tNULL\tCoordenador Comercial\tNULL\tNULL\t121\n1991\tRICARDO ALBUQUERQUE DA SILVA\tricardo.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n2612\tRICARDO DE AZEVEDO VILELLA\tricardo.vilella@uisa.com.br\tNULL\tCoordenador Comercial\tNULL\tNULL\t121\n2114\tRICARDO RODRIGUES DE OLIVEIRA\tRICARDO.OLIVEIRA@UISA.COM.BR\tNULL\tAnalista PCM Automotivo JR\tNULL\tNULL\t3014\n2853\tRICARDO SOARES FONSECA\tNULL\tNULL\tAnalista de Controles Industriais PL\tNULL\tNULL\t1871\n1429\tRICARDO SOUZA DE LIMA\tricardo.lima@uisa.com.br\tNULL\tMotorista Líder\tNULL\tNULL\t3093\n189\tRITA DE CASSIA COSTA FRUTUOSO\trita.frutuoso@uisa.com.br\tNULL\tAnalista Gestão de Benefícios JR\tNULL\tNULL\t78\n2063\tROBERTO ALEXANDRE DE LIRA\troberto.lira@uisa.com.br\tNULL\tSupervisor de Manutenção Automotiva\tNULL\tNULL\t2061\n1970\tROBSON BELO DE AMORIM\trobson.amorim@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n571\tROBSON DA SILVA AMORIM\trobson.samorim@uisa.com.br\tNULL\tAnalista de Suprimentos SR\tNULL\tNULL\t3012\n1990\tROBSON SANTOS DA SILVA\trobson.silva@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n2991\tRODRIGO ALVES DE ALMEIDA\trodrigo.almeida@uisa.com.br\tNULL\tAnalista de Laboratório Automotivo I\tNULL\tNULL\t3014\n3010\tRODRIGO DA SILVA DIAS\trodrigo.dias@uisa.com.br\tNULL\tCoordenador de Governança em Tecnologia\tNULL\tNULL\t385\n2032\tRODRIGO MENDES CRUZ\trodrigo.cruz@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2039\n134\tRODRIGO RIBEIRO GONCALVES\trodrigo.goncalves@uisa.com.br\tNULL\tDiretor de Gente, Inovação e Administração\tNULL\tNULL\t472\n1430\tROGERIO BORGES\trogerio.borges@uisa.com.br\tNULL\tMotorista Líder\tNULL\tNULL\t3093\n116\tROGERIO DA SILVA CUNHA\trogerio.cunha@uisa.com.br\tNULL\tLíder de Fabricação de Açúcar\tNULL\tNULL\t117\n50\tROGERIO MONTEIRO DA SILVA\trogerio.silva@uisa.com.br\tNULL\tEspecialista de Projetos\tNULL\tNULL\t2571\n2300\tRONALDO ALVES JUNIOR\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t2066\n1941\tRONE CARLOS DA GUIA DIAS\trone.dias@uisa.com.br\tNULL\tLíder Almoxarifado\tNULL\tNULL\t3012\n1294\tRONIVALDO RODRIGUES DA SILVA\tronivaldo.silva@uisa.com.br\tNULL\tAnalista de Planejamento Controle Agrícola SR\tNULL\tNULL\t1699\n1714\tROSANGELA ALMEIDA DOS SANTOS\tNULL\tNULL\tLíder de Operações\tNULL\tNULL\t1701\n518\tROSENI FERNANDES BORGES\troseni.borges@uisa.com.br\tNULL\tAnalista de Suprimentos JR\tNULL\tNULL\t3012\n2046\tRUAN JUNIOR ALVES MARQUES\truan.marques@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n2073\tRUBENS EDUARDO PEREIRA DA SILVA\trubens.silva@uisa.com.br\tNULL\tAnalista de Processos Industriais JR\tNULL\tNULL\t549\n76\tSAMARA DE ARAUJO PINHEIRO\tsamara.pinheiro@uisa.com.br\tNULL\tAnalista de Contratos JR\tNULL\tNULL\t2611\n1958\tSAMUEL MARQUES DOS SANTOS\tNULL\tNULL\tLíder Operações Agrícolas I\tNULL\tNULL\t2055\n1825\tSAMUEL PEREIRA DA SILVA\tsamuel.pereira@uisa.com.br\tNULL\tEspecialista de Impostos Indiretos\tNULL\tNULL\t93\n2039\tSANDOVAL BERTULINO GUIMARAES\tsandoval.guimaraes@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1754\tSANDRO KATUFICO URYU\tsandro.uryu@uisa.com.br\tNULL\tCoordenador de Empacotamento e Saneantes\tNULL\tNULL\t528\n1978\tSENIVAN SILVA DE ARAUJO GOMES\tNULL\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t3093\n1995\tSERGIO ROBERTO DE SOUZA\tsergio.roberto@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t1428\n3171\tSERGIO SPINELLI SILVA JUNIOR\tEndereçoeletrônico@uisanet.com.br\tNULL\tDiretor\tNULL\tNULL\t472\n2075\tSERGIO YGULA\tsergio.ygula@uisa.com.br\tNULL\tGerente Originação e Parceria Agrícola\tNULL\tNULL\t1599\n2899\tSIDINEI NEVES DOS SANTOS\tsidinei.santos@uisa.com.br\tNULL\tTorneiro Mecânico Líder\tNULL\tNULL\t52\n1975\tSIDNEI PATRICK DE ALENCAR ALVES\tNULL\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t2015\n2043\tSIDNEI SILVA SANTOS\tsidnei.santos@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n1752\tSILAS MARQUES\tsilas.marques@uisa.com.br\tNULL\tEspecialista Comercial\tNULL\tNULL\t121\n1812\tSILVANO MANOEL ORLANDO\tsilvano.orlando@uisa.com.br\tNULL\tMecânico de Manutenção Industrial Líder\tNULL\tNULL\t52\n51\tSILVIA DA SILVA SOBRINHO\tsilvia.silva@uisa.com.br\tNULL\tSupervisor de Saúde Ocupacional\tNULL\tNULL\t1600\n2303\tSIMONE AQUINO DE MORAIS\tEndereçoeletrônico@uisanet.com.br\tNULL\tLíder de Limpeza\tNULL\tNULL\t1754\n1856\tSINESIO DIAS DE OLIVEIRA\tsinesio.oliveira@uisa.com.br\tNULL\tCoordenador Originação de Cana e Relacionamento com Fornecedores\tNULL\tNULL\t2075\n2294\tSIVALDO CORREIA LIMA\tNULL\tNULL\tEspecialista Técnico de Manutenção Automotiva\tNULL\tNULL\t3093\n2055\tSOLISVALDO DOS SANTOS MELO\tsolisvaldo.melo@uisa.com.br\tNULL\tSupervisor de Operações Agrícolas\tNULL\tNULL\t3093\n550\tSORLETI APARECIDA DE OLIVEIRA\tsorleti.oliveira@uisa.com.br\tNULL\tGerente Garantia da Qualidade\tNULL\tNULL\t1599\n1929\tTALINE DE JESUS OLIVEIRA ALVES\ttaline.alves@uisa.com.br\tNULL\tOperador Empacotamento Açúcar Líder\tNULL\tNULL\t528\n2117\tTAMARA ACUNHA LINS\ttamara.lins@uisa.com.br\tNULL\tAnalista PCM Automotivo JR\tNULL\tNULL\t3014\n2902\tTAYOMARA LETICIANA GONCALVES TRINDADE\ttayomara.trindade@uisa.com.br\tNULL\tAnalista de Sustentabilidade JR\tNULL\tNULL\t2900\n1885\tTHAIS DA SILVA LOPES\tthais.lopes@uisa.com.br\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n2004\tTHALLYS FERNANDO DE LIMA\tthallys.lima@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t2046\n2116\tTHAMIRES DE ALENCAR PEREIRA\tthamires.alencar@uisa.com.br\tNULL\tAnalista PCM Automotivo JR\tNULL\tNULL\t3014\n1931\tTHAMIRIS DOMINGUES SILVA KAGUEYAMA\tthamiris.silva@uisa.com.br\tNULL\tAnalista de Compliance PL\tNULL\tNULL\t2101\n1914\tTHAMIRYS AMANCIO XAVIER DE LIMA\tthamirys.lima@uisa.com.br\tNULL\tAnalista Controle de Qualidade\tNULL\tNULL\t1871\n1887\tTHAUAN JEFFERSON NASCIMENTO DOS SANTOS\tNULL\tNULL\tAnalista Laboratorio Industrial I\tNULL\tNULL\t1871\n59\tTHIAGO DA CUNHA LOPES\tthiago.lopes@uisa.com.br\tNULL\tCoordenador de Tratos Culturais\tNULL\tNULL\t3093\n2128\tTHIAGO DE FREITAS MEDRADO\tthiago.medrado@uisa.com.br\tNULL\tAnalista de Operações Agrícolas\tNULL\tNULL\t1699\n1822\tTHIAGO DINIZ DUARTE\tthiago.duarte@uisa.com.br\tNULL\tSupervisor de Produção\tNULL\tNULL\t528\n2666\tTIAGO GUEDES\tNULL\tNULL\tOperador Trat. Caldo/Fábrica de Açúcar Líder\tNULL\tNULL\t117\n2097\tTIAGO RODRIGO ZACARIAS DA SILVA\ttiago.silva@uisa.com.br\tNULL\tAnalista PCM Automotivo PL\tNULL\tNULL\t3014\n132\tTOMAZ CARRARO PEREIRA\ttomaz.pereira@uisa.com.br\tNULL\tDiretor de Finanças e Relações com Investidores\tNULL\tNULL\t472\n85\tTOMAZ CARRARO PEREIRA\ttomaz.pereira@uisa.com.br\tNULL\tGerente Executivo de Planejamento Estratégico e Novos Negócios\tNULL\tNULL\t132\n3013\tUIARA GONZAGA ARIABO CALOMEZORE\tuiara.calomezore@uisa.com.br\tNULL\tAnalista de Comunidades e Povos Tradicionais JR\tNULL\tNULL\t2900\n2021\tULISSES RIBEIRO\tulisses.ribeiro@uisa.com.br\tNULL\tLíder Operações Agrícolas III\tNULL\tNULL\t3093\n1598\tVAGNER RODRIGUES DA SILVA\tvagner.silva@uisa.com.br\tNULL\tEspecialista Suprimentos\tNULL\tNULL\t2952\n2992\tVALDEVINO FERREIRA DA COSTA\tvaldevino.costa@uisa.com.br\tNULL\tAnalista PCM Automotivo SR\tNULL\tNULL\t3014\n1919\tVALDINEI BECKER GONCALVES\tvaldinei.goncalves@uisa.com.br\tNULL\tAnalista Laboratorio Industrial Líder\tNULL\tNULL\t1871\n2989\tVALDINEY DE CAMPOS\tvaldiney.campos@uisa.com.br\tNULL\tEspecialista Key Account\tNULL\tNULL\t121\n1971\tVALMIR GOMES DOS SANTOS\tvalmir.santos@uisa.com.br\tNULL\tLíder Operações Agrícolas II\tNULL\tNULL\t2030\n",
+  "stderr": "",
+  "execution_time_ms": 86
+}

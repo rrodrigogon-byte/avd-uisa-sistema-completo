@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as total_lideres \nFROM employees \nWHERE active = 1 \nAND (\n  cargo LIKE '%Analista%' OR cargo LIKE '%analista%' OR\n  cargo LIKE '%Especialista%' OR cargo LIKE '%especialista%' OR\n  cargo LIKE '%Lider%' OR cargo LIKE '%Líder%' OR cargo LIKE '%lider%' OR cargo LIKE '%líder%' OR\n  cargo LIKE '%Supervisor%' OR cargo LIKE '%supervisor%' OR\n  cargo LIKE '%Coordenador%' OR cargo LIKE '%coordenador%' OR\n  cargo LIKE '%Gerente%' OR cargo LIKE '%gerente%' OR\n  cargo LIKE '%Diretor%' OR cargo LIKE '%diretor%' OR\n  cargo LIKE '%Presidente%' OR cargo LIKE '%presidente%' OR\n  funcao LIKE '%Analista%' OR funcao LIKE '%analista%' OR\n  funcao LIKE '%Especialista%' OR funcao LIKE '%especialista%' OR\n  funcao LIKE '%Lider%' OR funcao LIKE '%Líder%' OR funcao LIKE '%lider%' OR funcao LIKE '%líder%' OR\n  funcao LIKE '%Supervisor%' OR funcao LIKE '%supervisor%' OR\n  funcao LIKE '%Coordenador%' OR funcao LIKE '%coordenador%' OR\n  funcao LIKE '%Gerente%' OR funcao LIKE '%gerente%' OR\n  funcao LIKE '%Diretor%' OR funcao LIKE '%diretor%' OR\n  funcao LIKE '%Presidente%' OR funcao LIKE '%presidente%'\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT COUNT(*) as total_lideres \nFROM employees \nWHERE active = 1 \nAND (\n  cargo LIKE '%Analista%' OR cargo LIKE '%analista%' OR\n  cargo LIKE '%Especialista%' OR cargo LIKE '%especialista%' OR\n  cargo LIKE '%Lider%' OR cargo LIKE '%Líder%' OR cargo LIKE '%lider%' OR cargo LIKE '%líder%' OR\n  cargo LIKE '%Supervisor%' OR cargo LIKE '%supervisor%' OR\n  cargo LIKE '%Coordenador%' OR cargo LIKE '%coordenador%' OR\n  cargo LIKE '%Gerente%' OR cargo LIKE '%gerente%' OR\n  cargo LIKE '%Diretor%' OR cargo LIKE '%diretor%' OR\n  cargo LIKE '%Presidente%' OR cargo LIKE '%presidente%' OR\n  funcao LIKE '%Analista%' OR funcao LIKE '%analista%' OR\n  funcao LIKE '%Especialista%' OR funcao LIKE '%especialista%' OR\n  funcao LIKE '%Lider%' OR funcao LIKE '%Líder%' OR funcao LIKE '%lider%' OR funcao LIKE '%líder%' OR\n  funcao LIKE '%Supervisor%' OR funcao LIKE '%supervisor%' OR\n  funcao LIKE '%Coordenador%' OR funcao LIKE '%coordenador%' OR\n  funcao LIKE '%Gerente%' OR funcao LIKE '%gerente%' OR\n  funcao LIKE '%Diretor%' OR funcao LIKE '%diretor%' OR\n  funcao LIKE '%Presidente%' OR funcao LIKE '%presidente%'\n);",
+  "rows": [
+    {
+      "total_lideres": "524"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_lideres\n524\n",
+  "stderr": "",
+  "execution_time_ms": 72
+}

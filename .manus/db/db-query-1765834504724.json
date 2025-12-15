@@ -1,0 +1,2050 @@
+{
+  "query": "SELECT cargo, funcao, COUNT(*) as total \nFROM employees \nWHERE active = 1 \nGROUP BY cargo, funcao \nORDER BY cargo, funcao;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT cargo, funcao, COUNT(*) as total \nFROM employees \nWHERE active = 1 \nGROUP BY cargo, funcao \nORDER BY cargo, funcao;",
+  "rows": [
+    {
+      "cargo": "NULL",
+      "funcao": "NULL",
+      "total": "13"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Advogado PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Almoxarife JR",
+      "total": "15"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Almoxarife PL",
+      "total": "9"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Almoxarife SR",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Administrativo",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal PL",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Administração de Pessoal SR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Comercial JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Comercial PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Controle de Qualidade",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Contábil SR",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Estrutura e Remuneração SR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Financeiro JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Financeiro PL",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Financeiro SR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Fiscal PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Gestão de Benefícios JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Agricola II",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Agricola Líder",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial I",
+      "total": "16"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial II",
+      "total": "11"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial III",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Laboratorio Industrial Líder",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Operacional",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo JR",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo PL",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista PCM Automotivo SR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Tributário JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Tributário PL",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Tributário SR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista Técnico de Manutenção Automotiva II",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Atração e Seleção JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Atração e Seleção PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Compliance PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Comunicação Interna PL",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Comunicação e Eventos Corporativos JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Comunidades e Povos Tradicionais JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Conteúdo ESG",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Contratos JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Contratos PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Controles Industriais JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Controles Industriais PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Controles Internos PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Desenvolvimento Humano JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Desenvolvimento Humano PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Design JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Estruturação Financeira e RI SR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Faturamento JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Governança em Tecnologia PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Infraestrutura PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Laboratório Automotivo I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Logística JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Logística PL",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Microbiologia",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas",
+      "total": "11"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Operações Agrícolas Líder",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Pesquisa e Desenvolvimento",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola JR",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento Controle Agrícola SR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Planejamento e Custos JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Processos Industriais JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Projetos PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Segurança da Informação JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Segurança do Trabalho",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Seguros SR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Sistemas JR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Suprimentos JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Suprimentos SR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Analista de Sustentabilidade SR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Aposentado",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Aprendiz",
+      "total": "85"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente Administrativo",
+      "total": "15"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente Contábil",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente Financeiro",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente Fiscal",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente Jurídico",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente Tributário",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente de Contratos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente de Logística",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente de Suprimentos",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Assistente de Tecnologia da Informação",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auditor Interno PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Aux de Mecanico de Manutenção",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Administrativo",
+      "total": "24"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Armazenamento e Carregamento I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Armazenamento e Carregamento II",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Armazenamento e Carregamento III",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Laboratório Agrícola",
+      "total": "13"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Laboratório Industrial",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Mecanico",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar Mecanico Manutenção",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Almoxarifado",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Fabricação de Açúcar",
+      "total": "16"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Fabricação de Etanol",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Fertirrigação",
+      "total": "93"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Laboratório de Cana",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Limpeza",
+      "total": "33"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Manutenção",
+      "total": "30"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Manutenção Automotiva",
+      "total": "16"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Operações CTT",
+      "total": "20"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de PCM Industrial",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Pedreiro",
+      "total": "18"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Pesquisa e Desenvolvimento",
+      "total": "15"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Preparo e Plantio",
+      "total": "56"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Serviços Gerais",
+      "total": "14"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Tecnologia da Informação",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Tratamento de Água",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Tratos Culturais",
+      "total": "13"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Auxiliar de Viveiro Florestal",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Balanceiro",
+      "total": "11"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Bombeiro Civil",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Borracheiro I",
+      "total": "12"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Borracheiro II",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Borracheiro III",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Borracheiro Líder",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Caldeireiro",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Caldeireiro I",
+      "total": "23"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Caldeireiro II",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Caldeireiro III",
+      "total": "37"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Caldeireiro Líder",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Cientista de Dados PL",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Comboista Líder",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Comboísta",
+      "total": "33"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Comprador JR",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Comprador PL",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Comprador SR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Conferente de Produtos",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Conferente de Produtos I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Conferente de Produtos II",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Conselho de Administração",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Consultor de Merchandising",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Agricultura de Precisão/Geoprocessamento",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Comercial",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Controle de Qualidade",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Contábil",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Estrutura, Remuneração e Administração de Pessoal",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Jurídico",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Manutenção Automotiva",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Originação de Cana e Relacionamento com Fornecedores",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Planej. Contr. Manut. Agroindustrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Produção Agentes Biológicos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador Segurança Trabalho",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Armazenamento e Carregamento Açúcar",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Armazenamento e Carregamento Etanol",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Atração, Seleção e Desenvolvimento",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Cadeia de Suprimentos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Caldeiraria",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Colheita Mecanizada e Transporte",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Compras - Materiais e Insumos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Compras - Serviços e Projetos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Comunicação Corporativa",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Confiabilidade",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Controle Interno e Compliance",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Empacotamento e Saneantes",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Engenharia e Projetos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Estruturação Financeira e RI",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Extração",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Governança em Tecnologia",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Logística Industrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Manutenção Civil",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Manutenção Elétrica",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Manutenção Industrial",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Operações Logísticas",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Pesquisa e Desenvolvimento",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento Estratégico e Novos Negócios",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Controle Agrícola",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Controle Industrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Custos",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Planejamento e Custos Industriais",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Plantio",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Produção",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de S&OP",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Sistemas",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Sustentabilidade",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Coordenador de Tratos Culturais",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Cozinheiro",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Desenvolvedor JR",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Diretor",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Diretor Agroindustrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Diretor Comercial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Diretor Presidente",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Diretor de Controladoria",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Diretor de Finanças e Relações com Investidores",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Diretor de Gente, Inovação e Administração",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "ESTAGIARIO",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Eletricista de Manutenção Automotiva I",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Eletricista de Manutenção Automotiva II",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Eletricista de Manutenção Automotiva III",
+      "total": "9"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Encarregado Casa da Sede",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Agricultura e Precisão/Geoprocessamento",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Agrícola",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Comercial",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Contábil",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Key Account",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Planejamento e Custos",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Serviços Topográficos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Suprimentos",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista TI - SAP",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista Técnico de Manutenção Automotiva",
+      "total": "12"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Automação",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Confiabilidade",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Extração",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Impostos Diretos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Impostos Indiretos",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Infraestrutura",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Manutenção Automotiva",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Manutenção Industrial",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Planejamento Agroindustrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Planejamento Estratégico e Novos Negócios",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Produção",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Projetos",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Segurança do Trabalho",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Trade Marketing",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista de Utilidades",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista em Projetos Civis",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Especialista em Projetos Mecânicos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Estagiario de Engenharia",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Estagiário",
+      "total": "16"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Frentista",
+      "total": "10"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Funileiro/Pintor Automotivo",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Engenharia e Projetos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Agrícola",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Comercial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Industrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Jurídico, Compliance e Governança Corporativa",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo Suprimentos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo de Controladoria",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo de Planejamento Estratégico e Novos Negócios",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Executivo de Recursos Humanos",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Garantia da Qualidade",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Originação e Parceria Agrícola",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente Tecnologia da Informação",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Automação",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Estruturação Financeira e RI",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Filial",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Logística",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Planejamento de Produção Agroindustrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Produção Industrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Saúde e Segurança do Trabalho",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Sustentabilidade",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Gerente de Tributos e Operações Fiscais",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Governanta",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "INSTRUTOR",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Inspetor de Caldeiraria Industrial II",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Inspetor de Manutenção Automotiva III",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Inspetor de Manutenção Elétrica Industrial II",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Inspetor de Manutenção Industrial I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Inspetor de Manutenção Mecânica Industrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Inspetor de Manutenção Mecânica Industrial II",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Instrumentarista de Maquinas",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Instrutor Treinamentos",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Lavador",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Lubrificador Industrial I",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Lubrificador Industrial II",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Lubrificador Industrial III",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Lubrificador Industrial Líder",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder Abastecimento Combustível",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder Almoxarifado",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder Fábrica Levedura",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas I",
+      "total": "17"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas II",
+      "total": "22"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder Operações Agrícolas III",
+      "total": "47"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder Pesquisa e Desenvolvimento",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Caldeiraria",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Fabricação de Açúcar",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Facilities",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Limpeza",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Manutenção Civil",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Operações",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Qualidade Agrícola",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Líder de Serviços Gerais",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecanico de Manutenção",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico Eletricista",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva I",
+      "total": "42"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva II",
+      "total": "40"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva III",
+      "total": "44"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Automotiva Líder",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial I",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial II",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial III",
+      "total": "27"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Mecânico de Manutenção Industrial Líder",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Montador de Andaimes",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista Administração",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista II",
+      "total": "44"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista II - Carreta Trans. Mud/Adu/Calc.",
+      "total": "19"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista II - Munck",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista III - Caminhão Pipa",
+      "total": "35"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista III - Carreta",
+      "total": "214"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista Líder",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista de Carreta",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Motorista de Carreta Monitor",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Movimentador de Mercadorias I",
+      "total": "28"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Movimentador de Mercadorias II",
+      "total": "19"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar I",
+      "total": "59"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar II",
+      "total": "12"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar III",
+      "total": "12"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Empacotamento Açúcar Líder",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Empilhadeira",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Empilhadeira III",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo I",
+      "total": "20"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo II",
+      "total": "24"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo III",
+      "total": "14"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Extração de Caldo Líder",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol I",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol II",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol III",
+      "total": "12"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Fabricação de Etanol Líder",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Fábrica Levedura I",
+      "total": "17"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Fábrica Levedura II",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Fábrica Levedura III",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Geração de Vapor I",
+      "total": "13"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Geração de Vapor II",
+      "total": "9"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Geração de Vapor III",
+      "total": "9"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Geração de Vapor Líder",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Maquina Movel (Diversas)",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Movimentação de Bagaço",
+      "total": "16"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Munck",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Máquinas Agrícolas I",
+      "total": "37"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Máquinas Agrícolas II",
+      "total": "263"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Máquinas Agrícolas III",
+      "total": "154"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Pulverizador Automotriz",
+      "total": "32"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Pulverizador Tratorizado",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar I",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar II",
+      "total": "13"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar III",
+      "total": "12"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Trat. Caldo/Fábrica de Açúcar Líder",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Tratamento de Água I",
+      "total": "9"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Tratamento de Água II",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Tratamento de Água III",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador Tratamento de Água Líder",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador de Fabricação de Açúcar I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador de Fabricação de Açúcar II",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador de Fabricação de Açúcar III",
+      "total": "12"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador de Máquinas Líder",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador de Máquinas Monitor",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador do Sistema Carregamento de Álcool I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador do Sistema Carregamento de Álcool II",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Operador do Sistema Carregamento de Álcool III",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Pedreiro",
+      "total": "18"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Pensionista",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Piloto de Vant I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Pintor Industrial",
+      "total": "9"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Planejador de Manutenção I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Planejador de Manutenção II",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Planejador de Manutenção III",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Presidente do Conselho",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Reporter Cinematográfico",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Secretária Diretoria",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Secretária Executiva",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Soldador Argonista",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Soldador I",
+      "total": "38"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Soldador II",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Soldador III",
+      "total": "43"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor Armazenamento e Carregamento de Açúcar",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Controle Agrícola e Fornecedores",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Controle Processos e Qualidade",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Excelência Operacional",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Instrumentação",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Automotiva",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Civil",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Elétrica Externa",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Manutenção Mecânica Industrial",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Materiais",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Operações Agrícolas",
+      "total": "19"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de PCM",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Pesquisa e Desenvolvimento",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Produção",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Saúde Ocupacional",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Supervisor de Utilidades",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Torneiro Mecânico I",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Torneiro Mecânico III",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Torneiro Mecânico Líder",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Trabalhador Autonomo",
+      "total": "35"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Trabalhador Rural",
+      "total": "195"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Automação I",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Automação II",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Automação III",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Manutenção Elétrica Industrial I",
+      "total": "8"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Manutenção Elétrica Industrial II",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Manutenção Elétrica Industrial III",
+      "total": "13"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Manutenção Elétrica Industrial Líder",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Segurança do Trabalho JR",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Segurança do Trabalho PL",
+      "total": "7"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico Segurança do Trabalho SR",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Cogeração de Energia Líder",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Enfermagem do Trabalho I",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Enfermagem do Trabalho II",
+      "total": "4"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Instrumentação I",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Instrumentação II",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Instrumentação III",
+      "total": "6"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Instrumentação Líder",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Manutenção Elétrica Externa I",
+      "total": "5"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Manutenção Elétrica Externa II",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Manutenção Elétrica Externa III",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Manutenção Elétrica Externa Líder",
+      "total": "3"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Refrigeração I",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Técnico de Refrigeração III",
+      "total": "2"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Vendedor Externo",
+      "total": "1"
+    },
+    {
+      "cargo": "NULL",
+      "funcao": "Vigilante",
+      "total": "2"
+    },
+    {
+      "cargo": "Coordenador (Contábil e Tesouraria)",
+      "funcao": "NULL",
+      "total": "1"
+    },
+    {
+      "cargo": "Coordenador de Planejamento e Custos",
+      "funcao": "NULL",
+      "total": "1"
+    },
+    {
+      "cargo": "Gerente de Operações",
+      "funcao": "NULL",
+      "total": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "cargo\tfuncao\ttotal\nNULL\tNULL\t13\nNULL\tAdvogado PL\t1\nNULL\tAlmoxarife JR\t15\nNULL\tAlmoxarife PL\t9\nNULL\tAlmoxarife SR\t5\nNULL\tAnalista Administrativo\t6\nNULL\tAnalista Administração de Pessoal JR\t2\nNULL\tAnalista Administração de Pessoal PL\t2\nNULL\tAnalista Administração de Pessoal SR\t2\nNULL\tAnalista Comercial JR\t1\nNULL\tAnalista Comercial PL\t1\nNULL\tAnalista Controle de Qualidade\t3\nNULL\tAnalista Contábil SR\t3\nNULL\tAnalista Estrutura e Remuneração SR\t1\nNULL\tAnalista Financeiro JR\t1\nNULL\tAnalista Financeiro PL\t2\nNULL\tAnalista Financeiro SR\t1\nNULL\tAnalista Fiscal PL\t1\nNULL\tAnalista Gestão de Benefícios JR\t1\nNULL\tAnalista Laboratorio Agricola II\t3\nNULL\tAnalista Laboratorio Agricola Líder\t1\nNULL\tAnalista Laboratorio Industrial I\t16\nNULL\tAnalista Laboratorio Industrial II\t11\nNULL\tAnalista Laboratorio Industrial III\t6\nNULL\tAnalista Laboratorio Industrial Líder\t6\nNULL\tAnalista Operacional\t1\nNULL\tAnalista PCM Automotivo JR\t8\nNULL\tAnalista PCM Automotivo PL\t5\nNULL\tAnalista PCM Automotivo SR\t1\nNULL\tAnalista Tributário JR\t2\nNULL\tAnalista Tributário PL\t2\nNULL\tAnalista Tributário SR\t2\nNULL\tAnalista Técnico de Manutenção Automotiva II\t1\nNULL\tAnalista de Atração e Seleção JR\t2\nNULL\tAnalista de Atração e Seleção PL\t1\nNULL\tAnalista de Compliance PL\t1\nNULL\tAnalista de Comunicação Interna PL\t2\nNULL\tAnalista de Comunicação e Eventos Corporativos JR\t1\nNULL\tAnalista de Comunidades e Povos Tradicionais JR\t1\nNULL\tAnalista de Conteúdo ESG\t1\nNULL\tAnalista de Contratos JR\t1\nNULL\tAnalista de Contratos PL\t1\nNULL\tAnalista de Controles Industriais JR\t1\nNULL\tAnalista de Controles Industriais PL\t1\nNULL\tAnalista de Controles Internos PL\t1\nNULL\tAnalista de Desenvolvimento Humano JR\t1\nNULL\tAnalista de Desenvolvimento Humano PL\t1\nNULL\tAnalista de Design JR\t1\nNULL\tAnalista de Estruturação Financeira e RI SR\t1\nNULL\tAnalista de Faturamento JR\t1\nNULL\tAnalista de Governança em Tecnologia PL\t1\nNULL\tAnalista de Infraestrutura PL\t1\nNULL\tAnalista de Laboratório Automotivo I\t1\nNULL\tAnalista de Logística JR\t2\nNULL\tAnalista de Logística PL\t3\nNULL\tAnalista de Microbiologia\t1\nNULL\tAnalista de Operações Agrícolas\t11\nNULL\tAnalista de Operações Agrícolas Líder\t3\nNULL\tAnalista de Pesquisa e Desenvolvimento\t2\nNULL\tAnalista de Planejamento Controle Agrícola JR\t3\nNULL\tAnalista de Planejamento Controle Agrícola PL\t1\nNULL\tAnalista de Planejamento Controle Agrícola SR\t2\nNULL\tAnalista de Planejamento e Custos JR\t1\nNULL\tAnalista de Processos Industriais JR\t2\nNULL\tAnalista de Projetos PL\t1\nNULL\tAnalista de Segurança da Informação JR\t1\nNULL\tAnalista de Segurança do Trabalho\t1\nNULL\tAnalista de Seguros SR\t1\nNULL\tAnalista de Sistemas JR\t1\nNULL\tAnalista de Suprimentos JR\t2\nNULL\tAnalista de Suprimentos SR\t2\nNULL\tAnalista de Sustentabilidade JR\t2\nNULL\tAnalista de Sustentabilidade PL\t1\nNULL\tAnalista de Sustentabilidade SR\t2\nNULL\tAposentado\t2\nNULL\tAprendiz\t85\nNULL\tAssistente Administrativo\t15\nNULL\tAssistente Contábil\t3\nNULL\tAssistente Financeiro\t1\nNULL\tAssistente Fiscal\t8\nNULL\tAssistente Jurídico\t1\nNULL\tAssistente Tributário\t1\nNULL\tAssistente de Contratos\t1\nNULL\tAssistente de Logística\t8\nNULL\tAssistente de Suprimentos\t2\nNULL\tAssistente de Tecnologia da Informação\t3\nNULL\tAuditor Interno PL\t1\nNULL\tAux de Mecanico de Manutenção\t4\nNULL\tAuxiliar Administrativo\t24\nNULL\tAuxiliar Armazenamento e Carregamento I\t1\nNULL\tAuxiliar Armazenamento e Carregamento II\t1\nNULL\tAuxiliar Armazenamento e Carregamento III\t2\nNULL\tAuxiliar Laboratório Agrícola\t13\nNULL\tAuxiliar Laboratório Industrial\t6\nNULL\tAuxiliar Mecanico\t1\nNULL\tAuxiliar Mecanico Manutenção\t3\nNULL\tAuxiliar de Almoxarifado\t4\nNULL\tAuxiliar de Fabricação de Açúcar\t16\nNULL\tAuxiliar de Fabricação de Etanol\t3\nNULL\tAuxiliar de Fertirrigação\t93\nNULL\tAuxiliar de Laboratório de Cana\t8\nNULL\tAuxiliar de Limpeza\t33\nNULL\tAuxiliar de Manutenção\t30\nNULL\tAuxiliar de Manutenção Automotiva\t16\nNULL\tAuxiliar de Operações CTT\t20\nNULL\tAuxiliar de PCM Industrial\t4\nNULL\tAuxiliar de Pedreiro\t18\nNULL\tAuxiliar de Pesquisa e Desenvolvimento\t15\nNULL\tAuxiliar de Preparo e Plantio\t56\nNULL\tAuxiliar de Serviços Gerais\t14\nNULL\tAuxiliar de Tecnologia da Informação\t8\nNULL\tAuxiliar de Tratamento de Água\t3\nNULL\tAuxiliar de Tratos Culturais\t13\nNULL\tAuxiliar de Viveiro Florestal\t5\nNULL\tBalanceiro\t11\nNULL\tBombeiro Civil\t1\nNULL\tBorracheiro I\t12\nNULL\tBorracheiro II\t4\nNULL\tBorracheiro III\t7\nNULL\tBorracheiro Líder\t1\nNULL\tCaldeireiro\t2\nNULL\tCaldeireiro I\t23\nNULL\tCaldeireiro II\t6\nNULL\tCaldeireiro III\t37\nNULL\tCaldeireiro Líder\t2\nNULL\tCientista de Dados PL\t1\nNULL\tComboista Líder\t2\nNULL\tComboísta\t33\nNULL\tComprador JR\t4\nNULL\tComprador PL\t3\nNULL\tComprador SR\t1\nNULL\tConferente de Produtos\t5\nNULL\tConferente de Produtos I\t1\nNULL\tConferente de Produtos II\t1\nNULL\tConselho de Administração\t7\nNULL\tConsultor de Merchandising\t2\nNULL\tCoordenador Agricultura de Precisão/Geoprocessamento\t1\nNULL\tCoordenador Comercial\t2\nNULL\tCoordenador Controle de Qualidade\t1\nNULL\tCoordenador Contábil\t1\nNULL\tCoordenador Estrutura, Remuneração e Administração de Pessoal\t1\nNULL\tCoordenador Jurídico\t1\nNULL\tCoordenador Manutenção Automotiva\t2\nNULL\tCoordenador Originação de Cana e Relacionamento com Fornecedores\t1\nNULL\tCoordenador Planej. Contr. Manut. Agroindustrial\t1\nNULL\tCoordenador Produção Agentes Biológicos\t1\nNULL\tCoordenador Segurança Trabalho\t1\nNULL\tCoordenador de Armazenamento e Carregamento Açúcar\t1\nNULL\tCoordenador de Armazenamento e Carregamento Etanol\t1\nNULL\tCoordenador de Atração, Seleção e Desenvolvimento\t1\nNULL\tCoordenador de Cadeia de Suprimentos\t1\nNULL\tCoordenador de Caldeiraria\t1\nNULL\tCoordenador de Colheita Mecanizada e Transporte\t1\nNULL\tCoordenador de Compras - Materiais e Insumos\t1\nNULL\tCoordenador de Compras - Serviços e Projetos\t1\nNULL\tCoordenador de Comunicação Corporativa\t1\nNULL\tCoordenador de Confiabilidade\t1\nNULL\tCoordenador de Controle Interno e Compliance\t1\nNULL\tCoordenador de Empacotamento e Saneantes\t1\nNULL\tCoordenador de Engenharia e Projetos\t1\nNULL\tCoordenador de Estruturação Financeira e RI\t1\nNULL\tCoordenador de Extração\t1\nNULL\tCoordenador de Governança em Tecnologia\t1\nNULL\tCoordenador de Logística Industrial\t1\nNULL\tCoordenador de Manutenção Civil\t1\nNULL\tCoordenador de Manutenção Elétrica\t1\nNULL\tCoordenador de Manutenção Industrial\t2\nNULL\tCoordenador de Operações Logísticas\t1\nNULL\tCoordenador de Pesquisa e Desenvolvimento\t1\nNULL\tCoordenador de Planejamento Estratégico e Novos Negócios\t1\nNULL\tCoordenador de Planejamento e Controle Agrícola\t1\nNULL\tCoordenador de Planejamento e Controle Industrial\t1\nNULL\tCoordenador de Planejamento e Custos\t2\nNULL\tCoordenador de Planejamento e Custos Industriais\t1\nNULL\tCoordenador de Plantio\t1\nNULL\tCoordenador de Produção\t3\nNULL\tCoordenador de S&OP\t1\nNULL\tCoordenador de Sistemas\t2\nNULL\tCoordenador de Sustentabilidade\t1\nNULL\tCoordenador de Tratos Culturais\t2\nNULL\tCozinheiro\t3\nNULL\tDesenvolvedor JR\t4\nNULL\tDiretor\t1\nNULL\tDiretor Agroindustrial\t1\nNULL\tDiretor Comercial\t1\nNULL\tDiretor Presidente\t2\nNULL\tDiretor de Controladoria\t1\nNULL\tDiretor de Finanças e Relações com Investidores\t1\nNULL\tDiretor de Gente, Inovação e Administração\t1\nNULL\tESTAGIARIO\t6\nNULL\tEletricista de Manutenção Automotiva I\t4\nNULL\tEletricista de Manutenção Automotiva II\t6\nNULL\tEletricista de Manutenção Automotiva III\t9\nNULL\tEncarregado Casa da Sede\t1\nNULL\tEspecialista Agricultura e Precisão/Geoprocessamento\t1\nNULL\tEspecialista Agrícola\t1\nNULL\tEspecialista Comercial\t2\nNULL\tEspecialista Contábil\t1\nNULL\tEspecialista Key Account\t1\nNULL\tEspecialista Planejamento e Custos\t3\nNULL\tEspecialista Serviços Topográficos\t1\nNULL\tEspecialista Suprimentos\t3\nNULL\tEspecialista TI - SAP\t3\nNULL\tEspecialista Técnico de Manutenção Automotiva\t12\nNULL\tEspecialista de Automação\t2\nNULL\tEspecialista de Confiabilidade\t1\nNULL\tEspecialista de Extração\t1\nNULL\tEspecialista de Impostos Diretos\t1\nNULL\tEspecialista de Impostos Indiretos\t2\nNULL\tEspecialista de Infraestrutura\t1\nNULL\tEspecialista de Manutenção Automotiva\t1\nNULL\tEspecialista de Manutenção Industrial\t4\nNULL\tEspecialista de Planejamento Agroindustrial\t1\nNULL\tEspecialista de Planejamento Estratégico e Novos Negócios\t1\nNULL\tEspecialista de Produção\t4\nNULL\tEspecialista de Projetos\t2\nNULL\tEspecialista de Segurança do Trabalho\t2\nNULL\tEspecialista de Trade Marketing\t1\nNULL\tEspecialista de Utilidades\t2\nNULL\tEspecialista em Projetos Civis\t1\nNULL\tEspecialista em Projetos Mecânicos\t1\nNULL\tEstagiario de Engenharia\t3\nNULL\tEstagiário\t16\nNULL\tFrentista\t10\nNULL\tFunileiro/Pintor Automotivo\t2\nNULL\tGerente Engenharia e Projetos\t1\nNULL\tGerente Executivo Agrícola\t1\nNULL\tGerente Executivo Comercial\t1\nNULL\tGerente Executivo Industrial\t1\nNULL\tGerente Executivo Jurídico, Compliance e Governança Corporativa\t1\nNULL\tGerente Executivo Suprimentos\t1\nNULL\tGerente Executivo de Controladoria\t1\nNULL\tGerente Executivo de Planejamento Estratégico e Novos Negócios\t1\nNULL\tGerente Executivo de Recursos Humanos\t1\nNULL\tGerente Garantia da Qualidade\t1\nNULL\tGerente Originação e Parceria Agrícola\t1\nNULL\tGerente Tecnologia da Informação\t1\nNULL\tGerente de Automação\t1\nNULL\tGerente de Estruturação Financeira e RI\t1\nNULL\tGerente de Filial\t3\nNULL\tGerente de Logística\t1\nNULL\tGerente de Planejamento de Produção Agroindustrial\t1\nNULL\tGerente de Produção Industrial\t1\nNULL\tGerente de Saúde e Segurança do Trabalho\t1\nNULL\tGerente de Sustentabilidade\t1\nNULL\tGerente de Tributos e Operações Fiscais\t1\nNULL\tGovernanta\t1\nNULL\tINSTRUTOR\t1\nNULL\tInspetor de Caldeiraria Industrial II\t2\nNULL\tInspetor de Manutenção Automotiva III\t2\nNULL\tInspetor de Manutenção Elétrica Industrial II\t1\nNULL\tInspetor de Manutenção Industrial I\t1\nNULL\tInspetor de Manutenção Mecânica Industrial\t1\nNULL\tInspetor de Manutenção Mecânica Industrial II\t2\nNULL\tInstrumentarista de Maquinas\t1\nNULL\tInstrutor Treinamentos\t4\nNULL\tLavador\t5\nNULL\tLubrificador Industrial I\t2\nNULL\tLubrificador Industrial II\t1\nNULL\tLubrificador Industrial III\t2\nNULL\tLubrificador Industrial Líder\t1\nNULL\tLíder Abastecimento Combustível\t1\nNULL\tLíder Almoxarifado\t4\nNULL\tLíder Fábrica Levedura\t1\nNULL\tLíder Operações Agrícolas I\t17\nNULL\tLíder Operações Agrícolas II\t22\nNULL\tLíder Operações Agrícolas III\t47\nNULL\tLíder Pesquisa e Desenvolvimento\t1\nNULL\tLíder de Caldeiraria\t2\nNULL\tLíder de Fabricação de Açúcar\t6\nNULL\tLíder de Facilities\t1\nNULL\tLíder de Limpeza\t1\nNULL\tLíder de Manutenção Civil\t2\nNULL\tLíder de Operações\t2\nNULL\tLíder de Qualidade Agrícola\t3\nNULL\tLíder de Serviços Gerais\t1\nNULL\tMecanico de Manutenção\t5\nNULL\tMecânico Eletricista\t5\nNULL\tMecânico de Manutenção Automotiva I\t42\nNULL\tMecânico de Manutenção Automotiva II\t40\nNULL\tMecânico de Manutenção Automotiva III\t44\nNULL\tMecânico de Manutenção Automotiva Líder\t6\nNULL\tMecânico de Manutenção Industrial I\t6\nNULL\tMecânico de Manutenção Industrial II\t3\nNULL\tMecânico de Manutenção Industrial III\t27\nNULL\tMecânico de Manutenção Industrial Líder\t5\nNULL\tMontador de Andaimes\t3\nNULL\tMotorista Administração\t2\nNULL\tMotorista II\t44\nNULL\tMotorista II - Carreta Trans. Mud/Adu/Calc.\t19\nNULL\tMotorista II - Munck\t4\nNULL\tMotorista III - Caminhão Pipa\t35\nNULL\tMotorista III - Carreta\t214\nNULL\tMotorista Líder\t3\nNULL\tMotorista de Carreta\t1\nNULL\tMotorista de Carreta Monitor\t1\nNULL\tMovimentador de Mercadorias I\t28\nNULL\tMovimentador de Mercadorias II\t19\nNULL\tOperador Empacotamento Açúcar I\t59\nNULL\tOperador Empacotamento Açúcar II\t12\nNULL\tOperador Empacotamento Açúcar III\t12\nNULL\tOperador Empacotamento Açúcar Líder\t5\nNULL\tOperador Empilhadeira\t7\nNULL\tOperador Empilhadeira III\t1\nNULL\tOperador Extração de Caldo I\t20\nNULL\tOperador Extração de Caldo II\t24\nNULL\tOperador Extração de Caldo III\t14\nNULL\tOperador Extração de Caldo Líder\t7\nNULL\tOperador Fabricação de Etanol I\t6\nNULL\tOperador Fabricação de Etanol II\t7\nNULL\tOperador Fabricação de Etanol III\t12\nNULL\tOperador Fabricação de Etanol Líder\t4\nNULL\tOperador Fábrica Levedura I\t17\nNULL\tOperador Fábrica Levedura II\t7\nNULL\tOperador Fábrica Levedura III\t3\nNULL\tOperador Geração de Vapor I\t13\nNULL\tOperador Geração de Vapor II\t9\nNULL\tOperador Geração de Vapor III\t9\nNULL\tOperador Geração de Vapor Líder\t3\nNULL\tOperador Maquina Movel (Diversas)\t2\nNULL\tOperador Movimentação de Bagaço\t16\nNULL\tOperador Munck\t3\nNULL\tOperador Máquinas Agrícolas I\t37\nNULL\tOperador Máquinas Agrícolas II\t263\nNULL\tOperador Máquinas Agrícolas III\t154\nNULL\tOperador Pulverizador Automotriz\t32\nNULL\tOperador Pulverizador Tratorizado\t2\nNULL\tOperador Trat. Caldo/Fábrica de Açúcar I\t8\nNULL\tOperador Trat. Caldo/Fábrica de Açúcar II\t13\nNULL\tOperador Trat. Caldo/Fábrica de Açúcar III\t12\nNULL\tOperador Trat. Caldo/Fábrica de Açúcar Líder\t4\nNULL\tOperador Tratamento de Água I\t9\nNULL\tOperador Tratamento de Água II\t2\nNULL\tOperador Tratamento de Água III\t3\nNULL\tOperador Tratamento de Água Líder\t3\nNULL\tOperador de Fabricação de Açúcar I\t1\nNULL\tOperador de Fabricação de Açúcar II\t7\nNULL\tOperador de Fabricação de Açúcar III\t12\nNULL\tOperador de Máquinas Líder\t6\nNULL\tOperador de Máquinas Monitor\t1\nNULL\tOperador do Sistema Carregamento de Álcool I\t1\nNULL\tOperador do Sistema Carregamento de Álcool II\t2\nNULL\tOperador do Sistema Carregamento de Álcool III\t2\nNULL\tPedreiro\t18\nNULL\tPensionista\t7\nNULL\tPiloto de Vant I\t1\nNULL\tPintor Industrial\t9\nNULL\tPlanejador de Manutenção I\t1\nNULL\tPlanejador de Manutenção II\t7\nNULL\tPlanejador de Manutenção III\t2\nNULL\tPresidente do Conselho\t1\nNULL\tReporter Cinematográfico\t1\nNULL\tSecretária Diretoria\t1\nNULL\tSecretária Executiva\t1\nNULL\tSoldador Argonista\t1\nNULL\tSoldador I\t38\nNULL\tSoldador II\t6\nNULL\tSoldador III\t43\nNULL\tSupervisor Armazenamento e Carregamento de Açúcar\t1\nNULL\tSupervisor de Controle Agrícola e Fornecedores\t1\nNULL\tSupervisor de Controle Processos e Qualidade\t1\nNULL\tSupervisor de Excelência Operacional\t1\nNULL\tSupervisor de Instrumentação\t1\nNULL\tSupervisor de Manutenção\t1\nNULL\tSupervisor de Manutenção Automotiva\t8\nNULL\tSupervisor de Manutenção Civil\t1\nNULL\tSupervisor de Manutenção Elétrica Externa\t1\nNULL\tSupervisor de Manutenção Mecânica Industrial\t1\nNULL\tSupervisor de Materiais\t1\nNULL\tSupervisor de Operações Agrícolas\t19\nNULL\tSupervisor de PCM\t2\nNULL\tSupervisor de Pesquisa e Desenvolvimento\t1\nNULL\tSupervisor de Produção\t5\nNULL\tSupervisor de Saúde Ocupacional\t1\nNULL\tSupervisor de Utilidades\t2\nNULL\tTorneiro Mecânico I\t1\nNULL\tTorneiro Mecânico III\t5\nNULL\tTorneiro Mecânico Líder\t1\nNULL\tTrabalhador Autonomo\t35\nNULL\tTrabalhador Rural\t195\nNULL\tTécnico Automação I\t2\nNULL\tTécnico Automação II\t2\nNULL\tTécnico Automação III\t2\nNULL\tTécnico Manutenção Elétrica Industrial I\t8\nNULL\tTécnico Manutenção Elétrica Industrial II\t6\nNULL\tTécnico Manutenção Elétrica Industrial III\t13\nNULL\tTécnico Manutenção Elétrica Industrial Líder\t3\nNULL\tTécnico Segurança do Trabalho JR\t2\nNULL\tTécnico Segurança do Trabalho PL\t7\nNULL\tTécnico Segurança do Trabalho SR\t6\nNULL\tTécnico de Cogeração de Energia Líder\t1\nNULL\tTécnico de Enfermagem do Trabalho I\t2\nNULL\tTécnico de Enfermagem do Trabalho II\t4\nNULL\tTécnico de Instrumentação I\t2\nNULL\tTécnico de Instrumentação II\t3\nNULL\tTécnico de Instrumentação III\t6\nNULL\tTécnico de Instrumentação Líder\t2\nNULL\tTécnico de Manutenção Elétrica Externa I\t5\nNULL\tTécnico de Manutenção Elétrica Externa II\t3\nNULL\tTécnico de Manutenção Elétrica Externa III\t3\nNULL\tTécnico de Manutenção Elétrica Externa Líder\t3\nNULL\tTécnico de Refrigeração I\t2\nNULL\tTécnico de Refrigeração III\t2\nNULL\tVendedor Externo\t1\nNULL\tVigilante\t2\nCoordenador (Contábil e Tesouraria)\tNULL\t1\nCoordenador de Planejamento e Custos\tNULL\t1\nGerente de Operações\tNULL\t1\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

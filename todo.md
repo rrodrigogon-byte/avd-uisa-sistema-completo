@@ -2057,3 +2057,20 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Verificar contagem de registros importados (3157 funcionários, 189 departamentos, 405 cargos)
 - [x] Validar relacionamentos hierárquicos (3132 funcionários com gestor definido)
 - [x] Testar consultas de funcionários por hierarquia (diretoria: 10, gerência: 23, coordenação: 52, supervisão: 231, operacional: 2842)
+
+## 🔧 CONFIGURAÇÃO DE LÍDERES E CICLO 2025/2026 (15/12/2025)
+
+### Cadastro de Líderes como Usuários
+- [x] Identificar todos os líderes da UISA (Analistas, Especialistas, Líderes, Supervisores, Coordenadores, Gerentes, Gerentes Executivos, Diretores, Presidente)
+- [x] Cadastrar líderes como usuários do sistema com perfil apropriado (316 usuários criados)
+- [x] Vincular usuários aos funcionários correspondentes
+
+### Ciclo de Avaliação 2025/2026
+- [x] Criar novo ciclo de avaliação com nome "2025/2026" (ID: 31)
+- [x] Configurar datas de início e fim do ciclo (01/01/2025 a 30/06/2026)
+- [x] Configurar prazos para autoavaliação (31/03/2025), avaliação do gestor (30/04/2025) e consenso (31/05/2025)
+
+### Configuração de Avaliadores
+- [x] Configurar gestores como avaliadores de suas respectivas equipes (95 gestores identificados)
+- [x] Validar relacionamentos gestor-equipe no banco de dados (3132 funcionários com gestor)
+- [x] Testar configurações realizadas
