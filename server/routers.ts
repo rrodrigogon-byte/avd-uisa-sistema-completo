@@ -50,10 +50,6 @@ import { jobDescriptionsRouter } from "./routers/jobDescriptionsRouter";
 import { jobDescriptionsPDFRouter } from "./routers/jobDescriptionsPDF";
 import { pirRouter } from "./pirRouter";
 import { pirExportRouter } from "./pirExportRouter";
-import { pirProgramsRouter } from "./routers/pirProgramsRouter";
-import { pirTestsRouter } from "./routers/pirTestsRouter";
-import { pirTrainingsRouter } from "./routers/pirTrainingsRouter";
-import { pirMedicalExamsRouter } from "./routers/pirMedicalExamsRouter";
 import { productivityRouter } from "./routers/productivityRouter";
 import { attachmentsRouter } from "./routers/attachmentsRouter";
 import { faceRecognitionRouter } from "./routers/faceRecognitionRouter";
@@ -263,10 +259,6 @@ export const appRouter = router({
   pirDashboard: pirDashboardRouter,
   pir: pirRouter,
   pirExport: pirExportRouter,
-  pirPrograms: pirProgramsRouter,
-  pirTests: pirTestsRouter,
-  pirTrainings: pirTrainingsRouter,
-  pirMedicalExams: pirMedicalExamsRouter,
   accessControl: accessControlRouter,
   
   // Novos routers - Sistema de Cargos CBO e Aprovações (14/12/2025)
