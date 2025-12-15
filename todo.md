@@ -1848,3 +1848,58 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
   - Rotas configuradas no App.tsx
 - [x] Testar fluxo completo de avaliação de integridade
   - Gravação de vídeo integrada ao teste
+
+
+## 🆕 NOVAS FUNCIONALIDADES (15/12/2025)
+
+### Pesquisa NPS de Teste Pós-PDI
+- [x] Criar schema de banco de dados para pesquisa NPS
+  - [x] Tabela npsSurveys (nome, descrição, status, perguntas de follow-up)
+  - [x] Tabela npsResponses (score, category, feedback, employeeId, processId)
+- [x] Implementar procedures tRPC para NPS
+  - [x] nps.createSurvey - criar pesquisa NPS
+  - [x] nps.submitResponse - submeter resposta NPS
+  - [x] nps.getResults - obter resultados consolidados
+  - [x] nps.getAnalytics - análise de tendências e evolução
+  - [x] nps.hasResponded - verificar se usuário já respondeu
+- [x] Implementar página frontend NPS
+  - [x] Dashboard de resultados NPS (promotores, neutros, detratores)
+  - [x] Formulário de resposta NPS (escala 0-10)
+  - [x] Campo de feedback qualitativo dinâmico por categoria
+  - [x] Gráficos de tendência NPS ao longo do tempo
+- [x] Rota /admin/nps para dashboard de gerenciamento
+- [ ] Integrar NPS com fluxo pós-PDI (trigger automático)
+
+### Experimento A/B para Interface AVD
+- [x] Criar schema de banco de dados para experimentos A/B
+  - [x] Tabela abTestExperiments (nome, descrição, módulo alvo, tráfego, status)
+  - [x] Tabela abTestVariants (nome, descrição, peso, isControl)
+  - [x] Tabela abTestAssignments (userId, experimentId, variantId)
+  - [x] Tabela abTestResults (métricas de conversão, tempo, abandono)
+- [x] Implementar procedures tRPC para A/B Testing
+  - [x] abTest.createExperiment - criar experimento
+  - [x] abTest.addVariant - adicionar variante ao experimento
+  - [x] abTest.listAll - listar todos os experimentos
+  - [x] abTest.getById - obter detalhes com variantes
+  - [x] abTest.updateStatus - atualizar status (draft/active/paused/completed)
+  - [x] abTest.getAnalytics - obter análise de resultados
+- [x] Criar dashboard de experimentos A/B
+  - [x] Listagem de experimentos com status
+  - [x] Criação de novos experimentos
+  - [x] Adição de variantes (controle e tratamento)
+  - [x] Visualização de métricas por variante
+  - [x] Controles para iniciar/pausar experimentos
+- [x] Rota /admin/ab-tests para dashboard de gerenciamento
+
+### Questões Adicionais ao PIR Integridade
+- [x] Adicionar novas questões ao banco de dados do PIR
+  - [x] Questões para dimensão IP (Integridade Pessoal) - 4 questões adicionadas
+  - [x] Questões para dimensão ID (Integridade Decisória) - 4 questões adicionadas
+  - [x] Questões para dimensão IC (Integridade Comportamental) - 4 questões adicionadas
+  - [x] Questões para dimensão ES (Estabilidade) - 4 questões adicionadas
+  - [x] Questões para dimensão FL (Flexibilidade) - 4 questões adicionadas
+  - [x] Questões para dimensão AU (Autonomia) - 4 questões adicionadas
+- [x] Criar script de seed para novas questões (seed-pir-integrity-questions-v2.mjs)
+- [x] Executar seed - **24 questões inseridas com sucesso**
+- [x] Validar balanceamento das questões por dimensão - **84 questões totais no banco**
+
