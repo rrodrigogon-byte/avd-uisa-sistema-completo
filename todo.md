@@ -1598,3 +1598,79 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Implementar testes de sistema de auditoria
 - [x] Adicionar testes de integridade do banco de dados
 - [x] Executar todos os testes - **29/29 testes passando 100%** ✅
+
+
+## 🎯 PIR INTEGRIDADE - IMPLEMENTAÇÃO COMPLETA (15/12/2025)
+
+### Fase 1: Estrutura de Banco de Dados PIR Integridade
+- [x] Tabela pirIntegrityDimensions (6 dimensões: Honestidade, Confiabilidade, Resiliência Ética, Responsabilidade, Justiça, Coragem Moral)
+- [x] Tabela pirIntegrityQuestions (questões de avaliação com cenários)
+- [x] Tabela pirIntegrityAssessments (avaliações de integridade)
+- [x] Tabela pirIntegrityResponses (respostas dos colaboradores)
+- [x] Tabela pirIntegrityDimensionScores (pontuações por dimensão)
+- [x] Tabela pirIntegrityRiskIndicators (indicadores de risco automáticos)
+- [x] Tabela pirIntegrityReports (relatórios gerados)
+- [x] Tabela pirIntegrityDevelopmentPlans (planos de desenvolvimento de integridade)
+
+### Fase 2: Procedures tRPC PIR Integridade
+- [x] CRUD de dimensões PIR Integridade
+- [x] CRUD de questões PIR Integridade
+- [x] CRUD de avaliações PIR Integridade
+- [x] Procedures para respostas
+- [x] Procedures para cálculo de scores
+- [x] Procedures para indicadores de risco
+- [x] Procedures para relatórios
+- [ ] Procedures para planos de desenvolvimento (futuro)
+
+### Fase 3: Interface de Aplicação do Teste PIR Integridade
+- [x] Tela de boas-vindas com termo de consentimento
+- [x] Tela de questões com cenários de dilemas éticos
+- [x] Suporte a múltipla escolha com justificativa
+- [x] Suporte a escala Likert (1-5)
+- [x] Suporte a resposta aberta (texto)
+- [x] Timer e barra de progresso
+- [x] Salvamento automático de progresso
+- [x] Tela de conclusão com próximos passos
+
+### Fase 4: Banco de Questões PIR Integridade
+- [x] Interface de gestão de questões
+- [x] Criação/edição de questões com cenários
+- [x] Categorização por dimensão
+- [x] Categorização por dificuldade
+- [x] Sistema de ativação/desativação
+- [x] Questões seed (13 questões iniciais inseridas)
+
+### Fase 5: Análise e Scoring PIR Integridade
+- [x] Algoritmo de scoring por dimensão
+- [x] Cálculo de pontuação geral ponderada
+- [x] Classificação de nível de risco (Baixo, Moderado, Alto, Crítico)
+- [x] Análise de nível moral (Kohlberg: Pré-convencional, Convencional, Pós-convencional)
+- [x] Detecção de inconsistências entre respostas
+- [x] Detecção de anomalias de tempo
+- [x] Geração automática de indicadores de risco
+
+### Fase 6: Relatórios e Dashboards PIR Integridade
+- [x] Relatório individual completo
+- [x] Gráfico radar das 6 dimensões
+- [x] Medidor visual de nível de risco
+- [x] Dashboard gerencial
+- [ ] Visão por departamento (placeholder)
+- [ ] Visão por cargo (placeholder)
+- [ ] Comparações e benchmarks (placeholder)
+- [x] Exportação para PDF
+
+### Fase 7: Integrações PIR Integridade
+- [x] Integração com processo AVD (como etapa opcional)
+- [ ] Geração automática de PDI baseado em gaps (futuro)
+- [x] Sistema de alertas de risco crítico
+- [x] Integração com dashboard administrativo
+
+### Status Atual
+- [x] Dashboard PIR Integridade funcionando
+- [x] 6 dimensões de integridade baseadas em Kohlberg
+- [x] Cards de estatísticas (Total, Concluídas, Em Andamento, Score Médio)
+- [x] Seção de Avaliações Recentes
+- [x] Botões de Gestão de Questões e Nova Avaliação
+- [x] Rotas integradas no App.tsx
+- [x] Menu integrado no DashboardLayout
+

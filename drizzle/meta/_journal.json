@@ -43,6 +43,13 @@
       "when": 1765771555485,
       "tag": "0005_strong_mongoose",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1765804913446,
+      "tag": "0006_dry_stardust",
+      "breakpoints": true
     }
   ]
 }

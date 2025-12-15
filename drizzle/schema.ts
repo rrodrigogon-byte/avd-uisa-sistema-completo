@@ -6406,3 +6406,165 @@ export const jobApprovals = mysqlTable("jobApprovals", {
 
 export type JobApproval = typeof jobApprovals.$inferSelect;
 export type InsertJobApproval = typeof jobApprovals.$inferInsert;
+
+
+// ============================================================================
+// PIR INTEGRIDADE - Sistema de Avaliação de Integridade Ética
+// ============================================================================
+
+/**
+ * Dimensões de Integridade (6 dimensões baseadas em Kohlberg)
+ */
+export const pirIntegrityDimensions = mysqlTable("pirIntegrityDimensions", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 10 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  weight: int("weight").default(100).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirIntegrityDimension = typeof pirIntegrityDimensions.$inferSelect;
+export type InsertPirIntegrityDimension = typeof pirIntegrityDimensions.$inferInsert;
+
+/**
+ * Questões do PIR Integridade
+ */
+export const pirIntegrityQuestions = mysqlTable("pirIntegrityQuestions", {
+  id: int("id").autoincrement().primaryKey(),
+  dimensionId: int("dimensionId").notNull(),
+  questionType: mysqlEnum("questionType", ["scenario", "multiple_choice", "scale", "open_ended"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  scenario: text("scenario"),
+  question: text("question").notNull(),
+  options: json("options"), // [{value, label, score, moralLevel}]
+  scaleMin: int("scaleMin"),
+  scaleMax: int("scaleMax"),
+  scaleLabels: json("scaleLabels"),
+  requiresJustification: boolean("requiresJustification").default(false).notNull(),
+  difficulty: mysqlEnum("difficulty", ["easy", "medium", "hard"]).default("medium").notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirIntegrityQuestion = typeof pirIntegrityQuestions.$inferSelect;
+export type InsertPirIntegrityQuestion = typeof pirIntegrityQuestions.$inferInsert;
+
+/**
+ * Avaliações de Integridade
+ */
+export const pirIntegrityAssessments = mysqlTable("pirIntegrityAssessments", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  assessmentType: mysqlEnum("assessmentType", ["hiring", "periodic", "promotion", "investigation"]).notNull(),
+  status: mysqlEnum("status", ["draft", "in_progress", "completed", "cancelled"]).default("draft").notNull(),
+  startedAt: datetime("startedAt"),
+  completedAt: datetime("completedAt"),
+  overallScore: int("overallScore"),
+  riskLevel: mysqlEnum("riskLevel", ["low", "moderate", "high", "critical"]),
+  moralLevel: mysqlEnum("moralLevel", ["pre_conventional", "conventional", "post_conventional"]),
+  notes: text("notes"),
+  createdBy: int("createdBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirIntegrityAssessment = typeof pirIntegrityAssessments.$inferSelect;
+export type InsertPirIntegrityAssessment = typeof pirIntegrityAssessments.$inferInsert;
+
+/**
+ * Respostas do PIR Integridade
+ */
+export const pirIntegrityResponses = mysqlTable("pirIntegrityResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  assessmentId: int("assessmentId").notNull(),
+  questionId: int("questionId").notNull(),
+  selectedOption: varchar("selectedOption", { length: 10 }),
+  scaleValue: int("scaleValue"),
+  openResponse: text("openResponse"),
+  justification: text("justification"),
+  timeSpent: int("timeSpent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirIntegrityResponse = typeof pirIntegrityResponses.$inferSelect;
+export type InsertPirIntegrityResponse = typeof pirIntegrityResponses.$inferInsert;
+
+/**
+ * Pontuações por Dimensão
+ */
+export const pirIntegrityDimensionScores = mysqlTable("pirIntegrityDimensionScores", {
+  id: int("id").autoincrement().primaryKey(),
+  assessmentId: int("assessmentId").notNull(),
+  dimensionId: int("dimensionId").notNull(),
+  score: int("score").notNull(),
+  riskLevel: mysqlEnum("riskLevel", ["low", "moderate", "high", "critical"]),
+  strengths: json("strengths"),
+  weaknesses: json("weaknesses"),
+  recommendations: json("recommendations"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PirIntegrityDimensionScore = typeof pirIntegrityDimensionScores.$inferSelect;
+export type InsertPirIntegrityDimensionScore = typeof pirIntegrityDimensionScores.$inferInsert;
+
+/**
+ * Indicadores de Risco
+ */
+export const pirIntegrityRiskIndicators = mysqlTable("pirIntegrityRiskIndicators", {
+  id: int("id").autoincrement().primaryKey(),
+  assessmentId: int("assessmentId").notNull(),
+  indicatorType: varchar("indicatorType", { length: 50 }).notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).notNull(),
+  description: text("description"),
+  detectedAt: datetime("detectedAt"),
+  resolvedAt: datetime("resolvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PirIntegrityRiskIndicator = typeof pirIntegrityRiskIndicators.$inferSelect;
+export type InsertPirIntegrityRiskIndicator = typeof pirIntegrityRiskIndicators.$inferInsert;
+
+/**
+ * Relatórios do PIR Integridade
+ */
+export const pirIntegrityReports = mysqlTable("pirIntegrityReports", {
+  id: int("id").autoincrement().primaryKey(),
+  assessmentId: int("assessmentId").notNull(),
+  reportType: mysqlEnum("reportType", ["individual", "team", "department", "executive"]).notNull(),
+  executiveSummary: text("executiveSummary"),
+  detailedAnalysis: json("detailedAnalysis"),
+  recommendations: json("recommendations"),
+  generatedBy: int("generatedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PirIntegrityReport = typeof pirIntegrityReports.$inferSelect;
+export type InsertPirIntegrityReport = typeof pirIntegrityReports.$inferInsert;
+
+/**
+ * Planos de Desenvolvimento de Integridade
+ */
+export const pirIntegrityDevelopmentPlans = mysqlTable("pirIntegrityDevelopmentPlans", {
+  id: int("id").autoincrement().primaryKey(),
+  assessmentId: int("assessmentId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  dimensionId: int("dimensionId"),
+  actionTitle: varchar("actionTitle", { length: 255 }).notNull(),
+  actionDescription: text("actionDescription"),
+  targetDate: date("targetDate"),
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluido", "cancelado"]).default("pendente").notNull(),
+  progress: int("progress").default(0),
+  completedAt: datetime("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PirIntegrityDevelopmentPlan = typeof pirIntegrityDevelopmentPlans.$inferSelect;
+export type InsertPirIntegrityDevelopmentPlan = typeof pirIntegrityDevelopmentPlans.$inferInsert;

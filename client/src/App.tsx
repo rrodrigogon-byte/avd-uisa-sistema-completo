@@ -35,6 +35,12 @@ import PIRIntegridade from "./pages/PIRIntegridade";
 import IntegridadeTestes from "./pages/IntegridadeTestes";
 import IntegridadeResultados from "./pages/IntegridadeResultados";
 import IntegridadeAnalises from "./pages/IntegridadeAnalises";
+import {
+  DashboardPIRIntegridade,
+  TestePIRIntegridade,
+  ResultadoPIRIntegridade,
+  GestaoQuestoesPIRIntegridade,
+} from "./pages/PIRIntegridade/index";
 import AprovacoesCargos from "./pages/AprovacoesCargos";
 import ValidacaoTestes from "./pages/ValidacaoTestes";
 import DashboardTestes from "./pages/DashboardTestes";
@@ -408,6 +414,12 @@ function Router() {
       <Route path="/pir/comparacao" component={PIRComparacao} />
       <Route path="/pir/exportacao" component={PIRExportacao} />
       <Route path="/pir/integridade" component={PIRIntegridade} />
+      
+      {/* Rotas PIR Integridade - Sistema Completo */}
+      <Route path="/pir-integridade" component={DashboardPIRIntegridade} />
+      <Route path="/pir-integridade/teste/:id" component={TestePIRIntegridade} />
+      <Route path="/pir-integridade/resultado/:id" component={ResultadoPIRIntegridade} />
+      <Route path="/pir-integridade/questoes" component={GestaoQuestoesPIRIntegridade} />
       
       {/* Rotas de Integridade - 3 páginas */}
       <Route path="/integridade/testes" component={IntegridadeTestes} />
