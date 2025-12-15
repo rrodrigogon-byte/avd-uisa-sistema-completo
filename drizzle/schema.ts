@@ -3,7 +3,6 @@ import {
   boolean,
   date,
   datetime,
-  decimal,
   int,
   json,
   mysqlEnum,
@@ -29,11 +28,18 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: mysqlEnum("role", ["admin", "rh", "gestor", "colaborador"]).default("colaborador").notNull(),
+  
+  // Flag de Líder de Cargos e Salários
+  isSalaryLead: boolean("isSalaryLead").default(false).notNull(),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-  isSalaryLead: boolean("isSalaryLead").default(false).notNull(),
+  // Reconhecimento facial
+  faceDescriptor: text("faceDescriptor"), // JSON com descritores faciais
+  facePhotoUrl: varchar("facePhotoUrl", { length: 512 }),
+  faceRegisteredAt: datetime("faceRegisteredAt"),
 });
 
 export type User = typeof users.$inferSelect;
@@ -3625,14 +3631,18 @@ export type InsertClockTest = typeof clockTests.$inferInsert;
  */
 export const emailQueue = mysqlTable("emailQueue", {
   id: int("id").autoincrement().primaryKey(),
-  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
-  subject: varchar("subject", { length: 500 }).notNull(),
-  body: text("body").notNull(),
-  status: varchar("status", { length: 50 }).default("pending").notNull(),
-  attempts: int("attempts").default(0).notNull(),
-  lastError: text("lastError"),
-  scheduledFor: datetime("scheduledFor"),
-  sentAt: datetime("sentAt"),
+  destinatario: varchar("destinatario", { length: 320 }).notNull(),
+  assunto: varchar("assunto", { length: 500 }).notNull(),
+  corpo: text("corpo").notNull(),
+  tipoEmail: varchar("tipoEmail", { length: 100 }).notNull(),
+  prioridade: mysqlEnum("prioridade", ["baixa", "normal", "alta", "urgente"]).default("normal").notNull(),
+  status: mysqlEnum("status", ["pendente", "enviando", "enviado", "falhou", "cancelado"]).default("pendente").notNull(),
+  tentativas: int("tentativas").default(0).notNull(),
+  maxTentativas: int("maxTentativas").default(3).notNull(),
+  proximaTentativa: datetime("proximaTentativa"),
+  erroMensagem: text("erroMensagem"),
+  metadados: text("metadados"),
+  enviadoEm: datetime("enviadoEm"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -6400,367 +6410,3 @@ export const jobApprovals = mysqlTable("jobApprovals", {
 
 export type JobApproval = typeof jobApprovals.$inferSelect;
 export type InsertJobApproval = typeof jobApprovals.$inferInsert;
-
-
-// ============================================================================
-// CONFIGURAÇÃO DE APROVADORES PADRÃO
-// ============================================================================
-
-/**
- * Configuração de Aprovadores Padrão
- * Define os aprovadores padrão para cada nível do workflow de aprovações
- */
-export const defaultApprovers = mysqlTable("defaultApprovers", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Identificação do nível
-  level: int("level").notNull(), // 1, 2, 3, 4
-  levelName: varchar("levelName", { length: 255 }).notNull(), // Ex: "Líder Imediato", "RH C&S", etc.
-  
-  // Aprovador padrão
-  approverId: int("approverId").notNull(), // ID do funcionário
-  approverName: varchar("approverName", { length: 255 }).notNull(),
-  approverEmail: varchar("approverEmail", { length: 320 }),
-  approverRole: varchar("approverRole", { length: 255 }), // Cargo/função
-  
-  // Tipo de workflow
-  workflowType: mysqlEnum("workflowType", [
-    "job_description", // Descrição de cargos
-    "pdi", // PDI
-    "bonus", // Bônus
-    "evaluation", // Avaliações
-    "all" // Todos os workflows
-  ]).default("all").notNull(),
-  
-  // Configurações
-  isActive: boolean("isActive").default(true).notNull(),
-  canSkip: boolean("canSkip").default(false).notNull(), // Se pode pular este nível
-  isRequired: boolean("isRequired").default(true).notNull(), // Se é obrigatório
-  
-  // Notificações
-  notifyOnSubmission: boolean("notifyOnSubmission").default(true).notNull(),
-  notifyOnApproval: boolean("notifyOnApproval").default(true).notNull(),
-  notifyOnRejection: boolean("notifyOnRejection").default(true).notNull(),
-  
-  // Auditoria
-  createdBy: int("createdBy"),
-  createdByName: varchar("createdByName", { length: 255 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type DefaultApprover = typeof defaultApprovers.$inferSelect;
-export type InsertDefaultApprover = typeof defaultApprovers.$inferInsert;
-
-
-// ============================================================================
-// PIR COMPLETO - PROGRAMA DE INTEGRIDADE RESPIRATÓRIA
-// ============================================================================
-
-/**
- * Programas PIR
- * Gerenciamento de programas de integridade respiratória
- */
-export const pirPrograms = mysqlTable("pirPrograms", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Informações do programa
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
-  startDate: date("startDate").notNull(),
-  endDate: date("endDate"),
-  status: mysqlEnum("status", ["active", "inactive", "completed"]).default("active").notNull(),
-  
-  // Responsáveis
-  coordinatorId: int("coordinatorId"), // ID do coordenador do programa
-  coordinatorName: varchar("coordinatorName", { length: 255 }),
-  
-  // Configurações
-  requiresMedicalExam: boolean("requiresMedicalExam").default(true).notNull(),
-  requiresTraining: boolean("requiresTraining").default(true).notNull(),
-  testFrequencyMonths: int("testFrequencyMonths").default(12).notNull(), // Frequência de reteste
-  
-  // Auditoria
-  createdBy: int("createdBy"),
-  createdByName: varchar("createdByName", { length: 255 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirProgram = typeof pirPrograms.$inferSelect;
-export type InsertPirProgram = typeof pirPrograms.$inferInsert;
-
-/**
- * Participantes do Programa PIR
- * Funcionários cadastrados no programa de integridade respiratória
- */
-export const pirParticipants = mysqlTable("pirParticipants", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Relacionamentos
-  programId: int("programId").notNull(),
-  employeeId: int("employeeId").notNull(),
-  
-  // Status
-  status: mysqlEnum("status", ["active", "inactive", "suspended", "completed"]).default("active").notNull(),
-  enrollmentDate: date("enrollmentDate").notNull(),
-  lastTestDate: date("lastTestDate"),
-  nextTestDue: date("nextTestDue"),
-  
-  // Exame médico
-  medicalExamDate: date("medicalExamDate"),
-  medicalExamStatus: mysqlEnum("medicalExamStatus", ["pending", "approved", "rejected", "expired"]).default("pending").notNull(),
-  medicalExamExpiry: date("medicalExamExpiry"),
-  medicalNotes: text("medicalNotes"),
-  
-  // Treinamento
-  trainingDate: date("trainingDate"),
-  trainingStatus: mysqlEnum("trainingStatus", ["pending", "completed", "expired"]).default("pending").notNull(),
-  trainingExpiry: date("trainingExpiry"),
-  trainingCertificate: varchar("trainingCertificate", { length: 500 }), // URL do certificado
-  
-  // Auditoria
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirParticipant = typeof pirParticipants.$inferSelect;
-export type InsertPirParticipant = typeof pirParticipants.$inferInsert;
-
-/**
- * Equipamentos de Proteção Respiratória (EPR)
- * Cadastro de respiradores e máscaras
- */
-export const pirEquipment = mysqlTable("pirEquipment", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Informações do equipamento
-  name: varchar("name", { length: 255 }).notNull(),
-  manufacturer: varchar("manufacturer", { length: 255 }),
-  model: varchar("model", { length: 255 }),
-  type: mysqlEnum("type", [
-    "half_mask", // Meia-face
-    "full_mask", // Face inteira
-    "n95", // N95/PFF2
-    "powered", // Motorizado
-    "supplied_air", // Ar mandado
-    "scba" // Autônomo
-  ]).notNull(),
-  
-  // Especificações técnicas
-  protectionFactor: int("protectionFactor"), // Fator de proteção nominal
-  approvalNumber: varchar("approvalNumber", { length: 100 }), // CA (Certificado de Aprovação)
-  sizes: text("sizes"), // JSON com tamanhos disponíveis
-  
-  // Controle
-  isActive: boolean("isActive").default(true).notNull(),
-  stockQuantity: int("stockQuantity").default(0),
-  
-  // Auditoria
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirEquipment = typeof pirEquipment.$inferSelect;
-export type InsertPirEquipment = typeof pirEquipment.$inferInsert;
-
-/**
- * Testes de Integridade (Fit Tests)
- * Registro completo de testes qualitativos e quantitativos
- */
-export const pirFitTests = mysqlTable("pirFitTests", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Relacionamentos
-  programId: int("programId").notNull(),
-  participantId: int("participantId").notNull(),
-  employeeId: int("employeeId").notNull(),
-  equipmentId: int("equipmentId").notNull(),
-  
-  // Informações do teste
-  testDate: datetime("testDate").notNull(),
-  testType: mysqlEnum("testType", ["qualitative", "quantitative"]).notNull(),
-  protocol: mysqlEnum("protocol", [
-    "osha_qualitative", // OSHA Qualitativo (sacarina, bitrex)
-    "osha_quantitative", // OSHA Quantitativo (PortaCount)
-    "iso_16975", // ISO 16975-3
-    "nbr_15052" // NBR 15052
-  ]).notNull(),
-  
-  // Equipamento testado
-  equipmentSize: varchar("equipmentSize", { length: 50 }),
-  equipmentCondition: mysqlEnum("equipmentCondition", ["new", "good", "fair", "poor"]).default("good"),
-  
-  // Resultado do teste
-  result: mysqlEnum("result", ["pass", "fail", "inconclusive"]).notNull(),
-  overallFitFactor: decimal("overallFitFactor", { precision: 10, scale: 2 }), // Fator de ajuste geral
-  
-  // Exercícios do teste (JSON com resultados por exercício)
-  exerciseResults: text("exerciseResults"), // JSON: {exercise: "normal_breathing", fitFactor: 150, pass: true}
-  
-  // Gravação de vídeo
-  videoUrl: varchar("videoUrl", { length: 500 }), // URL do vídeo no S3
-  videoS3Key: varchar("videoS3Key", { length: 500 }), // Chave S3 do vídeo
-  videoDuration: int("videoDuration"), // Duração em segundos
-  videoThumbnail: varchar("videoThumbnail", { length: 500 }), // URL da thumbnail
-  
-  // Observações
-  testNotes: text("testNotes"),
-  testerName: varchar("testerName", { length: 255 }), // Nome do aplicador do teste
-  testerId: int("testerId"), // ID do aplicador
-  
-  // Certificado
-  certificateUrl: varchar("certificateUrl", { length: 500 }), // URL do certificado gerado
-  certificateNumber: varchar("certificateNumber", { length: 100 }), // Número do certificado
-  certificateExpiry: date("certificateExpiry"), // Validade do certificado
-  
-  // Auditoria
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirFitTest = typeof pirFitTests.$inferSelect;
-export type InsertPirFitTest = typeof pirFitTests.$inferInsert;
-
-/**
- * Treinamentos PIR
- * Registro de treinamentos obrigatórios
- */
-export const pirTrainings = mysqlTable("pirTrainings", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Informações do treinamento
-  title: varchar("title", { length: 255 }).notNull(),
-  description: text("description"),
-  trainingDate: datetime("trainingDate").notNull(),
-  duration: int("duration"), // Duração em minutos
-  
-  // Instrutor
-  instructorName: varchar("instructorName", { length: 255 }),
-  instructorId: int("instructorId"),
-  
-  // Conteúdo
-  topics: text("topics"), // JSON com tópicos abordados
-  materials: text("materials"), // JSON com materiais utilizados
-  
-  // Controle
-  maxParticipants: int("maxParticipants"),
-  status: mysqlEnum("status", ["scheduled", "in_progress", "completed", "cancelled"]).default("scheduled").notNull(),
-  
-  // Auditoria
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirTraining = typeof pirTrainings.$inferSelect;
-export type InsertPirTraining = typeof pirTrainings.$inferInsert;
-
-/**
- * Participantes de Treinamentos
- * Registro de presença e aprovação em treinamentos
- */
-export const pirTrainingParticipants = mysqlTable("pirTrainingParticipants", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Relacionamentos
-  trainingId: int("trainingId").notNull(),
-  employeeId: int("employeeId").notNull(),
-  
-  // Status
-  attendanceStatus: mysqlEnum("attendanceStatus", ["registered", "present", "absent", "excused"]).default("registered").notNull(),
-  completionStatus: mysqlEnum("completionStatus", ["pending", "completed", "failed"]).default("pending").notNull(),
-  
-  // Avaliação
-  assessmentScore: int("assessmentScore"), // Nota da avaliação (0-100)
-  assessmentPassed: boolean("assessmentPassed"),
-  
-  // Certificado
-  certificateUrl: varchar("certificateUrl", { length: 500 }),
-  certificateIssued: boolean("certificateIssued").default(false),
-  certificateIssuedAt: datetime("certificateIssuedAt"),
-  
-  // Auditoria
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirTrainingParticipant = typeof pirTrainingParticipants.$inferSelect;
-export type InsertPirTrainingParticipant = typeof pirTrainingParticipants.$inferInsert;
-
-/**
- * Exames Médicos Ocupacionais
- * Registro de exames para aptidão ao uso de EPR
- */
-export const pirMedicalExams = mysqlTable("pirMedicalExams", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Relacionamentos
-  employeeId: int("employeeId").notNull(),
-  programId: int("programId"),
-  
-  // Informações do exame
-  examDate: date("examDate").notNull(),
-  examType: mysqlEnum("examType", ["admissional", "periodico", "retorno_trabalho", "mudanca_funcao", "demissional"]).notNull(),
-  
-  // Médico
-  doctorName: varchar("doctorName", { length: 255 }),
-  doctorCRM: varchar("doctorCRM", { length: 50 }),
-  clinicName: varchar("clinicName", { length: 255 }),
-  
-  // Resultado
-  result: mysqlEnum("result", ["apto", "inapto", "apto_com_restricoes"]).notNull(),
-  restrictions: text("restrictions"), // Restrições se houver
-  
-  // Exames complementares
-  spirometry: text("spirometry"), // JSON com resultados da espirometria
-  chestXray: text("chestXray"), // JSON com resultados do raio-X
-  otherExams: text("otherExams"), // JSON com outros exames
-  
-  // Validade
-  expiryDate: date("expiryDate"),
-  
-  // Documentos
-  reportUrl: varchar("reportUrl", { length: 500 }), // URL do laudo
-  
-  // Auditoria
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirMedicalExam = typeof pirMedicalExams.$inferSelect;
-export type InsertPirMedicalExam = typeof pirMedicalExams.$inferInsert;
-
-/**
- * Histórico de Uso de EPR
- * Registro de utilização de equipamentos
- */
-export const pirEquipmentUsage = mysqlTable("pirEquipmentUsage", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Relacionamentos
-  employeeId: int("employeeId").notNull(),
-  equipmentId: int("equipmentId").notNull(),
-  
-  // Informações de uso
-  assignedDate: date("assignedDate").notNull(),
-  returnedDate: date("returnedDate"),
-  status: mysqlEnum("status", ["in_use", "returned", "damaged", "lost"]).default("in_use").notNull(),
-  
-  // Detalhes
-  equipmentSize: varchar("equipmentSize", { length: 50 }),
-  serialNumber: varchar("serialNumber", { length: 100 }),
-  
-  // Condição
-  assignedCondition: mysqlEnum("assignedCondition", ["new", "good", "fair"]).default("good"),
-  returnedCondition: mysqlEnum("returnedCondition", ["good", "fair", "poor", "damaged"]),
-  
-  // Observações
-  notes: text("notes"),
-  
-  // Auditoria
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PirEquipmentUsage = typeof pirEquipmentUsage.$inferSelect;
-export type InsertPirEquipmentUsage = typeof pirEquipmentUsage.$inferInsert;

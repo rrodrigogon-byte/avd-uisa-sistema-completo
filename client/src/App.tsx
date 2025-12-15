@@ -161,7 +161,6 @@ import EmailMetrics from "./pages/EmailMetrics";
 import AdminRhEmailDashboard from "./pages/AdminRhEmailDashboard";
 import NotificationTemplates from "./pages/admin/NotificationTemplates";
 import Aprovadores from "./pages/admin/Aprovadores";
-import AprovadoresPadrao from "./pages/AprovadoresPadrao";
 import ScheduledReports from "./pages/ScheduledReports";
 import ExecutiveDashboard from "./pages/ExecutiveDashboard";
 import DashboardExecutivo from "./pages/DashboardExecutivo";
@@ -474,7 +473,6 @@ function Router() {
       <Route path="/avaliar-360/:id" component={Avaliar360} />
       <Route path="/admin/audit-log" component={AuditTrail} />
       <Route path="/admin/gestao-aprovadores" component={GestaoAprovadores} />
-      <Route path="/admin/aprovadores-padrao" component={AprovadoresPadrao} />
       <Route path="/admin/analytics" component={Analytics} />
       <Route path="/feedback" component={Feedbacks} />
       <Route path="/ciclos/:cycleId/criar-metas" component={CriarMetasCiclo} />
