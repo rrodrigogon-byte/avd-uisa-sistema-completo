@@ -59,6 +59,13 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    
+    // Iniciar cron jobs para notificações automáticas
+    import('../cronJobs').then(({ startCronJobs }) => {
+      startCronJobs();
+    }).catch(err => {
+      console.error('[Server] Failed to start cron jobs:', err);
+    });
   });
 }
 

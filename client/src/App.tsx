@@ -5,14 +5,39 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import Templates from "./pages/Templates";
+import TemplateForm from "./pages/TemplateForm";
+import Evaluations from "./pages/Evaluations";
+import EvaluationForm from "./pages/EvaluationForm";
+import Notifications from "./pages/Notifications";
+import Reports from "./pages/Reports";
+import PIR from "./pages/PIR";
+import JobDescriptions from "./pages/JobDescriptions";
+import Employees from "./pages/Employees";
+import Departments from "./pages/Departments";
+import Positions from "./pages/Positions";
+import Organogram from "./pages/Organogram";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/templates"} component={Templates} />
+      <Route path={"/templates/new"} component={TemplateForm} />
+      <Route path={"/evaluations"} component={Evaluations} />
+      <Route path={"/evaluations/new"} component={EvaluationForm} />
+      <Route path={"/notifications"} component={Notifications} />
+      <Route path={"/reports"} component={Reports} />
+      <Route path={"/pir"} component={PIR} />
+      <Route path={"/job-descriptions"} component={JobDescriptions} />
+      <Route path={"/employees"} component={Employees} />
+      <Route path={"/departments"} component={Departments} />
+      <Route path={"/positions"} component={Positions} />
+      <Route path={"/organogram"} component={Organogram} />
       <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );

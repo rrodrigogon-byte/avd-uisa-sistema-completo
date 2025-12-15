@@ -1,0 +1,1 @@
+ALTER TABLE `performanceEvaluations` ADD `managerComments` text;

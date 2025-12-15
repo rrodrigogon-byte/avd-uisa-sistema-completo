@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "mysql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1765766433148,
+      "tag": "0000_strong_gressill",
+      "breakpoints": true
+    }
+  ]
 }
