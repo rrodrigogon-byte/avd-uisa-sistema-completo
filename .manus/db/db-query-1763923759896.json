@@ -1,0 +1,14 @@
+{
+  "query": "SELECT settingKey, settingValue FROM systemSettings WHERE settingKey = 'smtp_config' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT settingKey, settingValue FROM systemSettings WHERE settingKey = 'smtp_config' LIMIT 1;",
+  "rows": [
+    {
+      "settingKey": "smtp_config",
+      "settingValue": "{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"hcmsjglzurabtaus\",\"fromName\":\"Sistema AVD UISA\",\"fromEmail\":\"avd@uisa.com.br\"}"
+    }
+  ],
+  "messages": [],
+  "stdout": "settingKey\tsettingValue\nsmtp_config\t{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"hcmsjglzurabtaus\",\"fromName\":\"Sistema AVD UISA\",\"fromEmail\":\"avd@uisa.com.br\"}\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

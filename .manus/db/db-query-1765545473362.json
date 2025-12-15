@@ -1,0 +1,32 @@
+{
+  "query": "SELECT * FROM testResults LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT * FROM testResults LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "invitationId": "1",
+      "employeeId": "690001",
+      "testType": "bigfive",
+      "scores": "{}",
+      "profileType": "Big Five",
+      "profileDescription": "Abertura=0, Conscienciosidade=0, Extroversão=0, Amabilidade=0, Neuroticismo=0",
+      "strengths": "NULL",
+      "developmentAreas": "NULL",
+      "workStyle": "NULL",
+      "communicationStyle": "NULL",
+      "leadershipStyle": "NULL",
+      "motivators": "NULL",
+      "stressors": "NULL",
+      "teamContribution": "NULL",
+      "careerRecommendations": "NULL",
+      "rawData": "NULL",
+      "completedAt": "2025-12-11 23:35:31",
+      "createdAt": "2025-12-11 23:35:30",
+      "updatedAt": "2025-12-12 12:29:46"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tinvitationId\temployeeId\ttestType\tscores\tprofileType\tprofileDescription\tstrengths\tdevelopmentAreas\tworkStyle\tcommunicationStyle\tleadershipStyle\tmotivators\tstressors\tteamContribution\tcareerRecommendations\trawData\tcompletedAt\tcreatedAt\tupdatedAt\n1\t1\t690001\tbigfive\t{}\tBig Five\tAbertura=0, Conscienciosidade=0, Extroversão=0, Amabilidade=0, Neuroticismo=0\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t2025-12-11 23:35:31\t2025-12-11 23:35:30\t2025-12-12 12:29:46\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}

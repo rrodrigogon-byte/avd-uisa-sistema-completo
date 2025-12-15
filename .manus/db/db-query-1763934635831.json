@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total, status FROM employees GROUP BY status",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT COUNT(*) as total, status FROM employees GROUP BY status",
+  "rows": [
+    {
+      "total": "3044",
+      "status": "ativo"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tstatus\n3044\tativo\n",
+  "stderr": "",
+  "execution_time_ms": 95
+}

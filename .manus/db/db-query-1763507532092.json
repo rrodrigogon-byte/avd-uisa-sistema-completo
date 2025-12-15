@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO systemSettings (settingKey, settingValue, description, createdAt, updatedAt) \nVALUES ('smtp_config', '{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"C8HNBnv@Wfjznqo6CKSzw^\"}', 'Configurações SMTP para envio de emails', NOW(), NOW())\nON DUPLICATE KEY UPDATE settingValue = '{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"C8HNBnv@Wfjznqo6CKSzw^\"}', updatedAt = NOW();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute INSERT INTO systemSettings (settingKey, settingValue, description, createdAt, updatedAt) \nVALUES ('smtp_config', '{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"C8HNBnv@Wfjznqo6CKSzw^\"}', 'Configurações SMTP para envio de emails', NOW(), NOW())\nON DUPLICATE KEY UPDATE settingValue = '{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"C8HNBnv@Wfjznqo6CKSzw^\"}', updatedAt = NOW();",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1817
+}
