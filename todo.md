@@ -1903,3 +1903,28 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Executar seed - **24 questões inseridas com sucesso**
 - [x] Validar balanceamento das questões por dimensão - **84 questões totais no banco**
 
+
+
+## 🆕 NOVAS FUNCIONALIDADES (15/12/2025 - Continuação)
+
+### Trigger Automático de NPS Após Conclusão do PDI
+- [x] Criar procedure para trigger automático de NPS após conclusão do PDI
+- [x] Implementar serviço de notificação NPS em tempo real
+- [x] Adicionar configuração de delay para envio do NPS
+- [x] Criar job automático para verificar PDIs concluídos e disparar NPS
+- [x] Implementar router npsTrigger com endpoints de trigger
+
+### Experimento A/B para Layout de Avaliação
+- [x] Criar primeiro experimento A/B para testar variações de layout
+- [x] Implementar variante A (layout atual - controle)
+- [x] Implementar variante B (novo layout com cards)
+- [x] Adicionar lógica de atribuição de variantes no processo de avaliação
+- [x] Criar métricas de comparação entre variantes
+
+### Relatório Consolidado NPS + Avaliação
+- [x] Criar procedure para relatório consolidado NPS + Avaliação
+- [x] Implementar cruzamento de dados NPS com resultados de avaliação
+- [x] Adicionar visualizações gráficas do relatório consolidado
+- [x] Criar página de relatório consolidado no admin (/admin/nps/consolidated-report)
+- [x] Verificar integridade do PIR e identificar pendências
+

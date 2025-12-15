@@ -126,6 +126,9 @@ import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovals
 import { videoUploadRouter } from "./routers/videoUploadRouter";
 import { abTestRouter } from "./routers/abTestRouter";
 import { npsRouter } from "./routers/npsRouter";
+import { npsTriggerRouter } from "./routers/npsTriggerRouter";
+import { abTestLayoutRouter } from "./routers/abTestLayoutRouter";
+import { consolidatedNpsReportRouter } from "./routers/consolidatedNpsReportRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -286,6 +289,11 @@ export const appRouter = router({
   videoUpload: videoUploadRouter,
   abTest: abTestRouter,
   nps: npsRouter,
+  
+  // Novos routers - Trigger NPS, A/B Layout e Relatório Consolidado (15/12/2025)
+  npsTrigger: npsTriggerRouter,
+  abTestLayout: abTestLayoutRouter,
+  consolidatedNpsReport: consolidatedNpsReportRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,
