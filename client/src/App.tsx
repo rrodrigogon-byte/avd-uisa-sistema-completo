@@ -31,11 +31,6 @@ import FaceRegistration from "./pages/FaceRegistration";
 import TemporalAnalysis from "./pages/TemporalAnalysis";
 import PIRComparacao from "./pages/PIRComparacao";
 import PIRExportacao from "./pages/PIRExportacao";
-import PIRIntegridade from "./pages/PIRIntegridade";
-import IntegridadeTestes from "./pages/IntegridadeTestes";
-import IntegridadeResultados from "./pages/IntegridadeResultados";
-import IntegridadeAnalises from "./pages/IntegridadeAnalises";
-import AprovacoesCargos from "./pages/AprovacoesCargos";
 import ValidacaoTestes from "./pages/ValidacaoTestes";
 import DashboardTestes from "./pages/DashboardTestes";
 import { Route, Switch } from "wouter";
@@ -127,7 +122,6 @@ import TestVARK from "./pages/TestVARK";
 import TestLeadership from "./pages/TestLeadership";
 import TestCareerAnchors from "./pages/TestCareerAnchors";
 import TestPIR from "./pages/TestPIR";
-import Passo2PIR from "./pages/Passo2PIR";
 import PIRDashboard from "./pages/PIRDashboard";
 import PIRReport from "./pages/PIRReport";
 import DetalhesResultadoTeste from "./pages/DetalhesResultadoTeste";
@@ -251,9 +245,6 @@ import RelatoriosHierarquia from "./pages/RelatoriosHierarquia";
 import HierarquiaUISA from "./pages/HierarquiaUISA";
 import AnaliseEvolucao from "./pages/AnaliseEvolucao";
 import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
-import DashboardAprovacoesCargos from "./pages/job-descriptions/DashboardAprovacoes";
-import FormularioCargo from "./pages/job-descriptions/FormularioCargo";
-import TestesIntegridade from "./pages/integrity-tests/TestesIntegridade";
 
 function Router() {
   return (
@@ -407,15 +398,6 @@ function Router() {
       <Route path="/pir/relatorio/:employeeId" component={PIRReport} />
       <Route path="/pir/comparacao" component={PIRComparacao} />
       <Route path="/pir/exportacao" component={PIRExportacao} />
-      <Route path="/pir/integridade" component={PIRIntegridade} />
-      
-      {/* Rotas de Integridade - 3 páginas */}
-      <Route path="/integridade/testes" component={IntegridadeTestes} />
-      <Route path="/integridade/resultados" component={IntegridadeResultados} />
-      <Route path="/integridade/analises" component={IntegridadeAnalises} />
-      
-      {/* Rota de Aprovações de Cargos com workflow de 4 níveis */}
-      <Route path="/aprovacoes/cargos" component={AprovacoesCargos} />
       <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
@@ -489,7 +471,7 @@ function Router() {
       {/* Processo AVD - 5 Passos */}
       <Route path="/avd/processo/dashboard" component={ProcessoDashboard} />
       <Route path="/avd/processo/passo1/:processId?" component={Passo1DadosPessoais} />
-      <Route path="/avd/processo/passo2/:processId?" component={Passo2PIR} />
+      <Route path="/avd/processo/passo2/:processId?" component={TestPIR} />
       <Route path="/avd/processo/passo3/:processId?" component={Passo3Competencias} />
       <Route path="/avd/processo/passo4/:processId?" component={Passo4Desempenho} />
       <Route path="/avd/processo/passo5/:processId?" component={Passo5PDI} />
@@ -522,12 +504,6 @@ function Router() {
       {/* Novos recursos - Exportação e Análise de Evolução */}
       <Route path="/relatorios/exportacao" component={ExportacaoRelatorios} />
       <Route path="/analytics/evolucao" component={AnaliseEvolucao} />
-      
-      {/* Novas rotas - Dashboard de Aprovações de Cargos e Testes de Integridade */}
-      <Route path="/job-descriptions/dashboard" component={DashboardAprovacoesCargos} />
-      <Route path="/job-descriptions/novo" component={FormularioCargo} />
-      <Route path="/job-descriptions/editar/:id" component={FormularioCargo} />
-      <Route path="/integrity-tests" component={TestesIntegridade} />
       
       {/* Passos 4, 5 e 6 - Resultados e Dashboard Admin */}
       <Route path="/resultados/:participantId" component={ResultadosIndividuais} />

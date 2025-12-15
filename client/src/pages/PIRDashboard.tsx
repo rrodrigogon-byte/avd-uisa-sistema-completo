@@ -50,7 +50,6 @@ import {
   AlertCircle,
   Filter,
   Download,
-  Shield,
 } from "lucide-react";
 
 const COLORS = {
@@ -142,22 +141,22 @@ export default function PIRDashboard() {
   const performanceDistribution = [
     {
       name: "Excepcional (90-100)",
-      value: stats?.scoreRanges?.excepcional || 0,
+      value: stats.scoreRanges.excepcional,
       color: COLORS.excepcional,
     },
     {
       name: "Supera (75-89)",
-      value: stats?.scoreRanges?.supera || 0,
+      value: stats.scoreRanges.supera,
       color: COLORS.supera,
     },
     {
       name: "Atende (60-74)",
-      value: stats?.scoreRanges?.atende || 0,
+      value: stats.scoreRanges.atende,
       color: COLORS.atende,
     },
     {
       name: "Abaixo (0-59)",
-      value: stats?.scoreRanges?.abaixo || 0,
+      value: stats.scoreRanges.abaixo,
       color: COLORS.abaixo,
     },
   ];
@@ -196,16 +195,10 @@ export default function PIRDashboard() {
             Análise consolidada das avaliações de Perfil de Identidade de Relacionamento
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="default" onClick={() => window.location.href = '/integridade/testes'}>
-            <Shield className="h-4 w-4 mr-2" />
-            Testes de Integridade
-          </Button>
-          <Button variant="outline" onClick={() => window.print()}>
-            <Download className="h-4 w-4 mr-2" />
-            Exportar PDF
-          </Button>
-        </div>
+        <Button variant="outline" onClick={() => window.print()}>
+          <Download className="h-4 w-4 mr-2" />
+          Exportar PDF
+        </Button>
       </div>
 
       {/* Filtros */}

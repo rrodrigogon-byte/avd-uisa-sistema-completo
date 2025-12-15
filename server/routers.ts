@@ -112,14 +112,6 @@ import { evaluationCycleRouter } from "./routers/evaluationCycleRouter";
 import { testNotificationsRouter } from "./routers/testNotificationsRouter";
 import { htmlImportRouter } from "./routers/htmlImportRouter";
 import { pirDashboardRouter } from "./routers/pirDashboardRouter";
-import { accessControlRouter } from "./accessControlRouter";
-import { cboRouter } from "./routers/cboRouter";
-import { jobDescriptionWorkflowRouter } from "./routers/jobDescriptionWorkflowRouter";
-import { integrityRouter } from "./routers/integrityRouter";
-import { jobDescriptionsApprovalsRouter } from "./routers/jobDescriptionsApprovalsRouter";
-import { integrityTestsRouter } from "./routers/integrityTestsRouter";
-import { integrityPIRRouter } from "./routers/integrityPIRRouter";
-import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovalsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -258,20 +250,6 @@ export const appRouter = router({
   pirDashboard: pirDashboardRouter,
   pir: pirRouter,
   pirExport: pirExportRouter,
-  accessControl: accessControlRouter,
-  
-  // Novos routers - Sistema de Cargos CBO e Aprovações (14/12/2025)
-  cbo: cboRouter,
-  jobDescriptionWorkflow: jobDescriptionWorkflowRouter,
-  integrity: integrityRouter,
-  
-  // Novos routers - Dashboard de Aprovações e Testes de Integridade (14/12/2025)
-  jobDescriptionsApprovals: jobDescriptionsApprovalsRouter,
-  integrityTests: integrityTestsRouter,
-  
-  // Novos routers - PIR de Integridade e Aprovações de Cargos com 4 níveis (14/12/2025)
-  integrityPIR: integrityPIRRouter,
-  jobDescriptionApprovals: jobDescriptionApprovalsRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

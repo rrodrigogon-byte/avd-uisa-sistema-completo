@@ -79,7 +79,7 @@ export default function PerfilFuncionario() {
               {/* Foto */}
               <div className="flex-shrink-0">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#F39200] to-[#d97f00] flex items-center justify-center text-white text-4xl font-bold">
-                  {employee?.employee?.name?.charAt(0) || "?"}
+                  {employee.employee.name?.charAt(0) || "?"}
                 </div>
               </div>
 
@@ -87,7 +87,7 @@ export default function PerfilFuncionario() {
               <div className="flex-1 grid grid-cols-2 gap-6">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-2xl font-bold text-gray-900">{employee?.employee?.name || "Nome não disponível"}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{employee.employee.name}</h2>
                     <Button
                       size="sm"
                       variant="ghost"
@@ -97,40 +97,40 @@ export default function PerfilFuncionario() {
                       <Pencil className="w-4 h-4" />
                     </Button>
                   </div>
-                  <p className="text-lg text-gray-600 mt-1">{employee?.position?.title || "Cargo não definido"}</p>
+                  <p className="text-lg text-gray-600 mt-1">{employee.position?.title || "Cargo não definido"}</p>
                   
                   <div className="flex gap-2 mt-3">
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                      {employee?.employee?.employeeCode || "N/A"}
+                      {employee.employee.employeeCode}
                     </Badge>
                     <Badge variant="outline" className={
-                      employee?.employee?.status === "ativo" ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-700 border-gray-200"
+                      employee.employee.status === "ativo" ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-700 border-gray-200"
                     }>
-                      {employee?.employee?.status || "Ativo"}
+                      {employee.employee.status || "Ativo"}
                     </Badge>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  {employee?.employee?.email && (
+                  {employee.employee.email && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Mail className="w-4 h-4" />
                       <span>{employee.employee.email}</span>
                     </div>
                   )}
-                  {employee?.employee?.phone && (
+                  {employee.employee.phone && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Phone className="w-4 h-4" />
                       <span>{employee.employee.phone}</span>
                     </div>
                   )}
-                  {employee?.department?.name && (
+                  {employee.department?.name && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Briefcase className="w-4 h-4" />
                       <span>{employee.department.name}</span>
                     </div>
                   )}
-                  {employee?.employee?.hireDate && (
+                  {employee.employee.hireDate && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Calendar className="w-4 h-4" />
                       <span>Admissão: {new Date(employee.employee.hireDate).toLocaleDateString('pt-BR')}</span>

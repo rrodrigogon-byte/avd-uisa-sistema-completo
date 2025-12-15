@@ -196,9 +196,7 @@ export const pirDashboardRouter = router({
       });
 
       // Calcular média geral de cada dimensão
-      const avgDimensionScores: Record<string, number> = {
-        IP: 0, ID: 0, IC: 0, ES: 0, FL: 0, AU: 0
-      };
+      const avgDimensionScores: Record<string, number> = {};
       Object.entries(dimensionScores).forEach(([dim, scores]) => {
         avgDimensionScores[dim] = scores.length > 0
           ? Math.round((scores.reduce((sum, s) => sum + s, 0) / scores.length) * 10) / 10
@@ -278,8 +276,7 @@ export const pirDashboardRouter = router({
         }))
         .sort((a, b) => a.month.localeCompare(b.month));
 
-      // Sempre retornar array, mesmo vazio
-      return evolution || [];
+      return evolution;
     }),
 
   /**
