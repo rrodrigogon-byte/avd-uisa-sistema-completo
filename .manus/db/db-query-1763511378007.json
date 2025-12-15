@@ -1,9 +1,0 @@
-{
-  "query": "-- Atribuir centro de custos baseado no departamento\n-- Formato: CC-{departmentId}-{nome_departamento}\n\nUPDATE employees e\nINNER JOIN departments d ON e.departmentId = d.id\nSET e.costCenter = CONCAT('CC-', LPAD(d.id, 3, '0'), '-', UPPER(SUBSTRING(d.name, 1, 10)));",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute -- Atribuir centro de custos baseado no departamento\n-- Formato: CC-{departmentId}-{nome_departamento}\n\nUPDATE employees e\nINNER JOIN departments d ON e.departmentId = d.id\nSET e.costCenter = CONCAT('CC-', LPAD(d.id, 3, '0'), '-', UPPER(SUBSTRING(d.name, 1, 10)));",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 166
-}

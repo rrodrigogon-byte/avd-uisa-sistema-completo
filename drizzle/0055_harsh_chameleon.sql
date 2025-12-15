@@ -1,1 +1,0 @@
-ALTER TABLE `evaluationCycles` MODIFY COLUMN `status` enum('planejado','ativo','concluido','cancelado') NOT NULL DEFAULT 'planejado';

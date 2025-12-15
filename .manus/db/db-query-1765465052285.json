@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `pdiImportHistory` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `fileName` VARCHAR(255) NOT NULL,\n  `fileSize` INT NOT NULL,\n  `fileType` ENUM('xlsx', 'xls', 'csv', 'pdf', 'html', 'txt') NOT NULL,\n  `fileUrl` VARCHAR(512),\n  `status` ENUM('processando', 'concluido', 'erro', 'parcial') NOT NULL DEFAULT 'processando',\n  `totalRecords` INT NOT NULL DEFAULT 0,\n  `successCount` INT NOT NULL DEFAULT 0,\n  `errorCount` INT NOT NULL DEFAULT 0,\n  `errors` JSON,\n  `importedBy` INT NOT NULL,\n  `startedAt` DATETIME NOT NULL,\n  `completedAt` DATETIME,\n  `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `pdiImportHistory` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `fileName` VARCHAR(255) NOT NULL,\n  `fileSize` INT NOT NULL,\n  `fileType` ENUM('xlsx', 'xls', 'csv', 'pdf', 'html', 'txt') NOT NULL,\n  `fileUrl` VARCHAR(512),\n  `status` ENUM('processando', 'concluido', 'erro', 'parcial') NOT NULL DEFAULT 'processando',\n  `totalRecords` INT NOT NULL DEFAULT 0,\n  `successCount` INT NOT NULL DEFAULT 0,\n  `errorCount` INT NOT NULL DEFAULT 0,\n  `errors` JSON,\n  `importedBy` INT NOT NULL,\n  `startedAt` DATETIME NOT NULL,\n  `completedAt` DATETIME,\n  `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 190
-}

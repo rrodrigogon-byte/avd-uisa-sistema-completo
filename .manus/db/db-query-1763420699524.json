@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO employeeCompetencies (employeeId, competencyId, currentLevel, evaluatedAt, evaluatedBy) \nSELECT \n  (SELECT id FROM employees WHERE employeeCode = 'ADMIN001'),\n  id,\n  3,\n  NOW(),\n  1\nFROM competencies \nWHERE code IN ('COMP_001', 'COMP_002', 'COMP_003', 'COMP_004', 'COMP_005', 'COMP_046', 'COMP_047', 'COMP_049')\nLIMIT 8",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute INSERT INTO employeeCompetencies (employeeId, competencyId, currentLevel, evaluatedAt, evaluatedBy) \nSELECT \n  (SELECT id FROM employees WHERE employeeCode = 'ADMIN001'),\n  id,\n  3,\n  NOW(),\n  1\nFROM competencies \nWHERE code IN ('COMP_001', 'COMP_002', 'COMP_003', 'COMP_004', 'COMP_005', 'COMP_046', 'COMP_047', 'COMP_049')\nLIMIT 8",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 66
-}
