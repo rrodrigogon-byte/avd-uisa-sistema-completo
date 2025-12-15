@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import AVDStepGuard from "@/components/AVDStepGuard";
 import AVDProgressBreadcrumbs from "@/components/AVDProgressBreadcrumbs";
+import NPSSurvey from "@/components/NPSSurvey";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 /**
  * Passo 5: Plano de Desenvolvimento Individual (PDI)
@@ -47,11 +49,19 @@ export default function Passo5PDI() {
   const [objectives, setObjectives] = useState("");
   const [actions, setActions] = useState<DevelopmentAction[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showNPSSurvey, setShowNPSSurvey] = useState(false);
+  const [npsCompleted, setNpsCompleted] = useState(false);
 
   // Buscar avaliação de desempenho (Passo 4)
   const { data: performanceAssessment, isLoading: loadingPerformance } = trpc.avd.getPerformanceAssessmentByProcess.useQuery(
     { processId: processId! },
     { enabled: !!processId }
+  );
+
+  // Buscar pesquisa NPS ativa para conclusão de processo
+  const { data: activeSurvey } = trpc.nps.getActiveSurvey.useQuery(
+    { triggerEvent: "process_completed" },
+    { enabled: true }
   );
 
   // Buscar competências para vincular ações
@@ -83,11 +93,30 @@ export default function Passo5PDI() {
   // Mutation para atualizar passo do processo
   const updateProcessStep = trpc.avd.updateProcessStep.useMutation({
     onSuccess: () => {
-      // Navegar para página de conclusão ou dashboard
-      navigate('/');
-      toast.success("Processo AVD concluído com sucesso!");
+      // Verificar se há pesquisa NPS ativa
+      if (activeSurvey && employeeId && !npsCompleted) {
+        setShowNPSSurvey(true);
+      } else {
+        // Navegar para página de conclusão ou dashboard
+        navigate('/');
+        toast.success("Processo AVD concluído com sucesso!");
+      }
     },
   });
+
+  // Handler para quando NPS é completado ou fechado
+  const handleNPSComplete = () => {
+    setNpsCompleted(true);
+    setShowNPSSurvey(false);
+    navigate('/');
+    toast.success("Processo AVD concluído com sucesso! Obrigado pelo feedback!");
+  };
+
+  const handleNPSSkip = () => {
+    setShowNPSSurvey(false);
+    navigate('/');
+    toast.success("Processo AVD concluído com sucesso!");
+  };
 
   // Carregar dados existentes
   useEffect(() => {
@@ -552,6 +581,31 @@ export default function Passo5PDI() {
       )}
         </div>
       </div>
+
+      {/* Modal de Pesquisa NPS */}
+      <Dialog open={showNPSSurvey} onOpenChange={(open) => !open && handleNPSSkip()}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-center">Processo Concluído!</DialogTitle>
+            <DialogDescription className="text-center">
+              Antes de finalizar, gostaríamos de saber sua opinião sobre o processo de avaliação.
+            </DialogDescription>
+          </DialogHeader>
+          {activeSurvey && employeeId && (
+            <NPSSurvey
+              surveyId={activeSurvey.id}
+              employeeId={employeeId}
+              processId={processId}
+              onComplete={handleNPSComplete}
+            />
+          )}
+          <div className="flex justify-center mt-4">
+            <Button variant="ghost" onClick={handleNPSSkip} className="text-muted-foreground">
+              Pular pesquisa
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AVDStepGuard>
   );
 }

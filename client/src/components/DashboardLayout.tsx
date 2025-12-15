@@ -301,6 +301,8 @@ const menuItems = [
       { icon: TrendingUp, label: "Analytics Avançado", path: "/analytics/avancado" },
       { icon: Scale, label: "Benchmarking", path: "/benchmarking" },
       { icon: BarChart, label: "Relatórios", path: "/relatorios-produtividade" },
+      { icon: GitBranch, label: "Testes A/B", path: "/admin/ab-tests" },
+      { icon: Star, label: "Pesquisa NPS", path: "/admin/nps" },
     ],
   },
   

@@ -1817,3 +1817,34 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 ### Rotas Adicionadas
 - [x] /admin/ab-tests - Dashboard de Testes A/B
 - [x] /admin/nps - Dashboard de Pesquisa NPS
+
+
+## 🆕 INTEGRAÇÕES FINAIS (15/12/2025)
+
+### Integrar NPS ao Fluxo AVD
+- [x] Exibir automaticamente a pesquisa NPS após o colaborador completar o Passo 5 (PDI)
+- [x] Criar componente NPSModal para exibição pós-PDI
+- [x] Integrar com o fluxo de conclusão do processo AVD
+
+### Adicionar Links no Menu Lateral
+- [x] Incluir acesso ao dashboard de Testes A/B no DashboardLayout para administradores
+- [x] Incluir acesso ao dashboard NPS no DashboardLayout para administradores
+- [x] Organizar seção de Analytics/Métricas no menu
+
+### Conectar Gravação de Vídeo com S3
+- [x] Integrar componente VideoRecorder com endpoint de upload S3
+- [x] Conectar com backend para salvar metadados do vídeo
+- [ ] Testar fluxo completo de gravação e upload
+
+### Verificar Pendências PIR Integridade
+- [x] Verificar se todas as funcionalidades do PIR Integridade estão funcionando
+  - Dashboard com estatísticas (total, concluídas, em andamento, score médio)
+  - 6 dimensões de integridade baseadas em Kohlberg
+  - Listagem de avaliações com filtros
+  - Gestão de questões
+  - Sistema de scoring e cálculo de risco
+- [x] Validar integração com processo AVD
+  - Link no menu lateral (seção Integridade)
+  - Rotas configuradas no App.tsx
+- [x] Testar fluxo completo de avaliação de integridade
+  - Gravação de vídeo integrada ao teste

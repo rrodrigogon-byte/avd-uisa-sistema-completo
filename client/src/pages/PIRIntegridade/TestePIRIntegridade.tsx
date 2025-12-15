@@ -8,8 +8,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, CheckCircle, Clock, Loader2, Shield } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, Loader2, Shield, Video } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import VideoRecorder from "@/components/VideoRecorder";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function TestePIRIntegridade() {
   const params = useParams<{ id: string }>();
@@ -20,6 +22,9 @@ export default function TestePIRIntegridade() {
   const [responses, setResponses] = useState<Record<number, { option?: string; justification?: string }>>({});
   const [startTime, setStartTime] = useState<number>(Date.now());
   const timeRef = useRef<number>(Date.now());
+  const [showVideoRecorder, setShowVideoRecorder] = useState(false);
+  const [videoUploaded, setVideoUploaded] = useState(false);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
 
   const { data: questionsData, isLoading: loadingQuestions } = trpc.pirIntegrity.listQuestions.useQuery({ active: true, limit: 100 });
   const { data: existingResponses } = trpc.pirIntegrity.getResponses.useQuery({ assessmentId });
@@ -27,6 +32,45 @@ export default function TestePIRIntegridade() {
   const saveResponse = trpc.pirIntegrity.saveResponse.useMutation();
   const completeAssessment = trpc.pirIntegrity.completeAssessment.useMutation();
   const startAssessment = trpc.pirIntegrity.startAssessment.useMutation();
+  const uploadVideo = trpc.videoUpload.upload.useMutation();
+
+  // Handler para upload de vídeo gravado
+  const handleVideoRecorded = async (videoBlob: Blob) => {
+    setIsUploadingVideo(true);
+    try {
+      // Converter Blob para Base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Data = reader.result as string;
+        
+        // Calcular duração aproximada (assumindo 1MB ~ 10 segundos para webm)
+        const durationSeconds = Math.round(videoBlob.size / (1024 * 1024) * 10);
+        
+        try {
+          await uploadVideo.mutateAsync({
+            processId: assessmentId,
+            employeeId: 0, // Será preenchido pelo backend com o usuário atual
+            stepNumber: 2, // PIR é o passo 2
+            videoData: base64Data,
+            mimeType: videoBlob.type || "video/webm",
+            durationSeconds,
+          });
+          
+          setVideoUploaded(true);
+          toast.success("Vídeo enviado com sucesso!");
+        } catch (error) {
+          console.error("Erro ao enviar vídeo:", error);
+          toast.error("Erro ao enviar vídeo. Tente novamente.");
+        }
+        setIsUploadingVideo(false);
+      };
+      reader.readAsDataURL(videoBlob);
+    } catch (error) {
+      console.error("Erro ao processar vídeo:", error);
+      toast.error("Erro ao processar vídeo");
+      setIsUploadingVideo(false);
+    }
+  };
 
   const questions = questionsData?.questions || [];
   const currentQuestion = questions[currentIndex];
@@ -143,6 +187,40 @@ export default function TestePIRIntegridade() {
         </div>
 
         <Progress value={progress} className="h-2" />
+
+        {/* Seção de Gravação de Vídeo */}
+        <Collapsible open={showVideoRecorder} onOpenChange={setShowVideoRecorder}>
+          <Card className="border-[#F39200]">
+            <CardHeader className="pb-2">
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="w-full justify-between p-0 h-auto hover:bg-transparent">
+                  <div className="flex items-center gap-2">
+                    <Video className="h-5 w-5 text-[#F39200]" />
+                    <CardTitle className="text-lg">Gravação de Vídeo (Opcional)</CardTitle>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {showVideoRecorder ? "Ocultar" : "Expandir"}
+                  </span>
+                </Button>
+              </CollapsibleTrigger>
+              <CardDescription>
+                Grave um vídeo durante a avaliação para análise comportamental
+                {videoUploaded && (
+                  <span className="ml-2 text-green-600 font-medium">✓ Vídeo enviado</span>
+                )}
+              </CardDescription>
+            </CardHeader>
+            <CollapsibleContent>
+              <CardContent>
+                <VideoRecorder
+                  onVideoRecorded={handleVideoRecorded}
+                  maxDuration={600}
+                  disabled={isUploadingVideo || videoUploaded}
+                />
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
 
         <Card>
           <CardHeader>
