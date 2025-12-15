@@ -2074,3 +2074,31 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Configurar gestores como avaliadores de suas respectivas equipes (95 gestores identificados)
 - [x] Validar relacionamentos gestor-equipe no banco de dados (3132 funcionários com gestor)
 - [x] Testar configurações realizadas
+
+
+## 📋 CADASTRO BASE - CICLO 2025/2026 (15/12/2025)
+
+### Competências Técnicas (Usina de Cana-de-Açúcar)
+- [x] Criar competências técnicas para área Agrícola (6 competências)
+- [x] Criar competências técnicas para área Industrial (6 competências)
+- [x] Criar competências técnicas para área de Energia (5 competências)
+- [x] Criar competências técnicas para área de Etanol (5 competências)
+- [x] Criar competências técnicas para área Administrativa (6 competências)
+
+### Competências Comportamentais (Boas Práticas RH)
+- [x] Criar competências comportamentais essenciais (12 competências)
+- [x] Criar competências de liderança (8 competências)
+
+### Níveis de Proficiência
+- [x] Criar níveis de proficiência (1-5) para cada competência (280 níveis)
+
+### Metas SMART Organizacionais - Ciclo 2025/2026
+- [x] Criar metas organizacionais estratégicas (7 metas corporativas)
+- [x] Criar metas por departamento Agrícola (5 metas)
+- [x] Criar metas por departamento Industrial (5 metas)
+- [x] Criar metas por departamento Energia (5 metas)
+- [x] Criar metas por departamento Etanol (5 metas)
+- [x] Criar metas por departamento Administrativo (6 metas)
+- [x] Criar metas por departamento Qualidade (4 metas)
+- [x] Criar metas por departamento Manutenção (4 metas)
+- [x] Criar metas por departamento SSMA (4 metas)

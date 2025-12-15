@@ -1,0 +1,52 @@
+{
+  "query": "SELECT type, goalType, category, COUNT(*) as total FROM smartGoals WHERE cycleId = 31 GROUP BY type, goalType, category ORDER BY type, goalType;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT type, goalType, category, COUNT(*) as total FROM smartGoals WHERE cycleId = 31 GROUP BY type, goalType, category ORDER BY type, goalType;",
+  "rows": [
+    {
+      "type": "team",
+      "goalType": "individual",
+      "category": "development",
+      "total": "4"
+    },
+    {
+      "type": "team",
+      "goalType": "individual",
+      "category": "behavioral",
+      "total": "5"
+    },
+    {
+      "type": "team",
+      "goalType": "individual",
+      "category": "corporate",
+      "total": "6"
+    },
+    {
+      "type": "team",
+      "goalType": "individual",
+      "category": "financial",
+      "total": "23"
+    },
+    {
+      "type": "organizational",
+      "goalType": "corporate",
+      "category": "corporate",
+      "total": "1"
+    },
+    {
+      "type": "organizational",
+      "goalType": "corporate",
+      "category": "financial",
+      "total": "4"
+    },
+    {
+      "type": "organizational",
+      "goalType": "corporate",
+      "category": "behavioral",
+      "total": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "type\tgoalType\tcategory\ttotal\nteam\tindividual\tdevelopment\t4\nteam\tindividual\tbehavioral\t5\nteam\tindividual\tcorporate\t6\nteam\tindividual\tfinancial\t23\norganizational\tcorporate\tcorporate\t1\norganizational\tcorporate\tfinancial\t4\norganizational\tcorporate\tbehavioral\t2\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}
