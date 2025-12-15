@@ -42,6 +42,8 @@ import {
   GestaoQuestoesPIRIntegridade,
 } from "./pages/PIRIntegridade/index";
 import AprovacoesCargos from "./pages/AprovacoesCargos";
+import ABTestDashboard from "./pages/ABTestDashboard";
+import NPSDashboard from "./pages/NPSDashboard";
 import ValidacaoTestes from "./pages/ValidacaoTestes";
 import DashboardTestes from "./pages/DashboardTestes";
 import { Route, Switch } from "wouter";
@@ -546,6 +548,10 @@ function Router() {
       <Route path="/admin/dashboard-processos" component={DashboardAdmin} />
       <Route path="/admin/email-monitoring" component={EmailMonitoring} />
       <Route path="/admin/test-monitoring" component={TestMonitoringDashboard} />
+      
+      {/* Testes A/B e NPS */}
+      <Route path="/admin/ab-tests" component={ABTestDashboard} />
+      <Route path="/admin/nps" component={NPSDashboard} />
       
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />

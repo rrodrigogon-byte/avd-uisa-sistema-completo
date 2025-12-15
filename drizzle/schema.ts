@@ -6575,3 +6575,196 @@ export const pirIntegrityDevelopmentPlans = mysqlTable("pirIntegrityDevelopmentP
 
 export type PirIntegrityDevelopmentPlan = typeof pirIntegrityDevelopmentPlans.$inferSelect;
 export type InsertPirIntegrityDevelopmentPlan = typeof pirIntegrityDevelopmentPlans.$inferInsert;
+
+
+// ============================================================================
+// TABELAS DE UPLOAD DE VÍDEO PARA S3
+// ============================================================================
+
+/**
+ * Gravações de Vídeo AVD
+ */
+export const avdVideoRecordings = mysqlTable("avdVideoRecordings", {
+  id: int("id").autoincrement().primaryKey(),
+  processId: int("processId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  stepNumber: int("stepNumber").notNull(),
+  
+  // Dados do arquivo
+  fileKey: varchar("fileKey", { length: 500 }).notNull(),
+  fileUrl: varchar("fileUrl", { length: 1000 }).notNull(),
+  mimeType: varchar("mimeType", { length: 100 }).default("video/webm"),
+  fileSizeBytes: int("fileSizeBytes"),
+  durationSeconds: int("durationSeconds"),
+  
+  // Metadados
+  status: mysqlEnum("status", ["uploading", "processing", "completed", "failed"]).default("uploading").notNull(),
+  errorMessage: text("errorMessage"),
+  
+  // Análise (opcional)
+  transcription: text("transcription"),
+  analysisResult: json("analysisResult"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AvdVideoRecording = typeof avdVideoRecordings.$inferSelect;
+export type InsertAvdVideoRecording = typeof avdVideoRecordings.$inferInsert;
+
+// ============================================================================
+// TABELAS DE TESTES A/B
+// ============================================================================
+
+/**
+ * Experimentos A/B
+ */
+export const abTestExperiments = mysqlTable("abTestExperiments", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  targetModule: mysqlEnum("targetModule", ["pir", "competencias", "desempenho", "pdi"]).notNull(),
+  
+  // Configuração
+  status: mysqlEnum("status", ["draft", "active", "paused", "completed", "archived"]).default("draft").notNull(),
+  trafficPercentage: int("trafficPercentage").default(100).notNull(),
+  
+  // Período
+  startDate: datetime("startDate").notNull(),
+  endDate: datetime("endDate"),
+  
+  // Criador
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AbTestExperiment = typeof abTestExperiments.$inferSelect;
+export type InsertAbTestExperiment = typeof abTestExperiments.$inferInsert;
+
+/**
+ * Variantes de Testes A/B
+ */
+export const abTestVariants = mysqlTable("abTestVariants", {
+  id: int("id").autoincrement().primaryKey(),
+  experimentId: int("experimentId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Configuração da variante
+  isControl: boolean("isControl").default(false).notNull(),
+  trafficWeight: int("trafficWeight").default(50).notNull(),
+  
+  // Conteúdo da variante (questões modificadas)
+  questionContent: json("questionContent"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AbTestVariant = typeof abTestVariants.$inferSelect;
+export type InsertAbTestVariant = typeof abTestVariants.$inferInsert;
+
+/**
+ * Atribuições de Variantes (qual usuário viu qual variante)
+ */
+export const abTestAssignments = mysqlTable("abTestAssignments", {
+  id: int("id").autoincrement().primaryKey(),
+  experimentId: int("experimentId").notNull(),
+  variantId: int("variantId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Resultado
+  completed: boolean("completed").default(false).notNull(),
+  responseTimeSeconds: int("responseTimeSeconds"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: datetime("completedAt"),
+});
+
+export type AbTestAssignment = typeof abTestAssignments.$inferSelect;
+export type InsertAbTestAssignment = typeof abTestAssignments.$inferInsert;
+
+/**
+ * Resultados de Testes A/B
+ */
+export const abTestResults = mysqlTable("abTestResults", {
+  id: int("id").autoincrement().primaryKey(),
+  experimentId: int("experimentId").notNull(),
+  variantId: int("variantId").notNull(),
+  
+  // Métricas
+  sampleSize: int("sampleSize").default(0).notNull(),
+  completions: int("completions").default(0).notNull(),
+  conversionRate: int("conversionRate").default(0),
+  avgResponseTimeSeconds: int("avgResponseTimeSeconds"),
+  dropoffRate: int("dropoffRate").default(0),
+  
+  // Significância estatística
+  isStatisticallySignificant: boolean("isStatisticallySignificant").default(false),
+  confidenceLevel: int("confidenceLevel"),
+  
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+});
+
+export type AbTestResult = typeof abTestResults.$inferSelect;
+export type InsertAbTestResult = typeof abTestResults.$inferInsert;
+
+// ============================================================================
+// TABELAS DE PESQUISA NPS
+// ============================================================================
+
+/**
+ * Pesquisas NPS
+ */
+export const npsSurveys = mysqlTable("npsSurveys", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Perguntas
+  mainQuestion: text("mainQuestion").notNull(),
+  promoterFollowUp: text("promoterFollowUp"),
+  passiveFollowUp: text("passiveFollowUp"),
+  detractorFollowUp: text("detractorFollowUp"),
+  
+  // Configuração de gatilho
+  triggerEvent: mysqlEnum("triggerEvent", ["process_completed", "step_completed", "manual"]).default("process_completed").notNull(),
+  triggerStepNumber: int("triggerStepNumber"),
+  delayMinutes: int("delayMinutes").default(0),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "active", "paused", "completed"]).default("draft").notNull(),
+  
+  // Criador
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NpsSurvey = typeof npsSurveys.$inferSelect;
+export type InsertNpsSurvey = typeof npsSurveys.$inferInsert;
+
+/**
+ * Respostas NPS
+ */
+export const npsResponses = mysqlTable("npsResponses", {
+  id: int("id").autoincrement().primaryKey(),
+  surveyId: int("surveyId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  processId: int("processId"),
+  
+  // Resposta
+  score: int("score").notNull(),
+  category: mysqlEnum("category", ["promoter", "passive", "detractor"]).notNull(),
+  followUpComment: text("followUpComment"),
+  
+  // Metadados
+  responseTimeSeconds: int("responseTimeSeconds"),
+  deviceType: varchar("deviceType", { length: 50 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type NpsResponse = typeof npsResponses.$inferSelect;
+export type InsertNpsResponse = typeof npsResponses.$inferInsert;

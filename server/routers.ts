@@ -123,6 +123,9 @@ import { pirIntegrityRouter } from "./routers/pirIntegrityRouter";
 import { pirRiskAlertsRouter } from "./routers/pirRiskAlertsRouter";
 import { pirDepartmentReportsRouter } from "./routers/pirDepartmentReportsRouter";
 import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovalsRouter";
+import { videoUploadRouter } from "./routers/videoUploadRouter";
+import { abTestRouter } from "./routers/abTestRouter";
+import { npsRouter } from "./routers/npsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -278,6 +281,11 @@ export const appRouter = router({
   pirRiskAlerts: pirRiskAlertsRouter,
   pirDepartmentReports: pirDepartmentReportsRouter,
   jobDescriptionApprovals: jobDescriptionApprovalsRouter,
+  
+  // Novos routers - Upload de Vídeo, Testes A/B e NPS (15/12/2025)
+  videoUpload: videoUploadRouter,
+  abTest: abTestRouter,
+  nps: npsRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,

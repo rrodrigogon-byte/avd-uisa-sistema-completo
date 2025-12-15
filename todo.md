@@ -1743,3 +1743,77 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Adicionar documentação técnica
 - [x] Criar FAQ e troubleshooting
 
+
+
+## ✅ NOVOS RECURSOS IMPLEMENTADOS - 15/12/2025
+
+### Upload de Vídeo para S3
+- [x] Criar procedure tRPC para upload de vídeo
+  - [x] Implementar endpoint de upload com validação de tamanho (100MB máx)
+  - [x] Integrar com storagePut para salvar no S3
+  - [x] Salvar metadados do vídeo no banco de dados
+- [x] Atualizar schema para armazenar referências de vídeo
+  - [x] Adicionar tabela avdVideoRecordings
+  - [x] Relacionar vídeos com processos AVD
+- [x] Implementar router videoUploadRouter.ts
+  - [x] upload - fazer upload de vídeo para S3
+  - [x] listByProcess - listar vídeos de um processo
+  - [x] getById - buscar vídeo por ID
+  - [x] delete - excluir vídeo
+
+### Testes A/B de Questões
+- [x] Criar schema para testes A/B
+  - [x] Tabela abTestExperiments (experimentos)
+  - [x] Tabela abTestVariants (variantes de questões)
+  - [x] Tabela abTestAssignments (atribuições de variantes)
+  - [x] Tabela abTestResults (resultados e métricas)
+- [x] Implementar procedures tRPC (abTestRouter.ts)
+  - [x] createExperiment - criar novo experimento
+  - [x] listAll - listar todos os experimentos
+  - [x] assignVariant - atribuir variante ao usuário
+  - [x] recordResult - registrar resultado
+  - [x] getAnalytics - obter análise comparativa com significância estatística
+  - [x] updateStatus - atualizar status do experimento
+- [x] Implementar lógica de distribuição de variantes
+  - [x] Algoritmo de randomização balanceada por peso
+  - [x] Persistência de atribuição por usuário
+- [x] Criar dashboard de análise A/B (ABTestDashboard.tsx)
+  - [x] Visualização de métricas por variante
+  - [x] Gráficos comparativos de desempenho
+  - [x] Indicador de significância estatística
+  - [x] Identificação de variante vencedora
+
+### Pesquisa de Satisfação (NPS)
+- [x] Criar schema para NPS
+  - [x] Tabela npsSurveys (pesquisas)
+  - [x] Tabela npsResponses (respostas)
+- [x] Implementar procedures tRPC (npsRouter.ts)
+  - [x] createSurvey - criar pesquisa
+  - [x] listSurveys - listar pesquisas
+  - [x] getById - buscar pesquisa por ID
+  - [x] submitResponse - enviar resposta
+  - [x] getResults - obter resultados consolidados
+  - [x] getAnalytics - análise detalhada com tendências
+  - [x] hasResponded - verificar se já respondeu
+  - [x] updateStatus - atualizar status da pesquisa
+- [x] Implementar componente de pesquisa NPS (NPSSurvey.tsx)
+  - [x] Escala 0-10 com design intuitivo e cores por categoria
+  - [x] Campo de comentário opcional contextual
+  - [x] Animação de agradecimento após envio
+  - [x] Categorização automática (Promotores/Neutros/Detratores)
+- [x] Criar dashboard de resultados NPS (NPSDashboard.tsx)
+  - [x] Score NPS calculado (Promotores - Detratores)
+  - [x] Distribuição de respostas com gráfico de barras
+  - [x] Análise de comentários por categoria
+  - [x] Tendência ao longo do tempo (up/down/stable)
+
+### Testes Unitários
+- [x] Testes para upload de vídeo (6 testes)
+- [x] Testes para sistema A/B (11 testes)
+- [x] Testes para NPS (14 testes)
+- [x] Testes de validação de schema (4 testes)
+- [x] **Total: 35 testes passando 100%**
+
+### Rotas Adicionadas
+- [x] /admin/ab-tests - Dashboard de Testes A/B
+- [x] /admin/nps - Dashboard de Pesquisa NPS
