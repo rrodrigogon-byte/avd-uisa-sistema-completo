@@ -1705,3 +1705,41 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Implementar exportação de relatórios comparativos - exportComparisonReport (JSON/CSV)
 - [x] Adicionar filtros por período e tipo de análise - Suporte a startDate/endDate em todas queries
 
+
+
+## 🔧 COMPLETAR FUNCIONALIDADES PENDENTES (15/12/2025)
+
+### Timer Visível Durante o Teste PIR
+- [x] Adicionar componente de timer visível na página PIRIntegridade
+- [x] Mostrar tempo decorrido desde o início do teste
+- [x] Adicionar indicador de tempo estimado restante
+- [x] Estilizar timer de forma não intrusiva mas visível
+
+### Botão de Pausar/Retomar Teste
+- [x] Implementar funcionalidade de pausar teste PIR
+- [x] Salvar estado atual das respostas ao pausar
+- [x] Implementar funcionalidade de retomar teste
+- [x] Adicionar confirmação antes de pausar
+- [x] Mostrar indicador visual quando teste está pausado
+
+### Sistema de Gravação de Vídeo no Frontend
+- [x] Integrar VideoRecorder na página PIRIntegridade
+- [ ] Implementar upload de vídeo para S3
+- [ ] Conectar com backend para salvar metadados do vídeo
+- [ ] Adicionar validação de vídeo (face detectada)
+- [x] Mostrar preview do vídeo gravado
+
+### Melhorar Alertas de Risco (100%)
+- [x] Implementar alertas em tempo real durante o teste
+- [x] Adicionar notificações para comportamentos suspeitos
+- [x] Criar dashboard de alertas para administradores
+- [x] Implementar sistema de flags de risco
+- [x] Integrar alertas com sistema de notificações
+
+### Documentação do Sistema (100%)
+- [x] Criar guia de usuário completo
+- [x] Documentar APIs e endpoints
+- [x] Criar manual de administração
+- [x] Adicionar documentação técnica
+- [x] Criar FAQ e troubleshooting
+
