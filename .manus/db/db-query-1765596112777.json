@@ -1,0 +1,30 @@
+{
+  "query": "SHOW CREATE TABLE successionCandidates",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SHOW CREATE TABLE successionCandidates",
+  "rows": [
+    {
+      "Table": "successionCandidates",
+      "Create Table": "CREATE TABLE `successionCandidates` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `planId` int(11) NOT NULL,",
+    "  `employeeId` int(11) NOT NULL,",
+    "  `readinessLevel` enum('imediato','1_ano','2_3_anos','mais_3_anos') NOT NULL,",
+    "  `priority` int(11) NOT NULL DEFAULT '1',",
+    "  `developmentPlanId` int(11) DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  `gapAnalysis` text DEFAULT NULL,",
+    "  `developmentActions` text DEFAULT NULL,",
+    "  `performance` enum('baixo','medio','alto') NOT NULL DEFAULT 'medio',",
+    "  `potential` enum('baixo','medio','alto') NOT NULL DEFAULT 'medio',",
+    "  `comments` text DEFAULT NULL,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=240001"
+  ],
+  "stdout": "Table\tCreate Table\nsuccessionCandidates\tCREATE TABLE `successionCandidates` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `planId` int(11) NOT NULL,\n  `employeeId` int(11) NOT NULL,\n  `readinessLevel` enum('imediato','1_ano','2_3_anos','mais_3_anos') NOT NULL,\n  `priority` int(11) NOT NULL DEFAULT '1',\n  `developmentPlanId` int(11) DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  `gapAnalysis` text DEFAULT NULL,\n  `developmentActions` text DEFAULT NULL,\n  `performance` enum('baixo','medio','alto') NOT NULL DEFAULT 'medio',\n  `potential` enum('baixo','medio','alto') NOT NULL DEFAULT 'medio',\n  `comments` text DEFAULT NULL,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin AUTO_INCREMENT=240001\n",
+  "stderr": "",
+  "execution_time_ms": 82
+}

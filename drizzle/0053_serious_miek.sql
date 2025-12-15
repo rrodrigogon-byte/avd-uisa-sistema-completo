@@ -1,0 +1,1 @@
+ALTER TABLE `pushNotificationLogs` MODIFY COLUMN `status` enum('sent','opened','failed') NOT NULL DEFAULT 'sent';

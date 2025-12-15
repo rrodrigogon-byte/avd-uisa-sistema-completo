@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, name, year, type, status, startDate, endDate FROM evaluationCycles ORDER BY createdAt DESC LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, year, type, status, startDate, endDate FROM evaluationCycles ORDER BY createdAt DESC LIMIT 5",
+  "rows": [
+    {
+      "id": "90001",
+      "name": "Ciclo Anual 2025",
+      "year": "2025",
+      "type": "anual",
+      "status": "planejamento",
+      "startDate": "2025-01-01 00:00:00",
+      "endDate": "2025-12-31 00:00:00"
+    },
+    {
+      "id": "60001",
+      "name": "Ciclo 2025",
+      "year": "2025",
+      "type": "anual",
+      "status": "em_andamento",
+      "startDate": "2025-01-01 00:00:00",
+      "endDate": "2025-12-31 00:00:00"
+    },
+    {
+      "id": "30001",
+      "name": "Ciclo de Avaliação 2025",
+      "year": "2025",
+      "type": "anual",
+      "status": "em_andamento",
+      "startDate": "2025-01-01 00:00:00",
+      "endDate": "2025-12-31 23:59:59"
+    },
+    {
+      "id": "2",
+      "name": "Ciclo 2025",
+      "year": "2025",
+      "type": "anual",
+      "status": "em_andamento",
+      "startDate": "2025-01-01 00:00:00",
+      "endDate": "2025-12-31 00:00:00"
+    },
+    {
+      "id": "1",
+      "name": "Ciclo 2025",
+      "year": "2025",
+      "type": "anual",
+      "status": "em_andamento",
+      "startDate": "2025-01-01 00:00:00",
+      "endDate": "2025-12-31 00:00:00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tyear\ttype\tstatus\tstartDate\tendDate\n90001\tCiclo Anual 2025\t2025\tanual\tplanejamento\t2025-01-01 00:00:00\t2025-12-31 00:00:00\n60001\tCiclo 2025\t2025\tanual\tem_andamento\t2025-01-01 00:00:00\t2025-12-31 00:00:00\n30001\tCiclo de Avaliação 2025\t2025\tanual\tem_andamento\t2025-01-01 00:00:00\t2025-12-31 23:59:59\n2\tCiclo 2025\t2025\tanual\tem_andamento\t2025-01-01 00:00:00\t2025-12-31 00:00:00\n1\tCiclo 2025\t2025\tanual\tem_andamento\t2025-01-01 00:00:00\t2025-12-31 00:00:00\n",
+  "stderr": "",
+  "execution_time_ms": 88
+}

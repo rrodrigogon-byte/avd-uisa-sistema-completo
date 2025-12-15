@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, name, email, employeeCode, chapa FROM employees WHERE email IS NOT NULL AND email != '' AND active = 1 LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, email, employeeCode, chapa FROM employees WHERE email IS NOT NULL AND email != '' AND active = 1 LIMIT 5",
+  "rows": [
+    {
+      "id": "690001",
+      "name": "JOSE ARIMATEA DE ANGELO CALSAVERINI",
+      "email": "ari.calsaverini@uisa.com.br",
+      "employeeCode": "UISA8001266",
+      "chapa": "8001266"
+    },
+    {
+      "id": "690002",
+      "name": "MARIA GEANE MONTEIRO DA SILVA",
+      "email": "geane.monteiro@uisa.com.br",
+      "employeeCode": "UISA434906",
+      "chapa": "434906"
+    },
+    {
+      "id": "690003",
+      "name": "JARI DE SOUZA",
+      "email": "jari.souza@uisa.com.br",
+      "employeeCode": "UISA860913",
+      "chapa": "860913"
+    },
+    {
+      "id": "690004",
+      "name": "PAULO CESAR LEITE",
+      "email": "paulo.leite@uisa.com.br",
+      "employeeCode": "UISA115258",
+      "chapa": "115258"
+    },
+    {
+      "id": "690005",
+      "name": "JOSE FERNANDO MAZUCA FILHO",
+      "email": "jose.mazuca@uisa.com.br",
+      "employeeCode": "UISA892394",
+      "chapa": "892394"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\temployeeCode\tchapa\n690001\tJOSE ARIMATEA DE ANGELO CALSAVERINI\tari.calsaverini@uisa.com.br\tUISA8001266\t8001266\n690002\tMARIA GEANE MONTEIRO DA SILVA\tgeane.monteiro@uisa.com.br\tUISA434906\t434906\n690003\tJARI DE SOUZA\tjari.souza@uisa.com.br\tUISA860913\t860913\n690004\tPAULO CESAR LEITE\tpaulo.leite@uisa.com.br\tUISA115258\t115258\n690005\tJOSE FERNANDO MAZUCA FILHO\tjose.mazuca@uisa.com.br\tUISA892394\t892394\n",
+  "stderr": "",
+  "execution_time_ms": 65
+}

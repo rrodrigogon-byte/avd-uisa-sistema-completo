@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `reportExecutionLogs` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `scheduledReportId` int NOT NULL,\n  `executedAt` datetime NOT NULL,\n  `status` enum('success','failed','partial') NOT NULL,\n  `recipientCount` int NOT NULL DEFAULT 0,\n  `successCount` int NOT NULL DEFAULT 0,\n  `failedCount` int NOT NULL DEFAULT 0,\n  `errorMessage` text,\n  `executionTimeMs` int,\n  `fileSize` int,\n  CONSTRAINT `reportExecutionLogs_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE `reportExecutionLogs` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `scheduledReportId` int NOT NULL,\n  `executedAt` datetime NOT NULL,\n  `status` enum('success','failed','partial') NOT NULL,\n  `recipientCount` int NOT NULL DEFAULT 0,\n  `successCount` int NOT NULL DEFAULT 0,\n  `failedCount` int NOT NULL DEFAULT 0,\n  `errorMessage` text,\n  `executionTimeMs` int,\n  `fileSize` int,\n  CONSTRAINT `reportExecutionLogs_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 181
+}

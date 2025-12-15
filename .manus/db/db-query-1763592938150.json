@@ -1,0 +1,20 @@
+{
+  "query": "SELECT * FROM systemSettings WHERE settingKey LIKE '%smtp%' LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT * FROM systemSettings WHERE settingKey LIKE '%smtp%' LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "settingKey": "smtp_config",
+      "settingValue": "{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"hcmsjglzurabtaus\",\"fromName\":\"Sistema AVD UISA\",\"fromEmail\":\"avd@uisa.com.br\"}",
+      "description": "Configurações SMTP para envio de emails",
+      "isEncrypted": "0",
+      "updatedBy": "NULL",
+      "createdAt": "2025-11-18 23:12:12",
+      "updatedAt": "2025-11-19 00:38:14"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsettingKey\tsettingValue\tdescription\tisEncrypted\tupdatedBy\tcreatedAt\tupdatedAt\n1\tsmtp_config\t{\"host\":\"smtp.gmail.com\",\"port\":587,\"secure\":false,\"user\":\"avd@uisa.com.br\",\"pass\":\"hcmsjglzurabtaus\",\"fromName\":\"Sistema AVD UISA\",\"fromEmail\":\"avd@uisa.com.br\"}\tConfigurações SMTP para envio de emails\t0\tNULL\t2025-11-18 23:12:12\t2025-11-19 00:38:14\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
