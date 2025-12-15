@@ -899,6 +899,814 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  // ==================== METAS (GOALS) ====================
+  goal: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getGoalsByUser(ctx.user.id);
+    }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const goal = await db.getGoalById(input.id);
+        if (!goal) throw new TRPCError({ code: 'NOT_FOUND', message: 'Meta não encontrada' });
+        if (goal.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        return goal;
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        title: z.string().min(1),
+        description: z.string().optional(),
+        type: z.enum(['individual', 'team', 'organizational']).default('individual'),
+        category: z.string().optional(),
+        targetValue: z.number().optional(),
+        currentValue: z.number().default(0),
+        unit: z.string().optional(),
+        status: z.enum(['not_started', 'in_progress', 'completed', 'cancelled', 'overdue']).default('not_started'),
+        priority: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+        startDate: z.date(),
+        deadline: z.date(),
+        managerId: z.number().optional(),
+        weight: z.number().default(100),
+        evaluationCycle: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createGoal({ ...input, userId: ctx.user.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        targetValue: z.number().optional(),
+        currentValue: z.number().optional(),
+        status: z.enum(['not_started', 'in_progress', 'completed', 'cancelled', 'overdue']).optional(),
+        priority: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+        deadline: z.date().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, ...data } = input;
+        const goal = await db.getGoalById(id);
+        if (!goal) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (goal.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        await db.updateGoal(id, data);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const goal = await db.getGoalById(input.id);
+        if (!goal) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (goal.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        await db.deleteGoal(input.id);
+        return { success: true };
+      }),
+
+    addProgress: protectedProcedure
+      .input(z.object({
+        goalId: z.number(),
+        value: z.number(),
+        percentage: z.number(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const goal = await db.getGoalById(input.goalId);
+        if (!goal) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (goal.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        return await db.createGoalProgress({ ...input, recordedBy: ctx.user.id });
+      }),
+
+    getProgress: protectedProcedure
+      .input(z.object({ goalId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const goal = await db.getGoalById(input.goalId);
+        if (!goal) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (goal.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        return await db.getGoalProgress(input.goalId);
+      }),
+  }),
+
+  // ==================== PDI (DEVELOPMENT PLANS) ====================
+  developmentPlan: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getDevelopmentPlansByUser(ctx.user.id);
+    }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input, ctx }) => {
+        const plan = await db.getDevelopmentPlanById(input.id);
+        if (!plan) throw new TRPCError({ code: 'NOT_FOUND', message: 'PDI não encontrado' });
+        if (plan.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        const actions = await db.getDevelopmentActionsByPlan(input.id);
+        return { ...plan, actions };
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        title: z.string().min(1),
+        description: z.string().optional(),
+        period: z.string().min(1),
+        status: z.enum(['rascunho', 'ativo', 'concluido', 'cancelado']).default('rascunho'),
+        managerId: z.number(),
+        startDate: z.date(),
+        endDate: z.date(),
+        evaluationId: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createDevelopmentPlan({ ...input, userId: ctx.user.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        status: z.enum(['rascunho', 'ativo', 'concluido', 'cancelado']).optional(),
+        completionPercentage: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, ...data } = input;
+        const plan = await db.getDevelopmentPlanById(id);
+        if (!plan) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (plan.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        await db.updateDevelopmentPlan(id, data);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const plan = await db.getDevelopmentPlanById(input.id);
+        if (!plan) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (plan.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        await db.deleteDevelopmentPlan(input.id);
+        return { success: true };
+      }),
+
+    addAction: protectedProcedure
+      .input(z.object({
+        planId: z.number(),
+        title: z.string().min(1),
+        description: z.string().optional(),
+        type: z.enum(['training', 'course', 'mentoring', 'project', 'reading', 'certification', 'other']),
+        status: z.enum(['not_started', 'in_progress', 'completed', 'cancelled']).default('not_started'),
+        deadline: z.date().optional(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const plan = await db.getDevelopmentPlanById(input.planId);
+        if (!plan) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (plan.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        return await db.createDevelopmentAction(input);
+      }),
+
+    updateAction: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        status: z.enum(['not_started', 'in_progress', 'completed', 'cancelled']).optional(),
+        completedAt: z.date().optional(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, ...data } = input;
+        await db.updateDevelopmentAction(id, data);
+        return { success: true };
+      }),
+
+    deleteAction: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteDevelopmentAction(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // ==================== SUCESSÃO ====================
+  succession: router({
+    listPlans: protectedProcedure.query(async () => {
+      return await db.getAllSuccessionPlans();
+    }),
+
+    getPlanById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const plan = await db.getSuccessionPlanById(input.id);
+        if (!plan) throw new TRPCError({ code: 'NOT_FOUND', message: 'Plano de sucessão não encontrado' });
+        const candidates = await db.getSuccessionCandidatesByPlan(input.id);
+        return { ...plan, candidates };
+      }),
+
+    createPlan: adminProcedure
+      .input(z.object({
+        position: z.string().min(1),
+        jobDescriptionId: z.number().optional(),
+        department: z.string().optional(),
+        currentOccupantId: z.number().optional(),
+        vacancyRisk: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+        estimatedVacancyDate: z.date().optional(),
+        status: z.enum(['ativo', 'em_andamento', 'concluido', 'cancelado']).default('ativo'),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createSuccessionPlan({ ...input, createdBy: ctx.user.id });
+      }),
+
+    updatePlan: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        position: z.string().optional(),
+        vacancyRisk: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+        estimatedVacancyDate: z.date().optional(),
+        status: z.enum(['ativo', 'em_andamento', 'concluido', 'cancelado']).optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateSuccessionPlan(id, data);
+        return { success: true };
+      }),
+
+    deletePlan: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteSuccessionPlan(input.id);
+        return { success: true };
+      }),
+
+    addCandidate: adminProcedure
+      .input(z.object({
+        planId: z.number(),
+        candidateId: z.number(),
+        readinessLevel: z.enum(['ready_now', 'ready_1_year', 'ready_2_years', 'ready_3_years', 'not_ready']),
+        potential: z.enum(['low', 'medium', 'high']).default('medium'),
+        performance: z.enum(['below', 'meets', 'exceeds', 'outstanding']).default('meets'),
+        competencyGaps: z.string().optional(),
+        developmentPlanId: z.number().optional(),
+        notes: z.string().optional(),
+        priority: z.number().default(1),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createSuccessionCandidate(input);
+      }),
+
+    updateCandidate: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        readinessLevel: z.enum(['ready_now', 'ready_1_year', 'ready_2_years', 'ready_3_years', 'not_ready']).optional(),
+        potential: z.enum(['low', 'medium', 'high']).optional(),
+        performance: z.enum(['below', 'meets', 'exceeds', 'outstanding']).optional(),
+        competencyGaps: z.string().optional(),
+        notes: z.string().optional(),
+        priority: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateSuccessionCandidate(id, data);
+        return { success: true };
+      }),
+
+    deleteCandidate: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteSuccessionCandidate(input.id);
+        return { success: true };
+      }),
+
+    addReadinessAssessment: adminProcedure
+      .input(z.object({
+        candidateId: z.number(),
+        assessmentDate: z.date(),
+        readinessLevel: z.enum(['ready_now', 'ready_1_year', 'ready_2_years', 'ready_3_years', 'not_ready']),
+        strengths: z.string().optional(),
+        developmentAreas: z.string().optional(),
+        recommendations: z.string().optional(),
+        overallScore: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createReadinessAssessment({ ...input, assessorId: ctx.user.id });
+      }),
+
+    getReadinessAssessments: protectedProcedure
+      .input(z.object({ candidateId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getReadinessAssessmentsByCandidate(input.candidateId);
+      }),
+  }),
+
+  // ==================== PESSOAS (EMPLOYEES) ====================
+  employee: router({
+    list: protectedProcedure.query(async () => {
+      return await db.getAllEmployees();
+    }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const employee = await db.getEmployeeById(input.id);
+        if (!employee) throw new TRPCError({ code: 'NOT_FOUND', message: 'Funcionário não encontrado' });
+        const history = await db.getPositionHistoryByEmployee(input.id);
+        return { ...employee, history };
+      }),
+
+    getByUserId: protectedProcedure
+      .input(z.object({ userId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getEmployeeByUserId(input.userId);
+      }),
+
+    create: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        employeeNumber: z.string().optional(),
+        department: z.string().optional(),
+        position: z.string().optional(),
+        level: z.string().optional(),
+        managerId: z.number().optional(),
+        hireDate: z.date().optional(),
+        contractType: z.enum(['clt', 'pj', 'estagio', 'temporario', 'terceirizado']).optional(),
+        status: z.enum(['ativo', 'ferias', 'afastado', 'desligado']).default('ativo'),
+        location: z.string().optional(),
+        phone: z.string().optional(),
+        birthDate: z.date().optional(),
+        baseSalary: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createEmployee(input);
+      }),
+
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        employeeNumber: z.string().optional(),
+        department: z.string().optional(),
+        position: z.string().optional(),
+        level: z.string().optional(),
+        managerId: z.number().optional(),
+        contractType: z.enum(['clt', 'pj', 'estagio', 'temporario', 'terceirizado']).optional(),
+        status: z.enum(['ativo', 'ferias', 'afastado', 'desligado']).optional(),
+        location: z.string().optional(),
+        phone: z.string().optional(),
+        baseSalary: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateEmployee(id, data);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteEmployee(input.id);
+        return { success: true };
+      }),
+
+    addPositionHistory: adminProcedure
+      .input(z.object({
+        employeeId: z.number(),
+        type: z.enum(['admissao', 'promocao', 'transferencia', 'rebaixamento', 'desligamento']),
+        previousPosition: z.string().optional(),
+        newPosition: z.string(),
+        previousDepartment: z.string().optional(),
+        newDepartment: z.string().optional(),
+        previousSalary: z.number().optional(),
+        newSalary: z.number().optional(),
+        effectiveDate: z.date(),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createPositionHistory({ ...input, approvedBy: ctx.user.id });
+      }),
+
+    getPositionHistory: protectedProcedure
+      .input(z.object({ employeeId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getPositionHistoryByEmployee(input.employeeId);
+      }),
+  }),
+
+  // ==================== TEMPO (TIME RECORDS) ====================
+  timeRecord: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const employee = await db.getEmployeeByUserId(ctx.user.id);
+      if (!employee) throw new TRPCError({ code: 'NOT_FOUND', message: 'Funcionário não encontrado' });
+      return await db.getTimeRecordsByEmployee(employee.id);
+    }),
+
+    create: protectedProcedure
+      .input(z.object({
+        date: z.date(),
+        checkIn: z.date().optional(),
+        lunchOut: z.date().optional(),
+        lunchIn: z.date().optional(),
+        checkOut: z.date().optional(),
+        totalMinutes: z.number().optional(),
+        overtimeMinutes: z.number().default(0),
+        status: z.enum(['normal', 'falta', 'atestado', 'ferias', 'folga', 'pendente_ajuste']).default('normal'),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const employee = await db.getEmployeeByUserId(ctx.user.id);
+        if (!employee) throw new TRPCError({ code: 'NOT_FOUND', message: 'Funcionário não encontrado' });
+        return await db.createTimeRecord({ ...input, employeeId: employee.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        checkIn: z.date().optional(),
+        lunchOut: z.date().optional(),
+        lunchIn: z.date().optional(),
+        checkOut: z.date().optional(),
+        totalMinutes: z.number().optional(),
+        overtimeMinutes: z.number().optional(),
+        status: z.enum(['normal', 'falta', 'atestado', 'ferias', 'folga', 'pendente_ajuste']).optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, ...data } = input;
+        const record = await db.getTimeRecordById(id);
+        if (!record) throw new TRPCError({ code: 'NOT_FOUND' });
+        const employee = await db.getEmployeeByUserId(ctx.user.id);
+        if (!employee || record.employeeId !== employee.id) {
+          if (ctx.user.role !== 'admin') throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        await db.updateTimeRecord(id, data);
+        return { success: true };
+      }),
+
+    requestAdjustment: protectedProcedure
+      .input(z.object({
+        timeRecordId: z.number(),
+        type: z.enum(['entrada', 'saida', 'almoco_saida', 'almoco_retorno', 'justificativa_falta']),
+        originalValue: z.date().optional(),
+        requestedValue: z.date().optional(),
+        justification: z.string().min(1),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createTimeAdjustment({ ...input, requestedBy: ctx.user.id });
+      }),
+
+    listAdjustments: protectedProcedure.query(async ({ ctx }) => {
+      const employee = await db.getEmployeeByUserId(ctx.user.id);
+      if (!employee) throw new TRPCError({ code: 'NOT_FOUND', message: 'Funcionário não encontrado' });
+      return await db.getTimeAdjustmentsByEmployee(employee.id);
+    }),
+
+    reviewAdjustment: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(['aprovado', 'rejeitado']),
+        reviewComments: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, status, reviewComments } = input;
+        await db.updateTimeAdjustment(id, {
+          status,
+          reviewedBy: ctx.user.id,
+          reviewedAt: new Date(),
+          reviewComments,
+        });
+        return { success: true };
+      }),
+
+    getTimeBank: protectedProcedure.query(async ({ ctx }) => {
+      const employee = await db.getEmployeeByUserId(ctx.user.id);
+      if (!employee) throw new TRPCError({ code: 'NOT_FOUND', message: 'Funcionário não encontrado' });
+      return await db.getTimeBankByEmployee(employee.id);
+    }),
+  }),
+
+  // ==================== PENDÊNCIAS ====================
+  pendency: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getPendenciesByUser(ctx.user.id);
+    }),
+
+    create: protectedProcedure
+      .input(z.object({
+        type: z.enum(['avaliacao', 'aprovacao', 'documento', 'meta', 'pdi', 'ponto', 'treinamento', 'outro']),
+        title: z.string().min(1),
+        description: z.string().optional(),
+        priority: z.enum(['baixa', 'media', 'alta', 'urgente']).default('media'),
+        dueDate: z.date().optional(),
+        referenceId: z.number().optional(),
+        referenceType: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createPendency({ ...input, userId: ctx.user.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(['pendente', 'em_andamento', 'concluida', 'cancelada']).optional(),
+        completedAt: z.date().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, ...data } = input;
+        await db.updatePendency(id, data);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deletePendency(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // ==================== APROVAÇÕES ====================
+  approval: router({
+    listPending: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getApprovalsByApprover(ctx.user.id);
+    }),
+
+    listRequested: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getApprovalsByRequester(ctx.user.id);
+    }),
+
+    create: protectedProcedure
+      .input(z.object({
+        itemType: z.enum(['pir', 'job_description', 'time_adjustment', 'development_plan', 'bonus', 'expense', 'outro']),
+        itemId: z.number(),
+        title: z.string().min(1),
+        approverId: z.number(),
+        priority: z.enum(['baixa', 'media', 'alta', 'urgente']).default('media'),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createApproval({ ...input, requestedBy: ctx.user.id });
+      }),
+
+    approve: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        comments: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, comments } = input;
+        await db.updateApproval(id, {
+          status: 'aprovado',
+          comments,
+          decidedAt: new Date(),
+        });
+        return { success: true };
+      }),
+
+    reject: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        comments: z.string().min(1),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, comments } = input;
+        await db.updateApproval(id, {
+          status: 'rejeitado',
+          comments,
+          decidedAt: new Date(),
+        });
+        return { success: true };
+      }),
+  }),
+
+  // ==================== BÔNUS ====================
+  bonus: router({
+    listPrograms: protectedProcedure.query(async () => {
+      return await db.getAllBonusPrograms();
+    }),
+
+    getProgramById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const program = await db.getBonusProgramById(input.id);
+        if (!program) throw new TRPCError({ code: 'NOT_FOUND', message: 'Programa de bônus não encontrado' });
+        const eligibility = await db.getBonusEligibilityByProgram(input.id);
+        const calculations = await db.getBonusCalculationsByProgram(input.id);
+        return { ...program, eligibility, calculations };
+      }),
+
+    createProgram: adminProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        type: z.enum(['performance', 'goal_achievement', 'profit_sharing', 'retention', 'project', 'spot']),
+        period: z.string().min(1),
+        startDate: z.date(),
+        endDate: z.date(),
+        totalBudget: z.number().optional(),
+        status: z.enum(['planejamento', 'ativo', 'em_calculo', 'pago', 'cancelado']).default('planejamento'),
+        eligibilityCriteria: z.string().optional(),
+        calculationFormula: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createBonusProgram({ ...input, createdBy: ctx.user.id });
+      }),
+
+    updateProgram: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        status: z.enum(['planejamento', 'ativo', 'em_calculo', 'pago', 'cancelado']).optional(),
+        totalBudget: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateBonusProgram(id, data);
+        return { success: true };
+      }),
+
+    deleteProgram: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteBonusProgram(input.id);
+        return { success: true };
+      }),
+
+    addEligibility: adminProcedure
+      .input(z.object({
+        programId: z.number(),
+        employeeId: z.number(),
+        isEligible: z.boolean().default(true),
+        ineligibilityReason: z.string().optional(),
+        multiplier: z.number().default(100),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createBonusEligibility(input);
+      }),
+
+    calculateBonus: adminProcedure
+      .input(z.object({
+        programId: z.number(),
+        employeeId: z.number(),
+        baseAmount: z.number(),
+        appliedMultipliers: z.string().optional(),
+        finalAmount: z.number(),
+        performanceScore: z.number().optional(),
+        goalAchievementPercentage: z.number().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createBonusCalculation({ ...input, calculatedBy: ctx.user.id });
+      }),
+
+    getMyBonuses: protectedProcedure.query(async ({ ctx }) => {
+      const employee = await db.getEmployeeByUserId(ctx.user.id);
+      if (!employee) return [];
+      return await db.getBonusCalculationsByEmployee(employee.id);
+    }),
+  }),
+
+  // ==================== ADMINISTRAÇÃO ====================
+  admin: router({
+    // Ciclos de Avaliação
+    listCycles: adminProcedure.query(async () => {
+      return await db.getAllEvaluationCycles();
+    }),
+
+    getCycleById: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getEvaluationCycleById(input.id);
+      }),
+
+    createCycle: adminProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        year: z.number(),
+        type: z.enum(['anual', 'semestral', 'trimestral', 'mensal']),
+        startDate: z.date(),
+        endDate: z.date(),
+        status: z.enum(['planejamento', 'ativo', 'em_avaliacao', 'concluido', 'cancelado']).default('planejamento'),
+        defaultTemplateId: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createEvaluationCycle({ ...input, createdBy: ctx.user.id });
+      }),
+
+    updateCycle: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        status: z.enum(['planejamento', 'ativo', 'em_avaliacao', 'concluido', 'cancelado']).optional(),
+        defaultTemplateId: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateEvaluationCycle(id, data);
+        return { success: true };
+      }),
+
+    // Competências
+    listCompetencies: adminProcedure.query(async () => {
+      return await db.getAllCompetencies();
+    }),
+
+    createCompetency: adminProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        type: z.enum(['tecnica', 'comportamental', 'lideranca']),
+        description: z.string().optional(),
+        category: z.string().optional(),
+        proficiencyLevels: z.string().optional(),
+        isActive: z.boolean().default(true),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createCompetency({ ...input, createdBy: ctx.user.id });
+      }),
+
+    updateCompetency: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateCompetency(id, data);
+        return { success: true };
+      }),
+
+    deleteCompetency: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteCompetency(input.id);
+        return { success: true };
+      }),
+
+    // Departamentos
+    listDepartments: protectedProcedure.query(async () => {
+      return await db.getAllDepartments();
+    }),
+
+    createDepartment: adminProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        code: z.string().optional(),
+        description: z.string().optional(),
+        parentId: z.number().optional(),
+        managerId: z.number().optional(),
+        isActive: z.boolean().default(true),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createDepartment(input);
+      }),
+
+    updateDepartment: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        managerId: z.number().optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateDepartment(id, data);
+        return { success: true };
+      }),
+
+    deleteDepartment: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteDepartment(input.id);
+        return { success: true };
+      }),
+
+    // Logs do Sistema
+    getSystemLogs: adminProcedure
+      .input(z.object({ limit: z.number().default(100) }))
+      .query(async ({ input }) => {
+        return await db.getSystemLogs(input.limit);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

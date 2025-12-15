@@ -21,20 +21,47 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, FileText, ClipboardList, Bell, BarChart3, Target, Briefcase } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  LogOut, 
+  PanelLeft, 
+  Users, 
+  FileText, 
+  ClipboardList, 
+  Bell, 
+  BarChart3, 
+  Target, 
+  Briefcase,
+  Home,
+  TrendingUp,
+  GraduationCap,
+  GitBranch,
+  Clock,
+  AlertCircle,
+  CheckSquare,
+  DollarSign,
+  PieChart,
+  Settings
+} from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: FileText, label: "Templates", path: "/templates" },
+  { icon: Home, label: "In\u00edcio", path: "/" },
+  { icon: Target, label: "Metas", path: "/goals" },
   { icon: ClipboardList, label: "Avalia\u00e7\u00f5es", path: "/evaluations" },
-  { icon: Target, label: "PIR", path: "/pir" },
-  { icon: Briefcase, label: "Descri\u00e7\u00f5es de Cargo", path: "/job-descriptions" },
-  { icon: Bell, label: "Notifica\u00e7\u00f5es", path: "/notifications" },
+  { icon: GraduationCap, label: "Desenvolvimento", path: "/development" },
+  { icon: GitBranch, label: "Sucess\u00e3o", path: "/succession" },
+  { icon: Users, label: "Pessoas", path: "/employees" },
+  { icon: Clock, label: "Tempo", path: "/time" },
+  { icon: AlertCircle, label: "Pend\u00eancias", path: "/pendencies" },
+  { icon: CheckSquare, label: "Aprova\u00e7\u00f5es", path: "/approvals" },
+  { icon: DollarSign, label: "B\u00f4nus", path: "/bonus" },
+  { icon: PieChart, label: "Analytics", path: "/analytics" },
   { icon: BarChart3, label: "Relat\u00f3rios", path: "/reports" },
+  { icon: Settings, label: "Administra\u00e7\u00e3o", path: "/admin" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

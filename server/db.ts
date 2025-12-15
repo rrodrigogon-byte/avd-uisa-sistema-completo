@@ -27,7 +27,28 @@ import {
   technicalCompetencies,
   behavioralCompetencies,
   jobRequirements,
-  jobDescriptionApprovalHistory
+  jobDescriptionApprovalHistory,
+  goals,
+  goalProgress,
+  developmentPlans,
+  developmentActions,
+  successionPlans,
+  successionCandidates,
+  readinessAssessments,
+  employees,
+  positionHistory,
+  timeRecords,
+  timeAdjustments,
+  timeBank,
+  pendencies,
+  approvals,
+  bonusPrograms,
+  bonusEligibility,
+  bonusCalculations,
+  evaluationCycles,
+  competencies,
+  departments,
+  systemLogs
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -707,4 +728,507 @@ export async function getJobDescriptionApprovalHistory(jobDescriptionId: number)
   return await db.select().from(jobDescriptionApprovalHistory)
     .where(eq(jobDescriptionApprovalHistory.jobDescriptionId, jobDescriptionId))
     .orderBy(jobDescriptionApprovalHistory.performedAt);
+}
+
+// ==================== METAS (GOALS) ====================
+
+export async function createGoal(goal: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(goals).values(goal);
+  return result;
+}
+
+export async function getGoalsByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(goals).where(eq(goals.userId, userId));
+}
+
+export async function getGoalById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(goals).where(eq(goals.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateGoal(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(goals).set(data).where(eq(goals.id, id));
+}
+
+export async function deleteGoal(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(goals).where(eq(goals.id, id));
+}
+
+export async function createGoalProgress(progress: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(goalProgress).values(progress);
+  return result;
+}
+
+export async function getGoalProgress(goalId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(goalProgress).where(eq(goalProgress.goalId, goalId));
+}
+
+// ==================== PDI (DEVELOPMENT PLANS) ====================
+
+export async function createDevelopmentPlan(plan: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(developmentPlans).values(plan);
+  return result;
+}
+
+export async function getDevelopmentPlansByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(developmentPlans).where(eq(developmentPlans.userId, userId));
+}
+
+export async function getDevelopmentPlanById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(developmentPlans).where(eq(developmentPlans.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateDevelopmentPlan(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(developmentPlans).set(data).where(eq(developmentPlans.id, id));
+}
+
+export async function deleteDevelopmentPlan(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(developmentPlans).where(eq(developmentPlans.id, id));
+}
+
+export async function createDevelopmentAction(action: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(developmentActions).values(action);
+  return result;
+}
+
+export async function getDevelopmentActionsByPlan(planId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(developmentActions).where(eq(developmentActions.planId, planId));
+}
+
+export async function updateDevelopmentAction(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(developmentActions).set(data).where(eq(developmentActions.id, id));
+}
+
+export async function deleteDevelopmentAction(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(developmentActions).where(eq(developmentActions.id, id));
+}
+
+// ==================== SUCESSÃO ====================
+
+export async function createSuccessionPlan(plan: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(successionPlans).values(plan);
+  return result;
+}
+
+export async function getAllSuccessionPlans() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(successionPlans);
+}
+
+export async function getSuccessionPlanById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(successionPlans).where(eq(successionPlans.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateSuccessionPlan(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(successionPlans).set(data).where(eq(successionPlans.id, id));
+}
+
+export async function deleteSuccessionPlan(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(successionPlans).where(eq(successionPlans.id, id));
+}
+
+export async function createSuccessionCandidate(candidate: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(successionCandidates).values(candidate);
+  return result;
+}
+
+export async function getSuccessionCandidatesByPlan(planId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(successionCandidates).where(eq(successionCandidates.planId, planId));
+}
+
+export async function updateSuccessionCandidate(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(successionCandidates).set(data).where(eq(successionCandidates.id, id));
+}
+
+export async function deleteSuccessionCandidate(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(successionCandidates).where(eq(successionCandidates.id, id));
+}
+
+export async function createReadinessAssessment(assessment: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(readinessAssessments).values(assessment);
+  return result;
+}
+
+export async function getReadinessAssessmentsByCandidate(candidateId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(readinessAssessments).where(eq(readinessAssessments.candidateId, candidateId));
+}
+
+// ==================== PESSOAS (EMPLOYEES) ====================
+
+export async function createEmployee(employee: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(employees).values(employee);
+  return result;
+}
+
+export async function getAllEmployees() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(employees);
+}
+
+export async function getEmployeeById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(employees).where(eq(employees.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getEmployeeByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(employees).where(eq(employees.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateEmployee(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(employees).set(data).where(eq(employees.id, id));
+}
+
+export async function deleteEmployee(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(employees).where(eq(employees.id, id));
+}
+
+export async function createPositionHistory(history: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(positionHistory).values(history);
+  return result;
+}
+
+export async function getPositionHistoryByEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(positionHistory).where(eq(positionHistory.employeeId, employeeId));
+}
+
+// ==================== TEMPO (TIME RECORDS) ====================
+
+export async function createTimeRecord(record: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(timeRecords).values(record);
+  return result;
+}
+
+export async function getTimeRecordsByEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(timeRecords).where(eq(timeRecords.employeeId, employeeId));
+}
+
+export async function getTimeRecordById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(timeRecords).where(eq(timeRecords.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateTimeRecord(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(timeRecords).set(data).where(eq(timeRecords.id, id));
+}
+
+export async function createTimeAdjustment(adjustment: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(timeAdjustments).values(adjustment);
+  return result;
+}
+
+export async function getTimeAdjustmentsByEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  // Need to join with timeRecords to filter by employee
+  return await db.select().from(timeAdjustments);
+}
+
+export async function updateTimeAdjustment(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(timeAdjustments).set(data).where(eq(timeAdjustments.id, id));
+}
+
+export async function getTimeBankByEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(timeBank).where(eq(timeBank.employeeId, employeeId));
+}
+
+export async function upsertTimeBank(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(timeBank).values(data).onDuplicateKeyUpdate({ set: data });
+}
+
+// ==================== PENDÊNCIAS ====================
+
+export async function createPendency(pendency: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(pendencies).values(pendency);
+  return result;
+}
+
+export async function getPendenciesByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(pendencies).where(eq(pendencies.userId, userId));
+}
+
+export async function updatePendency(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(pendencies).set(data).where(eq(pendencies.id, id));
+}
+
+export async function deletePendency(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(pendencies).where(eq(pendencies.id, id));
+}
+
+// ==================== APROVAÇÕES ====================
+
+export async function createApproval(approval: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(approvals).values(approval);
+  return result;
+}
+
+export async function getApprovalsByApprover(approverId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(approvals).where(eq(approvals.approverId, approverId));
+}
+
+export async function getApprovalsByRequester(requestedBy: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(approvals).where(eq(approvals.requestedBy, requestedBy));
+}
+
+export async function updateApproval(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(approvals).set(data).where(eq(approvals.id, id));
+}
+
+// ==================== BÔNUS ====================
+
+export async function createBonusProgram(program: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(bonusPrograms).values(program);
+  return result;
+}
+
+export async function getAllBonusPrograms() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(bonusPrograms);
+}
+
+export async function getBonusProgramById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(bonusPrograms).where(eq(bonusPrograms.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateBonusProgram(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(bonusPrograms).set(data).where(eq(bonusPrograms.id, id));
+}
+
+export async function deleteBonusProgram(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(bonusPrograms).where(eq(bonusPrograms.id, id));
+}
+
+export async function createBonusEligibility(eligibility: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(bonusEligibility).values(eligibility);
+  return result;
+}
+
+export async function getBonusEligibilityByProgram(programId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(bonusEligibility).where(eq(bonusEligibility.programId, programId));
+}
+
+export async function createBonusCalculation(calculation: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(bonusCalculations).values(calculation);
+  return result;
+}
+
+export async function getBonusCalculationsByProgram(programId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(bonusCalculations).where(eq(bonusCalculations.programId, programId));
+}
+
+export async function getBonusCalculationsByEmployee(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(bonusCalculations).where(eq(bonusCalculations.employeeId, employeeId));
+}
+
+// ==================== ADMINISTRAÇÃO ====================
+
+export async function createEvaluationCycle(cycle: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(evaluationCycles).values(cycle);
+  return result;
+}
+
+export async function getAllEvaluationCycles() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(evaluationCycles);
+}
+
+export async function getEvaluationCycleById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(evaluationCycles).where(eq(evaluationCycles.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateEvaluationCycle(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(evaluationCycles).set(data).where(eq(evaluationCycles.id, id));
+}
+
+export async function createCompetency(competency: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(competencies).values(competency);
+  return result;
+}
+
+export async function getAllCompetencies() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(competencies);
+}
+
+export async function updateCompetency(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(competencies).set(data).where(eq(competencies.id, id));
+}
+
+export async function deleteCompetency(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(competencies).where(eq(competencies.id, id));
+}
+
+export async function createDepartment(department: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(departments).values(department);
+  return result;
+}
+
+export async function getAllDepartments() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(departments);
+}
+
+export async function updateDepartment(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(departments).set(data).where(eq(departments.id, id));
+}
+
+export async function deleteDepartment(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(departments).where(eq(departments.id, id));
+}
+
+export async function createSystemLog(log: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(systemLogs).values(log);
+  return result;
+}
+
+export async function getSystemLogs(limit: number = 100) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(systemLogs).limit(limit);
 }

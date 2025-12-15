@@ -21,6 +21,16 @@ import EditJobDescription from "./pages/EditJobDescription";
 import EditTemplate from "./pages/EditTemplate";
 import EditEvaluation from "./pages/EditEvaluation";
 import PIRForm from "./pages/PIRForm";
+import Goals from "./pages/Goals";
+import Development from "./pages/Development";
+import Succession from "./pages/Succession";
+import Employees from "./pages/Employees";
+import Time from "./pages/Time";
+import Pendencies from "./pages/Pendencies";
+import Approvals from "./pages/Approvals";
+import Bonus from "./pages/Bonus";
+import Analytics from "./pages/Analytics";
+import Admin from "./pages/Admin";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -43,6 +53,16 @@ function Router() {
       <Route path={"/job-descriptions"} component={JobDescriptions} />
       <Route path={"/job-descriptions/:id"} component={JobDescriptionDetail} />
       <Route path={"/job-descriptions/edit/:id"} component={EditJobDescription} />
+      <Route path={"/goals"} component={Goals} />
+      <Route path={"/development"} component={Development} />
+      <Route path={"/succession"} component={Succession} />
+      <Route path={"/employees"} component={Employees} />
+      <Route path={"/time"} component={Time} />
+      <Route path={"/pendencies"} component={Pendencies} />
+      <Route path={"/approvals"} component={Approvals} />
+      <Route path={"/bonus"} component={Bonus} />
+      <Route path={"/analytics"} component={Analytics} />
+      <Route path={"/admin"} component={Admin} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
