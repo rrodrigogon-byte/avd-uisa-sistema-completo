@@ -4961,6 +4961,13 @@ export const avdAssessmentProcesses = mysqlTable("avdAssessmentProcesses", {
   step4Id: int("step4Id"), // ID da avaliação de desempenho
   step5Id: int("step5Id"), // ID do PDI
   
+  // Dados JSON de cada passo (para persistência)
+  step1Data: json("step1Data"), // Dados do Passo 1 - Dados Pessoais
+  step2Data: json("step2Data"), // Dados do Passo 2 - PIR
+  step3Data: json("step3Data"), // Dados do Passo 3 - Competências
+  step4Data: json("step4Data"), // Dados do Passo 4 - Desempenho
+  step5Data: json("step5Data"), // Dados do Passo 5 - PDI
+  
   // Metadados
   createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

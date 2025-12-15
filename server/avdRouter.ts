@@ -650,6 +650,158 @@ export const avdRouter = router({
     }),
 
   /**
+   * Obter ou criar processo AVD para um funcionário
+   * Retorna processo existente em andamento ou cria um novo
+   */
+  getOrCreateProcess: protectedProcedure
+    .input(z.object({
+      employeeId: z.number(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Buscar processo em andamento existente
+      const [existingProcess] = await db.select()
+        .from(avdAssessmentProcesses)
+        .where(
+          and(
+            eq(avdAssessmentProcesses.employeeId, input.employeeId),
+            eq(avdAssessmentProcesses.status, 'em_andamento')
+          )
+        )
+        .orderBy(desc(avdAssessmentProcesses.createdAt))
+        .limit(1);
+
+      if (existingProcess) {
+        // Calcular passos completados
+        const completedSteps: number[] = [];
+        if (existingProcess.step1CompletedAt) completedSteps.push(1);
+        if (existingProcess.step2CompletedAt) completedSteps.push(2);
+        if (existingProcess.step3CompletedAt) completedSteps.push(3);
+        if (existingProcess.step4CompletedAt) completedSteps.push(4);
+        if (existingProcess.step5CompletedAt) completedSteps.push(5);
+
+        return {
+          processId: existingProcess.id,
+          currentStep: existingProcess.currentStep,
+          completedSteps,
+          status: existingProcess.status,
+          isNew: false,
+        };
+      }
+
+      // Criar novo processo
+      const [result] = await db.insert(avdAssessmentProcesses).values({
+        employeeId: input.employeeId,
+        status: 'em_andamento',
+        currentStep: 1,
+        createdBy: ctx.user.id,
+      });
+
+      return {
+        processId: result.insertId,
+        currentStep: 1,
+        completedSteps: [],
+        status: 'em_andamento' as const,
+        isNew: true,
+      };
+    }),
+
+  /**
+   * Marcar um passo como concluído e avançar para o próximo
+   */
+  completeStep: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+      step: z.number().min(1).max(5),
+      stepRecordId: z.number().optional(), // ID do registro criado neste passo
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const updateData: Record<string, any> = {
+        updatedAt: new Date(),
+      };
+
+      // Marcar data de conclusão do passo
+      const stepCompletedField = `step${input.step}CompletedAt`;
+      updateData[stepCompletedField] = new Date();
+
+      // Salvar ID do registro do passo se fornecido
+      if (input.stepRecordId) {
+        const stepIdField = `step${input.step}Id`;
+        updateData[stepIdField] = input.stepRecordId;
+      }
+
+      // Avançar para o próximo passo
+      if (input.step < 5) {
+        updateData.currentStep = input.step + 1;
+      } else {
+        // Passo 5 concluído = processo finalizado
+        updateData.currentStep = 5;
+        updateData.status = 'concluido';
+        updateData.completedAt = new Date();
+      }
+
+      await db.update(avdAssessmentProcesses)
+        .set(updateData)
+        .where(eq(avdAssessmentProcesses.id, input.processId));
+
+      return { 
+        success: true, 
+        nextStep: input.step < 5 ? input.step + 1 : null,
+        processCompleted: input.step === 5,
+      };
+    }),
+
+  /**
+   * Buscar status do processo AVD para validação de acesso aos passos
+   */
+  getProcessStatus: protectedProcedure
+    .input(z.object({
+      processId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [process] = await db.select()
+        .from(avdAssessmentProcesses)
+        .where(eq(avdAssessmentProcesses.id, input.processId))
+        .limit(1);
+
+      if (!process) {
+        return {
+          currentStep: 1,
+          completedSteps: [] as number[],
+          status: 'nao_iniciado' as const,
+          canAccessStep: (step: number) => step === 1,
+        };
+      }
+
+      // Calcular passos completados baseado nas datas de conclusão
+      const completedSteps: number[] = [];
+      if (process.step1CompletedAt) completedSteps.push(1);
+      if (process.step2CompletedAt) completedSteps.push(2);
+      if (process.step3CompletedAt) completedSteps.push(3);
+      if (process.step4CompletedAt) completedSteps.push(4);
+      if (process.step5CompletedAt) completedSteps.push(5);
+
+      return {
+        currentStep: process.currentStep,
+        completedSteps,
+        status: process.status,
+        step1CompletedAt: process.step1CompletedAt,
+        step2CompletedAt: process.step2CompletedAt,
+        step3CompletedAt: process.step3CompletedAt,
+        step4CompletedAt: process.step4CompletedAt,
+        step5CompletedAt: process.step5CompletedAt,
+      };
+    }),
+
+  /**
    * Buscar progresso do processo AVD
    */
   getProcessProgress: protectedProcedure
