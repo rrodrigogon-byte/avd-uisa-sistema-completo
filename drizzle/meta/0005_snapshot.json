@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "3f7e7433-d2cb-46da-9061-3380bff7fe3e",
-  "prevId": "f19679ba-a947-4530-ab98-5749ff3f37f7",
+  "id": "24bfe0d2-7d94-477b-adfc-0afa16efb7ac",
+  "prevId": "bda46bd0-be1b-4866-92cc-a15a01fceb46",
   "tables": {
-    "analyticsMetrics": {
-      "name": "analyticsMetrics",
+    "auditLogs": {
+      "name": "auditLogs",
       "columns": {
         "id": {
           "name": "id",
@@ -14,144 +14,54 @@
           "notNull": true,
           "autoincrement": true
         },
-        "metricType": {
-          "name": "metricType",
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "action": {
+          "name": "action",
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "period": {
-          "name": "period",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "dimension": {
-          "name": "dimension",
+        "entity": {
+          "name": "entity",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "dimensionValue": {
-          "name": "dimensionValue",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "value": {
-          "name": "value",
-          "type": "int",
-          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "metadata": {
-          "name": "metadata",
+        "entityId": {
+          "name": "entityId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "changes": {
+          "name": "changes",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "calculatedAt": {
-          "name": "calculatedAt",
-          "type": "timestamp",
+        "ipAddress": {
+          "name": "ipAddress",
+          "type": "varchar(45)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "analyticsMetrics_id": {
-          "name": "analyticsMetrics_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "approvals": {
-      "name": "approvals",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "itemType": {
-          "name": "itemType",
-          "type": "enum('pir','job_description','time_adjustment','development_plan','bonus','expense','outro')",
-          "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
-        "itemId": {
-          "name": "itemId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "requestedBy": {
-          "name": "requestedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "approverId": {
-          "name": "approverId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('pendente','aprovado','rejeitado')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'pendente'"
-        },
-        "comments": {
-          "name": "comments",
+        "userAgent": {
+          "name": "userAgent",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "decidedAt": {
-          "name": "decidedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "priority": {
-          "name": "priority",
-          "type": "enum('baixa','media','alta','urgente')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'media'"
         },
         "createdAt": {
           "name": "createdAt",
@@ -165,8 +75,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "approvals_id": {
-          "name": "approvals_id",
+        "auditLogs_id": {
+          "name": "auditLogs_id",
           "columns": [
             "id"
           ]
@@ -175,8 +85,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "behavioralCompetencies": {
-      "name": "behavioralCompetencies",
+    "calibrationReviews": {
+      "name": "calibrationReviews",
       "columns": {
         "id": {
           "name": "id",
@@ -185,48 +95,62 @@
           "notNull": true,
           "autoincrement": true
         },
-        "jobDescriptionId": {
-          "name": "jobDescriptionId",
+        "sessionId": {
+          "name": "sessionId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
+        "evaluationId": {
+          "name": "evaluationId",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "description": {
-          "name": "description",
+        "originalScore": {
+          "name": "originalScore",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "calibratedScore": {
+          "name": "calibratedScore",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "requiredLevel": {
-          "name": "requiredLevel",
+        "reviewedBy": {
+          "name": "reviewedBy",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "displayOrder": {
-          "name": "displayOrder",
-          "type": "int",
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 0
+          "default": "(now())"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "behavioralCompetencies_id": {
-          "name": "behavioralCompetencies_id",
+        "calibrationReviews_id": {
+          "name": "calibrationReviews_id",
           "columns": [
             "id"
           ]
@@ -235,8 +159,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "bonusCalculations": {
-      "name": "bonusCalculations",
+    "calibrationSessions": {
+      "name": "calibrationSessions",
       "columns": {
         "id": {
           "name": "id",
@@ -245,66 +169,52 @@
           "notNull": true,
           "autoincrement": true
         },
-        "programId": {
-          "name": "programId",
+        "cycleId": {
+          "name": "cycleId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "employeeId": {
-          "name": "employeeId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "baseAmount": {
-          "name": "baseAmount",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "appliedMultipliers": {
-          "name": "appliedMultipliers",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "finalAmount": {
-          "name": "finalAmount",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "performanceScore": {
-          "name": "performanceScore",
+        "departmentId": {
+          "name": "departmentId",
           "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "goalAchievementPercentage": {
-          "name": "goalAchievementPercentage",
+        "facilitatorId": {
+          "name": "facilitatorId",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "paymentStatus": {
-          "name": "paymentStatus",
-          "type": "enum('calculado','aprovado','pago','cancelado')",
+        "status": {
+          "name": "status",
+          "type": "enum('agendada','em_andamento','concluida')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'calculado'"
+          "default": "'agendada'"
         },
-        "paidAt": {
-          "name": "paidAt",
-          "type": "timestamp",
+        "scheduledDate": {
+          "name": "scheduledDate",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "startedAt": {
+          "name": "startedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "completedAt": {
+          "name": "completedAt",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -316,82 +226,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "calculatedBy": {
-          "name": "calculatedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "calculatedAt": {
-          "name": "calculatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "bonusCalculations_id": {
-          "name": "bonusCalculations_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "bonusEligibility": {
-      "name": "bonusEligibility",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "programId": {
-          "name": "programId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "employeeId": {
-          "name": "employeeId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "isEligible": {
-          "name": "isEligible",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": true
-        },
-        "ineligibilityReason": {
-          "name": "ineligibilityReason",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "multiplier": {
-          "name": "multiplier",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 100
-        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -404,127 +238,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "bonusEligibility_id": {
-          "name": "bonusEligibility_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "bonusPrograms": {
-      "name": "bonusPrograms",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "enum('performance','goal_achievement','profit_sharing','retention','project','spot')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "period": {
-          "name": "period",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "startDate": {
-          "name": "startDate",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "endDate": {
-          "name": "endDate",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "totalBudget": {
-          "name": "totalBudget",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('planejamento','ativo','em_calculo','pago','cancelado')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'planejamento'"
-        },
-        "eligibilityCriteria": {
-          "name": "eligibilityCriteria",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "calculationFormula": {
-          "name": "calculationFormula",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "bonusPrograms_id": {
-          "name": "bonusPrograms_id",
+        "calibrationSessions_id": {
+          "name": "calibrationSessions_id",
           "columns": [
             "id"
           ]
@@ -543,16 +258,16 @@
           "notNull": true,
           "autoincrement": true
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
+        "code": {
+          "name": "code",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "type": {
-          "name": "type",
-          "type": "enum('tecnica','comportamental','lideranca')",
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -566,32 +281,18 @@
         },
         "category": {
           "name": "category",
-          "type": "varchar(100)",
+          "type": "enum('tecnica','comportamental','lideranca')",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "proficiencyLevels": {
-          "name": "proficiencyLevels",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "isActive": {
-          "name": "isActive",
+        "active": {
+          "name": "active",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": true
-        },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -621,6 +322,73 @@
           ]
         }
       },
+      "uniqueConstraints": {
+        "competencies_code_unique": {
+          "name": "competencies_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "competencyLevels": {
+      "name": "competencyLevels",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "competencyId": {
+          "name": "competencyId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "level": {
+          "name": "level",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "competencyLevels_id": {
+          "name": "competencyLevels_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
@@ -634,18 +402,18 @@
           "notNull": true,
           "autoincrement": true
         },
+        "code": {
+          "name": "code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "name": {
           "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "code": {
-          "name": "code",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
         "description": {
@@ -669,8 +437,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "isActive": {
-          "name": "isActive",
+        "active": {
+          "name": "active",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -706,12 +474,6 @@
         }
       },
       "uniqueConstraints": {
-        "departments_name_unique": {
-          "name": "departments_name_unique",
-          "columns": [
-            "name"
-          ]
-        },
         "departments_code_unique": {
           "name": "departments_code_unique",
           "columns": [
@@ -731,9 +493,9 @@
           "notNull": true,
           "autoincrement": true
         },
-        "planId": {
-          "name": "planId",
-          "type": "int",
+        "code": {
+          "name": "code",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -752,49 +514,62 @@
           "notNull": false,
           "autoincrement": false
         },
+        "category": {
+          "name": "category",
+          "type": "enum('70_pratica','20_mentoria','10_curso')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "type": {
           "name": "type",
-          "type": "enum('training','course','mentoring','project','reading','certification','other')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('not_started','in_progress','completed','cancelled')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'not_started'"
-        },
-        "deadline": {
-          "name": "deadline",
-          "type": "timestamp",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "completedAt": {
-          "name": "completedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "comments": {
-          "name": "comments",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "displayOrder": {
-          "name": "displayOrder",
+        "competencyId": {
+          "name": "competencyId",
           "type": "int",
           "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "duration": {
+          "name": "duration",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cost": {
+          "name": "cost",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 0
+          "default": true
         },
         "createdAt": {
           "name": "createdAt",
@@ -824,11 +599,18 @@
           ]
         }
       },
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "developmentActions_code_unique": {
+          "name": "developmentActions_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
       "checkConstraint": {}
     },
-    "developmentPlans": {
-      "name": "developmentPlans",
+    "emailMetrics": {
+      "name": "emailMetrics",
       "columns": {
         "id": {
           "name": "id",
@@ -837,73 +619,125 @@
           "notNull": true,
           "autoincrement": true
         },
-        "userId": {
-          "name": "userId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "period": {
-          "name": "period",
+        "type": {
+          "name": "type",
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "status": {
-          "name": "status",
-          "type": "enum('rascunho','ativo','concluido','cancelado')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'rascunho'"
-        },
-        "managerId": {
-          "name": "managerId",
-          "type": "int",
+        "toEmail": {
+          "name": "toEmail",
+          "type": "varchar(320)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "startDate": {
-          "name": "startDate",
-          "type": "timestamp",
+        "subject": {
+          "name": "subject",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "success": {
+          "name": "success",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "endDate": {
-          "name": "endDate",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "completionPercentage": {
-          "name": "completionPercentage",
+        "deliveryTime": {
+          "name": "deliveryTime",
           "type": "int",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
-        "evaluationId": {
-          "name": "evaluationId",
+        "messageId": {
+          "name": "messageId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "error": {
+          "name": "error",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "attempts": {
+          "name": "attempts",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "sentAt": {
+          "name": "sentAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "emailMetrics_id": {
+          "name": "emailMetrics_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "employeeCompetencies": {
+      "name": "employeeCompetencies",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "employeeId": {
+          "name": "employeeId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "competencyId": {
+          "name": "competencyId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currentLevel": {
+          "name": "currentLevel",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "evaluatedAt": {
+          "name": "evaluatedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "evaluatedBy": {
+          "name": "evaluatedBy",
           "type": "int",
           "primaryKey": false,
           "notNull": false,
@@ -930,8 +764,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "developmentPlans_id": {
-          "name": "developmentPlans_id",
+        "employeeCompetencies_id": {
+          "name": "employeeCompetencies_id",
           "columns": [
             "id"
           ]
@@ -954,35 +788,63 @@
           "name": "userId",
           "type": "int",
           "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "employeeCode": {
+          "name": "employeeCode",
+          "type": "varchar(50)",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "employeeNumber": {
-          "name": "employeeNumber",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "department": {
-          "name": "department",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "position": {
-          "name": "position",
+        "name": {
+          "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cpf": {
+          "name": "cpf",
+          "type": "varchar(14)",
+          "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "level": {
-          "name": "level",
-          "type": "varchar(50)",
+        "birthDate": {
+          "name": "birthDate",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": false,
+          "autoincrement": false
+        },
+        "hireDate": {
+          "name": "hireDate",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "positionId": {
+          "name": "positionId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "managerId": {
@@ -992,31 +854,9 @@
           "notNull": false,
           "autoincrement": false
         },
-        "hireDate": {
-          "name": "hireDate",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "contractType": {
-          "name": "contractType",
-          "type": "enum('clt','pj','estagio','temporario','terceirizado')",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('ativo','ferias','afastado','desligado')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'ativo'"
-        },
-        "location": {
-          "name": "location",
-          "type": "varchar(100)",
+        "photoUrl": {
+          "name": "photoUrl",
+          "type": "varchar(512)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1028,16 +868,31 @@
           "notNull": false,
           "autoincrement": false
         },
-        "birthDate": {
-          "name": "birthDate",
-          "type": "timestamp",
+        "address": {
+          "name": "address",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "baseSalary": {
-          "name": "baseSalary",
-          "type": "int",
+        "status": {
+          "name": "status",
+          "type": "enum('ativo','afastado','desligado')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'ativo'"
+        },
+        "rmCode": {
+          "name": "rmCode",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "rmLastSync": {
+          "name": "rmLastSync",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1077,10 +932,16 @@
             "userId"
           ]
         },
-        "employees_employeeNumber_unique": {
-          "name": "employees_employeeNumber_unique",
+        "employees_employeeCode_unique": {
+          "name": "employees_employeeCode_unique",
           "columns": [
-            "employeeNumber"
+            "employeeCode"
+          ]
+        },
+        "employees_cpf_unique": {
+          "name": "employees_cpf_unique",
+          "columns": [
+            "cpf"
           ]
         }
       },
@@ -1112,45 +973,38 @@
         },
         "type": {
           "name": "type",
-          "type": "enum('anual','semestral','trimestral','mensal')",
+          "type": "enum('anual','semestral','trimestral')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "startDate": {
           "name": "startDate",
-          "type": "timestamp",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "endDate": {
           "name": "endDate",
-          "type": "timestamp",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "status": {
           "name": "status",
-          "type": "enum('planejamento','ativo','em_avaliacao','concluido','cancelado')",
+          "type": "enum('planejamento','em_andamento','concluido','cancelado')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": "'planejamento'"
         },
-        "defaultTemplateId": {
-          "name": "defaultTemplateId",
-          "type": "int",
+        "description": {
+          "name": "description",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
-        },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
           "autoincrement": false
         },
         "createdAt": {
@@ -1184,8 +1038,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "evaluationTemplates": {
-      "name": "evaluationTemplates",
+    "evaluationQuestions": {
+      "name": "evaluationQuestions",
       "columns": {
         "id": {
           "name": "id",
@@ -1194,41 +1048,56 @@
           "notNull": true,
           "autoincrement": true
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
+        "code": {
+          "name": "code",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "description": {
-          "name": "description",
+        "question": {
+          "name": "question",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "enum('escala','texto','multipla_escolha')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "options": {
+          "name": "options",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "structure": {
-          "name": "structure",
-          "type": "text",
+        "weight": {
+          "name": "weight",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": 1
         },
-        "isActive": {
-          "name": "isActive",
+        "active": {
+          "name": "active",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": true
-        },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -1237,32 +1106,30 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "evaluationTemplates_id": {
-          "name": "evaluationTemplates_id",
+        "evaluationQuestions_id": {
+          "name": "evaluationQuestions_id",
           "columns": [
             "id"
           ]
         }
       },
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "evaluationQuestions_code_unique": {
+          "name": "evaluationQuestions_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
       "checkConstraint": {}
     },
-    "evaluations": {
-      "name": "evaluations",
+    "evaluationResponses": {
+      "name": "evaluationResponses",
       "columns": {
         "id": {
           "name": "id",
@@ -1271,15 +1138,15 @@
           "notNull": true,
           "autoincrement": true
         },
-        "templateId": {
-          "name": "templateId",
+        "evaluationId": {
+          "name": "evaluationId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "evaluatedUserId": {
-          "name": "evaluatedUserId",
+        "questionId": {
+          "name": "questionId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
@@ -1292,33 +1159,11 @@
           "notNull": true,
           "autoincrement": false
         },
-        "period": {
-          "name": "period",
-          "type": "varchar(100)",
+        "evaluatorType": {
+          "name": "evaluatorType",
+          "type": "enum('self','manager','peer','subordinate')",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('draft','submitted','approved','rejected')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'draft'"
-        },
-        "responses": {
-          "name": "responses",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "comments": {
-          "name": "comments",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
         "score": {
@@ -1328,16 +1173,9 @@
           "notNull": false,
           "autoincrement": false
         },
-        "submittedAt": {
-          "name": "submittedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "approvedAt": {
-          "name": "approvedAt",
-          "type": "timestamp",
+        "textResponse": {
+          "name": "textResponse",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1349,22 +1187,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "evaluations_id": {
-          "name": "evaluations_id",
+        "evaluationResponses_id": {
+          "name": "evaluationResponses_id",
           "columns": [
             "id"
           ]
@@ -1373,8 +1202,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "goalProgress": {
-      "name": "goalProgress",
+    "goalUpdates": {
+      "name": "goalUpdates",
       "columns": {
         "id": {
           "name": "id",
@@ -1390,36 +1219,36 @@
           "notNull": true,
           "autoincrement": false
         },
-        "value": {
-          "name": "value",
+        "progress": {
+          "name": "progress",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "percentage": {
-          "name": "percentage",
-          "type": "int",
+        "currentValue": {
+          "name": "currentValue",
+          "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
-        "comments": {
-          "name": "comments",
+        "notes": {
+          "name": "notes",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "recordedBy": {
-          "name": "recordedBy",
+        "updatedBy": {
+          "name": "updatedBy",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "recordedAt": {
-          "name": "recordedAt",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -1430,8 +1259,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "goalProgress_id": {
-          "name": "goalProgress_id",
+        "goalUpdates_id": {
+          "name": "goalUpdates_id",
           "columns": [
             "id"
           ]
@@ -1450,8 +1279,15 @@
           "notNull": true,
           "autoincrement": true
         },
-        "userId": {
-          "name": "userId",
+        "cycleId": {
+          "name": "cycleId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "employeeId": {
+          "name": "employeeId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
@@ -1473,33 +1309,31 @@
         },
         "type": {
           "name": "type",
-          "type": "enum('individual','team','organizational')",
+          "type": "enum('individual','equipe','organizacional')",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'individual'"
+          "autoincrement": false
         },
         "category": {
           "name": "category",
-          "type": "varchar(100)",
+          "type": "enum('quantitativa','qualitativa')",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "targetValue": {
           "name": "targetValue",
-          "type": "int",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "currentValue": {
           "name": "currentValue",
-          "type": "int",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "unit": {
           "name": "unit",
@@ -1508,54 +1342,77 @@
           "notNull": false,
           "autoincrement": false
         },
-        "status": {
-          "name": "status",
-          "type": "enum('not_started','in_progress','completed','cancelled','overdue')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'not_started'"
-        },
-        "priority": {
-          "name": "priority",
-          "type": "enum('low','medium','high','critical')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'medium'"
-        },
-        "startDate": {
-          "name": "startDate",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "deadline": {
-          "name": "deadline",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "managerId": {
-          "name": "managerId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "weight": {
           "name": "weight",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
-          "default": 100
+          "default": 1
         },
-        "evaluationCycle": {
-          "name": "evaluationCycle",
-          "type": "varchar(100)",
+        "startDate": {
+          "name": "startDate",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "endDate": {
+          "name": "endDate",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('rascunho','pendente_aprovacao','aprovada','em_andamento','concluida','cancelada')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'rascunho'"
+        },
+        "progress": {
+          "name": "progress",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "linkedToPLR": {
+          "name": "linkedToPLR",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "linkedToBonus": {
+          "name": "linkedToBonus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "createdBy": {
+          "name": "createdBy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "approvedBy": {
+          "name": "approvedBy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approvedAt": {
+          "name": "approvedAt",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -1591,8 +1448,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "jobDescriptionApprovalHistory": {
-      "name": "jobDescriptionApprovalHistory",
+    "nineBoxPositions": {
+      "name": "nineBoxPositions",
       "columns": {
         "id": {
           "name": "id",
@@ -1601,50 +1458,163 @@
           "notNull": true,
           "autoincrement": true
         },
-        "jobDescriptionId": {
-          "name": "jobDescriptionId",
+        "cycleId": {
+          "name": "cycleId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "action": {
-          "name": "action",
-          "type": "enum('submetido','aprovado','rejeitado','reaberto','arquivado')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "performedBy": {
-          "name": "performedBy",
+        "employeeId": {
+          "name": "employeeId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "comments": {
-          "name": "comments",
+        "performance": {
+          "name": "performance",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "potential": {
+          "name": "potential",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "box": {
+          "name": "box",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "calibrated": {
+          "name": "calibrated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "calibratedBy": {
+          "name": "calibratedBy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "calibratedAt": {
+          "name": "calibratedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "previousStatus": {
-          "name": "previousStatus",
-          "type": "varchar(50)",
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
         },
-        "newStatus": {
-          "name": "newStatus",
-          "type": "varchar(50)",
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "nineBoxPositions_id": {
+          "name": "nineBoxPositions_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "notifications": {
+      "name": "notifications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "performedAt": {
-          "name": "performedAt",
+        "type": {
+          "name": "type",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "link": {
+          "name": "link",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "read": {
+          "name": "read",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "readAt": {
+          "name": "readAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -1655,8 +1625,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "jobDescriptionApprovalHistory_id": {
-          "name": "jobDescriptionApprovalHistory_id",
+        "notifications_id": {
+          "name": "notifications_id",
           "columns": [
             "id"
           ]
@@ -1665,8 +1635,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "jobDescriptions": {
-      "name": "jobDescriptions",
+    "passwordResetTokens": {
+      "name": "passwordResetTokens",
       "columns": {
         "id": {
           "name": "id",
@@ -1675,6 +1645,95 @@
           "notNull": true,
           "autoincrement": true
         },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "used": {
+          "name": "used",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "passwordResetTokens_id": {
+          "name": "passwordResetTokens_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "passwordResetTokens_token_unique": {
+          "name": "passwordResetTokens_token_unique",
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "pdiItems": {
+      "name": "pdiItems",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "planId": {
+          "name": "planId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "actionId": {
+          "name": "actionId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "competencyId": {
+          "name": "competencyId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "title": {
           "name": "title",
           "type": "varchar(255)",
@@ -1682,481 +1741,40 @@
           "notNull": true,
           "autoincrement": false
         },
-        "code": {
-          "name": "code",
-          "type": "varchar(50)",
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "enum('70_pratica','20_mentoria','10_curso')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "department": {
-          "name": "department",
+        "type": {
+          "name": "type",
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "level": {
-          "name": "level",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "summary": {
-          "name": "summary",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "mission": {
-          "name": "mission",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "version": {
-          "name": "version",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 1
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('rascunho','em_analise','aprovado','rejeitado','arquivado')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'rascunho'"
-        },
-        "isActive": {
-          "name": "isActive",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "previousVersionId": {
-          "name": "previousVersionId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "int",
+        "startDate": {
+          "name": "startDate",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "approvedBy": {
-          "name": "approvedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "approvedAt": {
-          "name": "approvedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "rejectedBy": {
-          "name": "rejectedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "rejectedAt": {
-          "name": "rejectedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "approvalComments": {
-          "name": "approvalComments",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "submittedAt": {
-          "name": "submittedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "jobDescriptions_id": {
-          "name": "jobDescriptions_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {
-        "jobDescriptions_code_unique": {
-          "name": "jobDescriptions_code_unique",
-          "columns": [
-            "code"
-          ]
-        }
-      },
-      "checkConstraint": {}
-    },
-    "jobRequirements": {
-      "name": "jobRequirements",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "jobDescriptionId": {
-          "name": "jobDescriptionId",
-          "type": "int",
+        "endDate": {
+          "name": "endDate",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "enum('education','experience','certification','other')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "isRequired": {
-          "name": "isRequired",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": true
-        },
-        "displayOrder": {
-          "name": "displayOrder",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "jobRequirements_id": {
-          "name": "jobRequirements_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "jobResponsibilities": {
-      "name": "jobResponsibilities",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "jobDescriptionId": {
-          "name": "jobDescriptionId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "displayOrder": {
-          "name": "displayOrder",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "jobResponsibilities_id": {
-          "name": "jobResponsibilities_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "notificationLogs": {
-      "name": "notificationLogs",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "userId": {
-          "name": "userId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "enum('new_evaluation','reminder','status_change','deadline_approaching')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "evaluationId": {
-          "name": "evaluationId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "content": {
-          "name": "content",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "isRead": {
-          "name": "isRead",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "sentAt": {
-          "name": "sentAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "notificationLogs_id": {
-          "name": "notificationLogs_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "notificationSettings": {
-      "name": "notificationSettings",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "userId": {
-          "name": "userId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "notifyOnNewEvaluation": {
-          "name": "notifyOnNewEvaluation",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": true
-        },
-        "notifyPendingReminders": {
-          "name": "notifyPendingReminders",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": true
-        },
-        "notifyOnStatusChange": {
-          "name": "notifyOnStatusChange",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": true
-        },
-        "reminderDaysBefore": {
-          "name": "reminderDaysBefore",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 7
-        },
-        "reminderFrequency": {
-          "name": "reminderFrequency",
-          "type": "enum('daily','weekly')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'weekly'"
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "notificationSettings_id": {
-          "name": "notificationSettings_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {
-        "notificationSettings_userId_unique": {
-          "name": "notificationSettings_userId_unique",
-          "columns": [
-            "userId"
-          ]
-        }
-      },
-      "checkConstraint": {}
-    },
-    "pendencies": {
-      "name": "pendencies",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "userId": {
-          "name": "userId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "enum('avaliacao','aprovacao','documento','meta','pdi','ponto','treinamento','outro')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "priority": {
-          "name": "priority",
-          "type": "enum('baixa','media','alta','urgente')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'media'"
         },
         "status": {
           "name": "status",
@@ -2166,210 +1784,17 @@
           "autoincrement": false,
           "default": "'pendente'"
         },
-        "dueDate": {
-          "name": "dueDate",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "referenceId": {
-          "name": "referenceId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "referenceType": {
-          "name": "referenceType",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "completedAt": {
-          "name": "completedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "pendencies_id": {
-          "name": "pendencies_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "pirApprovalHistory": {
-      "name": "pirApprovalHistory",
-      "columns": {
-        "id": {
-          "name": "id",
+        "progress": {
+          "name": "progress",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": true
-        },
-        "pirId": {
-          "name": "pirId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "action": {
-          "name": "action",
-          "type": "enum('submetido','aprovado','rejeitado','reaberto')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "performedBy": {
-          "name": "performedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "comments": {
-          "name": "comments",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "previousStatus": {
-          "name": "previousStatus",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "newStatus": {
-          "name": "newStatus",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "performedAt": {
-          "name": "performedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "pirApprovalHistory_id": {
-          "name": "pirApprovalHistory_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "pirGoals": {
-      "name": "pirGoals",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "pirId": {
-          "name": "pirId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "weight": {
-          "name": "weight",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "targetValue": {
-          "name": "targetValue",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "unit": {
-          "name": "unit",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "currentValue": {
-          "name": "currentValue",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false,
           "default": 0
         },
-        "status": {
-          "name": "status",
-          "type": "enum('not_started','in_progress','completed','blocked')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'not_started'"
-        },
-        "deadline": {
-          "name": "deadline",
-          "type": "timestamp",
+        "notes": {
+          "name": "notes",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -2390,13 +1815,20 @@
           "autoincrement": false,
           "onUpdate": true,
           "default": "(now())"
+        },
+        "completedAt": {
+          "name": "completedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "pirGoals_id": {
-          "name": "pirGoals_id",
+        "pdiItems_id": {
+          "name": "pdiItems_id",
           "columns": [
             "id"
           ]
@@ -2405,8 +1837,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "pirProgress": {
-      "name": "pirProgress",
+    "pdiPlans": {
+      "name": "pdiPlans",
       "columns": {
         "id": {
           "name": "id",
@@ -2415,129 +1847,56 @@
           "notNull": true,
           "autoincrement": true
         },
-        "goalId": {
-          "name": "goalId",
+        "cycleId": {
+          "name": "cycleId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "value": {
-          "name": "value",
+        "employeeId": {
+          "name": "employeeId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "comments": {
-          "name": "comments",
-          "type": "text",
+        "targetPositionId": {
+          "name": "targetPositionId",
+          "type": "int",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
-        },
-        "recordedBy": {
-          "name": "recordedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "recordedAt": {
-          "name": "recordedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "pirProgress_id": {
-          "name": "pirProgress_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "pirs": {
-      "name": "pirs",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "userId": {
-          "name": "userId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "period": {
-          "name": "period",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
           "autoincrement": false
         },
         "status": {
           "name": "status",
-          "type": "enum('rascunho','em_analise','aprovado','rejeitado','ativo','concluido','cancelado')",
+          "type": "enum('rascunho','pendente_aprovacao','aprovado','em_andamento','concluido','cancelado')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": "'rascunho'"
         },
-        "evaluationId": {
-          "name": "evaluationId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "managerId": {
-          "name": "managerId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "startDate": {
           "name": "startDate",
-          "type": "timestamp",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "endDate": {
           "name": "endDate",
-          "type": "timestamp",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "overallProgress": {
+          "name": "overallProgress",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "approvedBy": {
           "name": "approvedBy",
@@ -2548,38 +1907,345 @@
         },
         "approvedAt": {
           "name": "approvedAt",
-          "type": "timestamp",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "rejectedBy": {
-          "name": "rejectedBy",
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        },
+        "completedAt": {
+          "name": "completedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "pdiPlans_id": {
+          "name": "pdiPlans_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "pdiProgress": {
+      "name": "pdiProgress",
+      "columns": {
+        "id": {
+          "name": "id",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": true
         },
-        "rejectedAt": {
-          "name": "rejectedAt",
-          "type": "timestamp",
+        "itemId": {
+          "name": "itemId",
+          "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "approvalComments": {
-          "name": "approvalComments",
+        "progress": {
+          "name": "progress",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "submittedAt": {
-          "name": "submittedAt",
-          "type": "timestamp",
+        "evidenceUrl": {
+          "name": "evidenceUrl",
+          "type": "varchar(512)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "updatedBy": {
+          "name": "updatedBy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "pdiProgress_id": {
+          "name": "pdiProgress_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "performanceEvaluations": {
+      "name": "performanceEvaluations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "cycleId": {
+          "name": "cycleId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "employeeId": {
+          "name": "employeeId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "enum('360','180','90')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('pendente','em_andamento','concluida')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'pendente'"
+        },
+        "selfEvaluationCompleted": {
+          "name": "selfEvaluationCompleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "managerEvaluationCompleted": {
+          "name": "managerEvaluationCompleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "peersEvaluationCompleted": {
+          "name": "peersEvaluationCompleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "subordinatesEvaluationCompleted": {
+          "name": "subordinatesEvaluationCompleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "finalScore": {
+          "name": "finalScore",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
+        },
+        "completedAt": {
+          "name": "completedAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "performanceEvaluations_id": {
+          "name": "performanceEvaluations_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "positionCompetencies": {
+      "name": "positionCompetencies",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "positionId": {
+          "name": "positionId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "competencyId": {
+          "name": "competencyId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requiredLevel": {
+          "name": "requiredLevel",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "weight": {
+          "name": "weight",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "positionCompetencies_id": {
+          "name": "positionCompetencies_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "positions": {
+      "name": "positions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "level": {
+          "name": "level",
+          "type": "enum('junior','pleno','senior','especialista','coordenador','gerente','diretor')",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "departmentId": {
+          "name": "departmentId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
         },
         "createdAt": {
           "name": "createdAt",
@@ -2602,18 +2268,25 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "pirs_id": {
-          "name": "pirs_id",
+        "positions_id": {
+          "name": "positions_id",
           "columns": [
             "id"
           ]
         }
       },
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "positions_code_unique": {
+          "name": "positions_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
       "checkConstraint": {}
     },
-    "positionHistory": {
-      "name": "positionHistory",
+    "psychometricTests": {
+      "name": "psychometricTests",
       "columns": {
         "id": {
           "name": "id",
@@ -2629,72 +2302,93 @@
           "notNull": true,
           "autoincrement": false
         },
-        "type": {
-          "name": "type",
-          "type": "enum('admissao','promocao','transferencia','rebaixamento','desligamento')",
+        "testType": {
+          "name": "testType",
+          "type": "enum('disc','bigfive')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "previousPosition": {
-          "name": "previousPosition",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "newPosition": {
-          "name": "newPosition",
-          "type": "varchar(255)",
+        "completedAt": {
+          "name": "completedAt",
+          "type": "datetime",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "previousDepartment": {
-          "name": "previousDepartment",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "newDepartment": {
-          "name": "newDepartment",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "previousSalary": {
-          "name": "previousSalary",
+        "discDominance": {
+          "name": "discDominance",
           "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "newSalary": {
-          "name": "newSalary",
+        "discInfluence": {
+          "name": "discInfluence",
           "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "effectiveDate": {
-          "name": "effectiveDate",
-          "type": "timestamp",
+        "discSteadiness": {
+          "name": "discSteadiness",
+          "type": "int",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
-        "reason": {
-          "name": "reason",
+        "discCompliance": {
+          "name": "discCompliance",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "discProfile": {
+          "name": "discProfile",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "bigFiveOpenness": {
+          "name": "bigFiveOpenness",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "bigFiveConscientiousness": {
+          "name": "bigFiveConscientiousness",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "bigFiveExtraversion": {
+          "name": "bigFiveExtraversion",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "bigFiveAgreeableness": {
+          "name": "bigFiveAgreeableness",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "bigFiveNeuroticism": {
+          "name": "bigFiveNeuroticism",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "responses": {
+          "name": "responses",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "approvedBy": {
-          "name": "approvedBy",
-          "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -2706,168 +2400,22 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "positionHistory_id": {
-          "name": "positionHistory_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "readinessAssessments": {
-      "name": "readinessAssessments",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
         },
-        "candidateId": {
-          "name": "candidateId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "assessmentDate": {
-          "name": "assessmentDate",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "assessorId": {
-          "name": "assessorId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "readinessLevel": {
-          "name": "readinessLevel",
-          "type": "enum('ready_now','ready_1_year','ready_2_years','ready_3_years','not_ready')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "strengths": {
-          "name": "strengths",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "developmentAreas": {
-          "name": "developmentAreas",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "recommendations": {
-          "name": "recommendations",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "overallScore": {
-          "name": "overallScore",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
+          "onUpdate": true,
           "default": "(now())"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "readinessAssessments_id": {
-          "name": "readinessAssessments_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "reports": {
-      "name": "reports",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "enum('performance_overview','team_comparison','individual_progress','custom')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "period": {
-          "name": "period",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "data": {
-          "name": "data",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "generatedBy": {
-          "name": "generatedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "generatedAt": {
-          "name": "generatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "reports_id": {
-          "name": "reports_id",
+        "psychometricTests_id": {
+          "name": "psychometricTests_id",
           "columns": [
             "id"
           ]
@@ -2893,8 +2441,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "candidateId": {
-          "name": "candidateId",
+        "employeeId": {
+          "name": "employeeId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
@@ -2902,33 +2450,18 @@
         },
         "readinessLevel": {
           "name": "readinessLevel",
-          "type": "enum('ready_now','ready_1_year','ready_2_years','ready_3_years','not_ready')",
+          "type": "enum('imediato','1_ano','2_3_anos','mais_3_anos')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "potential": {
-          "name": "potential",
-          "type": "enum('low','medium','high')",
+        "priority": {
+          "name": "priority",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'medium'"
-        },
-        "performance": {
-          "name": "performance",
-          "type": "enum('below','meets','exceeds','outstanding')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'meets'"
-        },
-        "competencyGaps": {
-          "name": "competencyGaps",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "default": 1
         },
         "developmentPlanId": {
           "name": "developmentPlanId",
@@ -2943,14 +2476,6 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "priority": {
-          "name": "priority",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 1
         },
         "createdAt": {
           "name": "createdAt",
@@ -2993,52 +2518,39 @@
           "notNull": true,
           "autoincrement": true
         },
-        "position": {
-          "name": "position",
-          "type": "varchar(255)",
+        "positionId": {
+          "name": "positionId",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "jobDescriptionId": {
-          "name": "jobDescriptionId",
+        "currentHolderId": {
+          "name": "currentHolderId",
           "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "department": {
-          "name": "department",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "currentOccupantId": {
-          "name": "currentOccupantId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "vacancyRisk": {
-          "name": "vacancyRisk",
-          "type": "enum('low','medium','high','critical')",
+        "isCritical": {
+          "name": "isCritical",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'medium'"
+          "default": false
         },
-        "estimatedVacancyDate": {
-          "name": "estimatedVacancyDate",
-          "type": "timestamp",
+        "riskLevel": {
+          "name": "riskLevel",
+          "type": "enum('baixo','medio','alto','critico')",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'medio'"
         },
         "status": {
           "name": "status",
-          "type": "enum('ativo','em_andamento','concluido','cancelado')",
+          "type": "enum('ativo','inativo')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -3049,13 +2561,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
-        },
-        "createdBy": {
-          "name": "createdBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
           "autoincrement": false
         },
         "createdAt": {
@@ -3089,8 +2594,8 @@
       "uniqueConstraints": {},
       "checkConstraint": {}
     },
-    "systemLogs": {
-      "name": "systemLogs",
+    "systemSettings": {
+      "name": "systemSettings",
       "columns": {
         "id": {
           "name": "id",
@@ -3099,99 +2604,18 @@
           "notNull": true,
           "autoincrement": true
         },
-        "type": {
-          "name": "type",
-          "type": "enum('info','warning','error','security','audit')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "module": {
-          "name": "module",
+        "settingKey": {
+          "name": "settingKey",
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "action": {
-          "name": "action",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "details": {
-          "name": "details",
+        "settingValue": {
+          "name": "settingValue",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
-        },
-        "ipAddress": {
-          "name": "ipAddress",
-          "type": "varchar(45)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "userAgent": {
-          "name": "userAgent",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "systemLogs_id": {
-          "name": "systemLogs_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "technicalCompetencies": {
-      "name": "technicalCompetencies",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "jobDescriptionId": {
-          "name": "jobDescriptionId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
           "autoincrement": false
         },
         "description": {
@@ -3201,287 +2625,17 @@
           "notNull": false,
           "autoincrement": false
         },
-        "requiredLevel": {
-          "name": "requiredLevel",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "displayOrder": {
-          "name": "displayOrder",
-          "type": "int",
+        "isEncrypted": {
+          "name": "isEncrypted",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 0
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "technicalCompetencies_id": {
-          "name": "technicalCompetencies_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "timeAdjustments": {
-      "name": "timeAdjustments",
-      "columns": {
-        "id": {
-          "name": "id",
+          "default": false
+        },
+        "updatedBy": {
+          "name": "updatedBy",
           "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "timeRecordId": {
-          "name": "timeRecordId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "requestedBy": {
-          "name": "requestedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "enum('entrada','saida','almoco_saida','almoco_retorno','justificativa_falta')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "originalValue": {
-          "name": "originalValue",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "requestedValue": {
-          "name": "requestedValue",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "justification": {
-          "name": "justification",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('pendente','aprovado','rejeitado')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'pendente'"
-        },
-        "reviewedBy": {
-          "name": "reviewedBy",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "reviewedAt": {
-          "name": "reviewedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "reviewComments": {
-          "name": "reviewComments",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "timeAdjustments_id": {
-          "name": "timeAdjustments_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "timeBank": {
-      "name": "timeBank",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "employeeId": {
-          "name": "employeeId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "period": {
-          "name": "period",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "balanceMinutes": {
-          "name": "balanceMinutes",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "overtimeMinutes": {
-          "name": "overtimeMinutes",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "compensatedMinutes": {
-          "name": "compensatedMinutes",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "timeBank_id": {
-          "name": "timeBank_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "timeRecords": {
-      "name": "timeRecords",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "employeeId": {
-          "name": "employeeId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "date": {
-          "name": "date",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "checkIn": {
-          "name": "checkIn",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "lunchOut": {
-          "name": "lunchOut",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "lunchIn": {
-          "name": "lunchIn",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "checkOut": {
-          "name": "checkOut",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "totalMinutes": {
-          "name": "totalMinutes",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "overtimeMinutes": {
-          "name": "overtimeMinutes",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 0
-        },
-        "status": {
-          "name": "status",
-          "type": "enum('normal','falta','atestado','ferias','folga','pendente_ajuste')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'normal'"
-        },
-        "notes": {
-          "name": "notes",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -3507,8 +2661,83 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "timeRecords_id": {
-          "name": "timeRecords_id",
+        "systemSettings_id": {
+          "name": "systemSettings_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "systemSettings_settingKey_unique": {
+          "name": "systemSettings_settingKey_unique",
+          "columns": [
+            "settingKey"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "testQuestions": {
+      "name": "testQuestions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "testType": {
+          "name": "testType",
+          "type": "enum('disc','bigfive')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "questionNumber": {
+          "name": "questionNumber",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "questionText": {
+          "name": "questionText",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "dimension": {
+          "name": "dimension",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reverse": {
+          "name": "reverse",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "testQuestions_id": {
+          "name": "testQuestions_id",
           "columns": [
             "id"
           ]
@@ -3557,11 +2786,11 @@
         },
         "role": {
           "name": "role",
-          "type": "enum('user','admin')",
+          "type": "enum('admin','rh','gestor','colaborador')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'user'"
+          "default": "'colaborador'"
         },
         "createdAt": {
           "name": "createdAt",
@@ -3587,6 +2816,27 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(now())"
+        },
+        "faceDescriptor": {
+          "name": "faceDescriptor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "facePhotoUrl": {
+          "name": "facePhotoUrl",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "faceRegisteredAt": {
+          "name": "faceRegisteredAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},

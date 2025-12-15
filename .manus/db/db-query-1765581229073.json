@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE testResults \nADD COLUMN validationStatus ENUM('pendente', 'aprovado', 'reprovado') DEFAULT 'pendente' NOT NULL,\nADD COLUMN validatedBy INT NULL,\nADD COLUMN validatedAt DATETIME NULL,\nADD COLUMN validationComments TEXT NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE testResults \nADD COLUMN validationStatus ENUM('pendente', 'aprovado', 'reprovado') DEFAULT 'pendente' NOT NULL,\nADD COLUMN validatedBy INT NULL,\nADD COLUMN validatedAt DATETIME NULL,\nADD COLUMN validationComments TEXT NULL;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1223
+}

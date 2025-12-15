@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE bonusPolicies \nADD COLUMN salaryMultiplierPercent INT NOT NULL DEFAULT 100,\nADD COLUMN minMultiplierPercent INT NOT NULL DEFAULT 50,\nADD COLUMN maxMultiplierPercent INT NOT NULL DEFAULT 200,\nADD COLUMN minPerformanceRating INT DEFAULT NULL,\nADD COLUMN minTenureMonths INT DEFAULT NULL,\nADD COLUMN requiresGoalCompletion BOOLEAN DEFAULT FALSE,\nADD COLUMN minGoalCompletionRate INT DEFAULT NULL,\nADD COLUMN validFrom DATE DEFAULT NULL,\nADD COLUMN validUntil DATE DEFAULT NULL,\nADD COLUMN approvalStatus ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',\nADD COLUMN approvedBy INT DEFAULT NULL,\nADD COLUMN approvedAt DATETIME DEFAULT NULL,\nADD COLUMN createdBy INT DEFAULT NULL",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE bonusPolicies \nADD COLUMN salaryMultiplierPercent INT NOT NULL DEFAULT 100,\nADD COLUMN minMultiplierPercent INT NOT NULL DEFAULT 50,\nADD COLUMN maxMultiplierPercent INT NOT NULL DEFAULT 200,\nADD COLUMN minPerformanceRating INT DEFAULT NULL,\nADD COLUMN minTenureMonths INT DEFAULT NULL,\nADD COLUMN requiresGoalCompletion BOOLEAN DEFAULT FALSE,\nADD COLUMN minGoalCompletionRate INT DEFAULT NULL,\nADD COLUMN validFrom DATE DEFAULT NULL,\nADD COLUMN validUntil DATE DEFAULT NULL,\nADD COLUMN approvalStatus ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',\nADD COLUMN approvedBy INT DEFAULT NULL,\nADD COLUMN approvedAt DATETIME DEFAULT NULL,\nADD COLUMN createdBy INT DEFAULT NULL",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1060 (42S21) at line 1: Duplicate column name 'minPerformanceRating'"
+  ]
+}

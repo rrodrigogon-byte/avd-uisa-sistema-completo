@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE `pdiReviews`\nADD COLUMN `reviewerRole` varchar(100) AFTER `reviewerId`,\nADD COLUMN `overallProgress` int AFTER `reviewDate`,\nADD COLUMN `strengths` text AFTER `overallProgress`,\nADD COLUMN `improvements` text AFTER `strengths`,\nADD COLUMN `nextSteps` text AFTER `improvements`,\nCHANGE COLUMN `recommendations` `recommendation` text;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE `pdiReviews`\nADD COLUMN `reviewerRole` varchar(100) AFTER `reviewerId`,\nADD COLUMN `overallProgress` int AFTER `reviewDate`,\nADD COLUMN `strengths` text AFTER `overallProgress`,\nADD COLUMN `improvements` text AFTER `strengths`,\nADD COLUMN `nextSteps` text AFTER `improvements`,\nCHANGE COLUMN `recommendations` `recommendation` text;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'overallprogress' in 'pdiReviews'"
+  ]
+}
