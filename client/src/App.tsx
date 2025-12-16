@@ -279,8 +279,11 @@ import ImportacaoHTML from "./pages/ImportacaoHTML";
 import ConstrutorFormularios from "./pages/ConstrutorFormularios";
 import ProcessosAvaliativos from "./pages/ProcessosAvaliativos";
 import DashboardsAnaliticos from "./pages/DashboardsAnaliticos";
+import DashboardNotificacoes from "./pages/DashboardNotificacoes";
+import DashboardAuditoria from "./pages/DashboardAuditoria";
 import HierarchyView from "./pages/HierarchyView";
 import Organograma from "./pages/Organograma";
+import OrganogramaHierarchy from "./pages/OrganogramaHierarchy";
 import RelatoriosHierarquia from "./pages/RelatoriosHierarquia";
 import HierarquiaUISA from "./pages/HierarquiaUISA";
 import AnaliseEvolucao from "./pages/AnaliseEvolucao";
@@ -506,6 +509,9 @@ function Router() {
       <Route path="/hierarquia" component={HierarquiaUISA} />
       <Route path="/hierarquia-busca" component={HierarchyView} />
       <Route path="/organograma" component={Organograma} />
+      <Route path="/organograma/hierarquia" component={OrganogramaHierarchy} />
+      <Route path="/dashboard/notificacoes" component={DashboardNotificacoes} />
+      <Route path="/dashboard/auditoria" component={DashboardAuditoria} />
       <Route path="/relatorios/hierarquia" component={RelatoriosHierarquia} />
       <Route path="/admin/emails" component={DashboardEmails} />
       <Route path="/admin/emails-admin-rh" component={AdminRhEmailDashboard} />

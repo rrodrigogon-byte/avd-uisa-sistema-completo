@@ -30,6 +30,7 @@ import {
   Clock,
   CheckCircle2,
 } from 'lucide-react';
+import { ReportExportButtons } from '@/components/ReportExportButtons';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -140,15 +141,20 @@ export default function FuncionarioDetalhes() {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold">{employee?.name || 'Nome não disponível'}</h1>
-              <p className="text-muted-foreground text-lg">
-                {employee?.positionTitle || 'Cargo não informado'}
-              </p>
-              <div className="flex items-center gap-4 mt-2">
-                {getStatusBadge(employee?.status || 'ativo')}
-                <span className="text-sm text-muted-foreground">
-                  Matrícula: {employee?.employeeCode || 'N/A'}
-                </span>
+              <div className="flex items-start justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold">{employee?.name || 'Nome não disponível'}</h1>
+                  <p className="text-muted-foreground text-lg">
+                    {employee?.positionTitle || 'Cargo não informado'}
+                  </p>
+                  <div className="flex items-center gap-4 mt-2">
+                    {getStatusBadge(employee?.status || 'ativo')}
+                    <span className="text-sm text-muted-foreground">
+                      Matrícula: {employee?.employeeCode || 'N/A'}
+                    </span>
+                  </div>
+                </div>
+                <ReportExportButtons employeeId={employeeId} variant="individual" />
               </div>
             </div>
           </div>

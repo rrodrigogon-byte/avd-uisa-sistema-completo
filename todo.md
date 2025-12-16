@@ -3030,3 +3030,56 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [ ] Testar ordenação em todas as colunas disponíveis
 - [ ] Verificar performance das queries com paginação
 - [ ] Validar responsividade dos controles de paginação
+
+
+## 🔄 MELHORIAS SOLICITADAS - ORGANOGRAMA E RELATÓRIOS (16/12/2025)
+
+### Organograma - Correção e Melhorias
+- [x] Analisar dados do Excel com 3659 funcionários e hierarquia completa
+- [x] Corrigir estrutura hierárquica: Presidente → Diretor → Gestor → Coordenador → Funcionário
+- [x] Implementar importação de dados do Excel para o banco de dados
+- [x] Adicionar campos de hierarquia nas tabelas (presidenteChapa, diretorChapa, gestorChapa, coordenadorChapa)
+- [x] Criar visualização de organograma em árvore hierárquica
+- [x] Adicionar filtros por empresa, seção, função
+- [ ] Melhorar performance do carregamento (paginação, lazy loading)
+- [x] Implementar busca de funcionários no organograma
+
+### Exportação de Relatórios
+- [x] Criar componente ReportExportButtons reutilizável
+- [x] Integrar exportação na página de detalhes de funcionários (/funcionarios/:id)
+- [ ] Integrar exportação no dashboard administrativo
+- [ ] Implementar exportação em PDF (relatórios de avaliação completos)
+- [ ] Implementar exportação em Excel (dados tabulares)
+- [ ] Adicionar opções de personalização de relatórios
+
+### Páginas Dedicadas - Notificações
+- [ ] Criar página /notificacoes com tabela paginada
+- [ ] Implementar filtros (tipo, status, data, usuário)
+- [ ] Adicionar busca por conteúdo de notificação
+- [ ] Implementar marcação de leitura/não leitura
+- [ ] Adicionar ações em massa (marcar todas como lidas, excluir)
+- [ ] Criar visualização de detalhes de notificação
+
+### Páginas Dedicadas - Auditoria
+- [ ] Criar página /auditoria com tabela paginada de logs
+- [ ] Implementar filtros (ação, usuário, data, módulo)
+- [ ] Adicionar busca por descrição de ação
+- [ ] Criar visualização de detalhes de log de auditoria
+- [ ] Implementar exportação de logs (CSV, Excel)
+- [ ] Adicionar timeline de ações por usuário
+
+### Dashboards Analíticos
+- [x] Criar dashboard de análise de notificações
+  - [x] Gráfico de tendências de notificações ao longo do tempo
+  - [x] Distribuição por tipo de notificação
+  - [x] Taxa de leitura de notificações
+  - [x] Notificações mais frequentes
+- [x] Criar dashboard de análise de auditoria
+  - [x] Gráfico de atividades por usuário
+  - [x] Distribuição de ações por módulo
+  - [x] Horários de pico de uso do sistema
+  - [x] Ações mais frequentes
+  - [x] Identificação de padrões suspeitos
+- [x] Implementar visualizações com recharts ou similar
+- [x] Adicionar filtros de período nos dashboards
+- [x] Criar cards de métricas principais

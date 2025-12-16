@@ -268,6 +268,25 @@ export const employees = mysqlTable("employees", {
     "operacional"
   ]),
   
+  // Hierarquia organizacional completa (do Excel)
+  empresa: varchar("empresa", { length: 255 }), // EMPRESA
+  chapaPresidente: varchar("chapaPresidente", { length: 50 }), // Chapa do Presidente
+  presidente: varchar("presidente", { length: 255 }), // Nome do Presidente
+  funcaoPresidente: varchar("funcaoPresidente", { length: 255 }), // Função do Presidente
+  emailPresidente: varchar("emailPresidente", { length: 320 }), // Email do Presidente
+  chapaDiretor: varchar("chapaDiretor", { length: 50 }), // Chapa do Diretor
+  diretor: varchar("diretor", { length: 255 }), // Nome do Diretor
+  funcaoDiretor: varchar("funcaoDiretor", { length: 255 }), // Função do Diretor
+  emailDiretor: varchar("emailDiretor", { length: 320 }), // Email do Diretor
+  chapaGestor: varchar("chapaGestor", { length: 50 }), // Chapa do Gestor
+  gestor: varchar("gestor", { length: 255 }), // Nome do Gestor
+  funcaoGestor: varchar("funcaoGestor", { length: 255 }), // Função do Gestor
+  emailGestor: varchar("emailGestor", { length: 320 }), // Email do Gestor
+  chapaCoordenador: varchar("chapaCoordenador", { length: 50 }), // Chapa do Coordenador
+  coordenador: varchar("coordenador", { length: 255 }), // Nome do Coordenador
+  funcaoCoordenador: varchar("funcaoCoordenador", { length: 255 }), // Função do Coordenador
+  emailCoordenador: varchar("emailCoordenador", { length: 320 }), // Email do Coordenador
+  
   photoUrl: varchar("photoUrl", { length: 512 }),
   phone: varchar("phone", { length: 20 }),
   address: text("address"),

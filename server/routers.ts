@@ -30,6 +30,7 @@ import { pdiExportRouter } from "./pdiExportRouter";
 import { pdiReportExportRouter } from "./pdiReportExport";
 import { pdiRouter } from "./routers/pdiRouter";
 import { organogramaRouter } from "./routers/organogramaRouter";
+import { organogramaHierarchyRouter } from "./routers/organogramaHierarchyRouter";
 import { orgChartRouter } from "./routers/orgChartRouter";
 import { avdRouter } from "./avdRouter";
 import { competencyValidationRouter } from "./competencyValidationRouter";
@@ -367,6 +368,7 @@ export const appRouter = router({
   // Router de PDI Completo (16/12/2025)
   pdi: pdiRouter,
   organograma: organogramaRouter,
+  organogramaHierarchy: organogramaHierarchyRouter,
   orgChart: orgChartRouter,
   departmentGoals: departmentGoalsRouter,
   evaluationWeights: evaluationWeightsRouter,

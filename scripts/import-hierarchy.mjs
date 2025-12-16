@@ -1,173 +1,175 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
-import XLSX from "xlsx";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+/**
+ * Script de importação de hierarquia organizacional
+ * Importa dados do arquivo JSON gerado a partir do Excel
+ */
 
-// Conectar ao banco de dados
-const connection = await mysql.createConnection(process.env.DATABASE_URL);
-const db = drizzle(connection);
+const DATABASE_URL = process.env.DATABASE_URL;
 
-// Ler arquivo Excel
-const workbook = XLSX.readFile(join(__dirname, "../funcionarios-hierarquia.xlsx"));
-const sheetName = workbook.SheetNames[0];
-const worksheet = workbook.Sheets[sheetName];
-const data = XLSX.utils.sheet_to_json(worksheet);
-
-console.log(`Total de registros no Excel: ${data.length}`);
-
-// Mapear dados únicos de funcionários
-const employeesMap = new Map();
-const managersMap = new Map();
-
-for (const row of data) {
-  // Adicionar funcionário principal
-  if (row.Chapa && row.Nome) {
-    employeesMap.set(row.Chapa, {
-      chapa: row.Chapa.toString(),
-      employeeCode: row.Chapa.toString(),
-      name: row.Nome,
-      email: row.Email || null,
-      funcao: row.Função || null,
-      secao: row.Seção || null,
-    });
-  }
-
-  // Mapear hierarquia
-  if (row.Chapa && row["[Chapa Coordenador]"]) {
-    managersMap.set(row.Chapa.toString(), row["[Chapa Coordenador]"].toString());
-  } else if (row.Chapa && row["[Chapa Gestor]"]) {
-    managersMap.set(row.Chapa.toString(), row["[Chapa Gestor]"].toString());
-  } else if (row.Chapa && row["[Chapa Diretor]"]) {
-    managersMap.set(row.Chapa.toString(), row["[Chapa Diretor]"].toString());
-  } else if (row.Chapa && row["[Chapa Presidente]"]) {
-    managersMap.set(row.Chapa.toString(), row["[Chapa Presidente]"].toString());
-  }
-
-  // Adicionar coordenador
-  if (row["[Chapa Coordenador]"] && row.Coordenador) {
-    employeesMap.set(row["[Chapa Coordenador]"], {
-      chapa: row["[Chapa Coordenador]"].toString(),
-      employeeCode: row["[Chapa Coordenador]"].toString(),
-      name: row.Coordenador,
-      email: row["[Email Coordenador]"] || null,
-      funcao: row["[Função Coordenador]"] || null,
-      secao: row.Seção || null,
-    });
-  }
-
-  // Adicionar gestor
-  if (row["[Chapa Gestor]"] && row.Gestor) {
-    employeesMap.set(row["[Chapa Gestor]"], {
-      chapa: row["[Chapa Gestor]"].toString(),
-      employeeCode: row["[Chapa Gestor]"].toString(),
-      name: row.Gestor,
-      email: row["[Email Gestor]"] || null,
-      funcao: row["[Função Gestor]"] || null,
-      secao: row.Seção || null,
-    });
-  }
-
-  // Adicionar diretor
-  if (row["[Chapa Diretor]"] && row.Diretor) {
-    employeesMap.set(row["[Chapa Diretor]"], {
-      chapa: row["[Chapa Diretor]"].toString(),
-      employeeCode: row["[Chapa Diretor]"].toString(),
-      name: row.Diretor,
-      email: row["[Email Diretor]"] || null,
-      funcao: row["[Função Diretor]"] || null,
-      secao: row.Seção || null,
-    });
-  }
-
-  // Adicionar presidente
-  if (row["[Chapa Presidente]"] && row.Presidente) {
-    employeesMap.set(row["[Chapa Presidente]"], {
-      chapa: row["[Chapa Presidente]"].toString(),
-      employeeCode: row["[Chapa Presidente]"].toString(),
-      name: row.Presidente,
-      email: row["[Email Presidente]"] || null,
-      funcao: row["[Função Presidente]"] || null,
-      secao: row.Seção || null,
-    });
-  }
+if (!DATABASE_URL) {
+  console.error("❌ DATABASE_URL não configurada");
+  process.exit(1);
 }
 
-console.log(`Total de funcionários únicos: ${employeesMap.size}`);
+async function importHierarchy() {
+  console.log("📊 Iniciando importação de hierarquia organizacional...\n");
 
-// Inserir funcionários no banco de dados
-let insertedCount = 0;
-let updatedCount = 0;
+  // Conectar ao banco de dados
+  const connection = await mysql.createConnection(DATABASE_URL);
+  const db = drizzle(connection);
 
-for (const [chapa, employee] of employeesMap) {
-  try {
-    // Verificar se funcionário já existe
-    const [existing] = await connection.execute(
-      "SELECT id FROM employees WHERE chapa = ?",
-      [chapa]
-    );
+  // Ler dados do JSON
+  const jsonPath = "/home/ubuntu/employees_hierarchy.json";
+  if (!fs.existsSync(jsonPath)) {
+    console.error(`❌ Arquivo não encontrado: ${jsonPath}`);
+    process.exit(1);
+  }
 
-    if (existing.length > 0) {
-      // Atualizar funcionário existente
-      await connection.execute(
-        `UPDATE employees 
-         SET name = ?, email = ?, funcao = ?, secao = ?
-         WHERE chapa = ?`,
-        [employee.name, employee.email, employee.funcao, employee.secao, chapa]
+  const employeesData = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+  console.log(`📁 ${employeesData.length} funcionários encontrados no arquivo\n`);
+
+  let updated = 0;
+  let created = 0;
+  let errors = 0;
+
+  for (const empData of employeesData) {
+    try {
+      // Verificar se funcionário já existe pela chapa
+      const [existing] = await connection.execute(
+        "SELECT id FROM employees WHERE chapa = ?",
+        [empData.chapa]
       );
-      updatedCount++;
-    } else {
-      // Inserir novo funcionário
-      await connection.execute(
-        `INSERT INTO employees (chapa, employeeCode, name, email, funcao, secao, createdAt, updatedAt)
-         VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-        [chapa, employee.employeeCode, employee.name, employee.email, employee.funcao, employee.secao]
-      );
-      insertedCount++;
+
+      if (existing.length > 0) {
+        // Atualizar funcionário existente
+        await connection.execute(
+          `UPDATE employees SET
+            name = ?,
+            email = ?,
+            empresa = ?,
+            codSecao = ?,
+            secao = ?,
+            codFuncao = ?,
+            funcao = ?,
+            chapaPresidente = ?,
+            presidente = ?,
+            funcaoPresidente = ?,
+            emailPresidente = ?,
+            chapaDiretor = ?,
+            diretor = ?,
+            funcaoDiretor = ?,
+            emailDiretor = ?,
+            chapaGestor = ?,
+            gestor = ?,
+            funcaoGestor = ?,
+            emailGestor = ?,
+            chapaCoordenador = ?,
+            coordenador = ?,
+            funcaoCoordenador = ?,
+            emailCoordenador = ?,
+            active = 1,
+            status = 'ativo',
+            updatedAt = NOW()
+          WHERE id = ?`,
+          [
+            empData.nome,
+            empData.email || null,
+            empData.empresa,
+            empData.codigoSecao,
+            empData.secao,
+            empData.codigoFuncao,
+            empData.funcao,
+            empData.chapaPresidente,
+            empData.presidente,
+            empData.funcaoPresidente,
+            empData.emailPresidente,
+            empData.chapaDiretor,
+            empData.diretor,
+            empData.funcaoDiretor,
+            empData.emailDiretor,
+            empData.chapaGestor,
+            empData.gestor,
+            empData.funcaoGestor,
+            empData.emailGestor,
+            empData.chapaCoordenador,
+            empData.coordenador,
+            empData.funcaoCoordenador,
+            empData.emailCoordenador,
+            existing[0].id,
+          ]
+        );
+        updated++;
+      } else {
+        // Criar novo funcionário
+        await connection.execute(
+          `INSERT INTO employees (
+            employeeCode, chapa, name, email, empresa,
+            codSecao, secao, codFuncao, funcao,
+            chapaPresidente, presidente, funcaoPresidente, emailPresidente,
+            chapaDiretor, diretor, funcaoDiretor, emailDiretor,
+            chapaGestor, gestor, funcaoGestor, emailGestor,
+            chapaCoordenador, coordenador, funcaoCoordenador, emailCoordenador,
+            active, status, createdAt, updatedAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'ativo', NOW(), NOW())`,
+          [
+            empData.chapa,
+            empData.chapa,
+            empData.nome,
+            empData.email || null,
+            empData.empresa,
+            empData.codigoSecao,
+            empData.secao,
+            empData.codigoFuncao,
+            empData.funcao,
+            empData.chapaPresidente,
+            empData.presidente,
+            empData.funcaoPresidente,
+            empData.emailPresidente,
+            empData.chapaDiretor,
+            empData.diretor,
+            empData.funcaoDiretor,
+            empData.emailDiretor,
+            empData.chapaGestor,
+            empData.gestor,
+            empData.funcaoGestor,
+            empData.emailGestor,
+            empData.chapaCoordenador,
+            empData.coordenador,
+            empData.funcaoCoordenador,
+            empData.emailCoordenador,
+          ]
+        );
+        created++;
+      }
+
+      if ((updated + created) % 100 === 0) {
+        console.log(`⏳ Processados: ${updated + created} funcionários...`);
+      }
+    } catch (error) {
+      errors++;
+      console.error(`❌ Erro ao processar ${empData.chapa}: ${error.message}`);
     }
-  } catch (error) {
-    console.error(`Erro ao processar funcionário ${chapa}:`, error.message);
   }
+
+  await connection.end();
+
+  console.log("\n✅ Importação concluída!");
+  console.log(`📊 Estatísticas:`);
+  console.log(`   - Criados: ${created}`);
+  console.log(`   - Atualizados: ${updated}`);
+  console.log(`   - Erros: ${errors}`);
+  console.log(`   - Total processado: ${updated + created}`);
 }
 
-console.log(`Funcionários inseridos: ${insertedCount}`);
-console.log(`Funcionários atualizados: ${updatedCount}`);
-
-// Atualizar hierarquia (managerId)
-let hierarchyUpdated = 0;
-
-for (const [employeeChapa, managerChapa] of managersMap) {
-  try {
-    // Buscar IDs dos funcionários
-    const [employeeResult] = await connection.execute(
-      "SELECT id FROM employees WHERE chapa = ?",
-      [employeeChapa]
-    );
-
-    const [managerResult] = await connection.execute(
-      "SELECT id FROM employees WHERE chapa = ?",
-      [managerChapa]
-    );
-
-    if (employeeResult.length > 0 && managerResult.length > 0) {
-      const employeeId = employeeResult[0].id;
-      const managerId = managerResult[0].id;
-
-      await connection.execute(
-        "UPDATE employees SET managerId = ? WHERE id = ?",
-        [managerId, employeeId]
-      );
-      hierarchyUpdated++;
-    }
-  } catch (error) {
-    console.error(`Erro ao atualizar hierarquia ${employeeChapa} -> ${managerChapa}:`, error.message);
-  }
-}
-
-console.log(`Hierarquias atualizadas: ${hierarchyUpdated}`);
-
-await connection.end();
-console.log("Importação concluída!");
+importHierarchy()
+  .then(() => {
+    console.log("\n✨ Processo finalizado com sucesso!");
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error("\n❌ Erro fatal:", error);
+    process.exit(1);
+  });
