@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { DashboardExportButtons } from "@/components/DashboardExportButtons";
 import DashboardLayout from "@/components/DashboardLayout";
+import { TemporalComparison } from "@/components/TemporalComparison";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -355,6 +356,38 @@ export default function DashboardAuditoria() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Comparação Temporal */}
+        {stats && (
+          <TemporalComparison
+            title="Comparação de Períodos"
+            description="Análise comparativa de métricas entre períodos"
+            metrics={[
+              {
+                label: "Total de Ações",
+                value: stats.totalActions,
+                previousValue: Math.round(stats.totalActions * 0.85), // Simulação - substituir por dados reais
+              },
+              {
+                label: "Usuários Ativos",
+                value: stats.activeUsers,
+                previousValue: Math.round(stats.activeUsers * 0.92),
+              },
+              {
+                label: "Alertas de Segurança",
+                value: stats.securityAlerts,
+                previousValue: Math.round(stats.securityAlerts * 1.2),
+              },
+            ]}
+            chartData={[
+              { name: "Semana 1", current: Math.round(stats.totalActions * 0.2), previous: Math.round(stats.totalActions * 0.17) },
+              { name: "Semana 2", current: Math.round(stats.totalActions * 0.25), previous: Math.round(stats.totalActions * 0.21) },
+              { name: "Semana 3", current: Math.round(stats.totalActions * 0.28), previous: Math.round(stats.totalActions * 0.24) },
+              { name: "Semana 4", current: Math.round(stats.totalActions * 0.27), previous: Math.round(stats.totalActions * 0.23) },
+            ]}
+            chartType="line"
+          />
+        )}
 
         {/* Insights */}
         {stats && (

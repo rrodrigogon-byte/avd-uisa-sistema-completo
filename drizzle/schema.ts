@@ -805,6 +805,64 @@ export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = typeof auditLogs.$inferInsert;
 
 /**
+ * Alertas Automáticos de Auditoria
+ * Alertas gerados automaticamente quando padrões suspeitos são detectados
+ */
+export const auditAlerts = mysqlTable("auditAlerts", {
+  id: int("id").autoincrement().primaryKey(),
+  alertType: mysqlEnum("alertType", [
+    "multiple_failed_logins",
+    "unusual_activity_volume",
+    "suspicious_time_access",
+    "data_export_anomaly",
+    "privilege_escalation",
+    "unusual_entity_access"
+  ]).notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  userId: int("userId"), // Usuário relacionado ao alerta
+  description: text("description").notNull(),
+  details: text("details"), // JSON com detalhes do padrão detectado
+  status: mysqlEnum("status", ["new", "investigating", "resolved", "false_positive"]).default("new").notNull(),
+  resolvedBy: int("resolvedBy"), // Admin que resolveu
+  resolvedAt: timestamp("resolvedAt"),
+  resolution: text("resolution"), // Descrição da resolução
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AuditAlert = typeof auditAlerts.$inferSelect;
+export type InsertAuditAlert = typeof auditAlerts.$inferInsert;
+
+/**
+ * Configurações de Regras de Alerta
+ * Define thresholds e regras para geração automática de alertas
+ */
+export const alertRules = mysqlTable("alertRules", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  alertType: mysqlEnum("alertType", [
+    "multiple_failed_logins",
+    "unusual_activity_volume",
+    "suspicious_time_access",
+    "data_export_anomaly",
+    "privilege_escalation",
+    "unusual_entity_access"
+  ]).notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  threshold: int("threshold").notNull(), // Valor limite para disparar alerta
+  timeWindow: int("timeWindow").notNull(), // Janela de tempo em minutos
+  enabled: boolean("enabled").default(true).notNull(),
+  notifyAdmins: boolean("notifyAdmins").default(true).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AlertRule = typeof alertRules.$inferSelect;
+export type InsertAlertRule = typeof alertRules.$inferInsert;
+
+/**
  * Histórico de Alterações de Senha
  * Auditoria de mudanças de senha de líderes para consenso
  */

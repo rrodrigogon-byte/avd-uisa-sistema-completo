@@ -67,15 +67,19 @@ export function OrganizationalChartOptimized({
 }: OrganizationalChartOptimizedProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
+  const [selectedPosition, setSelectedPosition] = useState<string>("all");
+  const [selectedLocation, setSelectedLocation] = useState<string>("all");
   const [selectedEmployee, setSelectedEmployee] = useState<number | null>(null);
+  const [filteredCount, setFilteredCount] = useState<number>(0);
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
   const [page, setPage] = useState(0);
   const pageSize = 100;
   const chartRef = useRef<HTMLDivElement>(null);
 
-  // Buscar funcionários com paginação
+  // Buscar funcionários com paginação e filtros avançados
   const { data: employeesData, isLoading } = trpc.employees.list.useQuery({
     departmentId: selectedDepartment !== "all" ? parseInt(selectedDepartment) : undefined,
+    positionId: selectedPosition !== "all" ? parseInt(selectedPosition) : undefined,
     search: searchTerm || undefined,
     limit: pageSize,
     offset: page * pageSize,
@@ -131,21 +135,37 @@ export function OrganizationalChartOptimized({
     });
   }, []);
 
-  // Renderizar nó da árvore
+  // Verificar se nó corresponde aos filtros ativos
+  const matchesFilters = (node: HierarchyNode): boolean => {
+    if (searchTerm && !node.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
+    if (selectedDepartment !== "all" && node.departmentId !== parseInt(selectedDepartment)) {
+      return false;
+    }
+    if (selectedPosition !== "all" && node.positionId !== parseInt(selectedPosition)) {
+      return false;
+    }
+    return true;
+  };
+
+  // Renderizar nó individual
   const renderNode = (node: HierarchyNode) => {
-    const isSelected = selectedEmployee === node.id;
     const department = departments.find((d) => d.id === node.departmentId);
     const position = positions.find((p) => p.id === node.positionId);
     const isExpanded = expandedNodes.has(node.id);
+    const isSelected = selectedEmployee === node.id;
+    const isHighlighted = hasActiveFilters && matchesFilters(node);
 
     return (
-      <TooltipProvider key={node.id}>
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Card
               className={`
                 min-w-[200px] cursor-pointer transition-all hover:shadow-lg
                 ${isSelected ? "ring-2 ring-primary shadow-xl" : ""}
+                ${isHighlighted ? "ring-2 ring-green-500 bg-green-50 dark:bg-green-950" : ""}
               `}
               onClick={() => setSelectedEmployee(node.id)}
             >
@@ -260,15 +280,20 @@ export function OrganizationalChartOptimized({
     }
   };
 
-  // Contar total de funcionários visíveis
+  // Contar total de funcionários visíveis e atualizar contador de filtrados
   const totalVisible = useMemo(() => {
     const countNodes = (nodes: HierarchyNode[]): number => {
       return nodes.reduce((sum, node) => {
         return sum + 1 + countNodes(node.children);
       }, 0);
     };
-    return countNodes(hierarchyTree);
+    const count = countNodes(hierarchyTree);
+    setFilteredCount(count);
+    return count;
   }, [hierarchyTree]);
+
+  // Verificar se há filtros ativos
+  const hasActiveFilters = searchTerm || selectedDepartment !== "all" || selectedPosition !== "all" || selectedLocation !== "all";
 
   return (
     <div className="space-y-4">
@@ -294,12 +319,12 @@ export function OrganizationalChartOptimized({
             setPage(0); // Reset page on filter change
           }}
         >
-          <SelectTrigger className="w-full md:w-[250px]">
+          <SelectTrigger className="w-full md:w-[200px]">
             <Filter className="h-4 w-4 mr-2" />
-            <SelectValue placeholder="Filtrar por departamento" />
+            <SelectValue placeholder="Departamento" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos os departamentos</SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
             {departments.map((dept) => (
               <SelectItem key={dept.id} value={dept.id.toString()}>
                 {dept.name}
@@ -308,20 +333,62 @@ export function OrganizationalChartOptimized({
           </SelectContent>
         </Select>
 
-        <Button onClick={handleExport} variant="outline">
+        <Select
+          value={selectedPosition}
+          onValueChange={(value) => {
+            setSelectedPosition(value);
+            setPage(0); // Reset page on filter change
+          }}
+        >
+          <SelectTrigger className="w-full md:w-[200px]">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Cargo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            {positions.map((pos) => (
+              <SelectItem key={pos.id} value={pos.id.toString()}>
+                {pos.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Button 
+          onClick={() => {
+            setSearchTerm("");
+            setSelectedDepartment("all");
+            setSelectedPosition("all");
+            setSelectedLocation("all");
+            setPage(0);
+          }} 
+          variant="outline"
+          size="sm"
+        >
+          Limpar Filtros
+        </Button>
+
+        <Button onClick={handleExport} variant="outline" size="sm">
           <Download className="h-4 w-4 mr-2" />
-          Exportar PNG
+          Exportar
         </Button>
       </div>
 
       {/* Estatísticas e Paginação */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span>
-              {totalVisible} visível(is) de {total} total
-            </span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span>
+                {totalVisible} visível(is) de {total} total
+              </span>
+            </div>
+            {hasActiveFilters && (
+              <Badge variant="secondary" className="text-xs">
+                {filteredCount} resultado(s) filtrado(s)
+              </Badge>
+            )}
           </div>
         </div>
 

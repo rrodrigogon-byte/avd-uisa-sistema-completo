@@ -76,6 +76,7 @@ import { employeeProfileRouter } from "./routers/employeeProfileRouter";
 import { evaluationsRouter } from "./routers/evaluationsRouter";
 import { performanceReportsRouter } from "./routers/performanceReportsRouter";
 import { auditRouter } from "./routers/auditRouter";
+import { auditAlertsRouter } from "./routers/auditAlertsRouter";
 import { searchRouter } from "./routers/searchRouter";
 import { advancedAnalyticsRouter } from "./advancedAnalyticsRouter";
 import { evaluationTemplatesRouter } from "./routers/evaluationTemplatesRouter";
@@ -290,6 +291,7 @@ export const appRouter = router({
   admin: adminRouter,
   adminAdvanced: adminAdvancedRouter,
   audit: auditRouter,
+  auditAlerts: auditAlertsRouter,
   search: searchRouter,
   users: usersRouter,
   avdUisa: avdUisaRouter,

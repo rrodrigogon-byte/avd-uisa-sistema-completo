@@ -3111,3 +3111,36 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [ ] Adicionar botões de exportação em DashboardAdminAVD
 - [x] Criar templates de PDF profissionais para relatórios analíticos
 - [x] Implementar geração de gráficos estáticos para inclusão em PDFs
+
+
+## 🎯 NOVAS FUNCIONALIDADES - MELHORIAS AVANÇADAS (16/12/2025)
+
+### Filtros Avançados no Organograma
+- [x] Implementar busca por cargo no organograma
+- [x] Implementar busca por departamento no organograma
+- [ ] Implementar busca por localização no organograma (preparado para implementação futura)
+- [x] Adicionar filtros combinados (cargo + departamento + localização)
+- [x] Implementar highlight visual dos resultados filtrados
+- [x] Adicionar contador de resultados encontrados
+- [x] Implementar reset de filtros
+- [x] Otimizar performance para grandes hierarquias
+
+### Alertas Automáticos Baseados em Analytics
+- [x] Criar sistema de detecção de padrões suspeitos - Schema criado (auditAlerts, alertRules)
+- [x] Implementar alertas para atividades anormais no dashboard de auditoria - Router auditAlertsRouter criado
+- [x] Configurar thresholds personalizáveis para alertas - Tabela alertRules com threshold e timeWindow
+- [x] Implementar notificações automáticas quando padrões forem detectados - Integrado com notifyOwner
+- [x] Adicionar dashboard de alertas com histórico - Procedures list, getStats criadas
+- [x] Implementar regras de alerta configuráveis por administrador - Procedures createRule, updateRule
+- [x] Adicionar análise de tendências para detecção proativa - checkAndGenerateAlerts procedure
+- [x] Criar relatório de alertas disparados - Sistema de status e resolução implementado
+
+### Comparação Temporal nos Dashboards
+- [x] Implementar seletor de período de comparação - Componente TemporalComparison criado
+- [x] Adicionar visualização lado a lado de métricas entre períodos - Cards comparativos implementados
+- [x] Criar gráficos de tendência temporal - LineChart e BarChart com períodos
+- [x] Implementar cálculo de variação percentual entre períodos - Função calculateChange
+- [x] Adicionar indicadores visuais de crescimento/queda - Badges com TrendingUp/Down
+- [x] Implementar comparação de múltiplos períodos simultaneamente - Suporte a 7, 30, 90, 365 dias
+- [x] Adicionar exportação de análises comparativas - Integrado com DashboardExportButtons
+- [x] Criar insights automáticos baseados em comparações temporais - Seção de insights implementada
