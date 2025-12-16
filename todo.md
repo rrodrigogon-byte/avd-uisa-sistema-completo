@@ -2422,3 +2422,153 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Criar página Alertas de Segurança (/seguranca/alertas)
 - [x] Registrar rotas no App.tsx
 
+
+
+## 🆕 FLUXO DE APROVAÇÃO DE DESCRIÇÕES DE CARGOS E MAPEAMENTO DE ATIVIDADES (16/12/2025)
+
+### Análise Realizada
+- [x] Analisar estrutura atual de descrições de cargos UISA (480 descrições cadastradas)
+- [x] Verificar sistema de aprovação existente (2 estruturas parciais)
+- [x] Mapear sistema de atividades atual (employeeActivities + activityLogs)
+- [x] Criar documento de plano de ação (PLANO_FLUXO_APROVACAO_DESCRICOES.md)
+
+### Fase 1: Schema e Migrations
+- [ ] Criar tabela jobDescriptionApprovalFlow (fluxo de aprovação 4 níveis)
+- [ ] Criar tabela activityRoutines (rotinas do usuário)
+- [ ] Criar tabela desktopActivityLogs (coleta automática)
+- [ ] Criar tabela activityJobDescriptionMatch (confronto)
+- [ ] Executar migrations no banco de dados
+
+### Fase 2: Backend - Fluxo de Aprovação
+- [ ] Implementar jobDescriptionApprovalFlowRouter
+  - [ ] create - Criar novo fluxo de aprovação
+  - [ ] submit - Submeter para aprovação
+  - [ ] approve - Aprovar em nível específico
+  - [ ] reject - Rejeitar com comentários
+  - [ ] return - Devolver para ajustes
+  - [ ] getByJobDescription - Buscar fluxo por descrição
+  - [ ] getPendingByApprover - Listar pendentes por aprovador
+  - [ ] getApprovalStats - Estatísticas de aprovações
+- [ ] Criar helpers de workflow
+- [ ] Implementar notificações de aprovação
+- [ ] Testes unitários
+
+### Fase 3: Backend - Mapeamento de Atividades
+- [ ] Implementar activityRoutinesRouter
+  - [ ] create - Criar nova rotina
+  - [ ] update - Atualizar rotina
+  - [ ] delete - Excluir rotina
+  - [ ] list - Listar rotinas do funcionário
+  - [ ] linkToJobDescription - Vincular à descrição de cargo
+  - [ ] getMatchAnalysis - Análise de correspondência
+- [ ] Implementar desktopActivityRouter
+  - [ ] logActivity - Registrar atividade automática
+  - [ ] getActivitySummary - Resumo de atividades
+  - [ ] getActivityByPeriod - Atividades por período
+  - [ ] categorizeActivity - Categorizar atividade
+- [ ] Implementar activityMatchRouter
+  - [ ] generateReport - Gerar relatório de confronto
+  - [ ] getMatchAnalysis - Análise de aderência
+  - [ ] identifyGaps - Identificar gaps
+  - [ ] suggestAdjustments - Sugerir ajustes na descrição
+
+### Fase 4: Frontend - Aprovações
+- [ ] Dashboard de Aprovações de Descrições
+  - [ ] Visão geral de todas as descrições pendentes
+  - [ ] Filtros por status, departamento, aprovador
+  - [ ] Ações em lote
+  - [ ] Timeline de aprovações
+- [ ] Tela de Aprovação Individual
+  - [ ] Visualização completa da descrição
+  - [ ] Histórico de alterações
+  - [ ] Comentários anteriores
+  - [ ] Botões de aprovar/rejeitar/devolver
+
+### Fase 5: Frontend - Mapeamento de Atividades
+- [ ] Mapeamento de Rotinas do Usuário
+  - [ ] Formulário para adicionar rotinas
+  - [ ] Vinculação com responsabilidades do cargo
+  - [ ] Visualização de frequência e tempo
+  - [ ] Comparativo com descrição de cargo
+- [ ] Dashboard de Coleta Automática
+  - [ ] Resumo de atividades coletadas
+  - [ ] Gráficos de distribuição de tempo
+  - [ ] Categorização automática
+  - [ ] Alertas de atividades não mapeadas
+- [ ] Relatório de Confronto
+  - [ ] Comparativo atividades vs. descrição
+  - [ ] Indicadores de aderência
+  - [ ] Gaps identificados
+  - [ ] Sugestões de ajustes
+
+### Fase 6: Testes e Documentação
+- [ ] Testes de integração
+- [ ] Ajustes de UX
+- [ ] Documentação do sistema
+
+
+
+## 🆕 FLUXO DE APROVAÇÃO E MAPEAMENTO DE ATIVIDADES (16/12/2025)
+
+### Banco de Dados - Novas Tabelas
+- [x] Tabela jobDescriptionApprovalFlow - Fluxo de aprovação de descrições
+- [x] Tabela jobDescriptionApprovalHistory - Histórico de aprovações
+- [x] Tabela approvalFlowApprovers - Aprovadores por nível
+- [x] Tabela activityRoutines - Rotinas mapeadas pelo usuário
+- [x] Tabela desktopActivityLogs - Logs de atividades de desktop
+- [x] Tabela activityJobDescriptionMatch - Confronto atividades x cargo
+
+### Backend - Routers Implementados
+- [x] approvalFlowRouter - Fluxo de aprovação em 4 níveis
+  - [x] initiate - Iniciar fluxo de aprovação
+  - [x] approve - Aprovar descrição no nível atual
+  - [x] reject - Rejeitar descrição
+  - [x] return - Devolver para ajustes
+  - [x] getPendingApprovals - Listar pendências do usuário
+  - [x] getStats - Estatísticas de aprovações
+  - [x] listAll - Listar todos os fluxos
+- [x] activityMappingRouter - Mapeamento de atividades
+  - [x] createRoutine - Criar rotina
+  - [x] updateRoutine - Atualizar rotina
+  - [x] deleteRoutine - Excluir rotina
+  - [x] listRoutines - Listar rotinas do funcionário
+  - [x] linkToJobDescription - Vincular rotina ao cargo
+  - [x] logDesktopActivity - Registrar atividade de desktop
+  - [x] getDesktopActivitySummary - Resumo de atividades
+  - [x] generateMatchReport - Gerar relatório de confronto
+  - [x] getMatchReport - Buscar relatório
+  - [x] listMatchReports - Listar relatórios
+
+### Frontend - Páginas Implementadas
+- [x] AprovacaoDescricoes.tsx - Dashboard de aprovações
+  - [x] Visualização do fluxo de 4 níveis
+  - [x] KPIs de aprovações
+  - [x] Tabela de pendências do usuário
+  - [x] Ações de aprovar/rejeitar/devolver
+  - [x] Histórico de todas as aprovações
+- [x] MapeamentoRotinas.tsx - Mapeamento de rotinas
+  - [x] CRUD de rotinas do usuário
+  - [x] Vinculação de rotinas ao cargo
+  - [x] Indicador de aderência
+  - [x] Geração de relatórios de confronto
+- [x] ConfrontoAtividades.tsx - Análise de confronto
+  - [x] Filtros de análise (funcionário, cargo, período)
+  - [x] KPIs de aderência
+  - [x] Gráficos de distribuição por categoria
+  - [x] Gráficos de aplicativos utilizados
+  - [x] Análise de gaps
+  - [x] Histórico de relatórios
+
+### Fluxo de Aprovação - 4 Níveis
+1. **Nível 1**: Líder Imediato - Valida atividades e responsabilidades
+2. **Nível 2**: Especialista C&S - Valida nomenclatura e estrutura
+3. **Nível 3**: Gerente RH - Valida alinhamento estratégico
+4. **Nível 4**: Diretor GAI - Aprovação final
+
+### Rotas Adicionadas ao App.tsx
+- [x] /aprovacao-descricoes - Dashboard de aprovações
+- [x] /mapeamento-rotinas - Mapeamento de rotinas
+- [x] /confronto-atividades - Análise de confronto
+
+### Documentação
+- [x] PLANO_FLUXO_APROVACAO_DESCRICOES.md - Plano de ação completo

@@ -55,6 +55,9 @@ import MetasIndividuais from "./pages/MetasIndividuais";
 import PesosAvaliacao from "./pages/PesosAvaliacao";
 import BenchmarkDesempenho from "./pages/BenchmarkDesempenho";
 import PilotSimulations from "./pages/PilotSimulations";
+import AprovacaoDescricoes from "./pages/AprovacaoDescricoes";
+import MapeamentoRotinas from "./pages/MapeamentoRotinas";
+import ConfrontoAtividades from "./pages/ConfrontoAtividades";
 import SuspiciousAccessDashboard from "./pages/SuspiciousAccessDashboard";
 import IntegrityReport from "./pages/IntegrityReport";
 import { Route, Switch } from "wouter";
@@ -455,6 +458,9 @@ function Router() {
       <Route path="/descricao-cargos-uisa/criar" component={CriarDescricaoCargo} />
       <Route path="/descricao-cargos-uisa/:id" component={DetalhesDescricaoCargo} />
       <Route path="/minhas-atividades" component={MinhasAtividades} />
+      <Route path="/aprovacao-descricoes" component={AprovacaoDescricoes} />
+      <Route path="/mapeamento-rotinas" component={MapeamentoRotinas} />
+      <Route path="/confronto-atividades" component={ConfrontoAtividades} />
       <Route path="/relatorios-produtividade" component={RelatoriosProdutividade} />
       <Route path="/alertas" component={Alertas} />
       <Route path="/discrepancias" component={Discrepancias} />

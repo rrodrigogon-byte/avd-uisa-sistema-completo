@@ -138,6 +138,8 @@ import { evaluationWeightsRouter } from "./routers/evaluationWeightsRouter";
 import { positionCompetenciesRouter } from "./routers/positionCompetenciesRouter";
 import { performanceBenchmarkRouter } from "./routers/performanceBenchmarkRouter";
 import { pilotSimulationsRouter } from "./routers/pilotSimulationsRouter";
+import { approvalFlowRouter } from "./routers/approvalFlowRouter";
+import { activityMappingRouter } from "./routers/activityMappingRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -318,6 +320,10 @@ export const appRouter = router({
   
   // Novos routers - Sistema de Simulados e Alertas (15/12/2025)
   pilotSimulations: pilotSimulationsRouter,
+  
+  // Novos routers - Fluxo de Aprovação e Mapeamento de Atividades (16/12/2025)
+  approvalFlow: approvalFlowRouter,
+  activityMapping: activityMappingRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,
