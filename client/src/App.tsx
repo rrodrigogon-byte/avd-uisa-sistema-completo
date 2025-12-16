@@ -77,6 +77,9 @@ import PDIImportEdit from "./pages/PDIImportEdit";
 import PDIImportedList from "./pages/PDIImportedList";
 import PDIComparativeReport from "./pages/PDIComparativeReport";
 import PDIImportMetrics from "./pages/PDIImportMetrics";
+import PDIVisualizar from "./pages/PDIVisualizar";
+import PDIEditar from "./pages/PDIEditar";
+import PDILista from "./pages/PDILista";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
@@ -346,6 +349,9 @@ function Router() {
       <Route path="/ciclos-avaliacao/gerenciar" component={GerenciarCiclosAvaliacao} />
       <Route path="/ciclos/ativos" component={CiclosAtivos} />
       <Route path={"/pdi"} component={PDI} />
+      <Route path={"/pdi/lista"} component={PDILista} />
+      <Route path={"/pdi/visualizar/:id"} component={PDIVisualizar} />
+      <Route path={"/pdi/editar/:id"} component={PDIEditar} />
       <Route path={"/pdi/import"} component={PDIImport} />
       <Route path={"/pdi/import/history"} component={PDIImportHistory} />
       <Route path={"/pdi/import/edit/:id"} component={PDIImportEdit} />

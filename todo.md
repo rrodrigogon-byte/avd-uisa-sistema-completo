@@ -2442,3 +2442,204 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Seleção de funcionário, ciclo, competências
 - [x] Adicionar ações no modelo 70-20-10
 - [x] Validação de campos obrigatórios
+
+
+## 🎯 NOVA IMPLEMENTAÇÃO - SISTEMA PDI COMPLETO (16/12/2025)
+
+### Análise dos PDIs Anexados
+- [ ] Analisar estrutura completa dos PDIs HTML (Wilson, Fernando, Agenor, Callegari, Eduardo, Nadia, Pablo)
+- [ ] Identificar todos os campos e seções necessárias
+- [ ] Mapear layout e design dos PDIs
+- [ ] Definir estrutura de dados para importação
+
+### Campos Identificados nos PDIs
+- [ ] **Informações do Funcionário**: nome, cargo, foco desenvolvimento, diretor sponsor
+- [ ] **KPIs**: posição atual, reenquadramento, nova posição, plano performance (meses)
+- [ ] **Análise de Gaps/Competências**: gaps prioritários, competências-chave
+- [ ] **Gráfico de Competências**: dados para radar chart
+- [ ] **Estratégia de Remuneração**: tabela com movimentos, mecanismos, salários, justificativas
+- [ ] **Plano de Ação 70-20-10**: 
+  - 70% Aprendizado na Prática (On-the-Job)
+  - 20% Aprendizado Social
+  - 10% Aprendizado Formal
+- [ ] **Pacto de Responsabilidades**:
+  - Responsabilidades do Funcionário
+  - Responsabilidades da Liderança
+  - Responsabilidades do DHO
+- [ ] **Assinaturas**: funcionário, sponsor, mentor, DHO
+- [ ] **Timeline de Acompanhamento**: marcos com datas e status
+
+### Atualização do Schema do Banco de Dados
+- [ ] Criar tabela `employees` completa (se não existir)
+- [ ] Criar tabela `pdis` (planos de desenvolvimento)
+- [ ] Criar tabela `pdi_kpis` (indicadores)
+- [ ] Criar tabela `pdi_competencies` (competências)
+- [ ] Criar tabela `pdi_gaps` (gaps de desenvolvimento)
+- [ ] Criar tabela `pdi_remuneration_strategy` (estratégia de remuneração)
+- [ ] Criar tabela `pdi_remuneration_movements` (movimentos salariais)
+- [ ] Criar tabela `pdi_action_plan` (plano de ação 70-20-10)
+- [ ] Criar tabela `pdi_action_items` (itens de ação)
+- [ ] Criar tabela `pdi_responsibilities` (pacto de responsabilidades)
+- [ ] Criar tabela `pdi_signatures` (assinaturas)
+- [ ] Criar tabela `pdi_timeline` (marcos de acompanhamento)
+- [ ] Executar `pnpm db:push` para aplicar mudanças
+
+### Backend - tRPC Procedures
+- [ ] **Employees Router**:
+  - [ ] employees.list - listar funcionários
+  - [ ] employees.create - criar funcionário
+  - [ ] employees.update - atualizar funcionário
+  - [ ] employees.delete - excluir funcionário
+  - [ ] employees.getById - buscar por ID
+- [ ] **PDI Router**:
+  - [ ] pdi.create - criar PDI completo
+  - [ ] pdi.update - atualizar PDI
+  - [ ] pdi.delete - excluir PDI
+  - [ ] pdi.getById - buscar PDI por ID
+  - [ ] pdi.getByEmployee - buscar PDIs de um funcionário
+  - [ ] pdi.list - listar todos os PDIs
+  - [ ] pdi.import - importar PDI de HTML
+  - [ ] pdi.export - exportar PDI para PDF
+
+### Frontend - Gestão de Funcionários
+- [ ] Criar página `FuncionariosLista.tsx` - listagem com busca e filtros
+- [ ] Criar página `FuncionarioCriar.tsx` - formulário de criação
+- [ ] Criar página `FuncionarioEditar.tsx` - formulário de edição
+- [ ] Criar página `FuncionarioDetalhes.tsx` - visualização de perfil
+- [ ] Adicionar rotas no App.tsx
+
+### Frontend - Gestão de PDI
+- [ ] Criar página `PDILista.tsx` - listagem de PDIs
+- [ ] Criar página `PDICriar.tsx` - formulário completo de criação
+  - [ ] Seção: Informações do Funcionário
+  - [ ] Seção: KPIs
+  - [ ] Seção: Análise de Gaps/Competências
+  - [ ] Seção: Estratégia de Remuneração
+  - [ ] Seção: Plano de Ação 70-20-10
+  - [ ] Seção: Pacto de Responsabilidades
+  - [ ] Seção: Assinaturas
+  - [ ] Seção: Timeline de Acompanhamento
+- [ ] Criar página `PDIEditar.tsx` - edição de PDI existente
+- [ ] Criar página `PDIVisualizar.tsx` - visualização profissional (layout dos HTMLs)
+- [ ] Adicionar rotas no App.tsx
+
+### Frontend - Importação de PDI
+- [ ] Criar página `PDIImportar.tsx`
+  - [ ] Upload de arquivo HTML
+  - [ ] Parser para extrair dados
+  - [ ] Preview dos dados extraídos
+  - [ ] Formulário de correção manual
+  - [ ] Validação antes de salvar
+  - [ ] Salvar no banco de dados
+- [ ] Adicionar rota no App.tsx
+
+### Visualização Profissional do PDI
+- [ ] Replicar design dos PDIs HTML no React
+- [ ] Implementar gráfico de competências (radar chart) com Chart.js
+- [ ] Criar layout responsivo
+- [ ] Adicionar cores UISA (blue, green, light-blue, orange)
+- [ ] Implementar seções colapsáveis
+- [ ] Adicionar botão de exportar para PDF
+
+### Testes e Validação
+- [ ] Testar CRUD completo de funcionários
+- [ ] Testar CRUD completo de PDI
+- [ ] Testar importação de PDI HTML
+- [ ] Testar visualização de PDI
+- [ ] Testar exportação para PDF
+- [ ] Validar responsividade
+- [ ] Testar controle de acesso
+
+### Integração com Sistema AVD Existente
+- [ ] Integrar PDI com Passo 5 do processo AVD
+- [ ] Permitir criar PDI a partir dos dados do processo AVD
+- [ ] Adicionar link do PDI no dashboard administrativo
+- [ ] Adicionar PDI no perfil do funcionário
+
+### Melhorias de UX
+- [ ] Loading states em todas as operações
+- [ ] Mensagens de erro claras
+- [ ] Toast notifications para feedback
+- [ ] Skeleton loaders
+- [ ] Validação de formulários em tempo real
+- [ ] Confirmação antes de excluir
+- [ ] Auto-save durante preenchimento
+
+### Documentação
+- [ ] Documentar estrutura de dados do PDI
+- [ ] Criar guia de uso para importação
+- [ ] Documentar processo de criação manual
+- [ ] Adicionar exemplos de PDI
+
+
+## ✅ PROGRESSO DA IMPLEMENTAÇÃO PDI (16/12/2025)
+
+### Backend Concluído
+- [x] Schema do banco de dados atualizado com tabelas de PDI completo
+- [x] Tabelas criadas: pdiKpis, pdiRemunerationStrategy, pdiRemunerationMovements, pdiActionPlan702010, pdiResponsibilities, pdiSignatures, pdiTimeline
+- [x] Router pdiRouter.ts criado com procedures completas
+- [x] Procedures: list, getById, create, update, delete, updateTimeline, sign
+- [x] Router registrado no appRouter
+
+### Frontend Em Andamento
+- [x] Página PDILista.tsx criada com filtros e busca
+- [x] Página PDICriar.tsx - formulário completo (já existia)
+- [x] Página PDIVisualizar.tsx - layout profissional criado
+- [x] Página PDIEditar.tsx - edição de PDI criada
+- [ ] Página PDIImportar.tsx - importação de HTML (usar PDIImport existente)
+
+### Próximos Passos
+- [x] Adicionar rotas no App.tsx
+- [ ] Adicionar links no DashboardLayout
+- [x] Implementar formulário de criação de PDI (já existe em CriarPDI.tsx)
+- [x] Implementar visualização profissional com gráficos (PDIVisualizar.tsx)
+- [ ] Implementar importação de PDI HTML (já existe PDIImport.tsx)
+- [ ] Testar fluxo completo
+
+
+##
+ 🎉 IMPLEMENTAÇÕES CONCLUÍDAS - SISTEMA PDI COMPLETO (16/12/2025)
+
+### Páginas Frontend Criadas
+- [x] PDIVisualizar.tsx - Visualização profissional do PDI com:
+  - Layout moderno com gradiente de cores UISA (azul, verde, roxo, laranja)
+  - Informações do colaborador com progresso visual
+  - Seção de KPIs com cards coloridos
+  - Plano de Ação 70-20-10 com listas organizadas
+  - Estratégia de Remuneração com tabela de movimentos salariais
+  - Timeline de Acompanhamento com status visual
+  - Assinaturas com datas de conclusão
+  - Botões de Editar e Exportar PDF
+
+- [x] PDIEditar.tsx - Edição completa de PDI com:
+  - Formulário de informações básicas (status, datas, progresso)
+  - Edição de KPIs (posição atual, reenquadramento, nova posição, meses)
+  - Edição de Plano de Ação 70-20-10 com adição/remoção dinâmica de itens
+  - Edição de Timeline com adição/remoção de marcos
+  - Validações e feedback visual
+  - Integração com tRPC para salvar alterações
+
+### Rotas Adicionadas no App.tsx
+- [x] /pdi/lista - Listagem de todos os PDIs
+- [x] /pdi/visualizar/:id - Visualização profissional do PDI
+- [x] /pdi/editar/:id - Edição de PDI existente
+- [x] Imports das novas páginas adicionados
+
+### Funcionalidades Implementadas
+- [x] Visualização profissional com design moderno e responsivo
+- [x] Edição completa de todos os campos do PDI
+- [x] Navegação entre páginas (Lista → Visualizar → Editar)
+- [x] Feedback visual com badges de status
+- [x] Progresso visual com barras de progresso
+- [x] Timeline com status coloridos (pendente, em andamento, concluído, atrasado)
+- [x] Integração completa com backend tRPC
+
+### Próximas Melhorias Sugeridas
+- [ ] Adicionar links no DashboardLayout para fácil acesso
+- [ ] Implementar exportação real para PDF (atualmente mostra toast)
+- [ ] Adicionar gráficos de competências (radar chart) na visualização
+- [ ] Implementar sistema de assinaturas digitais
+- [ ] Adicionar histórico de edições do PDI
+- [ ] Implementar notificações de prazos e marcos
+- [ ] Criar dashboard de acompanhamento de PDIs
+- [ ] Adicionar filtros avançados na listagem

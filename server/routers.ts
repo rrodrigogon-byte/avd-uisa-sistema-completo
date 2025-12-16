@@ -28,6 +28,7 @@ import { pdiIntelligentRouter } from "./pdiIntelligentRouter";
 import { pdiHtmlImportRouter } from "./pdiHtmlImportRouter";
 import { pdiExportRouter } from "./pdiExportRouter";
 import { pdiReportExportRouter } from "./pdiReportExport";
+import { pdiRouter } from "./routers/pdiRouter";
 import { avdRouter } from "./avdRouter";
 import { competencyValidationRouter } from "./competencyValidationRouter";
 import { evaluation360Router } from "./evaluation360Router";
@@ -311,6 +312,9 @@ export const appRouter = router({
   
   // Novos routers - Metas Individuais, Pesos de Avaliação e Benchmark (15/12/2025)
   individualGoals: individualGoalsRouter,
+  
+  // Router de PDI Completo (16/12/2025)
+  pdi: pdiRouter,
   departmentGoals: departmentGoalsRouter,
   evaluationWeights: evaluationWeightsRouter,
   positionCompetencies: positionCompetenciesRouter,

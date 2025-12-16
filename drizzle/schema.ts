@@ -7722,3 +7722,240 @@ export const pilotMetricsRelations = relations(pilotMetrics, ({ one }) => ({
     references: [pilotSimulations.id],
   }),
 }));
+
+// ============================================================================
+// TABELAS ESTENDIDAS DE PDI - MODELO COMPLETO (Wilson/Fernando)
+// ============================================================================
+
+/**
+ * KPIs do PDI - Indicadores de Performance
+ */
+export const pdiKpis = mysqlTable("pdiKpis", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull().unique(), // Relacionamento 1:1 com pdiPlans
+  
+  // KPIs principais
+  currentPosition: varchar("currentPosition", { length: 100 }), // Ex: "~122%"
+  reframing: varchar("reframing", { length: 100 }), // Ex: "+12,5%"
+  newPosition: varchar("newPosition", { length: 100 }), // Ex: "~137%"
+  performancePlanMonths: int("performancePlanMonths").default(24), // Ex: 24 meses
+  
+  // KPIs alternativos (Fernando)
+  technicalExcellence: varchar("technicalExcellence", { length: 100 }), // Ex: "Nível Expert"
+  leadership: varchar("leadership", { length: 100 }), // Ex: "Desenvolvedora"
+  immediateIncentive: varchar("immediateIncentive", { length: 100 }), // Ex: "10%"
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiKpi = typeof pdiKpis.$inferSelect;
+export type InsertPdiKpi = typeof pdiKpis.$inferInsert;
+
+/**
+ * Estratégia de Remuneração do PDI
+ */
+export const pdiRemunerationStrategy = mysqlTable("pdiRemunerationStrategy", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull().unique(), // Relacionamento 1:1 com pdiPlans
+  
+  title: varchar("title", { length: 255 }).notNull(), // Ex: "Estratégia de Remuneração: Reenquadramento por Complexidade"
+  description: text("description"), // Descrição geral da estratégia
+  midpoint: varchar("midpoint", { length: 100 }), // Ex: "R$ 17.268,38"
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiRemunerationStrategy = typeof pdiRemunerationStrategy.$inferSelect;
+export type InsertPdiRemunerationStrategy = typeof pdiRemunerationStrategy.$inferInsert;
+
+/**
+ * Movimentos Salariais da Estratégia de Remuneração
+ */
+export const pdiRemunerationMovements = mysqlTable("pdiRemunerationMovements", {
+  id: int("id").autoincrement().primaryKey(),
+  strategyId: int("strategyId").notNull(), // Relacionamento com pdiRemunerationStrategy
+  
+  level: varchar("level", { length: 100 }).notNull(), // Ex: "1. Incentivo", "2. Otimização"
+  deadline: varchar("deadline", { length: 100 }), // Ex: "Imediato", "12-18 meses"
+  trigger: text("trigger"), // Gatilho/Meta
+  mechanism: varchar("mechanism", { length: 255 }), // Ex: "Aumento de +12,5%"
+  projectedSalary: varchar("projectedSalary", { length: 100 }), // Ex: "R$ 16.631,27"
+  positionInRange: varchar("positionInRange", { length: 100 }), // Ex: "~96%"
+  justification: text("justification"), // Justificativa estratégica
+  
+  orderIndex: int("orderIndex").default(0).notNull(), // Ordem de exibição
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiRemunerationMovement = typeof pdiRemunerationMovements.$inferSelect;
+export type InsertPdiRemunerationMovement = typeof pdiRemunerationMovements.$inferInsert;
+
+/**
+ * Plano de Ação 70-20-10 do PDI
+ */
+export const pdiActionPlan702010 = mysqlTable("pdiActionPlan702010", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull().unique(), // Relacionamento 1:1 com pdiPlans
+  
+  // 70% - Aprendizado na Prática
+  practice70Title: varchar("practice70Title", { length: 255 }).default("70% - Aprendizado na Prática (On-the-Job)").notNull(),
+  practice70Items: json("practice70Items").$type<string[]>().default([]), // Array de itens
+  
+  // 20% - Aprendizado Social
+  social20Title: varchar("social20Title", { length: 255 }).default("20% - Aprendizado com Outros (Social)").notNull(),
+  social20Items: json("social20Items").$type<string[]>().default([]), // Array de itens
+  
+  // 10% - Aprendizado Formal
+  formal10Title: varchar("formal10Title", { length: 255 }).default("10% - Aprendizado Formal").notNull(),
+  formal10Items: json("formal10Items").$type<string[]>().default([]), // Array de itens
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiActionPlan702010 = typeof pdiActionPlan702010.$inferSelect;
+export type InsertPdiActionPlan702010 = typeof pdiActionPlan702010.$inferInsert;
+
+/**
+ * Pacto de Responsabilidades do PDI
+ */
+export const pdiResponsibilities = mysqlTable("pdiResponsibilities", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull().unique(), // Relacionamento 1:1 com pdiPlans
+  
+  // Responsabilidades do Funcionário
+  employeeTitle: varchar("employeeTitle", { length: 255 }).default("Responsabilidades do Protagonista").notNull(),
+  employeeResponsibilities: json("employeeResponsibilities").$type<Array<{title: string, description: string}>>().default([]),
+  
+  // Responsabilidades da Liderança
+  leadershipTitle: varchar("leadershipTitle", { length: 255 }).default("Responsabilidades da Liderança").notNull(),
+  leadershipResponsibilities: json("leadershipResponsibilities").$type<Array<{title: string, description: string}>>().default([]),
+  
+  // Responsabilidades do DHO
+  dhoTitle: varchar("dhoTitle", { length: 255 }).default("Responsabilidades do DHO (O Guardião)").notNull(),
+  dhoResponsibilities: json("dhoResponsibilities").$type<Array<{title: string, description: string}>>().default([]),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiResponsibility = typeof pdiResponsibilities.$inferSelect;
+export type InsertPdiResponsibility = typeof pdiResponsibilities.$inferInsert;
+
+/**
+ * Assinaturas do PDI
+ */
+export const pdiSignatures = mysqlTable("pdiSignatures", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull().unique(), // Relacionamento 1:1 com pdiPlans
+  
+  // Assinatura do Funcionário
+  employeeName: varchar("employeeName", { length: 255 }),
+  employeeSignedAt: datetime("employeeSignedAt"),
+  employeeSignature: varchar("employeeSignature", { length: 512 }), // URL da assinatura digital
+  
+  // Assinatura do Sponsor
+  sponsorName: varchar("sponsorName", { length: 255 }),
+  sponsorSignedAt: datetime("sponsorSignedAt"),
+  sponsorSignature: varchar("sponsorSignature", { length: 512 }),
+  
+  // Assinatura do Mentor
+  mentorName: varchar("mentorName", { length: 255 }),
+  mentorSignedAt: datetime("mentorSignedAt"),
+  mentorSignature: varchar("mentorSignature", { length: 512 }),
+  
+  // Assinatura do DHO
+  dhoName: varchar("dhoName", { length: 255 }),
+  dhoSignedAt: datetime("dhoSignedAt"),
+  dhoSignature: varchar("dhoSignature", { length: 512 }),
+  
+  // Status geral
+  allSigned: boolean("allSigned").default(false).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiSignature = typeof pdiSignatures.$inferSelect;
+export type InsertPdiSignature = typeof pdiSignatures.$inferInsert;
+
+/**
+ * Timeline de Acompanhamento do PDI
+ */
+export const pdiTimeline = mysqlTable("pdiTimeline", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(), // Relacionamento com pdiPlans
+  
+  title: varchar("title", { length: 255 }).notNull(), // Ex: "Trimestre 1 - Integração"
+  description: text("description"), // Descrição do marco
+  targetDate: datetime("targetDate").notNull(), // Data prevista
+  completedDate: datetime("completedDate"), // Data de conclusão
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluido", "atrasado"]).default("pendente").notNull(),
+  
+  // Progresso e notas
+  progress: int("progress").default(0).notNull(), // 0-100
+  notes: text("notes"), // Observações
+  
+  orderIndex: int("orderIndex").default(0).notNull(), // Ordem de exibição
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PdiTimeline = typeof pdiTimeline.$inferSelect;
+export type InsertPdiTimeline = typeof pdiTimeline.$inferInsert;
+
+// Relações para as novas tabelas de PDI
+export const pdiKpisRelations = relations(pdiKpis, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiKpis.planId],
+    references: [pdiPlans.id],
+  }),
+}));
+
+export const pdiRemunerationStrategyRelations = relations(pdiRemunerationStrategy, ({ one, many }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiRemunerationStrategy.planId],
+    references: [pdiPlans.id],
+  }),
+  movements: many(pdiRemunerationMovements),
+}));
+
+export const pdiRemunerationMovementsRelations = relations(pdiRemunerationMovements, ({ one }) => ({
+  strategy: one(pdiRemunerationStrategy, {
+    fields: [pdiRemunerationMovements.strategyId],
+    references: [pdiRemunerationStrategy.id],
+  }),
+}));
+
+export const pdiActionPlan702010Relations = relations(pdiActionPlan702010, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiActionPlan702010.planId],
+    references: [pdiPlans.id],
+  }),
+}));
+
+export const pdiResponsibilitiesRelations = relations(pdiResponsibilities, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiResponsibilities.planId],
+    references: [pdiPlans.id],
+  }),
+}));
+
+export const pdiSignaturesRelations = relations(pdiSignatures, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiSignatures.planId],
+    references: [pdiPlans.id],
+  }),
+}));
+
+export const pdiTimelineRelations = relations(pdiTimeline, ({ one }) => ({
+  plan: one(pdiPlans, {
+    fields: [pdiTimeline.planId],
+    references: [pdiPlans.id],
+  }),
+}));
