@@ -46,7 +46,7 @@ import { bonusWorkflowRouter } from "./routers/bonusWorkflowRouter";
 import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
-import { notificationsRouter } from "./notificationsRouter";
+import { notificationsRouter } from "./routers/notificationsRouter";
 import { sendEmail } from "./emailService";
 import { pulseRouter } from "./routers/pulseRouter";
 import { exportRouter } from "./routers/exportRouter";

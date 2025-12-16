@@ -25,10 +25,25 @@ export const employeesRouter = router({
         positionId: z.number().optional(),
         status: z.enum(["ativo", "afastado", "desligado"]).optional(),
         search: z.string().optional(),
+        limit: z.number().min(1).max(1000).optional().default(100),
+        offset: z.number().min(0).optional().default(0),
       }).optional()
     )
     .query(async ({ input }) => {
-      return await listEmployees(input || {});
+      const params = input || {};
+      const limit = params.limit ?? 100;
+      const offset = params.offset ?? 0;
+      
+      const employees = await listEmployees(params);
+      
+      // Aplicar paginação
+      const paginatedEmployees = employees.slice(offset, offset + limit);
+      
+      return {
+        employees: paginatedEmployees,
+        total: employees.length,
+        hasMore: offset + limit < employees.length,
+      };
     }),
 
   /**

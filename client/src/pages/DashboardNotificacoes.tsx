@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
+import { DashboardExportButtons } from "@/components/DashboardExportButtons";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -27,6 +28,8 @@ import {
  */
 export default function DashboardNotificacoes() {
   const [period, setPeriod] = useState<string>("30");
+  const trendsChartRef = useRef<HTMLDivElement>(null);
+  const distributionChartRef = useRef<HTMLDivElement>(null);
 
   // Buscar estatísticas de notificações
   const { data: stats, isLoading: loadingStats } = trpc.notifications.getStats.useQuery({
@@ -61,18 +64,31 @@ export default function DashboardNotificacoes() {
             </p>
           </div>
 
-          <div className="w-48">
-            <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger>
-                <SelectValue placeholder="Período" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Últimos 7 dias</SelectItem>
-                <SelectItem value="30">Últimos 30 dias</SelectItem>
-                <SelectItem value="90">Últimos 90 dias</SelectItem>
-                <SelectItem value="365">Último ano</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-4">
+            {stats && trends && (
+              <DashboardExportButtons
+                dashboardTitle="Dashboard de Notificações"
+                data={trends}
+                columns={[
+                  { header: "Data", accessor: "date" },
+                  { header: "Quantidade", accessor: "count" },
+                ]}
+                chartRefs={[trendsChartRef, distributionChartRef]}
+              />
+            )}
+            <div className="w-48">
+              <Select value={period} onValueChange={setPeriod}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Período" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">Últimos 7 dias</SelectItem>
+                  <SelectItem value="30">Últimos 30 dias</SelectItem>
+                  <SelectItem value="90">Últimos 90 dias</SelectItem>
+                  <SelectItem value="365">Último ano</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
+import { DashboardExportButtons } from "@/components/DashboardExportButtons";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -28,6 +29,9 @@ import {
  */
 export default function DashboardAuditoria() {
   const [period, setPeriod] = useState<string>("30");
+  const userActivityChartRef = useRef<HTMLDivElement>(null);
+  const moduleDistributionChartRef = useRef<HTMLDivElement>(null);
+  const peakHoursChartRef = useRef<HTMLDivElement>(null);
 
   // Buscar estatísticas de auditoria
   const { data: stats, isLoading: loadingStats } = trpc.audit.getStats.useQuery({
@@ -74,18 +78,31 @@ export default function DashboardAuditoria() {
             </p>
           </div>
 
-          <div className="w-48">
-            <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger>
-                <SelectValue placeholder="Período" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Últimos 7 dias</SelectItem>
-                <SelectItem value="30">Últimos 30 dias</SelectItem>
-                <SelectItem value="90">Últimos 90 dias</SelectItem>
-                <SelectItem value="365">Último ano</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-4">
+            {userActivity && (
+              <DashboardExportButtons
+                dashboardTitle="Dashboard de Auditoria"
+                data={userActivity}
+                columns={[
+                  { header: "Usuário ID", accessor: "userId" },
+                  { header: "Ações", accessor: "actions" },
+                ]}
+                chartRefs={[userActivityChartRef, moduleDistributionChartRef, peakHoursChartRef]}
+              />
+            )}
+            <div className="w-48">
+              <Select value={period} onValueChange={setPeriod}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Período" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">Últimos 7 dias</SelectItem>
+                  <SelectItem value="30">Últimos 30 dias</SelectItem>
+                  <SelectItem value="90">Últimos 90 dias</SelectItem>
+                  <SelectItem value="365">Último ano</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 

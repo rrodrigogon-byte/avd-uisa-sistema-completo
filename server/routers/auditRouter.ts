@@ -280,6 +280,265 @@ export const auditRouter = router({
   }),
 
   /**
+   * Estatísticas para dashboard analítico
+   */
+  getStats: protectedProcedure
+    .input(
+      z.object({
+        days: z.number().min(1).max(365).default(30),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Apenas admins
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new Error("Unauthorized");
+      }
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+
+      const [{ total }] = await db
+        .select({ total: sql<number>`count(*)` })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate));
+
+      const [{ uniqueUsers }] = await db
+        .select({ uniqueUsers: sql<number>`count(distinct userId)` })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate));
+
+      const [{ uniqueActions }] = await db
+        .select({ uniqueActions: sql<number>`count(distinct activityType)` })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate));
+
+      // Calcular variação do período anterior
+      const prevStartDate = new Date(startDate);
+      prevStartDate.setDate(prevStartDate.getDate() - input.days);
+      const [{ prevTotal }] = await db
+        .select({ prevTotal: sql<number>`count(*)` })
+        .from(activityLogs)
+        .where(and(
+          gte(activityLogs.createdAt, prevStartDate),
+          lte(activityLogs.createdAt, startDate)
+        ));
+
+      const totalChange = prevTotal > 0 ? ((total - prevTotal) / prevTotal) * 100 : 0;
+
+      return {
+        total,
+        uniqueUsers,
+        uniqueActions,
+        totalChange: Math.round(totalChange * 10) / 10,
+        avgPerDay: Math.round((total / input.days) * 10) / 10,
+      };
+    }),
+
+  /**
+   * Atividades por usuário para dashboard
+   */
+  getUserActivity: protectedProcedure
+    .input(
+      z.object({
+        days: z.number().min(1).max(365).default(30),
+        limit: z.number().min(1).max(50).default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Apenas admins
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new Error("Unauthorized");
+      }
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+
+      const userActivity = await db
+        .select({
+          userId: activityLogs.userId,
+          count: sql<number>`count(*)`,
+        })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate))
+        .groupBy(activityLogs.userId)
+        .orderBy(desc(sql`count(*)`))
+        .limit(input.limit);
+
+      return userActivity.map(item => ({
+        userId: item.userId,
+        actions: item.count,
+      }));
+    }),
+
+  /**
+   * Distribuição de ações por módulo
+   */
+  getModuleDistribution: protectedProcedure
+    .input(
+      z.object({
+        days: z.number().min(1).max(365).default(30),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Apenas admins
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new Error("Unauthorized");
+      }
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+
+      const distribution = await db
+        .select({
+          module: activityLogs.entityType,
+          count: sql<number>`count(*)`,
+        })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate))
+        .groupBy(activityLogs.entityType)
+        .orderBy(desc(sql`count(*)`));
+
+      return distribution.map(item => ({
+        module: item.module || 'Outros',
+        count: item.count,
+      }));
+    }),
+
+  /**
+   * Horários de pico de uso
+   */
+  getPeakHours: protectedProcedure
+    .input(
+      z.object({
+        days: z.number().min(1).max(365).default(30),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Apenas admins
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new Error("Unauthorized");
+      }
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+
+      const peakHours = await db
+        .select({
+          hour: sql<number>`HOUR(createdAt)`,
+          count: sql<number>`count(*)`,
+        })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate))
+        .groupBy(sql`HOUR(createdAt)`)
+        .orderBy(sql`HOUR(createdAt)`);
+
+      return peakHours.map(item => ({
+        hour: `${item.hour}:00`,
+        count: item.count,
+      }));
+    }),
+
+  /**
+   * Ações mais frequentes
+   */
+  getTopActions: protectedProcedure
+    .input(
+      z.object({
+        days: z.number().min(1).max(365).default(30),
+        limit: z.number().min(1).max(50).default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Apenas admins
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new Error("Unauthorized");
+      }
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+
+      const topActions = await db
+        .select({
+          action: activityLogs.activityType,
+          count: sql<number>`count(*)`,
+        })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate))
+        .groupBy(activityLogs.activityType)
+        .orderBy(desc(sql`count(*)`))
+        .limit(input.limit);
+
+      return topActions.map(item => ({
+        action: item.action,
+        count: item.count,
+      }));
+    }),
+
+  /**
+   * Padrões suspeitos para dashboard
+   */
+  getSuspiciousPatterns: protectedProcedure
+    .input(
+      z.object({
+        days: z.number().min(1).max(365).default(30),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Apenas admins
+      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
+        throw new Error("Unauthorized");
+      }
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - input.days);
+
+      // Detectar volume anormal de ações
+      const abnormalVolume = await db
+        .select({
+          userId: activityLogs.userId,
+          count: sql<number>`count(*)`,
+        })
+        .from(activityLogs)
+        .where(gte(activityLogs.createdAt, startDate))
+        .groupBy(activityLogs.userId)
+        .having(sql`count(*) > 500`) // Mais de 500 ações no período
+        .orderBy(desc(sql`count(*)`));
+
+      // Detectar ações fora do horário comercial (antes 6h ou depois 22h)
+      const [{ offHoursCount }] = await db
+        .select({ offHoursCount: sql<number>`count(*)` })
+        .from(activityLogs)
+        .where(and(
+          gte(activityLogs.createdAt, startDate),
+          sql`(HOUR(createdAt) < 6 OR HOUR(createdAt) > 22)`
+        ));
+
+      return {
+        abnormalVolume: abnormalVolume.length,
+        offHoursActions: offHoursCount,
+        hasIssues: abnormalVolume.length > 0 || offHoursCount > 100,
+      };
+    }),
+
+  /**
    * Exportar logs de auditoria
    */
   export: protectedProcedure

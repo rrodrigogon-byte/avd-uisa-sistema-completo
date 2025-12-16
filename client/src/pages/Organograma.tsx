@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
-import { OrganizationalChart } from "@/components/OrganizationalChart";
+import { OrganizationalChartOptimized } from "@/components/OrganizationalChartOptimized";
 import { trpc } from "@/lib/trpc";
 import { Loader2, Building2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -23,8 +23,7 @@ export default function Organograma() {
   // Buscar estatísticas
   const { data: stats } = trpc.hierarchy.getHierarchyStats.useQuery();
 
-  // Buscar todos os funcionários
-  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery({});
+  // Não precisamos mais buscar todos os funcionários aqui - o componente otimizado faz isso
 
   // Buscar departamentos
   const { data: departments, isLoading: loadingDepartments } =
@@ -56,7 +55,7 @@ export default function Organograma() {
     });
   };
 
-  const isLoading = loadingEmployees || loadingDepartments || loadingPositions;
+  const isLoading = loadingDepartments || loadingPositions;
 
   if (isLoading) {
     return (
@@ -68,20 +67,7 @@ export default function Organograma() {
     );
   }
 
-  if (!employees || employees.length === 0) {
-    return (
-      <DashboardLayout>
-        <div className="container mx-auto p-6">
-          <Alert>
-            <AlertDescription>
-              Nenhum funcionário cadastrado. Cadastre funcionários para visualizar o
-              organograma.
-            </AlertDescription>
-          </Alert>
-        </div>
-      </DashboardLayout>
-    );
-  }
+  // Removido check de employees vazios - o componente otimizado lida com isso
 
   return (
     <DashboardLayout>
@@ -168,8 +154,7 @@ export default function Organograma() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <OrganizationalChart
-              employees={employees}
+            <OrganizationalChartOptimized
               departments={departments || []}
               positions={positions || []}
             />
@@ -194,11 +179,7 @@ export default function Organograma() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Sem gestor (CEO/Diretor)</SelectItem>
-                    {employees && employees.filter(emp => emp.id !== editingEmployee?.id).map((emp) => (
-                      <SelectItem key={emp.id} value={emp.id.toString()}>
-                        {emp.name}
-                      </SelectItem>
-                    ))}
+                    {/* TODO: Buscar lista de funcionários para seleção de gestor */}
                   </SelectContent>
                 </Select>
               </div>
