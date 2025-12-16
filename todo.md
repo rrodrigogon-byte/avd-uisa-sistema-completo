@@ -2392,3 +2392,33 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 
 ### Testes
 - [x] Criar testes vitest para validar as implementações (11 testes passando)
+
+
+## 🆕 NOVOS RECURSOS - SEÇÃO PILOTO (16/12/2025)
+
+### Links no Menu Lateral
+- [x] Adicionar seção "Piloto" no DashboardLayout
+- [x] Link para "Simulados" (/piloto/simulados) - apenas admin/RH
+- [x] Link para "Alertas de Segurança" (/seguranca/alertas) - apenas admin/RH
+- [x] Controle de visibilidade por role (admin/RH)
+
+### Dados de Demonstração
+- [x] Criar procedure seedDemoData para gerar dados fictícios
+  - [x] Piloto completo com dados pessoais
+  - [x] 25 participantes fictícios
+  - [x] Cronograma de 8 etapas
+  - [x] Métricas de avaliação
+- [x] Criar procedure clearDemoData para limpar dados demo
+- [x] Adicionar botões "Gerar Demo" e "Limpar Demo" na página de Simulados
+
+### Notificações por Email
+- [x] Implementar procedure notifyManagersAboutAlerts
+- [x] Implementar procedure sendAutomaticAlertEmail
+- [x] Criar templates HTML profissionais para emails
+- [x] Adicionar botão "Notificar Gestores" na página de Alertas de Segurança
+
+### Páginas Novas
+- [x] Criar página Simulados (/piloto/simulados)
+- [x] Criar página Alertas de Segurança (/seguranca/alertas)
+- [x] Registrar rotas no App.tsx
+
