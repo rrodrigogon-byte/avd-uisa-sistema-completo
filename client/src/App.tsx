@@ -54,6 +54,9 @@ import CompetenciasPorCargo from "./pages/CompetenciasPorCargo";
 import MetasIndividuais from "./pages/MetasIndividuais";
 import PesosAvaliacao from "./pages/PesosAvaliacao";
 import BenchmarkDesempenho from "./pages/BenchmarkDesempenho";
+import PilotSimulations from "./pages/PilotSimulations";
+import SuspiciousAccessDashboard from "./pages/SuspiciousAccessDashboard";
+import IntegrityReport from "./pages/IntegrityReport";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -569,6 +572,11 @@ function Router() {
       <Route path="/admin/pesos-avaliacao" component={PesosAvaliacao} />
       <Route path="/admin/benchmark-desempenho" component={BenchmarkDesempenho} />
       <Route path="/admin/ab-experiments" component={AbTestExperiments} />
+      
+      {/* Simulados do Piloto e Alertas de Segurança */}
+      <Route path="/piloto/simulados" component={PilotSimulations} />
+      <Route path="/seguranca/alertas" component={SuspiciousAccessDashboard} />
+      <Route path="/relatorio-integridade/:assessmentId?" component={IntegrityReport} />
       
       <Route path={"/"} component={Home} />
       <Route path={"/404"} component={NotFound} />

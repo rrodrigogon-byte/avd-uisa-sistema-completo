@@ -2290,3 +2290,80 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
   - [x] 9 módulos completos de treinamento
   - [x] Casos práticos e FAQ incluídos
   - [x] Checklist do aplicador
+
+
+## 🆕 NOVAS FUNCIONALIDADES - SIMULADOS E MONITORAMENTO (15/12/2025)
+
+### Sistema de Simulados para Piloto (20-30 colaboradores)
+- [ ] Criar schema de banco para simulados (pilotSimulations, pilotParticipants, pilotSchedule)
+- [ ] Implementar CRUD de participantes do piloto
+- [ ] Criar sistema de cronograma seguindo material de treinamento
+- [ ] Implementar painel de acompanhamento do progresso do piloto
+- [ ] Adicionar métricas e estatísticas do piloto
+
+### Dashboard de Alertas de Acessos Suspeitos em Tempo Real
+- [ ] Criar schema para registro de logs de acesso (accessLogs, suspiciousAlerts)
+- [ ] Implementar detecção de padrões suspeitos (horários, localização, frequência)
+- [ ] Criar dashboard visual com alertas em tempo real
+- [ ] Adicionar sistema de notificações de alertas críticos
+- [ ] Implementar filtros e busca de eventos suspeitos
+
+### Gráfico Radar no Relatório Individual de Integridade
+- [ ] Definir dimensões do perfil de integridade (6 dimensões)
+- [ ] Implementar cálculo de scores por dimensão
+- [ ] Criar componente de gráfico radar com Recharts
+- [ ] Integrar gráfico radar no relatório individual do colaborador
+- [ ] Adicionar legenda e explicação das dimensões
+
+
+## 🆕 NOVAS FUNCIONALIDADES - SIMULADOS DO PILOTO E ALERTAS (15/12/2025)
+
+### Sistema de Simulados para Piloto (20-30 colaboradores)
+- [x] Criar schema de banco de dados para simulados do piloto
+  - [x] Tabela pilotSimulations - gerenciamento de pilotos
+  - [x] Tabela pilotParticipants - participantes de cada piloto
+- [x] Implementar router tRPC para simulados (pilotSimulationsRouter)
+  - [x] create - criar novo piloto
+  - [x] list - listar todos os pilotos
+  - [x] getById - obter detalhes de um piloto
+  - [x] addParticipant - adicionar participante
+  - [x] removeParticipant - remover participante
+  - [x] updateStatus - atualizar status do piloto
+  - [x] updateParticipantStatus - atualizar status do participante
+- [x] Implementar página PilotSimulations.tsx
+  - [x] Lista de pilotos com status e progresso
+  - [x] Formulário de criação de novo piloto
+  - [x] Gerenciamento de participantes
+  - [x] Cronograma do piloto
+  - [x] Acompanhamento de progresso em tempo real
+
+### Dashboard de Alertas de Acessos Suspeitos em Tempo Real
+- [x] Utilizar tabela existente pirSuspiciousAccessLogs
+- [x] Utilizar router existente pirSuspiciousAccessRouter
+- [x] Implementar página SuspiciousAccessDashboard.tsx
+  - [x] Cards de estatísticas (total, críticos, altos, médios, baixos)
+  - [x] Distribuição por tipo de anomalia
+  - [x] Status dos alertas (pendente, revisado, descartado, confirmado)
+  - [x] Lista de alertas com filtros
+  - [x] Auto-refresh a cada 30 segundos
+  - [x] Modal de revisão de alertas
+
+### Gráfico Radar no Relatório Individual de Integridade
+- [x] Criar componente IntegrityRadarChart.tsx
+  - [x] Gráfico radar com 6 dimensões (IP, ID, IC, ES, FL, AU)
+  - [x] Comparação com benchmark organizacional
+  - [x] Versão mini para cards
+- [x] Implementar página IntegrityReport.tsx
+  - [x] Score geral e nível de risco
+  - [x] Nível moral (Kohlberg)
+  - [x] Gráfico radar do perfil de integridade
+  - [x] Pontos fortes e áreas de desenvolvimento
+  - [x] Análise detalhada por dimensão
+  - [x] Histórico de avaliações
+  - [x] Exportação para PDF
+
+### Rotas Adicionadas
+- [x] /piloto/simulados - Página de simulados do piloto
+- [x] /seguranca/alertas - Dashboard de alertas suspeitos
+- [x] /relatorio-integridade/:assessmentId - Relatório individual de integridade
+

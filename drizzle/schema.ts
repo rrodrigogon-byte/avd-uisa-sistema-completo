@@ -7544,3 +7544,181 @@ export const pirIntegritySuspiciousAccessLogsRelations = relations(pirIntegrityS
     references: [employees.id],
   }),
 }));
+
+
+// ============================================================================
+// TABELAS DE SIMULADOS PARA PILOTO
+// ============================================================================
+
+/**
+ * Simulados do Piloto - Gerenciamento de pilotos de avaliação
+ */
+export const pilotSimulations = mysqlTable("pilotSimulations", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Configurações do piloto
+  targetParticipants: int("targetParticipants").default(30).notNull(), // 20-30 colaboradores
+  startDate: datetime("startDate").notNull(),
+  endDate: datetime("endDate").notNull(),
+  
+  // Cronograma baseado no material de treinamento
+  phase: mysqlEnum("phase", [
+    "preparation",      // Preparação e seleção de participantes
+    "training",         // Treinamento dos participantes
+    "execution",        // Execução do piloto
+    "analysis",         // Análise de resultados
+    "adjustment",       // Ajustes e melhorias
+    "completed"         // Piloto concluído
+  ]).default("preparation").notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "active", "paused", "completed", "cancelled"]).default("draft").notNull(),
+  
+  // Métricas
+  completionRate: int("completionRate").default(0), // Percentual de conclusão
+  averageScore: int("averageScore"), // Pontuação média
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PilotSimulation = typeof pilotSimulations.$inferSelect;
+export type InsertPilotSimulation = typeof pilotSimulations.$inferInsert;
+
+/**
+ * Participantes do Piloto
+ */
+export const pilotParticipants = mysqlTable("pilotParticipants", {
+  id: int("id").autoincrement().primaryKey(),
+  pilotId: int("pilotId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Status do participante
+  status: mysqlEnum("status", [
+    "invited",          // Convidado
+    "accepted",         // Aceitou participar
+    "in_training",      // Em treinamento
+    "ready",            // Pronto para avaliação
+    "in_progress",      // Avaliação em andamento
+    "completed",        // Avaliação concluída
+    "declined",         // Recusou participar
+    "removed"           // Removido do piloto
+  ]).default("invited").notNull(),
+  
+  // Progresso
+  trainingCompletedAt: datetime("trainingCompletedAt"),
+  assessmentStartedAt: datetime("assessmentStartedAt"),
+  assessmentCompletedAt: datetime("assessmentCompletedAt"),
+  
+  // Resultados
+  overallScore: int("overallScore"),
+  feedbackNotes: text("feedbackNotes"),
+  
+  // Metadados
+  invitedAt: datetime("invitedAt").default(sql`CURRENT_TIMESTAMP`).notNull(),
+  respondedAt: datetime("respondedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PilotParticipant = typeof pilotParticipants.$inferSelect;
+export type InsertPilotParticipant = typeof pilotParticipants.$inferInsert;
+
+/**
+ * Cronograma do Piloto - Etapas detalhadas
+ */
+export const pilotSchedule = mysqlTable("pilotSchedule", {
+  id: int("id").autoincrement().primaryKey(),
+  pilotId: int("pilotId").notNull(),
+  
+  // Detalhes da etapa
+  stepNumber: int("stepNumber").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Datas
+  plannedStartDate: datetime("plannedStartDate").notNull(),
+  plannedEndDate: datetime("plannedEndDate").notNull(),
+  actualStartDate: datetime("actualStartDate"),
+  actualEndDate: datetime("actualEndDate"),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "delayed", "cancelled"]).default("pending").notNull(),
+  
+  // Responsável
+  responsibleUserId: int("responsibleUserId"),
+  
+  // Notas
+  notes: text("notes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PilotSchedule = typeof pilotSchedule.$inferSelect;
+export type InsertPilotSchedule = typeof pilotSchedule.$inferInsert;
+
+/**
+ * Métricas do Piloto - Acompanhamento em tempo real
+ */
+export const pilotMetrics = mysqlTable("pilotMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  pilotId: int("pilotId").notNull(),
+  
+  // Data da métrica
+  recordedAt: datetime("recordedAt").default(sql`CURRENT_TIMESTAMP`).notNull(),
+  
+  // Métricas de participação
+  totalParticipants: int("totalParticipants").default(0).notNull(),
+  activeParticipants: int("activeParticipants").default(0).notNull(),
+  completedParticipants: int("completedParticipants").default(0).notNull(),
+  
+  // Métricas de progresso
+  averageProgress: int("averageProgress").default(0).notNull(), // 0-100
+  averageTimeSpent: int("averageTimeSpent").default(0).notNull(), // minutos
+  
+  // Métricas de qualidade
+  averageScore: int("averageScore"),
+  alertsCount: int("alertsCount").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PilotMetric = typeof pilotMetrics.$inferSelect;
+export type InsertPilotMetric = typeof pilotMetrics.$inferInsert;
+
+// Relations para Piloto
+export const pilotSimulationsRelations = relations(pilotSimulations, ({ many }) => ({
+  participants: many(pilotParticipants),
+  schedule: many(pilotSchedule),
+  metrics: many(pilotMetrics),
+}));
+
+export const pilotParticipantsRelations = relations(pilotParticipants, ({ one }) => ({
+  pilot: one(pilotSimulations, {
+    fields: [pilotParticipants.pilotId],
+    references: [pilotSimulations.id],
+  }),
+  employee: one(employees, {
+    fields: [pilotParticipants.employeeId],
+    references: [employees.id],
+  }),
+}));
+
+export const pilotScheduleRelations = relations(pilotSchedule, ({ one }) => ({
+  pilot: one(pilotSimulations, {
+    fields: [pilotSchedule.pilotId],
+    references: [pilotSimulations.id],
+  }),
+}));
+
+export const pilotMetricsRelations = relations(pilotMetrics, ({ one }) => ({
+  pilot: one(pilotSimulations, {
+    fields: [pilotMetrics.pilotId],
+    references: [pilotSimulations.id],
+  }),
+}));
