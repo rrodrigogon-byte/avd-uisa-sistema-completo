@@ -209,10 +209,7 @@ export default function PDIImportHistory() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => {
-                                setEditingImport(item.id);
-                                setEditedFileName(item.fileName);
-                              }}
+                              onClick={() => setLocation(`/pdi/import/edit/${item.id}`)}
                             >
                               Editar e Reprocessar
                             </Button>

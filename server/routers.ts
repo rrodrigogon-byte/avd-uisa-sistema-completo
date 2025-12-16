@@ -2340,6 +2340,386 @@ export const appRouter = router({
           importedQuality,
         };
       }),
+
+    // Atualizar PDI importado com correções
+    updateImportedPdi: protectedProcedure
+      .input(z.object({
+        importId: z.number(),
+        pdiData: z.object({
+          employeeId: z.number().optional(),
+          cycleId: z.number().optional(),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
+          strategicContext: z.string().optional(),
+          durationMonths: z.number().optional(),
+          actions: z.array(z.object({
+            id: z.number().optional(),
+            title: z.string(),
+            description: z.string(),
+            category: z.enum(['70_pratica', '20_mentoria', '10_curso']),
+            dueDate: z.string(),
+            status: z.string(),
+            responsible: z.string(),
+          })).optional(),
+          competencyGaps: z.array(z.object({
+            id: z.number().optional(),
+            competencyName: z.string(),
+            currentLevel: z.number(),
+            targetLevel: z.number(),
+            gap: z.number(),
+            priority: z.string(),
+          })).optional(),
+        }),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiImportHistory, pdiPlans, pdiActions, pdiCompetencyGaps, pdiEditHistory } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Buscar importação
+        const importRecord = await database
+          .select()
+          .from(pdiImportHistory)
+          .where(eq(pdiImportHistory.id, input.importId))
+          .limit(1);
+        
+        if (importRecord.length === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Importação não encontrada',
+          });
+        }
+        
+        // Buscar ou criar PDI associado
+        let pdiId: number;
+        const existingPdi = await database
+          .select()
+          .from(pdiPlans)
+          .where(eq(pdiPlans.id, (importRecord[0] as any).pdiId || 0))
+          .limit(1);
+        
+        if (existingPdi.length > 0) {
+          pdiId = existingPdi[0].id;
+          
+          // Atualizar PDI existente
+          const updateData: any = {};
+          if (input.pdiData.cycleId) updateData.cycleId = input.pdiData.cycleId;
+          if (input.pdiData.startDate) updateData.startDate = new Date(input.pdiData.startDate);
+          if (input.pdiData.endDate) updateData.endDate = new Date(input.pdiData.endDate);
+          
+          if (Object.keys(updateData).length > 0) {
+            await database
+              .update(pdiPlans)
+              .set(updateData)
+              .where(eq(pdiPlans.id, pdiId));
+          }
+        } else {
+          // Criar novo PDI
+          const [newPdi] = await database
+            .insert(pdiPlans)
+            .values({
+              cycleId: input.pdiData.cycleId || 1,
+              employeeId: input.pdiData.employeeId || 1,
+              status: 'rascunho',
+              startDate: input.pdiData.startDate ? new Date(input.pdiData.startDate) : new Date(),
+              endDate: input.pdiData.endDate ? new Date(input.pdiData.endDate) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+              overallProgress: 0,
+            })
+            .$returningId();
+          
+          pdiId = newPdi.id;
+        }
+        
+        // Atualizar ações
+        if (input.pdiData.actions) {
+          // Remover ações antigas
+          await database
+            .delete(pdiActions)
+            .where(eq(pdiActions.planId, pdiId));
+          
+          // Inserir novas ações
+          if (input.pdiData.actions.length > 0) {
+            const actionsToInsert = input.pdiData.actions.map(action => ({
+              planId: pdiId,
+              title: action.title,
+              description: action.description,
+              axis: action.category === '70_pratica' ? '70_pratica' : action.category === '20_mentoria' ? '20_experiencia' : '10_educacao',
+              developmentArea: 'Desenvolvimento Profissional',
+              successMetric: 'Conclusão da ação',
+              responsible: action.responsible,
+              dueDate: new Date(action.dueDate),
+              status: 'nao_iniciado' as const,
+              priority: 'media' as const,
+              progress: 0,
+            }));
+            
+            await database.insert(pdiActions).values(actionsToInsert);
+          }
+        }
+        
+        // Registrar histórico de edição
+        await database.insert(pdiEditHistory).values({
+          pdiId: pdiId,
+          editType: 'pdi_update',
+          fieldChanged: 'multiple',
+          oldValue: 'Importação original',
+          newValue: 'Correções aplicadas',
+          editedBy: ctx.user.id,
+          editReason: 'Correção de erros de importação',
+        });
+        
+        // Atualizar status da importação
+        await database
+          .update(pdiImportHistory)
+          .set({
+            status: 'concluido',
+            errorCount: 0,
+            errors: null,
+          })
+          .where(eq(pdiImportHistory.id, input.importId));
+        
+        return {
+          success: true,
+          pdiId,
+          message: 'PDI atualizado com sucesso',
+        };
+      }),
+
+    // Enviar PDI para aprovação do Diretor
+    submitForApproval: protectedProcedure
+      .input(z.object({
+        importId: z.number(),
+        pdiId: z.number(),
+        note: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiPlans, pdiImportHistory, employees, users } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Atualizar status do PDI para pendente de aprovação
+        await database
+          .update(pdiPlans)
+          .set({ status: 'pendente_aprovacao' })
+          .where(eq(pdiPlans.id, input.pdiId));
+        
+        // Buscar dados do PDI e funcionário
+        const pdiData = await database
+          .select({
+            pdiId: pdiPlans.id,
+            employeeId: pdiPlans.employeeId,
+            employeeName: employees.name,
+            employeeEmail: employees.email,
+          })
+          .from(pdiPlans)
+          .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+          .where(eq(pdiPlans.id, input.pdiId))
+          .limit(1);
+        
+        // Buscar Diretor de Gente, Administração e Inovação (admin ou rh)
+        const directors = await database
+          .select()
+          .from(users)
+          .where(eq(users.role, 'admin'));
+        
+        // Enviar email de notificação para o Diretor
+        try {
+          const { sendEmail } = await import('./_core/email');
+          
+          for (const director of directors) {
+            if (director.email) {
+              await sendEmail({
+                to: director.email,
+                subject: '📋 PDI Aguardando Aprovação',
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #F39200;">PDI Aguardando Aprovação</h2>
+                    
+                    <p>Olá <strong>${director.name}</strong>,</p>
+                    
+                    <p>Um novo PDI foi enviado para sua aprovação:</p>
+                    
+                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #F39200;">
+                      <p><strong>Funcionário:</strong> ${pdiData[0]?.employeeName || 'N/A'}</p>
+                      <p><strong>Enviado por:</strong> ${ctx.user.name}</p>
+                      <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+                      ${input.note ? `<p><strong>Observações:</strong> ${input.note}</p>` : ''}
+                    </div>
+                    
+                    <p>Acesse o sistema para revisar e aprovar o PDI.</p>
+                    
+                    <a href="${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/aprovacoes/pdis" 
+                       style="display: inline-block; padding: 12px 24px; background: #F39200; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px;">
+                      Revisar PDI
+                    </a>
+                    
+                    <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #6b7280; font-size: 12px;">Esta é uma notificação automática do Sistema AVD UISA.</p>
+                  </div>
+                `,
+              });
+            }
+          }
+        } catch (emailError) {
+          console.error('[PDI] Erro ao enviar email de aprovação:', emailError);
+        }
+        
+        return {
+          success: true,
+          message: 'PDI enviado para aprovação',
+        };
+      }),
+
+    // Listar PDIs pendentes de aprovação
+    listPendingApproval: protectedProcedure
+      .query(async ({ ctx }) => {
+        const database = await getDb();
+        if (!database) return [];
+        
+        const { pdiPlans, employees, evaluationCycles } = await import('../drizzle/schema');
+        const { eq, desc } = await import('drizzle-orm');
+        
+        const pendingPdis = await database
+          .select({
+            id: pdiPlans.id,
+            employeeId: pdiPlans.employeeId,
+            employeeName: employees.name,
+            employeeEmail: employees.email,
+            cycleId: pdiPlans.cycleId,
+            cycleName: evaluationCycles.name,
+            status: pdiPlans.status,
+            startDate: pdiPlans.startDate,
+            endDate: pdiPlans.endDate,
+            createdAt: pdiPlans.createdAt,
+          })
+          .from(pdiPlans)
+          .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+          .leftJoin(evaluationCycles, eq(pdiPlans.cycleId, evaluationCycles.id))
+          .where(eq(pdiPlans.status, 'pendente_aprovacao'))
+          .orderBy(desc(pdiPlans.createdAt));
+        
+        return pendingPdis;
+      }),
+
+    // Aprovar ou rejeitar PDI
+    reviewApproval: protectedProcedure
+      .input(z.object({
+        pdiId: z.number(),
+        decision: z.enum(['aprovado', 'rejeitado']),
+        feedback: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const database = await getDb();
+        if (!database) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Banco de dados indisponível',
+          });
+        }
+        
+        const { pdiPlans, employees, pdiEditHistory } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        
+        // Atualizar status do PDI
+        await database
+          .update(pdiPlans)
+          .set({
+            status: input.decision,
+            approvedBy: ctx.user.id,
+            approvedAt: new Date(),
+          })
+          .where(eq(pdiPlans.id, input.pdiId));
+        
+        // Registrar histórico
+        await database.insert(pdiEditHistory).values({
+          pdiId: input.pdiId,
+          editType: 'pdi_update',
+          fieldChanged: 'status',
+          oldValue: 'pendente_aprovacao',
+          newValue: input.decision,
+          editedBy: ctx.user.id,
+          editReason: input.feedback || `PDI ${input.decision === 'aprovado' ? 'aprovado' : 'rejeitado'} pelo Diretor`,
+        });
+        
+        // Buscar dados do PDI e funcionário para notificação
+        const pdiData = await database
+          .select({
+            employeeId: pdiPlans.employeeId,
+            employeeName: employees.name,
+            employeeEmail: employees.email,
+          })
+          .from(pdiPlans)
+          .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+          .where(eq(pdiPlans.id, input.pdiId))
+          .limit(1);
+        
+        // Enviar email de notificação para o funcionário
+        try {
+          const { sendEmail } = await import('./_core/email');
+          
+          if (pdiData[0]?.employeeEmail) {
+            const statusEmoji = input.decision === 'aprovado' ? '✅' : '❌';
+            const statusText = input.decision === 'aprovado' ? 'Aprovado' : 'Rejeitado';
+            const statusColor = input.decision === 'aprovado' ? '#10b981' : '#ef4444';
+            
+            await sendEmail({
+              to: pdiData[0].employeeEmail,
+              subject: `${statusEmoji} Seu PDI foi ${statusText}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: ${statusColor};">${statusEmoji} PDI ${statusText}</h2>
+                  
+                  <p>Olá <strong>${pdiData[0].employeeName}</strong>,</p>
+                  
+                  <p>Seu Plano de Desenvolvimento Individual (PDI) foi <strong style="color: ${statusColor};">${statusText.toLowerCase()}</strong> pelo Diretor de Gente, Administração e Inovação.</p>
+                  
+                  ${input.feedback ? `
+                    <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid ${statusColor};">
+                      <p><strong>Feedback:</strong></p>
+                      <p>${input.feedback}</p>
+                    </div>
+                  ` : ''}
+                  
+                  ${input.decision === 'aprovado' ? `
+                    <p>Agora você pode começar a executar as ações do seu plano de desenvolvimento.</p>
+                  ` : `
+                    <p>Por favor, revise o feedback e faça as correções necessárias antes de reenviar para aprovação.</p>
+                  `}
+                  
+                  <a href="${process.env.VITE_APP_URL || 'https://avduisa-sys-vd5bj8to.manus.space'}/pdi" 
+                     style="display: inline-block; padding: 12px 24px; background: #F39200; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px;">
+                    Ver Meu PDI
+                  </a>
+                  
+                  <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                  <p style="color: #6b7280; font-size: 12px;">Esta é uma notificação automática do Sistema AVD UISA.</p>
+                </div>
+              `,
+            });
+          }
+        } catch (emailError) {
+          console.error('[PDI] Erro ao enviar email de resultado de aprovação:', emailError);
+        }
+        
+        return {
+          success: true,
+          message: `PDI ${input.decision === 'aprovado' ? 'aprovado' : 'rejeitado'} com sucesso`,
+        };
+      }),
   }),
 
   // ============================================================================

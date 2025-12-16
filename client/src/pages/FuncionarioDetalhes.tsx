@@ -134,20 +134,20 @@ export default function FuncionarioDetalhes() {
           </Button>
           <div className="flex items-start gap-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={employee.employee?.avatarUrl} />
+              <AvatarImage src={(employee as any)?.avatarUrl} />
               <AvatarFallback className="text-2xl">
-                {employee.employee?.name.charAt(0).toUpperCase()}
+                {employee?.name?.charAt(0)?.toUpperCase() || '?'}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold">{employee.employee?.name}</h1>
+              <h1 className="text-3xl font-bold">{employee?.name || 'Nome não disponível'}</h1>
               <p className="text-muted-foreground text-lg">
-                {employee.position?.title || 'Cargo não informado'}
+                {employee?.positionTitle || 'Cargo não informado'}
               </p>
               <div className="flex items-center gap-4 mt-2">
-                {getStatusBadge(employee.employee?.status || 'ativo')}
+                {getStatusBadge(employee?.status || 'ativo')}
                 <span className="text-sm text-muted-foreground">
-                  Matrícula: {employee.employee?.employeeCode}
+                  Matrícula: {employee?.employeeCode || 'N/A'}
                 </span>
               </div>
             </div>
@@ -162,7 +162,7 @@ export default function FuncionarioDetalhes() {
                 <Mail className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">E-mail</p>
-                  <p className="font-medium">{employee.employee?.email || 'N/A'}</p>
+                  <p className="font-medium">{employee?.email || 'N/A'}</p>
                 </div>
               </div>
             </CardContent>
@@ -174,7 +174,7 @@ export default function FuncionarioDetalhes() {
                 <Building2 className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Departamento</p>
-                  <p className="font-medium">{employee.department?.name || 'N/A'}</p>
+                  <p className="font-medium">{employee?.departmentName || 'N/A'}</p>
                 </div>
               </div>
             </CardContent>
@@ -186,7 +186,7 @@ export default function FuncionarioDetalhes() {
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Data de Admissão</p>
-                  <p className="font-medium">{formatDate(employee.employee?.hireDate)}</p>
+                  <p className="font-medium">{formatDate(employee?.hireDate)}</p>
                 </div>
               </div>
             </CardContent>
@@ -199,9 +199,9 @@ export default function FuncionarioDetalhes() {
                 <div>
                   <p className="text-sm text-muted-foreground">Tempo de Casa</p>
                   <p className="font-medium">
-                    {employee.employee?.hireDate
+                    {employee?.hireDate
                       ? `${Math.floor(
-                          (new Date().getTime() - new Date(employee.employee.hireDate).getTime()) /
+                          (new Date().getTime() - new Date(employee.hireDate).getTime()) /
                             (1000 * 60 * 60 * 24 * 365)
                         )} anos`
                       : 'N/A'}

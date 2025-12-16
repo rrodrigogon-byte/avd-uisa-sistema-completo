@@ -73,6 +73,7 @@ import ManageEvaluations from "./pages/ManageEvaluations";
 import PDI from "./pages/PDI";
 import PDIImport from "./pages/PDIImport";
 import PDIImportHistory from "./pages/PDIImportHistory";
+import PDIImportEdit from "./pages/PDIImportEdit";
 import PDIImportedList from "./pages/PDIImportedList";
 import PDIComparativeReport from "./pages/PDIComparativeReport";
 import PDIImportMetrics from "./pages/PDIImportMetrics";
@@ -347,6 +348,7 @@ function Router() {
       <Route path={"/pdi"} component={PDI} />
       <Route path={"/pdi/import"} component={PDIImport} />
       <Route path={"/pdi/import/history"} component={PDIImportHistory} />
+      <Route path={"/pdi/import/edit/:id"} component={PDIImportEdit} />
       <Route path={"/pdi/imported"} component={PDIImportedList} />
       <Route path={"/pdi/comparison"} component={PDIComparativeReport} />
       <Route path={"/pdi/metrics"} component={PDIImportMetrics} />

@@ -2392,3 +2392,53 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 
 ### Testes
 - [x] Criar testes vitest para validar as implementações (11 testes passando)
+
+
+## 🐛 CORREÇÕES E MELHORIAS (16/12/2025)
+
+### Erro no Perfil de Funcionários
+- [x] Investigar erro ao acessar perfil de funcionários (ID 1 mostra dados vazios)
+- [x] Verificar se a procedure getById está retornando dados corretamente
+- [x] Corrigir exibição de dados no FuncionarioDetalhes.tsx - estrutura plana vs aninhada
+- [x] Verificar estrutura de dados retornada vs esperada pelo componente
+
+### Importação e Criação de PDI
+- [ ] Analisar estado atual do processo de importação de PDI
+- [ ] Implementar funcionalidades faltantes de importação
+- [ ] Implementar criação de PDI a partir de dados importados
+- [ ] Testar fluxo completo de importação e criação de PDI
+
+
+
+### Edição de PDI Importado com Destaque de Erros
+- [x] Criar página PDIImportEdit.tsx para edição de PDI importado
+- [x] Destacar campos com erros em vermelho
+- [x] Permitir correção de todos os campos do PDI
+- [x] Validar dados antes de salvar
+- [x] Integrar botões "Detalhes" e "Editar e Reprocessar" do histórico
+
+### Fluxo de Aprovação do Diretor
+- [x] Criar status de aprovação para PDI (pendente_aprovacao, aprovado, rejeitado)
+- [x] Após salvar PDI corrigido, enviar para aprovação do Diretor de Gente
+- [x] Criar tela de aprovação de PDIs para o Diretor (PDIPendentes.tsx já existe)
+- [x] Notificar Diretor quando houver PDI pendente de aprovação
+- [x] Notificar funcionário quando PDI for aprovado/rejeitado
+
+### Melhorias de Feedback Visual
+- [x] Adicionar barra de progresso durante importação (já existe Progress component)
+- [x] Mostrar status em tempo real da importação (isProcessing state)
+- [x] Exibir resumo detalhado após importação (importResult)
+- [x] Melhorar mensagens de erro e sucesso (toast notifications)
+
+### Histórico de Importações Detalhado
+- [x] Adicionar mais informações no histórico (usuário, duração, etc.)
+- [x] Permitir filtrar por status, data, usuário
+- [x] Exibir detalhes dos erros de cada importação
+- [x] Permitir reprocessar importações com erro (via página de edição)
+
+### Criação Manual de PDI
+- [x] Criar página para criação manual de PDI (CriarPDI.tsx já existe)
+- [x] Formulário completo com todos os campos do PDI
+- [x] Seleção de funcionário, ciclo, competências
+- [x] Adicionar ações no modelo 70-20-10
+- [x] Validação de campos obrigatórios

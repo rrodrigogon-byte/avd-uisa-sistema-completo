@@ -57,6 +57,16 @@ export default function PerfilFuncionario() {
     );
   }
 
+  // Adaptar estrutura de dados - a procedure retorna dados em formato plano
+  const employeeName = employee?.name || "Nome não disponível";
+  const employeeCode = employee?.employeeCode || "N/A";
+  const employeeEmail = employee?.email;
+  const employeePhone = (employee as any)?.phone;
+  const employeeStatus = employee?.status || "ativo";
+  const employeeHireDate = employee?.hireDate;
+  const departmentName = employee?.departmentName;
+  const positionTitle = employee?.positionTitle || "Cargo não definido";
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -79,7 +89,7 @@ export default function PerfilFuncionario() {
               {/* Foto */}
               <div className="flex-shrink-0">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#F39200] to-[#d97f00] flex items-center justify-center text-white text-4xl font-bold">
-                  {employee?.employee?.name?.charAt(0) || "?"}
+                  {employeeName?.charAt(0) || "?"}
                 </div>
               </div>
 
@@ -87,7 +97,7 @@ export default function PerfilFuncionario() {
               <div className="flex-1 grid grid-cols-2 gap-6">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-2xl font-bold text-gray-900">{employee?.employee?.name || "Nome não disponível"}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{employeeName}</h2>
                     <Button
                       size="sm"
                       variant="ghost"
@@ -97,43 +107,43 @@ export default function PerfilFuncionario() {
                       <Pencil className="w-4 h-4" />
                     </Button>
                   </div>
-                  <p className="text-lg text-gray-600 mt-1">{employee?.position?.title || "Cargo não definido"}</p>
+                  <p className="text-lg text-gray-600 mt-1">{positionTitle}</p>
                   
                   <div className="flex gap-2 mt-3">
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                      {employee?.employee?.employeeCode || "N/A"}
+                      {employeeCode}
                     </Badge>
                     <Badge variant="outline" className={
-                      employee?.employee?.status === "ativo" ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-700 border-gray-200"
+                      employeeStatus === "ativo" ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-700 border-gray-200"
                     }>
-                      {employee?.employee?.status || "Ativo"}
+                      {employeeStatus}
                     </Badge>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  {employee?.employee?.email && (
+                  {employeeEmail && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Mail className="w-4 h-4" />
-                      <span>{employee.employee.email}</span>
+                      <span>{employeeEmail}</span>
                     </div>
                   )}
-                  {employee?.employee?.phone && (
+                  {employeePhone && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Phone className="w-4 h-4" />
-                      <span>{employee.employee.phone}</span>
+                      <span>{employeePhone}</span>
                     </div>
                   )}
-                  {employee?.department?.name && (
+                  {departmentName && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Briefcase className="w-4 h-4" />
-                      <span>{employee.department.name}</span>
+                      <span>{departmentName}</span>
                     </div>
                   )}
-                  {employee?.employee?.hireDate && (
+                  {employeeHireDate && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Calendar className="w-4 h-4" />
-                      <span>Admissão: {new Date(employee.employee.hireDate).toLocaleDateString('pt-BR')}</span>
+                      <span>Admissão: {new Date(employeeHireDate).toLocaleDateString('pt-BR')}</span>
                     </div>
                   )}
                 </div>
@@ -278,13 +288,13 @@ export default function PerfilFuncionario() {
           open={editDialogOpen}
           onOpenChange={setEditDialogOpen}
           employee={{
-            id: employee.employee.id,
-            name: employee.employee.name || "",
-            email: employee.employee.email,
-            phone: employee.employee.phone,
-            departmentId: employee.employee.departmentId,
-            positionId: employee.employee.positionId,
-            hireDate: employee.employee.hireDate,
+            id: employee.id,
+            name: employeeName,
+            email: employeeEmail,
+            phone: employeePhone,
+            departmentId: employee.departmentId,
+            positionId: employee.positionId,
+            hireDate: employeeHireDate,
           }}
           onSuccess={() => refetchEmployee()}
         />
