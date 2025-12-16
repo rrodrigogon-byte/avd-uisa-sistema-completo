@@ -158,14 +158,25 @@ const menuItems = [
     ],
   },
   
+  // 📝 PDI (PLANO DE DESENVOLVIMENTO INDIVIDUAL)
+  {
+    icon: BookOpen,
+    label: "PDI",
+    isSection: true,
+    children: [
+      { icon: FileText, label: "Meus PDIs", path: "/pdi" },
+      { icon: Edit3, label: "Criar PDI", path: "/pdi/criar" },
+      { icon: Upload, label: "Importar PDI", path: "/pdi/import" },
+      { icon: BarChart, label: "Visualizar PDIs", path: "/pdi/visualizar" },
+    ],
+  },
+  
   // 🎓 DESENVOLVIMENTO
   {
     icon: GraduationCap,
     label: "Desenvolvimento",
     isSection: true,
     children: [
-      { icon: Lightbulb, label: "PDI Inteligente", path: "/pdi" },
-      { icon: Upload, label: "Importar PDI", path: "/pdi/import" },
       { icon: Target, label: "PIR - Dashboard", path: "/pir/dashboard" },
       { icon: Users, label: "Perfis de Funcionários", path: "/desenvolvimento/funcionarios" },
       { icon: Brain, label: "Testes Psicométricos", path: "/testes-psicometricos" },

@@ -2643,3 +2643,35 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [ ] Implementar notificações de prazos e marcos
 - [ ] Criar dashboard de acompanhamento de PDIs
 - [ ] Adicionar filtros avançados na listagem
+
+
+## 🎨 MELHORIAS DE PDI - NAVEGAÇÃO, EXPORTAÇÃO E VISUALIZAÇÃO (16/12/2025)
+
+### Navegação PDI no DashboardLayout
+- [x] Adicionar seção "PDI" no menu lateral do DashboardLayout
+- [x] Criar links para:
+  - [x] Listagem de PDIs (Meus PDIs)
+  - [x] Criar novo PDI
+  - [x] Importar PDI de HTML
+  - [x] Visualizar PDIs
+
+### Exportação de PDI para PDF
+- [x] Integrar biblioteca de geração de PDF (jsPDF + jspdf-autotable)
+- [x] Criar template profissional para exportação (pdiPdfExport.ts)
+- [x] Implementar botão de exportação na visualização do PDI
+- [x] Garantir que todos os dados do PDI sejam incluídos no PDF (KPIs, competências, plano 70-20-10, remuneração, responsabilidades)
+- [x] Validar formatação e layout do PDF exportado (cores UISA, tabelas, listas)
+
+### Importação de PDI HTML
+- [ ] Verificar parser de HTML do PDI
+- [ ] Garantir que todos os campos sejam extraídos corretamente
+- [ ] Validar dados importados contra schema do banco
+- [ ] Testar com arquivo PDI_Fernando9.html fornecido
+- [ ] Adicionar tratamento de erros e validações
+
+### Gráficos de Competências
+- [x] Implementar radar chart na visualização do PDI (usando recharts)
+- [x] Mostrar visualmente as competências avaliadas (nível atual vs nível alvo)
+- [x] Destacar gaps identificados no gráfico (cores por severidade: vermelho, laranja, amarelo)
+- [x] Adicionar legenda e tooltips explicativos (legenda de gaps com cores)
+- [x] Integrar com dados de avaliação de competências (tabela + gráfico lado a lado)

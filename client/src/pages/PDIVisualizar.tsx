@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { exportPDIToPDF } from "@/lib/pdiPdfExport";
 
 /**
  * Página de Visualização Profissional do PDI
@@ -24,8 +25,20 @@ export default function PDIVisualizar() {
 
   const { data: pdi, isLoading } = trpc.pdi.getById.useQuery({ id: pdiId });
 
-  const handleExportPDF = () => {
-    toast.info("Exportação para PDF em desenvolvimento");
+  const handleExportPDF = async () => {
+    if (!pdi) {
+      toast.error("N\u00e3o h\u00e1 dados para exportar");
+      return;
+    }
+
+    try {
+      toast.info("Gerando PDF...");
+      await exportPDIToPDF(pdi);
+      toast.success("PDF exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      toast.error("Erro ao gerar PDF. Tente novamente.");
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -187,6 +200,133 @@ export default function PDIVisualizar() {
                       <p className="text-2xl font-bold text-orange-700">{pdi.kpis.performancePlanMonths} meses</p>
                     </div>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Gráfico de Competências */}
+          {pdi.competencies && pdi.competencies.length > 0 && (
+            <Card className="border-l-4 border-l-indigo-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-indigo-600" />
+                  Mapa de Competências e Gaps
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Gráfico Radar */}
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart data={pdi.competencies.map((comp: any) => ({
+                        competency: comp.competency.length > 20 ? comp.competency.substring(0, 20) + '...' : comp.competency,
+                        'Nível Atual': comp.currentLevel,
+                        'Nível Alvo': comp.targetLevel,
+                      }))}>
+                        <PolarGrid stroke="#e5e7eb" />
+                        <PolarAngleAxis 
+                          dataKey="competency" 
+                          tick={{ fill: '#6b7280', fontSize: 11 }}
+                        />
+                        <PolarRadiusAxis 
+                          angle={90} 
+                          domain={[0, 5]}
+                          tick={{ fill: '#6b7280' }}
+                        />
+                        <Radar
+                          name="Nível Atual"
+                          dataKey="Nível Atual"
+                          stroke="#3b82f6"
+                          fill="#3b82f6"
+                          fillOpacity={0.3}
+                        />
+                        <Radar
+                          name="Nível Alvo"
+                          dataKey="Nível Alvo"
+                          stroke="#10b981"
+                          fill="#10b981"
+                          fillOpacity={0.3}
+                        />
+                        <Legend 
+                          wrapperStyle={{ paddingTop: '20px' }}
+                          iconType="circle"
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'white', 
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            padding: '12px'
+                          }}
+                        />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Tabela de Competências */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="border p-3 text-left text-sm font-semibold">Competência</th>
+                          <th className="border p-3 text-center text-sm font-semibold">Atual</th>
+                          <th className="border p-3 text-center text-sm font-semibold">Alvo</th>
+                          <th className="border p-3 text-center text-sm font-semibold">Gap</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pdi.competencies.map((comp: any, index: number) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="border p-3 text-sm">{comp.competency}</td>
+                            <td className="border p-3 text-center text-sm">
+                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold">
+                                {comp.currentLevel}
+                              </span>
+                            </td>
+                            <td className="border p-3 text-center text-sm">
+                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-700 font-semibold">
+                                {comp.targetLevel}
+                              </span>
+                            </td>
+                            <td className="border p-3 text-center text-sm">
+                              <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-semibold ${
+                                comp.gap > 2 ? 'bg-red-100 text-red-700' :
+                                comp.gap > 1 ? 'bg-orange-100 text-orange-700' :
+                                comp.gap > 0 ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {comp.gap}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Legenda de Gaps */}
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-semibold text-gray-700 mb-2">Legenda de Gaps:</p>
+                  <div className="flex flex-wrap gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-red-100 border-2 border-red-700"></span>
+                      <span className="text-gray-600">Gap Alto (3+): Prioridade Máxima</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-orange-100 border-2 border-orange-700"></span>
+                      <span className="text-gray-600">Gap Médio (2): Prioridade Alta</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-yellow-100 border-2 border-yellow-700"></span>
+                      <span className="text-gray-600">Gap Baixo (1): Prioridade Média</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full bg-gray-100 border-2 border-gray-700"></span>
+                      <span className="text-gray-600">Sem Gap (0): Mantido</span>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
