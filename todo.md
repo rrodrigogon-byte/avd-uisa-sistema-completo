@@ -2,6 +2,12 @@
 
 ## 🆕 NOVOS PASSOS DO SISTEMA AVD UISA (12/12/2025)
 
+### 🐛 Correção Organograma (16/12/2025)
+- [x] Corrigir erro "An unexpected error occurred" na página de Organograma
+- [x] Identificar causa: setState dentro de useMemo causando loop infinito
+- [x] Mover setFilteredCount para useEffect separado
+- [x] Testar correção - **ORGANOGRAMA FUNCIONANDO 100%**
+
 ### 🐛 Correção Urgente: PIR Não Está Funcionando
 - [x] Investigar problema do PIR (Passo 2)
 - [x] Verificar se dados estão sendo salvos no banco - **QUESTÕES CADASTRADAS: 60 questões OK**
@@ -3144,3 +3150,10 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Implementar comparação de múltiplos períodos simultaneamente - Suporte a 7, 30, 90, 365 dias
 - [x] Adicionar exportação de análises comparativas - Integrado com DashboardExportButtons
 - [x] Criar insights automáticos baseados em comparações temporais - Seção de insights implementada
+
+## Correções de Bugs (16/12/2025)
+
+- [x] Adicionar procedimento notifications.countUnread no backend
+- [x] Adicionar procedimento notifications.getMyNotifications no backend
+- [x] Adicionar procedimento notifications.getInApp no backend
+- [x] Criar testes para validar os novos procedimentos (5/5 testes passando)

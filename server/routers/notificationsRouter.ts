@@ -305,4 +305,69 @@ export const notificationsRouter = router({
         rate: item.total > 0 ? Math.round((item.read / item.total) * 100) : 0,
       }));
     }),
+
+  /**
+   * Contar notificações não lidas do usuário
+   */
+  countUnread: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const [{ count }] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(notifications)
+        .where(and(
+          eq(notifications.userId, ctx.user.id),
+          eq(notifications.read, false)
+        ));
+
+      return count;
+    }),
+
+  /**
+   * Buscar notificações do usuário (para dropdown/modal)
+   */
+  getMyNotifications: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(50).default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const items = await db
+        .select()
+        .from(notifications)
+        .where(eq(notifications.userId, ctx.user.id))
+        .orderBy(desc(notifications.createdAt))
+        .limit(input.limit);
+
+      return items;
+    }),
+
+  /**
+   * Buscar notificações in-app (alias para compatibilidade)
+   */
+  getInApp: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(50).default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const items = await db
+        .select()
+        .from(notifications)
+        .where(eq(notifications.userId, ctx.user.id))
+        .orderBy(desc(notifications.createdAt))
+        .limit(input.limit);
+
+      return items;
+    }),
 });

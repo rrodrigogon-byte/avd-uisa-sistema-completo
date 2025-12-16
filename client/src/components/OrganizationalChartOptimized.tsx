@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Card, CardContent } from "@/components/ui/card";
@@ -280,17 +280,20 @@ export function OrganizationalChartOptimized({
     }
   };
 
-  // Contar total de funcionários visíveis e atualizar contador de filtrados
+  // Contar total de funcionários visíveis
   const totalVisible = useMemo(() => {
     const countNodes = (nodes: HierarchyNode[]): number => {
       return nodes.reduce((sum, node) => {
         return sum + 1 + countNodes(node.children);
       }, 0);
     };
-    const count = countNodes(hierarchyTree);
-    setFilteredCount(count);
-    return count;
+    return countNodes(hierarchyTree);
   }, [hierarchyTree]);
+
+  // Atualizar contador de filtrados usando useEffect
+  useEffect(() => {
+    setFilteredCount(totalVisible);
+  }, [totalVisible]);
 
   // Verificar se há filtros ativos
   const hasActiveFilters = searchTerm || selectedDepartment !== "all" || selectedPosition !== "all" || selectedLocation !== "all";
