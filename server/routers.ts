@@ -98,6 +98,8 @@ import { continuousFeedbackRouter } from "./continuousFeedbackRouter";
 import { dashboardGestorRouter } from "./routers/dashboardGestorRouter";
 import { reportsAdvancedRouter } from "./routers/reportsAdvancedRouter";
 import { psychometricTestsRouter } from "./routers/psychometricTestsRouter";
+import { reportExportRouter } from "./routers/reportExportRouter";
+import { notificationPreferencesRouter } from "./routers/notificationPreferencesRouter";
 import { geriatricRouter } from "./routers/geriatricRouter";
 import { adminAdvancedRouter } from "./routers/adminAdvancedRouter";
 import { evaluationProcessesRouter } from "./routers/evaluationProcessesRouter";
@@ -247,6 +249,37 @@ const hierarchyRouter = router({
       const report = await generateSubordinateDistributionReport();
       return report;
     }),
+
+  // Aliases para compatibilidade
+  getOrganizationTree: protectedProcedure
+    .query(async () => {
+      const { getFullHierarchyTree } = await import('./db');
+      const tree = await getFullHierarchyTree();
+      return tree;
+    }),
+
+  getHierarchyStats: protectedProcedure
+    .query(async () => {
+      const stats = await getHierarchyStats();
+      return stats;
+    }),
+
+  // Atualizar gestor de um funcionário
+  setManager: protectedProcedure
+    .input(z.object({
+      employeeId: z.number(),
+      managerId: z.number().nullable(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      await db.update(employees)
+        .set({ managerId: input.managerId })
+        .where(eq(employees.id, input.employeeId));
+
+      return { success: true };
+    }),
 });
 
 export const appRouter = router({
@@ -305,6 +338,10 @@ export const appRouter = router({
   permissions: permissionsRouter,
   movements: movementsRouter,
   emailNotificationsAuto: emailNotificationsAutoRouter,
+  
+  // Novos routers - Exportação de Relatórios e Preferências de Notificações (16/12/2025)
+  reportExport: reportExportRouter,
+  notificationPreferences: notificationPreferencesRouter,
   
   // Novos routers - Upload de Vídeo, Testes A/B e NPS (15/12/2025)
   videoUpload: videoUploadRouter,

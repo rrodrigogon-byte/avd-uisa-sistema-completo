@@ -2915,3 +2915,54 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Validar filtros e visualizações do dashboard
 - [x] Criar testes automatizados para as 3 funcionalidades - 25 testes passando
 - [x] Testar casos de erro e edge cases
+
+
+## 🔧 CORREÇÕES E NOVAS FUNCIONALIDADES (16/12/2025)
+
+### Correção do Organograma
+- [ ] Corrigir organograma que não está exibindo funcionários
+- [ ] Importar dados de hierarquia do Excel para o banco de dados
+- [ ] Implementar visualização hierárquica com dados reais
+
+### Exportação de Relatórios
+- [ ] Implementar exportação de dados de movimentações para Excel com gráficos
+- [ ] Implementar exportação de dados de movimentações para PDF com gráficos
+- [ ] Adicionar opções de filtros para exportação (período, departamento, tipo)
+
+### Sistema de Preferências de Notificações
+- [ ] Criar tabela de preferências de notificações por usuário
+- [ ] Implementar página de configuração de preferências
+- [ ] Permitir que cada usuário configure quais tipos de notificações deseja receber por e-mail
+- [ ] Integrar preferências com sistema de envio de notificações
+
+### Dashboard de Auditoria de Permissões
+- [ ] Criar tabela de histórico de acessos e ações
+- [ ] Implementar registro automático de tentativas de ações não autorizadas
+- [ ] Criar dashboard de visualização de histórico de acessos
+- [ ] Adicionar filtros por usuário, tipo de ação, período
+- [ ] Implementar alertas para atividades suspeitas
+
+- [ ] Verificar e corrigir hierarquia: Jari deve ser superior imediato de João Bosco
+- [ ] Corrigir erro no componente Organograma.tsx (linha 212 - Cannot read properties of undefined)
+
+
+## 🔧 CORREÇÕES REALIZADAS (16/12/2025)
+
+### Organograma
+- [x] Corrigir organograma que não estava exibindo dados
+- [x] Importar 4.447 funcionários do Excel com hierarquias
+- [x] Corrigir erro "Cannot read properties of undefined" no Organograma.tsx
+- [x] Verificar e corrigir hierarquia: Jari é superior imediato de João Bosco
+- [x] Adicionar procedures getOrganizationTree e getHierarchyStats
+- [x] Adicionar procedure setManager para atualizar gestores
+
+### Novas Funcionalidades Solicitadas
+- [ ] Exportação de Relatórios - Excel/PDF com gráficos de movimentações
+- [ ] Sistema de Preferências de Notificações - Configurar tipos de notificações por e-mail
+- [ ] Dashboard de Auditoria de Permissões - Histórico de acessos e tentativas não autorizadas
+
+- [x] Corrigir hierarquia: Rodrigo Ribeiro Gonçalves é diretor direto de Andre Sbardellini, Lucas dos Passos Silva, Ede Ogusuku, Rodrigo da Silva Dias, Bernardo Mendes (Márcio Bortolloto não encontrado no banco)
+
+- [x] Corrigir hierarquia: Marcio Bortolotto agora é subordinado direto de Rodrigo Ribeiro Gonçalves
+
+- [x] Corrigir hierarquia: Mazuca é o CEO e todos os Diretores respondem a ele (10 diretores corretos)

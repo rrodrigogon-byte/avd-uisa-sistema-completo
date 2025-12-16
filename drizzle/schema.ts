@@ -8098,3 +8098,184 @@ export const employeeMovementsRelations = relations(employeeMovements, ({ one })
     references: [employees.id],
   }),
 }));
+
+
+// ============================================================================
+// EXPORTAÇÃO AVANÇADA DE RELATÓRIOS COM GRÁFICOS
+// ============================================================================
+
+/**
+ * Histórico de exportações de relatórios com gráficos personalizados
+ */
+export const advancedReportExports = mysqlTable("advancedReportExports", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Tipo de relatório
+  reportType: mysqlEnum("reportType", [
+    "movimentacoes",
+    "desempenho",
+    "hierarquia",
+    "competencias",
+    "pdi",
+    "avaliacoes",
+    "metas",
+    "bonus",
+    "customizado"
+  ]).notNull(),
+  
+  // Formato de exportação
+  format: mysqlEnum("format", ["excel", "pdf"]).notNull(),
+  
+  // Filtros aplicados (JSON)
+  filters: json("filters"),
+  
+  // Configurações de gráficos (JSON)
+  chartConfig: json("chartConfig"),
+  
+  // Status da exportação
+  status: mysqlEnum("status", ["pendente", "processando", "concluido", "erro"]).default("pendente").notNull(),
+  
+  // URL do arquivo gerado
+  fileUrl: text("fileUrl"),
+  
+  // Tamanho do arquivo em bytes
+  fileSize: int("fileSize"),
+  
+  // Mensagem de erro (se houver)
+  errorMessage: text("errorMessage"),
+  
+  // Metadados
+  userId: int("userId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type AdvancedReportExport = typeof advancedReportExports.$inferSelect;
+export type InsertAdvancedReportExport = typeof advancedReportExports.$inferInsert;
+
+// ============================================================================
+// PREFERÊNCIAS DE NOTIFICAÇÕES POR USUÁRIO
+// ============================================================================
+
+/**
+ * Preferências de notificações configuradas por cada usuário
+ */
+export const userNotificationSettings = mysqlTable("userNotificationSettings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  
+  // Preferências por tipo de notificação
+  enableProcessStart: boolean("enableProcessStart").default(true).notNull(),
+  enableStepCompleted: boolean("enableStepCompleted").default(true).notNull(),
+  enableStepReminder: boolean("enableStepReminder").default(true).notNull(),
+  enableGoalUpdate: boolean("enableGoalUpdate").default(true).notNull(),
+  enableEvaluationRequest: boolean("enableEvaluationRequest").default(true).notNull(),
+  enablePdiUpdate: boolean("enablePdiUpdate").default(true).notNull(),
+  enableBonusNotification: boolean("enableBonusNotification").default(true).notNull(),
+  enableApprovalRequest: boolean("enableApprovalRequest").default(true).notNull(),
+  enableSystemAlert: boolean("enableSystemAlert").default(true).notNull(),
+  
+  // Preferências de canal
+  emailEnabled: boolean("emailEnabled").default(true).notNull(),
+  pushEnabled: boolean("pushEnabled").default(false).notNull(),
+  
+  // Frequência de resumos
+  dailyDigest: boolean("dailyDigest").default(false).notNull(),
+  weeklyDigest: boolean("weeklyDigest").default(false).notNull(),
+  
+  // Horário preferido para notificações (formato HH:MM)
+  preferredTimeStart: varchar("preferredTimeStart", { length: 5 }).default("08:00"),
+  preferredTimeEnd: varchar("preferredTimeEnd", { length: 5 }).default("18:00"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserNotificationSetting = typeof userNotificationSettings.$inferSelect;
+export type InsertUserNotificationSetting = typeof userNotificationSettings.$inferInsert;
+
+// ============================================================================
+// AUDITORIA DE PERMISSÕES E ACESSOS
+// ============================================================================
+
+/**
+ * Log detalhado de tentativas de acesso (autorizadas e não autorizadas)
+ */
+export const permissionAccessLogs = mysqlTable("permissionAccessLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Usuário que tentou o acesso
+  userId: int("userId"),
+  userEmail: varchar("userEmail", { length: 320 }),
+  userName: text("userName"),
+  
+  // Ação tentada
+  action: varchar("action", { length: 200 }).notNull(),
+  resource: varchar("resource", { length: 200 }).notNull(),
+  resourceId: int("resourceId"),
+  
+  // Resultado da tentativa
+  accessGranted: boolean("accessGranted").notNull(),
+  denialReason: text("denialReason"),
+  
+  // Permissões verificadas
+  requiredPermissions: json("requiredPermissions"),
+  userPermissions: json("userPermissions"),
+  
+  // Contexto da requisição
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  requestPath: text("requestPath"),
+  requestMethod: varchar("requestMethod", { length: 10 }),
+  
+  // Dados adicionais
+  metadata: json("metadata"),
+  
+  // Nível de risco
+  riskLevel: mysqlEnum("riskLevel", ["baixo", "medio", "alto", "critico"]).default("baixo"),
+  
+  // Timestamp
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PermissionAccessLog = typeof permissionAccessLogs.$inferSelect;
+export type InsertPermissionAccessLog = typeof permissionAccessLogs.$inferInsert;
+
+/**
+ * Dashboard de métricas de segurança e auditoria
+ */
+export const securityMetrics = mysqlTable("securityMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Período da métrica
+  periodStart: datetime("periodStart").notNull(),
+  periodEnd: datetime("periodEnd").notNull(),
+  
+  // Contadores
+  totalAccessAttempts: int("totalAccessAttempts").default(0).notNull(),
+  successfulAccesses: int("successfulAccesses").default(0).notNull(),
+  deniedAccesses: int("deniedAccesses").default(0).notNull(),
+  
+  // Por nível de risco
+  lowRiskCount: int("lowRiskCount").default(0).notNull(),
+  mediumRiskCount: int("mediumRiskCount").default(0).notNull(),
+  highRiskCount: int("highRiskCount").default(0).notNull(),
+  criticalRiskCount: int("criticalRiskCount").default(0).notNull(),
+  
+  // Usuários únicos
+  uniqueUsers: int("uniqueUsers").default(0).notNull(),
+  suspiciousUsers: int("suspiciousUsers").default(0).notNull(),
+  
+  // Recursos mais acessados (JSON)
+  topResources: json("topResources"),
+  
+  // Ações mais frequentes (JSON)
+  topActions: json("topActions"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SecurityMetric = typeof securityMetrics.$inferSelect;
+export type InsertSecurityMetric = typeof securityMetrics.$inferInsert;

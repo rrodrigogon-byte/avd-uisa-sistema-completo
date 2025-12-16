@@ -6,7 +6,6 @@ import { trpc } from "@/lib/trpc";
 import { Loader2, Building2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -25,11 +24,7 @@ export default function Organograma() {
   const { data: stats } = trpc.hierarchy.getHierarchyStats.useQuery();
 
   // Buscar todos os funcionários
-  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery({
-    page: 1,
-    limit: 10000,
-    search: "",
-  });
+  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery({});
 
   // Buscar departamentos
   const { data: departments, isLoading: loadingDepartments } =
@@ -73,7 +68,7 @@ export default function Organograma() {
     );
   }
 
-  if (!employees?.employees || employees.employees.length === 0) {
+  if (!employees || employees.length === 0) {
     return (
       <DashboardLayout>
         <div className="container mx-auto p-6">
@@ -151,50 +146,20 @@ export default function Organograma() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Níveis Hierárquicos
+                  Profundidade Máxima
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.byLevel.length}</div>
+                <div className="text-2xl font-bold">{stats.maxDepth}</div>
                 <p className="text-xs text-muted-foreground">
-                  Diferentes níveis
+                  Níveis hierárquicos
                 </p>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Distribuição por Nível */}
-        {stats && stats.byLevel.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribuição por Nível Hierárquico</CardTitle>
-              <CardDescription>Quantidade de funcionários em cada nível</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {stats.byLevel.map((level) => (
-                  <div key={level.level || 'undefined'} className="flex items-center justify-between">
-                    <span className="text-sm font-medium capitalize">{level.level || 'Não definido'}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-48 bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-orange-500 h-2 rounded-full"
-                          style={{
-                            width: `${(Number(level.count) / stats.byLevel.reduce((sum, l) => sum + Number(l.count), 0)) * 100}%`,
-                          }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold w-12 text-right">{level.count}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Visualização do Organograma */}
+        {/* Organograma */}
         <Card>
           <CardHeader>
             <CardTitle>Estrutura Organizacional</CardTitle>
@@ -204,7 +169,7 @@ export default function Organograma() {
           </CardHeader>
           <CardContent>
             <OrganizationalChart
-              employees={employees.employees}
+              employees={employees}
               departments={departments || []}
               positions={positions || []}
             />
@@ -229,9 +194,9 @@ export default function Organograma() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Sem gestor (CEO/Diretor)</SelectItem>
-                    {employees?.employees.filter(emp => emp.employee.id !== editingEmployee?.id).map((emp) => (
-                      <SelectItem key={emp.employee.id} value={emp.employee.id.toString()}>
-                        {emp.employee.name} {emp.employee.hierarchyLevel && `(${emp.employee.hierarchyLevel})`}
+                    {employees && employees.filter(emp => emp.id !== editingEmployee?.id).map((emp) => (
+                      <SelectItem key={emp.id} value={emp.id.toString()}>
+                        {emp.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -242,8 +207,7 @@ export default function Organograma() {
                   Cancelar
                 </Button>
                 <Button onClick={handleSaveManager} disabled={setManagerMutation.isPending}>
-                  {setManagerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Salvar
+                  {setManagerMutation.isPending ? "Salvando..." : "Salvar"}
                 </Button>
               </div>
             </div>
