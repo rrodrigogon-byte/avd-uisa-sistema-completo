@@ -147,6 +147,7 @@ import { pilotSimulationsRouter } from "./routers/pilotSimulationsRouter";
 import { permissionsRouter } from "./routers/permissionsRouter";
 import { movementsRouter } from "./routers/movementsRouter";
 import { emailNotificationsAutoRouter } from "./routers/emailNotificationsAutoRouter";
+import { avdExportRouter } from "./routers/avdExportRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -292,6 +293,7 @@ export const appRouter = router({
   users: usersRouter,
   avdUisa: avdUisaRouter,
   avd: avdRouter,
+  avdExport: avdExportRouter,
   pendencias: pendenciasRouter,
   
   // Novos routers - Três próximos passos

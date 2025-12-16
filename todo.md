@@ -2993,3 +2993,40 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Implementar exportação de desempenho - PDF de desempenho implementado
 - [x] Implementar exportação de competências - PDF de competências implementado
 - [x] Implementar exportação de PDI - PDF de PDI implementado
+
+
+## 📋 NOVAS MELHORIAS SOLICITADAS (16/12/2025)
+
+### Funcionalidades de Exportação de Relatórios
+- [x] Implementar exportação de relatórios em formato Excel com dados reais do banco
+- [x] Implementar exportação de relatórios em formato PDF com dados reais do banco
+- [x] Adicionar queries tRPC para buscar dados de funcionários e avaliações para exportação
+- [x] Criar interface de botões de exportação nas páginas de relatórios
+- [x] Substituir dados de exemplo por dados reais nas exportações
+- [x] Adicionar formatação profissional nos relatórios exportados
+
+### Routers tRPC Faltantes
+- [x] Implementar router notifications.list com paginação e filtros
+- [x] Implementar router audit.list com paginação, filtros e ordenação
+- [x] Implementar router users.list para listagem completa de usuários
+- [x] Conectar interface de notificações com dados reais do banco
+- [x] Conectar interface de auditoria com dados reais do banco
+- [x] Adicionar filtros de data e tipo nas notificações
+
+### Paginação e Ordenação em Tabelas
+- [x] Adicionar paginação na tabela de notificações com controle de página
+- [x] Adicionar paginação na tabela de auditoria com controle de página
+- [x] Implementar ordenação por colunas na tabela de notificações (data, tipo, status)
+- [x] Implementar ordenação por colunas na tabela de auditoria (data, usuário, ação)
+- [x] Adicionar controles de limite de registros por página (10, 25, 50, 100)
+- [x] Otimizar queries do banco para suportar paginação eficiente com offset/limit
+- [x] Adicionar indicadores visuais de ordenação (setas nas colunas)
+- [ ] Implementar persistência de preferências de paginação/ordenação
+
+### Testes e Validação
+- [ ] Testar exportação Excel com dados reais de múltiplos funcionários
+- [ ] Testar exportação PDF com formatação e gráficos
+- [ ] Testar paginação com grandes volumes de dados (100+ registros)
+- [ ] Testar ordenação em todas as colunas disponíveis
+- [ ] Verificar performance das queries com paginação
+- [ ] Validar responsividade dos controles de paginação

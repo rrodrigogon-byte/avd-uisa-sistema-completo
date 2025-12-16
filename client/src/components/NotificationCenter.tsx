@@ -35,9 +35,12 @@ export default function NotificationCenter() {
   const [, setLocation] = useLocation();
 
   // Buscar notificações do backend
-  const { data: notifications, refetch } = trpc.notifications.list.useQuery({
+  const { data: notificationsData, refetch } = trpc.notifications.list.useQuery({
+    page: 1,
     limit: 20,
   });
+  
+  const notifications = notificationsData?.data || [];
 
   // Contar não lidas
   const { data: unreadCount } = trpc.notifications.countUnread.useQuery();
@@ -161,7 +164,7 @@ export default function NotificationCenter() {
             </div>
           ) : (
             <div className="divide-y">
-              {notifications.map((notification) => (
+              {(notifications || []).map((notification) => (
                 <div
                   key={notification.id}
                   className={cn(

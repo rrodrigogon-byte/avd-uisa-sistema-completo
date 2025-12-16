@@ -33,12 +33,16 @@ export const notificationsRouter = router({
       return result;
     }),
 
-  // Listar notificações do usuário
+  // Listar notificações do usuário com paginação e filtros
   list: protectedProcedure
     .input(
       z.object({
-        limit: z.number().min(1).max(100).default(50),
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(25),
         onlyUnread: z.boolean().optional(),
+        type: z.string().optional(),
+        sortBy: z.enum(['createdAt', 'type']).default('createdAt'),
+        sortOrder: z.enum(['asc', 'desc']).default('desc'),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -50,15 +54,44 @@ export const notificationsRouter = router({
       if (input.onlyUnread) {
         conditions.push(eq(notifications.read, false));
       }
+      
+      if (input.type) {
+        conditions.push(eq(notifications.type, input.type));
+      }
+
+      // Calcular offset
+      const offset = (input.page - 1) * input.limit;
+
+      // Ordenação
+      const orderColumn = input.sortBy === 'createdAt' ? notifications.createdAt : notifications.type;
+      const orderFn = input.sortOrder === 'asc' ? orderColumn : desc(orderColumn);
 
       const result = await db
         .select()
         .from(notifications)
         .where(and(...conditions))
-        .orderBy(desc(notifications.createdAt))
-        .limit(input.limit);
+        .orderBy(orderFn)
+        .limit(input.limit)
+        .offset(offset);
 
-      return result;
+      // Contar total
+      const totalResult = await db
+        .select()
+        .from(notifications)
+        .where(and(...conditions));
+      
+      const total = totalResult.length;
+      const totalPages = Math.ceil(total / input.limit);
+
+      return {
+        data: result,
+        pagination: {
+          page: input.page,
+          limit: input.limit,
+          total,
+          totalPages,
+        },
+      };
     }),
 
   // Contar notificações não lidas

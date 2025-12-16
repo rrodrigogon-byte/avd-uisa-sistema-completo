@@ -42,18 +42,20 @@ export const auditRouter = router({
     }),
 
   /**
-   * Listar logs de auditoria com filtros
+   * Listar logs de auditoria com filtros, paginação e ordenação
    */
   list: protectedProcedure
     .input(
       z.object({
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(25),
         userId: z.number().optional(),
         action: z.string().optional(),
         entityType: z.string().optional(),
         startDate: z.date().optional(),
         endDate: z.date().optional(),
-        limit: z.number().min(1).max(100).default(50),
-        offset: z.number().min(0).default(0),
+        sortBy: z.enum(['createdAt', 'activityType', 'userId']).default('createdAt'),
+        sortOrder: z.enum(['asc', 'desc']).default('desc'),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -87,23 +89,46 @@ export const auditRouter = router({
         conditions.push(lte(activityLogs.createdAt, input.endDate));
       }
 
+      // Calcular offset
+      const offset = (input.page - 1) * input.limit;
+
+      // Ordenação
+      let orderColumn;
+      switch (input.sortBy) {
+        case 'activityType':
+          orderColumn = activityLogs.activityType;
+          break;
+        case 'userId':
+          orderColumn = activityLogs.userId;
+          break;
+        default:
+          orderColumn = activityLogs.createdAt;
+      }
+      const orderFn = input.sortOrder === 'asc' ? orderColumn : desc(orderColumn);
+
       const logs = await db
         .select()
         .from(activityLogs)
         .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(desc(activityLogs.createdAt))
+        .orderBy(orderFn)
         .limit(input.limit)
-        .offset(input.offset);
+        .offset(offset);
 
       const [{ count }] = await db
         .select({ count: sql<number>`count(*)` })
         .from(activityLogs)
         .where(conditions.length > 0 ? and(...conditions) : undefined);
 
+      const totalPages = Math.ceil(count / input.limit);
+
       return {
-        logs,
-        total: count,
-        hasMore: input.offset + input.limit < count,
+        data: logs,
+        pagination: {
+          page: input.page,
+          limit: input.limit,
+          total: count,
+          totalPages,
+        },
       };
     }),
 

@@ -26,11 +26,85 @@ const adminOrRHProcedure = protectedProcedure.use(({ ctx, next }) => {
 
 export const usersRouter = router({
   /**
-   * Listar todos os usuários
+   * Listar todos os usuários com paginação, filtros e ordenação
    */
-  list: adminOrRHProcedure.query(async () => {
-    return await db.getAllUsers();
-  }),
+  list: adminOrRHProcedure
+    .input(
+      z.object({
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(25),
+        role: z.enum(["admin", "rh", "gestor", "colaborador"]).optional(),
+        searchTerm: z.string().optional(),
+        sortBy: z.enum(['name', 'email', 'createdAt', 'role']).default('createdAt'),
+        sortOrder: z.enum(['asc', 'desc']).default('desc'),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const params = input || {};
+      const page = params.page || 1;
+      const limit = params.limit || 25;
+      const offset = (page - 1) * limit;
+
+      // Buscar todos os usuários com filtros
+      let allUsers = await db.getAllUsers();
+
+      // Aplicar filtro de role
+      if (params.role) {
+        allUsers = allUsers.filter(u => u.role === params.role);
+      }
+
+      // Aplicar filtro de busca
+      if (params.searchTerm) {
+        const term = params.searchTerm.toLowerCase();
+        allUsers = allUsers.filter(u => 
+          u.name?.toLowerCase().includes(term) || 
+          u.email?.toLowerCase().includes(term)
+        );
+      }
+
+      // Ordenar
+      allUsers.sort((a, b) => {
+        let aVal: any, bVal: any;
+        
+        switch (params.sortBy) {
+          case 'name':
+            aVal = a.name || '';
+            bVal = b.name || '';
+            break;
+          case 'email':
+            aVal = a.email || '';
+            bVal = b.email || '';
+            break;
+          case 'role':
+            aVal = a.role || '';
+            bVal = b.role || '';
+            break;
+          default:
+            aVal = a.createdAt;
+            bVal = b.createdAt;
+        }
+
+        if (params.sortOrder === 'asc') {
+          return aVal > bVal ? 1 : -1;
+        } else {
+          return aVal < bVal ? 1 : -1;
+        }
+      });
+
+      const total = allUsers.length;
+      const totalPages = Math.ceil(total / limit);
+      const paginatedUsers = allUsers.slice(offset, offset + limit);
+
+      return {
+        data: paginatedUsers,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+        },
+      };
+    }),
 
   /**
    * Buscar usuário por ID
