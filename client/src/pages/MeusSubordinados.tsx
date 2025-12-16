@@ -281,6 +281,12 @@ export default function MeusSubordinados() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <Link href="/avaliacao-em-lote">
+              <Button variant="default" size="sm">
+                <ClipboardCheck className="h-4 w-4 mr-2" />
+                Avaliação em Lote
+              </Button>
+            </Link>
             <Badge variant="outline" className="text-sm py-1 px-3">
               <UserCircle className="h-4 w-4 mr-1" />
               {leaderInfo?.employeeName}

@@ -2622,3 +2622,74 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] 114 líderes identificados
 - [ ] Testar funcionalidades de líder na interface
 
+
+
+## 🆕 NOVOS PASSOS - VINCULAÇÃO E AVALIAÇÃO EM LOTE (16/12/2025)
+
+### Vincular Usuário à Hierarquia
+- [ ] Implementar lógica para associar email do usuário logado a um líder da planilha
+- [ ] Criar procedure para buscar funcionário pelo email do usuário
+- [ ] Atualizar contexto de autenticação para incluir dados do funcionário vinculado
+- [ ] Permitir que líderes vejam apenas seus subordinados
+
+### Menu de Navegação para Líderes
+- [ ] Adicionar link "Meus Subordinados" no menu lateral do DashboardLayout
+- [ ] Criar página MeusSubordinados.tsx para líderes
+- [ ] Implementar visualização hierárquica de subordinados
+- [ ] Mostrar status de avaliação de cada subordinado
+
+### Avaliação em Lote
+- [ ] Implementar seleção múltipla de subordinados
+- [ ] Criar procedure para iniciar avaliações em lote
+- [ ] Adicionar interface de seleção com checkboxes
+- [ ] Implementar feedback de progresso do processo em lote
+- [ ] Validar que subordinados não têm avaliação em andamento
+
+
+
+## 🆕 NOVOS PASSOS - VINCULAÇÃO, MENU E AVALIAÇÃO EM LOTE (16/12/2025)
+
+### Vincular Usuário à Hierarquia
+- [x] Implementar procedure `getLinkedEmployee` no avdUisaRouter
+  - Busca funcionário na tabela employeeHierarchy pelo email do usuário logado
+  - Retorna informações do funcionário, nível hierárquico e se é líder
+  - Determina automaticamente se usuário é coordenador, gestor, diretor ou colaborador
+- [x] Integrar com sistema de hierarquia TOTVS existente
+  - Utiliza tabela employeeHierarchy para vinculação
+  - Verifica subordinados em todos os níveis (coordenador, gestor, diretor)
+
+### Menu de Navegação para Líderes
+- [x] Adicionar link "Meus Subordinados" no menu lateral (DashboardLayout)
+  - Adicionado na seção "Hierarquia" do menu
+  - Ícone UsersRound para identificação visual
+  - Link para /meus-subordinados
+- [x] Adicionar link "Avaliação em Lote" no menu lateral
+  - Adicionado na seção "Hierarquia" do menu
+  - Ícone PlayCircle para identificação visual
+  - Link para /avaliacao-em-lote
+
+### Avaliação em Lote
+- [x] Implementar procedure `startBatchEvaluations` no avdUisaRouter
+  - Recebe cycleId e array de employeeIds
+  - Verifica permissão (admin, rh ou gestor)
+  - Valida se ciclo existe e está ativo
+  - Cria avaliações para múltiplos funcionários
+  - Retorna estatísticas (criadas, puladas, erros)
+  - Notifica funcionários sobre nova avaliação
+- [x] Implementar procedure `getSubordinatesForBatchEvaluation`
+  - Busca subordinados do líder logado
+  - Filtra por ciclo de avaliação
+  - Retorna lista de subordinados com IDs da tabela employees
+  - Indica quais já possuem avaliação no ciclo
+- [x] Criar página AvaliacaoEmLote.tsx
+  - Seleção de ciclo de avaliação ativo
+  - Lista de subordinados com checkbox para seleção
+  - Filtros por nome, email, chapa, função e seção
+  - Indicador visual de quem já possui avaliação
+  - Botão para iniciar avaliações em lote
+  - Feedback de sucesso/erro com toast
+- [x] Adicionar botão "Avaliação em Lote" na página MeusSubordinados
+  - Link direto para página de avaliação em lote
+  - Ícone ClipboardCheck para identificação visual
+- [x] Adicionar rota /avaliacao-em-lote no App.tsx
+- [x] Importar componente AvaliacaoEmLote no App.tsx

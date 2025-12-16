@@ -1,0 +1,31 @@
+{
+  "query": "SELECT id, openId, name, email, role FROM users WHERE name LIKE '%goncalves%' OR email LIKE '%goncalves%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, openId, name, email, role FROM users WHERE name LIKE '%goncalves%' OR email LIKE '%goncalves%' LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "AxwGE5iWvsJniQFEAmgzb5",
+      "name": "Rodrigo Ribeiro goncalves",
+      "email": "rrodrigogon@gmail.com",
+      "role": "admin"
+    },
+    {
+      "id": "31432",
+      "openId": "leader_56be65d0d4e141c5",
+      "name": "RODRIGO RIBEIRO GONCALVES",
+      "email": "rodrigo.goncalves@uisa.com.br",
+      "role": "admin"
+    },
+    {
+      "id": "31731",
+      "openId": "leader_84671ac790264b14",
+      "name": "VALDINEI BECKER GONCALVES",
+      "email": "valdinei.goncalves@uisa.com.br",
+      "role": "gestor"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\n1\tAxwGE5iWvsJniQFEAmgzb5\tRodrigo Ribeiro goncalves\trrodrigogon@gmail.com\tadmin\n31432\tleader_56be65d0d4e141c5\tRODRIGO RIBEIRO GONCALVES\trodrigo.goncalves@uisa.com.br\tadmin\n31731\tleader_84671ac790264b14\tVALDINEI BECKER GONCALVES\tvaldinei.goncalves@uisa.com.br\tgestor\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
