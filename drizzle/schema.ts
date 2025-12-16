@@ -8079,3 +8079,60 @@ export const departmentApprovalConfigRelations = relations(departmentApprovalCon
     references: [departments.id],
   }),
 }));
+
+
+// ============================================================================
+// TABELAS AUXILIARES DE HIERARQUIA (IMPORTAÇÃO TOTVS)
+// ============================================================================
+
+/**
+ * Seções/Áreas da empresa - importado da planilha TOTVS
+ */
+export const organizationalSections = mysqlTable("organizationalSections", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 100 }).notNull().unique(), // Código da seção (ex: 1.00.04.05.110040202.00.0)
+  name: varchar("name", { length: 255 }).notNull(), // Nome da seção
+  company: varchar("company", { length: 100 }), // Empresa (USINAS ITAMARATI, etc)
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type OrganizationalSection = typeof organizationalSections.$inferSelect;
+export type InsertOrganizationalSection = typeof organizationalSections.$inferInsert;
+
+/**
+ * Funções/Cargos da empresa - importado da planilha TOTVS
+ */
+export const organizationalPositions = mysqlTable("organizationalPositions", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(), // Código da função
+  title: varchar("title", { length: 255 }).notNull(), // Nome da função
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type OrganizationalPosition = typeof organizationalPositions.$inferSelect;
+export type InsertOrganizationalPosition = typeof organizationalPositions.$inferInsert;
+
+/**
+ * Log de importações de hierarquia
+ */
+export const hierarchyImportLogs = mysqlTable("hierarchyImportLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  totalRecords: int("totalRecords").notNull(),
+  importedRecords: int("importedRecords").notNull(),
+  updatedRecords: int("updatedRecords").notNull(),
+  errorRecords: int("errorRecords").default(0).notNull(),
+  errors: json("errors"), // Lista de erros encontrados
+  importedBy: int("importedBy"),
+  importedByName: varchar("importedByName", { length: 255 }),
+  status: mysqlEnum("status", ["em_andamento", "concluido", "erro"]).default("em_andamento").notNull(),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type HierarchyImportLog = typeof hierarchyImportLogs.$inferSelect;
+export type InsertHierarchyImportLog = typeof hierarchyImportLogs.$inferInsert;

@@ -107,7 +107,7 @@ import { autoNotificationsRouter } from "./routers/autoNotificationsRouter";
 import { pdfExportRouter } from "./routers/pdfExportRouter";
 import { emailMonitoringRouter } from "./routers/emailMonitoringRouter";
 import { employeeImportRouter } from "./routers/employeeImportRouter";
-import { hierarchyRouter } from "./routers/hierarchyRouter";
+import { hierarchyRouter as hierarchyRouterFromFile, hierarchyTotvsRouter } from "./routers/hierarchyRouter";
 import { evaluationCycleRouter } from "./routers/evaluationCycleRouter";
 import { testNotificationsRouter } from "./routers/testNotificationsRouter";
 import { htmlImportRouter } from "./routers/htmlImportRouter";
@@ -273,6 +273,7 @@ export const appRouter = router({
   emailMonitoring: emailMonitoringRouter,
   employeeImport: employeeImportRouter,
   hierarchy: hierarchyRouter,
+  hierarchyTotvs: hierarchyTotvsRouter,
   htmlImport: htmlImportRouter,
   evaluationCycle: evaluationCycleRouter,
   pirDashboard: pirDashboardRouter,

@@ -1,0 +1,110 @@
+{
+  "query": "SELECT DISTINCT coordinatorEmail, coordinatorName, coordinatorChapa FROM employeeHierarchy WHERE coordinatorEmail IS NOT NULL LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT DISTINCT coordinatorEmail, coordinatorName, coordinatorChapa FROM employeeHierarchy WHERE coordinatorEmail IS NOT NULL LIMIT 20;",
+  "rows": [
+    {
+      "coordinatorEmail": "aparecido.furtado@uisa.com.br",
+      "coordinatorName": "APARECIDO DA COSTA FURTADO",
+      "coordinatorChapa": "0673536"
+    },
+    {
+      "coordinatorEmail": "mayron.coelho@uisa.com.br",
+      "coordinatorName": "MAYRON FELINTO TORRES COELHO",
+      "coordinatorChapa": "0867136"
+    },
+    {
+      "coordinatorEmail": "agenor.mineto@uisa.com.br",
+      "coordinatorName": "AGENOR JOSE MINETO JUNIOR",
+      "coordinatorChapa": "8001913"
+    },
+    {
+      "coordinatorEmail": "abner.neto@uisa.com.br",
+      "coordinatorName": "ABNER PEREIRA DE CARVALHO NETO",
+      "coordinatorChapa": "0862118"
+    },
+    {
+      "coordinatorEmail": "marcos.lima@uisa.com.br",
+      "coordinatorName": "MARCOS LIMA BATISTA",
+      "coordinatorChapa": "8000901"
+    },
+    {
+      "coordinatorEmail": "alfredo.santos@uisa.com.br",
+      "coordinatorName": "ALFREDO EZEQUIEL DOS SANTOS NETO",
+      "coordinatorChapa": "0724190"
+    },
+    {
+      "coordinatorEmail": "evaldo.lemes@uisa.com.br",
+      "coordinatorName": "EVALDO CONRRADO LEMES",
+      "coordinatorChapa": "0740713"
+    },
+    {
+      "coordinatorEmail": "mauricio.silva@uisa.com.br",
+      "coordinatorName": "MAURICIO ROCHA DA SILVA",
+      "coordinatorChapa": "0716375"
+    },
+    {
+      "coordinatorEmail": "francisco.conceicao@uisa.com.br",
+      "coordinatorName": "FRANCISCO CLODOALDO CONCEICAO DA SILVA",
+      "coordinatorChapa": "0427586"
+    },
+    {
+      "coordinatorEmail": "giovana.almeida@uisa.com.br",
+      "coordinatorName": "GIOVANA TENDOLO DE ALMEIDA",
+      "coordinatorChapa": "8000896"
+    },
+    {
+      "coordinatorEmail": "luiz.melo@uisa.com.br",
+      "coordinatorName": "LUIZ GUILHERME FAUSTINO DE MELO",
+      "coordinatorChapa": "8002101"
+    },
+    {
+      "coordinatorEmail": "luis.mauro@uisa.com.br",
+      "coordinatorName": "LUIS MAURO SANTOS SILVA",
+      "coordinatorChapa": "0659827"
+    },
+    {
+      "coordinatorEmail": "bruna.modena@uisa.com.br",
+      "coordinatorName": "BRUNA FRANCIELE MODENA",
+      "coordinatorChapa": "0827282"
+    },
+    {
+      "coordinatorEmail": "caroline.silva@uisa.com.br",
+      "coordinatorName": "CAROLINE ANDRESSA MENDES SILVA",
+      "coordinatorChapa": "0899674"
+    },
+    {
+      "coordinatorEmail": "guilherme.paiva@uisa.com.br",
+      "coordinatorName": "GUILHERME DE PAIVA E SILVA",
+      "coordinatorChapa": "0892718"
+    },
+    {
+      "coordinatorEmail": "solisvaldo.melo@uisa.com.br",
+      "coordinatorName": "SOLISVALDO DOS SANTOS MELO",
+      "coordinatorChapa": "0857882"
+    },
+    {
+      "coordinatorEmail": "edvaldo.gouveia@uisa.com.br",
+      "coordinatorName": "EDVALDO MAYCON ZANETI DE GOUVEIA",
+      "coordinatorChapa": "8002789"
+    },
+    {
+      "coordinatorEmail": "elton.lima@uisa.com.br",
+      "coordinatorName": "ELTON BENTO DE LIMA",
+      "coordinatorChapa": "0882003"
+    },
+    {
+      "coordinatorEmail": "leandro.motta@uisa.com.br",
+      "coordinatorName": "LEANDRO MOREIRA DA MOTTA",
+      "coordinatorChapa": "8001250"
+    },
+    {
+      "coordinatorEmail": "ismael.andrade@uisa.com.br",
+      "coordinatorName": "ISMAEL DE JESUS ANDRADE",
+      "coordinatorChapa": "0715409"
+    }
+  ],
+  "messages": [],
+  "stdout": "coordinatorEmail\tcoordinatorName\tcoordinatorChapa\naparecido.furtado@uisa.com.br\tAPARECIDO DA COSTA FURTADO\t0673536\nmayron.coelho@uisa.com.br\tMAYRON FELINTO TORRES COELHO\t0867136\nagenor.mineto@uisa.com.br\tAGENOR JOSE MINETO JUNIOR\t8001913\nabner.neto@uisa.com.br\tABNER PEREIRA DE CARVALHO NETO\t0862118\nmarcos.lima@uisa.com.br\tMARCOS LIMA BATISTA\t8000901\nalfredo.santos@uisa.com.br\tALFREDO EZEQUIEL DOS SANTOS NETO\t0724190\nevaldo.lemes@uisa.com.br\tEVALDO CONRRADO LEMES\t0740713\nmauricio.silva@uisa.com.br\tMAURICIO ROCHA DA SILVA\t0716375\nfrancisco.conceicao@uisa.com.br\tFRANCISCO CLODOALDO CONCEICAO DA SILVA\t0427586\ngiovana.almeida@uisa.com.br\tGIOVANA TENDOLO DE ALMEIDA\t8000896\nluiz.melo@uisa.com.br\tLUIZ GUILHERME FAUSTINO DE MELO\t8002101\nluis.mauro@uisa.com.br\tLUIS MAURO SANTOS SILVA\t0659827\nbruna.modena@uisa.com.br\tBRUNA FRANCIELE MODENA\t0827282\ncaroline.silva@uisa.com.br\tCAROLINE ANDRESSA MENDES SILVA\t0899674\nguilherme.paiva@uisa.com.br\tGUILHERME DE PAIVA E SILVA\t0892718\nsolisvaldo.melo@uisa.com.br\tSOLISVALDO DOS SANTOS MELO\t0857882\nedvaldo.gouveia@uisa.com.br\tEDVALDO MAYCON ZANETI DE GOUVEIA\t8002789\nelton.lima@uisa.com.br\tELTON BENTO DE LIMA\t0882003\nleandro.motta@uisa.com.br\tLEANDRO MOREIRA DA MOTTA\t8001250\nismael.andrade@uisa.com.br\tISMAEL DE JESUS ANDRADE\t0715409\n",
+  "stderr": "",
+  "execution_time_ms": 62
+}

@@ -67,6 +67,7 @@ import { NotificationProvider } from "./contexts/NotificationContext";
 import Home from "./pages/Home";
 import TemplatesAnalytics from "./pages/TemplatesAnalytics";
 import DashboardGestor from "./pages/DashboardGestor";
+import MeusSubordinados from "./pages/MeusSubordinados";
 import ConfiguracoesSMTP from "./pages/ConfiguracoesSMTP";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
@@ -282,6 +283,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path="/gestor" component={DashboardGestor} />
+      <Route path="/meus-subordinados" component={MeusSubordinados} />
       <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />
       <Route path="/configuracoes/notificacoes" component={NotificacoesConfig} />
       <Route path="/reconhecimento-facial/cadastro" component={FaceRegistration} />

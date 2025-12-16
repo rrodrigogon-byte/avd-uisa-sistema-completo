@@ -2572,3 +2572,53 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 
 ### Documentação
 - [x] PLANO_FLUXO_APROVACAO_DESCRICOES.md - Plano de ação completo
+
+
+## 🆕 IMPORTAÇÃO DE HIERARQUIA ORGANIZACIONAL (16/12/2025)
+
+### Análise da Planilha de Hierarquia
+- [x] Analisar estrutura da planilha funcionarioscomahierarquia.xlsx
+  - Total de registros: 3.659
+  - Funcionários únicos: 3.159
+  - Estrutura hierárquica: Presidente > Diretor > Gestor > Coordenador > Funcionário
+  - Colunas: Chapa, Nome, Email, Seção, Função + dados de cada nível hierárquico
+
+### Schema de Banco de Dados para Hierarquia
+- [x] Utilizar tabela employeeHierarchy existente com campos de hierarquia
+- [x] Criar tabela organizationalSections (seções)
+- [x] Criar tabela organizationalPositions (funções)
+- [x] Criar tabela hierarchyImportLogs (logs de importação)
+- [x] Executar migração do banco de dados
+
+### Importação de Dados
+- [x] Criar script de importação da planilha (import_hierarchy.py)
+- [x] Importar funcionários com hierarquia - **3.157 funcionários importados**
+- [x] Importar seções - **188 seções importadas**
+- [x] Importar funções/cargos - **404 funções importadas**
+- [x] Identificar líderes - **114 líderes identificados**
+
+### Procedures tRPC para Hierarquia
+- [x] getSubordinatesByChapa - obter subordinados de um líder
+- [x] getAllSubordinatesByChapa - obter todos os subordinados
+- [x] getMyLeaderInfo - obter informações do líder atual
+- [x] getHierarchyTreeByChapa - obter árvore hierárquica
+- [x] getTotvsStats - obter estatísticas da hierarquia
+- [x] listSections - listar seções organizacionais
+- [x] listPositions - listar funções/cargos
+- [x] getImportLogs - obter histórico de importações
+- [x] searchEmployeesTotvs - buscar funcionários
+- [x] getByChapa - obter funcionário por chapa
+
+### Interface de Líder
+- [x] Criar página de visualização de subordinados (MeusSubordinados.tsx)
+- [x] Implementar lista de subordinados com filtros (busca, seção)
+- [x] Adicionar ações de avaliação para subordinados
+- [x] Criar dashboard de líder com estatísticas da equipe
+- [x] Rota /meus-subordinados adicionada ao App.tsx
+
+### Testes e Validação
+- [x] Importação de dados concluída com sucesso
+- [x] 3.157 funcionários importados
+- [x] 114 líderes identificados
+- [ ] Testar funcionalidades de líder na interface
+

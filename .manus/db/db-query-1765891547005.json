@@ -1,0 +1,70 @@
+{
+  "query": "SELECT coordinatorChapa, coordinatorName, coordinatorEmail, COUNT(*) as subordinados FROM employeeHierarchy WHERE coordinatorChapa IS NOT NULL GROUP BY coordinatorChapa, coordinatorName, coordinatorEmail ORDER BY subordinados DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT coordinatorChapa, coordinatorName, coordinatorEmail, COUNT(*) as subordinados FROM employeeHierarchy WHERE coordinatorChapa IS NOT NULL GROUP BY coordinatorChapa, coordinatorName, coordinatorEmail ORDER BY subordinados DESC LIMIT 10;",
+  "rows": [
+    {
+      "coordinatorChapa": "0888648",
+      "coordinatorName": "SANDRO KATUFICO URYU",
+      "coordinatorEmail": "sandro.uryu@uisa.com.br",
+      "subordinados": "152"
+    },
+    {
+      "coordinatorChapa": "0882003",
+      "coordinatorName": "ELTON BENTO DE LIMA",
+      "coordinatorEmail": "elton.lima@uisa.com.br",
+      "subordinados": "87"
+    },
+    {
+      "coordinatorChapa": "8002105",
+      "coordinatorName": "MARCIO ALEX SAIA",
+      "coordinatorEmail": "marcio.saia@uisa.com.br",
+      "subordinados": "76"
+    },
+    {
+      "coordinatorChapa": "0870153",
+      "coordinatorName": "MAILSON DA CRUZ SILVA",
+      "coordinatorEmail": "mailson.silva@uisa.com.br",
+      "subordinados": "69"
+    },
+    {
+      "coordinatorChapa": "0083178",
+      "coordinatorName": "ADILSON SILVEIRA",
+      "coordinatorEmail": "adilson.silveira@uisa.com.br",
+      "subordinados": "66"
+    },
+    {
+      "coordinatorChapa": "0892718",
+      "coordinatorName": "GUILHERME DE PAIVA E SILVA",
+      "coordinatorEmail": "guilherme.paiva@uisa.com.br",
+      "subordinados": "63"
+    },
+    {
+      "coordinatorChapa": "0827282",
+      "coordinatorName": "BRUNA FRANCIELE MODENA",
+      "coordinatorEmail": "bruna.modena@uisa.com.br",
+      "subordinados": "57"
+    },
+    {
+      "coordinatorChapa": "0867136",
+      "coordinatorName": "MAYRON FELINTO TORRES COELHO",
+      "coordinatorEmail": "mayron.coelho@uisa.com.br",
+      "subordinados": "50"
+    },
+    {
+      "coordinatorChapa": "0876313",
+      "coordinatorName": "EMIDIO LUIZ DE CARVALHO NETO",
+      "coordinatorEmail": "emidio.neto@uisa.com.br",
+      "subordinados": "37"
+    },
+    {
+      "coordinatorChapa": "0623423",
+      "coordinatorName": "WANDERLEY ALVES DE OLIVEIRA",
+      "coordinatorEmail": "wanderley.oliveira@uisa.com.br",
+      "subordinados": "36"
+    }
+  ],
+  "messages": [],
+  "stdout": "coordinatorChapa\tcoordinatorName\tcoordinatorEmail\tsubordinados\n0888648\tSANDRO KATUFICO URYU\tsandro.uryu@uisa.com.br\t152\n0882003\tELTON BENTO DE LIMA\telton.lima@uisa.com.br\t87\n8002105\tMARCIO ALEX SAIA\tmarcio.saia@uisa.com.br\t76\n0870153\tMAILSON DA CRUZ SILVA\tmailson.silva@uisa.com.br\t69\n0083178\tADILSON SILVEIRA\tadilson.silveira@uisa.com.br\t66\n0892718\tGUILHERME DE PAIVA E SILVA\tguilherme.paiva@uisa.com.br\t63\n0827282\tBRUNA FRANCIELE MODENA\tbruna.modena@uisa.com.br\t57\n0867136\tMAYRON FELINTO TORRES COELHO\tmayron.coelho@uisa.com.br\t50\n0876313\tEMIDIO LUIZ DE CARVALHO NETO\temidio.neto@uisa.com.br\t37\n0623423\tWANDERLEY ALVES DE OLIVEIRA\twanderley.oliveira@uisa.com.br\t36\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

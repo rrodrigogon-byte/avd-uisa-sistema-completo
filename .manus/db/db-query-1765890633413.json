@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `organizationalSections` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `code` varchar(100) NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `company` varchar(100),\n  `active` boolean NOT NULL DEFAULT true,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `organizationalSections_id` PRIMARY KEY(`id`),\n  CONSTRAINT `organizationalSections_code_unique` UNIQUE(`code`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `organizationalSections` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `code` varchar(100) NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `company` varchar(100),\n  `active` boolean NOT NULL DEFAULT true,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `organizationalSections_id` PRIMARY KEY(`id`),\n  CONSTRAINT `organizationalSections_code_unique` UNIQUE(`code`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 189
+}

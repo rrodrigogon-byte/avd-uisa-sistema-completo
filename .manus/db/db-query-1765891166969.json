@@ -1,0 +1,19 @@
+{
+  "query": "SELECT COUNT(*) as total FROM employeeHierarchy; SELECT COUNT(DISTINCT coordinatorChapa) as coordenadores, COUNT(DISTINCT managerChapa) as gestores, COUNT(DISTINCT directorChapa) as diretores FROM employeeHierarchy;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT COUNT(*) as total FROM employeeHierarchy; SELECT COUNT(DISTINCT coordinatorChapa) as coordenadores, COUNT(DISTINCT managerChapa) as gestores, COUNT(DISTINCT directorChapa) as diretores FROM employeeHierarchy;",
+  "rows": [
+    {
+      "total": "3157"
+    },
+    {
+      "total": "coordenadores\tgestores\tdiretores"
+    },
+    {
+      "total": "74\t29\t9"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n3157\ncoordenadores\tgestores\tdiretores\n74\t29\t9\n",
+  "stderr": "",
+  "execution_time_ms": 70
+}

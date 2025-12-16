@@ -99,6 +99,13 @@
       "when": 1765888935798,
       "tag": "0013_abnormal_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1765890601606,
+      "tag": "0014_legal_yellow_claw",
+      "breakpoints": true
     }
   ]
 }
