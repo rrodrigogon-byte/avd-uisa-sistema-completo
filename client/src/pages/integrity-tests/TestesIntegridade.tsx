@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +24,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import {
@@ -33,6 +41,8 @@ import {
   CheckCircle2,
   Clock,
   BarChart3,
+  Search,
+  User,
 } from "lucide-react";
 
 /**
@@ -44,6 +54,11 @@ export default function TestesIntegridade() {
     null
   );
   const [analysisDialog, setAnalysisDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Query para listar funcionários
+  const { data: employees, isLoading: employeesLoading } =
+    trpc.employees.list.useQuery();
 
   // Query para listar testes disponíveis
   const { data: tests, isLoading: testsLoading } =
@@ -62,6 +77,20 @@ export default function TestesIntegridade() {
       { employeeId: selectedEmployeeId!, includeHistory: true, periodMonths: 12 },
       { enabled: !!selectedEmployeeId }
     );
+
+  // Filtrar funcionários por busca
+  const filteredEmployees = useMemo(() => {
+    if (!employees) return [];
+    if (!searchTerm) return employees;
+
+    const lowerSearch = searchTerm.toLowerCase();
+    return employees.filter(
+      (emp) =>
+        emp.nome?.toLowerCase().includes(lowerSearch) ||
+        emp.cpf?.toLowerCase().includes(lowerSearch) ||
+        emp.matricula?.toLowerCase().includes(lowerSearch)
+    );
+  }, [employees, searchTerm]);
 
   const getRiskLevelBadge = (riskLevel: string) => {
     const riskMap = {
@@ -111,6 +140,8 @@ export default function TestesIntegridade() {
     return "text-red-600";
   };
 
+  const selectedEmployee = employees?.find((e) => e.id === selectedEmployeeId);
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -125,8 +156,86 @@ export default function TestesIntegridade() {
         </div>
       </div>
 
+      {/* Seleção de Funcionário */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <User className="h-5 w-5" />
+            Selecionar Colaborador
+          </CardTitle>
+          <CardDescription>
+            Escolha um colaborador para visualizar seus resultados de testes de integridade
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome, CPF ou matrícula..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Select
+              value={selectedEmployeeId?.toString() || ""}
+              onValueChange={(value) => setSelectedEmployeeId(Number(value))}
+            >
+              <SelectTrigger className="w-[300px]">
+                <SelectValue placeholder="Selecione um colaborador" />
+              </SelectTrigger>
+              <SelectContent>
+                {employeesLoading ? (
+                  <SelectItem value="loading" disabled>
+                    Carregando...
+                  </SelectItem>
+                ) : filteredEmployees.length === 0 ? (
+                  <SelectItem value="empty" disabled>
+                    Nenhum colaborador encontrado
+                  </SelectItem>
+                ) : (
+                  filteredEmployees.map((emp) => (
+                    <SelectItem key={emp.id} value={emp.id.toString()}>
+                      {emp.nome} - {emp.matricula || emp.cpf}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {selectedEmployee && (
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <User className="h-4 w-4 text-primary" />
+                <span className="font-semibold">Colaborador Selecionado:</span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Nome:</span>
+                  <div className="font-medium">{selectedEmployee.nome}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Matrícula:</span>
+                  <div className="font-medium">{selectedEmployee.matricula || "N/A"}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">CPF:</span>
+                  <div className="font-medium">{selectedEmployee.cpf || "N/A"}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Cargo:</span>
+                  <div className="font-medium">{selectedEmployee.cargo || "N/A"}</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Estatísticas Gerais */}
-      {consolidatedReport && (
+      {selectedEmployeeId && consolidatedReport && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-3">
@@ -260,7 +369,7 @@ export default function TestesIntegridade() {
       </Card>
 
       {/* Análise Comportamental */}
-      {analysis && analysis.length > 0 && (
+      {selectedEmployeeId && analysis && analysis.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -334,7 +443,7 @@ export default function TestesIntegridade() {
       )}
 
       {/* Tendências e Recomendações Consolidadas */}
-      {consolidatedReport && consolidatedReport.trends.length > 0 && (
+      {selectedEmployeeId && consolidatedReport && consolidatedReport.trends.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>Tendências Recentes</CardTitle>
@@ -373,7 +482,8 @@ export default function TestesIntegridade() {
       )}
 
       {/* Recomendações Consolidadas */}
-      {consolidatedReport &&
+      {selectedEmployeeId &&
+        consolidatedReport &&
         consolidatedReport.recommendations.length > 0 && (
           <Card>
             <CardHeader>
@@ -397,6 +507,21 @@ export default function TestesIntegridade() {
             </CardContent>
           </Card>
         )}
+
+      {/* Mensagem quando nenhum funcionário está selecionado */}
+      {!selectedEmployeeId && (
+        <Card>
+          <CardContent className="py-12">
+            <div className="text-center text-muted-foreground space-y-2">
+              <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-lg font-medium">Nenhum colaborador selecionado</p>
+              <p className="text-sm">
+                Selecione um colaborador acima para visualizar seus resultados de testes de integridade
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Dialog de Análise Detalhada */}
       <Dialog open={analysisDialog} onOpenChange={setAnalysisDialog}>

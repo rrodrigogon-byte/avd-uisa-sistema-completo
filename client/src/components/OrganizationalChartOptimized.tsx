@@ -89,6 +89,16 @@ export function OrganizationalChartOptimized({
   const total = employeesData?.total || 0;
   const hasMore = employeesData?.hasMore || false;
 
+  // Extrair lista única de localizações (empresas) dos funcionários
+  const locations = useMemo(() => {
+    if (!employees) return [];
+    const uniqueLocations = new Set<string>();
+    employees.forEach((emp) => {
+      if (emp.empresa) uniqueLocations.add(emp.empresa);
+    });
+    return Array.from(uniqueLocations).sort();
+  }, [employees]);
+
   // Construir árvore hierárquica com lazy loading
   const hierarchyTree = useMemo(() => {
     // Criar mapa de funcionários
@@ -145,6 +155,13 @@ export function OrganizationalChartOptimized({
     }
     if (selectedPosition !== "all" && node.positionId !== parseInt(selectedPosition)) {
       return false;
+    }
+    // Filtro de localização (empresa)
+    if (selectedLocation !== "all") {
+      const employee = employees.find(e => e.id === node.id);
+      if (!employee || employee.empresa !== selectedLocation) {
+        return false;
+      }
     }
     return true;
   };
@@ -352,6 +369,27 @@ export function OrganizationalChartOptimized({
             {positions.map((pos) => (
               <SelectItem key={pos.id} value={pos.id.toString()}>
                 {pos.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={selectedLocation}
+          onValueChange={(value) => {
+            setSelectedLocation(value);
+            setPage(0); // Reset page on filter change
+          }}
+        >
+          <SelectTrigger className="w-full md:w-[200px]">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Localização" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas</SelectItem>
+            {locations.map((loc) => (
+              <SelectItem key={loc} value={loc}>
+                {loc}
               </SelectItem>
             ))}
           </SelectContent>

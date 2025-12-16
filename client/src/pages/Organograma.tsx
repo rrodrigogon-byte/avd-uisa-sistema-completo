@@ -33,6 +33,10 @@ export default function Organograma() {
   const { data: positions, isLoading: loadingPositions } =
     trpc.positions.list.useQuery();
 
+  // Buscar lista de funcionários para seleção de gestor
+  const { data: allEmployees, isLoading: loadingEmployees } =
+    trpc.employees.list.useQuery();
+
   // Mutation para atualizar gestor
   const setManagerMutation = trpc.hierarchy.setManager.useMutation({
     onSuccess: () => {
@@ -55,7 +59,7 @@ export default function Organograma() {
     });
   };
 
-  const isLoading = loadingDepartments || loadingPositions;
+  const isLoading = loadingDepartments || loadingPositions || loadingEmployees;
 
   if (isLoading) {
     return (
@@ -179,7 +183,13 @@ export default function Organograma() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Sem gestor (CEO/Diretor)</SelectItem>
-                    {/* TODO: Buscar lista de funcionários para seleção de gestor */}
+                    {allEmployees
+                      ?.filter((emp) => emp.id !== editingEmployee?.id) // Não permitir selecionar a si mesmo
+                      .map((emp) => (
+                        <SelectItem key={emp.id} value={emp.id.toString()}>
+                          {emp.nome} - {emp.cargo || "Sem cargo"}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>

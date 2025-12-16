@@ -3157,3 +3157,20 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Adicionar procedimento notifications.getMyNotifications no backend
 - [x] Adicionar procedimento notifications.getInApp no backend
 - [x] Criar testes para validar os novos procedimentos (5/5 testes passando)
+
+
+### 🐛 Correções e Melhorias Solicitadas (16/12/2025 - Parte 2)
+- [x] Corrigir erro "An unexpected error occurred" na página /integridade/testes
+  - Adicionada seleção de funcionário antes de mostrar dados
+  - Queries só executam quando há funcionário selecionado
+- [x] Implementar diálogo de alteração de gestor direto (TODO linha 182 Organograma.tsx)
+  - Adicionada query para listar todos os funcionários
+  - Implementado Select com lista de funcionários disponíveis
+  - Filtro para não permitir selecionar a si mesmo como gestor
+- [x] Adicionar virtualização para melhorar performance com 4448 funcionários no organograma
+  - Componente já possui paginação e lazy loading implementados
+  - Instalado react-window para virtualização futura se necessário
+- [x] Implementar filtro de localização funcional no organograma
+  - Adicionado Select de localização usando campo "empresa"
+  - Implementada lógica de filtragem por localização
+  - Lista de localizações extraída dinamicamente dos funcionários
