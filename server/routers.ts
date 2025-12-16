@@ -48,6 +48,7 @@ import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./notificationsRouter";
 import { sendEmail } from "./emailService";
 import { pulseRouter } from "./routers/pulseRouter";
+import { exportRouter } from "./routers/exportRouter";
 import { positionsRouter } from "./routers/positionsRouter";
 import { jobDescriptionsRouter } from "./routers/jobDescriptionsRouter";
 import { jobDescriptionsPDFRouter } from "./routers/jobDescriptionsPDF";
@@ -316,6 +317,7 @@ export const appRouter = router({
   pir: pirRouter,
   pirExport: pirExportRouter,
   accessControl: accessControlRouter,
+  export: exportRouter,
   
   // Novos routers - Sistema de Cargos CBO e Aprovações (14/12/2025)
   cbo: cboRouter,

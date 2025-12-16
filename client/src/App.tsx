@@ -148,6 +148,10 @@ import PesquisaPublica from "./pages/PesquisaPublica";
 import ResultadosPesquisaPulse from "./pages/ResultadosPesquisaPulse";
 import Feedbacks from "./pages/Feedbacks";
 import Badges from "./pages/Badges";
+import FerramentasAdmin from "./pages/FerramentasAdmin";
+import ExportacaoDados from "./pages/ExportacaoDados";
+import GerenciamentoNotificacoes from "./pages/GerenciamentoNotificacoes";
+import AuditoriaCompleta from "./pages/AuditoriaCompleta";
 import PsychometricTests from "./pages/PsychometricTests";
 import TestDISC from "./pages/TestDISC";
 import TestBigFive from "./pages/TestBigFive";
@@ -596,6 +600,12 @@ function Router() {
       
       {/* Dashboard de Movimentações */}
       <Route path="/admin/movimentacoes" component={DashboardMovimentacoes} />
+      
+      {/* Ferramentas Administrativas */}
+      <Route path="/admin/ferramentas" component={FerramentasAdmin} />
+      <Route path="/admin/exportacao-dados" component={ExportacaoDados} />
+      <Route path="/admin/notificacoes" component={GerenciamentoNotificacoes} />
+      <Route path="/admin/auditoria" component={AuditoriaCompleta} />
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />

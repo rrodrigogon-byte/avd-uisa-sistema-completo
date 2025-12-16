@@ -913,4 +913,295 @@ export const employeesRouter = router({
 
       return profile;
     }),
+
+  /**
+   * Criar funcionários de exemplo (seed)
+   * APENAS PARA DESENVOLVIMENTO/DEMONSTRAÇÃO
+   */
+  seedSampleEmployees: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      // Verificar permissão
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores podem criar dados de exemplo",
+        });
+      }
+
+      const { getDb } = await import("../db");
+      const { employees, departments, positions } = await import("../../drizzle/schema");
+      const { sql } = await import("drizzle-orm");
+      const database = await getDb();
+      if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      try {
+        // Verificar se já existem funcionários
+        const existingEmployees = await database.select().from(employees);
+        if (existingEmployees.length > 0) {
+          return {
+            success: false,
+            message: "Já existem funcionários cadastrados. Seed não executado para evitar duplicatas.",
+            count: existingEmployees.length,
+          };
+        }
+
+        // Buscar departamentos e cargos existentes
+        const depts = await database.select().from(departments);
+        const positionsData = await database.select().from(positions);
+
+        if (depts.length === 0 || positionsData.length === 0) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "É necessário ter departamentos e cargos cadastrados antes de criar funcionários",
+          });
+        }
+
+        // Criar estrutura hierárquica de funcionários
+        const employeesData = [
+          // CEO (sem gestor)
+          {
+            employeeCode: "EMP001",
+            name: "João Silva",
+            email: "joao.silva@empresa.com",
+            chapa: "001",
+            departmentId: depts[0]?.id,
+            positionId: positionsData[0]?.id,
+            managerId: null,
+            cargo: "CEO",
+            departamento: depts[0]?.name,
+            telefone: "(11) 98765-4321",
+            active: true,
+          },
+          {
+            employeeCode: "EMP002",
+            name: "Maria Santos",
+            email: "maria.santos@empresa.com",
+            chapa: "002",
+            departmentId: depts[1]?.id || depts[0]?.id,
+            positionId: positionsData[1]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Diretora de RH",
+            departamento: depts[1]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4322",
+            active: true,
+          },
+          {
+            employeeCode: "EMP003",
+            name: "Carlos Oliveira",
+            email: "carlos.oliveira@empresa.com",
+            chapa: "003",
+            departmentId: depts[2]?.id || depts[0]?.id,
+            positionId: positionsData[1]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Diretor de TI",
+            departamento: depts[2]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4323",
+            active: true,
+          },
+          {
+            employeeCode: "EMP004",
+            name: "Ana Paula Costa",
+            email: "ana.costa@empresa.com",
+            chapa: "004",
+            departmentId: depts[3]?.id || depts[0]?.id,
+            positionId: positionsData[1]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Diretora Comercial",
+            departamento: depts[3]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4324",
+            active: true,
+          },
+          {
+            employeeCode: "EMP005",
+            name: "Pedro Almeida",
+            email: "pedro.almeida@empresa.com",
+            chapa: "005",
+            departmentId: depts[1]?.id || depts[0]?.id,
+            positionId: positionsData[2]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Gerente de Recrutamento",
+            departamento: depts[1]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4325",
+            active: true,
+          },
+          {
+            employeeCode: "EMP006",
+            name: "Juliana Ferreira",
+            email: "juliana.ferreira@empresa.com",
+            chapa: "006",
+            departmentId: depts[2]?.id || depts[0]?.id,
+            positionId: positionsData[2]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Gerente de Desenvolvimento",
+            departamento: depts[2]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4326",
+            active: true,
+          },
+          {
+            employeeCode: "EMP007",
+            name: "Roberto Lima",
+            email: "roberto.lima@empresa.com",
+            chapa: "007",
+            departmentId: depts[3]?.id || depts[0]?.id,
+            positionId: positionsData[2]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Gerente de Vendas",
+            departamento: depts[3]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4327",
+            active: true,
+          },
+          {
+            employeeCode: "EMP008",
+            name: "Fernanda Souza",
+            email: "fernanda.souza@empresa.com",
+            chapa: "008",
+            departmentId: depts[2]?.id || depts[0]?.id,
+            positionId: positionsData[3]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Coordenadora de Projetos",
+            departamento: depts[2]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4328",
+            active: true,
+          },
+          {
+            employeeCode: "EMP009",
+            name: "Marcos Pereira",
+            email: "marcos.pereira@empresa.com",
+            chapa: "009",
+            departmentId: depts[3]?.id || depts[0]?.id,
+            positionId: positionsData[3]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Coordenador de Vendas",
+            departamento: depts[3]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4329",
+            active: true,
+          },
+          {
+            employeeCode: "EMP010",
+            name: "Beatriz Rodrigues",
+            email: "beatriz.rodrigues@empresa.com",
+            chapa: "010",
+            departmentId: depts[2]?.id || depts[0]?.id,
+            positionId: positionsData[4]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Analista de Sistemas Sênior",
+            departamento: depts[2]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4330",
+            active: true,
+          },
+          {
+            employeeCode: "EMP011",
+            name: "Lucas Martins",
+            email: "lucas.martins@empresa.com",
+            chapa: "011",
+            departmentId: depts[2]?.id || depts[0]?.id,
+            positionId: positionsData[5]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Analista de Sistemas Pleno",
+            departamento: depts[2]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4331",
+            active: true,
+          },
+          {
+            employeeCode: "EMP012",
+            name: "Camila Dias",
+            email: "camila.dias@empresa.com",
+            chapa: "012",
+            departmentId: depts[1]?.id || depts[0]?.id,
+            positionId: positionsData[5]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Analista de RH Pleno",
+            departamento: depts[1]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4332",
+            active: true,
+          },
+          {
+            employeeCode: "EMP013",
+            name: "Rafael Santos",
+            email: "rafael.santos@empresa.com",
+            chapa: "013",
+            departmentId: depts[3]?.id || depts[0]?.id,
+            positionId: positionsData[4]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Analista Comercial Sênior",
+            departamento: depts[3]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4333",
+            active: true,
+          },
+          {
+            employeeCode: "EMP014",
+            name: "Patricia Oliveira",
+            email: "patricia.oliveira@empresa.com",
+            chapa: "014",
+            departmentId: depts[2]?.id || depts[0]?.id,
+            positionId: positionsData[6]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Analista de Sistemas Júnior",
+            departamento: depts[2]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4334",
+            active: true,
+          },
+          {
+            employeeCode: "EMP015",
+            name: "Thiago Costa",
+            email: "thiago.costa@empresa.com",
+            chapa: "015",
+            departmentId: depts[3]?.id || depts[0]?.id,
+            positionId: positionsData[6]?.id || positionsData[0]?.id,
+            managerId: null,
+            cargo: "Analista Comercial Júnior",
+            departamento: depts[3]?.name || depts[0]?.name,
+            telefone: "(11) 98765-4335",
+            active: true,
+          },
+        ];
+
+        // Inserir funcionários
+        const insertedIds: number[] = [];
+        for (const emp of employeesData) {
+          const result = await database.insert(employees).values(emp);
+          insertedIds.push(Number(result[0].insertId));
+        }
+
+        // Atualizar hierarquia (managerId)
+        // Diretores (2,3,4) reportam ao CEO (1)
+        if (insertedIds.length >= 4) {
+          await database.update(employees)
+            .set({ managerId: insertedIds[0] })
+            .where(sql`id IN (${insertedIds[1]}, ${insertedIds[2]}, ${insertedIds[3]})`);
+        }
+
+        // Gerentes reportam aos Diretores
+        if (insertedIds.length >= 7) {
+          await database.update(employees).set({ managerId: insertedIds[1] }).where(sql`id = ${insertedIds[4]}`); // Gerente RH -> Diretora RH
+          await database.update(employees).set({ managerId: insertedIds[2] }).where(sql`id = ${insertedIds[5]}`); // Gerente TI -> Diretor TI
+          await database.update(employees).set({ managerId: insertedIds[3] }).where(sql`id = ${insertedIds[6]}`); // Gerente Comercial -> Diretora Comercial
+        }
+
+        // Coordenadores reportam aos Gerentes
+        if (insertedIds.length >= 9) {
+          await database.update(employees).set({ managerId: insertedIds[5] }).where(sql`id = ${insertedIds[7]}`); // Coord. Projetos -> Gerente TI
+          await database.update(employees).set({ managerId: insertedIds[6] }).where(sql`id = ${insertedIds[8]}`); // Coord. Vendas -> Gerente Comercial
+        }
+
+        // Analistas reportam aos Coordenadores/Gerentes
+        if (insertedIds.length >= 15) {
+          await database.update(employees).set({ managerId: insertedIds[7] }).where(sql`id IN (${insertedIds[9]}, ${insertedIds[10]}, ${insertedIds[13]})`);
+          await database.update(employees).set({ managerId: insertedIds[4] }).where(sql`id = ${insertedIds[11]}`); // Analista RH -> Gerente RH
+          await database.update(employees).set({ managerId: insertedIds[8] }).where(sql`id IN (${insertedIds[12]}, ${insertedIds[14]})`);
+        }
+
+        return {
+          success: true,
+          message: `${employeesData.length} funcionários de exemplo criados com sucesso!`,
+          count: employeesData.length,
+        };
+      } catch (error) {
+        console.error("Erro ao criar funcionários de exemplo:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Erro ao criar funcionários: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+        });
+      }
+    }),
 });
