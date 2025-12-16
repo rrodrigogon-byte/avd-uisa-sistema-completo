@@ -55,6 +55,7 @@ import MetasIndividuais from "./pages/MetasIndividuais";
 import PesosAvaliacao from "./pages/PesosAvaliacao";
 import BenchmarkDesempenho from "./pages/BenchmarkDesempenho";
 import PilotSimulations from "./pages/PilotSimulations";
+import DashboardMovimentacoes from "./pages/DashboardMovimentacoes";
 import SuspiciousAccessDashboard from "./pages/SuspiciousAccessDashboard";
 import IntegrityReport from "./pages/IntegrityReport";
 import { Route, Switch } from "wouter";
@@ -592,6 +593,9 @@ function Router() {
       <Route path="/admin/pesos-avaliacao" component={PesosAvaliacao} />
       <Route path="/admin/benchmark-desempenho" component={BenchmarkDesempenho} />
       <Route path="/admin/ab-experiments" component={AbTestExperiments} />
+      
+      {/* Dashboard de Movimentações */}
+      <Route path="/admin/movimentacoes" component={DashboardMovimentacoes} />
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />

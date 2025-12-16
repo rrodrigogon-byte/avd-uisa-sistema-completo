@@ -141,6 +141,9 @@ import { evaluationWeightsRouter } from "./routers/evaluationWeightsRouter";
 import { positionCompetenciesRouter } from "./routers/positionCompetenciesRouter";
 import { performanceBenchmarkRouter } from "./routers/performanceBenchmarkRouter";
 import { pilotSimulationsRouter } from "./routers/pilotSimulationsRouter";
+import { permissionsRouter } from "./routers/permissionsRouter";
+import { movementsRouter } from "./routers/movementsRouter";
+import { emailNotificationsAutoRouter } from "./routers/emailNotificationsAutoRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -297,6 +300,11 @@ export const appRouter = router({
   pirSuspiciousAccess: pirSuspiciousAccessRouter,
   pirDepartmentReports: pirDepartmentReportsRouter,
   jobDescriptionApprovals: jobDescriptionApprovalsRouter,
+  
+  // Novos routers - Sistema de Permissões, Movimentações e Notificações (16/12/2025)
+  permissions: permissionsRouter,
+  movements: movementsRouter,
+  emailNotificationsAuto: emailNotificationsAutoRouter,
   
   // Novos routers - Upload de Vídeo, Testes A/B e NPS (15/12/2025)
   videoUpload: videoUploadRouter,

@@ -357,6 +357,7 @@ const menuItems = [
       { icon: Target, label: "Metas Individuais", path: "/admin/metas-individuais" },
       { icon: Scale, label: "Pesos de Avaliação", path: "/admin/pesos-avaliacao" },
       { icon: BarChart3, label: "Benchmark Desempenho", path: "/admin/benchmark-desempenho" },
+      { icon: TrendingUp, label: "Movimentações", path: "/admin/movimentacoes" },
     ],
   },
   

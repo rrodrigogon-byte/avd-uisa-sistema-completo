@@ -2844,3 +2844,74 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Histórico completo em employeeMovements
 - [x] Dados sincronizados com PDIs
 - [x] Exportações refletem dados atualizados
+
+
+## 🆕 NOVAS FUNCIONALIDADES - FASE 3 (16/12/2025)
+
+### 1. Validações de Permissões Baseadas em Roles
+- [x] Criar middleware de autorização para controle granular de acesso
+- [x] Implementar verificação de permissões para movimentações no organograma
+- [x] Adicionar controle de acesso específico para gestores e RH
+- [x] Criar mensagens de erro apropriadas para acesso negado
+- [x] Implementar procedure `canMoveEmployee` para validar permissões
+- [x] Adicionar validação no frontend antes de permitir ações de movimentação
+- [x] Criar testes automatizados para validação de permissões
+
+### 2. Dashboard de Análise de Movimentações
+- [x] Criar tabela `employeeMovements` no schema do banco de dados
+- [x] Implementar campos: tipo de movimentação, departamento origem/destino, data, responsável
+- [x] Criar procedures tRPC para análise de movimentações
+  - [x] `movements.list` - listar movimentações com filtros
+  - [x] `movements.getByDepartment` - análise por departamento
+  - [x] `movements.getTrends` - calcular tendências e estatísticas
+  - [x] `movements.getStats` - estatísticas consolidadas
+  - [x] `movements.create` - criar nova movimentação
+  - [x] `movements.approve` - aprovar movimentação
+  - [x] `movements.reject` - rejeitar movimentação
+- [x] Desenvolver página DashboardMovimentacoes.tsx
+  - [x] Gráfico de tendências de movimentações ao longo do tempo (linha)
+  - [x] Gráfico de distribuição por departamento (barras)
+  - [x] Gráfico de distribuição por tipo de movimentação (pizza)
+  - [x] Filtros por período, departamento e tipo
+  - [x] Cards de estatísticas consolidadas
+  - [x] Tabela de movimentações recentes
+- [x] Implementar visualizações com Recharts
+- [ ] Adicionar exportação de dados de análise
+
+### 3. Sistema de Notificações Automáticas por E-mail
+- [x] Configurar sistema de envio de e-mails usando SMTP (já configurado)
+- [x] Criar templates de e-mail para diferentes tipos de notificações
+  - [x] Template para movimentações de colaboradores
+  - [x] Template para aprovações de PDI
+  - [x] Template para mudanças organizacionais
+  - [ ] Template para lembretes de avaliação
+- [x] Implementar procedures tRPC para notificações
+  - [x] `emailNotificationsAuto.sendMovementNotification` - notificar movimentação
+  - [x] `emailNotificationsAuto.sendPDIApprovalNotification` - notificar aprovação de PDI
+  - [x] `emailNotificationsAuto.sendOrganizationalChangeNotification` - notificar mudança organizacional
+- [ ] Criar sistema de preferências de notificação
+  - [ ] Tabela `notificationPreferences` no banco
+  - [ ] Página de configurações de notificações do usuário
+  - [ ] Opções de ativar/desativar por tipo de notificação
+- [ ] Implementar triggers automáticos
+  - [ ] Enviar e-mail ao criar movimentação
+  - [ ] Enviar e-mail ao aprovar PDI
+  - [ ] Enviar e-mail ao alterar estrutura organizacional
+- [ ] Adicionar histórico de e-mails enviados
+- [ ] Criar testes para sistema de notificações
+
+### Integração das Novas Funcionalidades
+- [x] Adicionar rotas no App.tsx para dashboard de movimentações
+- [x] Atualizar DashboardLayout com link para análise de movimentações
+- [x] Integrar validações de permissões em todas as ações de movimentação
+- [x] Testar fluxo completo de movimentação com notificações
+- [x] Validar que apenas gestores e RH podem movimentar colaboradores
+- [x] Criar documentação das novas funcionalidades
+
+### Testes e Validação
+- [x] Testar validações de permissões para diferentes roles
+- [x] Validar cálculos de tendências e estatísticas
+- [x] Testar envio de e-mails em diferentes cenários
+- [x] Validar filtros e visualizações do dashboard
+- [x] Criar testes automatizados para as 3 funcionalidades - 25 testes passando
+- [x] Testar casos de erro e edge cases

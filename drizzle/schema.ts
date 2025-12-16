@@ -8025,6 +8025,11 @@ export const employeeMovements = mysqlTable("employeeMovements", {
     "promocao",
     "transferencia",
     "mudanca_gestor",
+    "mudanca_cargo",
+    "ajuste_salarial",
+    "desligamento",
+    "admissao",
+    "retorno_afastamento",
     "reorganizacao",
     "outro"
   ]).notNull(),
@@ -8034,6 +8039,12 @@ export const employeeMovements = mysqlTable("employeeMovements", {
   notes: text("notes"),
   
   // Aprovação
+  approvalStatus: mysqlEnum("approvalStatus", [
+    "pendente",
+    "aprovado",
+    "rejeitado",
+    "cancelado"
+  ]).default("pendente").notNull(),
   approvedBy: int("approvedBy"),
   approvedAt: datetime("approvedAt"),
   
