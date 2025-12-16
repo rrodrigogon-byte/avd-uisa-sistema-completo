@@ -487,4 +487,145 @@ export const pilotSimulationsRouter = router({
 
       return availableEmployees;
     }),
+
+  /**
+   * Gerar dados de demonstração para simulados do piloto
+   */
+  seedDemoData: protectedProcedure
+    .input(z.object({
+      pilotName: z.string().default("Piloto de Demonstração AVD"),
+      participantCount: z.number().min(5).max(50).default(25),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const firstNames = ["Ana", "Carlos", "Maria", "João", "Fernanda", "Pedro", "Juliana", "Lucas", "Camila", "Rafael", "Beatriz", "Gustavo", "Larissa", "Thiago", "Mariana", "Bruno", "Patrícia", "Diego", "Amanda", "Felipe"];
+      const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Almeida", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho", "Araújo"];
+      const departments = ["Recursos Humanos", "Tecnologia", "Financeiro", "Comercial", "Operações", "Marketing", "Jurídico", "Logística"];
+      const positions = ["Analista", "Coordenador", "Gerente", "Supervisor", "Especialista", "Assistente", "Consultor", "Líder"];
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 15);
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 45);
+
+      const [pilotResult] = await db.insert(pilotSimulations).values({
+        name: input.pilotName,
+        description: "Piloto de demonstração com dados fictícios para testar o fluxo completo do sistema AVD.",
+        targetParticipants: input.participantCount,
+        startDate,
+        endDate,
+        phase: "execution",
+        status: "active",
+        completionRate: 35,
+        averageScore: 78,
+        createdBy: ctx.user?.id || 0,
+      });
+
+      const pilotId = pilotResult.insertId;
+
+      const scheduleSteps = [
+        { stepNumber: 1, title: "Seleção de Participantes", status: "completed" as const },
+        { stepNumber: 2, title: "Comunicação Inicial", status: "completed" as const },
+        { stepNumber: 3, title: "Treinamento", status: "completed" as const },
+        { stepNumber: 4, title: "Execução - Fase 1 (PIR)", status: "in_progress" as const },
+        { stepNumber: 5, title: "Execução - Fase 2 (Competências)", status: "pending" as const },
+        { stepNumber: 6, title: "Coleta de Feedback", status: "pending" as const },
+        { stepNumber: 7, title: "Análise de Resultados", status: "pending" as const },
+        { stepNumber: 8, title: "Ajustes e Documentação", status: "pending" as const },
+      ];
+
+      for (let i = 0; i < scheduleSteps.length; i++) {
+        const step = scheduleSteps[i];
+        const stepStart = new Date(startDate.getTime() + (i * 7 * 24 * 60 * 60 * 1000));
+        const stepEnd = new Date(stepStart.getTime() + (7 * 24 * 60 * 60 * 1000) - 1);
+        await db.insert(pilotSchedule).values({
+          pilotId,
+          stepNumber: step.stepNumber,
+          title: step.title,
+          description: `Etapa ${step.stepNumber} do piloto`,
+          plannedStartDate: stepStart,
+          plannedEndDate: stepEnd,
+          actualStartDate: step.status !== "pending" ? stepStart : null,
+          actualEndDate: step.status === "completed" ? stepEnd : null,
+          status: step.status,
+        });
+      }
+
+      const createdEmployeeIds: number[] = [];
+      const statuses = ["completed", "in_progress", "ready", "in_training", "accepted", "invited", "declined"] as const;
+
+      for (let i = 0; i < input.participantCount; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@demo.uisa.com.br`;
+        const employeeCode = `DEMO${String(i + 1).padStart(4, "0")}`;
+
+        const [empResult] = await db.insert(employees).values({
+          name: `${firstName} ${lastName}`,
+          email,
+          employeeCode,
+          department: departments[Math.floor(Math.random() * departments.length)],
+          position: positions[Math.floor(Math.random() * positions.length)],
+          hireDate: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), 1),
+          active: true,
+        });
+
+        createdEmployeeIds.push(empResult.insertId);
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+        await db.insert(pilotParticipants).values({
+          pilotId,
+          employeeId: empResult.insertId,
+          status,
+          invitedAt: startDate,
+          respondedAt: ["accepted", "in_training", "ready", "in_progress", "completed"].includes(status) ? new Date(startDate.getTime() + 2 * 24 * 60 * 60 * 1000) : null,
+          overallScore: status === "completed" ? 60 + Math.floor(Math.random() * 35) : null,
+        });
+      }
+
+      await db.insert(pilotMetrics).values({
+        pilotId,
+        totalParticipants: input.participantCount,
+        activeParticipants: Math.floor(input.participantCount * 0.6),
+        completedParticipants: Math.floor(input.participantCount * 0.15),
+        averageProgress: 35,
+        averageScore: 78,
+        alertsCount: 2,
+      });
+
+      return {
+        success: true,
+        pilotId,
+        message: `Piloto de demonstração criado com ${input.participantCount} participantes!`,
+      };
+    }),
+
+  /**
+   * Limpar dados de demonstração
+   */
+  clearDemoData: protectedProcedure
+    .input(z.object({ pilotId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const participants = await db.select({ employeeId: pilotParticipants.employeeId }).from(pilotParticipants).where(eq(pilotParticipants.pilotId, input.pilotId));
+      const employeeIds = participants.map(p => p.employeeId);
+
+      await db.delete(pilotMetrics).where(eq(pilotMetrics.pilotId, input.pilotId));
+      await db.delete(pilotSchedule).where(eq(pilotSchedule.pilotId, input.pilotId));
+      await db.delete(pilotParticipants).where(eq(pilotParticipants.pilotId, input.pilotId));
+
+      if (employeeIds.length > 0) {
+        const demoEmployees = await db.select().from(employees).where(and(inArray(employees.id, employeeIds), sql`${employees.employeeCode} LIKE 'DEMO%'`));
+        for (const emp of demoEmployees) {
+          await db.delete(employees).where(eq(employees.id, emp.id));
+        }
+      }
+
+      await db.delete(pilotSimulations).where(eq(pilotSimulations.id, input.pilotId));
+      return { success: true, message: "Dados de demonstração removidos com sucesso" };
+    }),
 });

@@ -52,6 +52,7 @@ import {
   Search,
   TrendingUp,
   BarChart3,
+  Mail,
 } from "lucide-react";
 
 const anomalyTypeLabels: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
@@ -116,6 +117,24 @@ export default function SuspiciousAccessDashboard() {
       toast.error(`Erro ao revisar alerta: ${error.message}`);
     },
   });
+
+  // Mutation para notificar gestores por email
+  const notifyManagersMutation = trpc.pirSuspiciousAccess.notifyManagersAboutAlerts.useMutation({
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    },
+    onError: (error) => {
+      toast.error(`Erro ao enviar notificações: ${error.message}`);
+    },
+  });
+
+  const handleNotifyManagers = () => {
+    notifyManagersMutation.mutate({ includeAllPending: true });
+  };
 
   // Auto-refresh a cada 30 segundos
   useEffect(() => {
@@ -195,6 +214,16 @@ export default function SuspiciousAccessDashboard() {
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               <RefreshCw className="h-4 w-4 mr-1" />
               Atualizar
+            </Button>
+            <Button 
+              variant="default" 
+              size="sm" 
+              onClick={handleNotifyManagers}
+              disabled={notifyManagersMutation.isPending || statusCounts.pending === 0}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              <Mail className="h-4 w-4 mr-1" />
+              {notifyManagersMutation.isPending ? "Enviando..." : "Notificar Gestores"}
             </Button>
           </div>
         </div>

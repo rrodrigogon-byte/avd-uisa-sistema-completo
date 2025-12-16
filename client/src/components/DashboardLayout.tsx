@@ -365,6 +365,18 @@ const menuItems = [
       { icon: BarChart, label: "Notificações Analytics", path: "/admin/notificacoes-analytics" },
     ],
   },
+  
+  // 🧪 PILOTO
+  {
+    icon: FlaskConical,
+    label: "Piloto",
+    isSection: true,
+    requiredRole: ["admin", "rh"],
+    children: [
+      { icon: FlaskConical, label: "Simulados", path: "/piloto/simulados" },
+      { icon: Shield, label: "Alertas de Segurança", path: "/seguranca/alertas" },
+    ],
+  },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

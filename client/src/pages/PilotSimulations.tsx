@@ -49,6 +49,8 @@ import {
   Eye,
   RefreshCw,
   ChevronRight,
+  FlaskConical,
+  Trash2,
 } from "lucide-react";
 
 const phaseLabels: Record<string, string> = {
@@ -183,6 +185,49 @@ export default function PilotSimulations() {
     },
   });
 
+  // Mutations para dados de demonstração
+  const seedDemoMutation = trpc.pilotSimulations.seedDemoData.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.pilotSimulations.list.invalidate();
+      if (data.pilotId) {
+        setSelectedPilotId(data.pilotId);
+      }
+    },
+    onError: (error) => {
+      toast.error(`Erro ao gerar dados demo: ${error.message}`);
+    },
+  });
+
+  const clearDemoMutation = trpc.pilotSimulations.clearDemoData.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setSelectedPilotId(null);
+      utils.pilotSimulations.list.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Erro ao limpar dados demo: ${error.message}`);
+    },
+  });
+
+  const handleGenerateDemo = () => {
+    seedDemoMutation.mutate({ pilotName: "Piloto de Demonstração AVD", participantCount: 25 });
+  };
+
+  const handleClearDemo = () => {
+    if (selectedPilotId && pilotDetails?.pilot?.name?.includes("Demonstração")) {
+      clearDemoMutation.mutate({ pilotId: selectedPilotId });
+    }
+  };
+
+  const _updateScheduleSuccess = trpc.pilotSimulations.updateScheduleStep.useMutation({
+    onSuccess: () => {
+      toast.success("Etapa atualizada (backup)!");
+      utils.pilotSimulations.getById.invalidate({ id: selectedPilotId! });
+      utils.pilotSimulations.getDashboard.invalidate({ pilotId: selectedPilotId! });
+    },
+  });
+
   const recordMetricsMutation = trpc.pilotSimulations.recordMetrics.useMutation({
     onSuccess: () => {
       toast.success("Métricas registradas!");
@@ -264,13 +309,33 @@ export default function PilotSimulations() {
               Gerencie pilotos de avaliação com 20-30 colaboradores
             </p>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Piloto
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              onClick={handleGenerateDemo}
+              disabled={seedDemoMutation.isPending}
+            >
+              <FlaskConical className="h-4 w-4 mr-2" />
+              {seedDemoMutation.isPending ? "Gerando..." : "Gerar Demo"}
+            </Button>
+            {selectedPilotId && pilotDetails?.pilot?.name?.includes("Demonstração") && (
+              <Button 
+                variant="outline" 
+                onClick={handleClearDemo}
+                disabled={clearDemoMutation.isPending}
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {clearDemoMutation.isPending ? "Limpando..." : "Limpar Demo"}
               </Button>
-            </DialogTrigger>
+            )}
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Piloto
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Criar Novo Piloto</DialogTitle>
@@ -340,6 +405,7 @@ export default function PilotSimulations() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

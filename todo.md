@@ -2367,3 +2367,28 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] /seguranca/alertas - Dashboard de alertas suspeitos
 - [x] /relatorio-integridade/:assessmentId - Relatório individual de integridade
 
+
+
+## 🆕 NOVAS FUNCIONALIDADES (15 Dezembro 2024)
+
+### Links no Menu Lateral
+- [x] Adicionar link "Simulados" no DashboardLayout (seção Piloto)
+- [x] Adicionar link "Alertas de Segurança" no DashboardLayout (seção Piloto)
+- [x] Organizar seções do menu lateral de forma lógica
+
+### Dados de Demonstração para Simulados
+- [x] Criar procedure seedDemoData para dados de simulados do piloto
+- [x] Gerar participantes fictícios para testes (25 participantes)
+- [x] Criar respostas de exemplo para simulados
+- [x] Permitir testar fluxo completo com dados demo
+- [x] Adicionar procedure clearDemoData para limpar dados de demonstração
+
+### Notificações por Email para Alertas de Segurança
+- [x] Implementar envio de email para gestores sobre acessos suspeitos
+- [x] Criar template de email para alertas de segurança
+- [x] Configurar integração com sistema de notificações existente
+- [x] Adicionar botão "Notificar Gestores" na página de alertas
+- [x] Implementar procedure sendAutomaticAlertEmail para alertas críticos
+
+### Testes
+- [x] Criar testes vitest para validar as implementações (11 testes passando)
