@@ -7966,6 +7966,43 @@ export const pdiTimelineRelations = relations(pdiTimeline, ({ one }) => ({
 // ============================================================================
 
 /**
+ * Estrutura Hierárquica do Organograma
+ * Define a estrutura visual e hierárquica da organização
+ */
+export const orgChartStructure = mysqlTable("orgChartStructure", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Tipo de nó (departamento ou cargo)
+  nodeType: mysqlEnum("nodeType", ["department", "position"]).notNull(),
+  
+  // Referências
+  departmentId: int("departmentId"), // Se nodeType = department
+  positionId: int("positionId"), // Se nodeType = position
+  
+  // Hierarquia
+  parentId: int("parentId"), // ID do nó pai na estrutura
+  level: int("level").default(0).notNull(), // Nível hierárquico (0 = raiz)
+  orderIndex: int("orderIndex").default(0).notNull(), // Ordem de exibição entre irmãos
+  
+  // Dados para visualização
+  displayName: varchar("displayName", { length: 255 }).notNull(),
+  color: varchar("color", { length: 20 }), // Cor do nó no organograma
+  icon: varchar("icon", { length: 50 }), // Ícone do nó
+  
+  // Posicionamento visual (para drag-and-drop)
+  positionX: int("positionX"), // Coordenada X
+  positionY: int("positionY"), // Coordenada Y
+  
+  // Metadados
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type OrgChartStructure = typeof orgChartStructure.$inferSelect;
+export type InsertOrgChartStructure = typeof orgChartStructure.$inferInsert;
+
+/**
  * Histórico de Movimentações de Colaboradores
  * Registra todas as mudanças de cargo, departamento e gestor
  */

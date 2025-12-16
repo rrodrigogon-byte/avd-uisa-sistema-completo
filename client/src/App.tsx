@@ -82,6 +82,10 @@ import PDIEditar from "./pages/PDIEditar";
 import PDILista from "./pages/PDILista";
 import DashboardPDI from "./pages/DashboardPDI";
 import PDIList from "./pages/PDIList";
+import PDIImportacao from "./pages/PDIImportacao";
+import PDIListagem from "./pages/PDIListagem";
+import OrganogramaDinamico from "./pages/OrganogramaDinamico";
+import HistoricoMovimentacoes from "./pages/HistoricoMovimentacoes";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
@@ -403,6 +407,10 @@ function Router() {
       <Route path="/pdi-inteligente/novo" component={PDIInteligenteNovo} />
       <Route path="/pdi-inteligente/:id/detalhes" component={PDIInteligenteDetalhes} />
       <Route path="/pdi-inteligente/:id" component={PDIInteligente} />
+      <Route path="/pdi/importacao" component={PDIImportacao} />
+      <Route path="/pdi/listagem" component={PDIListagem} />
+      <Route path="/organograma-dinamico" component={OrganogramaDinamico} />
+      <Route path="/historico-movimentacoes" component={HistoricoMovimentacoes} />
       <Route path="/testes-psicometricos/resultados" component={TestesResultadosRH} />
       <Route path="/equipe/perfis-disc" component={TeamDISCProfiles} />
       <Route path="/team-disc-profiles" component={TeamProfiles} />

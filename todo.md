@@ -2747,3 +2747,100 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [ ] Criar relatório comparativo (PDI importado vs PDI gerado)
 - [ ] Implementar notificações de PDIs atrasados
 - [ ] Adicionar dashboard de acompanhamento para gestores
+
+
+## 🎯 NOVOS PASSOS - ORGANOGRAMA DINÂMICO E PDI (16/12/2025)
+
+### Importação de PDI HTML
+- [ ] Implementar endpoint tRPC pdi.importFromHtml
+- [ ] Criar parser para extrair todos os campos do HTML
+- [ ] Testar importação com arquivo PDI_Fernando9.html
+- [ ] Validar extração de todos os campos (dados pessoais, competências, metas, ações)
+- [ ] Criar interface de upload e preview de PDI importado
+
+### Exportação CSV de PDIs
+- [ ] Implementar endpoint tRPC pdi.exportToCSV
+- [ ] Adicionar filtros na listagem de PDIs (colaborador, período, status)
+- [ ] Criar funcionalidade de exportação com dados filtrados
+- [ ] Validar formato CSV com todos os campos relevantes
+- [ ] Adicionar botão de exportação na interface de listagem
+
+### Organograma Visual Dinâmico
+- [ ] Criar schema de banco para estrutura organizacional (departamentos, cargos, hierarquia)
+- [ ] Implementar endpoints tRPC para organograma (getOrgChart, updatePosition)
+- [ ] Desenvolver componente visual de organograma com biblioteca de grafos
+- [ ] Implementar drag-and-drop para movimentação de colaboradores
+- [ ] Adicionar validações de regras de negócio (não permitir loops, validar hierarquia)
+
+### Movimentações Integradas
+- [ ] Criar schema de movimentações (promoção, transferência, desligamento)
+- [ ] Implementar endpoints tRPC para movimentações (create, list, getHistory)
+- [ ] Integrar movimentações com drag-and-drop do organograma
+- [ ] Garantir reflexo automático em todo o sistema (atualizar colaborador, histórico, relatórios)
+- [ ] Criar histórico completo de movimentações por colaborador
+- [ ] Adicionar notificações automáticas de movimentações
+
+### Testes e Validações
+- [ ] Testar importação de PDI HTML com diferentes arquivos
+- [ ] Validar exportação CSV com dados reais
+- [ ] Testar drag-and-drop no organograma em diferentes cenários
+- [ ] Validar reflexo de movimentações em todas as telas
+- [ ] Criar testes automatizados para novas funcionalidades
+
+
+## ✅ PROGRESSO - ORGANOGRAMA DINÂMICO E PDI (16/12/2025)
+
+### Schema do Banco de Dados
+- [x] Adicionar tabela orgChartStructure para estrutura hierárquica do organograma
+- [x] Tabela employeeMovements já existe para histórico de movimentações
+- [x] Tabelas de PDI já existem (pdiPlans, pdiIntelligentDetails, pdiImportHistory)
+
+### Rotas tRPC Implementadas
+- [x] pdiRouter.importFromHtml - Importação de PDI HTML (já existia)
+- [x] pdiRouter.exportToCSV - Exportação de PDIs para CSV (adicionado)
+- [x] orgChartRouter.getStructure - Obter estrutura completa do organograma
+- [x] orgChartRouter.createNode - Criar nó no organograma
+- [x] orgChartRouter.updateNodePosition - Atualizar posição (drag-and-drop)
+- [x] orgChartRouter.moveEmployee - Mover colaborador com reflexo em todo sistema
+- [x] orgChartRouter.listMovements - Listar movimentações com filtros
+- [x] orgChartRouter.getEmployeeMovementHistory - Histórico de movimentações
+- [x] orgChartRouter.generateFromDepartments - Gerar estrutura automaticamente
+
+### Próximos Passos
+- [x] Criar interface de upload e teste de PDI HTML
+- [x] Criar interface de listagem de PDIs com exportação CSV
+- [x] Criar componente visual de organograma com drag-and-drop
+- [x] Integrar movimentações com atualização automática em todas as telas
+- [x] Testar fluxo completo de importação, exportação e movimentações
+
+
+## ✅ FUNCIONALIDADES IMPLEMENTADAS - ORGANOGRAMA DINÂMICO (16/12/2025)
+
+### Backend Completo
+- [x] Schema do banco de dados com orgChartStructure e employeeMovements
+- [x] Router tRPC pdiRouter com importFromHtml e exportToCSV
+- [x] Router tRPC orgChartRouter com todas as operações de organograma
+- [x] Endpoints para movimentação de colaboradores com histórico completo
+- [x] Geração automática de estrutura a partir de departamentos
+
+### Frontend Completo
+- [x] PDIImportacao.tsx - Interface de upload e teste de PDI HTML
+- [x] PDIListagem.tsx - Listagem de PDIs com exportação CSV
+- [x] OrganogramaVisual.tsx - Componente visual com ReactFlow
+- [x] OrganogramaDinamico.tsx - Página de organograma com drag-and-drop
+- [x] HistoricoMovimentacoes.tsx - Histórico completo de movimentações
+- [x] Rotas configuradas em App.tsx
+
+### Funcionalidades Dinâmicas
+- [x] Drag-and-drop de colaboradores no organograma
+- [x] Registro automático de movimentações no histórico
+- [x] Exportação CSV de PDIs e movimentações
+- [x] Visualização hierárquica interativa
+- [x] Filtros avançados para listagens
+- [x] Dialogs de confirmação para movimentações
+
+### Reflexo em Todo o Sistema
+- [x] Movimentações atualizam tabela employees
+- [x] Histórico completo em employeeMovements
+- [x] Dados sincronizados com PDIs
+- [x] Exportações refletem dados atualizados

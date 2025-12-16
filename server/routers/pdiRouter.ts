@@ -854,4 +854,120 @@ export const pdiRouter = router({
         topCompetencies,
       };
     }),
+
+  /**
+   * Exportar PDIs para CSV
+   */
+  exportToCSV: protectedProcedure
+    .input(z.object({
+      status: z.enum(['rascunho', 'pendente_aprovacao', 'aprovado', 'em_andamento', 'concluido', 'cancelado']).optional(),
+      employeeId: z.number().optional(),
+      departmentId: z.number().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      const conditions: any[] = [];
+
+      if (input.status) {
+        conditions.push(eq(pdiPlans.status, input.status));
+      }
+
+      if (input.employeeId) {
+        conditions.push(eq(pdiPlans.employeeId, input.employeeId));
+      }
+
+      if (input.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+
+      if (input.startDate) {
+        conditions.push(gte(pdiPlans.createdAt, new Date(input.startDate)));
+      }
+
+      if (input.endDate) {
+        conditions.push(lte(pdiPlans.createdAt, new Date(input.endDate)));
+      }
+
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+      // Buscar PDIs com todos os dados para exportação
+      const pdis = await db
+        .select({
+          id: pdiPlans.id,
+          employeeName: employees.name,
+          employeeCode: employees.employeeCode,
+          employeeEmail: employees.email,
+          department: departments.name,
+          currentPosition: employees.cargo,
+          targetPosition: positions.title,
+          status: pdiPlans.status,
+          startDate: pdiPlans.startDate,
+          endDate: pdiPlans.endDate,
+          overallProgress: pdiPlans.overallProgress,
+          createdAt: pdiPlans.createdAt,
+          updatedAt: pdiPlans.updatedAt,
+        })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(pdiPlans.targetPositionId, positions.id))
+        .where(whereClause)
+        .orderBy(desc(pdiPlans.createdAt));
+
+      // Gerar CSV
+      const headers = [
+        'ID',
+        'Nome do Colaborador',
+        'Matrícula',
+        'E-mail',
+        'Departamento',
+        'Cargo Atual',
+        'Cargo Alvo',
+        'Status',
+        'Data Início',
+        'Data Fim',
+        'Progresso (%)',
+        'Criado em',
+        'Atualizado em'
+      ];
+
+      const rows = pdis.map(pdi => [
+        pdi.id?.toString() || '',
+        pdi.employeeName || '',
+        pdi.employeeCode || '',
+        pdi.employeeEmail || '',
+        pdi.department || '',
+        pdi.currentPosition || '',
+        pdi.targetPosition || '',
+        pdi.status || '',
+        pdi.startDate ? new Date(pdi.startDate).toLocaleDateString('pt-BR') : '',
+        pdi.endDate ? new Date(pdi.endDate).toLocaleDateString('pt-BR') : '',
+        pdi.overallProgress?.toString() || '0',
+        pdi.createdAt ? new Date(pdi.createdAt).toLocaleDateString('pt-BR') : '',
+        pdi.updatedAt ? new Date(pdi.updatedAt).toLocaleDateString('pt-BR') : ''
+      ]);
+
+      // Escapar valores CSV (adicionar aspas se contiver vírgula, quebra de linha ou aspas)
+      const escapeCsvValue = (value: string) => {
+        if (value.includes(',') || value.includes('\n') || value.includes('"')) {
+          return `"${value.replace(/"/g, '""')}`;
+        }
+        return value;
+      };
+
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(escapeCsvValue).join(','))
+      ].join('\n');
+
+      return {
+        csv: csvContent,
+        filename: `pdis_export_${new Date().toISOString().split('T')[0]}.csv`,
+        count: pdis.length
+      };
+    }),
 });
