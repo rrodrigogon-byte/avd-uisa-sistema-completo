@@ -7959,3 +7959,94 @@ export const pdiTimelineRelations = relations(pdiTimeline, ({ one }) => ({
     references: [pdiPlans.id],
   }),
 }));
+
+
+// ============================================================================
+// TABELAS DE ORGANOGRAMA DINÂMICO
+// ============================================================================
+
+/**
+ * Histórico de Movimentações de Colaboradores
+ * Registra todas as mudanças de cargo, departamento e gestor
+ */
+export const employeeMovements = mysqlTable("employeeMovements", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Dados anteriores
+  previousDepartmentId: int("previousDepartmentId"),
+  previousPositionId: int("previousPositionId"),
+  previousManagerId: int("previousManagerId"),
+  
+  // Novos dados
+  newDepartmentId: int("newDepartmentId"),
+  newPositionId: int("newPositionId"),
+  newManagerId: int("newManagerId"),
+  
+  // Tipo de movimentação
+  movementType: mysqlEnum("movementType", [
+    "promocao",
+    "transferencia",
+    "mudanca_gestor",
+    "reorganizacao",
+    "outro"
+  ]).notNull(),
+  
+  // Justificativa e observações
+  reason: text("reason"),
+  notes: text("notes"),
+  
+  // Aprovação
+  approvedBy: int("approvedBy"),
+  approvedAt: datetime("approvedAt"),
+  
+  // Data efetiva da movimentação
+  effectiveDate: datetime("effectiveDate").notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmployeeMovement = typeof employeeMovements.$inferSelect;
+export type InsertEmployeeMovement = typeof employeeMovements.$inferInsert;
+
+// Relações para movimentações de colaboradores
+export const employeeMovementsRelations = relations(employeeMovements, ({ one }) => ({
+  employee: one(employees, {
+    fields: [employeeMovements.employeeId],
+    references: [employees.id],
+  }),
+  previousDepartment: one(departments, {
+    fields: [employeeMovements.previousDepartmentId],
+    references: [departments.id],
+  }),
+  newDepartment: one(departments, {
+    fields: [employeeMovements.newDepartmentId],
+    references: [departments.id],
+  }),
+  previousPosition: one(positions, {
+    fields: [employeeMovements.previousPositionId],
+    references: [positions.id],
+  }),
+  newPosition: one(positions, {
+    fields: [employeeMovements.newPositionId],
+    references: [positions.id],
+  }),
+  previousManager: one(employees, {
+    fields: [employeeMovements.previousManagerId],
+    references: [employees.id],
+  }),
+  newManager: one(employees, {
+    fields: [employeeMovements.newManagerId],
+    references: [employees.id],
+  }),
+  approver: one(employees, {
+    fields: [employeeMovements.approvedBy],
+    references: [employees.id],
+  }),
+  creator: one(employees, {
+    fields: [employeeMovements.createdBy],
+    references: [employees.id],
+  }),
+}));

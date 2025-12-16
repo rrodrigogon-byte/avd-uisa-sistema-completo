@@ -2675,3 +2675,75 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Destacar gaps identificados no gráfico (cores por severidade: vermelho, laranja, amarelo)
 - [x] Adicionar legenda e tooltips explicativos (legenda de gaps com cores)
 - [x] Integrar com dados de avaliação de competências (tabela + gráfico lado a lado)
+
+
+## 🎯 NOVAS FUNCIONALIDADES - PDI HTML, FILTROS E ORGANOGRAMA (16/12/2025)
+
+### Validação de Importação de PDI HTML
+- [x] Desenvolver parser completo para PDI_Fernando9.html
+- [ ] Extrair dados do colaborador (nome, cargo, departamento, gestor)
+- [ ] Extrair competências técnicas do PDI
+- [ ] Extrair competências comportamentais do PDI
+- [ ] Extrair ações de desenvolvimento com prazos e responsáveis
+- [ ] Mapear campos extraídos para schema do banco de dados
+- [x] Criar endpoint tRPC para upload e processamento de HTML (pdi.importFromHtml)
+- [ ] Validar integridade e completude dos dados importados
+- [ ] Testar parser com arquivo PDI_Fernando9.html fornecido
+- [ ] Implementar tratamento de erros e validações
+
+### Filtros e Busca Avançada na Listagem de PDIs
+- [x] Criar página de listagem de PDIs com tabela completa (PDIList.tsx)
+- [x] Implementar filtro por status (Em Andamento, Concluído, Atrasado, Cancelado)
+- [x] Implementar filtro por colaborador (busca por nome)
+- [x] Implementar filtro por departamento (dropdown de departamentos)
+- [x] Implementar filtro por período (data início e data fim)
+- [x] Adicionar busca por texto livre (nome, cargo, competência, ação)
+- [x] Implementar paginação de resultados
+- [x] Adicionar ordenação por colunas (nome, data, status, progresso)
+- [x] Criar visualização de detalhes do PDI ao clicar (rota já existe)
+- [ ] Adicionar exportação de resultados filtrados (CSV)
+
+### Dashboard de Acompanhamento de PDIs
+- [x] Criar página de dashboard específico para PDIs (DashboardPDI.tsx)
+- [x] Implementar card de métricas gerais:
+  - [x] Total de PDIs cadastrados
+  - [x] PDIs concluídos
+  - [x] PDIs em andamento
+  - [x] PDIs atrasados
+- [x] Criar gráfico de progresso por departamento (barra horizontal)
+- [x] Criar gráfico de competências mais trabalhadas (top 10)
+- [x] Implementar lista de PDIs atrasados com alertas
+- [x] Adicionar filtro de período no dashboard (últimos 30/60/90 dias, ano)
+- [ ] Criar visualização de taxa de conclusão por gestor
+- [ ] Implementar gráfico de evolução temporal (linha do tempo)
+- [ ] Adicionar drill-down para detalhes por departamento
+- [ ] Criar exportação de relatório consolidado (PDF)
+
+### Organograma Completo e Dinâmico
+- [x] Criar schema de banco para estrutura hierárquica (employeeMovements)
+- [x] Criar router de organograma (organogramaRouter)
+- [x] Implementar endpoint de hierarquia completa
+- [x] Implementar endpoint de detalhes do colaborador
+- [x] Criar endpoint de movimentações
+- [x] Registrar histórico de movimentações no banco
+- [x] Implementar componente de organograma visual (tree view) - já existe
+- [x] Adicionar visualização hierárquica de departamentos - já existe
+- [x] Implementar visualização de colaboradores por nível - já existe
+- [ ] Adicionar drag-and-drop para movimentações de colaboradores
+- [ ] Criar modal de confirmação de movimentação
+- [ ] Implementar zoom e pan no organograma
+- [ ] Adicionar busca de colaborador no organograma
+- [ ] Mostrar card de informações ao clicar no nó (foto, cargo, contato)
+- [ ] Implementar filtro por departamento no organograma
+- [ ] Adicionar indicadores visuais (vagas abertas, novos colaboradores)
+- [ ] Criar visualização de subordinados diretos expandível
+- [ ] Implementar exportação do organograma (imagem PNG/SVG)
+- [ ] Adicionar modo de edição para gestores RH
+
+### Integrações e Melhorias
+- [ ] Integrar PDI importado com processo AVD existente
+- [ ] Sincronizar competências do PDI com Passo 3 (Competências)
+- [ ] Vincular ações do PDI ao Passo 5 (PDI do processo AVD)
+- [ ] Criar relatório comparativo (PDI importado vs PDI gerado)
+- [ ] Implementar notificações de PDIs atrasados
+- [ ] Adicionar dashboard de acompanhamento para gestores

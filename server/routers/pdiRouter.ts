@@ -1,6 +1,7 @@
-import { z } from "zod";
-import { router, protectedProcedure, adminProcedure } from "../_core/trpc";
+import { TRPCError } from "@trpc/server";
+import { adminProcedure, protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
+import { z } from "zod";
 import { 
   pdiPlans, 
   pdiKpis, 
@@ -12,10 +13,14 @@ import {
   pdiTimeline,
   pdiIntelligentDetails,
   pdiCompetencyGaps,
-  employees
+  pdiImportHistory,
+  pdiEditHistory,
+  employees,
+  departments,
+  positions
 } from "../../drizzle/schema";
-import { eq, and, desc } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
+import { eq, and, desc, or, like, gte, lte, inArray, sql } from "drizzle-orm";
+import { parsePDIHtml } from "../pdiHtmlParser";
 
 /**
  * Router de PDI (Plano de Desenvolvimento Individual)
@@ -484,5 +489,369 @@ export const pdiRouter = router({
       }
 
       return { success: true };
+    }),
+
+  /**
+   * Importar PDI de arquivo HTML
+   */
+  importFromHtml: protectedProcedure
+    .input(z.object({
+      htmlContent: z.string(),
+      employeeId: z.number().optional(),
+      cycleId: z.number().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      try {
+        // Parse do HTML
+        const parsedData = parsePDIHtml(input.htmlContent);
+
+        // Buscar ou criar colaborador
+        let employeeId = input.employeeId;
+        if (!employeeId) {
+          const [employee] = await db.select()
+            .from(employees)
+            .where(like(employees.name, `%${parsedData.employeeName}%`))
+            .limit(1);
+          
+          if (!employee) {
+            throw new TRPCError({ 
+              code: "NOT_FOUND", 
+              message: `Colaborador "${parsedData.employeeName}" não encontrado no sistema` 
+            });
+          }
+          employeeId = employee.id;
+        }
+
+        // Criar PDI
+        const [plan] = await db.insert(pdiPlans).values({
+          cycleId: input.cycleId || null,
+          employeeId,
+          status: 'em_andamento',
+          startDate: new Date(),
+          endDate: null,
+          overallProgress: 0,
+        });
+
+        const planId = plan.insertId;
+
+        // Criar KPIs
+        if (parsedData.kpis) {
+          await db.insert(pdiKpis).values({
+            planId,
+            currentPosition: parsedData.kpis.currentPosition,
+            reframing: parsedData.kpis.reframing,
+            newPosition: parsedData.kpis.newPosition,
+          });
+        }
+
+        // Criar estratégia de remuneração
+        if (parsedData.compensationTrack && parsedData.compensationTrack.length > 0) {
+          const [strategy] = await db.insert(pdiRemunerationStrategy).values({
+            planId,
+            title: 'Trilha de Remuneração por Performance',
+            description: 'Importado de HTML',
+          });
+
+          const movements = parsedData.compensationTrack.map((track, index) => ({
+            strategyId: strategy.insertId,
+            level: track.level,
+            deadline: track.timeline,
+            action: track.trigger,
+            projectedSalary: track.projectedSalary,
+            rangePosition: track.positionInRange,
+            orderIndex: index + 1,
+          }));
+
+          await db.insert(pdiRemunerationMovements).values(movements);
+        }
+
+        // Criar plano de ação 70-20-10
+        if (parsedData.actionPlan) {
+          await db.insert(pdiActionPlan702010).values({
+            planId,
+            practice70Items: JSON.stringify(parsedData.actionPlan.onTheJob),
+            social20Items: JSON.stringify(parsedData.actionPlan.social),
+            formal10Items: JSON.stringify(parsedData.actionPlan.formal),
+          });
+        }
+
+        // Criar responsabilidades
+        if (parsedData.responsibilityPact) {
+          await db.insert(pdiResponsibilities).values({
+            planId,
+            employeeResponsibilities: JSON.stringify(parsedData.responsibilityPact.employee),
+            leadershipResponsibilities: JSON.stringify(parsedData.responsibilityPact.leadership),
+            dhoResponsibilities: JSON.stringify(parsedData.responsibilityPact.dho),
+          });
+        }
+
+        // Criar detalhes inteligentes
+        await db.insert(pdiIntelligentDetails).values({
+          planId,
+          importedFromHtml: true,
+          htmlSource: input.htmlContent,
+        });
+
+        // Registrar histórico de importação
+        await db.insert(pdiImportHistory).values({
+          fileName: 'PDI_Importado.html',
+          fileSize: input.htmlContent.length,
+          importedBy: ctx.user.id,
+          totalPdisImported: 1,
+          successfulImports: 1,
+          failedImports: 0,
+          status: 'completed',
+        });
+
+        return {
+          success: true,
+          planId,
+          employeeId,
+          message: 'PDI importado com sucesso'
+        };
+      } catch (error: any) {
+        console.error('Erro ao importar PDI:', error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error.message || 'Erro ao importar PDI do HTML'
+        });
+      }
+    }),
+
+  /**
+   * Buscar PDIs com filtros avançados
+   */
+  listWithFilters: protectedProcedure
+    .input(z.object({
+      status: z.enum(['rascunho', 'em_andamento', 'concluido', 'cancelado']).optional(),
+      employeeId: z.number().optional(),
+      employeeName: z.string().optional(),
+      departmentId: z.number().optional(),
+      startDate: z.date().optional(),
+      endDate: z.date().optional(),
+      searchText: z.string().optional(),
+      page: z.number().default(1),
+      pageSize: z.number().default(20),
+      orderBy: z.enum(['createdAt', 'employeeName', 'status', 'progress']).default('createdAt'),
+      orderDirection: z.enum(['asc', 'desc']).default('desc'),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const conditions: any[] = [];
+
+      // Filtro por status
+      if (input.status) {
+        conditions.push(eq(pdiPlans.status, input.status));
+      }
+
+      // Filtro por colaborador
+      if (input.employeeId) {
+        conditions.push(eq(pdiPlans.employeeId, input.employeeId));
+      }
+
+      // Filtro por nome do colaborador
+      if (input.employeeName) {
+        conditions.push(like(employees.name, `%${input.employeeName}%`));
+      }
+
+      // Filtro por departamento
+      if (input.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+
+      // Filtro por período
+      if (input.startDate) {
+        conditions.push(gte(pdiPlans.createdAt, input.startDate));
+      }
+      if (input.endDate) {
+        conditions.push(lte(pdiPlans.createdAt, input.endDate));
+      }
+
+      // Busca por texto livre
+      if (input.searchText) {
+        conditions.push(
+          or(
+            like(employees.name, `%${input.searchText}%`),
+            like(employees.cargo, `%${input.searchText}%`)
+          )
+        );
+      }
+
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+      // Buscar total de registros
+      const [{ count }] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .where(whereClause);
+
+      // Buscar PDIs com paginação
+      const offset = (input.page - 1) * input.pageSize;
+      
+      let query = db
+        .select({
+          id: pdiPlans.id,
+          employeeId: pdiPlans.employeeId,
+          employeeName: employees.name,
+          employeePosition: employees.cargo,
+          departmentName: departments.name,
+          status: pdiPlans.status,
+          startDate: pdiPlans.startDate,
+          endDate: pdiPlans.endDate,
+          overallProgress: pdiPlans.overallProgress,
+          createdAt: pdiPlans.createdAt,
+        })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .where(whereClause)
+        .limit(input.pageSize)
+        .offset(offset)
+        .$dynamic();
+
+      // Ordenação
+      if (input.orderBy === 'createdAt') {
+        query = input.orderDirection === 'asc' 
+          ? query.orderBy(pdiPlans.createdAt)
+          : query.orderBy(desc(pdiPlans.createdAt));
+      } else if (input.orderBy === 'employeeName') {
+        query = input.orderDirection === 'asc'
+          ? query.orderBy(employees.name)
+          : query.orderBy(desc(employees.name));
+      } else if (input.orderBy === 'status') {
+        query = input.orderDirection === 'asc'
+          ? query.orderBy(pdiPlans.status)
+          : query.orderBy(desc(pdiPlans.status));
+      } else if (input.orderBy === 'progress') {
+        query = input.orderDirection === 'asc'
+          ? query.orderBy(pdiPlans.overallProgress)
+          : query.orderBy(desc(pdiPlans.overallProgress));
+      }
+
+      const pdis = await query;
+
+      return {
+        pdis,
+        pagination: {
+          total: count,
+          page: input.page,
+          pageSize: input.pageSize,
+          totalPages: Math.ceil(count / input.pageSize),
+        }
+      };
+    }),
+
+  /**
+   * Dashboard de estatísticas de PDIs
+   */
+  getDashboardStats: protectedProcedure
+    .input(z.object({
+      departmentId: z.number().optional(),
+      startDate: z.date().optional(),
+      endDate: z.date().optional(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const conditions: any[] = [];
+
+      if (input.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+
+      if (input.startDate) {
+        conditions.push(gte(pdiPlans.createdAt, input.startDate));
+      }
+
+      if (input.endDate) {
+        conditions.push(lte(pdiPlans.createdAt, input.endDate));
+      }
+
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+      // Estatísticas gerais
+      const stats = await db
+        .select({
+          total: sql<number>`count(*)`,
+          concluidos: sql<number>`sum(case when ${pdiPlans.status} = 'concluido' then 1 else 0 end)`,
+          emAndamento: sql<number>`sum(case when ${pdiPlans.status} = 'em_andamento' then 1 else 0 end)`,
+          atrasados: sql<number>`sum(case when ${pdiPlans.status} = 'em_andamento' and ${pdiPlans.endDate} < NOW() then 1 else 0 end)`,
+          progressoMedio: sql<number>`avg(${pdiPlans.overallProgress})`,
+        })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .where(whereClause);
+
+      // PDIs por departamento
+      const byDepartment = await db
+        .select({
+          departmentId: departments.id,
+          departmentName: departments.name,
+          total: sql<number>`count(*)`,
+          concluidos: sql<number>`sum(case when ${pdiPlans.status} = 'concluido' then 1 else 0 end)`,
+          progressoMedio: sql<number>`avg(${pdiPlans.overallProgress})`,
+        })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .where(whereClause)
+        .groupBy(departments.id, departments.name);
+
+      // PDIs atrasados (detalhes)
+      const atrasados = await db
+        .select({
+          id: pdiPlans.id,
+          employeeName: employees.name,
+          employeePosition: employees.cargo,
+          departmentName: departments.name,
+          endDate: pdiPlans.endDate,
+          overallProgress: pdiPlans.overallProgress,
+        })
+        .from(pdiPlans)
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .where(
+          and(
+            eq(pdiPlans.status, 'em_andamento'),
+            sql`${pdiPlans.endDate} < NOW()`,
+            whereClause
+          )
+        )
+        .orderBy(pdiPlans.endDate)
+        .limit(10);
+
+      // Competências mais trabalhadas (top 10)
+      const topCompetencies = await db
+        .select({
+          competencyId: pdiCompetencyGaps.competencyId,
+          count: sql<number>`count(*)`,
+        })
+        .from(pdiCompetencyGaps)
+        .leftJoin(pdiPlans, eq(pdiCompetencyGaps.planId, pdiPlans.id))
+        .leftJoin(employees, eq(pdiPlans.employeeId, employees.id))
+        .where(whereClause)
+        .groupBy(pdiCompetencyGaps.competencyId)
+        .orderBy(desc(sql`count(*)`)) 
+        .limit(10);
+
+      return {
+        general: stats[0] || {
+          total: 0,
+          concluidos: 0,
+          emAndamento: 0,
+          atrasados: 0,
+          progressoMedio: 0,
+        },
+        byDepartment,
+        atrasados,
+        topCompetencies,
+      };
     }),
 });
