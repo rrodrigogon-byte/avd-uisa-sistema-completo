@@ -1,9 +1,0 @@
-{
-  "query": "CREATE INDEX IF NOT EXISTS idx_approval_flow_job ON jobDescriptionApprovalFlow(jobDescriptionId);\nCREATE INDEX IF NOT EXISTS idx_approval_flow_status ON jobDescriptionApprovalFlow(status);\nCREATE INDEX IF NOT EXISTS idx_approval_history_flow ON jobDescriptionApprovalHistory(flowId);\nCREATE INDEX IF NOT EXISTS idx_routines_employee ON activityRoutines(employeeId);\nCREATE INDEX IF NOT EXISTS idx_desktop_logs_employee ON desktopActivityLogs(employeeId);\nCREATE INDEX IF NOT EXISTS idx_desktop_logs_start ON desktopActivityLogs(startTime);\nCREATE INDEX IF NOT EXISTS idx_match_employee ON activityJobDescriptionMatch(employeeId);\nCREATE INDEX IF NOT EXISTS idx_match_job ON activityJobDescriptionMatch(jobDescriptionId);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE INDEX IF NOT EXISTS idx_approval_flow_job ON jobDescriptionApprovalFlow(jobDescriptionId);\nCREATE INDEX IF NOT EXISTS idx_approval_flow_status ON jobDescriptionApprovalFlow(status);\nCREATE INDEX IF NOT EXISTS idx_approval_history_flow ON jobDescriptionApprovalHistory(flowId);\nCREATE INDEX IF NOT EXISTS idx_routines_employee ON activityRoutines(employeeId);\nCREATE INDEX IF NOT EXISTS idx_desktop_logs_employee ON desktopActivityLogs(employeeId);\nCREATE INDEX IF NOT EXISTS idx_desktop_logs_start ON desktopActivityLogs(startTime);\nCREATE INDEX IF NOT EXISTS idx_match_employee ON activityJobDescriptionMatch(employeeId);\nCREATE INDEX IF NOT EXISTS idx_match_job ON activityJobDescriptionMatch(jobDescriptionId);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 4011
-}

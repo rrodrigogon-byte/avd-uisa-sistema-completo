@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `organizationalPositions` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `title` varchar(255) NOT NULL,\n  `active` boolean NOT NULL DEFAULT true,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `organizationalPositions_id` PRIMARY KEY(`id`),\n  CONSTRAINT `organizationalPositions_code_unique` UNIQUE(`code`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `organizationalPositions` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `code` varchar(50) NOT NULL,\n  `title` varchar(255) NOT NULL,\n  `active` boolean NOT NULL DEFAULT true,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `organizationalPositions_id` PRIMARY KEY(`id`),\n  CONSTRAINT `organizationalPositions_code_unique` UNIQUE(`code`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 217
-}

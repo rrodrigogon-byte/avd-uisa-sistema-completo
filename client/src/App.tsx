@@ -55,9 +55,6 @@ import MetasIndividuais from "./pages/MetasIndividuais";
 import PesosAvaliacao from "./pages/PesosAvaliacao";
 import BenchmarkDesempenho from "./pages/BenchmarkDesempenho";
 import PilotSimulations from "./pages/PilotSimulations";
-import AprovacaoDescricoes from "./pages/AprovacaoDescricoes";
-import MapeamentoRotinas from "./pages/MapeamentoRotinas";
-import ConfrontoAtividades from "./pages/ConfrontoAtividades";
 import SuspiciousAccessDashboard from "./pages/SuspiciousAccessDashboard";
 import IntegrityReport from "./pages/IntegrityReport";
 import { Route, Switch } from "wouter";
@@ -67,8 +64,6 @@ import { NotificationProvider } from "./contexts/NotificationContext";
 import Home from "./pages/Home";
 import TemplatesAnalytics from "./pages/TemplatesAnalytics";
 import DashboardGestor from "./pages/DashboardGestor";
-import MeusSubordinados from "./pages/MeusSubordinados";
-import AvaliacaoEmLote from "./pages/AvaliacaoEmLote";
 import ConfiguracoesSMTP from "./pages/ConfiguracoesSMTP";
 import Metas from "./pages/Metas";
 import Avaliacoes from "./pages/Avaliacoes";
@@ -284,8 +279,6 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path="/gestor" component={DashboardGestor} />
-      <Route path="/meus-subordinados" component={MeusSubordinados} />
-      <Route path="/avaliacao-em-lote" component={AvaliacaoEmLote} />
       <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />
       <Route path="/configuracoes/notificacoes" component={NotificacoesConfig} />
       <Route path="/reconhecimento-facial/cadastro" component={FaceRegistration} />
@@ -462,9 +455,6 @@ function Router() {
       <Route path="/descricao-cargos-uisa/criar" component={CriarDescricaoCargo} />
       <Route path="/descricao-cargos-uisa/:id" component={DetalhesDescricaoCargo} />
       <Route path="/minhas-atividades" component={MinhasAtividades} />
-      <Route path="/aprovacao-descricoes" component={AprovacaoDescricoes} />
-      <Route path="/mapeamento-rotinas" component={MapeamentoRotinas} />
-      <Route path="/confronto-atividades" component={ConfrontoAtividades} />
       <Route path="/relatorios-produtividade" component={RelatoriosProdutividade} />
       <Route path="/alertas" component={Alertas} />
       <Route path="/discrepancias" component={Discrepancias} />
