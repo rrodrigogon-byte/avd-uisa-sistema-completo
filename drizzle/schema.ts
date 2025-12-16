@@ -7441,3 +7441,106 @@ export const performanceAlertsRelations = relations(performanceAlerts, ({ one })
     references: [individualGoals.id],
   }),
 }));
+
+
+// ============================================================================
+// TABELAS DE VERSIONAMENTO DE QUESTÕES PIR INTEGRIDADE
+// ============================================================================
+
+/**
+ * Histórico de Versões de Questões PIR Integridade
+ * Mantém rastreabilidade de todas as alterações em questões
+ */
+export const pirIntegrityQuestionVersions = mysqlTable("pirIntegrityQuestionVersions", {
+  id: int("id").autoincrement().primaryKey(),
+  questionId: int("questionId").notNull(),
+  versionNumber: int("versionNumber").notNull(),
+  
+  // Snapshot do conteúdo da questão
+  title: varchar("title", { length: 255 }).notNull(),
+  scenario: text("scenario"),
+  question: text("question").notNull(),
+  options: json("options"),
+  questionType: mysqlEnum("questionType", ["scenario", "multiple_choice", "scale", "open_ended"]).notNull(),
+  difficulty: mysqlEnum("difficulty", ["easy", "medium", "hard"]).default("medium").notNull(),
+  
+  // Metadados da versão
+  changeReason: text("changeReason"),
+  changeType: mysqlEnum("changeType", ["created", "updated", "deactivated", "reactivated"]).notNull(),
+  changedBy: int("changedBy").notNull(),
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+  
+  // Referência à versão anterior
+  previousVersionId: int("previousVersionId"),
+  
+  // Status
+  isCurrentVersion: boolean("isCurrentVersion").default(true).notNull(),
+});
+
+export type PirIntegrityQuestionVersion = typeof pirIntegrityQuestionVersions.$inferSelect;
+export type InsertPirIntegrityQuestionVersion = typeof pirIntegrityQuestionVersions.$inferInsert;
+
+/**
+ * Logs de Acesso Suspeito PIR Integridade
+ * Detecta padrões anômalos durante avaliações
+ */
+export const pirIntegritySuspiciousAccessLogs = mysqlTable("pirIntegritySuspiciousAccessLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  assessmentId: int("assessmentId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Tipo de anomalia detectada
+  anomalyType: mysqlEnum("anomalyType", [
+    "fast_responses",       // Respostas muito rápidas
+    "pattern_detected",     // Padrão de respostas detectado
+    "multiple_sessions",    // Múltiplas sessões simultâneas
+    "unusual_time",         // Horário incomum
+    "browser_switch",       // Troca de navegador/dispositivo
+    "copy_paste",           // Tentativa de copiar/colar
+    "tab_switch",           // Troca de aba frequente
+    "other"
+  ]).notNull(),
+  
+  // Detalhes da anomalia
+  description: text("description").notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  
+  // Dados técnicos
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  metadata: json("metadata"),
+  
+  // Status do alerta
+  status: mysqlEnum("status", ["pending", "reviewed", "dismissed", "confirmed"]).default("pending").notNull(),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: datetime("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PirIntegritySuspiciousAccessLog = typeof pirIntegritySuspiciousAccessLogs.$inferSelect;
+export type InsertPirIntegritySuspiciousAccessLog = typeof pirIntegritySuspiciousAccessLogs.$inferInsert;
+
+// Relations
+export const pirIntegrityQuestionVersionsRelations = relations(pirIntegrityQuestionVersions, ({ one }) => ({
+  question: one(pirIntegrityQuestions, {
+    fields: [pirIntegrityQuestionVersions.questionId],
+    references: [pirIntegrityQuestions.id],
+  }),
+  previousVersion: one(pirIntegrityQuestionVersions, {
+    fields: [pirIntegrityQuestionVersions.previousVersionId],
+    references: [pirIntegrityQuestionVersions.id],
+  }),
+}));
+
+export const pirIntegritySuspiciousAccessLogsRelations = relations(pirIntegritySuspiciousAccessLogs, ({ one }) => ({
+  assessment: one(pirIntegrityAssessments, {
+    fields: [pirIntegritySuspiciousAccessLogs.assessmentId],
+    references: [pirIntegrityAssessments.id],
+  }),
+  employee: one(employees, {
+    fields: [pirIntegritySuspiciousAccessLogs.employeeId],
+    references: [employees.id],
+  }),
+}));

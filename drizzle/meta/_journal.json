@@ -78,6 +78,13 @@
       "when": 1765837061987,
       "tag": "0010_perpetual_bloodscream",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1765849916238,
+      "tag": "0011_shocking_stingray",
+      "breakpoints": true
     }
   ]
 }

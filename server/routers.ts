@@ -121,6 +121,7 @@ import { integrityTestsRouter } from "./routers/integrityTestsRouter";
 import { integrityPIRRouter } from "./routers/integrityPIRRouter";
 import { pirIntegrityRouter } from "./routers/pirIntegrityRouter";
 import { pirRiskAlertsRouter } from "./routers/pirRiskAlertsRouter";
+import { pirSuspiciousAccessRouter } from "./routers/pirSuspiciousAccessRouter";
 import { pirDepartmentReportsRouter } from "./routers/pirDepartmentReportsRouter";
 import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovalsRouter";
 import { videoUploadRouter } from "./routers/videoUploadRouter";
@@ -289,6 +290,7 @@ export const appRouter = router({
   integrityPIR: integrityPIRRouter,
   pirIntegrity: pirIntegrityRouter,
   pirRiskAlerts: pirRiskAlertsRouter,
+  pirSuspiciousAccess: pirSuspiciousAccessRouter,
   pirDepartmentReports: pirDepartmentReportsRouter,
   jobDescriptionApprovals: jobDescriptionApprovalsRouter,
   

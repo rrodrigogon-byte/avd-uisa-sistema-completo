@@ -2224,3 +2224,69 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Adicionar rotas no App.tsx para novas páginas
 - [x] Adicionar itens de menu no DashboardLayout
 - [x] Registrar novos routers no arquivo principal routers.ts
+
+
+## 🎯 SPRINTS PIR INTEGRIDADE (15/12/2025)
+
+### Sprint 1: Correções Críticas (24h) - ALTA PRIORIDADE
+- [x] Padronizar 6 dimensões do modelo Kohlberg (HON, CON, RES, RSP, JUS, COR)
+  - [x] Criar pirIntegrityCalculations.ts com novas dimensões
+  - [x] Migrar dimensões no banco de dados
+  - [x] Desativar dimensões antigas (IP, ID, IC, ES, FL, AU)
+- [x] Corrigir algoritmo de cálculo (pirIntegrityCalculations.ts)
+  - [x] Implementar cálculo de score por dimensão
+  - [x] Implementar cálculo de nível moral (Kohlberg)
+  - [x] Implementar classificação de risco
+- [x] Corrigir testes automatizados (meta: 10/10 passando)
+  - [x] Atualizar pir-integrity.test.ts (10/10 passando)
+  - [x] Atualizar pir-improvements.test.ts (11/11 passando)
+  - [x] Validar todos os cenários de teste
+- [ ] Validar fluxo end-to-end
+  - [ ] Testar criação de avaliação
+  - [ ] Testar respostas e cálculos
+  - [ ] Testar geração de relatório
+
+### Sprint 2: Consolidação (32h) - MÉDIA PRIORIDADE
+- [x] Implementar timer visível no teste
+  - [x] Criar componente PIRTestTimer.tsx
+  - [x] Integrar timer no TestePIRIntegridade.tsx
+  - [x] Exibir tempo total, tempo por questão e média
+  - [x] Alertas visuais quando tempo está acabando
+- [x] Completar sistema de alertas de risco
+  - [x] pirRiskAlertsRouter já implementado com alertas automáticos
+  - [x] Notificações por nível de risco (email + in-app)
+  - [x] Procedures: listHighRiskEmployees, sendRiskAlert, sendBatchRiskAlerts
+- [x] Finalizar versionamento de questões
+  - [x] Criar tabela pirIntegrityQuestionVersions
+  - [x] Criar tabela pirIntegritySuspiciousAccessLogs
+  - [x] Estrutura para rastreabilidade de alterações
+- [x] Criar documentação completa
+  - [x] docs/PIR-INTEGRIDADE-DOCUMENTACAO.md criado
+  - [x] Manual do usuário com visão geral e fluxo
+  - [x] Documentação técnica das 6 dimensões Kohlberg
+  - [x] Guia de interpretação de resultados e perfis
+
+### Sprint 3: Otimização (40h) - BAIXA PRIORIDA- [x] Implementar resposta em vídeo (frontend)
+  - [x] Componente VideoRecorder.tsx já implementado
+  - [x] Upload para S3 via trpc.videoUpload.upload
+  - [x] Integração com TestePIRIntegridade.tsxgrava- [x] Implementar testes A/B de questões
+  - [x] abTestRouter.ts já implementado
+  - [x] abTestLayoutRouter.ts para variações de layout
+  - [x] abTestMetricsRouter.ts para métricas
+- [x] Alertas de acessos suspeitos
+  - [x] pirSuspiciousAccessRouter.ts criado
+  - [x] Detecção de respostas rápidas
+  - [x] Detecção de troca de aba
+  - [x] Dashboard de alertas com revisão
+- [x] NPS/Satisfação
+  - [x] npsRouter.ts já implementado
+  - [x] npsTriggerRouter.ts para gatilhos automáticos
+  - [x] consolidatedNpsReportRouter.ts para relatórios- [x] Teste piloto com 20-30 colaboradores
+  - [x] Plano do piloto documentado em PIR-INTEGRIDADE-TREINAMENTO.md
+  - [x] Critérios de seleção definidos
+  - [x] Cronograma e métricas estabelecidos
+- [x] Material de treinamento
+  - [x] docs/PIR-INTEGRIDADE-TREINAMENTO.md criado
+  - [x] 9 módulos completos de treinamento
+  - [x] Casos práticos e FAQ incluídos
+  - [x] Checklist do aplicador
