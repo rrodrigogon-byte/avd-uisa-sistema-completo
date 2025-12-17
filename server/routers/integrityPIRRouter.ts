@@ -1,5 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { router, protectedProcedure } from "../_core/trpc";
+import { router, protectedProcedure, publicProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 import { pirInvitations, pirAssessments, integrityTestResults, employees } from "../../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -144,37 +145,52 @@ export const integrityPIRRouter = router({
   /**
    * Buscar convite por token (público - sem autenticação)
    */
-  getInvitationByToken: protectedProcedure
+  getInvitationByToken: publicProcedure
     .input(z.object({ token: z.string() }))
     .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) return null;
+      try {
+        console.log('[getInvitationByToken] Token recebido:', input.token);
+        const db = await getDb();
+        if (!db) {
+          console.log('[getInvitationByToken] Database não disponível');
+          return null;
+        }
 
-      const [invitation] = await db
-        .select()
-        .from(pirInvitations)
-        .where(eq(pirInvitations.token, input.token))
-        .limit(1);
+        const [invitation] = await db
+          .select()
+          .from(pirInvitations)
+          .where(eq(pirInvitations.token, input.token))
+          .limit(1);
 
-      if (!invitation) return null;
+        if (!invitation) {
+          console.log('[getInvitationByToken] Convite não encontrado');
+          return null;
+        }
 
-      // Verificar se expirou
-      if (new Date() > new Date(invitation.expiresAt)) {
-        await db
-          .update(pirInvitations)
-          .set({ status: "expired" })
-          .where(eq(pirInvitations.id, invitation.id));
-        
-        return { ...invitation, status: "expired" as const };
+        console.log('[getInvitationByToken] Convite encontrado:', invitation.id, 'status:', invitation.status);
+
+        // Verificar se expirou
+        if (new Date() > new Date(invitation.expiresAt)) {
+          console.log('[getInvitationByToken] Convite expirado');
+          await db
+            .update(pirInvitations)
+            .set({ status: "expired" })
+            .where(eq(pirInvitations.id, invitation.id));
+          
+          return { ...invitation, status: "expired" as const };
+        }
+
+        return invitation;
+      } catch (error) {
+        console.error('[getInvitationByToken] Erro:', error);
+        throw error;
       }
-
-      return invitation;
     }),
 
   /**
    * Submeter respostas do PIR via token
    */
-  submitPIRPublic: protectedProcedure
+  submitPIRPublic: publicProcedure
     .input(
       z.object({
         token: z.string(),
@@ -251,7 +267,7 @@ export const integrityPIRRouter = router({
   /**
    * Marcar convite como iniciado
    */
-  startInvitation: protectedProcedure
+  startInvitation: publicProcedure
     .input(z.object({ token: z.string() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
@@ -298,5 +314,77 @@ export const integrityPIRRouter = router({
         .where(eq(pirInvitations.id, input.invitationId));
 
       return { success: true };
+    }),
+
+  /**
+   * Auto-login via token PIR (público)
+   * Valida token e retorna dados para criar sessão temporária
+   */
+  autoLoginPIR: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar convite pelo token
+      const [invitation] = await db
+        .select()
+        .from(pirInvitations)
+        .where(eq(pirInvitations.token, input.token))
+        .limit(1);
+
+      if (!invitation) {
+        throw new Error("Token inválido");
+      }
+
+      // Verificar expiração
+      if (invitation.expiresAt && new Date() > invitation.expiresAt) {
+        throw new Error("Token expirado");
+      }
+
+      // Verificar se já foi completado
+      if (invitation.status === "completed") {
+        throw new Error("Este teste já foi completado");
+      }
+
+      // Buscar dados do funcionário se houver
+      let employeeData = null;
+      if (invitation.employeeId) {
+        const [employee] = await db
+          .select()
+          .from(employees)
+          .where(eq(employees.id, invitation.employeeId))
+          .limit(1);
+        employeeData = employee;
+      }
+
+      // Marcar como iniciado se ainda está pending ou sent
+      if (invitation.status === "pending" || invitation.status === "sent") {
+        await db
+          .update(pirInvitations)
+          .set({
+            status: "in_progress",
+            startedAt: new Date(),
+          })
+          .where(eq(pirInvitations.id, invitation.id));
+      }
+
+      // Retornar dados para o frontend
+      return {
+        success: true,
+        invitation: {
+          id: invitation.id,
+          token: invitation.token,
+          expiresAt: invitation.expiresAt,
+          candidateName: invitation.candidateName,
+          candidateEmail: invitation.candidateEmail,
+        },
+        employee: employeeData ? {
+          id: employeeData.id,
+          name: employeeData.name,
+          email: employeeData.email,
+          position: employeeData.position,
+        } : null,
+      };
     }),
 });

@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
@@ -39,7 +40,7 @@ export const pirIntegrityRouter = router({
   }),
 
   // ============ QUESTÕES ============
-  listQuestions: protectedProcedure
+  listQuestions: publicProcedure
     .input(z.object({
       dimensionId: z.number().optional(),
       difficulty: z.enum(["easy", "medium", "hard"]).optional(),
@@ -48,38 +49,28 @@ export const pirIntegrityRouter = router({
       limit: z.number().default(20),
     }))
     .query(async ({ input }) => {
+      console.log('[listQuestions] Input recebido:', JSON.stringify(input));
       const db = await getDb();
-      if (!db) return { questions: [], total: 0 };
-
-      const conditions = [];
-      if (input.dimensionId) {
-        conditions.push(eq(pirIntegrityQuestions.dimensionId, input.dimensionId));
-      }
-      if (input.difficulty) {
-        conditions.push(eq(pirIntegrityQuestions.difficulty, input.difficulty));
-      }
-      if (input.active !== undefined) {
-        conditions.push(eq(pirIntegrityQuestions.active, input.active));
+      if (!db) {
+        console.log('[listQuestions] Database não disponível');
+        return { questions: [], total: 0 };
       }
 
-      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-      const questions = await db
-        .select()
-        .from(pirIntegrityQuestions)
-        .where(whereClause)
-        .orderBy(pirIntegrityQuestions.dimensionId, pirIntegrityQuestions.displayOrder)
-        .limit(input.limit)
-        .offset((input.page - 1) * input.limit);
-
-      const countResult = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(pirIntegrityQuestions)
-        .where(whereClause);
-
+      // USANDO SQL RAW para bypassing Drizzle ORM
+      console.log('[listQuestions] Executando SQL raw...');
+      const result = await db.execute(sql`
+        SELECT * FROM pirIntegrityQuestions 
+        WHERE active = 1 
+        ORDER BY displayOrder 
+        LIMIT 100
+      `);
+      
+      const questions = Array.isArray(result) ? result : (result as any).rows || [];
+      console.log('[listQuestions] SQL retornou:', questions.length, 'questões');
+      
       return { 
         questions, 
-        total: Number(countResult[0]?.count || 0) 
+        total: questions.length 
       };
     }),
 

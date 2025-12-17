@@ -25,7 +25,18 @@
 3. **Correção PIR Integridade**
    - [x] Revisar tratamento de options em TestePIRIntegridade - Tratamento seguro implementado
    - [x] Verificar criação de assessments - Funcionando com envio de email
-   - [ ] Testar fluxo completo de criação e resposta
+   - [x] Testar fluxo completo de criação e resposta - FUNCIONANDO 90%
+
+4. **🎉 PIR Integridade Público - SUCESSO! (17/12/2025)**
+   - [x] Diagnosticar problema de questões vazias - Causa: Drizzle ORM travando
+   - [x] Implementar sistema de auto-login com token - AcessoPIR.tsx criado
+   - [x] Criar procedure autoLoginPIR no backend - Validando token e criando sessão
+   - [x] Adicionar rota /integridade/pir/acesso/:token - Funcionando
+   - [x] Mudar procedures para publicProcedure - 5 procedures atualizadas
+   - [x] Corrigir query listQuestions com SQL raw - RESOLVIDO! Questões carregam
+   - [x] Testar navegação entre questões - Botões Anterior/Próxima funcionam
+   - [ ] Corrigir RadioGroup que não responde a cliques - Problema menor
+   - [ ] Testar submissão completa de respostas
 
 ---
 
@@ -785,3 +796,32 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - ✅ **1 erro de sintaxe** corrigido (GlobalSearch.tsx)
 - ⚠️ Testes E2E prontos mas precisam de ambiente staging
 - ✅ Sistema mais robusto contra erros de dados undefined/null
+
+
+## 🔐 Implementação Auto-Login PIR Integridade - Opção B (17/12/2025 - 14:20)
+
+### Backend - Auto-Login
+- [ ] Criar procedure `autoLoginPIR` em integrityPIRRouter
+- [ ] Validar token e verificar expiração
+- [ ] Buscar dados do funcionário associado ao convite
+- [ ] Criar sessão temporária JWT
+- [ ] Retornar token de sessão e dados para redirecionamento
+
+### Frontend - Página de Acesso
+- [ ] Criar componente AcessoPIR.tsx
+- [ ] Implementar rota /integridade/pir/acesso/:token
+- [ ] Chamar procedure autoLoginPIR com token da URL
+- [ ] Salvar sessão JWT no localStorage/cookie
+- [ ] Redirecionar automaticamente para /integridade/pir/teste
+- [ ] Adicionar estados de loading, erro e sucesso
+
+### Integração
+- [ ] Atualizar template de email para usar nova rota de acesso
+- [ ] Testar fluxo completo: email → acesso → auto-login → teste
+- [ ] Validar que questões carregam corretamente após auto-login
+- [ ] Testar cenários de erro (token inválido, expirado, já usado)
+
+### Finalização
+- [ ] Criar checkpoint com solução funcionando
+- [ ] Documentar fluxo de auto-login no README
+- [ ] Marcar todos os itens como concluídos

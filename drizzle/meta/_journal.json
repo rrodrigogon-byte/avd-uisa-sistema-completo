@@ -148,6 +148,20 @@
       "when": 1765929634344,
       "tag": "0020_next_black_panther",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1765998446180,
+      "tag": "0021_bent_spot",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1765998755250,
+      "tag": "0022_classy_colonel_america",
+      "breakpoints": true
     }
   ]
 }
