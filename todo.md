@@ -603,3 +603,40 @@
 - [ ] Adicionar animações e transições avançadas
 - [ ] Implementar histórico completo de avaliações
 - [ ] Criar guia interativo para novos usuários
+
+
+---
+
+## 🛡️ PADRÕES DE ROBUSTEZ E QUALIDADE DE CÓDIGO (17/12/2025)
+
+### Aplicar Padrão em Outros Módulos
+- [ ] Migrar Dashboard para usar funções seguras (safeMap, safeFilter, etc.)
+- [ ] Migrar módulo de Avaliações para usar funções seguras
+- [ ] Migrar módulo de Relatórios para usar funções seguras
+- [ ] Migrar módulo de Gestão de Funcionários para usar funções seguras
+- [ ] Migrar módulo de Departamentos para usar funções seguras
+- [ ] Migrar módulo de Notificações para usar funções seguras
+- [ ] Revisar todos os componentes em client/src/pages/ para uso de funções seguras
+- [ ] Revisar todos os componentes em client/src/components/ para uso de funções seguras
+
+### Criar Testes Automatizados
+- [ ] Configurar ambiente de testes vitest para funções utilitárias
+- [ ] Criar testes unitários para safeMap
+- [ ] Criar testes unitários para safeFilter
+- [ ] Criar testes unitários para safeReduce
+- [ ] Criar testes unitários para safeFlatMap
+- [ ] Criar testes unitários para safeSort
+- [ ] Criar testes unitários para safeGroupBy
+- [ ] Criar testes unitários para safeUnique
+- [ ] Criar testes de integração para componentes corrigidos
+- [ ] Configurar coverage mínimo de 80% para funções utilitárias
+
+### Estabelecer como Padrão Obrigatório
+- [ ] Criar lint rules customizadas no ESLint
+- [ ] Criar regra para detectar uso direto de .map() sem verificação
+- [ ] Criar regra para detectar uso direto de .filter() sem verificação
+- [ ] Criar regra para forçar uso de safeMap/safeFilter em vez de .map/.filter
+- [ ] Adicionar pre-commit hooks para executar linting
+- [ ] Configurar CI/CD para falhar se lint rules não forem seguidas
+- [ ] Documentar padrões obrigatórios no README do projeto
+- [ ] Criar guia de boas práticas para novos desenvolvedores

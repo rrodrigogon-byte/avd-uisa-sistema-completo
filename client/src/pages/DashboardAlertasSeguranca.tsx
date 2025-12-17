@@ -60,7 +60,7 @@ export default function DashboardAlertasSeguranca() {
     limit: 100,
   });
 
-  const alerts = alertsData?.alerts.map(a => ({
+  const alerts = safeMap(alertsData?.alerts, a => ({
     id: a.alert.id,
     userId: a.alert.employeeId,
     ipAddress: a.alert.ipAddress || "N/A",
@@ -69,7 +69,7 @@ export default function DashboardAlertasSeguranca() {
     reason: a.alert.description,
     accessTime: a.alert.detectedAt,
     details: a.alert.reviewNotes || "",
-  })) || [];
+  }));
 
   const resolveAlertsMutation = trpc.pirSuspiciousAccess.reviewAlert.useMutation({
     onSuccess: () => {
