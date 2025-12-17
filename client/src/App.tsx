@@ -55,6 +55,8 @@ import MetasIndividuais from "./pages/MetasIndividuais";
 import PesosAvaliacao from "./pages/PesosAvaliacao";
 import BenchmarkDesempenho from "./pages/BenchmarkDesempenho";
 import PilotSimulations from "./pages/PilotSimulations";
+import SimuladosPiloto from "./pages/SimuladosPiloto";
+import DashboardAlertasSeguranca from "./pages/DashboardAlertasSeguranca";
 import DashboardMovimentacoes from "./pages/DashboardMovimentacoes";
 import SuspiciousAccessDashboard from "./pages/SuspiciousAccessDashboard";
 import IntegrityReport from "./pages/IntegrityReport";
@@ -621,7 +623,9 @@ function Router() {
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />
+      <Route path="/piloto/simulados-gerenciar" component={SimuladosPiloto} />
       <Route path="/seguranca/alertas" component={SuspiciousAccessDashboard} />
+      <Route path="/seguranca/alertas-dashboard" component={DashboardAlertasSeguranca} />
       <Route path="/relatorio-integridade/:assessmentId?" component={IntegrityReport} />
       
       <Route path={"/"} component={Home} />

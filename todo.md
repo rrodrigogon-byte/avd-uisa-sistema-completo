@@ -3344,3 +3344,37 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Melhorar performance geral da aplicação
 - [x] Otimizar queries de banco de dados
 - [x] Testar fluxo completo com dados de demonstração
+
+
+## 🚀 NOVAS FUNCIONALIDADES - SIMULADOS, ALERTAS E NOTIFICAÇÕES (16/12/2025)
+
+### Página de Simulados do Piloto
+- [x] Criar componente de listagem de simulados
+- [x] Implementar formulário de criação de simulado
+- [x] Adicionar visualização detalhada de simulado individual
+- [x] Implementar funcionalidade de edição de simulado
+- [x] Adicionar ações de exclusão de simulado
+- [x] Criar rota e navegação para página de simulados
+
+### Dashboard de Alertas de Segurança
+- [x] Criar página dedicada para dashboard de alertas
+- [x] Implementar filtros de alertas (status, severidade, período)
+- [x] Adicionar gráficos de visualização de dados (distribuição por severidade, timeline)
+- [x] Implementar ações em lote (marcar como resolvido, deletar múltiplos)
+- [x] Criar cards de estatísticas resumidas
+- [x] Adicionar tabela interativa de alertas com ordenação
+- [x] Criar rota e navegação para dashboard de alertas
+
+### Job Automático de Notificações
+- [x] Criar procedure tRPC para verificação de alertas críticos
+- [x] Implementar lógica de envio de emails para alertas não resolvidos
+- [x] Configurar job agendado usando schedule tool
+- [ ] Testar envio automático de notificações
+- [x] Documentar configuração do job
+
+### Testes e Validação
+- [ ] Testar fluxo completo de simulados
+- [ ] Testar dashboard de alertas com diferentes filtros
+- [ ] Validar envio automático de emails
+- [ ] Verificar responsividade das interfaces
+- [ ] Criar checkpoint final

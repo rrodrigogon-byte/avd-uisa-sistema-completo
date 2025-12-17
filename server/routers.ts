@@ -146,6 +146,7 @@ import { evaluationWeightsRouter } from "./routers/evaluationWeightsRouter";
 import { positionCompetenciesRouter } from "./routers/positionCompetenciesRouter";
 import { performanceBenchmarkRouter } from "./routers/performanceBenchmarkRouter";
 import { pilotSimulationsRouter } from "./routers/pilotSimulationsRouter";
+import { securityAlertsNotificationRouter } from "./routers/securityAlertsNotificationRouter";
 import { permissionsRouter } from "./routers/permissionsRouter";
 import { movementsRouter } from "./routers/movementsRouter";
 import { emailNotificationsAutoRouter } from "./routers/emailNotificationsAutoRouter";
@@ -379,6 +380,7 @@ export const appRouter = router({
   
   // Novos routers - Sistema de Simulados e Alertas (15/12/2025)
   pilotSimulations: pilotSimulationsRouter,
+  securityAlertsNotification: securityAlertsNotificationRouter,
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,
