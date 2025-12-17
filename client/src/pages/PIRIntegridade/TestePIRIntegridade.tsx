@@ -302,7 +302,7 @@ export default function TestePIRIntegridade() {
             <p className="text-lg font-medium">{currentQuestion?.question}</p>
 
             {currentQuestion?.questionType === "scenario" || currentQuestion?.questionType === "multiple_choice" ? (
-              <RadioGroup value={responses[currentQuestion?.id]?.option || ""} onValueChange={handleOptionChange}>
+              <RadioGroup value={responses[currentQuestion?.id]?.option} onValueChange={handleOptionChange}>
                 <div className="space-y-3">
                   {safeMap(options, (opt: any, idx: number) => (
                     <div key={idx} className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">

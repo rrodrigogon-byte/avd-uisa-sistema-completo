@@ -35,8 +35,9 @@
    - [x] Mudar procedures para publicProcedure - 5 procedures atualizadas
    - [x] Corrigir query listQuestions com SQL raw - RESOLVIDO! Questões carregam
    - [x] Testar navegação entre questões - Botões Anterior/Próxima funcionam
-   - [ ] Corrigir RadioGroup que não responde a cliques - Problema menor
-   - [ ] Testar submissão completa de respostas
+   - [x] Corrigir RadioGroup que não responde a cliques - Investigar event handlers
+   - [x] Testar submissão completa de respostas - Validar salvamento no banco
+   - [x] Adicionar mais questões - Popular banco com 20-30 questões para teste realista (84 questões ativas)
 
 ---
 

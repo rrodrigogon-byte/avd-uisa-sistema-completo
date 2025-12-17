@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as total FROM pirIntegrityQuestions WHERE active = 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT COUNT(*) as total FROM pirIntegrityQuestions WHERE active = 1",
+  "rows": [
+    {
+      "total": "84"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n84\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}
