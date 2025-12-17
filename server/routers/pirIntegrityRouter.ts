@@ -65,8 +65,12 @@ export const pirIntegrityRouter = router({
         LIMIT 100
       `);
       
-      const questions = Array.isArray(result) ? result : (result as any).rows || [];
+      // result[0] contém as linhas, result[1] contém os metadados
+      const questions = Array.isArray(result[0]) ? result[0] : [];
       console.log('[listQuestions] SQL retornou:', questions.length, 'questões');
+      if (questions.length > 0) {
+        console.log('[listQuestions] Primeira questão:', JSON.stringify(questions[0]).substring(0, 200));
+      }
       
       return { 
         questions, 
