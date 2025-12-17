@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SessionTimeout } from "@/components/SessionTimeout";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useErrorTracking } from "@/hooks/useErrorTracking";
 import NotFound from "@/pages/NotFound";
 import AcompanhamentoAvaliacoes from "@/pages/AcompanhamentoAvaliacoes";
 import CriarMetasCiclo from "@/pages/CriarMetasCiclo";
@@ -642,6 +643,9 @@ function Router() {
 }
 
 function App() {
+  // Ativar tracking de erros global
+  useErrorTracking();
+  
   return (
     <ErrorBoundary>
       <ThemeProvider

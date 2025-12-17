@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
+import { safeMap, safeFilter, isEmpty } from "@/lib/arrayHelpers";
 import {
   Table,
   TableBody,
@@ -93,9 +94,9 @@ export default function DashboardAdminAVD() {
 
   // Filtrar processos localmente
   const filteredProcesses = useMemo(() => {
-    if (!processes) return [];
+    if (isEmpty(processes)) return [];
     
-    return processes.filter((item) => {
+    return safeFilter(processes, (item) => {
       // Filtro de busca por nome ou chapa
       if (searchTerm) {
         const search = searchTerm.toLowerCase();
@@ -172,7 +173,7 @@ export default function DashboardAdminAVD() {
       ];
 
       // Criar linhas de dados
-      const rows = exportData.map((item) => [
+      const rows = safeMap(exportData, (item) => [
         item.processId,
         item.employeeName || "N/A",
         item.employeeChapa || "N/A",

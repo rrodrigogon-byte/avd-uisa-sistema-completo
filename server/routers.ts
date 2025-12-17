@@ -47,6 +47,7 @@ import { calibrationRouter } from "./calibrationRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./routers/notificationsRouter";
+import { errorMonitoringRouter } from "./errorMonitoringRouter";
 import { sendEmail } from "./emailService";
 import { pulseRouter } from "./routers/pulseRouter";
 import { exportRouter } from "./routers/exportRouter";
@@ -299,6 +300,7 @@ export const appRouter = router({
   avd: avdRouter,
   avdExport: avdExportRouter,
   pendencias: pendenciasRouter,
+  errorMonitoring: errorMonitoringRouter,
   
   // Novos routers - Três próximos passos
   customReportBuilder: customReportBuilderRouter,

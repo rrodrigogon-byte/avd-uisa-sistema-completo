@@ -62,6 +62,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { safeMap, safeFilter, safeLength } from "@/lib/arrayHelpers";
 
 const userSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -276,7 +277,7 @@ export default function GestaoUsuarios() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {users?.filter((u) => u.role === "admin").length || 0}
+                {safeLength(safeFilter(users, (u) => u.role === "admin"))}
               </div>
             </CardContent>
           </Card>
@@ -288,7 +289,7 @@ export default function GestaoUsuarios() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {users?.filter((u) => u.role === "gestor").length || 0}
+                {safeLength(safeFilter(users, (u) => u.role === "gestor"))}
               </div>
             </CardContent>
           </Card>
@@ -300,7 +301,7 @@ export default function GestaoUsuarios() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {users?.filter((u) => u.role === "rh").length || 0}
+                {safeLength(safeFilter(users, (u) => u.role === "rh"))}
               </div>
             </CardContent>
           </Card>
@@ -336,7 +337,7 @@ export default function GestaoUsuarios() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map((u: any) => (
+                    {safeMap(users, (u: any) => (
                       <TableRow key={u.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">

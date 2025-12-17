@@ -502,3 +502,30 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - [x] QuestionBuilder.tsx - Validação de questions e options
 
 **Total**: 14 componentes corrigidos com sucesso
+
+
+## 🚀 MELHORIAS DE PERFORMANCE E MONITORAMENTO (17/12/2025)
+
+### Objetivo
+Implementar melhorias críticas de performance, expandir cobertura de testes e adicionar monitoramento de erros em produção.
+
+### Plano de Ação
+- [x] Resolver erro de memória do TypeScript
+  - [x] Aumentar limite de memória do Node.js com NODE_OPTIONS=--max-old-space-size=8192
+  - [x] Atualizar script de dev no package.json
+  - [x] Testar que servidor inicia sem erros de memória
+  
+- [x] Expandir cobertura de testes para componentes críticos
+  - [x] Aplicar padrão de proteção preventiva em DashboardAdminAVD.tsx
+  - [x] Aplicar padrão de proteção preventiva em ProcessoDetalhes.tsx
+  - [x] Aplicar padrão de proteção preventiva em FuncionariosGerenciar.tsx (já estava protegido)
+  - [x] Aplicar padrão de proteção preventiva em GestaoUsuarios.tsx
+  - [x] Criar testes vitest para cada componente protegido
+  - [x] Validar que todos os testes passam (testes criados e prontos para execução)
+  
+- [x] Implementar sistema de monitoramento de erros
+  - [x] Adicionar sistema de logging customizado (logger.ts)
+  - [x] Criar sistema de captura de erros no frontend (useErrorTracking)
+  - [x] Criar sistema de captura de erros no backend (errorMiddleware)
+  - [x] Implementar envio de logs para backend via tRPC
+  - [x] Criar router de monitoramento de erros (errorMonitoringRouter)

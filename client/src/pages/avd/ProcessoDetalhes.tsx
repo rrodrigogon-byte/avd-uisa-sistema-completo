@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { Progress } from "@/components/ui/progress";
+import { safeMap, safeFilter, isEmpty } from "@/lib/arrayHelpers";
 
 /**
  * Página de Detalhes do Processo AVD
@@ -115,7 +116,7 @@ export default function ProcessoDetalhes() {
     },
   ];
 
-  const completedSteps = steps.filter((s) => s.completed).length;
+  const completedSteps = safeFilter(steps, (s) => s.completed).length;
   const progressPercentage = (completedSteps / 5) * 100;
 
   const getStatusBadge = (status: string) => {
@@ -194,7 +195,7 @@ export default function ProcessoDetalhes() {
           <Progress value={progressPercentage} className="h-2" />
 
           <div className="grid gap-4 md:grid-cols-5">
-            {steps.map((step) => {
+            {safeMap(steps, (step) => {
               const Icon = step.icon;
               return (
                 <div
