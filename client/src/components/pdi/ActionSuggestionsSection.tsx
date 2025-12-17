@@ -246,8 +246,12 @@ export default function ActionSuggestionsSection({ pdiId }: ActionSuggestionsSec
               Projetos e Atividades no Dia a Dia
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {suggestions.pratica_70?.map((action: any, index: number) =>
-                renderActionCard(action, "pratica_70", index)
+              {(suggestions?.pratica_70 && Array.isArray(suggestions.pratica_70)) ? (
+                suggestions.pratica_70.map((action: any, index: number) =>
+                  renderActionCard(action, "pratica_70", index)
+                )
+              ) : (
+                <p className="text-sm text-muted-foreground col-span-full">Nenhuma sugestão disponível</p>
               )}
             </div>
           </div>
@@ -259,8 +263,12 @@ export default function ActionSuggestionsSection({ pdiId }: ActionSuggestionsSec
               Mentoria e Job Rotation
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {suggestions.experiencia_20?.map((action: any, index: number) =>
-                renderActionCard(action, "experiencia_20", index)
+              {(suggestions?.experiencia_20 && Array.isArray(suggestions.experiencia_20)) ? (
+                suggestions.experiencia_20.map((action: any, index: number) =>
+                  renderActionCard(action, "experiencia_20", index)
+                )
+              ) : (
+                <p className="text-sm text-muted-foreground col-span-full">Nenhuma sugestão disponível</p>
               )}
             </div>
           </div>
@@ -272,8 +280,12 @@ export default function ActionSuggestionsSection({ pdiId }: ActionSuggestionsSec
               Cursos e Certificações
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {suggestions.educacao_10?.map((action: any, index: number) =>
-                renderActionCard(action, "educacao_10", index)
+              {(suggestions?.educacao_10 && Array.isArray(suggestions.educacao_10)) ? (
+                suggestions.educacao_10.map((action: any, index: number) =>
+                  renderActionCard(action, "educacao_10", index)
+                )
+              ) : (
+                <p className="text-sm text-muted-foreground col-span-full">Nenhuma sugestão disponível</p>
               )}
             </div>
           </div>

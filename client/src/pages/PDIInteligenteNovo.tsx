@@ -111,7 +111,9 @@ export default function PDIInteligenteNovo() {
     });
   };
 
-  const selectedEmployee = employees?.find((e: any) => e?.employee?.id === selectedEmployeeId)?.employee;
+  const selectedEmployee = (employees && Array.isArray(employees)) 
+    ? employees.find((e: any) => e?.employee?.id === selectedEmployeeId)?.employee 
+    : undefined;
 
   return (
     <DashboardLayout>
@@ -185,32 +187,37 @@ export default function PDIInteligenteNovo() {
                       />
                       <CommandEmpty>Nenhum colaborador encontrado.</CommandEmpty>
                       <CommandGroup className="max-h-64 overflow-auto">
-                        {employees?.map((item: any) => {
-                          if (!item?.employee) return null;
-                          const employee = item.employee;
-                          return (
-                          <CommandItem
-                            key={employee.id}
-                            value={`${employee.name} ${item.position?.title || ''} ${item.department?.name || ''}`}
-                            onSelect={() => {
-                              setSelectedEmployeeId(employee.id);
-                              setEmployeeOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                selectedEmployeeId === employee.id ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            <div>
-                              <p className="font-medium">{employee.name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {item.position?.title || "Sem cargo"} - {item.department?.name || "Sem departamento"}
-                              </p>
-                            </div>
-                          </CommandItem>
-                        );})}
+                        {(employees && Array.isArray(employees)) ? (
+                          employees.map((item: any) => {
+                            if (!item?.employee) return null;
+                            const employee = item.employee;
+                            return (
+                              <CommandItem
+                                key={employee.id}
+                                value={`${employee.name} ${item.position?.title || ''} ${item.department?.name || ''}`}
+                                onSelect={() => {
+                                  setSelectedEmployeeId(employee.id);
+                                  setEmployeeOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedEmployeeId === employee.id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <div>
+                                  <p className="font-medium">{employee.name}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {item.position?.title || "Sem cargo"} - {item.department?.name || "Sem departamento"}
+                                  </p>
+                                </div>
+                              </CommandItem>
+                            );
+                          })
+                        ) : (
+                          <CommandEmpty>Nenhum colaborador encontrado</CommandEmpty>
+                        )}
                       </CommandGroup>
                     </Command>
                   </PopoverContent>

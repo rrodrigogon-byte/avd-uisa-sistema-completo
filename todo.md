@@ -3504,3 +3504,11 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Criar página de agradecimento após conclusão do teste
 - [x] Adicionar rotas públicas no App.tsx
 - [x] Integrar sistema de email queue com convites de integridade
+
+
+## 🐛 CORREÇÃO URGENTE - ERRO MAP (17/12/2025)
+
+- [x] Corrigir erro "T?.map is not a function" que está impedindo a renderização correta
+  - [x] Corrigido ActionSuggestionsSection.tsx - adicionada verificação Array.isArray() antes de usar .map()
+  - [x] Corrigido PDIInteligenteNovo.tsx - adicionada verificação Array.isArray() antes de usar .find() e .map()
+  - [x] Testado e validado - páginas carregando sem erros
