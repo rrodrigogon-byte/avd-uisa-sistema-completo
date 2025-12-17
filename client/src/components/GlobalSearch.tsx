@@ -171,7 +171,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
             </div>
           ) : (
             <div className="py-2 space-y-1">
-              {results.map((result, index) => {
+              {safeMap(ensureArray(results), (result, index) => {
                 const Icon = typeIcons[result.type];
                 const isSelected = index === selectedIndex;
 

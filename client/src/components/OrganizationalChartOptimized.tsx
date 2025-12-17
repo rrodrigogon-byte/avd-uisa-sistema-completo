@@ -92,9 +92,10 @@ export function OrganizationalChartOptimized({
 
   // Extrair lista única de localizações (empresas) dos funcionários
   const locations = useMemo(() => {
-    if (!employees) return [];
+    const safeEmployees = ensureArray(employees);
+    if (isEmpty(safeEmployees)) return [];
     const uniqueLocations = new Set<string>();
-    employees.forEach((emp) => {
+    safeEmployees.forEach((emp) => {
       if (emp.empresa) uniqueLocations.add(emp.empresa);
     });
     return Array.from(uniqueLocations).sort();
@@ -102,10 +103,11 @@ export function OrganizationalChartOptimized({
 
   // Construir árvore hierárquica com lazy loading
   const hierarchyTree = useMemo(() => {
+    const safeEmployees = ensureArray(employees);
     // Criar mapa de funcionários
     const employeeMap = new Map<number, HierarchyNode>();
-    employees.forEach((emp) => {
-      const hasChildren = employees.some((e) => e.managerId === emp.id);
+    safeEmployees.forEach((emp) => {
+      const hasChildren = safeEmployees.some((e) => e.managerId === emp.id);
       employeeMap.set(emp.id, {
         ...emp,
         children: [],
@@ -159,7 +161,7 @@ export function OrganizationalChartOptimized({
     }
     // Filtro de localização (empresa)
     if (selectedLocation !== "all") {
-      const employee = employees.find(e => e.id === node.id);
+      const employee = safeFind(ensureArray(employees), e => e.id === node.id);
       if (!employee || employee.empresa !== selectedLocation) {
         return false;
       }
@@ -169,8 +171,8 @@ export function OrganizationalChartOptimized({
 
   // Renderizar nó individual
   const renderNode = (node: HierarchyNode) => {
-    const department = departments.find((d) => d.id === node.departmentId);
-    const position = positions.find((p) => p.id === node.positionId);
+    const department = safeFind(ensureArray(departments), (d) => d.id === node.departmentId);
+    const position = safeFind(ensureArray(positions), (p) => p.id === node.positionId);
     const isExpanded = expandedNodes.has(node.id);
     const isSelected = selectedEmployee === node.id;
     const isHighlighted = hasActiveFilters && matchesFilters(node);
@@ -274,7 +276,7 @@ export function OrganizationalChartOptimized({
 
     return (
       <TreeNode label={renderNode(node)}>
-        {node.children.map((child) => renderTree(child))}
+        {safeMap(ensureArray(node.children), (child) => renderTree(child))}
       </TreeNode>
     );
   };
@@ -301,7 +303,7 @@ export function OrganizationalChartOptimized({
   // Contar total de funcionários visíveis
   const totalVisible = useMemo(() => {
     const countNodes = (nodes: HierarchyNode[]): number => {
-      return nodes.reduce((sum, node) => {
+      return safeReduce(ensureArray(nodes), (sum, node) => {
         return sum + 1 + countNodes(node.children);
       }, 0);
     };
@@ -346,7 +348,7 @@ export function OrganizationalChartOptimized({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            {departments.map((dept) => (
+            {safeMap(ensureArray(departments), (dept) => (
               <SelectItem key={dept.id} value={dept.id.toString()}>
                 {dept.name}
               </SelectItem>
@@ -367,7 +369,7 @@ export function OrganizationalChartOptimized({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            {positions.map((pos) => (
+            {safeMap(ensureArray(positions), (pos) => (
               <SelectItem key={pos.id} value={pos.id.toString()}>
                 {pos.title}
               </SelectItem>
@@ -388,7 +390,7 @@ export function OrganizationalChartOptimized({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas</SelectItem>
-            {locations.map((loc) => (
+            {safeMap(ensureArray(locations), (loc) => (
               <SelectItem key={loc} value={loc}>
                 {loc}
               </SelectItem>
@@ -517,7 +519,7 @@ export function OrganizationalChartOptimized({
                             </div>
                           }
                         >
-                          {hierarchyTree.map((root) => renderTree(root))}
+                          {safeMap(ensureArray(hierarchyTree), (root) => renderTree(root))}
                         </Tree>
                       )}
                     </div>

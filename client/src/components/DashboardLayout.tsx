@@ -40,7 +40,8 @@ import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isE
 // Componente de seção com submenu
 function MenuSection({ item, location, setLocation, badgeCounts }: { item: any; location: string; setLocation: (path: string) => void; badgeCounts?: Record<string, number> }) {
   const [isOpen, setIsOpen] = useState(true);
-  const hasActiveChild = item.children?.some((child: any) => location === child.path);
+  const safeChildren = ensureArray(item.children);
+  const hasActiveChild = safeChildren.some((child: any) => location === child.path);
   
   return (
     <div className="space-y-1">
@@ -64,7 +65,7 @@ function MenuSection({ item, location, setLocation, badgeCounts }: { item: any; 
       <div className={`ml-4 space-y-0.5 overflow-hidden transition-all duration-300 ease-in-out ${
         isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
       }`}>
-        {item.children.map((child: any) => {
+        {safeMap(safeChildren, (child: any) => {
           const isActive = location === child.path;
           return (
             <SidebarMenuItem key={child.path}>
@@ -500,9 +501,9 @@ function DashboardLayoutContent({
   };
   
   // Filtrar itens de menu baseado no role do usuário
-  const filteredMenuItems = user ? filterMenuItems(menuItems, user.role as any) : [];
+  const filteredMenuItems = user ? ensureArray(filterMenuItems(menuItems, user.role as any)) : [];
   
-  const activeMenuItem = filteredMenuItems.find(item => item.path === location);
+  const activeMenuItem = safeFind(filteredMenuItems, item => item.path === location);
   const isMobile = useIsMobile();
   const [searchOpen, setSearchOpen] = useState(false);
   
@@ -594,7 +595,7 @@ function DashboardLayoutContent({
 
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
-              {filteredMenuItems.map((item, idx) => {
+              {safeMap(filteredMenuItems, (item, idx) => {
                 if (item.isSection && item.children) {
                   return <MenuSection key={idx} item={item} location={location} setLocation={setLocation} badgeCounts={badgeCounts} />;
                 }
