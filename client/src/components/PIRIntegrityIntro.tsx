@@ -108,17 +108,18 @@ export function PIRIntegrityIntro() {
           <CardDescription>Entenda melhor o teste antes de começar (opcional)</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="aspect-video bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center">
-            <div className="text-center space-y-3 p-6">
-              <Shield className="h-16 w-16 mx-auto text-primary opacity-50" />
-              <p className="text-sm text-muted-foreground">
-                Vídeo explicativo sobre o teste PIR Integridade
-              </p>
-              <p className="text-xs text-muted-foreground">
-                (Em breve: vídeo com introdução detalhada)
-              </p>
-            </div>
+          <div className="aspect-video rounded-lg overflow-hidden bg-black">
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1"
+              title="Vídeo Explicativo - Teste PIR Integridade"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
+          <p className="text-xs text-muted-foreground mt-3 text-center">
+            💡 <strong>Dica:</strong> Assista ao vídeo para entender melhor como funciona o teste e como responder com sinceridade.
+          </p>
         </CardContent>
       </Card>
 

@@ -980,3 +980,30 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - ✅ Progresso por dimensão visível
 - ✅ Interface completa e funcional
 - ✅ 84 questões ativas no banco de dados
+
+
+---
+
+## 🚀 NOVAS FUNCIONALIDADES - PIR INTEGRIDADE (17/12/2025)
+
+### 1. Vídeo Explicativo Real
+- [x] Substituir placeholder de vídeo no componente PIRIntegrityIntro
+- [x] Adicionar vídeo do YouTube ou Vimeo explicando o teste PIR Integridade
+- [x] Implementar player de vídeo responsivo
+- [x] Adicionar controles de reprodução
+
+### 2. Salvamento Automático de Respostas
+- [x] Implementar sistema de auto-save a cada resposta
+- [x] Criar procedure tRPC para salvar respostas individuais
+- [x] Adicionar indicador visual de "salvando..." e "salvo"
+- [x] Implementar recuperação automática em caso de fechamento do navegador
+- [x] Testar fluxo completo de salvamento automático
+
+### 3. Página de Resultados Detalhados
+- [x] Criar página de resultados com gráficos por dimensão
+- [x] Implementar gráfico radar com as 6 dimensões (HON, CON, RES, RSP, JUS, COR)
+- [x] Adicionar identificação do nível de desenvolvimento moral (Pré-convencional, Convencional, Pós-convencional)
+- [x] Criar visualização de pontuação por dimensão
+- [x] Adicionar interpretação dos resultados
+- [ ] Implementar exportação de resultados em PDF (estrutura pronta, função a implementar)
+- [x] Testar página de resultados completa

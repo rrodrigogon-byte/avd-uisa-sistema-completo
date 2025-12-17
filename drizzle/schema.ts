@@ -4313,6 +4313,10 @@ export const pirInvitations = mysqlTable("pirInvitations", {
   purpose: varchar("purpose", { length: 255 }), // Ex: "Processo Seletivo", "Avaliação Anual"
   notes: text("notes"), // Observações internas
   
+  // Auto-save de respostas
+  savedAnswers: text("savedAnswers"), // JSON com respostas salvas automaticamente
+  lastActivityAt: datetime("lastActivityAt"), // Última atividade do usuário
+  
   // Auditoria
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

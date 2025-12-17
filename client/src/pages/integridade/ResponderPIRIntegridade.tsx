@@ -54,6 +54,8 @@ export default function ResponderPIRIntegridade() {
   const [startTime] = useState(Date.now());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   // Queries
   const { data: invitation, isLoading: loadingInvitation, error: invitationError } =
@@ -65,12 +67,29 @@ export default function ResponderPIRIntegridade() {
       { enabled: !!invitation && invitation.status !== "expired" }
     );
 
+  // Recuperar respostas salvas
+  const { data: savedAnswersData } = trpc.integrityPIR.getSavedAnswers.useQuery(
+    { token },
+    { enabled: !!token && !!invitation && invitation.status !== "completed" }
+  );
+
   // Mutations
   const startInvitation = trpc.integrityPIR.startInvitation.useMutation();
+  const saveAnswer = trpc.integrityPIR.saveAnswer.useMutation({
+    onSuccess: () => {
+      setIsSaving(false);
+      setLastSaved(new Date());
+    },
+    onError: (error) => {
+      setIsSaving(false);
+      console.error("Erro ao salvar resposta:", error);
+    },
+  });
   const submitPIR = trpc.integrityPIR.submitPIRPublic.useMutation({
     onSuccess: () => {
       toast.success("Teste concluído com sucesso!");
-      navigate("/integridade/obrigado");
+      // Redirecionar para página de resultados
+      navigate(`/integridade/pir/resultados/${token}`);
     },
     onError: (error) => {
       toast.error(`Erro ao enviar teste: ${error.message}`);
@@ -84,6 +103,14 @@ export default function ResponderPIRIntegridade() {
       startInvitation.mutate({ token });
     }
   }, [invitation?.id]);
+
+  // Recuperar respostas salvas ao carregar
+  useEffect(() => {
+    if (savedAnswersData?.answers && Object.keys(savedAnswersData.answers).length > 0) {
+      setAnswers(savedAnswersData.answers);
+      toast.success(`${Object.keys(savedAnswersData.answers).length} respostas recuperadas`);
+    }
+  }, [savedAnswersData]);
 
   const questions = questionsData?.questions || [];
   const currentQuestion = questions[currentQuestionIndex];
@@ -216,7 +243,16 @@ export default function ResponderPIRIntegridade() {
 
   const handleAnswerChange = (value: string) => {
     if (!currentQuestion) return;
-    setAnswers((prev) => ({ ...prev, [currentQuestion.id]: parseInt(value) }));
+    const answer = parseInt(value);
+    setAnswers((prev) => ({ ...prev, [currentQuestion.id]: answer }));
+    
+    // Auto-save
+    setIsSaving(true);
+    saveAnswer.mutate({
+      token,
+      questionId: currentQuestion.id,
+      answer,
+    });
   };
 
   const handleNext = () => {
@@ -373,9 +409,23 @@ export default function ResponderPIRIntegridade() {
                       <span>
                         Questão {currentQuestionIndex + 1} de {questions.length}
                       </span>
-                      <span>
-                        {answeredCount} de {questions.length} respondidas ({Math.round((answeredCount / questions.length) * 100)}%)
-                      </span>
+                      <div className="flex items-center gap-3">
+                        {/* Indicador de salvamento */}
+                        {isSaving ? (
+                          <span className="flex items-center gap-1 text-xs text-blue-600">
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                            Salvando...
+                          </span>
+                        ) : lastSaved ? (
+                          <span className="flex items-center gap-1 text-xs text-green-600">
+                            <CheckCircle className="h-3 w-3" />
+                            Salvo
+                          </span>
+                        ) : null}
+                        <span>
+                          {answeredCount} de {questions.length} respondidas ({Math.round((answeredCount / questions.length) * 100)}%)
+                        </span>
+                      </div>
                     </div>
                     <Progress value={(answeredCount / questions.length) * 100} className="h-2" />
                   </div>

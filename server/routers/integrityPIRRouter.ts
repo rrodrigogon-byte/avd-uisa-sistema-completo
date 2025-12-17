@@ -248,6 +248,13 @@ export const integrityPIRRouter = router({
         totalTime: null,
       });
 
+      // Salvar scores no convite para exibição na página de resultados
+      const scoresData = JSON.stringify({
+        dimensionScores: input.dimensionScores,
+        overallScore: input.overallScore,
+        answers: input.answers,
+      });
+
       // Atualizar convite
       await db
         .update(pirInvitations)
@@ -255,6 +262,7 @@ export const integrityPIRRouter = router({
           status: "completed",
           completedAt: new Date(),
           pirAssessmentId: testResult.insertId,
+          savedAnswers: scoresData, // Salvar scores para exibição
         })
         .where(eq(pirInvitations.id, invitation.id));
 
@@ -262,6 +270,96 @@ export const integrityPIRRouter = router({
         success: true,
         resultId: testResult.insertId,
       };
+    }),
+
+  /**
+   * Salvar resposta individual (auto-save)
+   */
+  saveAnswer: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+        questionId: z.number(),
+        answer: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar convite
+      const [invitation] = await db
+        .select()
+        .from(pirInvitations)
+        .where(eq(pirInvitations.token, input.token))
+        .limit(1);
+
+      if (!invitation) {
+        throw new Error("Convite não encontrado");
+      }
+
+      if (invitation.status === "completed") {
+        throw new Error("Este convite já foi utilizado");
+      }
+
+      if (new Date() > new Date(invitation.expiresAt)) {
+        throw new Error("Este convite expirou");
+      }
+
+      // Recuperar respostas salvas ou criar novo objeto
+      let savedAnswers: Record<number, number> = {};
+      if (invitation.savedAnswers) {
+        try {
+          savedAnswers = JSON.parse(invitation.savedAnswers as string);
+        } catch (e) {
+          console.error("Erro ao parsear savedAnswers:", e);
+        }
+      }
+
+      // Atualizar resposta
+      savedAnswers[input.questionId] = input.answer;
+
+      // Salvar no banco
+      await db
+        .update(pirInvitations)
+        .set({
+          savedAnswers: JSON.stringify(savedAnswers),
+          lastActivityAt: new Date(),
+        })
+        .where(eq(pirInvitations.id, invitation.id));
+
+      return {
+        success: true,
+        totalAnswered: Object.keys(savedAnswers).length,
+      };
+    }),
+
+  /**
+   * Recuperar respostas salvas
+   */
+  getSavedAnswers: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { answers: {} };
+
+      const [invitation] = await db
+        .select()
+        .from(pirInvitations)
+        .where(eq(pirInvitations.token, input.token))
+        .limit(1);
+
+      if (!invitation || !invitation.savedAnswers) {
+        return { answers: {} };
+      }
+
+      try {
+        const answers = JSON.parse(invitation.savedAnswers as string);
+        return { answers };
+      } catch (e) {
+        console.error("Erro ao parsear savedAnswers:", e);
+        return { answers: {} };
+      }
     }),
 
   /**
