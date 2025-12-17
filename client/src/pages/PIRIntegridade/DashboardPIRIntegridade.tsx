@@ -1,5 +1,6 @@
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { safeMap, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -100,7 +101,7 @@ export default function DashboardPIRIntegridade() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {dimensionsData?.dimensions.map((dim) => (
+              {safeMap(dimensionsData?.dimensions, (dim) => (
                 <div key={dim.id} className="p-4 border rounded-lg text-center">
                   <div className="font-semibold text-blue-600">{dim.code}</div>
                   <div className="text-sm text-gray-600">{dim.name}</div>
@@ -128,14 +129,14 @@ export default function DashboardPIRIntegridade() {
           <CardContent>
             {loadingAssessments ? (
               <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>
-            ) : assessmentsData?.assessments.length === 0 ? (
+            ) : isEmpty(assessmentsData?.assessments) ? (
               <div className="text-center py-8 text-gray-500">
                 <FileText className="h-12 w-12 mx-auto mb-2 opacity-50" />
                 <p>Nenhuma avaliação encontrada</p>
               </div>
             ) : (
               <div className="space-y-3">
-                {assessmentsData?.assessments.map((a) => (
+                {safeMap(assessmentsData?.assessments, (a) => (
                   <div key={a.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
                     onClick={() => a.status === "completed" ? navigate(`/pir-integridade/resultado/${a.id}`) : navigate(`/pir-integridade/teste/${a.id}`)}>
                     <div className="flex items-center gap-4">

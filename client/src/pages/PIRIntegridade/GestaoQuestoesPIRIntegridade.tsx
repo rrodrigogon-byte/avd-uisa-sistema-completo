@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { ArrowLeft, Edit, Loader2, Plus, Shield, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { safeMap, ensureArray } from "@/lib/arrayHelpers";
 
 export default function GestaoQuestoesPIRIntegridade() {
   const [, navigate] = useLocation();
@@ -125,7 +126,7 @@ export default function GestaoQuestoesPIRIntegridade() {
               <SelectTrigger className="w-[200px]"><SelectValue placeholder="Filtrar dimensão" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas as Dimensões</SelectItem>
-                {dimensionsData?.dimensions.map(d => (
+                {safeMap(dimensionsData?.dimensions, d => (
                   <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
                 ))}
               </SelectContent>
@@ -138,7 +139,7 @@ export default function GestaoQuestoesPIRIntegridade() {
           <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>
         ) : (
           <div className="space-y-4">
-            {questionsData?.questions.map(q => {
+            {safeMap(questionsData?.questions, q => {
               const dim = dimensionsData?.dimensions.find(d => d.id === q.dimensionId);
               return (
                 <Card key={q.id}>
@@ -180,7 +181,7 @@ export default function GestaoQuestoesPIRIntegridade() {
                   <Select value={form.dimensionId.toString()} onValueChange={v => setForm(p => ({ ...p, dimensionId: parseInt(v) }))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {dimensionsData?.dimensions.map(d => (
+                      {safeMap(dimensionsData?.dimensions, d => (
                         <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
                       ))}
                     </SelectContent>
@@ -216,7 +217,7 @@ export default function GestaoQuestoesPIRIntegridade() {
               </div>
               <div className="space-y-3">
                 <Label>Opções de Resposta</Label>
-                {form.options.map((opt, idx) => (
+                {safeMap(form.options, (opt, idx) => (
                   <div key={idx} className="grid grid-cols-12 gap-2 items-center">
                     <span className="col-span-1 font-bold">{opt.value.toUpperCase()})</span>
                     <Input className="col-span-5" placeholder="Texto da opção" value={opt.label} onChange={e => updateOption(idx, "label", e.target.value)} />

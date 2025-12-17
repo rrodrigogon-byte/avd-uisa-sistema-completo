@@ -13,6 +13,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import VideoRecorder from "@/components/VideoRecorder";
 import PIRTestTimer from "@/components/PIRTestTimer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { safeMap, ensureArray } from "@/lib/arrayHelpers";
 
 export default function TestePIRIntegridade() {
   const params = useParams<{ id: string }>();
@@ -289,7 +290,7 @@ export default function TestePIRIntegridade() {
             {currentQuestion?.questionType === "scenario" || currentQuestion?.questionType === "multiple_choice" ? (
               <RadioGroup value={responses[currentQuestion?.id]?.option || ""} onValueChange={handleOptionChange}>
                 <div className="space-y-3">
-                  {options.map((opt: any, idx: number) => (
+                  {safeMap(options, (opt: any, idx: number) => (
                     <div key={idx} className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                       <RadioGroupItem value={opt.value} id={`opt-${idx}`} />
                       <Label htmlFor={`opt-${idx}`} className="flex-1 cursor-pointer">{opt.label}</Label>

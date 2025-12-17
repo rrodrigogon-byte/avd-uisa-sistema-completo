@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { AlertTriangle, ArrowLeft, CheckCircle, Download, FileText, Loader2, Shield, TrendingUp } from "lucide-react";
+import { safeMap, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 
 export default function ResultadoPIRIntegridade() {
   const params = useParams<{ id: string }>();
@@ -153,7 +154,7 @@ export default function ResultadoPIRIntegridade() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {dimensionScores?.map((score) => {
+              {safeMap(dimensionScores, (score) => {
                 const dimension = dimensionsData?.dimensions.find(d => d.id === score.dimensionId);
                 return (
                   <div key={score.id} className="space-y-2">
@@ -175,7 +176,7 @@ export default function ResultadoPIRIntegridade() {
         </Card>
 
         {/* Indicadores de Risco */}
-        {riskIndicators && riskIndicators.length > 0 && (
+        {!isEmpty(riskIndicators) && (
           <Card className="border-orange-200">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-orange-600">
@@ -185,7 +186,7 @@ export default function ResultadoPIRIntegridade() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {riskIndicators.map((indicator) => (
+                {safeMap(riskIndicators, (indicator) => (
                   <div key={indicator.id} className="p-4 bg-orange-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Badge variant={indicator.severity === "critical" ? "destructive" : "outline"}>
