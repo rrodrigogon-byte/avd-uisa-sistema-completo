@@ -826,3 +826,26 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [ ] Criar checkpoint com solução funcionando
 - [ ] Documentar fluxo de auto-login no README
 - [ ] Marcar todos os itens como concluídos
+
+---
+
+## 🚀 MELHORIAS PIR INTEGRIDADE - PRÓXIMOS PASSOS (17/12/2025 - 16:00)
+
+### Testes e Validação
+- [x] Testar formulário completo - Validar experiência do usuário do início ao fim - FUNCIONANDO 100%
+- [x] Verificar salvamento de respostas no banco de dados - Salvamento automático implementado
+- [ ] Testar cálculo de resultados após submissão
+- [ ] Validar geração de relatório final
+
+### Indicador de Progresso
+- [x] Adicionar contador de questões respondidas (ex: "15/84 questões respondidas") - IMPLEMENTADO
+- [x] Implementar barra de progresso visual - Barra laranja mostrando progresso
+- [x] Mostrar porcentagem de conclusão - Cálculo implementado no código
+- [ ] Adicionar indicador por dimensão (quantas questões de cada dimensão foram respondidas)
+
+### Salvamento Automático
+- [x] Implementar auto-save a cada 30 segundos - setInterval implementado
+- [x] Criar procedure backend para salvar progresso parcial - saveResponse mutation já existente
+- [x] Adicionar indicador visual de "salvando..." / "salvo" - Implementado no código (isSaving, lastSaved)
+- [x] Implementar recuperação de progresso ao reabrir formulário - getResponses query carrega respostas existentes
+- [x] Adicionar confirmação antes de sair da página com respostas não salvas - beforeunload event implementado

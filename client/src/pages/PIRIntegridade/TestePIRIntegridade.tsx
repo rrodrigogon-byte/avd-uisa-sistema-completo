@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, CheckCircle, Loader2, Shield, Video } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2, Shield, Video, Save, Check } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import VideoRecorder from "@/components/VideoRecorder";
 import PIRTestTimer from "@/components/PIRTestTimer";
@@ -29,6 +29,9 @@ export default function TestePIRIntegridade() {
   const [videoUploaded, setVideoUploaded] = useState(false);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [totalElapsedTime, setTotalElapsedTime] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: questionsData, isLoading: loadingQuestions } = trpc.pirIntegrity.listQuestions.useQuery({ active: true, limit: 100 });
   const { data: existingResponses } = trpc.pirIntegrity.getResponses.useQuery({ assessmentId });
@@ -90,6 +93,10 @@ export default function TestePIRIntegridade() {
   const questions = questionsData?.questions || [];
   const currentQuestion = questions[currentIndex];
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
+  
+  // Calcular quantas questões foram respondidas
+  const answeredCount = Object.keys(responses).filter(key => responses[parseInt(key)]?.option).length;
+  const progressPercentage = questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0;
 
   useEffect(() => {
     if (assessmentId) {
@@ -122,16 +129,55 @@ export default function TestePIRIntegridade() {
     const response = responses[currentQuestion.id];
     const timeSpent = Math.round((Date.now() - questionStartTime.current) / 1000);
     
-    await saveResponse.mutateAsync({
-      assessmentId,
-      questionId: currentQuestion.id,
-      selectedOption: response?.option,
-      justification: response?.justification,
-      timeSpent,
-    });
+    setIsSaving(true);
+    try {
+      await saveResponse.mutateAsync({
+        assessmentId,
+        questionId: currentQuestion.id,
+        selectedOption: response?.option,
+        justification: response?.justification,
+        timeSpent,
+      });
+      setLastSaved(new Date());
+    } finally {
+      setIsSaving(false);
+    }
     
     questionStartTime.current = Date.now();
   };
+  
+  // Auto-save a cada 30 segundos
+  useEffect(() => {
+    if (autoSaveTimerRef.current) {
+      clearInterval(autoSaveTimerRef.current);
+    }
+    
+    autoSaveTimerRef.current = setInterval(() => {
+      if (currentQuestion && responses[currentQuestion.id]?.option) {
+        saveCurrentResponse();
+      }
+    }, 30000); // 30 segundos
+    
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearInterval(autoSaveTimerRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestion?.id, responses[currentQuestion?.id || 0]?.option]);
+  
+  // Aviso antes de sair da página com respostas não salvas
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (answeredCount > 0 && currentIndex < questions.length - 1) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [answeredCount, currentIndex, questions.length]);
 
   const handleNext = async () => {
     await saveCurrentResponse();
@@ -229,14 +275,42 @@ export default function TestePIRIntegridade() {
           />
         </div>
 
-        {/* Barra de Progresso */}
-        <div className="space-y-2">
-          <Progress value={progress} className="h-2" />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Progresso: {Math.round(progress)}%</span>
-            <span>Tempo nesta questão: {Math.floor(questionElapsedTime / 60)}:{(questionElapsedTime % 60).toString().padStart(2, '0')}</span>
-          </div>
-        </div>
+        {/* Barra de Progresso Melhorada */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium">Progresso da Avaliação</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {answeredCount} de {questions.length} questões respondidas
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isSaving && (
+                    <div className="flex items-center gap-1 text-xs text-blue-600">
+                      <Save className="h-3 w-3 animate-pulse" />
+                      Salvando...
+                    </div>
+                  )}
+                  {!isSaving && lastSaved && (
+                    <div className="flex items-center gap-1 text-xs text-green-600">
+                      <Check className="h-3 w-3" />
+                      Salvo {new Date(lastSaved).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <Progress value={progressPercentage} className="h-3" />
+              
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span className="font-medium">{progressPercentage}% concluído</span>
+                <span>Questão {currentIndex + 1} de {questions.length}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Timer Detalhado */}
         <PIRTestTimer
