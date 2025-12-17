@@ -1,4 +1,5 @@
-import { useState, useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Tree, TreeNode } from "react-organizational-chart";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Card, CardContent } from "@/components/ui/card";
@@ -52,13 +53,13 @@ interface HierarchyNode extends Employee {
 }
 
 interface OrganizationalChartProps {
-  employees: Employee[];
+  employees?: Employee[];
   departments?: Array<{ id: number; name: string }>;
   positions?: Array<{ id: number; title: string }>;
 }
 
 export function OrganizationalChart({
-  employees,
+  employees = [],
   departments = [],
   positions = [],
 }: OrganizationalChartProps) {
@@ -69,18 +70,21 @@ export function OrganizationalChart({
 
   // Construir árvore hierárquica
   const hierarchyTree = useMemo(() => {
+    // Garantir que employees é um array válido
+    const safeEmployees = ensureArray(employees);
+    
     // Filtrar funcionários
-    let filteredEmployees = employees;
+    let filteredEmployees = safeEmployees;
 
     if (selectedDepartment !== "all") {
-      filteredEmployees = employees.filter(
-        (emp) => emp.departmentId?.toString() === selectedDepartment
+      filteredEmployees = safeFilter(safeEmployees, (emp) => 
+        emp.departmentId?.toString() === selectedDepartment
       );
     }
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filteredEmployees = filteredEmployees.filter(
+      filteredEmployees = safeFilter(filteredEmployees,
         (emp) =>
           emp.name.toLowerCase().includes(term) ||
           emp.email?.toLowerCase().includes(term) ||

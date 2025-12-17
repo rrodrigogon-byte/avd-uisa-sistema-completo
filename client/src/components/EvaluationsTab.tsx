@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Award, TrendingUp, Eye, FileText, Calendar, User, Target, Loader2, Download } from "lucide-react";
 import { trpc } from "@/lib/trpc";
-import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty, safeSort } from "@/lib/arrayHelpers";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 import { toast } from "sonner";
 
@@ -59,20 +59,20 @@ export default function EvaluationsTab({ employeeId }: EvaluationsTabProps) {
   }
 
   // Dados para gráfico de evolução
-  const evolutionData = evaluations
-    .filter((e: any) => e.finalScore)
-    .sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-    .map((e: any) => ({
-      date: new Date(e.createdAt).toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }),
-      autoavaliacao: e.selfScore || 0,
-      gestor: e.managerScore || 0,
-      final: e.finalScore || 0,
-    }));
+  const safeEvaluations = ensureArray(evaluations);
+  const filteredEvals = safeFilter(safeEvaluations, (e: any) => e.finalScore);
+  const sortedEvals = safeSort(filteredEvals, (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  const evolutionData = safeMap(sortedEvals, (e: any) => ({
+    date: new Date(e.createdAt).toLocaleDateString("pt-BR", { month: "short", year: "2-digit" }),
+    autoavaliacao: e.selfScore || 0,
+    gestor: e.managerScore || 0,
+    final: e.finalScore || 0,
+  }));
 
   // Calcular estatísticas
-  const avgSelfScore = evaluations.reduce((acc: number, e: any) => acc + (e.selfScore || 0), 0) / evaluations.length;
-  const avgManagerScore = evaluations.reduce((acc: number, e: any) => acc + (e.managerScore || 0), 0) / evaluations.length;
-  const avgFinalScore = evaluations.reduce((acc: number, e: any) => acc + (e.finalScore || 0), 0) / evaluations.length;
+  const avgSelfScore = safeLength(safeEvaluations) > 0 ? safeReduce(safeEvaluations, (acc: number, e: any) => acc + (e.selfScore || 0), 0) / safeLength(safeEvaluations) : 0;
+  const avgManagerScore = safeLength(safeEvaluations) > 0 ? safeReduce(safeEvaluations, (acc: number, e: any) => acc + (e.managerScore || 0), 0) / safeLength(safeEvaluations) : 0;
+  const avgFinalScore = safeLength(safeEvaluations) > 0 ? safeReduce(safeEvaluations, (acc: number, e: any) => acc + (e.finalScore || 0), 0) / safeLength(safeEvaluations) : 0;
 
   const handleViewDetails = (evaluation: any) => {
     setSelectedEvaluation(evaluation);

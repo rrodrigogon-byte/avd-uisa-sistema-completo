@@ -64,13 +64,14 @@ export default function TestesResultados({ employeeId }: TestesResultadosProps) 
 
   // Filtrar resultados
   const filteredResults = useMemo(() => {
-    if (!testResults) return [];
+    const safeResults = ensureArray(testResults);
+    if (isEmpty(safeResults)) return [];
 
-    let filtered = [...testResults];
+    let filtered = [...safeResults];
 
     // Filtro por tipo de teste
     if (selectedTestType !== "all") {
-      filtered = filtered.filter((result: any) => result.testType === selectedTestType);
+      filtered = safeFilter(filtered, (result: any) => result.testType === selectedTestType);
     }
 
     // Filtro por período
@@ -96,7 +97,7 @@ export default function TestesResultados({ employeeId }: TestesResultadosProps) 
           break;
       }
 
-      filtered = filtered.filter((result: any) => {
+      filtered = safeFilter(filtered, (result: any) => {
         if (!result.completedAt) return false;
         return new Date(result.completedAt) >= periodDate;
       });

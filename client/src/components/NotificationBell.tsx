@@ -121,10 +121,9 @@ export default function NotificationBell() {
 
   // Atualizar contador de não lidas
   useEffect(() => {
-    if (notifications) {
-      const count = notifications.filter((n) => !n.read).length;
-      setUnreadCount(count);
-    }
+    const safeNotifications = ensureArray(notifications);
+    const count = safeLength(safeFilter(safeNotifications, (n) => !n.read));
+    setUnreadCount(count);
   }, [notifications]);
 
   const handleNotificationClick = (notification: Notification) => {

@@ -30,8 +30,9 @@ export function EvaluationPreview({
   targetAudience,
   estimatedTime,
 }: EvaluationPreviewProps) {
-  const totalWeight = questions.reduce((sum, q) => sum + q.weight, 0);
-  const requiredQuestions = questions.filter(q => q.required).length;
+  const safeQuestions = ensureArray(questions);
+  const totalWeight = safeReduce(safeQuestions, (sum, q) => sum + q.weight, 0);
+  const requiredQuestions = safeLength(safeFilter(safeQuestions, q => q.required));
 
   return (
     <div className="space-y-6">

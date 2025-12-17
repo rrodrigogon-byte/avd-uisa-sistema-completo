@@ -94,8 +94,9 @@ export default function EvaluationForm({ evaluationId, type, onComplete }: Evalu
 
   const handleSubmit = async () => {
     // Validate all competencies are rated
-    const missingRatings = competencies.filter((c) => !ratings[c.id]);
-    if (missingRatings.length > 0) {
+    const safeCompetencies = ensureArray(competencies);
+    const missingRatings = safeFilter(safeCompetencies, (c) => !ratings[c.id]);
+    if (safeLength(missingRatings) > 0) {
       toast.error("Por favor, avalie todas as competências antes de enviar");
       return;
     }

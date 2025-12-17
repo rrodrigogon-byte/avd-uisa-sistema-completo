@@ -183,7 +183,7 @@ export default function PIRAlertSystem({
 
   // Remover alerta
   const dismissAlert = (alertId: string) => {
-    setAlerts(prev => prev.filter(a => a.id !== alertId));
+    setAlerts(prev => safeFilter(ensureArray(prev), a => a.id !== alertId));
   };
 
   // Limpar todos os alertas
@@ -277,19 +277,20 @@ export function usePIRAlerts() {
   }, []);
 
   const getAlertsSummary = useCallback(() => {
+    const safeAlerts = ensureArray(alerts);
     return {
-      total: alerts.length,
-      critical: alerts.filter(a => a.severity === 'critical').length,
-      high: alerts.filter(a => a.severity === 'high').length,
-      medium: alerts.filter(a => a.severity === 'medium').length,
-      low: alerts.filter(a => a.severity === 'low').length,
+      total: safeLength(safeAlerts),
+      critical: safeLength(safeFilter(safeAlerts, a => a.severity === 'critical')),
+      high: safeLength(safeFilter(safeAlerts, a => a.severity === 'high')),
+      medium: safeLength(safeFilter(safeAlerts, a => a.severity === 'medium')),
+      low: safeLength(safeFilter(safeAlerts, a => a.severity === 'low')),
       types: {
-        speed: alerts.filter(a => a.type === 'speed').length,
-        pattern: alerts.filter(a => a.type === 'pattern').length,
-        pause: alerts.filter(a => a.type === 'pause').length,
-        face: alerts.filter(a => a.type === 'face').length,
-        focus: alerts.filter(a => a.type === 'focus').length,
-        time: alerts.filter(a => a.type === 'time').length,
+        speed: safeLength(safeFilter(safeAlerts, a => a.type === 'speed')),
+        pattern: safeLength(safeFilter(safeAlerts, a => a.type === 'pattern')),
+        pause: safeLength(safeFilter(safeAlerts, a => a.type === 'pause')),
+        face: safeLength(safeFilter(safeAlerts, a => a.type === 'face')),
+        focus: safeLength(safeFilter(safeAlerts, a => a.type === 'focus')),
+        time: safeLength(safeFilter(safeAlerts, a => a.type === 'time')),
       },
     };
   }, [alerts]);

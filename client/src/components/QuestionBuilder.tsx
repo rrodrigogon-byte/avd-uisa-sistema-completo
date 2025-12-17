@@ -61,7 +61,8 @@ export function QuestionBuilder({ questions, onChange, readOnly = false }: Quest
   };
 
   const removeQuestion = (id: string) => {
-    onChange(questions.filter(q => q.id !== id));
+    const safeQuestions = ensureArray(questions);
+    onChange(safeFilter(safeQuestions, q => q.id !== id));
     toast.success("Questão removida");
   };
 
@@ -126,8 +127,9 @@ export function QuestionBuilder({ questions, onChange, readOnly = false }: Quest
     const question = questions.find(q => q.id === questionId);
     if (!question || !question.options) return;
 
+    const safeOptions = ensureArray(question.options);
     updateQuestion(questionId, {
-      options: question.options.filter(opt => opt.id !== optionId),
+      options: safeFilter(safeOptions, opt => opt.id !== optionId),
     });
   };
 

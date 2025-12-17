@@ -10,18 +10,38 @@ interface Competency {
 }
 
 interface CompetencyRadarChartProps {
-  competencies: Competency[];
+  competencies?: Competency[];
   title?: string;
   description?: string;
 }
 
 export default function CompetencyRadarChart({
-  competencies,
+  competencies = [],
   title = "Mapa de Competências",
   description = "Comparação entre nível atual e nível esperado",
 }: CompetencyRadarChartProps) {
+  // Garantir que competencies é um array válido
+  const safeCompetencies = ensureArray(competencies);
+
+  // Early return se não houver competências
+  if (isEmpty(safeCompetencies)) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-muted-foreground">
+            <p>Nenhuma competência disponível para visualização</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Preparar dados para o gráfico
-  const chartData = competencies.map((comp) => ({
+  const chartData = safeMap(safeCompetencies, (comp) => ({
     competency: comp.name.length > 20 ? comp.name.substring(0, 20) + "..." : comp.name,
     fullName: comp.name,
     "Nível Atual": comp.currentLevel,
@@ -30,10 +50,10 @@ export default function CompetencyRadarChart({
   }));
 
   // Calcular estatísticas
-  const avgCurrent = competencies.reduce((sum, c) => sum + c.currentLevel, 0) / competencies.length;
-  const avgRequired = competencies.reduce((sum, c) => sum + c.requiredLevel, 0) / competencies.length;
-  const totalGap = competencies.reduce((sum, c) => sum + Math.max(0, c.requiredLevel - c.currentLevel), 0);
-  const competenciesWithGap = competencies.filter((c) => c.currentLevel < c.requiredLevel).length;
+  const avgCurrent = safeReduce(safeCompetencies, (sum, c) => sum + c.currentLevel, 0) / safeLength(safeCompetencies);
+  const avgRequired = safeReduce(safeCompetencies, (sum, c) => sum + c.requiredLevel, 0) / safeLength(safeCompetencies);
+  const totalGap = safeReduce(safeCompetencies, (sum, c) => sum + Math.max(0, c.requiredLevel - c.currentLevel), 0);
+  const competenciesWithGap = safeLength(safeFilter(safeCompetencies, (c) => c.currentLevel < c.requiredLevel));
 
   return (
     <Card>
@@ -130,11 +150,14 @@ export default function CompetencyRadarChart({
             <div className="space-y-2">
               <h4 className="text-sm font-semibold">Competências Prioritárias para Desenvolvimento</h4>
               <div className="space-y-1">
-                {competencies
-                  .filter((c) => c.currentLevel < c.requiredLevel)
-                  .sort((a, b) => (b.requiredLevel - b.currentLevel) - (a.requiredLevel - a.currentLevel))
-                  .slice(0, 5)
-                  .map((comp, idx) => (
+                {safeSlice(
+                  safeSort(
+                    safeFilter(safeCompetencies, (c) => c.currentLevel < c.requiredLevel),
+                    (a, b) => (b.requiredLevel - b.currentLevel) - (a.requiredLevel - a.currentLevel)
+                  ),
+                  0,
+                  5
+                ).map((comp, idx) => (
                     <div
                       key={idx}
                       className="flex items-center justify-between p-2 bg-muted rounded text-sm"

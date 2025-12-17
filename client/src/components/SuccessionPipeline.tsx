@@ -163,23 +163,23 @@ export default function SuccessionPipeline({ plans }: SuccessionPipelineProps) {
               </div>
 
               {/* Estatísticas do Pipeline */}
-              {plan.successors.length > 0 && (
+              {safeLength(ensureArray(plan.successors)) > 0 && (
                 <div className="grid grid-cols-3 gap-3 pt-4 border-t">
                   <div className="text-center p-2 bg-green-50 dark:bg-green-950 rounded">
                     <p className="text-lg font-bold text-green-600">
-                      {plan.successors.filter((s) => s.readiness === "pronto").length}
+                      {safeLength(safeFilter(ensureArray(plan.successors), (s) => s.readiness === "pronto"))}
                     </p>
                     <p className="text-xs text-muted-foreground">Prontos</p>
                   </div>
                   <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-950 rounded">
                     <p className="text-lg font-bold text-yellow-600">
-                      {plan.successors.filter((s) => s.readiness === "1-2_anos").length}
+                      {safeLength(safeFilter(ensureArray(plan.successors), (s) => s.readiness === "1-2_anos"))}
                     </p>
                     <p className="text-xs text-muted-foreground">1-2 anos</p>
                   </div>
                   <div className="text-center p-2 bg-orange-50 dark:bg-orange-950 rounded">
                     <p className="text-lg font-bold text-orange-600">
-                      {plan.successors.filter((s) => s.readiness === "3-5_anos").length}
+                      {safeLength(safeFilter(ensureArray(plan.successors), (s) => s.readiness === "3-5_anos"))}
                     </p>
                     <p className="text-xs text-muted-foreground">3-5 anos</p>
                   </div>

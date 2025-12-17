@@ -48,7 +48,8 @@ export function InAppNotifications() {
     }
   });
 
-  const unreadCount = notifications.filter((n: InAppNotification) => !n.read).length;
+  const safeNotifications = ensureArray(notifications);
+  const unreadCount = safeLength(safeFilter(safeNotifications, (n: InAppNotification) => !n.read));
 
   const getIcon = (type: NotificationType) => {
     switch (type) {

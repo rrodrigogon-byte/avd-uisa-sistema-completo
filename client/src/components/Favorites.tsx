@@ -42,21 +42,24 @@ export function useFavorites() {
       addedAt: Date.now(),
     };
 
-    const updated = [...favorites.filter((f) => f.url !== url), newFavorite];
+    const safeFavorites = ensureArray(favorites);
+    const updated = [...safeFilter(safeFavorites, (f) => f.url !== url), newFavorite];
     setFavorites(updated);
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
     toast.success("Adicionado aos favoritos");
   };
 
   const removeFavorite = (url: string) => {
-    const updated = favorites.filter((f) => f.url !== url);
+    const safeFavorites = ensureArray(favorites);
+    const updated = safeFilter(safeFavorites, (f) => f.url !== url);
     setFavorites(updated);
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
     toast.success("Removido dos favoritos");
   };
 
   const isFavorite = (url: string) => {
-    return favorites.some((f) => f.url === url);
+    const safeFavorites = ensureArray(favorites);
+    return safeFavorites.some((f) => f.url === url);
   };
 
   return {

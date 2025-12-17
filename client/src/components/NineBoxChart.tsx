@@ -14,13 +14,15 @@ interface Employee {
 }
 
 interface NineBoxChartProps {
-  employees: Employee[];
+  employees?: Employee[];
   onEmployeeClick?: (employee: Employee) => void;
 }
 
-export default function NineBoxChart({ employees, onEmployeeClick }: NineBoxChartProps) {
+export default function NineBoxChart({ employees = [], onEmployeeClick }: NineBoxChartProps) {
+  const safeEmployees = ensureArray(employees);
+
   const getBoxEmployees = (perfMin: number, perfMax: number, potMin: number, potMax: number) => {
-    return employees.filter(
+    return safeFilter(safeEmployees,
       (emp) =>
         emp.performance >= perfMin &&
         emp.performance < perfMax &&

@@ -11,7 +11,8 @@ export function Breadcrumbs() {
   const [location] = useLocation();
 
   const getBreadcrumbs = (): BreadcrumbItem[] => {
-    const pathSegments = location.split("/").filter(Boolean);
+    const segments = location.split("/");
+    const pathSegments = safeFilter(ensureArray(segments), Boolean);
     
     const breadcrumbs: BreadcrumbItem[] = [
       { label: "Início", href: "/" },
