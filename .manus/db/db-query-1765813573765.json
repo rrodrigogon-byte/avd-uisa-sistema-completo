@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `avdVideoRecordings` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `processId` int NOT NULL,\n  `employeeId` int NOT NULL,\n  `stepNumber` int NOT NULL,\n  `fileKey` varchar(500) NOT NULL,\n  `fileUrl` varchar(1000) NOT NULL,\n  `mimeType` varchar(100) DEFAULT 'video/webm',\n  `fileSizeBytes` int,\n  `durationSeconds` int,\n  `status` enum('uploading','processing','completed','failed') DEFAULT 'uploading' NOT NULL,\n  `errorMessage` text,\n  `transcription` text,\n  `analysisResult` json,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `avdVideoRecordings_id` PRIMARY KEY(`id`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `avdVideoRecordings` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `processId` int NOT NULL,\n  `employeeId` int NOT NULL,\n  `stepNumber` int NOT NULL,\n  `fileKey` varchar(500) NOT NULL,\n  `fileUrl` varchar(1000) NOT NULL,\n  `mimeType` varchar(100) DEFAULT 'video/webm',\n  `fileSizeBytes` int,\n  `durationSeconds` int,\n  `status` enum('uploading','processing','completed','failed') DEFAULT 'uploading' NOT NULL,\n  `errorMessage` text,\n  `transcription` text,\n  `analysisResult` json,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `avdVideoRecordings_id` PRIMARY KEY(`id`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 342
-}

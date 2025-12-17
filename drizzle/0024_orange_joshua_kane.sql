@@ -1,2 +1,0 @@
-ALTER TABLE `psychometricTests` MODIFY COLUMN `testType` enum('disc','bigfive','mbti','ie','vark','leadership','careeranchors') NOT NULL;--> statement-breakpoint
-ALTER TABLE `testQuestions` MODIFY COLUMN `testType` enum('disc','bigfive','mbti','ie','vark','leadership','careeranchors') NOT NULL;

@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS katzTests (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  pacienteId INT NOT NULL,\n  dataAvaliacao DATETIME NOT NULL,\n  banho INT NOT NULL,\n  vestir INT NOT NULL,\n  higienePessoal INT NOT NULL,\n  transferencia INT NOT NULL,\n  continencia INT NOT NULL,\n  alimentacao INT NOT NULL,\n  pontuacaoTotal INT NOT NULL,\n  classificacao ENUM('independente', 'dependencia_parcial', 'dependencia_total') NOT NULL,\n  observacoes TEXT,\n  avaliadorId INT NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  FOREIGN KEY (pacienteId) REFERENCES geriatricPatients(id) ON DELETE CASCADE,\n  FOREIGN KEY (avaliadorId) REFERENCES users(id)\n)",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS katzTests (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  pacienteId INT NOT NULL,\n  dataAvaliacao DATETIME NOT NULL,\n  banho INT NOT NULL,\n  vestir INT NOT NULL,\n  higienePessoal INT NOT NULL,\n  transferencia INT NOT NULL,\n  continencia INT NOT NULL,\n  alimentacao INT NOT NULL,\n  pontuacaoTotal INT NOT NULL,\n  classificacao ENUM('independente', 'dependencia_parcial', 'dependencia_total') NOT NULL,\n  observacoes TEXT,\n  avaliadorId INT NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  FOREIGN KEY (pacienteId) REFERENCES geriatricPatients(id) ON DELETE CASCADE,\n  FOREIGN KEY (avaliadorId) REFERENCES users(id)\n)",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 306
-}

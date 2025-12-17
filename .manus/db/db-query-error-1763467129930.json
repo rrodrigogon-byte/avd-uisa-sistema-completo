@@ -1,8 +1,0 @@
-{
-  "query": "ALTER TABLE badges ADD COLUMN code varchar(50) UNIQUE AFTER id",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE badges ADD COLUMN code varchar(50) UNIQUE AFTER id",
-  "returncode": 1,
-  "logs": [
-    "ERROR 8200 (HY000) at line 1: unsupported add column 'code' constraint UNIQUE KEY when altering 'Vd5BJ8toX8cUC4zST6itFN.badges'"
-  ]
-}

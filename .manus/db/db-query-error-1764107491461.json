@@ -1,8 +1,0 @@
-{
-  "query": "ALTER TABLE jobDescriptions \nADD COLUMN costCenterApproverId INT NULL AFTER status,\nADD COLUMN salaryLeaderId INT NULL AFTER costCenterApproverId,\nADD COLUMN costCenterApprovedAt DATETIME NULL AFTER salaryLeaderId,\nADD COLUMN salaryLeaderApprovedAt DATETIME NULL AFTER costCenterApprovedAt;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE jobDescriptions \nADD COLUMN costCenterApproverId INT NULL AFTER status,\nADD COLUMN salaryLeaderId INT NULL AFTER costCenterApproverId,\nADD COLUMN costCenterApprovedAt DATETIME NULL AFTER salaryLeaderId,\nADD COLUMN salaryLeaderApprovedAt DATETIME NULL AFTER costCenterApprovedAt;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 1: Unknown column 'costcenterapproverid' in 'jobDescriptions'"
-  ]
-}
