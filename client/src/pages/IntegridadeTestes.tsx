@@ -134,7 +134,7 @@ export default function IntegridadeTestes() {
     return <Badge className={config.className}>{config.label}</Badge>;
   };
 
-  const filteredInvitations = (invitations || []).filter((inv) => {
+  const filteredInvitations = safeFilter(invitations, (inv) => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
     return (
@@ -193,7 +193,7 @@ export default function IntegridadeTestes() {
                       <SelectValue placeholder="Selecione um funcionário" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.map((emp) => (
+                      {safeMap(employees, (emp) => (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.name} - {emp.chapa}
                         </SelectItem>
@@ -340,9 +340,9 @@ export default function IntegridadeTestes() {
         <CardContent>
           {isLoading ? (
             <div className="text-center py-8 text-muted-foreground">Carregando...</div>
-          ) : filteredInvitations && filteredInvitations.length > 0 ? (
+          ) : !isEmpty(filteredInvitations) ? (
             <div className="space-y-4">
-              {filteredInvitations.map((invitation) => (
+              {safeMap(filteredInvitations, (invitation) => (
                 <Card key={invitation.id}>
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between">
