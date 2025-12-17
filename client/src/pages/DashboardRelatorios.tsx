@@ -26,6 +26,7 @@ import {
   Radar,
 } from "recharts";
 import { BarChart3, Download, TrendingUp, Users, Target, Award, Calendar, FileText } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -37,81 +38,83 @@ export default function DashboardRelatorios() {
   const [selectedMonth, setSelectedMonth] = useState<string>("all");
 
   // Queries
-  const { data: departments } = trpc.departments.list.useQuery();
-  const { data: employees } = trpc.employees.list.useQuery();
-  const { data: goals } = trpc.goals.list.useQuery({});
-  const { data: evaluations } = trpc.evaluations.list.useQuery({});
-  const { data: pdis } = trpc.pdi.list.useQuery({});
-  const { data: cycles360 } = trpc.cycles360.list.useQuery();
+  const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery();
+  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery();
+  const { data: goals, isLoading: loadingGoals } = trpc.goals.list.useQuery({});
+  const { data: evaluations, isLoading: loadingEvaluations } = trpc.evaluations.list.useQuery({});
+  const { data: pdis, isLoading: loadingPDIs } = trpc.pdi.list.useQuery({});
+  const { data: cycles360, isLoading: loadingCycles } = trpc.cycles360.list.useQuery();
+
+  const isLoading = loadingDepartments || loadingEmployees || loadingGoals || loadingEvaluations || loadingPDIs || loadingCycles;
 
   // Estatísticas Gerais
   const totalEmployees = employees?.length || 0;
-  const totalGoals = goals?.length || 0;
-  const completedGoals = goals?.filter(g => g.status === "concluida").length || 0;
-  const avgGoalProgress = goals?.length 
-    ? Math.round(goals.reduce((sum, g) => sum + (g.progress || 0), 0) / goals.length)
+  const totalGoals = safeLength(goals);
+  const completedGoals = safeLength(safeFilter(ensureArray(goals), g => g.status === "concluida"));
+  const avgGoalProgress = !isEmpty(goals)
+    ? Math.round(safeReduce(ensureArray(goals), (sum, g) => sum + (g.progress || 0), 0) / safeLength(goals))
     : 0;
 
-  const totalEvaluations = evaluations?.length || 0;
-  const completedEvaluations = evaluations?.filter(e => e.status === "concluida").length || 0;
+  const totalEvaluations = safeLength(evaluations);
+  const completedEvaluations = safeLength(safeFilter(ensureArray(evaluations), e => e.status === "concluida"));
 
-  const totalPDIs = pdis?.length || 0;
-  const activePDIs = pdis?.filter(p => p.status === "aprovado" || p.status === "em_andamento").length || 0;
+  const totalPDIs = safeLength(pdis);
+  const activePDIs = safeLength(safeFilter(ensureArray(pdis), p => p.status === "aprovado" || p.status === "em_andamento"));
 
-  const totalCycles360 = cycles360?.length || 0;
-  const activeCycles360 = cycles360?.filter(c => c.status === "ativo").length || 0;
+  const totalCycles360 = safeLength(cycles360);
+  const activeCycles360 = safeLength(safeFilter(ensureArray(cycles360), c => c.status === "ativo"));
 
   // Dados para gráfico de metas por mês
   const goalsPerMonth = Array.from({ length: 12 }, (_, i) => {
     const month = i + 1;
-    const monthGoals = goals?.filter(g => {
+    const monthGoals = safeFilter(ensureArray(goals), g => {
       const goalDate = new Date(g.createdAt);
       return goalDate.getMonth() + 1 === month && goalDate.getFullYear() === parseInt(selectedPeriod);
-    }) || [];
+    });
     
     return {
       month: new Date(2000, i).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
-      criadas: monthGoals.length,
-      concluidas: monthGoals.filter(g => g.status === "concluida").length,
-      emAndamento: monthGoals.filter(g => g.status === "em_andamento").length,
+      criadas: safeLength(monthGoals),
+      concluidas: safeLength(safeFilter(monthGoals, g => g.status === "concluida")),
+      emAndamento: safeLength(safeFilter(monthGoals, g => g.status === "em_andamento")),
     };
   });
 
   // Dados para gráfico de desempenho por departamento
-  const performanceByDepartment = departments?.map(dept => {
-    const deptEmployees = employees?.filter(e => e.departmentId === dept.id) || [];
-    const deptGoals = goals?.filter(g => 
+  const performanceByDepartment = safeMap(ensureArray(departments), dept => {
+    const deptEmployees = safeFilter(ensureArray(employees), e => e.departmentId === dept.id);
+    const deptGoals = safeFilter(ensureArray(goals), g => 
       deptEmployees.some(e => e.id === g.employeeId)
-    ) || [];
+    );
     
-    const avgProgress = deptGoals.length > 0
-      ? deptGoals.reduce((sum, g) => sum + (g.progress || 0), 0) / deptGoals.length
+    const avgProgress = !isEmpty(deptGoals)
+      ? safeReduce(deptGoals, (sum, g) => sum + (g.progress || 0), 0) / safeLength(deptGoals)
       : 0;
 
     return {
       name: dept.name,
-      funcionarios: deptEmployees.length,
-      metas: deptGoals.length,
+      funcionarios: safeLength(deptEmployees),
+      metas: safeLength(deptGoals),
       progresso: Math.round(avgProgress),
-      concluidas: deptGoals.filter(g => g.status === "concluida").length,
+      concluidas: safeLength(safeFilter(deptGoals, g => g.status === "concluida")),
     };
-  }) || [];
+  });
 
   // Dados para gráfico de distribuição de status
-  const statusDistribution = [
+  const statusDistribution = safeFilter([
     { name: "Concluídas", value: completedGoals, color: "#10B981" },
-    { name: "Em Andamento", value: goals?.filter(g => g.status === "em_andamento").length || 0, color: "#F39200" },
-    { name: "Pendentes", value: goals?.filter(g => g.status === "pendente").length || 0, color: "#EF4444" },
-    { name: "Canceladas", value: goals?.filter(g => g.status === "cancelada").length || 0, color: "#6B7280" },
-  ].filter(item => item.value > 0);
+    { name: "Em Andamento", value: safeLength(safeFilter(ensureArray(goals), g => g.status === "em_andamento")), color: "#F39200" },
+    { name: "Pendentes", value: safeLength(safeFilter(ensureArray(goals), g => g.status === "pendente")), color: "#EF4444" },
+    { name: "Canceladas", value: safeLength(safeFilter(ensureArray(goals), g => g.status === "cancelada")), color: "#6B7280" },
+  ], item => item.value > 0);
 
   // Dados para gráfico de PDIs
-  const pdiStatus = [
-    { name: "Aprovados", value: pdis?.filter(p => p.status === "aprovado").length || 0 },
-    { name: "Em Andamento", value: pdis?.filter(p => p.status === "em_andamento").length || 0 },
-    { name: "Concluídos", value: pdis?.filter(p => p.status === "concluido").length || 0 },
-    { name: "Pendentes", value: pdis?.filter(p => p.status === "pendente").length || 0 },
-  ].filter(item => item.value > 0);
+  const pdiStatus = safeFilter([
+    { name: "Aprovados", value: safeLength(safeFilter(ensureArray(pdis), p => p.status === "aprovado")) },
+    { name: "Em Andamento", value: safeLength(safeFilter(ensureArray(pdis), p => p.status === "em_andamento")) },
+    { name: "Concluídos", value: safeLength(safeFilter(ensureArray(pdis), p => p.status === "concluido")) },
+    { name: "Pendentes", value: safeLength(safeFilter(ensureArray(pdis), p => p.status === "pendente")) },
+  ], item => item.value > 0);
 
   // Exportar relatório
   const handleExportPDF = async () => {
@@ -120,7 +123,7 @@ export default function DashboardRelatorios() {
       await exportToPDF({
         filename: `relatorio-dashboard-${selectedPeriod}-${new Date().toISOString().split("T")[0]}.pdf`,
         title: "Dashboard de Relatórios",
-        subtitle: `Período: ${selectedPeriod}${selectedDepartment !== "all" ? ` | Departamento: ${departments?.find(d => d.id.toString() === selectedDepartment)?.name}` : ""}`,
+        subtitle: `Período: ${selectedPeriod}${selectedDepartment !== "all" ? ` | Departamento: ${safeFind(ensureArray(departments), d => d.id.toString() === selectedDepartment)?.name}` : ""}`,
         elementId: "dashboard-relatorios-content",
         orientation: "landscape",
       });
@@ -134,6 +137,67 @@ export default function DashboardRelatorios() {
   const handleExportExcel = () => {
     toast.info("Funcionalidade de exportação em desenvolvimento");
   };
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-6">
+          {/* Header Skeleton */}
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-80" />
+              <Skeleton className="h-4 w-96" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-10 w-48" />
+              <Skeleton className="h-10 w-24" />
+            </div>
+          </div>
+
+          {/* Stats Cards Skeleton */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2">
+                  <Skeleton className="h-4 w-32" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-3 w-24 mt-2" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Charts Skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-64 mt-2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[400px] w-full" />
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {[1, 2].map((i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-64 mt-2" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-[300px] w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -166,7 +230,7 @@ export default function DashboardRelatorios() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os departamentos</SelectItem>
-                {departments?.map(dept => (
+                {safeMap(ensureArray(departments), dept => (
                   <SelectItem key={dept.id} value={dept.id.toString()}>
                     {dept.name}
                   </SelectItem>
@@ -290,7 +354,7 @@ export default function DashboardRelatorios() {
                         fill="#8884d8"
                         dataKey="value"
                       >
-                        {statusDistribution.map((entry: any, index: number) => (
+                        {safeMap(statusDistribution, (entry: any, index: number) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -374,7 +438,7 @@ export default function DashboardRelatorios() {
                         fill="#8884d8"
                         dataKey="funcionarios"
                       >
-                        {performanceByDepartment.map((entry: any, index: number) => (
+                        {safeMap(performanceByDepartment, (entry: any, index: number) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

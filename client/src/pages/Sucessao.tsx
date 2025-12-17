@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Users, TrendingUp, AlertCircle, Plus, UserPlus, Award, Calendar, Target, Pencil, Trash2, Save, History, Send, FileDown } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { toast } from "sonner";
@@ -247,9 +248,9 @@ export default function Sucessao() {
   const handleExportPDF = async () => {
     if (!selectedPlan) return;
 
-    const position = positions?.find(p => p.id === selectedPlan.positionId);
-    const currentHolder = employees?.find(e => e.employee.id === selectedPlan.currentHolderId)?.employee;
-    const candidates = selectedPlan.candidates || [];
+    const position = safeFind(ensureArray(positions), p => p.id === selectedPlan.positionId);
+    const currentHolder = safeFind(ensureArray(employees), e => e.employee.id === selectedPlan.currentHolderId)?.employee;
+    const candidates = ensureArray(selectedPlan.candidates);
 
     // Gerar conteúdo HTML
     const content = `
@@ -270,8 +271,8 @@ export default function Sucessao() {
         candidates.length > 0
           ? generateTableHTML(
               ["Nome", "Prontidão", "Potencial", "Prioridade"],
-              candidates.map((c: any) => {
-                const emp = employees?.find(e => e.employee.id === c.candidateId)?.employee;
+              safeMap(candidates, (c: any) => {
+                const emp = safeFind(ensureArray(employees), e => e.employee.id === c.candidateId)?.employee;
                 return [
                   emp?.name || "N/A",
                   c.readiness || "N/A",
@@ -307,7 +308,7 @@ export default function Sucessao() {
 
   const handleSelectPlan = (planId: number) => {
     setSelectedPlanId(planId);
-    const plan = plans?.find(p => p.id === planId);
+    const plan = safeFind(ensureArray(plans), p => p.id === planId);
     if (plan) {
       setRisksData({
         riskLevel: plan.riskLevel || "",
@@ -328,8 +329,49 @@ export default function Sucessao() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-96">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div className="space-y-6">
+          {/* Header Skeleton */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-64" />
+              <Skeleton className="h-4 w-96" />
+            </div>
+            <Skeleton className="h-10 w-40" />
+          </div>
+
+          {/* Stats Skeleton */}
+          <div className="grid md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i}>
+                <CardHeader className="pb-2">
+                  <Skeleton className="h-4 w-32" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-16" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Plans Grid Skeleton */}
+          <div className="grid md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-32 mt-2" />
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <div className="flex gap-2 mt-4">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-20" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </DashboardLayout>
     );
@@ -383,7 +425,7 @@ export default function Sucessao() {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        {positions?.filter(p => p?.id).map((pos: any) => (
+                        {safeMap(safeFilter(ensureArray(positions), p => p?.id), (pos: any) => (
                           <SelectItem key={pos.id} value={pos.id.toString()}>
                             {pos.title}
                           </SelectItem>
@@ -399,7 +441,7 @@ export default function Sucessao() {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        {employees?.filter(e => e?.employee?.id).map((item: any) => (
+                        {safeMap(safeFilter(ensureArray(employees), e => e?.employee?.id), (item: any) => (
                           <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
                             {item.employee.name}
                           </SelectItem>
@@ -505,7 +547,7 @@ export default function Sucessao() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-red-600">
-                {plans?.filter(p => p.isCritical).length || 0}
+                {safeLength(safeFilter(ensureArray(plans), p => p.isCritical))}
               </div>
             </CardContent>
           </Card>
@@ -518,7 +560,7 @@ export default function Sucessao() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-orange-600">
-                {plans?.filter(p => p.riskLevel === "alto" || p.riskLevel === "critico").length || 0}
+                {safeLength(safeFilter(ensureArray(plans), p => p.riskLevel === "alto" || p.riskLevel === "critico"))}
               </div>
             </CardContent>
           </Card>
@@ -531,7 +573,7 @@ export default function Sucessao() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">
-                {plans?.reduce((sum, p) => sum + (p.successors?.length || 0), 0) || 0}
+                {safeReduce(ensureArray(plans), (sum, p) => sum + safeLength(ensureArray(p.successors)), 0)}
               </div>
             </CardContent>
           </Card>
@@ -539,7 +581,7 @@ export default function Sucessao() {
 
         {/* Lista de Planos */}
         <div className="grid md:grid-cols-3 gap-4">
-          {!plans || plans.length === 0 ? (
+          {isEmpty(plans) ? (
             <Card className="col-span-3">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
@@ -549,7 +591,7 @@ export default function Sucessao() {
               </CardContent>
             </Card>
           ) : (
-            plans.map((plan: any) => (
+            safeMap(ensureArray(plans), (plan: any) => (
               <Card
                 key={plan.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
@@ -687,8 +729,8 @@ export default function Sucessao() {
                     </Button>
                   </div>
 
-                  {selectedPlan.successors && selectedPlan.successors.length > 0 ? (
-                    selectedPlan.successors.map((successor: any) => (
+                  {!isEmpty(selectedPlan.successors) ? (
+                    safeMap(ensureArray(selectedPlan.successors), (successor: any) => (
                       <Card key={successor.id}>
                         <CardContent className="pt-6">
                           <div className="flex items-start justify-between">
@@ -991,7 +1033,7 @@ export default function Sucessao() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees?.filter(e => e?.employee?.id).map((item: any) => (
+                      {safeMap(safeFilter(ensureArray(employees), e => e?.employee?.id), (item: any) => (
                         <SelectItem key={item.employee.id} value={item.employee.id.toString()}>
                           {item.employee.name}
                         </SelectItem>
@@ -1145,7 +1187,7 @@ export default function Sucessao() {
                   <TabsContent value="candidates" className="space-y-2">
                     <Label>Selecione os Candidatos</Label>
                     <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                      {selectedPlan?.successors?.map((successor: any) => (
+                      {safeMap(ensureArray(selectedPlan?.successors), (successor: any) => (
                         <div key={successor.id} className="flex items-center space-x-2">
                           <Checkbox
                             id={`candidate-${successor.id}`}
@@ -1170,7 +1212,7 @@ export default function Sucessao() {
                         </div>
                       ))}
                     </div>
-                    {(!selectedPlan?.successors || selectedPlan.successors.length === 0) && (
+                    {isEmpty(selectedPlan?.successors) && (
                       <p className="text-sm text-muted-foreground">Nenhum candidato cadastrado</p>
                     )}
                   </TabsContent>
@@ -1178,7 +1220,7 @@ export default function Sucessao() {
                   <TabsContent value="department" className="space-y-2">
                     <Label>Selecione os Departamentos</Label>
                     <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                      {departments?.map((dept: any) => (
+                      {safeMap(ensureArray(departments), (dept: any) => (
                         <div key={dept.id} className="flex items-center space-x-2">
                           <Checkbox
                             id={`dept-${dept.id}`}
@@ -1211,7 +1253,7 @@ export default function Sucessao() {
                       placeholder="email1@example.com, email2@example.com"
                       value={testsData.emails.join(", ")}
                       onChange={(e) => {
-                        const emails = e.target.value.split(",").map((email: any) => email.trim()).filter(Boolean);
+                        const emails = safeFilter(safeMap(e.target.value.split(","), (email: any) => email.trim()), Boolean);
                         setTestsData({ ...testsData, emails });
                       }}
                       rows={4}
@@ -1262,8 +1304,8 @@ export default function Sucessao() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 max-h-[500px] overflow-y-auto">
-              {history && history.length > 0 ? (
-                history.map((item: any) => (
+              {!isEmpty(history) ? (
+                safeMap(ensureArray(history), (item: any) => (
                   <Card key={item.id}>
                     <CardContent className="pt-4">
                       <div className="flex items-start justify-between">
