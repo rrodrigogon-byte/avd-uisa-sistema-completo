@@ -35,6 +35,8 @@ import PIRIntegridade from "./pages/PIRIntegridade";
 import IntegridadeTestes from "./pages/IntegridadeTestes";
 import IntegridadeResultados from "./pages/IntegridadeResultados";
 import IntegridadeAnalises from "./pages/IntegridadeAnalises";
+import ResponderPIRIntegridade from "./pages/integridade/ResponderPIRIntegridade";
+import ObrigadoTeste from "./pages/integridade/ObrigadoTeste";
 import {
   DashboardPIRIntegridade,
   TestePIRIntegridade,
@@ -474,6 +476,10 @@ function Router() {
       <Route path="/integridade/testes" component={IntegridadeTestes} />
       <Route path="/integridade/resultados" component={IntegridadeResultados} />
       <Route path="/integridade/analises" component={IntegridadeAnalises} />
+      
+      {/* Rotas públicas de teste de integridade (sem autenticação) */}
+      <Route path="/integridade/pir/responder/:token" component={ResponderPIRIntegridade} />
+      <Route path="/integridade/obrigado" component={ObrigadoTeste} />
       
       {/* Rota de Aprovações de Cargos com workflow de 4 níveis */}
       <Route path="/aprovacoes/cargos" component={AprovacoesCargos} />

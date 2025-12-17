@@ -3488,3 +3488,19 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [ ] Criar checkpoint final do sistema completo
 - [ ] Validar que tudo está funcionando 100%
 - [ ] Preparar demonstração para o usuário
+
+### 🐛 Correção Urgente: Erro na Página de Testes de Integridade (17/12/2025)
+- [ ] Corrigir erro "T?.map is not a function" na página /integridade/testes
+- [ ] Validar retorno da API de testes de integridade (garantir que retorna array)
+- [ ] Verificar e corrigir fluxo completo de envio de email com link de teste
+- [ ] Garantir que retorno do link de teste funcione corretamente
+
+### ✅ Correções Implementadas (17/12/2025)
+- [x] Corrigir erro "T?.map is not a function" na página /integridade/testes
+- [x] Validar retorno da API de testes de integridade (garantir que retorna array)
+- [x] Criar template de email para convite de teste de integridade
+- [x] Implementar envio automático de email ao criar convite
+- [x] Criar página pública de resposta ao teste (/integridade/pir/responder/:token)
+- [x] Criar página de agradecimento após conclusão do teste
+- [x] Adicionar rotas públicas no App.tsx
+- [x] Integrar sistema de email queue com convites de integridade

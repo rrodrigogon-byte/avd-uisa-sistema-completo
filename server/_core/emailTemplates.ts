@@ -233,6 +233,56 @@ export function emailAvaliacoesConcluidas(data: {
 /**
  * Email com resumo de resultados
  */
+/**
+ * Email de convite para teste de integridade PIR
+ */
+export function emailConviteIntegridade(data: {
+  recipientName: string;
+  inviterName: string;
+  purpose?: string;
+  testUrl: string;
+  expiresAt: string;
+}): EmailTemplate {
+  const content = `
+    <h2 style="margin: 0 0 20px 0; color: #212529; font-size: 24px;">Convite para Teste de Integridade</h2>
+    <p style="margin: 0 0 15px 0; color: #495057; font-size: 16px; line-height: 1.6;">
+      Olá <strong>${data.recipientName}</strong>,
+    </p>
+    <p style="margin: 0 0 15px 0; color: #495057; font-size: 16px; line-height: 1.6;">
+      Você foi convidado(a) por <strong>${data.inviterName}</strong> para responder ao Teste de Integridade PIR.
+    </p>
+    ${data.purpose ? `
+    <div style="background-color: #e7f3ff; border-left: 4px solid #0066cc; padding: 15px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; color: #212529; font-weight: 600;">Propósito:</p>
+      <p style="margin: 0; color: #495057; font-size: 14px;">${data.purpose}</p>
+    </div>
+    ` : ''}
+    <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; color: #212529; font-weight: 600;">⏰ Prazo de Validade:</p>
+      <p style="margin: 0; color: #495057; font-size: 14px;">Este convite expira em: <strong>${data.expiresAt}</strong></p>
+    </div>
+    <p style="margin: 20px 0 15px 0; color: #495057; font-size: 16px; line-height: 1.6;">
+      O teste leva aproximadamente 15-20 minutos para ser concluído. Por favor, responda com sinceridade.
+    </p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${data.testUrl}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 40px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+        Iniciar Teste de Integridade
+      </a>
+    </div>
+    <p style="margin: 20px 0 0 0; color: #6c757d; font-size: 14px; line-height: 1.6;">
+      <strong>Importante:</strong> Este link é pessoal e intransferível. Não compartilhe com outras pessoas.
+    </p>
+  `;
+
+  return {
+    subject: 'Convite para Teste de Integridade PIR',
+    html: baseTemplate(content),
+  };
+}
+
+/**
+ * Email com resumo de resultados
+ */
 export function emailResumoResultados(data: {
   employeeName: string;
   processName: string;

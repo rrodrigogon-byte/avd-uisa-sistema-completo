@@ -1,8 +1,13 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { pirInvitations, pirAssessments, integrityTestResults } from "../../drizzle/schema";
+import { pirInvitations, pirAssessments, integrityTestResults, employees } from "../../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
+import { queueEmail } from "../_core/emailQueue";
+import { emailConviteIntegridade } from "../_core/emailTemplates";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { ENV } from "../_core/env";
 
 /**
  * Router para PIR de Integridade
@@ -49,11 +54,66 @@ export const integrityPIRRouter = router({
         createdByName: ctx.user.name || null,
       });
 
+      const invitationUrl = `/integridade/pir/responder/${token}`;
+      const fullUrl = `${ENV.frontendUrl || 'https://avduisa-sys-vd5bj8to.manus.space'}${invitationUrl}`;
+
+      // Determinar destinatário e nome
+      let recipientEmail = input.candidateEmail;
+      let recipientName = input.candidateName || "Candidato";
+
+      if (input.employeeId) {
+        const [employee] = await db
+          .select()
+          .from(employees)
+          .where(eq(employees.id, input.employeeId))
+          .limit(1);
+        
+        if (employee) {
+          recipientEmail = employee.email;
+          recipientName = employee.name;
+        }
+      }
+
+      // Enviar email se houver destinatário
+      if (recipientEmail) {
+        try {
+          const emailTemplate = emailConviteIntegridade({
+            recipientName,
+            inviterName: ctx.user.name || "Sistema AVD UISA",
+            purpose: input.purpose,
+            testUrl: fullUrl,
+            expiresAt: format(expiresAt, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }),
+          });
+
+          await queueEmail({
+            destinatario: recipientEmail,
+            assunto: emailTemplate.subject,
+            corpo: emailTemplate.html,
+            tipoEmail: "convite_integridade",
+            prioridade: "alta",
+            metadados: {
+              invitationId: result.insertId,
+              token,
+              employeeId: input.employeeId,
+            },
+          });
+
+          // Atualizar status para "sent"
+          await db
+            .update(pirInvitations)
+            .set({ status: "sent", sentAt: new Date() })
+            .where(eq(pirInvitations.id, result.insertId));
+        } catch (emailError) {
+          console.error("[IntegrityPIR] Erro ao enviar email:", emailError);
+          // Não falhar a criação do convite se o email falhar
+        }
+      }
+
       return {
         id: result.insertId,
         token,
         expiresAt,
-        invitationUrl: `/integridade/pir/responder/${token}`,
+        invitationUrl,
       };
     }),
 

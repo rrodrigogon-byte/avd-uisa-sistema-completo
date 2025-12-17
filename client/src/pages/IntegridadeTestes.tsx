@@ -133,7 +133,7 @@ export default function IntegridadeTestes() {
     return <Badge className={config.className}>{config.label}</Badge>;
   };
 
-  const filteredInvitations = invitations?.filter((inv) => {
+  const filteredInvitations = (invitations || []).filter((inv) => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
     return (
