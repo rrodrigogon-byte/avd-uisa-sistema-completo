@@ -2,6 +2,8 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 import { eq, and, desc, sql, inArray } from "drizzle-orm";
+import { sendPIRIntegrityInvite, sendPIRIntegrityCompletionNotification, sendPIRIntegrityReminder } from "../_core/email";
+import { ENV } from "../_core/env";
 import {
   pirIntegrityDimensions,
   pirIntegrityQuestions,
@@ -159,7 +161,30 @@ export const pirIntegrityRouter = router({
         createdBy: ctx.user?.id,
       });
 
-      return { success: true, id: result[0].insertId };
+      const assessmentId = result[0].insertId;
+
+      // Buscar dados do funcionário para enviar email
+      const employee = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, input.employeeId))
+        .limit(1);
+
+      if (employee.length > 0 && employee[0].email) {
+        const inviteLink = `${ENV.viteAppUrl || 'https://avduisa-sys-vd5bj8to.manus.space'}/pir-integridade/teste/${assessmentId}`;
+        
+        // Enviar email de convite (não aguardar para não bloquear a resposta)
+        sendPIRIntegrityInvite(
+          employee[0].email,
+          employee[0].name || 'Colaborador',
+          input.assessmentType,
+          inviteLink
+        ).catch(error => {
+          console.error('[PIR Integrity] Erro ao enviar email de convite:', error);
+        });
+      }
+
+      return { success: true, id: assessmentId };
     }),
 
   listAssessments: protectedProcedure
@@ -432,6 +457,33 @@ export const pirIntegrityRouter = router({
         })
         .where(eq(pirIntegrityAssessments.id, input.id));
 
+      // Buscar dados da avaliação e funcionário para enviar email de conclusão
+      const [assessment] = await db
+        .select({
+          assessment: pirIntegrityAssessments,
+          employee: employees,
+        })
+        .from(pirIntegrityAssessments)
+        .leftJoin(employees, eq(pirIntegrityAssessments.employeeId, employees.id))
+        .where(eq(pirIntegrityAssessments.id, input.id))
+        .limit(1);
+
+      if (assessment?.employee?.email) {
+        const resultLink = `${ENV.viteAppUrl || 'https://avduisa-sys-vd5bj8to.manus.space'}/pir-integridade/resultado/${input.id}`;
+        
+        // Enviar email de conclusão (não aguardar para não bloquear a resposta)
+        sendPIRIntegrityCompletionNotification(
+          assessment.employee.email,
+          assessment.employee.name || 'Colaborador',
+          assessment.assessment.assessmentType,
+          resultLink,
+          overallScore,
+          riskLevel
+        ).catch(error => {
+          console.error('[PIR Integrity] Erro ao enviar email de conclusão:', error);
+        });
+      }
+
       return { success: true, overallScore, riskLevel, moralLevel };
     }),
 
@@ -530,4 +582,93 @@ Data da Avaliação: ${assessment.completedAt?.toLocaleDateString('pt-BR')}
       ),
     };
   }),
+
+  // ============ LEMBRETES E NOTIFICAÇÕES ============
+  sendReminders: protectedProcedure
+    .input(z.object({
+      daysThreshold: z.number().default(3), // Enviar lembrete se criado há mais de X dias
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar avaliações pendentes (draft ou in_progress) criadas há mais de X dias
+      const thresholdDate = new Date();
+      thresholdDate.setDate(thresholdDate.getDate() - input.daysThreshold);
+
+      const pendingAssessments = await db
+        .select({
+          assessment: pirIntegrityAssessments,
+          employee: employees,
+        })
+        .from(pirIntegrityAssessments)
+        .leftJoin(employees, eq(pirIntegrityAssessments.employeeId, employees.id))
+        .where(
+          and(
+            inArray(pirIntegrityAssessments.status, ["draft", "in_progress"]),
+            sql`${pirIntegrityAssessments.createdAt} < ${thresholdDate}`
+          )
+        );
+
+      let sentCount = 0;
+      const errors: string[] = [];
+
+      for (const { assessment, employee } of pendingAssessments) {
+        if (!employee?.email) continue;
+
+        const inviteLink = `${ENV.viteAppUrl || 'https://avduisa-sys-vd5bj8to.manus.space'}/pir-integridade/teste/${assessment.id}`;
+        
+        try {
+          const sent = await sendPIRIntegrityReminder(
+            employee.email,
+            employee.name || 'Colaborador',
+            assessment.assessmentType,
+            inviteLink
+          );
+          
+          if (sent) {
+            sentCount++;
+          }
+        } catch (error) {
+          console.error(`[PIR Integrity] Erro ao enviar lembrete para ${employee.email}:`, error);
+          errors.push(`${employee.email}: ${error}`);
+        }
+      }
+
+      return {
+        success: true,
+        sentCount,
+        totalPending: pendingAssessments.length,
+        errors: errors.length > 0 ? errors : undefined,
+      };
+    }),
+
+  getPendingAssessments: protectedProcedure
+    .input(z.object({
+      daysThreshold: z.number().default(3),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { assessments: [] };
+
+      const thresholdDate = new Date();
+      thresholdDate.setDate(thresholdDate.getDate() - input.daysThreshold);
+
+      const assessments = await db
+        .select({
+          assessment: pirIntegrityAssessments,
+          employee: employees,
+        })
+        .from(pirIntegrityAssessments)
+        .leftJoin(employees, eq(pirIntegrityAssessments.employeeId, employees.id))
+        .where(
+          and(
+            inArray(pirIntegrityAssessments.status, ["draft", "in_progress"]),
+            sql`${pirIntegrityAssessments.createdAt} < ${thresholdDate}`
+          )
+        )
+        .orderBy(desc(pirIntegrityAssessments.createdAt));
+
+      return { assessments };
+    }),
 });

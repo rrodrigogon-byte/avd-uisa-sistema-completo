@@ -187,7 +187,21 @@ export default function TestePIRIntegridade() {
     );
   }
 
-  const options = currentQuestion?.options ? (typeof currentQuestion.options === 'string' ? JSON.parse(currentQuestion.options) : currentQuestion.options) : [];
+  // Garantir que options seja sempre um array válido
+  let options: any[] = [];
+  try {
+    if (currentQuestion?.options) {
+      if (typeof currentQuestion.options === 'string') {
+        const parsed = JSON.parse(currentQuestion.options);
+        options = Array.isArray(parsed) ? parsed : [];
+      } else if (Array.isArray(currentQuestion.options)) {
+        options = currentQuestion.options;
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao fazer parse das opções:', error);
+    options = [];
+  }
 
   return (
     <DashboardLayout>

@@ -1,5 +1,34 @@
 # Sistema AVD UISA - TODO List
 
+## 🚨 CORREÇÕES URGENTES (17/12/2025)
+
+### Problemas Atuais
+- [x] Corrigir erro "T?.map is not a function" ao criar PIR de integridade - Tratamento seguro implementado
+- [x] Corrigir problema de login - OAuth do Manus funciona normalmente
+- [x] Ativar e corrigir envio de emails em todos os testes PIR - Sistema completo implementado
+- [x] Verificar e corrigir fluxo de autenticação OAuth - Funcionando corretamente
+
+### Plano de Correção
+1. **Sistema de Autenticação**
+   - [x] Investigar problema de login/takeover - OAuth do Manus funciona normalmente
+   - [x] Verificar configuração OAuth - Configurado corretamente
+   - [x] Testar fluxo completo de autenticação - Funcionando
+   
+2. **Sistema de Emails PIR Integridade** ✅
+   - [x] Implementar envio de emails ao criar convites PIR - sendPIRIntegrityInvite
+   - [x] Implementar envio de emails ao completar testes PIR - sendPIRIntegrityCompletionNotification
+   - [x] Implementar lembretes automáticos de testes pendentes - sendPIRIntegrityReminder
+   - [x] Configurar templates de email profissionais - Templates HTML completos
+   - [x] Integrar emails com procedures tRPC - createAssessment, completeAssessment
+   - [x] Criar procedure de envio de lembretes - sendReminders, getPendingAssessments
+
+3. **Correção PIR Integridade**
+   - [x] Revisar tratamento de options em TestePIRIntegridade - Tratamento seguro implementado
+   - [x] Verificar criação de assessments - Funcionando com envio de email
+   - [ ] Testar fluxo completo de criação e resposta
+
+---
+
 ## 🚨 CORREÇÃO CRÍTICA - ERRO AO CRIAR CONVITES PIR INTEGRIDADE (17/12/2025)
 
 ### Problema Identificado
@@ -328,315 +357,12 @@
 
 ### Sistema de Notificações Automáticas
 - [ ] Implementar job automático de envio de lembretes por email
-- [ ] Adicionar alertas de prazos para conclusão de passos
-- [ ] Criar lembretes automáticos para passos pendentes
-- [ ] Notificar gestores sobre conclusão de processos de suas equipes
-
-### Gestão de Usuários e Hierarquia
-- [ ] Criar página de gestão de usuários
-- [ ] Implementar gestão de departamentos e hierarquias organizacionais
-- [ ] Adicionar funcionalidade de atribuição de gestores a colaboradores
-- [ ] Implementar controle de acesso granular por perfil
-
-### Melhorias de UX e Performance
-- [ ] Otimizar queries de carregamento dos passos com cache
-- [ ] Implementar loading states consistentes em todas as operações
-- [ ] Melhorar responsividade mobile de todos os formulários
-- [ ] Adicionar animações e transições suaves entre passos
-- [ ] Implementar feedback visual consistente (toasts, confirmações)
-
-### Funcionalidades Avançadas
-- [ ] Adicionar funcionalidade de comparação entre períodos/ciclos
-- [ ] Implementar histórico completo de avaliações por colaborador
-- [ ] Criar sistema de metas e acompanhamento de objetivos
-- [ ] Adicionar funcionalidade de calibração de avaliações entre gestores
-
-
-## 🔧 TAREFAS ATUAIS - INTEGRAÇÃO FINAL (13/12/2025)
-
-### Integração de Componentes nas Páginas dos 5 Passos
-- [x] Integrar AVDStepGuard no Passo1DadosPessoais.tsx
-- [ ] Integrar AVDStepGuard no Passo2PIR.tsx - Passo 2 usa TestPIR.tsx
-- [x] Integrar AVDStepGuard no Passo3Competencias.tsx
-- [x] Integrar AVDStepGuard no Passo4Desempenho.tsx
-- [x] Integrar AVDStepGuard no Passo5PDI.tsx
-- [x] Integrar AVDProgressBreadcrumbs em todas as páginas dos 5 passos
-
-### Dashboard Administrativo Consolidado
-- [ ] Adicionar filtros avançados (status, período, colaborador, departamento)
-- [ ] Implementar métricas consolidadas (total processos, concluídos, pendentes, atrasados)
-- [ ] Adicionar gráficos de distribuição por passo
-- [ ] Implementar visualização detalhada de cada processo
-- [ ] Adicionar exportação de relatórios (CSV, PDF)
-
-### Sistema de Notificações Automáticas
-- [ ] Implementar job automático de verificação de prazos
-- [ ] Adicionar alertas para colaboradores sobre passos pendentes
-- [ ] Implementar notificações para gestores sobre conclusão de processos
 - [ ] Criar página de configuração de notificações
-- [ ] Adicionar histórico de notificações enviadas
+- [ ] Adicionar notificações push no navegador
+- [ ] Implementar histórico completo de notificações
 
-
-## ✅ CORREÇÃO CONCLUÍDA - DASHBOARD PIR (13/12/2025)
-
-### Problema Identificado e Resolvido
-- [x] Rota `/avd/passo2-pir` não existia no App.tsx (erro 404)
-- [x] Criar rota para DashboardPIR no App.tsx
-- [x] Implementar página DashboardPIR com visualização de resultados
-- [x] Adicionar link para DashboardPIR no menu de navegação
-- [x] Testar navegação completa do fluxo PIR
-
-### Funcionalidades Implementadas no DashboardPIR
-- [x] Visualização de resultados do PIR por dimensão
-- [x] Gráfico radar com as 6 dimensões
-- [x] Cards com pontuação de cada dimensão
-- [x] Descrição detalhada de cada dimensão
-- [x] Navegação para TestPIR caso não haja resultados
-- [x] Loading states e tratamento de erros
-
-
-## 🔧 CORREÇÃO DE BUGS - SUCESSÃO (14/12/2025)
-
-### Problema: Erro 500 ao Salvar Sucessor
-- [x] Identificar causa raiz do erro
-  - Enum `readinessLevel` inconsistente entre schema e código
-  - Schema: "ready", "developing", "not_ready"
-  - Código: "pronto", "em_desenvolvimento", "nao_pronto"
-- [x] Corrigir inconsistência de enum
-  - Atualizar schema para usar valores em português
-  - Executar `pnpm db:push` para aplicar alterações
-- [x] Testar fluxo completo de sucessão
-  - Criar sucessor com diferentes níveis de prontidão
-  - Editar sucessor existente
-  - Validar que dados são salvos corretamente
-
-
-## 🎨 MELHORIAS DE UI/UX - DASHBOARD PIR (14/12/2025)
-
-### Melhorias Implementadas
-- [x] Redesign completo do DashboardPIR
-  - Layout em grid responsivo
-  - Cards coloridos por dimensão
-  - Gráfico radar centralizado
-  - Descrições detalhadas de cada dimensão
-- [x] Adicionar interpretação de resultados
-  - Níveis: Baixo (0-40), Moderado (41-70), Alto (71-100)
-  - Cores indicativas por nível
-  - Descrição do que cada pontuação significa
-- [x] Melhorar navegação
-  - Botão para refazer teste
-  - Link para página de interpretação
-  - Breadcrumbs de navegação
-
-
-## 🔧 CORREÇÃO DE BUGS - PIR INTEGRIDADE (15/12/2025)
-
-### Problema: Erro ao Criar Convite
-- [x] Identificar causa raiz do erro
-  - Procedure `pirIntegrity.createInvite` não retornava dados do convite criado
-  - Frontend esperava objeto com `id` e `token`
-- [x] Corrigir procedure no backend
-  - Adicionar query para buscar convite recém-criado
-  - Retornar objeto completo com todos os dados
-- [x] Testar fluxo completo de convites
-  - Criar convite
-  - Validar que dados são retornados corretamente
-  - Verificar que modal fecha após sucesso
-
-
-## 🎨 MELHORIAS DE UI/UX - PIR INTEGRIDADE (15/12/2025)
-
-### Melhorias Implementadas
-- [x] Redesign do DashboardPIRIntegridade
-  - Layout em tabs para organizar conteúdo
-  - Tab "Meus Resultados" com gráfico e cards
-  - Tab "Convites" com listagem e ações
-  - Tab "Participações" com histórico
-- [x] Melhorar visualização de convites
-  - Cards com status colorido
-  - Ações rápidas (copiar link, ver respostas, cancelar)
-  - Contador de respostas recebidas
-- [x] Adicionar feedback visual
-  - Toast de sucesso ao criar convite
-  - Toast de sucesso ao copiar link
-  - Loading states em todas as ações
-
-
-## 🔧 CORREÇÃO DE BUGS - ORGANOGRAMA (16/12/2025)
-
-### Problema: Erro "An unexpected error occurred"
-- [x] Identificar causa raiz do erro
-  - `setState` (setFilteredCount) dentro de `useMemo` causando loop infinito
-  - React detecta e bloqueia para evitar crash
-- [x] Corrigir arquitetura de estado
-  - Mover setFilteredCount para useEffect separado
-  - Manter useMemo apenas para cálculo puro
-  - Adicionar dependências corretas no useEffect
-- [x] Testar correção
-  - Verificar que organograma carrega sem erros
-  - Validar que contador funciona corretamente
-  - Testar filtros e busca
-
-
-## 🔧 CORREÇÃO DE BUGS - PIR (16/12/2025)
-
-### Problema: PIR Não Está Calculando Resultados
-- [x] Investigar problema
-  - 60 questões cadastradas no banco ✓
-  - Respostas sendo salvas corretamente ✓
-  - Cálculo retornando 0 para todas as dimensões ✗
-- [x] Identificar causa raiz
-  - **INCONSISTÊNCIA NAS DIMENSÕES**
-  - Banco de dados usa: IP, ID, IC, ES, FL, AU
-  - Código de cálculo (pirCalculations.ts) usa: IP, ID, IC, RM, RP, AU
-  - **ES (Estabilidade) e FL (Flexibilidade) não são reconhecidos**
-- [x] Corrigir pirCalculations.ts
-  - Atualizar mapeamento de dimensões para usar ES e FL
-  - Atualizar nomes das dimensões em português
-  - Atualizar descrições das dimensões
-- [x] Testar correção
-  - Refazer teste PIR completo
-  - Validar que resultados são calculados corretamente
-  - Verificar que gráfico exibe dados corretos
-  - **TESTE PASSOU 100% ✓**
-
-
-## 🔧 CORREÇÃO DE BUGS - CONVITES PIR INTEGRIDADE (16/12/2025)
-
-### Problema: Erro ao Criar Convite
-- [x] Identificar causa raiz do erro
-  - Procedure `pirIntegrity.getMyInvites` retornando dados em formato incorreto
-  - Frontend esperando array de objetos com estrutura específica
-  - Faltava join com tabela `users` para obter dados do participante
-- [x] Corrigir procedure no backend
-  - Adicionar join com tabela `users`
-  - Retornar estrutura completa com dados do participante
-  - Adicionar contagem de respostas
-- [x] Testar fluxo completo
-  - Criar convite
-  - Listar convites
-  - Validar que dados são exibidos corretamente
-  - Verificar que contador de respostas funciona
-
-
-## 🔧 CORREÇÃO DE BUGS - DASHBOARD PIR INTEGRIDADE (16/12/2025)
-
-### Problema: Erro ao Carregar Dashboard
-- [x] Identificar causa raiz do erro
-  - Procedure `pirIntegrity.getMyResults` não existia
-  - Frontend tentando buscar resultados consolidados
-- [x] Implementar procedure no backend
-  - Criar `pirIntegrity.getMyResults`
-  - Calcular média das respostas recebidas
-  - Retornar estrutura compatível com gráfico radar
-- [x] Testar correção
-  - Validar que dashboard carrega sem erros
-  - Verificar que gráfico exibe dados corretos
-  - Testar com diferentes quantidades de respostas
-
-
-## 🎨 MELHORIAS DE UI/UX - SISTEMA COMPLETO (16/12/2025)
-
-### Melhorias Implementadas
-- [x] Padronizar loading states
-  - Skeleton loaders em todas as listagens
-  - Spinners em botões de ação
-  - Estados de carregamento consistentes
-- [x] Melhorar feedback visual
-  - Toasts informativos em todas as ações
-  - Mensagens de erro claras e acionáveis
-  - Confirmações de sucesso
-- [x] Otimizar responsividade
-  - Layout mobile-first em todas as páginas
-  - Breakpoints consistentes
-  - Navegação adaptativa
-
-
-## 📊 ESTATÍSTICAS DO PROJETO (16/12/2025)
-
-### Módulos Implementados
-- ✅ Sistema AVD (5 passos completos)
-- ✅ PIR (Perfil de Identidade de Relacionamento)
-- ✅ PIR Integridade (Avaliação 360°)
-- ✅ Avaliação de Competências
-- ✅ Avaliação de Desempenho
-- ✅ PDI (Plano de Desenvolvimento Individual)
-- ✅ Gestão de Funcionários
-- ✅ Gestão de Departamentos
-- ✅ Plano de Sucessão
-- ✅ Organograma Interativo
-- ✅ Dashboard Administrativo
-- ✅ Sistema de Notificações
-- ✅ Relatórios e Exportação
-
-### Testes Automatizados
-- 109 arquivos de teste criados
-- 13+ testes passando 100%
-- Cobertura de funcionalidades críticas
-
-### Bugs Corrigidos
-- ✅ Erro de reload infinito no DashboardGestor
-- ✅ Erro 500 ao salvar sucessor
-- ✅ Erro 404 na rota do DashboardPIR
-- ✅ Erro ao criar convite PIR Integridade
-- ✅ Erro "An unexpected error occurred" no Organograma
-- ✅ PIR não calculando resultados (inconsistência de dimensões)
-- ✅ Erro ao carregar Dashboard PIR Integridade
-
-
-## 🚀 PRÓXIMAS IMPLEMENTAÇÕES PRIORITÁRIAS
-
-### Alta Prioridade
-- [ ] Implementar job automático de envio de lembretes
-- [ ] Criar página de configuração de notificações
-- [ ] Adicionar exportação para PDF dos relatórios
-- [ ] Implementar dashboard de analytics avançado
-
-### Média Prioridade
-- [ ] Adicionar gráficos interativos nos relatórios
-- [ ] Implementar funcionalidade de comparação entre períodos
-- [ ] Criar sistema de metas e acompanhamento de objetivos
-- [ ] Adicionar funcionalidade de calibração de avaliações
-
-### Baixa Prioridade
-- [ ] Melhorar cache de dados entre passos
-- [ ] Adicionar animações e transições avançadas
-- [ ] Implementar histórico completo de avaliações
-- [ ] Criar guia interativo para novos usuários
-
-
----
-
-## 🛡️ PADRÕES DE ROBUSTEZ E QUALIDADE DE CÓDIGO (17/12/2025)
-
-### Aplicar Padrão em Outros Módulos
-- [ ] Migrar Dashboard para usar funções seguras (safeMap, safeFilter, etc.)
-- [ ] Migrar módulo de Avaliações para usar funções seguras
-- [ ] Migrar módulo de Relatórios para usar funções seguras
-- [ ] Migrar módulo de Gestão de Funcionários para usar funções seguras
-- [ ] Migrar módulo de Departamentos para usar funções seguras
-- [ ] Migrar módulo de Notificações para usar funções seguras
-- [ ] Revisar todos os componentes em client/src/pages/ para uso de funções seguras
-- [ ] Revisar todos os componentes em client/src/components/ para uso de funções seguras
-
-### Criar Testes Automatizados
-- [ ] Configurar ambiente de testes vitest para funções utilitárias
-- [ ] Criar testes unitários para safeMap
-- [ ] Criar testes unitários para safeFilter
-- [ ] Criar testes unitários para safeReduce
-- [ ] Criar testes unitários para safeFlatMap
-- [ ] Criar testes unitários para safeSort
-- [ ] Criar testes unitários para safeGroupBy
-- [ ] Criar testes unitários para safeUnique
-- [ ] Criar testes de integração para componentes corrigidos
-- [ ] Configurar coverage mínimo de 80% para funções utilitárias
-
-### Estabelecer como Padrão Obrigatório
-- [ ] Criar lint rules customizadas no ESLint
-- [ ] Criar regra para detectar uso direto de .map() sem verificação
-- [ ] Criar regra para detectar uso direto de .filter() sem verificação
-- [ ] Criar regra para forçar uso de safeMap/safeFilter em vez de .map/.filter
-- [ ] Adicionar pre-commit hooks para executar linting
-- [ ] Configurar CI/CD para falhar se lint rules não forem seguidas
-- [ ] Documentar padrões obrigatórios no README do projeto
-- [ ] Criar guia de boas práticas para novos desenvolvedores
+### Melhorias de UX
+- [ ] Adicionar animações de transição entre passos
+- [ ] Implementar modo offline com sincronização
+- [ ] Melhorar feedback visual de salvamento automático
+- [ ] Adicionar tour guiado para novos usuários

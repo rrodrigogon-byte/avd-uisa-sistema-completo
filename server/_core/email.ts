@@ -1100,3 +1100,322 @@ export async function sendAdminReportEmail(
     html,
   });
 }
+
+/**
+ * Envia convite para teste PIR Integridade
+ */
+export async function sendPIRIntegrityInvite(
+  employeeEmail: string,
+  employeeName: string,
+  assessmentType: string,
+  inviteLink: string,
+  dueDate?: Date
+): Promise<boolean> {
+  const assessmentTypeNames: Record<string, string> = {
+    hiring: 'Processo Seletivo',
+    periodic: 'Avaliação Periódica',
+    promotion: 'Promoção',
+    investigation: 'Investigação',
+  };
+
+  const typeName = assessmentTypeNames[assessmentType] || 'Avaliação';
+  const dueDateText = dueDate 
+    ? `<p style="color: #dc2626; font-weight: 600; margin: 20px 0;">
+         ⏰ Prazo para conclusão: ${dueDate.toLocaleDateString('pt-BR', { 
+           day: '2-digit', 
+           month: 'long', 
+           year: 'numeric' 
+         })}
+       </p>`
+    : '';
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">🛡️ Avaliação PIR Integridade</h1>
+      </div>
+      
+      <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Olá <strong>${employeeName}</strong>,
+        </p>
+        
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Você foi convidado(a) para realizar a <strong>Avaliação PIR Integridade</strong> como parte do processo de <strong>${typeName}</strong>.
+        </p>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; margin: 25px 0;">
+          <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px;">📋 Sobre a Avaliação</h3>
+          <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+            O PIR Integridade é uma ferramenta que avalia aspectos éticos e comportamentais baseada na teoria de desenvolvimento moral de Kohlberg. 
+            A avaliação contém cenários e questões que ajudam a identificar seu perfil de integridade em 6 dimensões fundamentais.
+          </p>
+        </div>
+
+        ${dueDateText}
+        
+        <div style="background: #eff6ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #1e40af; font-size: 14px;">
+            <strong>⏱️ Tempo estimado:</strong> 30 minutos<br>
+            <strong>📝 Formato:</strong> Questões de múltipla escolha com cenários<br>
+            <strong>🎯 Objetivo:</strong> Avaliar integridade ética e comportamental
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${inviteLink}" 
+             style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
+                    color: white; 
+                    padding: 14px 32px; 
+                    text-decoration: none; 
+                    border-radius: 8px; 
+                    display: inline-block;
+                    font-weight: 600;
+                    font-size: 16px;
+                    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);">
+            🚀 Iniciar Avaliação
+          </a>
+        </div>
+        
+        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 25px 0;">
+          <p style="margin: 0; color: #92400e; font-size: 13px;">
+            <strong>💡 Dicas importantes:</strong><br>
+            • Responda com sinceridade - não há respostas certas ou erradas<br>
+            • Reserve um momento tranquilo para fazer a avaliação<br>
+            • Leia atentamente cada cenário antes de responder<br>
+            • Você pode justificar suas respostas quando solicitado
+          </p>
+        </div>
+        
+        <p style="color: #9ca3af; font-size: 13px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          Se o botão não funcionar, copie e cole este link no navegador:<br>
+          <a href="${inviteLink}" style="color: #3b82f6; word-break: break-all;">${inviteLink}</a>
+        </p>
+        
+        <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 20px;">
+          Sistema AVD UISA - Avaliação de Desempenho<br>
+          Este é um email automático, por favor não responda.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to: employeeEmail,
+    subject: `🛡️ Convite: Avaliação PIR Integridade - ${typeName}`,
+    html,
+  });
+}
+
+/**
+ * Envia notificação de conclusão do teste PIR Integridade
+ */
+export async function sendPIRIntegrityCompletionNotification(
+  employeeEmail: string,
+  employeeName: string,
+  assessmentType: string,
+  resultLink: string,
+  score?: number,
+  riskLevel?: string
+): Promise<boolean> {
+  const assessmentTypeNames: Record<string, string> = {
+    hiring: 'Processo Seletivo',
+    periodic: 'Avaliação Periódica',
+    promotion: 'Promoção',
+    investigation: 'Investigação',
+  };
+
+  const typeName = assessmentTypeNames[assessmentType] || 'Avaliação';
+  
+  const riskBadges: Record<string, { color: string; label: string; emoji: string }> = {
+    low: { color: '#10b981', label: 'Baixo Risco', emoji: '✅' },
+    moderate: { color: '#f59e0b', label: 'Risco Moderado', emoji: '⚠️' },
+    high: { color: '#ef4444', label: 'Alto Risco', emoji: '🔴' },
+    critical: { color: '#dc2626', label: 'Risco Crítico', emoji: '⛔' },
+  };
+
+  const riskInfo = riskLevel && riskBadges[riskLevel] 
+    ? `<div style="background: ${riskBadges[riskLevel].color}15; padding: 15px; border-radius: 8px; border-left: 4px solid ${riskBadges[riskLevel].color}; margin: 20px 0;">
+         <p style="margin: 0; color: ${riskBadges[riskLevel].color}; font-weight: 600; font-size: 16px;">
+           ${riskBadges[riskLevel].emoji} Nível de Risco: ${riskBadges[riskLevel].label}
+         </p>
+       </div>`
+    : '';
+
+  const scoreInfo = score !== undefined
+    ? `<div style="text-align: center; margin: 25px 0;">
+         <div style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 20px 40px; border-radius: 12px;">
+           <p style="margin: 0; color: white; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Pontuação Geral</p>
+           <p style="margin: 10px 0 0 0; color: white; font-size: 48px; font-weight: bold;">${score}/100</p>
+         </div>
+       </div>`
+    : '';
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">✓ Avaliação PIR Integridade Concluída!</h1>
+      </div>
+      
+      <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Olá <strong>${employeeName}</strong>,
+        </p>
+        
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Parabéns! Você concluiu com sucesso a <strong>Avaliação PIR Integridade</strong> do processo de <strong>${typeName}</strong>.
+        </p>
+
+        ${scoreInfo}
+        ${riskInfo}
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981; margin: 25px 0;">
+          <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #374151;">Próximos passos:</strong><br>
+            Seus resultados foram salvos e estão disponíveis para visualização detalhada.
+            A equipe de RH analisará suas respostas nas 6 dimensões de integridade e entrará em contato caso necessário.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resultLink}" 
+             style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                    color: white; 
+                    padding: 14px 32px; 
+                    text-decoration: none; 
+                    border-radius: 8px; 
+                    display: inline-block;
+                    font-weight: 600;
+                    font-size: 16px;
+                    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);">
+            📊 Ver Resultado Completo
+          </a>
+        </div>
+        
+        <div style="background: #eff6ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #1e40af; font-size: 13px;">
+            <strong>📈 O que você verá no resultado:</strong><br>
+            • Pontuação detalhada nas 6 dimensões de integridade<br>
+            • Análise do seu perfil ético e comportamental<br>
+            • Identificação de pontos fortes e áreas de desenvolvimento<br>
+            • Recomendações personalizadas
+          </p>
+        </div>
+        
+        <p style="color: #9ca3af; font-size: 13px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          Se o botão não funcionar, copie e cole este link no navegador:<br>
+          <a href="${resultLink}" style="color: #10b981; word-break: break-all;">${resultLink}</a>
+        </p>
+        
+        <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 20px;">
+          Sistema AVD UISA - Avaliação de Desempenho<br>
+          Este é um email automático, por favor não responda.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to: employeeEmail,
+    subject: `✓ PIR Integridade Concluído - Resultados Disponíveis`,
+    html,
+  });
+}
+
+/**
+ * Envia lembrete de teste PIR Integridade pendente
+ */
+export async function sendPIRIntegrityReminder(
+  employeeEmail: string,
+  employeeName: string,
+  assessmentType: string,
+  inviteLink: string,
+  daysRemaining?: number
+): Promise<boolean> {
+  const assessmentTypeNames: Record<string, string> = {
+    hiring: 'Processo Seletivo',
+    periodic: 'Avaliação Periódica',
+    promotion: 'Promoção',
+    investigation: 'Investigação',
+  };
+
+  const typeName = assessmentTypeNames[assessmentType] || 'Avaliação';
+  
+  const urgencyMessage = daysRemaining !== undefined && daysRemaining <= 2
+    ? `<div style="background: #fee2e2; padding: 15px; border-radius: 8px; border-left: 4px solid #dc2626; margin: 20px 0;">
+         <p style="margin: 0; color: #991b1b; font-weight: 600; font-size: 15px;">
+           ⚠️ URGENTE: Faltam apenas ${daysRemaining} ${daysRemaining === 1 ? 'dia' : 'dias'} para o prazo final!
+         </p>
+       </div>`
+    : daysRemaining !== undefined
+    ? `<p style="color: #f59e0b; font-weight: 600; margin: 20px 0;">
+         ⏰ Prazo: ${daysRemaining} dias restantes
+       </p>`
+    : '';
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">⏰ Lembrete: PIR Integridade Pendente</h1>
+      </div>
+      
+      <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Olá <strong>${employeeName}</strong>,
+        </p>
+        
+        <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+          Este é um lembrete de que você ainda não completou a <strong>Avaliação PIR Integridade</strong> do processo de <strong>${typeName}</strong>.
+        </p>
+
+        ${urgencyMessage}
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 25px 0;">
+          <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #374151;">Por que isso é importante:</strong><br>
+            A conclusão desta avaliação é essencial para o andamento do seu processo. 
+            Reserve 30 minutos do seu tempo para completar a avaliação o quanto antes.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${inviteLink}" 
+             style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+                    color: white; 
+                    padding: 14px 32px; 
+                    text-decoration: none; 
+                    border-radius: 8px; 
+                    display: inline-block;
+                    font-weight: 600;
+                    font-size: 16px;
+                    box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);">
+            🚀 Completar Avaliação Agora
+          </a>
+        </div>
+        
+        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #92400e; font-size: 13px;">
+            <strong>⏱️ Lembrete:</strong> A avaliação leva aproximadamente 30 minutos.<br>
+            Reserve um momento tranquilo para respondê-la com atenção.
+          </p>
+        </div>
+        
+        <p style="color: #9ca3af; font-size: 13px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          Se o botão não funcionar, copie e cole este link no navegador:<br>
+          <a href="${inviteLink}" style="color: #f59e0b; word-break: break-all;">${inviteLink}</a>
+        </p>
+        
+        <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 20px;">
+          Sistema AVD UISA - Avaliação de Desempenho<br>
+          Este é um email automático, por favor não responda.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to: employeeEmail,
+    subject: `⏰ Lembrete: Complete sua Avaliação PIR Integridade - ${typeName}`,
+    html,
+  });
+}
