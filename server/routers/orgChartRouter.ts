@@ -773,8 +773,8 @@ export const orgChartRouter = router({
           spanOfControl.length > 0
             ? spanOfControl.reduce((sum, soc) => sum + soc.subordinateCount, 0) / spanOfControl.length
             : 0,
-        spanOfControlDistribution: spanOfControl,
-        alerts,
+        spanOfControlDistribution: spanOfControl || [],
+        alerts: alerts || [],
       };
     }),
 });

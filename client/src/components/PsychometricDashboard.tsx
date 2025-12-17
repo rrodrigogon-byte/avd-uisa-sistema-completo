@@ -38,17 +38,20 @@ export function PsychometricDashboard() {
   }
 
   // Preparar dados para gráficos
-  const discData = [
+  const discData = safeFilter([
     { name: 'D - Dominante', value: stats.discProfiles.dominant, color: DISC_COLORS['D - Dominante'] },
     { name: 'I - Influente', value: stats.discProfiles.influential, color: DISC_COLORS['I - Influente'] },
     { name: 'S - Estável', value: stats.discProfiles.steady, color: DISC_COLORS['S - Estável'] },
     { name: 'C - Conforme', value: stats.discProfiles.conscientious, color: DISC_COLORS['C - Conforme'] },
-  ].filter(item => item.value > 0);
+  ], item => item.value > 0);
 
-  const departmentData = stats.byDepartment.slice(0, 5).map(dept => ({
-    name: dept.departmentName.length > 20 ? dept.departmentName.substring(0, 20) + '...' : dept.departmentName,
-    taxa: Math.round(dept.completionRate),
-  }));
+  const departmentData = safeMap(
+    ensureArray(stats.byDepartment).slice(0, 5),
+    dept => ({
+      name: dept.departmentName.length > 20 ? dept.departmentName.substring(0, 20) + '...' : dept.departmentName,
+      taxa: Math.round(dept.completionRate),
+    })
+  );
 
   return (
     <div className="space-y-6">
@@ -131,7 +134,7 @@ export function PsychometricDashboard() {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {discData.map((entry, index) => (
+                      {safeMap(discData, (entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -140,7 +143,7 @@ export function PsychometricDashboard() {
                 </ResponsiveContainer>
 
                 <div className="grid grid-cols-2 gap-2 mt-4">
-                  {commonProfiles?.map((profile) => (
+                  {safeMap(ensureArray(commonProfiles), (profile) => (
                     <div key={profile.profile} className="flex items-center justify-between p-2 border rounded">
                       <div className="flex items-center gap-2">
                         <div 
@@ -202,9 +205,9 @@ export function PsychometricDashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {stats.recentTests.length > 0 ? (
+          {!isEmpty(stats.recentTests) ? (
             <div className="space-y-2">
-              {stats.recentTests.map((test, i) => (
+              {safeMap(ensureArray(stats.recentTests), (test, i) => (
                 <div key={i} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-3">
                     <Award className="h-5 w-5 text-muted-foreground" />

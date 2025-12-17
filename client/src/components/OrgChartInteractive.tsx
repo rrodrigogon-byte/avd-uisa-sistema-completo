@@ -154,7 +154,7 @@ function DraggableEmployeeCard({ employee, onEdit, level = 0 }: DraggableEmploye
             />
           )}
 
-          {employee.subordinates!.map((sub) => (
+          {safeMap(employee.subordinates, (sub) => (
             <div key={sub.id} className="flex flex-col items-center">
               {/* Linha vertical para cada subordinado */}
               <div className="w-0.5 h-8 bg-border" />
@@ -222,13 +222,14 @@ function MoveEmployeeDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="null">Sem gestor (CEO/Diretor)</SelectItem>
-                {availableManagers
-                  .filter((m) => m.id !== employee.id) // Não pode ser gestor de si mesmo
-                  .map((manager) => (
+                {safeMap(
+                  safeFilter(availableManagers, (m) => m.id !== employee.id), // Não pode ser gestor de si mesmo
+                  (manager) => (
                     <SelectItem key={manager.id} value={manager.id.toString()}>
                       {manager.name} - {manager.positionTitle || "Sem cargo"}
                     </SelectItem>
-                  ))}
+                  )
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -309,7 +310,7 @@ export function OrgChartInteractive() {
 
   const handleDragStart = (event: DragStartEvent) => {
     const employeeId = event.active.id;
-    const employee = allEmployees.find((e) => e.id === employeeId);
+    const employee = safeFind(allEmployees, (e) => e.id === employeeId);
     if (employee) {
       setSelectedEmployee(employee);
     }
@@ -323,8 +324,8 @@ export function OrgChartInteractive() {
       return;
     }
 
-    const draggedEmployee = allEmployees.find((e) => e.id === active.id);
-    const targetEmployee = allEmployees.find((e) => e.id === over.id);
+    const draggedEmployee = safeFind(allEmployees, (e) => e.id === active.id);
+    const targetEmployee = safeFind(allEmployees, (e) => e.id === over.id);
 
     if (draggedEmployee && targetEmployee) {
       // Abrir diálogo de confirmação
@@ -405,7 +406,7 @@ export function OrgChartInteractive() {
       >
         <div className="overflow-x-auto pb-8">
           <div className="inline-flex gap-8 min-w-full justify-center p-8">
-            {orgData.tree.map((employee) => (
+            {safeMap(ensureArray(orgData.tree), (employee) => (
               <DraggableEmployeeCard
                 key={employee.id}
                 employee={employee}
