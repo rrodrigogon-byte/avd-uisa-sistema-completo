@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Calendar, Eye, Loader2, Mail, Plus, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";

@@ -9,6 +9,7 @@ import { Loader2, TrendingUp, Users, Award, Download, Filter, FileDown, Star, Sa
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { toast } from "sonner";
 import { exportToPDF, generateSectionHTML, generateTableHTML, generateInfoGridHTML, generateBadgeHTML } from "@/lib/pdfExport";
 import { Bar, Radar } from "react-chartjs-2";

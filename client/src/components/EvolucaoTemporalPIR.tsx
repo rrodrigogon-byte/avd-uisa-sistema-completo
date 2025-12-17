@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeReduce, safeLength, ensureArray } from "@/lib/arrayHelpers";
 import { Loader2, TrendingUp, TrendingDown, Minus, LineChart as LineChartIcon, Activity } from "lucide-react";
 import {
   LineChart,
@@ -40,32 +41,33 @@ export default function EvolucaoTemporalPIR({ employeeId }: EvolucaoTemporalPIRP
   });
 
   // Preparar dados para gráfico de linha (evolução geral)
-  const lineChartData = temporalHistory?.map((assessment) => ({
+  const lineChartData = safeMap(temporalHistory, (assessment) => ({
     date: new Date(assessment.completedAt!).toLocaleDateString("pt-BR", {
       month: "short",
       year: "numeric",
     }),
     score: assessment.overallScore || 0,
     assessmentId: assessment.id,
-  })) || [];
+  }));
 
   // Preparar dados para gráfico radar (última avaliação por categoria)
   const latestEvolution = competencyEvolution?.[competencyEvolution.length - 1];
-  const radarChartData = latestEvolution?.categories.map((cat) => ({
+  const radarChartData = safeMap(latestEvolution?.categories, (cat) => ({
     category: cat.category,
     score: Math.round(cat.averageScore),
-  })) || [];
+  }));
 
   // Calcular tendência
   const calculateTrend = () => {
-    if (!temporalHistory || temporalHistory.length < 2) return "stable";
+    const historyArray = ensureArray(temporalHistory);
+    if (historyArray.length < 2) return "stable";
     
-    const scores = temporalHistory.map(a => a.overallScore || 0);
+    const scores = safeMap(historyArray, a => a.overallScore || 0);
     const firstHalf = scores.slice(0, Math.floor(scores.length / 2));
     const secondHalf = scores.slice(Math.floor(scores.length / 2));
     
-    const avgFirst = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
-    const avgSecond = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+    const avgFirst = safeReduce(firstHalf, (a, b) => a + b, 0) / firstHalf.length;
+    const avgSecond = safeReduce(secondHalf, (a, b) => a + b, 0) / secondHalf.length;
     
     const diff = avgSecond - avgFirst;
     
@@ -195,7 +197,7 @@ export default function EvolucaoTemporalPIR({ employeeId }: EvolucaoTemporalPIRP
               <CardContent className="pt-6">
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-2">Avaliações Realizadas</p>
-                  <p className="text-3xl font-bold text-[#F39200]">{temporalHistory.length}</p>
+                  <p className="text-3xl font-bold text-[#F39200]">{safeLength(temporalHistory)}</p>
                 </div>
               </CardContent>
             </Card>
@@ -205,7 +207,7 @@ export default function EvolucaoTemporalPIR({ employeeId }: EvolucaoTemporalPIRP
                   <p className="text-sm text-gray-600 mb-2">Pontuação Média</p>
                   <p className="text-3xl font-bold text-[#F39200]">
                     {Math.round(
-                      temporalHistory.reduce((acc, a) => acc + (a.overallScore || 0), 0) / temporalHistory.length
+                      safeReduce(temporalHistory, (acc, a) => acc + (a.overallScore || 0), 0) / safeLength(temporalHistory)
                     )}
                   </p>
                 </div>
@@ -216,7 +218,7 @@ export default function EvolucaoTemporalPIR({ employeeId }: EvolucaoTemporalPIRP
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-2">Última Avaliação</p>
                   <p className="text-3xl font-bold text-[#F39200]">
-                    {temporalHistory[temporalHistory.length - 1]?.overallScore || 0}
+                    {ensureArray(temporalHistory)[ensureArray(temporalHistory).length - 1]?.overallScore || 0}
                   </p>
                 </div>
               </CardContent>
@@ -321,7 +323,7 @@ export default function EvolucaoTemporalPIR({ employeeId }: EvolucaoTemporalPIRP
                 </tr>
               </thead>
               <tbody>
-                {temporalHistory.map((assessment) => (
+                {safeMap(temporalHistory, (assessment) => (
                   <tr key={assessment.id} className="border-b hover:bg-gray-50">
                     <td className="py-3 px-4">
                       {new Date(assessment.completedAt!).toLocaleDateString("pt-BR", {
@@ -341,7 +343,7 @@ export default function EvolucaoTemporalPIR({ employeeId }: EvolucaoTemporalPIRP
                       </Badge>
                     </td>
                     <td className="py-3 px-4 text-gray-600">
-                      {assessment.answers?.length || 0} respostas
+                      {safeLength(assessment.answers)} respostas
                     </td>
                   </tr>
                 ))}

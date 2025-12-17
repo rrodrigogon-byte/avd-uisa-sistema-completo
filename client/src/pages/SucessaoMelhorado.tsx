@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Loader2, Users, TrendingUp, AlertCircle, Plus, Download, Search, ArrowLeft } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Link } from "wouter";
 import { exportMapaSucessao } from "@/lib/exportPDF";
 import { toast } from "sonner";

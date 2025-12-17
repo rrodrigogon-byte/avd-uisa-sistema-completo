@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import DashboardLayout from "@/components/DashboardLayout";
 import { ArrowLeft, CheckCircle, XCircle, Clock, FileText, Download } from "lucide-react";
 import { Separator } from "@/components/ui/separator";

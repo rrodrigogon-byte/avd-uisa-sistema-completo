@@ -26,6 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Brain, Check, ChevronsUpDown, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";

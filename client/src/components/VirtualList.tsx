@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, CSSProperties } from "react";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { useThrottle } from "@/lib/performance";
 
 interface VirtualListProps<T> {

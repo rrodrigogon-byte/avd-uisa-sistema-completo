@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Upload, FileText, CheckCircle, XCircle, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";

@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { toast } from "sonner";
 import { FileDown, TrendingUp, Target, AlertTriangle, Loader2, BarChart3 } from "lucide-react";
 import { exportPDIReportPDF } from "@/lib/pdfExport";

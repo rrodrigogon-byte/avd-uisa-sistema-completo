@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { ChevronRight, Home } from "lucide-react";
 
 interface BreadcrumbItem {

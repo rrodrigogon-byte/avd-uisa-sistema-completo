@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Shield, AlertTriangle, Activity, Clock, RefreshCw, Download, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";

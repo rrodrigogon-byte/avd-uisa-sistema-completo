@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { downloadICS } from "@/lib/generateICS";
 import { AlertCircle, Calendar, CalendarPlus, CheckCircle2, Clock, Plus, Target, TrendingUp } from "lucide-react";
 import { useState } from "react";

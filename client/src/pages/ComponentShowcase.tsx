@@ -1,4 +1,5 @@
 import {
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
   Accordion,
   AccordionContent,
   AccordionItem,

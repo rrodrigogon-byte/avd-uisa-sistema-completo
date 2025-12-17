@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Loader2, Upload, FileText, Download, Trash2, Eye, Paperclip, File, Image as ImageIcon, Award } from "lucide-react";
 import { toast } from "sonner";
 

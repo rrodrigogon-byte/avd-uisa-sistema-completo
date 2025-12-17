@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { CheckCircle2, Clock, Users, Loader2, TrendingUp, AlertCircle, BarChart3, Download, Plus } from "lucide-react";
 import { export360PDF } from "@/lib/pdfExport";
 import { toast } from "sonner";

@@ -35,6 +35,7 @@ import NotificationBell from "./NotificationBell";
 import { InAppNotifications } from "./InAppNotifications";
 import { filterMenuItems } from "@/lib/menuPermissions";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 
 // Componente de seção com submenu
 function MenuSection({ item, location, setLocation, badgeCounts }: { item: any; location: string; setLocation: (path: string) => void; badgeCounts?: Record<string, number> }) {

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import {
   Radar,
   RadarChart,

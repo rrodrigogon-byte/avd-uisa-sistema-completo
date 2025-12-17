@@ -16,6 +16,7 @@ import {
 import { Loader2, ArrowLeft, Plus, Trash2, FileText } from "lucide-react";
 import PsychometricResultsCard from "@/components/PsychometricResultsCard";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { toast } from "sonner";
 
 /**

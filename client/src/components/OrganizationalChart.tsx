@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 
 interface Employee {
   id: number;

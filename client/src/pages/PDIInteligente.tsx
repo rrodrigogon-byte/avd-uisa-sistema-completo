@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Loader2, Target, Users, Calendar, TrendingUp, Download, ArrowLeft, Award } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Link } from "wouter";
 import { exportPDIInteligente } from "@/lib/exportPDF";
 import { toast } from "sonner";

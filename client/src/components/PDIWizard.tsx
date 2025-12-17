@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { ArrowLeft, ArrowRight, CheckCircle2, Lightbulb, Loader2, Sparkles, Target } from "lucide-react";
 import { useState } from "react";

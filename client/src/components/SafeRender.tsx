@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 
 interface SafeRenderProps {
   data: any;

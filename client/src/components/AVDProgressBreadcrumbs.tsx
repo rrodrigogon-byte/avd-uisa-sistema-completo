@@ -1,4 +1,5 @@
 import { CheckCircle2, Circle, Lock, ArrowRight } from "lucide-react";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";

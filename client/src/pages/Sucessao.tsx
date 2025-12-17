@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Users, TrendingUp, AlertCircle, Plus, UserPlus, Award, Calendar, Target, Pencil, Trash2, Save, History, Send, FileDown } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { toast } from "sonner";
 import { exportToPDF, generateSectionHTML, generateTableHTML, generateInfoGridHTML, generateBadgeHTML, generateCardHTML } from "@/lib/pdfExport";
 

@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { AlertCircle, CheckCircle2, Clock, Users, Plus, Calendar } from "lucide-react";
 import { toast } from "sonner";
 

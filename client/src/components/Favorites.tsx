@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Star, X } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Users, Brain, TrendingUp, AlertCircle, Download } from "lucide-react";
 import { toast } from "sonner";

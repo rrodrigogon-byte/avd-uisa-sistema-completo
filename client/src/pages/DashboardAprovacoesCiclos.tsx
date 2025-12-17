@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { toast } from "sonner";
 import { Loader2, CheckCircle2, Clock, Users, Target, TrendingUp } from "lucide-react";

@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeLength } from "@/lib/arrayHelpers";
 import {
   Users,
   Target,
@@ -156,8 +157,7 @@ export default function DashboardGestor() {
 
   // Formatar dados para gráficos
   const performanceChartData = useMemo(() => {
-    if (!performanceByPeriod) return [];
-    return performanceByPeriod.map((item: any) => ({
+    return safeMap(performanceByPeriod, (item: any) => ({
       period: item.period,
       score: item.avgScore?.toFixed(1) || 0,
       count: item.count,
@@ -165,8 +165,7 @@ export default function DashboardGestor() {
   }, [performanceByPeriod]);
 
   const departmentChartData = useMemo(() => {
-    if (!performanceByDepartment) return [];
-    return performanceByDepartment.map((item: any) => ({
+    return safeMap(performanceByDepartment, (item: any) => ({
       name: item.departmentName || 'Sem departamento',
       score: item.avgScore?.toFixed(1) || 0,
       employees: item.count,

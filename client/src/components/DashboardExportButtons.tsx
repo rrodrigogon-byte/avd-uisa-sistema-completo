@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Download, FileSpreadsheet, FileText } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";

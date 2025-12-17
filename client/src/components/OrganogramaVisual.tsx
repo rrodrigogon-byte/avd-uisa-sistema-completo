@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import ReactFlow, {
   Node,
   Edge,

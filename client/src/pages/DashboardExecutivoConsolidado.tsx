@@ -37,6 +37,7 @@ import {
   Briefcase
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 
 /**
  * Dashboard Executivo Consolidado

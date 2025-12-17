@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Skeleton para tabelas

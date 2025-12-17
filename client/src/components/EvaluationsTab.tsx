@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Award, TrendingUp, Eye, FileText, Calendar, User, Target, Loader2, Download } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 import { toast } from "sonner";
 

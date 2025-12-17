@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Users, TrendingUp, AlertTriangle, Plus, Edit, Eye, Download, Trash2, FileText } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { useEmployeeSearch } from "@/hooks/useEmployeeSearch";
 import { toast } from "sonner";
 import { useLocation } from "wouter";

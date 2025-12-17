@@ -2,6 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { AlertCircle, Award, Brain, CheckCircle, Download, TrendingUp, User, Lightbulb } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { useRoute, useLocation } from 'wouter';
 import DashboardLayout from '@/components/DashboardLayout';
 import { trpc } from '@/lib/trpc';

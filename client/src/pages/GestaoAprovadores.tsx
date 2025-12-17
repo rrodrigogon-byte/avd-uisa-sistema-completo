@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Plus, Trash2, Edit, History, AlertTriangle } from "lucide-react";
 import CreateEditRuleModal from "@/components/CreateEditRuleModal";
 import { toast } from "sonner";
