@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { AlertTriangle, BarChart3, CheckCircle2, ClipboardList, FileText, Loader2, Plus, Settings, Shield, Users } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -128,7 +129,24 @@ export default function DashboardPIRIntegridade() {
           </CardHeader>
           <CardContent>
             {loadingAssessments ? (
-              <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-6 w-12" />
+                      <Skeleton className="h-6 w-20" />
+                      <Skeleton className="h-6 w-24" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : isEmpty(assessmentsData?.assessments) ? (
               <div className="text-center py-8 text-gray-500">
                 <FileText className="h-12 w-12 mx-auto mb-2 opacity-50" />

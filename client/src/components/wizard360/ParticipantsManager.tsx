@@ -1,3 +1,5 @@
+import { safeMap, safeFilter, safeSome, isEmpty } from "@/lib/arrayHelpers";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -113,8 +115,8 @@ export default function ParticipantsManager({
 
   const participantsByRole = useMemo(() => {
     return {
-      self: data.participants.filter(p => p.role === 'self'),
-      peer: data.participants.filter(p => p.role === 'peer'),
+      self: data.safeFilter(participants, p => p.role === 'self'),
+      peer: data.safeFilter(participants, p => p.role === 'peer'),
       subordinate: data.participants.filter(p => p.role === 'subordinate'),
       manager: data.participants.filter(p => p.role === 'manager')
     };

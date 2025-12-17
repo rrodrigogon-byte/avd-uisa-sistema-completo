@@ -1,3 +1,5 @@
+import { safeMap, safeFilter, safeReduce, isEmpty } from "@/lib/arrayHelpers";
+
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +57,7 @@ export default function DashboardTempoReal() {
   const metrics = goals
     ? {
         total: goals.length,
-        critical: goals.filter((g) => g.progress < 30 && g.status !== "completed").length,
+        critical: safeFilter(goals, (g) => g.progress < 30 && g.status !== "completed").length,
         onTrack: goals.filter((g) => g.progress >= 50 && g.status !== "completed").length,
         completed: goals.filter((g) => g.status === "completed").length,
         avgProgress: Math.round(goals.reduce((sum, g) => sum + g.progress, 0) / goals.length),

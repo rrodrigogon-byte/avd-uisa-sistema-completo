@@ -1,3 +1,5 @@
+import { safeMap, safeFilter, isEmpty } from "@/lib/arrayHelpers";
+
 import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";

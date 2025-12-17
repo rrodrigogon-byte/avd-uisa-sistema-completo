@@ -1,3 +1,5 @@
+import { safeMap, safeFilter, isEmpty } from "@/lib/arrayHelpers";
+
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { io, Socket } from "socket.io-client";
 import { toast } from "sonner";
