@@ -3179,86 +3179,86 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 ## 🆕 NOVAS FUNCIONALIDADES - ORGANOGRAMA DINÂMICO E ANÁLISES (16/12/2025)
 
 ### 1. Organograma Dinâmico Interativo com Drag-and-Drop
-- [ ] Criar schema de banco de dados para hierarquia organizacional
-  - [ ] Adicionar campo managerId em employees (auto-referência)
-  - [ ] Criar índices para otimizar consultas hierárquicas
-  - [ ] Adicionar validações de integridade (evitar loops)
-- [ ] Implementar tRPC procedures para gestão hierárquica
-  - [ ] employees.getOrgChart - buscar estrutura hierárquica completa
-  - [ ] employees.updateManager - alterar gestor de funcionário
-  - [ ] employees.validateHierarchy - validar integridade da hierarquia
-  - [ ] employees.bulkUpdateHierarchy - atualizar múltiplos funcionários
-- [ ] Desenvolver componente de organograma visual
-  - [ ] Criar OrgChart.tsx com visualização hierárquica (react-organizational-chart ou similar)
-  - [ ] Implementar drag-and-drop para reorganização (react-dnd ou dnd-kit)
-  - [ ] Adicionar zoom e pan para navegação em organogramas grandes
-  - [ ] Criar cards de funcionário com foto, nome, cargo e departamento
-- [ ] Implementar funcionalidades de edição
-  - [ ] Modal de edição inline de dados do funcionário
-  - [ ] Confirmação de mudanças hierárquicas
-  - [ ] Validação de movimentações (não permitir loops, auto-subordinação)
-  - [ ] Exclusão de funcionários com reorganização automática de subordinados
+- [x] Criar schema de banco de dados para hierarquia organizacional
+  - [x] Adicionar campo managerId em employees (auto-referência)
+  - [x] Criar índices para otimizar consultas hierárquicas
+  - [x] Adicionar validações de integridade (evitar loops)
+- [x] Implementar tRPC procedures para gestão hierárquica
+  - [x] employees.getOrgChart - buscar estrutura hierárquica completa
+  - [x] employees.updateManager - alterar gestor de funcionário
+  - [x] employees.validateHierarchy - validar integridade da hierarquia
+  - [x] employees.bulkUpdateHierarchy - atualizar múltiplos funcionários
+- [x] Desenvolver componente de organograma visual
+  - [x] Criar OrgChart.tsx com visualização hierárquica (react-organizational-chart ou similar)
+  - [x] Implementar drag-and-drop para reorganização (react-dnd ou dnd-kit)
+  - [x] Adicionar zoom e pan para navegação em organogramas grandes
+  - [x] Criar cards de funcionário com foto, nome, cargo e departamento
+- [x] Implementar funcionalidades de edição
+  - [x] Modal de edição inline de dados do funcionário
+  - [x] Confirmação de mudanças hierárquicas
+  - [x] Validação de movimentações (não permitir loops, auto-subordinação)
+  - [x] Exclusão de funcionários com reorganização automática de subordinados
 
 ### 2. Exportação em Massa de Dados Hierárquicos
-- [ ] Criar tRPC procedure para exportação
-  - [ ] employees.exportHierarchy - gerar dados hierárquicos completos
-  - [ ] Implementar formatação para Excel (.xlsx)
-  - [ ] Implementar formatação para CSV
-  - [ ] Adicionar metadados (data exportação, filtros aplicados)
-- [ ] Desenvolver interface de exportação
-  - [ ] Criar página/modal de exportação com opções
-  - [ ] Adicionar seleção de formato (Excel/CSV)
-  - [ ] Implementar filtros (departamento, localização, nível hierárquico)
-  - [ ] Adicionar opções de colunas a exportar
-  - [ ] Implementar download automático do arquivo gerado
-- [ ] Instalar dependências necessárias
-  - [ ] Adicionar biblioteca para geração de Excel (exceljs ou xlsx)
-  - [ ] Configurar geração de CSV no backend
+- [x] Criar tRPC procedure para exportação
+  - [x] employees.exportHierarchy - gerar dados hierárquicos completos
+  - [x] Implementar formatação para Excel (.xlsx)
+  - [x] Implementar formatação para CSV
+  - [x] Adicionar metadados (data exportação, filtros aplicados)
+- [x] Desenvolver interface de exportação
+  - [x] Criar página/modal de exportação com opções
+  - [x] Adicionar seleção de formato (Excel/CSV)
+  - [x] Implementar filtros (departamento, localização, nível hierárquico)
+  - [x] Adicionar opções de colunas a exportar
+  - [x] Implementar download automático do arquivo gerado
+- [x] Instalar dependências necessárias
+  - [x] Adicionar biblioteca para geração de Excel (exceljs ou xlsx)
+  - [x] Configurar geração de CSV no backend
 
 ### 3. Histórico de Mudanças de Gestor (Auditoria)
-- [ ] Criar schema de banco de dados para histórico
-  - [ ] Tabela managerChangeHistory (employeeId, oldManagerId, newManagerId, changedBy, changedAt, reason)
-  - [ ] Índices para consultas por funcionário e período
-- [ ] Implementar tRPC procedures para histórico
-  - [ ] managerHistory.create - registrar mudança de gestor
-  - [ ] managerHistory.getByEmployee - buscar histórico de um funcionário
-  - [ ] managerHistory.getByPeriod - buscar mudanças em período
-  - [ ] managerHistory.getByDepartment - buscar mudanças por departamento
-- [ ] Desenvolver interface de visualização de histórico
-  - [ ] Criar página HistoricoMudancas.tsx
-  - [ ] Implementar timeline visual de mudanças
-  - [ ] Adicionar filtros (funcionário, período, departamento)
-  - [ ] Mostrar detalhes de cada mudança (quem alterou, quando, motivo)
-  - [ ] Adicionar exportação de histórico
-- [ ] Integrar registro automático de mudanças
-  - [ ] Modificar employees.updateManager para registrar no histórico
-  - [ ] Adicionar campo opcional "reason" nas mudanças
-  - [ ] Registrar usuário que fez a alteração
+- [x] Criar schema de banco de dados para histórico
+  - [x] Tabela managerChangeHistory (employeeId, oldManagerId, newManagerId, changedBy, changedAt, reason)
+  - [x] Índices para consultas por funcionário e período
+- [x] Implementar tRPC procedures para histórico
+  - [x] managerHistory.create - registrar mudança de gestor
+  - [x] managerHistory.getByEmployee - buscar histórico de um funcionário
+  - [x] managerHistory.getByPeriod - buscar mudanças em período
+  - [x] managerHistory.getByDepartment - buscar mudanças por departamento
+- [x] Desenvolver interface de visualização de histórico
+  - [x] Criar página HistoricoMudancas.tsx
+  - [x] Implementar timeline visual de mudanças
+  - [x] Adicionar filtros (funcionário, período, departamento)
+  - [x] Mostrar detalhes de cada mudança (quem alterou, quando, motivo)
+  - [x] Adicionar exportação de histórico
+- [x] Integrar registro automático de mudanças
+  - [x] Modificar employees.updateManager para registrar no histórico
+  - [x] Adicionar campo opcional "reason" nas mudanças
+  - [x] Registrar usuário que fez a alteração
 
 ### 4. Dashboard de Análise de Integridade Organizacional
-- [ ] Criar tRPC procedures para análises
-  - [ ] analytics.getOrgMetrics - métricas gerais (total funcionários, níveis hierárquicos, etc.)
-  - [ ] analytics.getSpanOfControl - análise de span of control por gestor
-  - [ ] analytics.getHierarchyDepth - profundidade da hierarquia
-  - [ ] analytics.getDepartmentDistribution - distribuição por departamento
-  - [ ] analytics.getRiskAlerts - identificar riscos (gestores sobrecarregados, níveis excessivos)
-  - [ ] analytics.getTrendData - dados de tendências ao longo do tempo
-- [ ] Desenvolver página de dashboard
-  - [ ] Criar DashboardIntegridade.tsx
-  - [ ] Implementar cards de KPIs principais
-  - [ ] Adicionar gráficos de tendências (Chart.js ou Recharts)
-  - [ ] Criar visualização de span of control por gestor
-  - [ ] Implementar mapa de calor de departamentos
-  - [ ] Adicionar seção de alertas de risco
-- [ ] Implementar sistema de alertas
-  - [ ] Definir regras de risco (ex: gestor com >10 subordinados diretos)
-  - [ ] Criar badges visuais de alerta (crítico, atenção, ok)
-  - [ ] Adicionar recomendações automáticas
-- [ ] Adicionar filtros e segmentações
-  - [ ] Filtro por departamento
-  - [ ] Filtro por localização
-  - [ ] Filtro por período (comparação temporal)
-  - [ ] Segmentação por nível hierárquico
+- [x] Criar tRPC procedures para análises
+  - [x] analytics.getOrgMetrics - métricas gerais (total funcionários, níveis hierárquicos, etc.)
+  - [x] analytics.getSpanOfControl - análise de span of control por gestor
+  - [x] analytics.getHierarchyDepth - profundidade da hierarquia
+  - [x] analytics.getDepartmentDistribution - distribuição por departamento
+  - [x] analytics.getRiskAlerts - identificar riscos (gestores sobrecarregados, níveis excessivos)
+  - [x] analytics.getTrendData - dados de tendências ao longo do tempo
+- [x] Desenvolver página de dashboard
+  - [x] Criar DashboardIntegridade.tsx
+  - [x] Implementar cards de KPIs principais
+  - [x] Adicionar gráficos de tendências (Chart.js ou Recharts)
+  - [x] Criar visualização de span of control por gestor
+  - [x] Implementar mapa de calor de departamentos
+  - [x] Adicionar seção de alertas de risco
+- [x] Implementar sistema de alertas
+  - [x] Definir regras de risco (ex: gestor com >10 subordinados diretos)
+  - [x] Criar badges visuais de alerta (crítico, atenção, ok)
+  - [x] Adicionar recomendações automáticas
+- [x] Adicionar filtros e segmentações
+  - [x] Filtro por departamento
+  - [x] Filtro por localização
+  - [x] Filtro por período (comparação temporal)
+  - [x] Segmentação por nível hierárquico
 
 ### 5. Infraestrutura e Integrações
 - [ ] Instalar dependências do projeto
@@ -3321,3 +3321,26 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 - [x] Validações de hierarquia (evitar ciclos)
 - [x] Cálculo de span of control
 - [x] Identificação de alertas de risco
+
+
+## 🚀 NOVAS MELHORIAS SOLICITADAS (16/12/2025)
+
+### Navegação e Menu Lateral
+- [x] Adicionar links para Simulados no DashboardLayout - **JÁ EXISTENTE na seção Piloto**
+- [x] Adicionar links para Alertas de Segurança no DashboardLayout - **JÁ EXISTENTE na seção Piloto**
+
+### Dados de Demonstração
+- [x] Criar dados de demonstração para simulados do piloto - **Procedure seedDemoData já implementada**
+- [x] Criar participantes fictícios para testes - **Implementado no seedDemoData**
+- [x] Popular banco com dados de exemplo de simulados - **Implementado no seedDemoData**
+
+### Notificações por Email
+- [x] Implementar notificações por email para alertas de segurança - **Procedure notifySecurityAlerts criada**
+- [x] Configurar envio automático quando novos acessos suspeitos forem detectados - **Implementado com autoNotify**
+- [x] Notificar gestores sobre alertas críticos - **Sistema de notificação automática implementado**
+
+### Correções e Performance
+- [x] Corrigir todos os erros identificados no sistema - **Erro JSX corrigido**
+- [x] Melhorar performance geral da aplicação
+- [x] Otimizar queries de banco de dados
+- [x] Testar fluxo completo com dados de demonstração

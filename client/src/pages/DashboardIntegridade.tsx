@@ -306,7 +306,7 @@ export default function DashboardIntegridade() {
                     Balanceamento de Carga
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Redistribua subordinados de gestores sobrecarregados (&gt;10 subordinados) para
+                    Redistribua subordinados de gestores sobrecarregados (mais de 10 subordinados) para
                     melhorar a eficiência e qualidade da gestão.
                   </p>
                 </div>
