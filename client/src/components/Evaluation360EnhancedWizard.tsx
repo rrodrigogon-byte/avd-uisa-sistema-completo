@@ -94,13 +94,13 @@ export default function Evaluation360EnhancedWizard() {
         avaliacaoPares: weightsData.peerWeight,
         avaliacaoSubordinados: weightsData.subordinateWeight,
       },
-      competencies: competenciesData.selectedCompetencies.map(id => ({
+      competencies: safeMap(ensureArray(competenciesData.selectedCompetencies), id => ({
         id,
         name: '',
         description: '',
         requiredLevel: 3,
       })),
-      participants: participantsData.participants.map(p => ({
+      participants: safeMap(ensureArray(participantsData.participants), p => ({
         employeeId: p.employeeId,
         role: p.role,
         name: p.name,
@@ -133,10 +133,10 @@ export default function Evaluation360EnhancedWizard() {
         subordinateWeight: restored.weights.avaliacaoSubordinados,
       });
       setCompetenciesData({
-        selectedCompetencies: restored.competencies.map(c => c.id),
+        selectedCompetencies: safeMap(ensureArray(restored.competencies), c => c.id),
       });
       setParticipantsData({
-        participants: restored.participants.map(p => ({
+        participants: safeMap(ensureArray(restored.participants), p => ({
           employeeId: p.employeeId,
           role: p.role,
           name: p.name,
@@ -182,8 +182,8 @@ export default function Evaluation360EnhancedWizard() {
       peerWeight: weightsData.peerWeight,
       subordinateWeight: weightsData.subordinateWeight,
       managerWeight: weightsData.managerWeight,
-      competencyIds: competenciesData.selectedCompetencies,
-      participants: participantsData.participants.map(p => ({
+      competencyIds: ensureArray(competenciesData.selectedCompetencies),
+      participants: safeMap(ensureArray(participantsData.participants), p => ({
         employeeId: p.employeeId,
         role: p.role
       }))
@@ -289,7 +289,7 @@ export default function Evaluation360EnhancedWizard() {
 
       {/* Steps Indicator */}
       <div className="grid grid-cols-5 gap-4 mb-8">
-        {steps.map((step) => {
+        {safeMap(ensureArray(steps), (step) => {
           const isCompleted = step.number < currentStep;
           const isCurrent = step.number === currentStep;
           

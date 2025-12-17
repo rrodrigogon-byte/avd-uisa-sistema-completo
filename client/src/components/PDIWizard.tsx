@@ -124,7 +124,7 @@ Com base na análise de suas competências atuais e nas exigências do cargo de 
                     <SelectValue placeholder="Selecione um cargo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {positions?.map((pos: any) => (
+                    {safeMap(ensureArray(positions), (pos: any) => (
                       <SelectItem key={pos.id} value={pos.id.toString()}>
                         {pos.title}
                       </SelectItem>
@@ -237,7 +237,7 @@ Com base na análise de suas competências atuais e nas exigências do cargo de 
 
               {/* Competency Gaps List */}
               <div className="space-y-3">
-                {competencyGaps.map((comp) => (
+                {safeMap(ensureArray(competencyGaps), (comp) => (
                   <div key={comp.id} className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">{comp.name}</span>
@@ -389,7 +389,7 @@ Com base na análise de suas competências atuais e nas exigências do cargo de 
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm font-medium mb-2">Competências a Desenvolver</p>
                   <div className="space-y-1">
-                    {competencyGaps.slice(0, 3).map((comp) => (
+                    {safeMap(ensureArray(competencyGaps).slice(0, 3), (comp) => (
                       <p key={comp.id} className="text-sm text-muted-foreground">
                         • {comp.name} (Gap: {comp.gap} pontos)
                       </p>

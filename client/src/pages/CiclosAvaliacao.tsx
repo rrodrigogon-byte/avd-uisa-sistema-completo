@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Calendar, CheckCircle2, Clock, Loader2, Mail, Pause, Play, Plus, Trash2, XCircle } from "lucide-react";
+import ListSkeleton from "@/components/ListSkeleton";
+import DashboardLayout from "@/components/DashboardLayout";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -160,9 +162,17 @@ export default function CiclosAvaliacao() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto py-8 space-y-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">Gestão de Ciclos de Avaliação</h1>
+              <p className="text-muted-foreground mt-1">Carregando ciclos...</p>
+            </div>
+          </div>
+          <ListSkeleton count={3} />
+        </div>
+      </DashboardLayout>
     );
   }
 

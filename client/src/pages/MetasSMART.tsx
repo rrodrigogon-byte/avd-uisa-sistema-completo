@@ -29,6 +29,8 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import ListSkeleton from "@/components/ListSkeleton";
+import DashboardLayout from "@/components/DashboardLayout";
 
 /**
  * Dashboard de Metas SMART
@@ -132,16 +134,22 @@ export default function MetasSMART() {
 
   if (loadingDashboard || loadingGoals) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i: any) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+      <DashboardLayout>
+        <div className="container mx-auto p-6 space-y-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">Metas SMART</h1>
+              <p className="text-muted-foreground mt-1">Carregando suas metas...</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {[1, 2, 3, 4].map((i: number) => (
+              <div key={i} className="h-32 bg-muted animate-pulse rounded-lg"></div>
             ))}
           </div>
+          <ListSkeleton count={5} />
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 

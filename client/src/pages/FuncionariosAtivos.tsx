@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, Plus, Search, Pencil, Trash2, Download, Upload, Users } from "lucide-react";
+import ListSkeleton from "@/components/ListSkeleton";
 
 /**
  * Página de Gestão de Funcionários Ativos UISA
@@ -264,9 +265,7 @@ export default function FuncionariosAtivos() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
+              <ListSkeleton count={5} />
             ) : (
               <div className="overflow-x-auto">
                 <Table>
