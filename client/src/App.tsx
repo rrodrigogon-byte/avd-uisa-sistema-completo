@@ -87,6 +87,9 @@ import PDIImportacao from "./pages/PDIImportacao";
 import PDIListagem from "./pages/PDIListagem";
 import OrganogramaDinamico from "./pages/OrganogramaDinamico";
 import HistoricoMovimentacoes from "./pages/HistoricoMovimentacoes";
+import HistoricoMudancas from "./pages/HistoricoMudancas";
+import DashboardIntegridade from "./pages/DashboardIntegridade";
+import ExportarOrganograma from "./pages/ExportarOrganograma";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
@@ -419,6 +422,9 @@ function Router() {
       <Route path="/pdi/listagem" component={PDIListagem} />
       <Route path="/organograma-dinamico" component={OrganogramaDinamico} />
       <Route path="/historico-movimentacoes" component={HistoricoMovimentacoes} />
+      <Route path="/organograma/historico" component={HistoricoMudancas} />
+      <Route path="/organograma/integridade" component={DashboardIntegridade} />
+      <Route path="/organograma/exportar" component={ExportarOrganograma} />
       <Route path="/testes-psicometricos/resultados" component={TestesResultadosRH} />
       <Route path="/equipe/perfis-disc" component={TeamDISCProfiles} />
       <Route path="/team-disc-profiles" component={TeamProfiles} />

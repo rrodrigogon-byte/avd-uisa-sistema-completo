@@ -6,9 +6,10 @@ import {
   employeeMovements,
   employees,
   departments,
-  positions
+  positions,
+  managerChangeHistory
 } from "../../drizzle/schema";
-import { eq, and, desc, isNull, sql } from "drizzle-orm";
+import { eq, and, desc, isNull, sql, gte, lte, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 /**
@@ -486,6 +487,294 @@ export const orgChartRouter = router({
         success: true,
         message: `${createdCount} nós criados no organograma`,
         totalDepartments: depts.length
+      };
+    }),
+
+  /**
+   * Buscar histórico de mudanças de gestor
+   */
+  getManagerHistory: protectedProcedure
+    .input(
+      z.object({
+        employeeId: z.number().optional(),
+        departmentId: z.number().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        changeType: z.enum([
+          "promocao",
+          "transferencia",
+          "reorganizacao",
+          "desligamento_gestor",
+          "ajuste_hierarquico",
+          "outro",
+        ]).optional(),
+        limit: z.number().default(50),
+        offset: z.number().default(0),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const conditions = [];
+
+      if (input.employeeId) {
+        conditions.push(eq(managerChangeHistory.employeeId, input.employeeId));
+      }
+
+      if (input.departmentId) {
+        conditions.push(eq(managerChangeHistory.departmentId, input.departmentId));
+      }
+
+      if (input.startDate) {
+        conditions.push(gte(managerChangeHistory.effectiveDate, new Date(input.startDate)));
+      }
+
+      if (input.endDate) {
+        conditions.push(lte(managerChangeHistory.effectiveDate, new Date(input.endDate)));
+      }
+
+      if (input.changeType) {
+        conditions.push(eq(managerChangeHistory.changeType, input.changeType));
+      }
+
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+      const history = await db
+        .select()
+        .from(managerChangeHistory)
+        .where(whereClause)
+        .orderBy(desc(managerChangeHistory.effectiveDate))
+        .limit(input.limit)
+        .offset(input.offset);
+
+      const [countResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(managerChangeHistory)
+        .where(whereClause);
+
+      return {
+        history,
+        total: countResult?.count ?? 0,
+      };
+    }),
+
+  /**
+   * Exportar dados hierárquicos completos
+   */
+  exportHierarchy: protectedProcedure
+    .input(
+      z.object({
+        format: z.enum(["json", "csv"]).default("json"),
+        departmentId: z.number().optional(),
+        includeInactive: z.boolean().default(false),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const conditions = [];
+
+      if (!input.includeInactive) {
+        conditions.push(eq(employees.active, true));
+      }
+
+      if (input.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+      const employeesData = await db
+        .select({
+          id: employees.id,
+          employeeCode: employees.employeeCode,
+          name: employees.name,
+          email: employees.email,
+          cpf: employees.cpf,
+          birthDate: employees.birthDate,
+          hireDate: employees.hireDate,
+          departmentId: employees.departmentId,
+          departmentName: departments.name,
+          positionId: employees.positionId,
+          positionTitle: positions.title,
+          managerId: employees.managerId,
+          managerName: sql<string>`mgr.name`,
+          active: employees.active,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(employees.positionId, positions.id))
+        .leftJoin(sql`employees as mgr`, sql`${employees.managerId} = mgr.id`)
+        .where(whereClause);
+
+      if (input.format === "csv") {
+        // Converter para formato CSV
+        const headers = [
+          "ID",
+          "Código",
+          "Nome",
+          "Email",
+          "CPF",
+          "Data Nascimento",
+          "Data Admissão",
+          "Departamento",
+          "Cargo",
+          "Gestor",
+          "Status",
+        ];
+
+        const rows = employeesData.map((emp) => [
+          emp.id,
+          emp.employeeCode,
+          emp.name,
+          emp.email || "",
+          emp.cpf || "",
+          emp.birthDate ? new Date(emp.birthDate).toLocaleDateString("pt-BR") : "",
+          emp.hireDate ? new Date(emp.hireDate).toLocaleDateString("pt-BR") : "",
+          emp.departmentName || "",
+          emp.positionTitle || "",
+          emp.managerName || "",
+          emp.active ? "Ativo" : "Inativo",
+        ]);
+
+        const csvContent = [
+          headers.join(","),
+          ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+        ].join("\n");
+
+        return {
+          format: "csv",
+          data: csvContent,
+          filename: `organograma_${new Date().toISOString().split("T")[0]}.csv`,
+        };
+      }
+
+      // Formato JSON (padrão)
+      return {
+        format: "json",
+        data: employeesData,
+        total: employeesData.length,
+        exportedAt: new Date().toISOString(),
+      };
+    }),
+
+  /**
+   * Obter métricas de integridade organizacional
+   */
+  getIntegrityMetrics: protectedProcedure
+    .input(
+      z.object({
+        departmentId: z.number().optional(),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const conditions = [eq(employees.active, true)];
+
+      if (input?.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+
+      const whereClause = and(...conditions);
+
+      // Total de funcionários
+      const [totalResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(employees)
+        .where(whereClause);
+
+      const totalEmployees = totalResult?.count ?? 0;
+
+      // Funcionários sem gestor (possíveis CEOs/Diretores)
+      const [noManagerResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(employees)
+        .where(and(...conditions, isNull(employees.managerId)));
+
+      const employeesWithoutManager = noManagerResult?.count ?? 0;
+
+      // Span of control (subordinados por gestor)
+      const spanOfControl = await db
+        .select({
+          managerId: employees.managerId,
+          managerName: sql<string>`mgr.name`,
+          subordinateCount: sql<number>`count(*)`,
+        })
+        .from(employees)
+        .leftJoin(sql`employees as mgr`, sql`${employees.managerId} = mgr.id`)
+        .where(and(...conditions, sql`${employees.managerId} IS NOT NULL`))
+        .groupBy(employees.managerId, sql`mgr.name`);
+
+      // Calcular profundidade máxima da hierarquia
+      const allEmployees = await db
+        .select({
+          id: employees.id,
+          managerId: employees.managerId,
+        })
+        .from(employees)
+        .where(whereClause);
+
+      const calculateDepth = (empId: number, visited = new Set<number>()): number => {
+        if (visited.has(empId)) return 0; // Evitar loops
+        visited.add(empId);
+
+        const emp = allEmployees.find((e) => e.id === empId);
+        if (!emp || !emp.managerId) return 1;
+
+        return 1 + calculateDepth(emp.managerId, visited);
+      };
+
+      const depths = allEmployees.map((emp) => calculateDepth(emp.id));
+      const maxDepth = Math.max(...depths, 0);
+
+      // Identificar alertas de risco
+      const alerts = [];
+
+      // Alerta: Gestores com muitos subordinados diretos (>10)
+      const overloadedManagers = spanOfControl.filter((soc) => soc.subordinateCount > 10);
+      if (overloadedManagers.length > 0) {
+        alerts.push({
+          type: "span_of_control_high",
+          severity: "warning",
+          message: `${overloadedManagers.length} gestor(es) com mais de 10 subordinados diretos`,
+          data: overloadedManagers,
+        });
+      }
+
+      // Alerta: Hierarquia muito profunda (>6 níveis)
+      if (maxDepth > 6) {
+        alerts.push({
+          type: "hierarchy_too_deep",
+          severity: "warning",
+          message: `Hierarquia com ${maxDepth} níveis (recomendado: máximo 6)`,
+          data: { maxDepth },
+        });
+      }
+
+      // Alerta: Muitos funcionários sem gestor
+      if (employeesWithoutManager > 5) {
+        alerts.push({
+          type: "too_many_without_manager",
+          severity: "info",
+          message: `${employeesWithoutManager} funcionários sem gestor definido`,
+          data: { count: employeesWithoutManager },
+        });
+      }
+
+      return {
+        totalEmployees,
+        employeesWithoutManager,
+        maxHierarchyDepth: maxDepth,
+        averageSpanOfControl:
+          spanOfControl.length > 0
+            ? spanOfControl.reduce((sum, soc) => sum + soc.subordinateCount, 0) / spanOfControl.length
+            : 0,
+        spanOfControlDistribution: spanOfControl,
+        alerts,
       };
     }),
 });

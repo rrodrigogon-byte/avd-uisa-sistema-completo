@@ -8356,3 +8356,65 @@ export const securityMetrics = mysqlTable("securityMetrics", {
 
 export type SecurityMetric = typeof securityMetrics.$inferSelect;
 export type InsertSecurityMetric = typeof securityMetrics.$inferInsert;
+
+// ============================================================================
+// TABELAS DE ORGANOGRAMA E HIERARQUIA
+// ============================================================================
+
+/**
+ * Histórico de Mudanças de Gestor
+ * Registra todas as alterações na hierarquia organizacional para auditoria
+ */
+export const managerChangeHistory = mysqlTable("managerChangeHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Funcionário que teve o gestor alterado
+  employeeId: int("employeeId").notNull(),
+  employeeName: varchar("employeeName", { length: 255 }),
+  employeeCode: varchar("employeeCode", { length: 50 }),
+  
+  // Gestor anterior
+  oldManagerId: int("oldManagerId"),
+  oldManagerName: varchar("oldManagerName", { length: 255 }),
+  
+  // Novo gestor
+  newManagerId: int("newManagerId"),
+  newManagerName: varchar("newManagerName", { length: 255 }),
+  
+  // Motivo da mudança
+  reason: text("reason"),
+  changeType: mysqlEnum("changeType", [
+    "promocao",
+    "transferencia",
+    "reorganizacao",
+    "desligamento_gestor",
+    "ajuste_hierarquico",
+    "outro"
+  ]).default("ajuste_hierarquico").notNull(),
+  
+  // Informações departamentais no momento da mudança
+  departmentId: int("departmentId"),
+  departmentName: varchar("departmentName", { length: 255 }),
+  positionId: int("positionId"),
+  positionTitle: varchar("positionTitle", { length: 255 }),
+  
+  // Quem fez a alteração
+  changedBy: int("changedBy").notNull(),
+  changedByName: varchar("changedByName", { length: 255 }),
+  changedByRole: varchar("changedByRole", { length: 50 }),
+  
+  // Aprovação (se necessário)
+  requiresApproval: boolean("requiresApproval").default(false).notNull(),
+  approvalStatus: mysqlEnum("approvalStatus", ["pendente", "aprovado", "rejeitado"]).default("aprovado"),
+  approvedBy: int("approvedBy"),
+  approvedByName: varchar("approvedByName", { length: 255 }),
+  approvedAt: datetime("approvedAt"),
+  approvalNotes: text("approvalNotes"),
+  
+  // Metadados
+  effectiveDate: datetime("effectiveDate").notNull(), // Data efetiva da mudança
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ManagerChangeHistory = typeof managerChangeHistory.$inferSelect;
+export type InsertManagerChangeHistory = typeof managerChangeHistory.$inferInsert;

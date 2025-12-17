@@ -141,6 +141,13 @@
       "when": 1765919684929,
       "tag": "0019_moaning_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1765929634344,
+      "tag": "0020_next_black_panther",
+      "breakpoints": true
     }
   ]
 }
