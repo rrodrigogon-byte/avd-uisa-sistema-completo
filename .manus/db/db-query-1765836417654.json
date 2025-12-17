@@ -1,0 +1,798 @@
+{
+  "query": "SELECT code, name FROM departments WHERE active = 1 ORDER BY code;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT code, name FROM departments WHERE active = 1 ORDER BY code;",
+  "rows": [
+    {
+      "code": "1",
+      "name": "Usinas Itamarati S/A"
+    },
+    {
+      "code": "1000100",
+      "name": "00.00-Presidência"
+    },
+    {
+      "code": "1000101110050101000",
+      "name": "Conselho Administrativo"
+    },
+    {
+      "code": "1000101110050102000",
+      "name": "Apoio Diretoria e Conselho"
+    },
+    {
+      "code": "1000101110050201000",
+      "name": "Presidência"
+    },
+    {
+      "code": "1000106110051004000",
+      "name": "Treinamento e Desenvolvimento"
+    },
+    {
+      "code": "1000110110050103000",
+      "name": "Compliance e Governança Corporativa"
+    },
+    {
+      "code": "1000110110050105000",
+      "name": "Auditoria Interna"
+    },
+    {
+      "code": "1000110110050402000",
+      "name": "Jurídico"
+    },
+    {
+      "code": "1000110110050502000",
+      "name": "Contratos e Medições"
+    },
+    {
+      "code": "1000112110050801000",
+      "name": "Sustentabilidade"
+    },
+    {
+      "code": "1000114110018050000",
+      "name": "Almoxarifado Agrícola"
+    },
+    {
+      "code": "1000114110020202000",
+      "name": "Almoxarifado Industrial"
+    },
+    {
+      "code": "1000114110030102000",
+      "name": "Almoxarifado Assari"
+    },
+    {
+      "code": "1000114110051501000",
+      "name": "Administração de Compras"
+    },
+    {
+      "code": "1000114110051502000",
+      "name": "Administração de Materiais"
+    },
+    {
+      "code": "1000114110051503000",
+      "name": "Posto de Combustível"
+    },
+    {
+      "code": "1000114110051504000",
+      "name": "Central de Reciclagem"
+    },
+    {
+      "code": "1000114110051505000",
+      "name": "Inteligência Cadeia de Suprimentos"
+    },
+    {
+      "code": "1000401110040201000",
+      "name": "Administração Comercial - Açúcar"
+    },
+    {
+      "code": "1000407110030105000",
+      "name": "Armazenamento - Açúcar"
+    },
+    {
+      "code": "1000407110060101000",
+      "name": "Administração de Logística"
+    },
+    {
+      "code": "1000407110060102000",
+      "name": "Estrutura de Logística"
+    },
+    {
+      "code": "1000607110020801000",
+      "name": "Laboratorio Industrial"
+    },
+    {
+      "code": "1001201110011101000",
+      "name": "Preparo de Solo - Gestão"
+    },
+    {
+      "code": "1001201110011102000",
+      "name": "Tratos Soca - Herbicida - Gestão"
+    },
+    {
+      "code": "1001201110011102010",
+      "name": "Tratos Soca - Adubação - Gestão"
+    },
+    {
+      "code": "1001201110011103000",
+      "name": "Fertirrigação - Gestão"
+    },
+    {
+      "code": "1001201110011201050",
+      "name": "Plantio Convencional Rural Turma 05.0"
+    },
+    {
+      "code": "1001201110011201051",
+      "name": "Plantio Convencional Rural Turma 05.1"
+    },
+    {
+      "code": "1001201110011201053",
+      "name": "Plantio Convencional Rural Turma 05.3"
+    },
+    {
+      "code": "1001201110011201054",
+      "name": "Plantio Convencional Rural Turma 05.4"
+    },
+    {
+      "code": "1001201110011201055",
+      "name": "Plantio Convencional Rural Turma 05.5"
+    },
+    {
+      "code": "1001201110011201056",
+      "name": "Plantio Convencional Rural Turma 05.6"
+    },
+    {
+      "code": "1001201110011201057",
+      "name": "Plantio Convencional Rural Turma 05.7"
+    },
+    {
+      "code": "1001201110011201090",
+      "name": "Plantio Convencional Rural Turma 09.0"
+    },
+    {
+      "code": "1001201110011201130",
+      "name": "Plantio Convencional Rural Turma 13.0"
+    },
+    {
+      "code": "1001201110011201132",
+      "name": "Plantio Convencional Rural Turma 13.2"
+    },
+    {
+      "code": "1001201110011201133",
+      "name": "Plantio Convencional Rural Turma 13.3"
+    },
+    {
+      "code": "1001201110011201134",
+      "name": "Plantio Convencional Rural Turma 13.4"
+    },
+    {
+      "code": "1001201110011202000",
+      "name": "Plantio Conv Urbano - MDO Apoio Rurais"
+    },
+    {
+      "code": "1001201110011301000",
+      "name": "Preparo de Solo - MDO Apoio"
+    },
+    {
+      "code": "1001201110011302000",
+      "name": "Tratos Soca - Herbicida - MDO Apoio"
+    },
+    {
+      "code": "1001201110011302010",
+      "name": "Tratos Soca - Adubação - MDO Apoio"
+    },
+    {
+      "code": "1001201110011303000",
+      "name": "Fertirrigação - MDO Apoio"
+    },
+    {
+      "code": "1001201110011401000",
+      "name": "Fertirrigação - MDO Motorista Munck"
+    },
+    {
+      "code": "1001201110011402000",
+      "name": "Plantio Conv Urbano - MDO Motorista Caminhão Bombeiro"
+    },
+    {
+      "code": "1001201110011403000",
+      "name": "Preparo de Solo - MDO Motorista Caminhão"
+    },
+    {
+      "code": "1001201110011404000",
+      "name": "Tratos Soca - Herbicida - MDO Motorista Caminhão"
+    },
+    {
+      "code": "1001201110011501000",
+      "name": "Preparo de Solo - MDO Operador"
+    },
+    {
+      "code": "1001201110011502000",
+      "name": "Tratos Soca - Herbicida - MDO Operador Adubação"
+    },
+    {
+      "code": "1001201110011503000",
+      "name": "Tratos Soca - Herbicida - MDO Operador Pulverização"
+    },
+    {
+      "code": "1001201110011505000",
+      "name": "Fertirrigação - MDO Operador"
+    },
+    {
+      "code": "1001201110012510000",
+      "name": "MDO Operador Máquinas Estradas"
+    },
+    {
+      "code": "1001201110018026000",
+      "name": "Administração Agrícola"
+    },
+    {
+      "code": "1001201110051302000",
+      "name": "Administração de Manutenção Elétrica"
+    },
+    {
+      "code": "1001202110011901010",
+      "name": "Movimentação de Bagaço - MDO Operador Pá"
+    },
+    {
+      "code": "1001202110012101000",
+      "name": "Colheita Mec - Gestão"
+    },
+    {
+      "code": "1001202110012101130",
+      "name": "Colheita Mec 01 - Gestão"
+    },
+    {
+      "code": "1001202110012101210",
+      "name": "Colheita Mec 02 - Gestão"
+    },
+    {
+      "code": "1001202110012101310",
+      "name": "Colheita Mec 03 - Gestão de CTT"
+    },
+    {
+      "code": "1001202110012101330",
+      "name": "Colheita Mec 04 - Gestão de CTT"
+    },
+    {
+      "code": "1001202110012101510",
+      "name": "Colheita Mec 05 - Gestão"
+    },
+    {
+      "code": "1001202110012102000",
+      "name": "Manutenção Sistema Viário - Gestão de CTT"
+    },
+    {
+      "code": "1001202110012301000",
+      "name": "Apoio Colheita - MDO Apoio CTT"
+    },
+    {
+      "code": "1001202110012401130",
+      "name": "Colheita Mec 01 - MDO Motorista Bombeiro - CTT"
+    },
+    {
+      "code": "1001202110012401210",
+      "name": "Colheita Mec 02 - MDO Motorista Bombeiro - CTT"
+    },
+    {
+      "code": "1001202110012401310",
+      "name": "Colheita Mec 03 - MDO Motorista Bombeiro - CTT"
+    },
+    {
+      "code": "1001202110012401330",
+      "name": "Colheita Mec 04 - MDO Motorista Bombeiro - CTT"
+    },
+    {
+      "code": "1001202110012402000",
+      "name": "Transp Cana - MDO Motorista Caminhão Cavalo Mecânico"
+    },
+    {
+      "code": "1001202110012501000",
+      "name": "Colheita Mec - MDO Operador Colhedora"
+    },
+    {
+      "code": "1001202110012501130",
+      "name": "Colheita Mec 01 - MDO Operador Colhedora"
+    },
+    {
+      "code": "1001202110012501210",
+      "name": "Colheita Mec 02 - MDO Operador Colhedora"
+    },
+    {
+      "code": "1001202110012501310",
+      "name": "Colheita Mec 03 - MDO Operador Colhedora"
+    },
+    {
+      "code": "1001202110012501330",
+      "name": "Colheita Mec 04 - MDO Operador Colhedora"
+    },
+    {
+      "code": "1001202110012501510",
+      "name": "Colheita Mec 05 - MDO Operador Colhedora"
+    },
+    {
+      "code": "1001202110012502000",
+      "name": "Colheita Mec - MDO Operador Transbordo"
+    },
+    {
+      "code": "1001202110012502130",
+      "name": "Colheita Mec 01 - MDO Operador Transbordo"
+    },
+    {
+      "code": "1001202110012502210",
+      "name": "Colheita Mec 02 - MDO Operador Transbordo"
+    },
+    {
+      "code": "1001202110012502310",
+      "name": "Colheita Mec 03 - MDO Operador Transbordo"
+    },
+    {
+      "code": "1001202110012502330",
+      "name": "Colheita Mec 04 - MDO Operador Transbordo"
+    },
+    {
+      "code": "1001202110012502510",
+      "name": "Colheita Mec 05 - MDO Operador Transbordo"
+    },
+    {
+      "code": "1001202110012503000",
+      "name": "Apoio Colheita - MDO Operador Tração Escravo"
+    },
+    {
+      "code": "1001202110030201000",
+      "name": "Remoção Açúcar Indústria"
+    },
+    {
+      "code": "1001203110018027000",
+      "name": "Administração Originação e Relacionamento com Fornecedor"
+    },
+    {
+      "code": "1001203110018030000",
+      "name": "Qualidade Agrícola"
+    },
+    {
+      "code": "1001204110014002000",
+      "name": "Administração da Manutenção Automotiva"
+    },
+    {
+      "code": "1001204110014003000",
+      "name": "Engenharia e Desenvolvimento"
+    },
+    {
+      "code": "1001204110014004000",
+      "name": "Planejamento e Controle da Manutenção Automotiva"
+    },
+    {
+      "code": "1001204110014006000",
+      "name": "Manutenção de Máquinas Agrícolas"
+    },
+    {
+      "code": "1001204110014008000",
+      "name": "Manutenção de Veículos"
+    },
+    {
+      "code": "1001204110014010000",
+      "name": "Manutenção Preventiva Campo"
+    },
+    {
+      "code": "1001204110014012000",
+      "name": "Serviços Gerais de Manutenção"
+    },
+    {
+      "code": "1001204110014014000",
+      "name": "Montagem de Conjuntos"
+    },
+    {
+      "code": "1001204110014016000",
+      "name": "Oficina Volante"
+    },
+    {
+      "code": "1001204110014018000",
+      "name": "Abastecimento/Lubrificação no Campo"
+    },
+    {
+      "code": "1001204110014020000",
+      "name": "Implementos Agrícolas"
+    },
+    {
+      "code": "1001204110014022000",
+      "name": "Oficina Rampa 2"
+    },
+    {
+      "code": "1001204110014024000",
+      "name": "Solda e Corte"
+    },
+    {
+      "code": "1001204110014026000",
+      "name": "Borracharia"
+    },
+    {
+      "code": "1001204110014028000",
+      "name": "Elétrica Automotiva"
+    },
+    {
+      "code": "1001205110020201000",
+      "name": "Administração Industrial"
+    },
+    {
+      "code": "1001205110020302000",
+      "name": "Descarregamento e Mesas Alimentadoras"
+    },
+    {
+      "code": "1001205110020304000",
+      "name": "Moenda 66"
+    },
+    {
+      "code": "1001205110020305000",
+      "name": "Moenda 84"
+    },
+    {
+      "code": "1001205110020401000",
+      "name": "Tratamento do Caldo - Açúcar"
+    },
+    {
+      "code": "1001205110020402000",
+      "name": "Cozimento, Cristalização e Turbinagem"
+    },
+    {
+      "code": "1001205110020404000",
+      "name": "Secagem e Ensacamento"
+    },
+    {
+      "code": "1001205110020410000",
+      "name": "Produção Levedura"
+    },
+    {
+      "code": "1001205110020501000",
+      "name": "Tratamento do Caldo - Álcool"
+    },
+    {
+      "code": "1001205110020502000",
+      "name": "Fermentação, Filtração e Centrifugação"
+    },
+    {
+      "code": "1001205110020503000",
+      "name": "Destilaria"
+    },
+    {
+      "code": "1001205110020601000",
+      "name": "Geração de Energia Elétrica"
+    },
+    {
+      "code": "1001205110020701000",
+      "name": "Captação, Tratamento e Distribuição de Água"
+    },
+    {
+      "code": "1001205110020702000",
+      "name": "Geração e Distribuição de Vapor"
+    },
+    {
+      "code": "1001205110020705000",
+      "name": "Estação Tratamento de Água e Lavagem de Gases"
+    },
+    {
+      "code": "1001206110020201000",
+      "name": "Administração de Manutenção Industrial"
+    },
+    {
+      "code": "1001206110020901000",
+      "name": "Planejamento e Controle da Manutenção Industrial"
+    },
+    {
+      "code": "1001206110020902000",
+      "name": "Manutenção Mecânica"
+    },
+    {
+      "code": "1001206110020903000",
+      "name": "Manutenção Elétrica"
+    },
+    {
+      "code": "1001206110020905000",
+      "name": "Caldeiraria"
+    },
+    {
+      "code": "1001206110051301000",
+      "name": "Administração de Manutenção Civil"
+    },
+    {
+      "code": "1001207110020420000",
+      "name": "Laboratório Levedura"
+    },
+    {
+      "code": "1001207110020505000",
+      "name": "Carregamento de Etanol"
+    },
+    {
+      "code": "1001207110020801000",
+      "name": "Laboratório Industrial"
+    },
+    {
+      "code": "1001207110020802000",
+      "name": "Laboratório de Cana"
+    },
+    {
+      "code": "1001208110010102000",
+      "name": "Administração Planejamento Produção Agroindustrial"
+    },
+    {
+      "code": "1001209110018010000",
+      "name": "Pesquisa"
+    },
+    {
+      "code": "1001209110018018000",
+      "name": "Laboratório de Entomologia"
+    },
+    {
+      "code": "1001210110090101000",
+      "name": "Engenharia e Projetos"
+    },
+    {
+      "code": "1001211110030101000",
+      "name": "Administração Empacotamento"
+    },
+    {
+      "code": "1001211110030202000",
+      "name": "Empacotamento - Celula 01"
+    },
+    {
+      "code": "1001211110030203000",
+      "name": "Ensaque industrial - Célula 02"
+    },
+    {
+      "code": "1001211110030204000",
+      "name": "Empacotamento - Celula 03"
+    },
+    {
+      "code": "1001211110030205000",
+      "name": "Moinho"
+    },
+    {
+      "code": "1001211110030206000",
+      "name": "Manutenção Empacotamento"
+    },
+    {
+      "code": "1001212110020203000",
+      "name": "Confiabilidade"
+    },
+    {
+      "code": "1001212110020204000",
+      "name": "Integridade"
+    },
+    {
+      "code": "1001300110050202000",
+      "name": "Comunicação Corporativa"
+    },
+    {
+      "code": "1001303110051405000",
+      "name": "Automação"
+    },
+    {
+      "code": "1001401110051003000",
+      "name": "Estrutura e Remuneração"
+    },
+    {
+      "code": "1001401110051004000",
+      "name": "Desenvolvimento Humano"
+    },
+    {
+      "code": "1001402110051002000",
+      "name": "Segurança do Trabalho"
+    },
+    {
+      "code": "1001501110050501000",
+      "name": "Administração de Planejamento e Custos"
+    },
+    {
+      "code": "1001501110050503000",
+      "name": "Administração de Planejamento e Análise Financeira"
+    },
+    {
+      "code": "1001506110050301000",
+      "name": "Despesas Não Recorrentes"
+    },
+    {
+      "code": "1001506110050902000",
+      "name": "Administração Financeira"
+    },
+    {
+      "code": "1001508110050901000",
+      "name": "Contabilidade"
+    },
+    {
+      "code": "1001509110020301000",
+      "name": "Balança de Matéria Prima"
+    },
+    {
+      "code": "1001509110020405000",
+      "name": "Balança de Produtos Indústria"
+    },
+    {
+      "code": "1001509110050904000",
+      "name": "Administração Tributária"
+    },
+    {
+      "code": "1001509110050905000",
+      "name": "Centro Avançado Fiscal"
+    },
+    {
+      "code": "1001601110090202000",
+      "name": "Planejamento Estratégico e Novos Negócios"
+    },
+    {
+      "code": "1001602110050303000",
+      "name": "Estruturação Financeira e RI"
+    },
+    {
+      "code": "1001700110050202000",
+      "name": "Comunicação Corporativa"
+    },
+    {
+      "code": "1001701110051402000",
+      "name": "Operações de TI"
+    },
+    {
+      "code": "1001701110051404000",
+      "name": "Sistemas"
+    },
+    {
+      "code": "1001701110051406000",
+      "name": "Cyber Security"
+    },
+    {
+      "code": "1001701110051408000",
+      "name": "Projetos e Processos de TI"
+    },
+    {
+      "code": "1001702110020904000",
+      "name": "Instrumentação"
+    },
+    {
+      "code": "1001702110051405000",
+      "name": "Automação"
+    },
+    {
+      "code": "1001703110051407000",
+      "name": "Inteligência Artificial e Performance"
+    },
+    {
+      "code": "1001704110050203000",
+      "name": "Casa da Sede"
+    },
+    {
+      "code": "1001704110051001000",
+      "name": "Administração de RH"
+    },
+    {
+      "code": "1001704110051003000",
+      "name": "Cargos e Salários"
+    },
+    {
+      "code": "1001704110051004000",
+      "name": "Desenvolvimento Humano"
+    },
+    {
+      "code": "1001704110051006000",
+      "name": "Atração e Seleção"
+    },
+    {
+      "code": "1001704110051007000",
+      "name": "Administração de Pessoal"
+    },
+    {
+      "code": "1001704110051008000",
+      "name": "Jovem Aprendiz"
+    },
+    {
+      "code": "1001704110051010000",
+      "name": "Programa + Possibilidades"
+    },
+    {
+      "code": "1001704110051101000",
+      "name": "Administração de Benefícios"
+    },
+    {
+      "code": "1001704110051106000",
+      "name": "Quadro Suplementar - Afastados"
+    },
+    {
+      "code": "1001704110051201000",
+      "name": "Engenharia e Manutenção Civil - Facilities"
+    },
+    {
+      "code": "1001704110051202000",
+      "name": "Administração de Facilities"
+    },
+    {
+      "code": "1001704110051206000",
+      "name": "Alojamentos"
+    },
+    {
+      "code": "1001705110051002000",
+      "name": "Segurança do Trabalho"
+    },
+    {
+      "code": "1001705110051103000",
+      "name": "Saúde Ocupacional"
+    },
+    {
+      "code": "1090409110040307000",
+      "name": "Venda de Açúcar - MI - Santarém"
+    },
+    {
+      "code": "1100410110040308000",
+      "name": "Venda Açúcar - MI - Belém"
+    },
+    {
+      "code": "12010101510030105000",
+      "name": "GeoConnect"
+    },
+    {
+      "code": "12010102510030103000",
+      "name": "Centro de Pesquisa"
+    },
+    {
+      "code": "12010103510030102000",
+      "name": "Engenharia"
+    },
+    {
+      "code": "12010104510030101000",
+      "name": "Administrativo Financeiro"
+    },
+    {
+      "code": "12010105510030104000",
+      "name": "Novos Negócios"
+    },
+    {
+      "code": "12010200510030109000",
+      "name": "Administração de Planejamento Estratégico"
+    },
+    {
+      "code": "15000408250040306000",
+      "name": "Guanabara Alimentícia"
+    },
+    {
+      "code": "2000301130051106000",
+      "name": "Quadro Suplementar - Afastados"
+    },
+    {
+      "code": "DEP-ADM",
+      "name": "Administrativo"
+    },
+    {
+      "code": "DEP-AGR",
+      "name": "Agrícola"
+    },
+    {
+      "code": "DEP-ENE",
+      "name": "Energia"
+    },
+    {
+      "code": "DEP-ETA",
+      "name": "Etanol"
+    },
+    {
+      "code": "DEP-IND",
+      "name": "Industrial"
+    },
+    {
+      "code": "DEP-MAN",
+      "name": "Manutenção"
+    },
+    {
+      "code": "DEP-QUA",
+      "name": "Qualidade"
+    },
+    {
+      "code": "DEP-SSM",
+      "name": "SSMA"
+    },
+    {
+      "code": "DEPT-BADGE-1765815593948",
+      "name": "Test Department Badge"
+    },
+    {
+      "code": "TcnicoSeguranadoTrabalhoJR",
+      "name": "892394"
+    }
+  ],
+  "messages": [],
+  "stdout": "code\tname\n1\tUsinas Itamarati S/A\n1000100\t00.00-Presidência\n1000101110050101000\tConselho Administrativo\n1000101110050102000\tApoio Diretoria e Conselho\n1000101110050201000\tPresidência\n1000106110051004000\tTreinamento e Desenvolvimento\n1000110110050103000\tCompliance e Governança Corporativa\n1000110110050105000\tAuditoria Interna\n1000110110050402000\tJurídico\n1000110110050502000\tContratos e Medições\n1000112110050801000\tSustentabilidade\n1000114110018050000\tAlmoxarifado Agrícola\n1000114110020202000\tAlmoxarifado Industrial\n1000114110030102000\tAlmoxarifado Assari\n1000114110051501000\tAdministração de Compras\n1000114110051502000\tAdministração de Materiais\n1000114110051503000\tPosto de Combustível\n1000114110051504000\tCentral de Reciclagem\n1000114110051505000\tInteligência Cadeia de Suprimentos\n1000401110040201000\tAdministração Comercial - Açúcar\n1000407110030105000\tArmazenamento - Açúcar\n1000407110060101000\tAdministração de Logística\n1000407110060102000\tEstrutura de Logística\n1000607110020801000\tLaboratorio Industrial\n1001201110011101000\tPreparo de Solo - Gestão\n1001201110011102000\tTratos Soca - Herbicida - Gestão\n1001201110011102010\tTratos Soca - Adubação - Gestão\n1001201110011103000\tFertirrigação - Gestão\n1001201110011201050\tPlantio Convencional Rural Turma 05.0\n1001201110011201051\tPlantio Convencional Rural Turma 05.1\n1001201110011201053\tPlantio Convencional Rural Turma 05.3\n1001201110011201054\tPlantio Convencional Rural Turma 05.4\n1001201110011201055\tPlantio Convencional Rural Turma 05.5\n1001201110011201056\tPlantio Convencional Rural Turma 05.6\n1001201110011201057\tPlantio Convencional Rural Turma 05.7\n1001201110011201090\tPlantio Convencional Rural Turma 09.0\n1001201110011201130\tPlantio Convencional Rural Turma 13.0\n1001201110011201132\tPlantio Convencional Rural Turma 13.2\n1001201110011201133\tPlantio Convencional Rural Turma 13.3\n1001201110011201134\tPlantio Convencional Rural Turma 13.4\n1001201110011202000\tPlantio Conv Urbano - MDO Apoio Rurais\n1001201110011301000\tPreparo de Solo - MDO Apoio\n1001201110011302000\tTratos Soca - Herbicida - MDO Apoio\n1001201110011302010\tTratos Soca - Adubação - MDO Apoio\n1001201110011303000\tFertirrigação - MDO Apoio\n1001201110011401000\tFertirrigação - MDO Motorista Munck\n1001201110011402000\tPlantio Conv Urbano - MDO Motorista Caminhão Bombeiro\n1001201110011403000\tPreparo de Solo - MDO Motorista Caminhão\n1001201110011404000\tTratos Soca - Herbicida - MDO Motorista Caminhão\n1001201110011501000\tPreparo de Solo - MDO Operador\n1001201110011502000\tTratos Soca - Herbicida - MDO Operador Adubação\n1001201110011503000\tTratos Soca - Herbicida - MDO Operador Pulverização\n1001201110011505000\tFertirrigação - MDO Operador\n1001201110012510000\tMDO Operador Máquinas Estradas\n1001201110018026000\tAdministração Agrícola\n1001201110051302000\tAdministração de Manutenção Elétrica\n1001202110011901010\tMovimentação de Bagaço - MDO Operador Pá\n1001202110012101000\tColheita Mec - Gestão\n1001202110012101130\tColheita Mec 01 - Gestão\n1001202110012101210\tColheita Mec 02 - Gestão\n1001202110012101310\tColheita Mec 03 - Gestão de CTT\n1001202110012101330\tColheita Mec 04 - Gestão de CTT\n1001202110012101510\tColheita Mec 05 - Gestão\n1001202110012102000\tManutenção Sistema Viário - Gestão de CTT\n1001202110012301000\tApoio Colheita - MDO Apoio CTT\n1001202110012401130\tColheita Mec 01 - MDO Motorista Bombeiro - CTT\n1001202110012401210\tColheita Mec 02 - MDO Motorista Bombeiro - CTT\n1001202110012401310\tColheita Mec 03 - MDO Motorista Bombeiro - CTT\n1001202110012401330\tColheita Mec 04 - MDO Motorista Bombeiro - CTT\n1001202110012402000\tTransp Cana - MDO Motorista Caminhão Cavalo Mecânico\n1001202110012501000\tColheita Mec - MDO Operador Colhedora\n1001202110012501130\tColheita Mec 01 - MDO Operador Colhedora\n1001202110012501210\tColheita Mec 02 - MDO Operador Colhedora\n1001202110012501310\tColheita Mec 03 - MDO Operador Colhedora\n1001202110012501330\tColheita Mec 04 - MDO Operador Colhedora\n1001202110012501510\tColheita Mec 05 - MDO Operador Colhedora\n1001202110012502000\tColheita Mec - MDO Operador Transbordo\n1001202110012502130\tColheita Mec 01 - MDO Operador Transbordo\n1001202110012502210\tColheita Mec 02 - MDO Operador Transbordo\n1001202110012502310\tColheita Mec 03 - MDO Operador Transbordo\n1001202110012502330\tColheita Mec 04 - MDO Operador Transbordo\n1001202110012502510\tColheita Mec 05 - MDO Operador Transbordo\n1001202110012503000\tApoio Colheita - MDO Operador Tração Escravo\n1001202110030201000\tRemoção Açúcar Indústria\n1001203110018027000\tAdministração Originação e Relacionamento com Fornecedor\n1001203110018030000\tQualidade Agrícola\n1001204110014002000\tAdministração da Manutenção Automotiva\n1001204110014003000\tEngenharia e Desenvolvimento\n1001204110014004000\tPlanejamento e Controle da Manutenção Automotiva\n1001204110014006000\tManutenção de Máquinas Agrícolas\n1001204110014008000\tManutenção de Veículos\n1001204110014010000\tManutenção Preventiva Campo\n1001204110014012000\tServiços Gerais de Manutenção\n1001204110014014000\tMontagem de Conjuntos\n1001204110014016000\tOficina Volante\n1001204110014018000\tAbastecimento/Lubrificação no Campo\n1001204110014020000\tImplementos Agrícolas\n1001204110014022000\tOficina Rampa 2\n1001204110014024000\tSolda e Corte\n1001204110014026000\tBorracharia\n1001204110014028000\tElétrica Automotiva\n1001205110020201000\tAdministração Industrial\n1001205110020302000\tDescarregamento e Mesas Alimentadoras\n1001205110020304000\tMoenda 66\n1001205110020305000\tMoenda 84\n1001205110020401000\tTratamento do Caldo - Açúcar\n1001205110020402000\tCozimento, Cristalização e Turbinagem\n1001205110020404000\tSecagem e Ensacamento\n1001205110020410000\tProdução Levedura\n1001205110020501000\tTratamento do Caldo - Álcool\n1001205110020502000\tFermentação, Filtração e Centrifugação\n1001205110020503000\tDestilaria\n1001205110020601000\tGeração de Energia Elétrica\n1001205110020701000\tCaptação, Tratamento e Distribuição de Água\n1001205110020702000\tGeração e Distribuição de Vapor\n1001205110020705000\tEstação Tratamento de Água e Lavagem de Gases\n1001206110020201000\tAdministração de Manutenção Industrial\n1001206110020901000\tPlanejamento e Controle da Manutenção Industrial\n1001206110020902000\tManutenção Mecânica\n1001206110020903000\tManutenção Elétrica\n1001206110020905000\tCaldeiraria\n1001206110051301000\tAdministração de Manutenção Civil\n1001207110020420000\tLaboratório Levedura\n1001207110020505000\tCarregamento de Etanol\n1001207110020801000\tLaboratório Industrial\n1001207110020802000\tLaboratório de Cana\n1001208110010102000\tAdministração Planejamento Produção Agroindustrial\n1001209110018010000\tPesquisa\n1001209110018018000\tLaboratório de Entomologia\n1001210110090101000\tEngenharia e Projetos\n1001211110030101000\tAdministração Empacotamento\n1001211110030202000\tEmpacotamento - Celula 01\n1001211110030203000\tEnsaque industrial - Célula 02\n1001211110030204000\tEmpacotamento - Celula 03\n1001211110030205000\tMoinho\n1001211110030206000\tManutenção Empacotamento\n1001212110020203000\tConfiabilidade\n1001212110020204000\tIntegridade\n1001300110050202000\tComunicação Corporativa\n1001303110051405000\tAutomação\n1001401110051003000\tEstrutura e Remuneração\n1001401110051004000\tDesenvolvimento Humano\n1001402110051002000\tSegurança do Trabalho\n1001501110050501000\tAdministração de Planejamento e Custos\n1001501110050503000\tAdministração de Planejamento e Análise Financeira\n1001506110050301000\tDespesas Não Recorrentes\n1001506110050902000\tAdministração Financeira\n1001508110050901000\tContabilidade\n1001509110020301000\tBalança de Matéria Prima\n1001509110020405000\tBalança de Produtos Indústria\n1001509110050904000\tAdministração Tributária\n1001509110050905000\tCentro Avançado Fiscal\n1001601110090202000\tPlanejamento Estratégico e Novos Negócios\n1001602110050303000\tEstruturação Financeira e RI\n1001700110050202000\tComunicação Corporativa\n1001701110051402000\tOperações de TI\n1001701110051404000\tSistemas\n1001701110051406000\tCyber Security\n1001701110051408000\tProjetos e Processos de TI\n1001702110020904000\tInstrumentação\n1001702110051405000\tAutomação\n1001703110051407000\tInteligência Artificial e Performance\n1001704110050203000\tCasa da Sede\n1001704110051001000\tAdministração de RH\n1001704110051003000\tCargos e Salários\n1001704110051004000\tDesenvolvimento Humano\n1001704110051006000\tAtração e Seleção\n1001704110051007000\tAdministração de Pessoal\n1001704110051008000\tJovem Aprendiz\n1001704110051010000\tPrograma + Possibilidades\n1001704110051101000\tAdministração de Benefícios\n1001704110051106000\tQuadro Suplementar - Afastados\n1001704110051201000\tEngenharia e Manutenção Civil - Facilities\n1001704110051202000\tAdministração de Facilities\n1001704110051206000\tAlojamentos\n1001705110051002000\tSegurança do Trabalho\n1001705110051103000\tSaúde Ocupacional\n1090409110040307000\tVenda de Açúcar - MI - Santarém\n1100410110040308000\tVenda Açúcar - MI - Belém\n12010101510030105000\tGeoConnect\n12010102510030103000\tCentro de Pesquisa\n12010103510030102000\tEngenharia\n12010104510030101000\tAdministrativo Financeiro\n12010105510030104000\tNovos Negócios\n12010200510030109000\tAdministração de Planejamento Estratégico\n15000408250040306000\tGuanabara Alimentícia\n2000301130051106000\tQuadro Suplementar - Afastados\nDEP-ADM\tAdministrativo\nDEP-AGR\tAgrícola\nDEP-ENE\tEnergia\nDEP-ETA\tEtanol\nDEP-IND\tIndustrial\nDEP-MAN\tManutenção\nDEP-QUA\tQualidade\nDEP-SSM\tSSMA\nDEPT-BADGE-1765815593948\tTest Department Badge\nTcnicoSeguranadoTrabalhoJR\t892394\n",
+  "stderr": "",
+  "execution_time_ms": 47
+}

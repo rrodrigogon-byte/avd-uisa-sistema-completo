@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `pendencias` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `titulo` VARCHAR(255) NOT NULL,\n  `descricao` TEXT,\n  `status` ENUM('pendente', 'em_andamento', 'concluida', 'cancelada') DEFAULT 'pendente' NOT NULL,\n  `prioridade` ENUM('baixa', 'media', 'alta', 'urgente') DEFAULT 'media' NOT NULL,\n  `responsavelId` INT NOT NULL,\n  `criadoPorId` INT NOT NULL,\n  `dataVencimento` DATETIME,\n  `dataInicio` DATETIME,\n  `dataConclusao` DATETIME,\n  `categoria` VARCHAR(100),\n  `tags` TEXT,\n  `avaliacaoId` INT,\n  `metaId` INT,\n  `pdiId` INT,\n  `funcionarioId` INT,\n  `progresso` INT DEFAULT 0,\n  `observacoes` TEXT,\n  `anexos` TEXT,\n  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `pendencias` (\n  `id` INT AUTO_INCREMENT PRIMARY KEY,\n  `titulo` VARCHAR(255) NOT NULL,\n  `descricao` TEXT,\n  `status` ENUM('pendente', 'em_andamento', 'concluida', 'cancelada') DEFAULT 'pendente' NOT NULL,\n  `prioridade` ENUM('baixa', 'media', 'alta', 'urgente') DEFAULT 'media' NOT NULL,\n  `responsavelId` INT NOT NULL,\n  `criadoPorId` INT NOT NULL,\n  `dataVencimento` DATETIME,\n  `dataInicio` DATETIME,\n  `dataConclusao` DATETIME,\n  `categoria` VARCHAR(100),\n  `tags` TEXT,\n  `avaliacaoId` INT,\n  `metaId` INT,\n  `pdiId` INT,\n  `funcionarioId` INT,\n  `progresso` INT DEFAULT 0,\n  `observacoes` TEXT,\n  `anexos` TEXT,\n  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 256
+}

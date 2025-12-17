@@ -1,0 +1,46 @@
+{
+  "query": "SELECT d.id, d.code, d.name, COUNT(q.id) as question_count \nFROM pirIntegrityDimensions d \nLEFT JOIN pirIntegrityQuestions q ON d.id = q.dimensionId AND q.active = 1\nGROUP BY d.id, d.code, d.name \nORDER BY d.displayOrder;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT d.id, d.code, d.name, COUNT(q.id) as question_count \nFROM pirIntegrityDimensions d \nLEFT JOIN pirIntegrityQuestions q ON d.id = q.dimensionId AND q.active = 1\nGROUP BY d.id, d.code, d.name \nORDER BY d.displayOrder;",
+  "rows": [
+    {
+      "id": "1",
+      "code": "honesty",
+      "name": "Honestidade",
+      "question_count": "3"
+    },
+    {
+      "id": "2",
+      "code": "reliability",
+      "name": "Confiabilidade",
+      "question_count": "2"
+    },
+    {
+      "id": "3",
+      "code": "ethical_resilience",
+      "name": "Resiliência Ética",
+      "question_count": "2"
+    },
+    {
+      "id": "4",
+      "code": "responsibility",
+      "name": "Responsabilidade",
+      "question_count": "2"
+    },
+    {
+      "id": "5",
+      "code": "justice",
+      "name": "Justiça",
+      "question_count": "2"
+    },
+    {
+      "id": "6",
+      "code": "moral_courage",
+      "name": "Coragem Moral",
+      "question_count": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tname\tquestion_count\n1\thonesty\tHonestidade\t3\n2\treliability\tConfiabilidade\t2\n3\tethical_resilience\tResiliência Ética\t2\n4\tresponsibility\tResponsabilidade\t2\n5\tjustice\tJustiça\t2\n6\tmoral_courage\tCoragem Moral\t2\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

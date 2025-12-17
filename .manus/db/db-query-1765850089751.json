@@ -1,0 +1,37 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME LIKE 'pirIntegrity%' ORDER BY TABLE_NAME",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME LIKE 'pirIntegrity%' ORDER BY TABLE_NAME",
+  "rows": [
+    {
+      "TABLE_NAME": "pirIntegrityAlerts"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityAssessments"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityDevelopmentPlans"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityDimensionScores"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityDimensions"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityQuestions"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityReports"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityResponses"
+    },
+    {
+      "TABLE_NAME": "pirIntegrityRiskIndicators"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\npirIntegrityAlerts\npirIntegrityAssessments\npirIntegrityDevelopmentPlans\npirIntegrityDimensionScores\npirIntegrityDimensions\npirIntegrityQuestions\npirIntegrityReports\npirIntegrityResponses\npirIntegrityRiskIndicators\n",
+  "stderr": "",
+  "execution_time_ms": 120
+}

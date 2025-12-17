@@ -1,0 +1,40 @@
+{
+  "query": "SELECT testType, COUNT(*) as total, MIN(questionNumber) as min_num, MAX(questionNumber) as max_num FROM testQuestions GROUP BY testType ORDER BY testType;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT testType, COUNT(*) as total, MIN(questionNumber) as min_num, MAX(questionNumber) as max_num FROM testQuestions GROUP BY testType ORDER BY testType;",
+  "rows": [
+    {
+      "testType": "disc",
+      "total": "40",
+      "min_num": "1",
+      "max_num": "40"
+    },
+    {
+      "testType": "bigfive",
+      "total": "50",
+      "min_num": "1",
+      "max_num": "50"
+    },
+    {
+      "testType": "mbti",
+      "total": "20",
+      "min_num": "1",
+      "max_num": "5"
+    },
+    {
+      "testType": "ie",
+      "total": "25",
+      "min_num": "1",
+      "max_num": "5"
+    },
+    {
+      "testType": "vark",
+      "total": "20",
+      "min_num": "1",
+      "max_num": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "testType\ttotal\tmin_num\tmax_num\ndisc\t40\t1\t40\nbigfive\t50\t1\t50\nmbti\t20\t1\t5\nie\t25\t1\t5\nvark\t20\t1\t5\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}

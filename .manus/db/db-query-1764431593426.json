@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, employeeCode, name, email FROM employees WHERE id = 120001",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, employeeCode, name, email FROM employees WHERE id = 120001",
+  "rows": [
+    {
+      "id": "120001",
+      "employeeCode": "EMP001",
+      "name": "Rodrigo Ribeiro Goncalves",
+      "email": "rrodrigogon@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temployeeCode\tname\temail\n120001\tEMP001\tRodrigo Ribeiro Goncalves\trrodrigogon@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 50
+}

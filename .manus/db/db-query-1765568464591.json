@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS employeeAttachments (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  employeeId INT NOT NULL,\n  fileName VARCHAR(255) NOT NULL,\n  fileUrl VARCHAR(512) NOT NULL,\n  fileKey VARCHAR(512) NOT NULL,\n  fileType VARCHAR(100) NOT NULL,\n  fileSize INT NOT NULL,\n  category ENUM('certificado', 'documento', 'foto', 'curriculo', 'diploma', 'comprovante', 'contrato', 'outro') NOT NULL,\n  description TEXT,\n  isPublic BOOLEAN NOT NULL DEFAULT FALSE,\n  visibleToEmployee BOOLEAN NOT NULL DEFAULT TRUE,\n  visibleToManager BOOLEAN NOT NULL DEFAULT TRUE,\n  visibleToHR BOOLEAN NOT NULL DEFAULT TRUE,\n  uploadedBy INT NOT NULL,\n  uploadedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  deletedAt DATETIME\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS employeeAttachments (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  employeeId INT NOT NULL,\n  fileName VARCHAR(255) NOT NULL,\n  fileUrl VARCHAR(512) NOT NULL,\n  fileKey VARCHAR(512) NOT NULL,\n  fileType VARCHAR(100) NOT NULL,\n  fileSize INT NOT NULL,\n  category ENUM('certificado', 'documento', 'foto', 'curriculo', 'diploma', 'comprovante', 'contrato', 'outro') NOT NULL,\n  description TEXT,\n  isPublic BOOLEAN NOT NULL DEFAULT FALSE,\n  visibleToEmployee BOOLEAN NOT NULL DEFAULT TRUE,\n  visibleToManager BOOLEAN NOT NULL DEFAULT TRUE,\n  visibleToHR BOOLEAN NOT NULL DEFAULT TRUE,\n  uploadedBy INT NOT NULL,\n  uploadedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  deletedAt DATETIME\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 248
+}

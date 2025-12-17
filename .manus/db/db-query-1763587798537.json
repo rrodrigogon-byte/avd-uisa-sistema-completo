@@ -1,0 +1,40 @@
+{
+  "query": "SELECT id, title, employeeId, createdBy FROM smartGoals LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, title, employeeId, createdBy FROM smartGoals LIMIT 5",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Aumentar Receita em 20%",
+      "employeeId": "1",
+      "createdBy": "1"
+    },
+    {
+      "id": "2",
+      "title": "Reduzir Turnover em 15%",
+      "employeeId": "2",
+      "createdBy": "1"
+    },
+    {
+      "id": "3",
+      "title": "Concluir Certificação PMP",
+      "employeeId": "3",
+      "createdBy": "1"
+    },
+    {
+      "id": "4",
+      "title": "Implementar Sistema CRM",
+      "employeeId": "4",
+      "createdBy": "1"
+    },
+    {
+      "id": "5",
+      "title": "Aumentar NPS para 80",
+      "employeeId": "5",
+      "createdBy": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\temployeeId\tcreatedBy\n1\tAumentar Receita em 20%\t1\t1\n2\tReduzir Turnover em 15%\t2\t1\n3\tConcluir Certificação PMP\t3\t1\n4\tImplementar Sistema CRM\t4\t1\n5\tAumentar NPS para 80\t5\t1\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}

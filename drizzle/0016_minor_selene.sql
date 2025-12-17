@@ -1,0 +1,2 @@
+ALTER TABLE `employeeMovements` MODIFY COLUMN `movementType` enum('promocao','transferencia','mudanca_gestor','mudanca_cargo','ajuste_salarial','desligamento','admissao','retorno_afastamento','reorganizacao','outro') NOT NULL;--> statement-breakpoint
+ALTER TABLE `employeeMovements` ADD `approvalStatus` enum('pendente','aprovado','rejeitado','cancelado') DEFAULT 'pendente' NOT NULL;
