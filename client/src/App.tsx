@@ -308,6 +308,10 @@ import GerenciarTemplates from "./pages/admin/GerenciarTemplates";
 import AnalyticsVideos from "./pages/admin/AnalyticsVideos";
 import VideosEducacionais from "./pages/admin/VideosEducacionais";
 import VideosEducacionaisColaborador from "./pages/VideosEducacionais";
+import VideosTutoriais from "./pages/VideosTutoriais";
+import VideosProcessoAVD from "./pages/VideosProcessoAVD";
+import VideosTreinamentos from "./pages/VideosTreinamentos";
+import VideosBiblioteca from "./pages/VideosBiblioteca";
 
 function Router() {
   return (
@@ -647,6 +651,12 @@ function Router() {
       <Route path="/admin/analytics-videos" component={AnalyticsVideos} />
       <Route path="/admin/videos-educacionais" component={VideosEducacionais} />
       <Route path="/videos-educacionais" component={VideosEducacionaisColaborador} />
+      
+      {/* Rotas de Vídeos Instrucionais */}
+      <Route path="/videos/tutoriais" component={VideosTutoriais} />
+      <Route path="/videos/processo-avd" component={VideosProcessoAVD} />
+      <Route path="/videos/treinamentos" component={VideosTreinamentos} />
+      <Route path="/videos/biblioteca" component={VideosBiblioteca} />
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />

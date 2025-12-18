@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo, AlertCircle, Home, Sparkles, Users2, TrendingDown, FileBarChart, Database, Bell, Megaphone, FlaskConical } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo, AlertCircle, Home, Sparkles, Users2, TrendingDown, FileBarChart, Database, Bell, Megaphone, FlaskConical, Video, PlayCircle } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -389,6 +389,19 @@ const menuItems = [
     children: [
       { icon: FlaskConical, label: "Simulados", path: "/piloto/simulados" },
       { icon: Shield, label: "Alertas de Segurança", path: "/seguranca/alertas" },
+    ],
+  },
+  
+  // 🎥 VÍDEOS INSTRUCIONAIS
+  {
+    icon: Video,
+    label: "Vídeos",
+    isSection: true,
+    children: [
+      { icon: PlayCircle, label: "Tutoriais do Sistema", path: "/videos/tutoriais" },
+      { icon: Video, label: "Processo AVD", path: "/videos/processo-avd" },
+      { icon: GraduationCap, label: "Treinamentos", path: "/videos/treinamentos" },
+      { icon: BookOpen, label: "Biblioteca de Vídeos", path: "/videos/biblioteca" },
     ],
   },
 ];
