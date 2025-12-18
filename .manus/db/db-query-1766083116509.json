@@ -1,0 +1,9 @@
+{
+  "query": "\nINSERT INTO goalTemplateCategories (name, description, icon, displayOrder) VALUES\n('Desenvolvimento Técnico', 'Templates para desenvolvimento de habilidades técnicas e especializadas', 'Code', 1),\n('Liderança', 'Templates para desenvolvimento de competências de liderança e gestão', 'Users', 2),\n('Comportamental', 'Templates para desenvolvimento de soft skills e competências comportamentais', 'Heart', 3),\n('Resultados', 'Templates focados em metas de performance e resultados mensuráveis', 'TrendingUp', 4),\n('Inovação', 'Templates para projetos de inovação e melhoria contínua', 'Lightbulb', 5);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute \nINSERT INTO goalTemplateCategories (name, description, icon, displayOrder) VALUES\n('Desenvolvimento Técnico', 'Templates para desenvolvimento de habilidades técnicas e especializadas', 'Code', 1),\n('Liderança', 'Templates para desenvolvimento de competências de liderança e gestão', 'Users', 2),\n('Comportamental', 'Templates para desenvolvimento de soft skills e competências comportamentais', 'Heart', 3),\n('Resultados', 'Templates focados em metas de performance e resultados mensuráveis', 'TrendingUp', 4),\n('Inovação', 'Templates para projetos de inovação e melhoria contínua', 'Lightbulb', 5);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 70
+}

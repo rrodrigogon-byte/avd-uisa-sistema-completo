@@ -1,0 +1,9 @@
+{
+  "query": "\nCREATE TABLE IF NOT EXISTS `videoWatchSessions` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `videoId` int NOT NULL,\n  `userId` int NOT NULL,\n  `startedAt` datetime NOT NULL,\n  `endedAt` datetime,\n  `watchedSeconds` int NOT NULL DEFAULT 0,\n  `startPosition` int NOT NULL DEFAULT 0,\n  `endPosition` int NOT NULL DEFAULT 0,\n  `deviceType` varchar(50),\n  `completedInSession` boolean NOT NULL DEFAULT false,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `videoWatchSessions_id` PRIMARY KEY(`id`)\n);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute \nCREATE TABLE IF NOT EXISTS `videoWatchSessions` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `videoId` int NOT NULL,\n  `userId` int NOT NULL,\n  `startedAt` datetime NOT NULL,\n  `endedAt` datetime,\n  `watchedSeconds` int NOT NULL DEFAULT 0,\n  `startPosition` int NOT NULL DEFAULT 0,\n  `endPosition` int NOT NULL DEFAULT 0,\n  `deviceType` varchar(50),\n  `completedInSession` boolean NOT NULL DEFAULT false,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `videoWatchSessions_id` PRIMARY KEY(`id`)\n);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 199
+}

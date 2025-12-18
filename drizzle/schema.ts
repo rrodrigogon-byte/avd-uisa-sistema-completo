@@ -8544,9 +8544,10 @@ export type InsertTrendAnalytic = typeof trendAnalytics.$inferInsert;
 // ============================================================================
 
 /**
- * Templates de Metas - Templates pré-definidos por competência/gap
+ * Templates de Metas por Competência - Templates pré-definidos por competência/gap
+ * DEPRECATED: Use goalTemplates (nova versão) ao invés desta
  */
-export const goalTemplates = mysqlTable("goalTemplates", {
+export const competencyGoalTemplates = mysqlTable("competencyGoalTemplates", {
   id: int("id").autoincrement().primaryKey(),
   competencyId: int("competencyId").notNull(),
   gapLevel: mysqlEnum("gapLevel", ["critico", "alto", "medio", "baixo"]).notNull(),
@@ -8572,8 +8573,8 @@ export const goalTemplates = mysqlTable("goalTemplates", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
-export type GoalTemplate = typeof goalTemplates.$inferSelect;
-export type InsertGoalTemplate = typeof goalTemplates.$inferInsert;
+export type CompetencyGoalTemplate = typeof competencyGoalTemplates.$inferSelect;
+export type InsertCompetencyGoalTemplate = typeof competencyGoalTemplates.$inferInsert;
 
 /**
  * Análise de Gaps - Análise estruturada de gaps identificados
@@ -8698,3 +8699,264 @@ export const goalGenerationHistory = mysqlTable("goalGenerationHistory", {
 
 export type GoalGenerationHistory = typeof goalGenerationHistory.$inferSelect;
 export type InsertGoalGenerationHistory = typeof goalGenerationHistory.$inferInsert;
+
+
+// ============================================================================
+// TEMPLATES DE METAS PARA PDI
+// ============================================================================
+
+/**
+ * Categorias de Templates de Metas
+ * Organiza templates por área de desenvolvimento
+ */
+export const goalTemplateCategories = mysqlTable("goalTemplateCategories", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }), // Nome do ícone (ex: "Target", "TrendingUp")
+  displayOrder: int("displayOrder").default(0).notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GoalTemplateCategory = typeof goalTemplateCategories.$inferSelect;
+export type InsertGoalTemplateCategory = typeof goalTemplateCategories.$inferInsert;
+
+/**
+ * Templates de Metas
+ * Templates pré-configurados para acelerar criação de metas no PDI
+ */
+export const goalTemplates = mysqlTable("goalTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  categoryId: int("categoryId").notNull(),
+  
+  // Informações básicas
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  
+  // Tipo de meta (alinhado com competências)
+  targetType: mysqlEnum("targetType", [
+    "tecnica",
+    "comportamental",
+    "lideranca",
+    "resultado",
+    "desenvolvimento"
+  ]).notNull(),
+  
+  // Template de métricas SMART
+  metrics: json("metrics"), // { specific, measurable, achievable, relevant, timeBound }
+  
+  // Sugestões de ações de desenvolvimento
+  suggestedActions: json("suggestedActions"), // Array de IDs de developmentActions
+  
+  // Duração sugerida (em meses)
+  suggestedDurationMonths: int("suggestedDurationMonths").default(3).notNull(),
+  
+  // Nível de dificuldade
+  difficultyLevel: mysqlEnum("difficultyLevel", ["basico", "intermediario", "avancado"]).default("intermediario").notNull(),
+  
+  // Uso e popularidade
+  usageCount: int("usageCount").default(0).notNull(),
+  successRate: int("successRate").default(0).notNull(), // Percentual de conclusão bem-sucedida
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GoalTemplate = typeof goalTemplates.$inferSelect;
+export type InsertGoalTemplate = typeof goalTemplates.$inferInsert;
+
+/**
+ * Histórico de Uso de Templates
+ * Rastreia quando e como templates são utilizados
+ */
+export const goalTemplateUsage = mysqlTable("goalTemplateUsage", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull(),
+  employeeId: int("employeeId").notNull(),
+  pdiPlanId: int("pdiPlanId"), // PDI onde foi usado
+  
+  // Customizações feitas
+  wasCustomized: boolean("wasCustomized").default(false).notNull(),
+  customizations: json("customizations"), // Mudanças feitas no template
+  
+  // Resultado
+  completed: boolean("completed").default(false).notNull(),
+  completedAt: datetime("completedAt"),
+  successfullyCompleted: boolean("successfullyCompleted").default(false).notNull(),
+  
+  // Metadados
+  usedAt: timestamp("usedAt").defaultNow().notNull(),
+});
+
+export type GoalTemplateUsage = typeof goalTemplateUsage.$inferSelect;
+export type InsertGoalTemplateUsage = typeof goalTemplateUsage.$inferInsert;
+
+// ============================================================================
+// VÍDEOS EDUCACIONAIS
+// ============================================================================
+
+/**
+ * Categorias de Vídeos Educacionais
+ */
+export const educationalVideoCategories = mysqlTable("educationalVideoCategories", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EducationalVideoCategory = typeof educationalVideoCategories.$inferSelect;
+export type InsertEducationalVideoCategory = typeof educationalVideoCategories.$inferInsert;
+
+/**
+ * Vídeos Educacionais
+ * Biblioteca de conteúdo educacional sobre ética, compliance, integridade, etc.
+ */
+export const educationalVideos = mysqlTable("educationalVideos", {
+  id: int("id").autoincrement().primaryKey(),
+  categoryId: int("categoryId").notNull(),
+  
+  // Informações básicas
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Mídia
+  videoUrl: varchar("videoUrl", { length: 512 }).notNull(),
+  thumbnailUrl: varchar("thumbnailUrl", { length: 512 }),
+  duration: int("duration").notNull(), // Duração em segundos
+  
+  // Organização
+  tags: json("tags"), // Array de tags para busca
+  
+  // Relacionamento com competências/dimensões
+  relatedCompetencies: json("relatedCompetencies"), // IDs de competências relacionadas
+  relatedPIRDimensions: json("relatedPIRDimensions"), // Dimensões PIR relacionadas (IP, ID, IC, ES, FL, AU)
+  
+  // Dificuldade e público-alvo
+  difficultyLevel: mysqlEnum("difficultyLevel", ["basico", "intermediario", "avancado"]).default("basico").notNull(),
+  targetAudience: json("targetAudience"), // ["todos", "gestores", "colaboradores", "lideranca"]
+  
+  // Métricas de engajamento
+  viewCount: int("viewCount").default(0).notNull(),
+  completionCount: int("completionCount").default(0).notNull(),
+  averageWatchTime: int("averageWatchTime").default(0).notNull(), // Segundos
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  featured: boolean("featured").default(false).notNull(), // Destacado na home
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EducationalVideo = typeof educationalVideos.$inferSelect;
+export type InsertEducationalVideo = typeof educationalVideos.$inferInsert;
+
+/**
+ * Analytics de Visualização de Vídeos
+ * Rastreia progresso e engajamento de cada usuário com vídeos
+ */
+export const videoWatchAnalytics = mysqlTable("videoWatchAnalytics", {
+  id: int("id").autoincrement().primaryKey(),
+  videoId: int("videoId").notNull(),
+  userId: int("userId").notNull(),
+  
+  // Progresso de visualização
+  watchedSeconds: int("watchedSeconds").default(0).notNull(),
+  lastWatchPosition: int("lastWatchPosition").default(0).notNull(), // Posição em segundos
+  completed: boolean("completed").default(false).notNull(),
+  completedAt: datetime("completedAt"),
+  
+  // Engajamento
+  watchCount: int("watchCount").default(1).notNull(), // Quantas vezes assistiu
+  totalWatchTime: int("totalWatchTime").default(0).notNull(), // Tempo total assistido (pode ser > duração)
+  
+  // Interações
+  liked: boolean("liked").default(false).notNull(),
+  bookmarked: boolean("bookmarked").default(false).notNull(),
+  
+  // Metadados
+  firstWatchedAt: timestamp("firstWatchedAt").defaultNow().notNull(),
+  lastWatchedAt: timestamp("lastWatchedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VideoWatchAnalytics = typeof videoWatchAnalytics.$inferSelect;
+export type InsertVideoWatchAnalytics = typeof videoWatchAnalytics.$inferInsert;
+
+/**
+ * Sessões de Visualização de Vídeos
+ * Rastreia cada sessão individual de visualização para análise detalhada
+ */
+export const videoWatchSessions = mysqlTable("videoWatchSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  videoId: int("videoId").notNull(),
+  userId: int("userId").notNull(),
+  
+  // Dados da sessão
+  startedAt: datetime("startedAt").notNull(),
+  endedAt: datetime("endedAt"),
+  watchedSeconds: int("watchedSeconds").default(0).notNull(),
+  startPosition: int("startPosition").default(0).notNull(),
+  endPosition: int("endPosition").default(0).notNull(),
+  
+  // Contexto
+  deviceType: varchar("deviceType", { length: 50 }), // mobile, desktop, tablet
+  completedInSession: boolean("completedInSession").default(false).notNull(),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type VideoWatchSession = typeof videoWatchSessions.$inferSelect;
+export type InsertVideoWatchSession = typeof videoWatchSessions.$inferInsert;
+
+/**
+ * Correlação entre Vídeos e Performance PIR
+ * Análise de impacto dos vídeos educacionais na performance
+ */
+export const videoPerformanceCorrelation = mysqlTable("videoPerformanceCorrelation", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  videoId: int("videoId").notNull(),
+  
+  // Performance PIR antes de assistir
+  pirScoreBefore: int("pirScoreBefore"), // Score geral PIR antes
+  pirDimensionsBefore: json("pirDimensionsBefore"), // Scores por dimensão antes
+  pirAssessmentIdBefore: int("pirAssessmentIdBefore"),
+  
+  // Performance PIR depois de assistir
+  pirScoreAfter: int("pirScoreAfter"), // Score geral PIR depois
+  pirDimensionsAfter: json("pirDimensionsAfter"), // Scores por dimensão depois
+  pirAssessmentIdAfter: int("pirAssessmentIdAfter"),
+  
+  // Análise de impacto
+  improvementScore: int("improvementScore"), // Diferença (after - before)
+  dimensionsImproved: json("dimensionsImproved"), // Dimensões que melhoraram
+  
+  // Timing
+  videoWatchedAt: datetime("videoWatchedAt").notNull(),
+  pirBeforeDate: datetime("pirBeforeDate"),
+  pirAfterDate: datetime("pirAfterDate"),
+  daysBetweenVideoAndAfterPIR: int("daysBetweenVideoAndAfterPIR"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VideoPerformanceCorrelation = typeof videoPerformanceCorrelation.$inferSelect;
+export type InsertVideoPerformanceCorrelation = typeof videoPerformanceCorrelation.$inferInsert;

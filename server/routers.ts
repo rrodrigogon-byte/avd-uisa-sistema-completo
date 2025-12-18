@@ -148,6 +148,8 @@ import { individualGoalsRouter } from "./routers/individualGoalsRouter";
 import { departmentGoalsRouter } from "./routers/departmentGoalsRouter";
 import { evaluationWeightsRouter } from "./routers/evaluationWeightsRouter";
 import { positionCompetenciesRouter } from "./routers/positionCompetenciesRouter";
+import { goalTemplatesRouter } from "./routers/goalTemplatesRouter";
+import { educationalVideosRouter } from "./routers/educationalVideosRouter";
 import { performanceBenchmarkRouter } from "./routers/performanceBenchmarkRouter";
 import { pilotSimulationsRouter } from "./routers/pilotSimulationsRouter";
 import { securityAlertsNotificationRouter } from "./routers/securityAlertsNotificationRouter";
@@ -387,6 +389,10 @@ export const appRouter = router({
   evaluationWeights: evaluationWeightsRouter,
   positionCompetencies: positionCompetenciesRouter,
   performanceBenchmark: performanceBenchmarkRouter,
+  
+  // Novos routers - Templates de Metas e Vídeos Educacionais (18/12/2025)
+  goalTemplates: goalTemplatesRouter,
+  educationalVideos: educationalVideosRouter,
   
   // Novos routers - Sistema de Simulados e Alertas (15/12/2025)
   pilotSimulations: pilotSimulationsRouter,

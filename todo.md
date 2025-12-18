@@ -1219,3 +1219,102 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [ ] Testar lógica de bloqueio de resposta até vídeo ser assistido
 - [ ] Validar sugestões automáticas de templates de metas
 - [ ] Testar fluxo completo: PIR com vídeos → Avaliação → PDI com templates
+
+
+---
+
+## 🆕 NOVAS FUNCIONALIDADES - TEMPLATES DE METAS, VÍDEOS E ANALYTICS (18/12/2025)
+
+### Templates de Metas no PDI
+- [x] Criar schema de banco de dados para templates de metas
+  - [x] Tabela goalTemplates (id, name, description, category, targetType, metrics, createdBy, createdAt)
+  - [x] Tabela goalTemplateCategories (id, name, description, icon)
+  - [x] Tabela goalTemplateUsage (tracking de uso)
+- [x] Implementar procedures tRPC para templates
+  - [x] goalTemplates.list - listar templates disponíveis
+  - [x] goalTemplates.create - criar novo template (admin)
+  - [x] goalTemplates.update - atualizar template (admin)
+  - [x] goalTemplates.delete - deletar template (admin)
+  - [x] goalTemplates.getByCategory - buscar templates por categoria
+  - [x] goalTemplates.useTemplate - registrar uso de template
+  - [x] goalTemplates.getTemplateStats - estatísticas de uso
+- [ ] Criar interface de gerenciamento de templates (admin)
+  - [ ] Página de listagem de templates
+  - [ ] Formulário de criação/edição de templates
+  - [ ] Organização por categorias
+  - [ ] Preview de template antes de salvar
+- [ ] Integrar templates no fluxo de criação de metas (Passo 5 PDI)
+  - [ ] Modal de seleção de templates ao criar meta
+  - [ ] Preview de template com dados pré-preenchidos
+  - [ ] Permitir customização após aplicar template
+  - [ ] Opção de criar meta do zero (sem template)
+
+### Expansão de Vídeos Educacionais
+- [x] Atualizar schema de banco de dados para vídeos
+  - [x] Tabela educationalVideoCategories
+  - [x] Tabela educationalVideos com todos os campos (category, tags, duration, thumbnailUrl)
+  - [x] Tabela videoWatchAnalytics para tracking
+  - [x] Tabela videoWatchSessions para sessões
+  - [x] Tabela videoPerformanceCorrelation para análise de impacto
+- [ ] Criar seeds com novos vídeos educacionais
+  - [ ] 10+ vídeos sobre ética empresarial
+  - [ ] 10+ vídeos sobre compliance e regulamentação
+  - [ ] 10+ vídeos sobre integridade e conduta profissional
+  - [ ] Vídeos sobre liderança ética e tomada de decisão
+- [x] Implementar procedures tRPC para gerenciamento de vídeos
+  - [x] videos.list - listar vídeos com filtros (categoria, tags)
+  - [x] videos.create - criar novo vídeo (admin)
+  - [x] videos.update - atualizar vídeo (admin)
+  - [x] videos.delete - deletar vídeo (admin)
+  - [x] videos.getByCategory - buscar vídeos por categoria
+  - [x] videos.startWatchSession - iniciar sessão de visualização
+  - [x] videos.updateWatchProgress - atualizar progresso
+  - [x] videos.completeVideo - marcar como concluído
+  - [x] videos.toggleLike/toggleBookmark - interações
+- [ ] Criar interface de gerenciamento de vídeos (admin)
+  - [ ] Página de listagem de vídeos
+  - [ ] Formulário de upload/criação de vídeos
+  - [ ] Organização por categorias e tags
+  - [ ] Preview de vídeo antes de salvar
+- [ ] Melhorar interface de visualização de vídeos
+  - [ ] Filtros por categoria e tags
+  - [ ] Sistema de busca por título/descrição
+  - [ ] Grid responsivo com thumbnails
+  - [ ] Player de vídeo com controles completos
+
+### Dashboard de Analytics de Vídeos
+- [x] Criar schema de banco de dados para analytics
+  - [x] Tabela videoWatchAnalytics (tracking completo por usuário)
+  - [x] Tabela videoWatchSessions (sessões individuais)
+  - [x] Tabela videoPerformanceCorrelation (correlação com PIR)
+  - [x] Índices para otimizar queries de agregação
+- [x] Implementar tracking de visualizações
+  - [x] Procedure startWatchSession - iniciar sessão
+  - [x] Procedure updateWatchProgress - atualizar progresso (heartbeat)
+  - [x] Procedure completeVideo - marcar como concluído
+- [x] Criar procedures para cálculo de métricas
+  - [x] getVideoStats - estatísticas gerais (views, completion rate, avg watch time)
+  - [x] getUserProgress - estatísticas por usuário (vídeos assistidos, tempo total)
+  - [x] getMostWatchedVideos - ranking de vídeos mais assistidos
+  - [ ] getCategoryStats - estatísticas por categoria
+  - [ ] getCorrelationWithPIR - correlação entre vídeos e performance PIR
+- [ ] Desenvolver dashboard visual de analytics
+  - [ ] Cards com métricas principais (total views, completion rate, avg watch time)
+  - [ ] Gráfico de barras: vídeos mais assistidos
+  - [ ] Gráfico de linha: evolução de visualizações ao longo do tempo
+  - [ ] Tabela: ranking de vídeos por engagement
+  - [ ] Heatmap: horários de maior visualização
+- [ ] Implementar análise de correlação com PIR
+  - [ ] Gráfico scatter: vídeos assistidos vs pontuação PIR
+  - [ ] Análise por dimensão: quais vídeos correlacionam com cada dimensão
+  - [ ] Recomendações personalizadas baseadas em gaps do PIR
+  - [ ] Relatório de impacto: mudança na performance após assistir vídeos
+- [ ] Adicionar filtros e segmentação
+  - [ ] Filtros por período (última semana, mês, trimestre, ano)
+  - [ ] Filtros por categoria de vídeo
+  - [ ] Filtros por departamento/colaborador
+  - [ ] Segmentação por faixa de performance PIR
+- [ ] Criar relatório exportável
+  - [ ] Exportação em CSV com todas as métricas
+  - [ ] Exportação em PDF com gráficos e análises
+  - [ ] Agendamento de relatórios automáticos por email
