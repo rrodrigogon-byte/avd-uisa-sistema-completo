@@ -1,0 +1,82 @@
+{
+  "query": "SELECT id, code, name, description FROM pirIntegrityDimensions ORDER BY displayOrder",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, code, name, description FROM pirIntegrityDimensions ORDER BY displayOrder",
+  "rows": [
+    {
+      "id": "1",
+      "code": "HON",
+      "name": "Honestidade",
+      "description": "Capacidade de ser verdadeiro, transparente e sincero em todas as interações."
+    },
+    {
+      "id": "7",
+      "code": "IP",
+      "name": "Integridade Pessoal",
+      "description": "Avalia a consistência entre valores pessoais e comportamentos"
+    },
+    {
+      "id": "2",
+      "code": "CON",
+      "name": "Confiabilidade",
+      "description": "Capacidade de cumprir compromissos, ser consistente e manter a palavra dada."
+    },
+    {
+      "id": "8",
+      "code": "ID",
+      "name": "Integridade Decisória",
+      "description": "Avalia a qualidade ética das decisões tomadas"
+    },
+    {
+      "id": "3",
+      "code": "RES",
+      "name": "Resiliência Ética",
+      "description": "Capacidade de manter princípios éticos mesmo sob pressão ou adversidade."
+    },
+    {
+      "id": "9",
+      "code": "IC",
+      "name": "Integridade Comportamental",
+      "description": "Avalia a coerência entre discurso e ação"
+    },
+    {
+      "id": "4",
+      "code": "RSP",
+      "name": "Responsabilidade",
+      "description": "Capacidade de assumir responsabilidade por ações, decisões e suas consequências."
+    },
+    {
+      "id": "10",
+      "code": "ES",
+      "name": "Estabilidade",
+      "description": "Avalia a consistência emocional e comportamental ao longo do tempo"
+    },
+    {
+      "id": "5",
+      "code": "JUS",
+      "name": "Justiça",
+      "description": "Capacidade de tratar pessoas de forma equitativa e tomar decisões imparciais."
+    },
+    {
+      "id": "11",
+      "code": "FL",
+      "name": "Flexibilidade",
+      "description": "Avalia a capacidade de adaptação mantendo princípios éticos"
+    },
+    {
+      "id": "6",
+      "code": "COR",
+      "name": "Coragem Moral",
+      "description": "Capacidade de agir de acordo com princípios éticos mesmo quando há riscos pessoais."
+    },
+    {
+      "id": "12",
+      "code": "AU",
+      "name": "Autonomia",
+      "description": "Avalia a capacidade de agir de forma independente e ética"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tname\tdescription\n1\tHON\tHonestidade\tCapacidade de ser verdadeiro, transparente e sincero em todas as interações.\n7\tIP\tIntegridade Pessoal\tAvalia a consistência entre valores pessoais e comportamentos\n2\tCON\tConfiabilidade\tCapacidade de cumprir compromissos, ser consistente e manter a palavra dada.\n8\tID\tIntegridade Decisória\tAvalia a qualidade ética das decisões tomadas\n3\tRES\tResiliência Ética\tCapacidade de manter princípios éticos mesmo sob pressão ou adversidade.\n9\tIC\tIntegridade Comportamental\tAvalia a coerência entre discurso e ação\n4\tRSP\tResponsabilidade\tCapacidade de assumir responsabilidade por ações, decisões e suas consequências.\n10\tES\tEstabilidade\tAvalia a consistência emocional e comportamental ao longo do tempo\n5\tJUS\tJustiça\tCapacidade de tratar pessoas de forma equitativa e tomar decisões imparciais.\n11\tFL\tFlexibilidade\tAvalia a capacidade de adaptação mantendo princípios éticos\n6\tCOR\tCoragem Moral\tCapacidade de agir de acordo com princípios éticos mesmo quando há riscos pessoais.\n12\tAU\tAutonomia\tAvalia a capacidade de agir de forma independente e ética\n",
+  "stderr": "",
+  "execution_time_ms": 101
+}

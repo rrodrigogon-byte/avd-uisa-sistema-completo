@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS goalTemplates (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  competencyId INT NOT NULL,\n  gapLevel ENUM('critico', 'alto', 'medio', 'baixo') NOT NULL,\n  title VARCHAR(255) NOT NULL,\n  description TEXT NOT NULL,\n  suggestedActions JSON NULL,\n  suggestedResources JSON NULL,\n  successCriteria JSON NULL,\n  timeframe VARCHAR(100) NULL,\n  priority ENUM('alta', 'media', 'baixa') DEFAULT 'media',\n  active BOOLEAN DEFAULT TRUE,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (competencyId) REFERENCES competencies(id) ON DELETE CASCADE,\n  INDEX idx_competency_gap (competencyId, gapLevel),\n  INDEX idx_active (active)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS goalTemplates (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  competencyId INT NOT NULL,\n  gapLevel ENUM('critico', 'alto', 'medio', 'baixo') NOT NULL,\n  title VARCHAR(255) NOT NULL,\n  description TEXT NOT NULL,\n  suggestedActions JSON NULL,\n  suggestedResources JSON NULL,\n  successCriteria JSON NULL,\n  timeframe VARCHAR(100) NULL,\n  priority ENUM('alta', 'media', 'baixa') DEFAULT 'media',\n  active BOOLEAN DEFAULT TRUE,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (competencyId) REFERENCES competencies(id) ON DELETE CASCADE,\n  INDEX idx_competency_gap (competencyId, gapLevel),\n  INDEX idx_active (active)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 306
+}

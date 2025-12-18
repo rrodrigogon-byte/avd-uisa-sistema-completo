@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PIRIntegrityIntro } from "@/components/PIRIntegrityIntro";
+import { VideoPlayer } from "@/components/VideoPlayer";
 
 /**
  * Página pública para responder ao teste de integridade PIR via link de convite
@@ -56,6 +57,7 @@ export default function ResponderPIRIntegridade() {
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [videoWatchCompleted, setVideoWatchCompleted] = useState<Record<number, boolean>>({});
 
   // Queries
   const { data: invitation, isLoading: loadingInvitation, error: invitationError } =
@@ -474,9 +476,43 @@ export default function ResponderPIRIntegridade() {
                   )}
                 </CardHeader>
                 <CardContent>
+                  {/* Vídeo da questão (se existir) */}
+                  {currentQuestion.videoUrl && (
+                    <div className="mb-6">
+                      <VideoPlayer
+                        videoUrl={currentQuestion.videoUrl}
+                        thumbnailUrl={currentQuestion.videoThumbnailUrl || undefined}
+                        duration={currentQuestion.videoDuration || 180}
+                        requiresFullWatch={currentQuestion.requiresVideoWatch || false}
+                        onWatchComplete={() => {
+                          setVideoWatchCompleted(prev => ({
+                            ...prev,
+                            [currentQuestion.id]: true
+                          }));
+                        }}
+                        minWatchPercentage={90}
+                      />
+                    </div>
+                  )}
+
+                  {/* Alerta se vídeo não foi assistido */}
+                  {currentQuestion.requiresVideoWatch && 
+                   currentQuestion.videoUrl && 
+                   !videoWatchCompleted[currentQuestion.id] && (
+                    <Alert className="mb-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Vídeo Obrigatório</AlertTitle>
+                      <AlertDescription>
+                        Você precisa assistir pelo menos 90% do vídeo antes de responder esta questão.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+
                   <RadioGroup
                     value={answers[currentQuestion.id]?.toString()}
                     onValueChange={handleAnswerChange}
+                    disabled={currentQuestion.requiresVideoWatch && !videoWatchCompleted[currentQuestion.id]}
                   >
                     <div className="space-y-3">
                       {[1, 2, 3, 4, 5].map((value) => (

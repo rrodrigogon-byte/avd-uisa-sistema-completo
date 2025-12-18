@@ -1155,3 +1155,67 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
   - [ ] Notificação de milestone atingido
   - [ ] Alerta de meta em risco
   - [ ] Relatório semanal de progresso de metas
+
+
+---
+
+## 🎯 NOVAS FUNCIONALIDADES - MELHORIAS PIR E TEMPLATES DE METAS (18/12/2025)
+
+### 1. Popular Banco com 100+ Questões PIR
+- [x] Estender schema para suportar vídeos em questões PIR (videoUrl, videoDuration)
+- [ ] Criar script de seed com 100+ questões PIR categorizadas
+  - [ ] Questões de Influência Pessoal (IP) - 20 questões
+  - [ ] Questões de Iniciativa e Dinamismo (ID) - 20 questões
+  - [ ] Questões de Independência e Controle (IC) - 20 questões
+  - [ ] Questões de Estabilidade (ES) - 20 questões
+  - [ ] Questões de Flexibilidade (FL) - 20 questões
+  - [ ] Questões de Autonomia (AU) - 20 questões
+- [x] Adicionar 5-10 vídeos de exemplo para testes
+- [x] Popular banco de dados com seed script (5 vídeos adicionados)
+
+### 2. Visualização de Vídeos no Teste PIR
+- [x] Implementar componente VideoPlayer com controles
+  - [x] Player de vídeo responsivo
+  - [x] Barra de progresso do vídeo
+  - [x] Controle de play/pause
+  - [x] Indicador de tempo assistido
+- [x] Adicionar lógica de bloqueio de resposta
+  - [x] Desabilitar botões de resposta até vídeo ser assistido
+  - [x] Rastrear progresso do vídeo (% assistido)
+  - [x] Liberar resposta quando vídeo atingir 90%+ de progresso
+- [x] Integrar player na página ResponderPIRIntegridade
+- [x] Testar funcionalidade completa
+- [ ] Adicionar campo videoWatchedProgress na tabela de respostas
+
+### 3. Templates de Metas por Competência
+- [x] Criar tabela goalTemplates no schema
+  - [x] competencyId (FK para competencies)
+  - [x] templateTitle (título do template)
+  - [x] templateDescription (descrição detalhada)
+  - [x] suggestedActions (ações sugeridas - JSON)
+  - [x] timeframe (prazo sugerido)
+  - [x] gapLevel (nível de gap: crítico, alto, médio, baixo)
+  - [x] priority (prioridade: alta, média, baixa)
+- [x] Popular templates para cada competência (224 templates criados para 56 competências)
+  - [ ] Templates para Liderança
+  - [ ] Templates para Comunicação
+  - [ ] Templates para Trabalho em Equipe
+  - [ ] Templates para Resolução de Problemas
+  - [ ] Templates para Inovação
+  - [ ] Templates para Gestão de Tempo
+  - [ ] (Adicionar para todas as 20+ competências)
+- [ ] Criar procedures tRPC
+  - [ ] goalTemplates.listByCompetency - listar templates por competência
+  - [ ] goalTemplates.suggest - sugerir templates baseado em gaps
+  - [ ] goalTemplates.create - criar novo template (admin)
+- [ ] Integrar templates com Passo 5 (PDI)
+  - [ ] Sugerir templates automaticamente baseado em competências com baixa pontuação
+  - [ ] Permitir seleção de templates ao criar metas
+  - [ ] Adaptar templates para contexto específico do colaborador
+
+### Testes e Validação
+- [ ] Testar seed script com 100+ questões
+- [ ] Validar carregamento de vídeos no teste PIR
+- [ ] Testar lógica de bloqueio de resposta até vídeo ser assistido
+- [ ] Validar sugestões automáticas de templates de metas
+- [ ] Testar fluxo completo: PIR com vídeos → Avaliação → PDI com templates
