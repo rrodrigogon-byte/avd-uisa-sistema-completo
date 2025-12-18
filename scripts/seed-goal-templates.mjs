@@ -165,20 +165,17 @@ async function seedGoalTemplates() {
           
           await connection.execute(
             `INSERT INTO goalTemplates 
-             (competencyId, gapLevel, title, description, suggestedActions, suggestedResources, 
-              successCriteria, timeframe, priority, active)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (categoryId, name, description, targetType, suggestedDurationMonths, difficultyLevel, active, createdBy)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-              competency.id,
-              gapLevel,
-              title,
-              description,
-              JSON.stringify(template.suggestedActions),
-              JSON.stringify(template.suggestedResources),
-              JSON.stringify(template.successCriteria),
-              config.timeframe,
-              config.priority,
-              true
+              competency.id, // categoryId (usando competency.id como categoria)
+              title, // name
+              description, // description
+              'tecnica', // targetType (padrão)
+              gapLevel === 'critico' ? 2 : gapLevel === 'alto' ? 3 : gapLevel === 'medio' ? 4 : 6, // suggestedDurationMonths
+              gapLevel === 'critico' || gapLevel === 'alto' ? 'avancado' : gapLevel === 'medio' ? 'intermediario' : 'basico', // difficultyLevel
+              true, // active
+              1 // createdBy (admin padrão)
             ]
           );
           

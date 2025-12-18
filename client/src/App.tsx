@@ -109,6 +109,7 @@ import FuncionarioDetalhes from "./pages/FuncionarioDetalhes";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
 import FuncionariosGerenciar from "./pages/FuncionariosGerenciar";
 import DesenvolvimentoFuncionarios from "./pages/DesenvolvimentoFuncionarios";
+import CadastrarFuncionario from "./pages/CadastrarFuncionario";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
 import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
 import BonusAprovacoes from "./pages/aprovacoes/Bonus";
@@ -411,6 +412,7 @@ function Router() {
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
       <Route path="/funcionarios" component={Funcionarios} />
+      <Route path="/funcionarios/novo" component={CadastrarFuncionario} />
       <Route path="/funcionarios/:id" component={FuncionarioDetalhes} />
       <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
       <Route path="/desenvolvimento/funcionarios" component={DesenvolvimentoFuncionarios} />

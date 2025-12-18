@@ -1392,3 +1392,137 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [x] Adicionar vídeos ao menu principal - SEÇÃO CRIADA
 - [x] Implementar funcionalidade de vídeos instrucionais - 4 PÁGINAS CRIADAS
 
+
+
+---
+
+## 🆕 NOVA FASE: CADASTRO COMPLETO E ORGANOGRAMA DINÂMICO (18/12/2025)
+
+### Cadastro Completo de Funcionários
+- [x] Expandir schema de employees com todos os campos necessários
+  - [x] Adicionar campos: telefone, celular, data de nascimento, endereço completo
+  - [x] Adicionar campos: estado civil, escolaridade, formação acadêmica
+  - [x] Adicionar campos: data de admissão, tipo de contrato, salário
+  - [x] Adicionar campos: foto de perfil (URL S3), documentos (RG, CPF, CTPS)
+  - [x] Adicionar campos: informações bancárias, benefícios
+- [x] Criar procedures tRPC para gestão completa de funcionários
+  - [x] employees.getById - buscar funcionário completo por ID
+  - [x] employees.update - atualizar todos os campos do funcionário
+  - [x] employees.uploadPhoto - upload de foto para S3
+  - [x] employees.uploadDocument - upload de documentos para S3
+  - [x] employees.updateComplete - atualizar campos completos do funcionário
+- [ ] Implementar página de perfil completo do funcionário
+  - [ ] Visualização de todos os dados pessoais
+  - [ ] Visualização de dados profissionais
+  - [ ] Visualização de documentos anexados
+  - [ ] Edição inline de campos
+  - [ ] Upload de foto de perfil com preview
+  - [ ] Upload de documentos com validação
+- [ ] Implementar formulário de cadastro completo
+  - [ ] Wizard multi-step (dados pessoais, profissionais, documentos)
+  - [ ] Validação de CPF, email, telefone
+  - [ ] Máscaras de input para campos formatados
+  - [ ] Upload de foto e documentos durante cadastro
+  - [ ] Preview antes de salvar
+
+### Organograma Dinâmico e Interativo
+- [x] Melhorar visualização do organograma existente
+  - [x] Adicionar mais informações nos cards (foto, cargo, departamento)
+  - [x] Implementar diferentes layouts (vertical, horizontal, compacto)
+  - [x] Adicionar zoom suave e pan com limites
+  - [x] Implementar busca com highlight no organograma
+- [x] Implementar edição drag-and-drop do organograma
+  - [x] Permitir arrastar funcionários para mudar supervisor
+  - [x] Validação de hierarquias (não permitir loops)
+  - [x] Confirmação antes de salvar mudanças
+  - [ ] Histórico de mudanças na hierarquia
+- [x] Adicionar funcionalidades avançadas
+  - [x] Visualização de equipes por departamento
+  - [x] Filtros por cargo, departamento, localização
+  - [ ] Exportação do organograma como PNG/PDF
+  - [x] Visualização de subordinados diretos e indiretos
+  - [ ] Indicadores visuais (vagas abertas, novos contratados)
+- [x] Implementar edição inline no organograma
+  - [x] Clicar no card para editar informações básicas
+  - [ ] Modal de detalhes completos do funcionário
+  - [ ] Ações rápidas (promover, transferir, desligar)
+  - [ ] Adicionar novo funcionário diretamente no organograma
+
+### Gestão de Perfis e Permissões
+- [ ] Criar sistema de perfis de acesso detalhado
+  - [ ] Perfil Admin: acesso total ao sistema
+  - [ ] Perfil RH: gestão de funcionários e processos AVD
+  - [ ] Perfil Gestor: visualização de equipe e avaliações
+  - [ ] Perfil Funcionário: visualização própria e autoavaliação
+- [ ] Implementar controle granular de permissões
+  - [ ] Permissões por módulo (cadastro, organograma, AVD, relatórios)
+  - [ ] Permissões por ação (criar, editar, visualizar, excluir)
+  - [ ] Matriz de permissões configurável
+- [ ] Criar interface de gestão de perfis
+  - [ ] Página de configuração de perfis
+  - [ ] Atribuição de permissões por perfil
+  - [ ] Atribuição de perfis a usuários
+  - [ ] Auditoria de mudanças de permissões
+
+### Testes e Validação
+- [ ] Criar testes para novo schema de employees
+- [ ] Criar testes para procedures de gestão de funcionários
+- [ ] Criar testes para upload de arquivos S3
+- [ ] Criar testes para organograma drag-and-drop
+- [ ] Criar testes para sistema de permissões
+- [ ] Testar fluxo completo de cadastro de funcionário
+- [ ] Testar fluxo completo de reorganização hierárquica
+
+
+---
+
+## 📋 BASE DE FUNCIONÁRIOS E ORGANOGRAMA AVANÇADO (18/12/2025)
+
+### Schema e Backend
+- [x] Expandir tabela de funcionários com campos adicionais (data de admissão, status, foto, etc)
+- [x] Criar tabela de histórico de mudanças hierárquicas
+- [x] Implementar procedures tRPC para operações hierárquicas avançadas (promover, transferir, desligar)
+- [x] Implementar procedure para buscar estrutura organizacional completa
+- [x] Implementar procedure para histórico de mudanças
+
+### Formulário Wizard de Cadastro
+- [x] Criar componente wizard multi-step para cadastro de funcionários
+- [x] Step 1: Dados pessoais do funcionário
+- [x] Step 2: Dados profissionais (cargo, departamento, salário)
+- [x] Step 3: Posicionamento hierárquico (supervisor direto)
+- [x] Step 4: Revisão e confirmação
+- [x] Implementar validação em cada step
+- [x] Adicionar navegação entre steps (próximo, anterior, salvar)
+
+### Exportação de Organograma
+- [x] Implementar exportação como PNG usando html2canvas
+- [x] Implementar exportação como PDF usando jsPDF
+- [x] Adicionar opções de configuração de exportação (tamanho, orientação)
+- [x] Criar botões de exportação na interface do organograma
+
+### Histórico de Mudanças Hierárquicas
+- [x] Criar página de histórico de mudanças hierárquicas
+- [x] Implementar timeline visual de mudanças
+- [x] Adicionar filtros por funcionário, departamento, tipo de mudança
+- [x] Mostrar detalhes de cada mudança (antes/depois, data, responsável)
+
+### Modal de Detalhes do Funcionário
+- [x] Criar modal completo com todas as informações do funcionário
+- [x] Mostrar dados pessoais e profissionais
+- [x] Exibir posição hierárquica (supervisor e subordinados)
+- [x] Mostrar histórico de mudanças do funcionário
+- [x] Adicionar ações rápidas no modal
+
+### Ações Rápidas
+- [x] Implementar ação de promover funcionário
+- [x] Implementar ação de transferir funcionário (mudar departamento/supervisor)
+- [x] Implementar ação de desligar funcionário
+- [x] Criar modals de confirmação para cada ação
+- [x] Registrar todas as ações no histórico
+- [x] Adicionar validações de regras de negócio
+
+### Melhorias no Organograma Existente
+- [ ] Adicionar zoom e pan no organograma interativo
+- [ ] Implementar busca visual no organograma
+- [ ] Adicionar indicadores de status (ativo, afastado, desligado)
+- [ ] Melhorar responsividade mobile do organograma

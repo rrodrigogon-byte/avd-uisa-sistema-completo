@@ -287,9 +287,88 @@ export const employees = mysqlTable("employees", {
   funcaoCoordenador: varchar("funcaoCoordenador", { length: 255 }), // Função do Coordenador
   emailCoordenador: varchar("emailCoordenador", { length: 320 }), // Email do Coordenador
   
+  // Informações de Contato
   photoUrl: varchar("photoUrl", { length: 512 }),
   phone: varchar("phone", { length: 20 }),
+  mobilePhone: varchar("mobilePhone", { length: 20 }),
+  emergencyContact: varchar("emergencyContact", { length: 255 }),
+  emergencyPhone: varchar("emergencyPhone", { length: 20 }),
+  
+  // Endereço Completo
   address: text("address"),
+  addressStreet: varchar("addressStreet", { length: 255 }),
+  addressNumber: varchar("addressNumber", { length: 20 }),
+  addressComplement: varchar("addressComplement", { length: 100 }),
+  addressNeighborhood: varchar("addressNeighborhood", { length: 100 }),
+  addressCity: varchar("addressCity", { length: 100 }),
+  addressState: varchar("addressState", { length: 2 }),
+  addressZipCode: varchar("addressZipCode", { length: 10 }),
+  addressCountry: varchar("addressCountry", { length: 100 }).default("Brasil"),
+  
+  // Informações Pessoais
+  rg: varchar("rg", { length: 20 }),
+  rgIssuer: varchar("rgIssuer", { length: 50 }),
+  rgIssueDate: datetime("rgIssueDate"),
+  ctps: varchar("ctps", { length: 20 }),
+  ctpsSeries: varchar("ctpsSeries", { length: 10 }),
+  ctpsState: varchar("ctpsState", { length: 2 }),
+  pis: varchar("pis", { length: 20 }),
+  maritalStatus: mysqlEnum("maritalStatus", ["solteiro", "casado", "divorciado", "viuvo", "uniao_estavel"]),
+  gender: mysqlEnum("gender", ["masculino", "feminino", "outro", "nao_informar"]),
+  nationality: varchar("nationality", { length: 100 }).default("Brasileira"),
+  
+  // Formação Acadêmica
+  educationLevel: mysqlEnum("educationLevel", [
+    "fundamental_incompleto",
+    "fundamental_completo",
+    "medio_incompleto",
+    "medio_completo",
+    "superior_incompleto",
+    "superior_completo",
+    "pos_graduacao",
+    "mestrado",
+    "doutorado"
+  ]),
+  educationInstitution: varchar("educationInstitution", { length: 255 }),
+  educationCourse: varchar("educationCourse", { length: 255 }),
+  educationCompletionYear: int("educationCompletionYear"),
+  
+  // Informações Contratuais
+  contractType: mysqlEnum("contractType", ["clt", "pj", "estagio", "temporario", "terceirizado"]).default("clt"),
+  workSchedule: varchar("workSchedule", { length: 100 }),
+  weeklyHours: int("weeklyHours").default(40),
+  terminationDate: datetime("terminationDate"),
+  terminationReason: text("terminationReason"),
+  
+  // Informações Bancárias
+  bankName: varchar("bankName", { length: 100 }),
+  bankCode: varchar("bankCode", { length: 10 }),
+  bankBranch: varchar("bankBranch", { length: 20 }),
+  bankAccount: varchar("bankAccount", { length: 30 }),
+  bankAccountType: mysqlEnum("bankAccountType", ["corrente", "poupanca", "salario"]),
+  pixKey: varchar("pixKey", { length: 255 }),
+  
+  // Benefícios
+  hasHealthInsurance: boolean("hasHealthInsurance").default(false),
+  hasDentalInsurance: boolean("hasDentalInsurance").default(false),
+  hasLifeInsurance: boolean("hasLifeInsurance").default(false),
+  hasMealVoucher: boolean("hasMealVoucher").default(false),
+  hasTransportVoucher: boolean("hasTransportVoucher").default(false),
+  hasGymMembership: boolean("hasGymMembership").default(false),
+  benefitsNotes: text("benefitsNotes"),
+  
+  // Documentos (URLs S3)
+  documentRgUrl: varchar("documentRgUrl", { length: 512 }),
+  documentCpfUrl: varchar("documentCpfUrl", { length: 512 }),
+  documentCtpsUrl: varchar("documentCtpsUrl", { length: 512 }),
+  documentProofOfAddressUrl: varchar("documentProofOfAddressUrl", { length: 512 }),
+  documentDiplomaUrl: varchar("documentDiplomaUrl", { length: 512 }),
+  documentOthersUrl: text("documentOthersUrl"), // JSON array de URLs
+  
+  // Observações e Notas
+  notes: text("notes"),
+  internalNotes: text("internalNotes"), // Notas visíveis apenas para RH/Admin
+  
   status: mysqlEnum("status", ["ativo", "afastado", "desligado"]).default("ativo").notNull(),
   // Integração TOTVS RM
   rmCode: varchar("rmCode", { length: 50 }),
