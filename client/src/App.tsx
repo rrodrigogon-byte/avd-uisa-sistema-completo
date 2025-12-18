@@ -108,6 +108,7 @@ import Funcionarios from "./pages/Funcionarios";
 import FuncionarioDetalhes from "./pages/FuncionarioDetalhes";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
 import FuncionariosGerenciar from "./pages/FuncionariosGerenciar";
+import MetricasRH from "./pages/MetricasRH";
 import DesenvolvimentoFuncionarios from "./pages/DesenvolvimentoFuncionarios";
 import CadastrarFuncionario from "./pages/CadastrarFuncionario";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
@@ -415,6 +416,7 @@ function Router() {
       <Route path="/funcionarios/novo" component={CadastrarFuncionario} />
       <Route path="/funcionarios/:id" component={FuncionarioDetalhes} />
       <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
+      <Route path="/rh/metricas" component={MetricasRH} />
       <Route path="/desenvolvimento/funcionarios" component={DesenvolvimentoFuncionarios} />
       <Route path="/desenvolvimento/funcionarios/:id" component={PerfilFuncionario} />
       <Route path="/funcionarios/:id" component={PerfilFuncionario} />

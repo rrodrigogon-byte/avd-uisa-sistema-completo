@@ -13,7 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Loader2, Plus, Search, Pencil, Trash2, Download, Upload, Users, UserPlus, Filter, RefreshCw } from "lucide-react";
+import { Loader2, Plus, Search, Pencil, Trash2, Download, Upload, Users, UserPlus, Filter, RefreshCw, Eye, TrendingUp, UserX } from "lucide-react";
+import { EmployeeDetailsModal } from "@/components/EmployeeDetailsModal";
+import { EmployeeQuickActions } from "@/components/EmployeeQuickActions";
 
 /**
  * Página de Gestão Completa de Funcionários
@@ -28,6 +30,12 @@ export default function FuncionariosGerenciar() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
+  
+  // Estados para os novos componentes
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
+  const [quickActionType, setQuickActionType] = useState<"promote" | "transfer" | "terminate" | null>(null);
+  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   
   const [formData, setFormData] = useState({
     employeeCode: "",
@@ -222,6 +230,22 @@ export default function FuncionariosGerenciar() {
     }
   };
 
+  const handleViewDetails = (employee: any) => {
+    setSelectedEmployeeId(employee.employee.id);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleQuickAction = (action: "promote" | "transfer" | "terminate", employeeId: number) => {
+    setSelectedEmployeeId(employeeId);
+    setQuickActionType(action);
+    setIsQuickActionsOpen(true);
+    setIsDetailsModalOpen(false);
+  };
+
+  const handleQuickActionSuccess = () => {
+    refetch();
+  };
+
   const getStatusBadge = (status: string) => {
     const variants: Record<string, any> = {
       ativo: { variant: "default", label: "Ativo" },
@@ -401,7 +425,15 @@ export default function FuncionariosGerenciar() {
                           </Button>
                         </TableCell>
                         <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleViewDetails(emp)}
+                              title="Ver detalhes completos"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -409,6 +441,15 @@ export default function FuncionariosGerenciar() {
                               title="Editar funcionário"
                             >
                               <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleQuickAction("promote", emp.employee.id)}
+                              title="Promover funcionário"
+                              className="text-green-600 hover:text-green-700"
+                            >
+                              <TrendingUp className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -718,6 +759,24 @@ export default function FuncionariosGerenciar() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Modal de Detalhes do Funcionário */}
+        <EmployeeDetailsModal
+          employeeId={selectedEmployeeId}
+          open={isDetailsModalOpen}
+          onOpenChange={setIsDetailsModalOpen}
+          onActionClick={handleQuickAction}
+        />
+
+        {/* Modal de Ações Rápidas */}
+        <EmployeeQuickActions
+          employeeId={selectedEmployeeId}
+          employeeName={employees?.find((e: any) => e.employee.id === selectedEmployeeId)?.employee.name}
+          actionType={quickActionType}
+          open={isQuickActionsOpen}
+          onOpenChange={setIsQuickActionsOpen}
+          onSuccess={handleQuickActionSuccess}
+        />
       </div>
     </DashboardLayout>
   );

@@ -10,6 +10,11 @@ import {
   users 
 } from "../../drizzle/schema";
 import { eq, and, desc, sql, or, like, inArray } from "drizzle-orm";
+import { 
+  sendPromotionNotificationEmail, 
+  sendTransferNotificationEmail, 
+  sendTerminationNotificationEmail 
+} from "../_core/email";
 
 /**
  * Router Avançado para Gestão de Funcionários
@@ -88,6 +93,49 @@ export const employeesAdvancedRouter = router({
         .update(employees)
         .set(updateData)
         .where(eq(employees.id, input.employeeId));
+
+      // Buscar dados para o email
+      const [previousPosition] = await db
+        .select({ title: positions.title })
+        .from(positions)
+        .where(eq(positions.id, employee.positionId!))
+        .limit(1);
+
+      const [newPosition] = await db
+        .select({ title: positions.title })
+        .from(positions)
+        .where(eq(positions.id, input.newPositionId))
+        .limit(1);
+
+      let newDepartmentName: string | undefined;
+      if (input.newDepartmentId) {
+        const [newDept] = await db
+          .select({ name: departments.name })
+          .from(departments)
+          .where(eq(departments.id, input.newDepartmentId))
+          .limit(1);
+        newDepartmentName = newDept?.name;
+      }
+
+      // Enviar email de notificação
+      if (employee.email) {
+        try {
+          await sendPromotionNotificationEmail(
+            employee.email,
+            employee.name,
+            {
+              previousPosition: previousPosition?.title || "N/A",
+              newPosition: newPosition?.title || "N/A",
+              newDepartment: newDepartmentName,
+              newSalary: input.newSalary,
+              effectiveDate: input.effectiveDate,
+              reason: input.reason,
+            }
+          );
+        } catch (error) {
+          console.error("Erro ao enviar email de promoção:", error);
+        }
+      }
 
       return {
         success: true,
@@ -171,6 +219,70 @@ export const employeesAdvancedRouter = router({
         .set(updateData)
         .where(eq(employees.id, input.employeeId));
 
+      // Buscar dados para o email
+      const [previousDept] = await db
+        .select({ name: departments.name })
+        .from(departments)
+        .where(eq(departments.id, employee.departmentId!))
+        .limit(1);
+
+      const [newDept] = await db
+        .select({ name: departments.name })
+        .from(departments)
+        .where(eq(departments.id, input.newDepartmentId))
+        .limit(1);
+
+      let previousManagerName: string | undefined;
+      if (employee.managerId) {
+        const [prevMgr] = await db
+          .select({ name: employees.name })
+          .from(employees)
+          .where(eq(employees.id, employee.managerId))
+          .limit(1);
+        previousManagerName = prevMgr?.name;
+      }
+
+      let newManagerName: string | undefined;
+      if (input.newManagerId) {
+        const [newMgr] = await db
+          .select({ name: employees.name })
+          .from(employees)
+          .where(eq(employees.id, input.newManagerId))
+          .limit(1);
+        newManagerName = newMgr?.name;
+      }
+
+      let newPositionTitle: string | undefined;
+      if (input.newPositionId) {
+        const [newPos] = await db
+          .select({ title: positions.title })
+          .from(positions)
+          .where(eq(positions.id, input.newPositionId))
+          .limit(1);
+        newPositionTitle = newPos?.title;
+      }
+
+      // Enviar email de notificação
+      if (employee.email) {
+        try {
+          await sendTransferNotificationEmail(
+            employee.email,
+            employee.name,
+            {
+              previousDepartment: previousDept?.name || "N/A",
+              newDepartment: newDept?.name || "N/A",
+              previousManager: previousManagerName,
+              newManager: newManagerName,
+              newPosition: newPositionTitle,
+              effectiveDate: input.effectiveDate,
+              reason: input.reason,
+            }
+          );
+        } catch (error) {
+          console.error("Erro ao enviar email de transferência:", error);
+        }
+      }
+
       return {
         success: true,
         movementId: movement.insertId,
@@ -249,6 +361,45 @@ export const employeesAdvancedRouter = router({
           managerId: null,
         })
         .where(eq(employees.id, input.employeeId));
+
+      // Buscar dados para o email
+      let positionTitle = "N/A";
+      if (employee.positionId) {
+        const [pos] = await db
+          .select({ title: positions.title })
+          .from(positions)
+          .where(eq(positions.id, employee.positionId))
+          .limit(1);
+        positionTitle = pos?.title || "N/A";
+      }
+
+      let departmentName = "N/A";
+      if (employee.departmentId) {
+        const [dept] = await db
+          .select({ name: departments.name })
+          .from(departments)
+          .where(eq(departments.id, employee.departmentId))
+          .limit(1);
+        departmentName = dept?.name || "N/A";
+      }
+
+      // Enviar email de notificação
+      if (employee.email) {
+        try {
+          await sendTerminationNotificationEmail(
+            employee.email,
+            employee.name,
+            {
+              position: positionTitle,
+              department: departmentName,
+              effectiveDate: input.effectiveDate,
+              reason: input.reason,
+            }
+          );
+        } catch (error) {
+          console.error("Erro ao enviar email de desligamento:", error);
+        }
+      }
 
       return {
         success: true,
