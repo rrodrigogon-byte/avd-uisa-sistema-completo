@@ -92,11 +92,6 @@ export const pirIntegrityRouter = router({
       requiresJustification: z.boolean().default(false),
       difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
       displayOrder: z.number().default(0),
-      // Campos de vídeo
-      videoUrl: z.string().optional(),
-      videoThumbnailUrl: z.string().optional(),
-      videoDuration: z.number().optional(),
-      requiresVideoWatch: z.boolean().default(false),
     }))
     .mutation(async ({ input }) => {
       const db = await getDb();
@@ -122,11 +117,6 @@ export const pirIntegrityRouter = router({
       difficulty: z.enum(["easy", "medium", "hard"]).optional(),
       active: z.boolean().optional(),
       displayOrder: z.number().optional(),
-      // Campos de vídeo
-      videoUrl: z.string().optional(),
-      videoThumbnailUrl: z.string().optional(),
-      videoDuration: z.number().optional(),
-      requiresVideoWatch: z.boolean().optional(),
     }))
     .mutation(async ({ input }) => {
       const db = await getDb();

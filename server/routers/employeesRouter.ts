@@ -408,6 +408,10 @@ export const employeesRouter = router({
             departmentId: z.number().optional(),
             positionId: z.number().optional(),
             status: z.enum(["ativo", "afastado", "desligado"]).optional(),
+            search: z.string().optional(),
+            hireDateFrom: z.string().optional(),
+            hireDateTo: z.string().optional(),
+            assessmentStatus: z.enum(['with_assessment', 'without_assessment', 'in_progress', 'completed']).optional(),
           })
           .optional(),
       })
@@ -422,14 +426,52 @@ export const employeesRouter = router({
       }
 
       const employees = await listEmployees(input.filters);
-
-      // TODO: Implementar geração de arquivo CSV/Excel
-      // Por enquanto, retornar os dados
-      return {
-        data: employees,
-        format: input.format,
-        count: employees.length,
-      };
+      
+      // Formatar dados para exportação
+      const formattedData = employees.map(emp => ({
+        'Matrícula': emp.employee.employeeCode || emp.employee.chapa || '-',
+        'Nome': emp.employee.name || '-',
+        'Email': emp.employee.email || '-',
+        'CPF': emp.employee.cpf || '-',
+        'Departamento': emp.department?.name || '-',
+        'Cargo': emp.position?.title || '-',
+        'Data de Admissão': emp.employee.hireDate ? new Date(emp.employee.hireDate).toLocaleDateString('pt-BR') : '-',
+        'Salário': emp.employee.salary ? `R$ ${(emp.employee.salary / 100).toFixed(2)}` : '-',
+        'Status': emp.employee.status || '-',
+        'Telefone': emp.employee.phone || '-',
+      }));
+      
+      if (input.format === 'csv') {
+        // Gerar CSV
+        const headers = Object.keys(formattedData[0] || {});
+        const csvRows = [
+          headers.join(','),
+          ...formattedData.map(row => 
+            headers.map(header => {
+              const value = row[header as keyof typeof row] || '';
+              // Escapar aspas e adicionar aspas se contém vírgula
+              const escaped = String(value).replace(/"/g, '""');
+              return escaped.includes(',') ? `"${escaped}"` : escaped;
+            }).join(',')
+          )
+        ];
+        const csvContent = csvRows.join('\n');
+        
+        return {
+          content: csvContent,
+          filename: `funcionarios_${new Date().toISOString().split('T')[0]}.csv`,
+          mimeType: 'text/csv;charset=utf-8;',
+          count: employees.length,
+        };
+      } else {
+        // Para Excel, retornar dados estruturados (frontend usará biblioteca)
+        return {
+          data: formattedData,
+          filename: `funcionarios_${new Date().toISOString().split('T')[0]}.xlsx`,
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          count: employees.length,
+        };
+      }
     }),
 
   /**
@@ -1218,281 +1260,5 @@ export const employeesRouter = router({
           message: `Erro ao criar funcionários: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
         });
       }
-    }),
-
-  /**
-   * Upload de foto de perfil
-   */
-  uploadPhoto: protectedProcedure
-    .input(
-      z.object({
-        employeeId: z.number(),
-        fileData: z.string(), // Base64
-        fileName: z.string(),
-        mimeType: z.string(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      // Verificar permissão
-      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Apenas administradores e RH podem fazer upload de fotos",
-        });
-      }
-
-      const { storagePut } = await import("../storage");
-      const { getDb } = await import("../db");
-      const { employees } = await import("../../drizzle/schema");
-      const { eq } = await import("drizzle-orm");
-      const database = await getDb();
-      if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      // Converter base64 para buffer
-      const buffer = Buffer.from(input.fileData, "base64");
-
-      // Upload para S3
-      const fileKey = `employees/${input.employeeId}/photo/${Date.now()}-${input.fileName}`;
-      const { url } = await storagePut(fileKey, buffer, input.mimeType);
-
-      // Atualizar URL da foto no banco
-      await database
-        .update(employees)
-        .set({ photoUrl: url, updatedAt: new Date() })
-        .where(eq(employees.id, input.employeeId));
-
-      await logEmployeeAudit({
-        employeeId: input.employeeId,
-        action: "atualizado",
-        fieldChanged: "photoUrl",
-        newValue: url,
-        changedBy: ctx.user.id,
-      });
-
-      return { url, success: true };
-    }),
-
-  /**
-   * Upload de documento
-   */
-  uploadDocument: protectedProcedure
-    .input(
-      z.object({
-        employeeId: z.number(),
-        documentType: z.enum(["rg", "cpf", "ctps", "proof_of_address", "diploma", "other"]),
-        fileData: z.string(), // Base64
-        fileName: z.string(),
-        mimeType: z.string(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      // Verificar permissão
-      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Apenas administradores e RH podem fazer upload de documentos",
-        });
-      }
-
-      const { storagePut } = await import("../storage");
-      const { getDb } = await import("../db");
-      const { employees } = await import("../../drizzle/schema");
-      const { eq } = await import("drizzle-orm");
-      const database = await getDb();
-      if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      // Converter base64 para buffer
-      const buffer = Buffer.from(input.fileData, "base64");
-
-      // Upload para S3
-      const fileKey = `employees/${input.employeeId}/documents/${input.documentType}/${Date.now()}-${input.fileName}`;
-      const { url } = await storagePut(fileKey, buffer, input.mimeType);
-
-      // Atualizar URL do documento no banco
-      const updateData: any = { updatedAt: new Date() };
-      let fieldChanged = "";
-      
-      switch (input.documentType) {
-        case "rg":
-          updateData.documentRgUrl = url;
-          fieldChanged = "documentRgUrl";
-          break;
-        case "cpf":
-          updateData.documentCpfUrl = url;
-          fieldChanged = "documentCpfUrl";
-          break;
-        case "ctps":
-          updateData.documentCtpsUrl = url;
-          fieldChanged = "documentCtpsUrl";
-          break;
-        case "proof_of_address":
-          updateData.documentProofOfAddressUrl = url;
-          fieldChanged = "documentProofOfAddressUrl";
-          break;
-        case "diploma":
-          updateData.documentDiplomaUrl = url;
-          fieldChanged = "documentDiplomaUrl";
-          break;
-        case "other":
-          // Para outros documentos, adicionar ao array JSON
-          const employee = await database
-            .select({ documentOthersUrl: employees.documentOthersUrl })
-            .from(employees)
-            .where(eq(employees.id, input.employeeId))
-            .limit(1);
-          
-          const others = employee[0]?.documentOthersUrl 
-            ? JSON.parse(employee[0].documentOthersUrl as string) 
-            : [];
-          others.push({ url, fileName: input.fileName, uploadedAt: new Date().toISOString() });
-          updateData.documentOthersUrl = JSON.stringify(others);
-          fieldChanged = "documentOthersUrl";
-          break;
-      }
-
-      await database.update(employees).set(updateData).where(eq(employees.id, input.employeeId));
-
-      await logEmployeeAudit({
-        employeeId: input.employeeId,
-        action: "atualizado",
-        fieldChanged,
-        newValue: url,
-        changedBy: ctx.user.id,
-      });
-
-      return { url, success: true };
-    }),
-
-  /**
-   * Atualizar campos completos do funcionário
-   */
-  updateComplete: protectedProcedure
-    .input(
-      z.object({
-        id: z.number(),
-        data: z.object({
-          // Contato
-          mobilePhone: z.string().optional(),
-          emergencyContact: z.string().optional(),
-          emergencyPhone: z.string().optional(),
-          
-          // Endereço
-          addressStreet: z.string().optional(),
-          addressNumber: z.string().optional(),
-          addressComplement: z.string().optional(),
-          addressNeighborhood: z.string().optional(),
-          addressCity: z.string().optional(),
-          addressState: z.string().optional(),
-          addressZipCode: z.string().optional(),
-          
-          // Documentos
-          rg: z.string().optional(),
-          rgIssuer: z.string().optional(),
-          rgIssueDate: z.string().optional(),
-          ctps: z.string().optional(),
-          ctpsSeries: z.string().optional(),
-          ctpsState: z.string().optional(),
-          pis: z.string().optional(),
-          
-          // Pessoal
-          maritalStatus: z.enum(["solteiro", "casado", "divorciado", "viuvo", "uniao_estavel"]).optional(),
-          gender: z.enum(["masculino", "feminino", "outro", "nao_informar"]).optional(),
-          
-          // Educação
-          educationLevel: z.enum([
-            "fundamental_incompleto",
-            "fundamental_completo",
-            "medio_incompleto",
-            "medio_completo",
-            "superior_incompleto",
-            "superior_completo",
-            "pos_graduacao",
-            "mestrado",
-            "doutorado"
-          ]).optional(),
-          educationInstitution: z.string().optional(),
-          educationCourse: z.string().optional(),
-          educationCompletionYear: z.number().optional(),
-          
-          // Contrato
-          contractType: z.enum(["clt", "pj", "estagio", "temporario", "terceirizado"]).optional(),
-          workSchedule: z.string().optional(),
-          weeklyHours: z.number().optional(),
-          terminationDate: z.string().optional(),
-          terminationReason: z.string().optional(),
-          
-          // Banco
-          bankName: z.string().optional(),
-          bankCode: z.string().optional(),
-          bankBranch: z.string().optional(),
-          bankAccount: z.string().optional(),
-          bankAccountType: z.enum(["corrente", "poupanca", "salario"]).optional(),
-          pixKey: z.string().optional(),
-          
-          // Benefícios
-          hasHealthInsurance: z.boolean().optional(),
-          hasDentalInsurance: z.boolean().optional(),
-          hasLifeInsurance: z.boolean().optional(),
-          hasMealVoucher: z.boolean().optional(),
-          hasTransportVoucher: z.boolean().optional(),
-          hasGymMembership: z.boolean().optional(),
-          benefitsNotes: z.string().optional(),
-          
-          // Notas
-          notes: z.string().optional(),
-          internalNotes: z.string().optional(),
-        }),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      // Verificar permissão
-      if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Apenas administradores e RH podem atualizar funcionários",
-        });
-      }
-
-      const { getDb } = await import("../db");
-      const { employees } = await import("../../drizzle/schema");
-      const { eq } = await import("drizzle-orm");
-      const database = await getDb();
-      if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      // Verificar se funcionário existe
-      const existing = await database
-        .select()
-        .from(employees)
-        .where(eq(employees.id, input.id))
-        .limit(1);
-
-      if (existing.length === 0) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Funcionário não encontrado" });
-      }
-
-      // Converter datas
-      const processedData: any = { ...input.data };
-      if (input.data.rgIssueDate) processedData.rgIssueDate = new Date(input.data.rgIssueDate);
-      if (input.data.terminationDate) processedData.terminationDate = new Date(input.data.terminationDate);
-
-      processedData.updatedAt = new Date();
-
-      // Atualizar funcionário
-      await database.update(employees).set(processedData).where(eq(employees.id, input.id));
-
-      // Registrar auditoria para cada campo alterado
-      for (const [field, value] of Object.entries(input.data)) {
-        if (value !== undefined) {
-          await logEmployeeAudit({
-            employeeId: input.id,
-            action: "atualizado",
-            fieldChanged: field,
-            newValue: String(value),
-            changedBy: ctx.user.id,
-          });
-        }
-      }
-
-      return { success: true };
     }),
 });

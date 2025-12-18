@@ -39,8 +39,7 @@ export default function DashboardRelatorios() {
 
   // Queries
   const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery();
-  const { data: employeesData, isLoading: loadingEmployees } = trpc.employees.list.useQuery();
-  const employees = employeesData?.employees || [];
+  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery();
   const { data: goals, isLoading: loadingGoals } = trpc.goals.list.useQuery({});
   const { data: evaluations, isLoading: loadingEvaluations } = trpc.evaluations.list.useQuery({});
   const { data: pdis, isLoading: loadingPDIs } = trpc.pdi.list.useQuery({});
@@ -49,7 +48,7 @@ export default function DashboardRelatorios() {
   const isLoading = loadingDepartments || loadingEmployees || loadingGoals || loadingEvaluations || loadingPDIs || loadingCycles;
 
   // Estatísticas Gerais
-  const totalEmployees = employees.length;
+  const totalEmployees = employees?.length || 0;
   const totalGoals = safeLength(goals);
   const completedGoals = safeLength(safeFilter(ensureArray(goals), g => g.status === "concluida"));
   const avgGoalProgress = !isEmpty(goals)

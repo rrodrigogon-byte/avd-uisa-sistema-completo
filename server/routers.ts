@@ -73,8 +73,6 @@ import { payrollRouter } from "./routers/payrollRouter";
 import { adminRouter } from "./routers/adminRouter";
 import { pushNotificationsRouter } from "./routers/pushNotificationsRouter";
 import { employeesRouter } from "./routers/employeesRouter";
-import { employeesAdvancedRouter } from "./routers/employeesAdvancedRouter";
-import { hrMetricsRouter } from "./routers/hrMetricsRouter";
 import { employeeProfileRouter } from "./routers/employeeProfileRouter";
 import { evaluationsRouter } from "./routers/evaluationsRouter";
 import { performanceReportsRouter } from "./routers/performanceReportsRouter";
@@ -136,9 +134,6 @@ import { pirSuspiciousAccessRouter } from "./routers/pirSuspiciousAccessRouter";
 import { pirDepartmentReportsRouter } from "./routers/pirDepartmentReportsRouter";
 import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovalsRouter";
 import { videoUploadRouter } from "./routers/videoUploadRouter";
-import { pirVideoUploadRouter } from "./routers/pirVideoUploadRouter";
-import { autoGoalsRouter } from "./routers/autoGoalsRouter";
-import { consolidatedDashboardRouter } from "./routers/consolidatedDashboardRouter";
 import { abTestRouter } from "./routers/abTestRouter";
 import { npsRouter } from "./routers/npsRouter";
 import { npsTriggerRouter } from "./routers/npsTriggerRouter";
@@ -150,8 +145,6 @@ import { individualGoalsRouter } from "./routers/individualGoalsRouter";
 import { departmentGoalsRouter } from "./routers/departmentGoalsRouter";
 import { evaluationWeightsRouter } from "./routers/evaluationWeightsRouter";
 import { positionCompetenciesRouter } from "./routers/positionCompetenciesRouter";
-import { goalTemplatesRouter } from "./routers/goalTemplatesRouter";
-import { educationalVideosRouter } from "./routers/educationalVideosRouter";
 import { performanceBenchmarkRouter } from "./routers/performanceBenchmarkRouter";
 import { pilotSimulationsRouter } from "./routers/pilotSimulationsRouter";
 import { securityAlertsNotificationRouter } from "./routers/securityAlertsNotificationRouter";
@@ -348,9 +341,6 @@ export const appRouter = router({
   // Novos routers - PIR de Integridade e Aprovações de Cargos com 4 níveis (14/12/2025)
   integrityPIR: integrityPIRRouter,
   pirIntegrity: pirIntegrityRouter,
-  pirVideoUpload: pirVideoUploadRouter,
-  autoGoals: autoGoalsRouter,
-  consolidatedDashboard: consolidatedDashboardRouter,
   pirRiskAlerts: pirRiskAlertsRouter,
   pirSuspiciousAccess: pirSuspiciousAccessRouter,
   pirDepartmentReports: pirDepartmentReportsRouter,
@@ -391,10 +381,6 @@ export const appRouter = router({
   evaluationWeights: evaluationWeightsRouter,
   positionCompetencies: positionCompetenciesRouter,
   performanceBenchmark: performanceBenchmarkRouter,
-  
-  // Novos routers - Templates de Metas e Vídeos Educacionais (18/12/2025)
-  goalTemplates: goalTemplatesRouter,
-  educationalVideos: educationalVideosRouter,
   
   // Novos routers - Sistema de Simulados e Alertas (15/12/2025)
   pilotSimulations: pilotSimulationsRouter,
@@ -535,9 +521,7 @@ export const appRouter = router({
   // COLABORADORES - Usando router moderno com suporte a search
   // ============================================================================
   employees: employeesRouter,
-  employeesAdvanced: employeesAdvancedRouter,
   employeeProfile: employeeProfileRouter,
-  hrMetrics: hrMetricsRouter,
 
   // ============================================================================
   // METAS (movido para goalsRouter.ts)

@@ -2,15 +2,14 @@ import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import { OrganizationalChartOptimized } from "@/components/OrganizationalChartOptimized";
-import { OrgChartExporter } from "@/components/OrgChartExporter";
 import { trpc } from "@/lib/trpc";
 import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
-import { Loader2, Building2, Download } from "lucide-react";
+import { Loader2, Building2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
@@ -36,10 +35,8 @@ export default function Organograma() {
     trpc.positions.list.useQuery();
 
   // Buscar lista de funcionários para seleção de gestor
-  const { data: allEmployeesData, isLoading: loadingEmployees } =
+  const { data: allEmployees, isLoading: loadingEmployees } =
     trpc.employees.list.useQuery();
-  
-  const allEmployees = allEmployeesData?.employees || [];
 
   // Mutation para atualizar gestor
   const setManagerMutation = trpc.hierarchy.setManager.useMutation({
@@ -90,23 +87,6 @@ export default function Organograma() {
               Visualização completa da hierarquia organizacional
             </p>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Exportar Visual
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Exportar Organograma</DialogTitle>
-              </DialogHeader>
-              <OrgChartExporter 
-                targetElementId="org-chart-container" 
-                defaultFilename="organograma"
-              />
-            </DialogContent>
-          </Dialog>
         </div>
 
         {/* Estatísticas */}
@@ -204,7 +184,8 @@ export default function Organograma() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Sem gestor (CEO/Diretor)</SelectItem>
-                    {safeFilter(allEmployees, (emp) => emp.id !== editingEmployee?.id)
+                    {allEmployees
+                      ?.filter((emp) => emp.id !== editingEmployee?.id) // Não permitir selecionar a si mesmo
                       .map((emp) => (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.nome} - {emp.cargo || "Sem cargo"}

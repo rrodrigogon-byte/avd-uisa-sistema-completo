@@ -7,7 +7,6 @@
 - [x] Corrigir problema de login - OAuth do Manus funciona normalmente
 - [x] Ativar e corrigir envio de emails em todos os testes PIR - Sistema completo implementado
 - [x] Verificar e corrigir fluxo de autenticação OAuth - Funcionando corretamente
-- [x] Corrigir erro "v?.filter is not a function" nas páginas de perfis da equipe e funcionários - RESOLVIDO! Corrigido acesso aos dados em 5 páginas
 
 ### Plano de Correção
 1. **Sistema de Autenticação**
@@ -755,7 +754,7 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [ ] Validar que todos os componentes protegidos funcionam corretamente
 - [ ] Verificar que skeleton loaders aparecem durante carregamento
 - [ ] Confirmar que testes E2E passam sem erros críticos
-- [x] Criar checkpoint final com todas as melhorias
+- [ ] Criar checkpoint final com todas as melhorias
 
 
 ---
@@ -1054,29 +1053,25 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 ## 🚀 NOVAS FUNCIONALIDADES - EXPANSÃO DO SISTEMA (18/12/2025)
 
 ### 📚 Expansão do Banco de Questões PIR Integridade
-- [x] Expandir schema para suportar vídeos nas questões PIR
-  - [x] Adicionar campo videoUrl na tabela pirIntegrityQuestions
-  - [x] Adicionar campo videoThumbnailUrl para preview
-  - [x] Adicionar campo videoDuration para controle de tempo
-  - [x] Adicionar campo requiresVideoWatch para obrigar assistir vídeo
-- [x] Criar sistema de upload e armazenamento de vídeos (S3)
-  - [x] Implementar procedure uploadQuestionVideo no backend (pirVideoUploadRouter)
-  - [x] Configurar upload direto para S3 com validação de formato
-  - [x] Adicionar suporte a formatos: mp4, webm, mov
-  - [x] Validar tamanho máximo (50MB para vídeo, 2MB para thumbnail)
+- [ ] Expandir schema para suportar vídeos nas questões PIR
+  - [ ] Adicionar campo videoUrl na tabela pirIntegrityQuestions
+  - [ ] Adicionar campo videoThumbnailUrl para preview
+  - [ ] Adicionar campo videoDuration para controle de tempo
+- [ ] Criar sistema de upload e armazenamento de vídeos (S3)
+  - [ ] Implementar procedure uploadQuestionVideo no backend
+  - [ ] Configurar upload direto para S3 com validação de formato
+  - [ ] Adicionar suporte a formatos: mp4, webm, mov
   - [ ] Implementar compressão automática de vídeos grandes
 - [ ] Adicionar 100+ questões ao banco de dados PIR Integridade
   - [ ] Criar script de seed com questões categorizadas
   - [ ] Garantir distribuição equilibrada entre dimensões
   - [ ] Adicionar questões com e sem vídeos
   - [ ] Validar qualidade e relevância das questões
-- [x] Implementar interface de gerenciamento de questões com upload de vídeos
-  - [x] Criar página GestaoQuestoesPIRIntegridade aprimorada
-  - [x] Adicionar componente de upload de vídeo com preview
-  - [x] Implementar player de vídeo para visualização (tag <video> HTML5)
-  - [x] Adicionar filtros por dimensão (já existia)
-  - [x] Adicionar upload de thumbnail opcional
-  - [x] Implementar validação de formato e tamanho
+- [ ] Implementar interface de gerenciamento de questões com upload de vídeos
+  - [ ] Criar página GestaoQuestoesPIRIntegridade aprimorada
+  - [ ] Adicionar componente de upload de vídeo com preview
+  - [ ] Implementar player de vídeo para visualização
+  - [ ] Adicionar filtros por dimensão e tipo (com/sem vídeo)
 - [ ] Adicionar suporte a vídeos na visualização de questões durante avaliação
   - [ ] Atualizar TestePIRIntegridade para exibir vídeos
   - [ ] Implementar controles de reprodução (play, pause, replay)
@@ -1084,470 +1079,70 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
   - [ ] Garantir que questão só pode ser respondida após assistir vídeo completo
 
 ### 📊 Dashboard de Análise Consolidada
-- [x] Criar schema para métricas agregadas e análises consolidadas
-  - [x] Tabela consolidatedMetrics para cache de métricas
-  - [x] Tabela departmentAnalytics para análises por departamento
-  - [x] Tabela trendAnalytics para análise de tendências temporais
-  - [ ] Views materializadas para performance de queries (opcional)
-- [x] Implementar procedures backend para cálculo de métricas consolidadas
-  - [x] getConsolidatedMetrics - métricas gerais do sistema
-  - [x] getDepartmentAnalytics - análises por departamento
-  - [x] getTrendAnalytics - tendências temporais
-  - [x] getCompetencyBreakdown - competências com maiores gaps
-  - [x] getTopPerformers - top 10 colaboradores
-  - [x] exportConsolidatedReport - exportação de relatórios JSON/CSV
-- [x] Desenvolver dashboard executivo com visão geral de todas avaliações
-  - [x] Criar página DashboardConsolidado
-  - [x] Cards de KPIs principais (taxa de conclusão, média competências, média PIR, gaps críticos)
-  - [x] Visão geral de todos os tipos de avaliação (PIR, Competências, Desempenho, PDI)
-  - [x] Indicadores de saúde organizacional
-- [x] Adicionar gráficos e visualizações de tendências por departamento
-  - [x] Gráfico de evolução temporal (performance_evolution)
-  - [x] Comparação de performance entre departamentos (cards com métricas)
-  - [x] Lista de competências com maiores gaps
-  - [x] Ranking de top performers
-- [x] Implementar filtros por período, departamento e tipo de avaliação
-  - [x] Filtro de período (data inicial e final customizadas)
-  - [x] Filtro de departamento (dropdown)
-  - [ ] Filtro por tipo de avaliação (futuro)
-  - [ ] Filtro por status (futuro)
-- [x] Criar relatórios exportáveis para gestores
-  - [x] Exportação em JSON com todos os dados
-  - [x] Exportação em CSV básico
-  - [ ] Exportação em PDF com gráficos (futuro)
-  - [ ] Exportação em Excel (futuro)
+- [ ] Criar schema para métricas agregadas e análises consolidadas
+  - [ ] Tabela consolidatedMetrics para cache de métricas
+  - [ ] Tabela departmentAnalytics para análises por departamento
+  - [ ] Tabela trendAnalytics para análise de tendências temporais
+  - [ ] Views materializadas para performance de queries
+- [ ] Implementar procedures backend para cálculo de métricas consolidadas
+  - [ ] getConsolidatedMetrics - métricas gerais do sistema
+  - [ ] getDepartmentAnalytics - análises por departamento
+  - [ ] getTrendAnalytics - tendências temporais
+  - [ ] getComparisonAnalytics - comparações entre períodos
+  - [ ] exportConsolidatedReport - exportação de relatórios
+- [ ] Desenvolver dashboard executivo com visão geral de todas avaliações
+  - [ ] Criar página DashboardConsolidado
+  - [ ] Cards de KPIs principais (taxa de conclusão, média geral, etc)
+  - [ ] Visão geral de todos os tipos de avaliação (PIR, Competências, Desempenho, PDI)
+  - [ ] Indicadores de saúde organizacional
+- [ ] Adicionar gráficos e visualizações de tendências por departamento
+  - [ ] Gráfico de evolução temporal por departamento
+  - [ ] Comparação de performance entre departamentos
+  - [ ] Heatmap de competências por área
+  - [ ] Análise de gaps críticos organizacionais
+- [ ] Implementar filtros por período, departamento e tipo de avaliação
+  - [ ] Filtro de período (último mês, trimestre, semestre, ano, customizado)
+  - [ ] Filtro multi-seleção de departamentos
+  - [ ] Filtro por tipo de avaliação
+  - [ ] Filtro por status (concluído, em andamento, pendente)
+- [ ] Criar relatórios exportáveis para gestores
+  - [ ] Exportação em PDF com gráficos e análises
+  - [ ] Exportação em Excel com dados detalhados
+  - [ ] Relatório executivo resumido
+  - [ ] Relatório detalhado por colaborador
 
 ### 🎯 Sistema de Metas e PDI Automático
-- [x] Expandir schema para incluir metas vinculadas a gaps identificados
-  - [x] Tabela autoGeneratedGoals para metas sugeridas
-  - [x] Tabela goalTemplates para templates de metas por competência
-  - [x] Tabela gapAnalysis para análise estruturada de gaps
-  - [x] Tabela goalGenerationHistory para histórico de gerações
-  - [x] Relacionamento entre gaps e metas sugeridas
-- [x] Criar sistema de análise automática de gaps nas avaliações
-  - [x] Implementar algoritmo de identificação de gaps críticos (analyzeGaps)
-  - [x] Calcular prioridade de gaps (crítico, alto, médio, baixo)
-  - [x] Calcular impacto no desempenho
-  - [x] Correlacionar gaps com competências específicas
-  - [x] Determinar dificuldade de desenvolvimento
-- [x] Implementar geração automática de sugestões de metas baseadas em gaps
-  - [x] Procedure generateGoals
-  - [x] Algoritmo de matching gap → template de meta
-  - [x] Geração de metas genéricas quando não há template
-  - [x] Sugestão de prazos realistas baseados em complexidade
-  - [x] Critérios SMART automáticos (Specific, Measurable, Achievable, Relevant, Time-bound)
-  - [x] Sugestão de recursos e ações de desenvolvimento (via templates)
-- [x] Desenvolver interface de aprovação e edição de metas sugeridas
-  - [x] Página MetasAutomaticas.tsx
-  - [x] Interface de edição com campos SMART
-  - [x] Cards de metas pendentes com visualização completa
-  - [x] Botões de aprovar/editar/rejeitar individuais
-  - [x] Dialog de revisão com edição de campos
-  - [x] Rejeição com motivo
-- [x] Integrar metas ao PDI existente com tracking automático
-  - [x] Vincular metas aprovadas ao PDI do colaborador (approveGoal cria pdiPlan)
-  - [x] Atribuir responsáveis e prazos
-  - [ ] Criar ações de desenvolvimento automáticas (futuro)
-  - [ ] Configurar checkpoints de acompanhamento (futuro)
-  - [ ] Integrar com sistema de notificações (futuro)
+- [ ] Expandir schema para incluir metas vinculadas a gaps identificados
+  - [ ] Tabela autoGeneratedGoals para metas sugeridas
+  - [ ] Tabela goalTemplates para templates de metas por competência
+  - [ ] Tabela gapAnalysis para análise estruturada de gaps
+  - [ ] Relacionamento entre gaps e metas sugeridas
+- [ ] Criar sistema de análise automática de gaps nas avaliações
+  - [ ] Implementar algoritmo de identificação de gaps críticos
+  - [ ] Calcular prioridade de gaps (crítico, alto, médio, baixo)
+  - [ ] Identificar padrões de gaps recorrentes
+  - [ ] Correlacionar gaps com competências específicas
+- [ ] Implementar geração automática de sugestões de metas baseadas em gaps
+  - [ ] Procedure analyzeGapsAndSuggestGoals
+  - [ ] Algoritmo de matching gap → template de meta
+  - [ ] Personalização de metas baseada em histórico do colaborador
+  - [ ] Sugestão de prazos realistas baseados em complexidade
+  - [ ] Sugestão de recursos e ações de desenvolvimento
+- [ ] Desenvolver interface de aprovação e edição de metas sugeridas
+  - [ ] Página de revisão de metas sugeridas
+  - [ ] Interface de edição com campos SMART
+  - [ ] Aprovação em lote de metas
+  - [ ] Rejeição e solicitação de novas sugestões
+  - [ ] Comentários e justificativas
+- [ ] Integrar metas ao PDI existente com tracking automático
+  - [ ] Vincular metas aprovadas ao PDI do colaborador
+  - [ ] Criar ações de desenvolvimento automáticas
+  - [ ] Atribuir responsáveis e prazos
+  - [ ] Configurar checkpoints de acompanhamento
+  - [ ] Integrar com sistema de notificações
 - [ ] Adicionar notificações de progresso e alertas de metas
   - [ ] Notificação de nova meta sugerida
   - [ ] Alertas de prazo próximo
   - [ ] Notificação de milestone atingido
   - [ ] Alerta de meta em risco
   - [ ] Relatório semanal de progresso de metas
-
-
----
-
-## 🎯 NOVAS FUNCIONALIDADES - MELHORIAS PIR E TEMPLATES DE METAS (18/12/2025)
-
-### 1. Popular Banco com 100+ Questões PIR
-- [x] Estender schema para suportar vídeos em questões PIR (videoUrl, videoDuration)
-- [ ] Criar script de seed com 100+ questões PIR categorizadas
-  - [ ] Questões de Influência Pessoal (IP) - 20 questões
-  - [ ] Questões de Iniciativa e Dinamismo (ID) - 20 questões
-  - [ ] Questões de Independência e Controle (IC) - 20 questões
-  - [ ] Questões de Estabilidade (ES) - 20 questões
-  - [ ] Questões de Flexibilidade (FL) - 20 questões
-  - [ ] Questões de Autonomia (AU) - 20 questões
-- [x] Adicionar 5-10 vídeos de exemplo para testes
-- [x] Popular banco de dados com seed script (5 vídeos adicionados)
-
-### 2. Visualização de Vídeos no Teste PIR
-- [x] Implementar componente VideoPlayer com controles
-  - [x] Player de vídeo responsivo
-  - [x] Barra de progresso do vídeo
-  - [x] Controle de play/pause
-  - [x] Indicador de tempo assistido
-- [x] Adicionar lógica de bloqueio de resposta
-  - [x] Desabilitar botões de resposta até vídeo ser assistido
-  - [x] Rastrear progresso do vídeo (% assistido)
-  - [x] Liberar resposta quando vídeo atingir 90%+ de progresso
-- [x] Integrar player na página ResponderPIRIntegridade
-- [x] Testar funcionalidade completa
-- [ ] Adicionar campo videoWatchedProgress na tabela de respostas
-
-### 3. Templates de Metas por Competência
-- [x] Criar tabela goalTemplates no schema
-  - [x] competencyId (FK para competencies)
-  - [x] templateTitle (título do template)
-  - [x] templateDescription (descrição detalhada)
-  - [x] suggestedActions (ações sugeridas - JSON)
-  - [x] timeframe (prazo sugerido)
-  - [x] gapLevel (nível de gap: crítico, alto, médio, baixo)
-  - [x] priority (prioridade: alta, média, baixa)
-- [x] Popular templates para cada competência (224 templates criados para 56 competências)
-  - [ ] Templates para Liderança
-  - [ ] Templates para Comunicação
-  - [ ] Templates para Trabalho em Equipe
-  - [ ] Templates para Resolução de Problemas
-  - [ ] Templates para Inovação
-  - [ ] Templates para Gestão de Tempo
-  - [ ] (Adicionar para todas as 20+ competências)
-- [ ] Criar procedures tRPC
-  - [ ] goalTemplates.listByCompetency - listar templates por competência
-  - [ ] goalTemplates.suggest - sugerir templates baseado em gaps
-  - [ ] goalTemplates.create - criar novo template (admin)
-- [ ] Integrar templates com Passo 5 (PDI)
-  - [ ] Sugerir templates automaticamente baseado em competências com baixa pontuação
-  - [ ] Permitir seleção de templates ao criar metas
-  - [ ] Adaptar templates para contexto específico do colaborador
-
-### Testes e Validação
-- [ ] Testar seed script com 100+ questões
-- [ ] Validar carregamento de vídeos no teste PIR
-- [ ] Testar lógica de bloqueio de resposta até vídeo ser assistido
-- [ ] Validar sugestões automáticas de templates de metas
-- [ ] Testar fluxo completo: PIR com vídeos → Avaliação → PDI com templates
-
-
----
-
-## 🆕 NOVAS FUNCIONALIDADES - TEMPLATES DE METAS, VÍDEOS E ANALYTICS (18/12/2025)
-
-### Templates de Metas no PDI
-- [x] Criar schema de banco de dados para templates de metas
-  - [x] Tabela goalTemplates (id, name, description, category, targetType, metrics, createdBy, createdAt)
-  - [x] Tabela goalTemplateCategories (id, name, description, icon)
-  - [x] Tabela goalTemplateUsage (tracking de uso)
-- [x] Implementar procedures tRPC para templates
-  - [x] goalTemplates.list - listar templates disponíveis
-  - [x] goalTemplates.create - criar novo template (admin)
-  - [x] goalTemplates.update - atualizar template (admin)
-  - [x] goalTemplates.delete - deletar template (admin)
-  - [x] goalTemplates.getByCategory - buscar templates por categoria
-  - [x] goalTemplates.useTemplate - registrar uso de template
-  - [x] goalTemplates.getTemplateStats - estatísticas de uso
-- [ ] Criar interface de gerenciamento de templates (admin)
-  - [ ] Página de listagem de templates
-  - [ ] Formulário de criação/edição de templates
-  - [ ] Organização por categorias
-  - [ ] Preview de template antes de salvar
-- [ ] Integrar templates no fluxo de criação de metas (Passo 5 PDI)
-  - [ ] Modal de seleção de templates ao criar meta
-  - [ ] Preview de template com dados pré-preenchidos
-  - [ ] Permitir customização após aplicar template
-  - [ ] Opção de criar meta do zero (sem template)
-
-### Expansão de Vídeos Educacionais
-- [x] Atualizar schema de banco de dados para vídeos
-  - [x] Tabela educationalVideoCategories
-  - [x] Tabela educationalVideos com todos os campos (category, tags, duration, thumbnailUrl)
-  - [x] Tabela videoWatchAnalytics para tracking
-  - [x] Tabela videoWatchSessions para sessões
-  - [x] Tabela videoPerformanceCorrelation para análise de impacto
-- [ ] Criar seeds com novos vídeos educacionais
-  - [ ] 10+ vídeos sobre ética empresarial
-  - [ ] 10+ vídeos sobre compliance e regulamentação
-  - [ ] 10+ vídeos sobre integridade e conduta profissional
-  - [ ] Vídeos sobre liderança ética e tomada de decisão
-- [x] Implementar procedures tRPC para gerenciamento de vídeos
-  - [x] videos.list - listar vídeos com filtros (categoria, tags)
-  - [x] videos.create - criar novo vídeo (admin)
-  - [x] videos.update - atualizar vídeo (admin)
-  - [x] videos.delete - deletar vídeo (admin)
-  - [x] videos.getByCategory - buscar vídeos por categoria
-  - [x] videos.startWatchSession - iniciar sessão de visualização
-  - [x] videos.updateWatchProgress - atualizar progresso
-  - [x] videos.completeVideo - marcar como concluído
-  - [x] videos.toggleLike/toggleBookmark - interações
-- [ ] Criar interface de gerenciamento de vídeos (admin)
-  - [ ] Página de listagem de vídeos
-  - [ ] Formulário de upload/criação de vídeos
-  - [ ] Organização por categorias e tags
-  - [ ] Preview de vídeo antes de salvar
-- [ ] Melhorar interface de visualização de vídeos
-  - [ ] Filtros por categoria e tags
-  - [ ] Sistema de busca por título/descrição
-  - [ ] Grid responsivo com thumbnails
-  - [ ] Player de vídeo com controles completos
-
-### Dashboard de Analytics de Vídeos
-- [x] Criar schema de banco de dados para analytics
-  - [x] Tabela videoWatchAnalytics (tracking completo por usuário)
-  - [x] Tabela videoWatchSessions (sessões individuais)
-  - [x] Tabela videoPerformanceCorrelation (correlação com PIR)
-  - [x] Índices para otimizar queries de agregação
-- [x] Implementar tracking de visualizações
-  - [x] Procedure startWatchSession - iniciar sessão
-  - [x] Procedure updateWatchProgress - atualizar progresso (heartbeat)
-  - [x] Procedure completeVideo - marcar como concluído
-- [x] Criar procedures para cálculo de métricas
-  - [x] getVideoStats - estatísticas gerais (views, completion rate, avg watch time)
-  - [x] getUserProgress - estatísticas por usuário (vídeos assistidos, tempo total)
-  - [x] getMostWatchedVideos - ranking de vídeos mais assistidos
-  - [ ] getCategoryStats - estatísticas por categoria
-  - [ ] getCorrelationWithPIR - correlação entre vídeos e performance PIR
-- [ ] Desenvolver dashboard visual de analytics
-  - [ ] Cards com métricas principais (total views, completion rate, avg watch time)
-  - [ ] Gráfico de barras: vídeos mais assistidos
-  - [ ] Gráfico de linha: evolução de visualizações ao longo do tempo
-  - [ ] Tabela: ranking de vídeos por engagement
-  - [ ] Heatmap: horários de maior visualização
-- [ ] Implementar análise de correlação com PIR
-  - [ ] Gráfico scatter: vídeos assistidos vs pontuação PIR
-  - [ ] Análise por dimensão: quais vídeos correlacionam com cada dimensão
-  - [ ] Recomendações personalizadas baseadas em gaps do PIR
-  - [ ] Relatório de impacto: mudança na performance após assistir vídeos
-- [ ] Adicionar filtros e segmentação
-  - [ ] Filtros por período (última semana, mês, trimestre, ano)
-  - [ ] Filtros por categoria de vídeo
-  - [ ] Filtros por departamento/colaborador
-  - [ ] Segmentação por faixa de performance PIR
-- [ ] Criar relatório exportável
-  - [ ] Exportação em CSV com todas as métricas
-  - [ ] Exportação em PDF com gráficos e análises
-  - [ ] Agendamento de relatórios automáticos por email
-
-
-## 🔧 Correções e Melhorias - Fase 2 (18/12/2025)
-
-### Correção PIR Integridade
-- [x] Corrigir mensagem do processo de envio do PIR Integridade (página responder PIR)
-- [x] Revisar textos e instruções da interface de resposta
-
-### Interface de Gerenciamento de Templates
-- [x] Criar página admin para gerenciar templates de metas
-- [x] Implementar CRUD de templates (criar, editar, excluir)
-- [x] Adicionar categorização de templates
-- [x] Implementar busca e filtros de templates
-- [x] Adicionar preview de templates
-
-### Vídeos Educacionais
-- [x] Criar schema de banco para vídeos educacionais
-- [x] Popular banco com 30-40 vídeos sobre ética, compliance e integridade
-- [x] Adicionar URLs reais do YouTube/Vimeo
-- [ ] Implementar página de visualização de vídeos
-- [ ] Adicionar categorização e tags para vídeos
-- [ ] Implementar sistema de busca de vídeos
-
-### Dashboard de Analytics
-- [x] Criar schema de banco para métricas de analytics
-- [x] Implementar procedures para cálculo de métricas
-- [x] Criar gráfico de barras para engajamento
-- [x] Criar gráfico de linha para completion rate
-- [x] Criar scatter plot para correlação engajamento x performance PIR
-- [x] Adicionar filtros de período e categoria
-- [ ] Implementar exportação de dados de analytics
-
-
----
-
-## 🎥 SISTEMA DE VÍDEOS EDUCACIONAIS (18/12/2025)
-
-### Estrutura de Dados
-- [x] Criar tabela `educational_videos` no schema
-- [x] Criar tabela `video_progress` para rastrear progresso dos colaboradores
-- [x] Adicionar relações entre vídeos e dimensões PIR
-
-### Função de Seed (Admin)
-- [x] Adicionar botão de seed na página /admin/videos-educacionais
-- [x] Criar procedimento tRPC para popular 36 vídeos educacionais
-- [x] Implementar validação para evitar duplicação de vídeos
-
-### Interface de Visualização (Colaboradores)
-- [x] Criar página /videos-educacionais para listagem de vídeos
-- [x] Implementar player de vídeo com YouTube embed
-- [x] Adicionar funcionalidade de marcar vídeo como concluído
-- [x] Mostrar progresso geral do colaborador
-- [x] Criar filtros por categoria PIR
-
-### Sistema de Recomendação
-- [x] Criar algoritmo que identifica dimensões PIR com menor pontuação
-- [x] Implementar procedimento tRPC para buscar vídeos recomendados
-- [x] Adicionar seção "Recomendados para Você" na interface
-- [x] Priorizar vídeos não assistidos das dimensões mais fracas
-
-### Testes e Finalização
-- [x] Testar seed de vídeos como admin
-- [x] Testar visualização e conclusão de vídeos como colaborador
-- [x] Validar sistema de recomendação baseado em PIR
-- [x] Criar checkpoint final
-
-
-## 🚨 CORREÇÕES REPORTADAS (18/12/2025)
-
-### Problemas Identificados pelo Usuário
-- [x] Corrigir erro "An unexpected error occurred" no Organograma - CORRIGIDO
-- [x] Adicionar vídeos ao menu principal - SEÇÃO CRIADA
-- [x] Implementar funcionalidade de vídeos instrucionais - 4 PÁGINAS CRIADAS
-
-
-
----
-
-## 🆕 NOVA FASE: CADASTRO COMPLETO E ORGANOGRAMA DINÂMICO (18/12/2025)
-
-### Cadastro Completo de Funcionários
-- [x] Expandir schema de employees com todos os campos necessários
-  - [x] Adicionar campos: telefone, celular, data de nascimento, endereço completo
-  - [x] Adicionar campos: estado civil, escolaridade, formação acadêmica
-  - [x] Adicionar campos: data de admissão, tipo de contrato, salário
-  - [x] Adicionar campos: foto de perfil (URL S3), documentos (RG, CPF, CTPS)
-  - [x] Adicionar campos: informações bancárias, benefícios
-- [x] Criar procedures tRPC para gestão completa de funcionários
-  - [x] employees.getById - buscar funcionário completo por ID
-  - [x] employees.update - atualizar todos os campos do funcionário
-  - [x] employees.uploadPhoto - upload de foto para S3
-  - [x] employees.uploadDocument - upload de documentos para S3
-  - [x] employees.updateComplete - atualizar campos completos do funcionário
-- [ ] Implementar página de perfil completo do funcionário
-  - [ ] Visualização de todos os dados pessoais
-  - [ ] Visualização de dados profissionais
-  - [ ] Visualização de documentos anexados
-  - [ ] Edição inline de campos
-  - [ ] Upload de foto de perfil com preview
-  - [ ] Upload de documentos com validação
-- [ ] Implementar formulário de cadastro completo
-  - [ ] Wizard multi-step (dados pessoais, profissionais, documentos)
-  - [ ] Validação de CPF, email, telefone
-  - [ ] Máscaras de input para campos formatados
-  - [ ] Upload de foto e documentos durante cadastro
-  - [ ] Preview antes de salvar
-
-### Organograma Dinâmico e Interativo
-- [x] Melhorar visualização do organograma existente
-  - [x] Adicionar mais informações nos cards (foto, cargo, departamento)
-  - [x] Implementar diferentes layouts (vertical, horizontal, compacto)
-  - [x] Adicionar zoom suave e pan com limites
-  - [x] Implementar busca com highlight no organograma
-- [x] Implementar edição drag-and-drop do organograma
-  - [x] Permitir arrastar funcionários para mudar supervisor
-  - [x] Validação de hierarquias (não permitir loops)
-  - [x] Confirmação antes de salvar mudanças
-  - [ ] Histórico de mudanças na hierarquia
-- [x] Adicionar funcionalidades avançadas
-  - [x] Visualização de equipes por departamento
-  - [x] Filtros por cargo, departamento, localização
-  - [ ] Exportação do organograma como PNG/PDF
-  - [x] Visualização de subordinados diretos e indiretos
-  - [ ] Indicadores visuais (vagas abertas, novos contratados)
-- [x] Implementar edição inline no organograma
-  - [x] Clicar no card para editar informações básicas
-  - [ ] Modal de detalhes completos do funcionário
-  - [ ] Ações rápidas (promover, transferir, desligar)
-  - [ ] Adicionar novo funcionário diretamente no organograma
-
-### Gestão de Perfis e Permissões
-- [ ] Criar sistema de perfis de acesso detalhado
-  - [ ] Perfil Admin: acesso total ao sistema
-  - [ ] Perfil RH: gestão de funcionários e processos AVD
-  - [ ] Perfil Gestor: visualização de equipe e avaliações
-  - [ ] Perfil Funcionário: visualização própria e autoavaliação
-- [ ] Implementar controle granular de permissões
-  - [ ] Permissões por módulo (cadastro, organograma, AVD, relatórios)
-  - [ ] Permissões por ação (criar, editar, visualizar, excluir)
-  - [ ] Matriz de permissões configurável
-- [ ] Criar interface de gestão de perfis
-  - [ ] Página de configuração de perfis
-  - [ ] Atribuição de permissões por perfil
-  - [ ] Atribuição de perfis a usuários
-  - [ ] Auditoria de mudanças de permissões
-
-### Testes e Validação
-- [ ] Criar testes para novo schema de employees
-- [ ] Criar testes para procedures de gestão de funcionários
-- [ ] Criar testes para upload de arquivos S3
-- [ ] Criar testes para organograma drag-and-drop
-- [ ] Criar testes para sistema de permissões
-- [ ] Testar fluxo completo de cadastro de funcionário
-- [ ] Testar fluxo completo de reorganização hierárquica
-
-
----
-
-## 📋 BASE DE FUNCIONÁRIOS E ORGANOGRAMA AVANÇADO (18/12/2025)
-
-### Schema e Backend
-- [x] Expandir tabela de funcionários com campos adicionais (data de admissão, status, foto, etc)
-- [x] Criar tabela de histórico de mudanças hierárquicas
-- [x] Implementar procedures tRPC para operações hierárquicas avançadas (promover, transferir, desligar)
-- [x] Implementar procedure para buscar estrutura organizacional completa
-- [x] Implementar procedure para histórico de mudanças
-
-### Formulário Wizard de Cadastro
-- [x] Criar componente wizard multi-step para cadastro de funcionários
-- [x] Step 1: Dados pessoais do funcionário
-- [x] Step 2: Dados profissionais (cargo, departamento, salário)
-- [x] Step 3: Posicionamento hierárquico (supervisor direto)
-- [x] Step 4: Revisão e confirmação
-- [x] Implementar validação em cada step
-- [x] Adicionar navegação entre steps (próximo, anterior, salvar)
-
-### Exportação de Organograma
-- [x] Implementar exportação como PNG usando html2canvas
-- [x] Implementar exportação como PDF usando jsPDF
-- [x] Adicionar opções de configuração de exportação (tamanho, orientação)
-- [x] Criar botões de exportação na interface do organograma
-
-### Histórico de Mudanças Hierárquicas
-- [x] Criar página de histórico de mudanças hierárquicas
-- [x] Implementar timeline visual de mudanças
-- [x] Adicionar filtros por funcionário, departamento, tipo de mudança
-- [x] Mostrar detalhes de cada mudança (antes/depois, data, responsável)
-
-### Modal de Detalhes do Funcionário
-- [x] Criar modal completo com todas as informações do funcionário
-- [x] Mostrar dados pessoais e profissionais
-- [x] Exibir posição hierárquica (supervisor e subordinados)
-- [x] Mostrar histórico de mudanças do funcionário
-- [x] Adicionar ações rápidas no modal
-
-### Ações Rápidas
-- [x] Implementar ação de promover funcionário
-- [x] Implementar ação de transferir funcionário (mudar departamento/supervisor)
-- [x] Implementar ação de desligar funcionário
-- [x] Criar modals de confirmação para cada ação
-- [x] Registrar todas as ações no histórico
-- [x] Adicionar validações de regras de negócio
-
-### Melhorias no Organograma Existente
-- [ ] Adicionar zoom e pan no organograma interativo
-- [ ] Implementar busca visual no organograma
-- [ ] Adicionar indicadores de status (ativo, afastado, desligado)
-- [ ] Melhorar responsividade mobile do organograma
-
-
----
-
-## 🎯 NOVAS MELHORIAS - INTEGRAÇÃO E NOTIFICAÇÕES (18/12/2025)
-
-### Melhorias de Interface e Experiência do Usuário
-- [x] Integrar EmployeeDetailsModal na página de listagem de funcionários
-- [x] Integrar EmployeeQuickActions na página de listagem de funcionários
-- [x] Adicionar acesso rápido às ações de funcionários na listagem
-
-### Sistema de Notificações Automáticas por Email
-- [x] Implementar notificação por email para promoções de funcionários
-- [x] Implementar notificação por email para transferências de funcionários
-- [x] Implementar notificação por email para desligamentos de funcionários
-- [x] Criar templates de email profissionais para cada tipo de notificação
-
-### Dashboard de Métricas de RH
-- [x] Criar página de dashboard de métricas de RH
-- [x] Implementar cálculo e visualização de taxa de turnover
-- [x] Implementar cálculo e visualização de tempo médio de promoção
-- [x] Implementar visualização de distribuição hierárquica
-- [x] Adicionar gráficos e visualizações de dados
-- [x] Integrar dashboard no menu de navegação

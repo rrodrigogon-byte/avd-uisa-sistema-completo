@@ -108,9 +108,7 @@ import Funcionarios from "./pages/Funcionarios";
 import FuncionarioDetalhes from "./pages/FuncionarioDetalhes";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
 import FuncionariosGerenciar from "./pages/FuncionariosGerenciar";
-import MetricasRH from "./pages/MetricasRH";
 import DesenvolvimentoFuncionarios from "./pages/DesenvolvimentoFuncionarios";
-import CadastrarFuncionario from "./pages/CadastrarFuncionario";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
 import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
 import BonusAprovacoes from "./pages/aprovacoes/Bonus";
@@ -304,16 +302,6 @@ import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 import DashboardAprovacoesCargos from "./pages/job-descriptions/DashboardAprovacoes";
 import FormularioCargo from "./pages/job-descriptions/FormularioCargo";
 import TestesIntegridade from "./pages/integrity-tests/TestesIntegridade";
-import DashboardConsolidado from "./pages/DashboardConsolidado";
-import MetasAutomaticas from "./pages/MetasAutomaticas";
-import GerenciarTemplates from "./pages/admin/GerenciarTemplates";
-import AnalyticsVideos from "./pages/admin/AnalyticsVideos";
-import VideosEducacionais from "./pages/admin/VideosEducacionais";
-import VideosEducacionaisColaborador from "./pages/VideosEducacionais";
-import VideosTutoriais from "./pages/VideosTutoriais";
-import VideosProcessoAVD from "./pages/VideosProcessoAVD";
-import VideosTreinamentos from "./pages/VideosTreinamentos";
-import VideosBiblioteca from "./pages/VideosBiblioteca";
 
 function Router() {
   return (
@@ -413,10 +401,8 @@ function Router() {
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
       <Route path="/funcionarios" component={Funcionarios} />
-      <Route path="/funcionarios/novo" component={CadastrarFuncionario} />
       <Route path="/funcionarios/:id" component={FuncionarioDetalhes} />
       <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
-      <Route path="/rh/metricas" component={MetricasRH} />
       <Route path="/desenvolvimento/funcionarios" component={DesenvolvimentoFuncionarios} />
       <Route path="/desenvolvimento/funcionarios/:id" component={PerfilFuncionario} />
       <Route path="/funcionarios/:id" component={PerfilFuncionario} />
@@ -490,10 +476,6 @@ function Router() {
       <Route path="/pir-integridade/teste/:id" component={TestePIRIntegridade} />
       <Route path="/pir-integridade/resultado/:id" component={ResultadoPIRIntegridade} />
       <Route path="/pir-integridade/questoes" component={GestaoQuestoesPIRIntegridade} />
-      
-      {/* Novas Funcionalidades - Dashboard Consolidado e Metas Automáticas (18/12/2025) */}
-      <Route path="/dashboard-consolidado" component={DashboardConsolidado} />
-      <Route path="/metas-automaticas" component={MetasAutomaticas} />
       
       {/* Rotas de Integridade - 3 páginas */}
       <Route path="/integridade/testes" component={IntegridadeTestes} />
@@ -651,16 +633,6 @@ function Router() {
       <Route path="/admin/exportacao-dados" component={ExportacaoDados} />
       <Route path="/admin/notificacoes" component={GerenciamentoNotificacoes} />
       <Route path="/admin/auditoria" component={AuditoriaCompleta} />
-      <Route path="/admin/templates-metas" component={GerenciarTemplates} />
-      <Route path="/admin/analytics-videos" component={AnalyticsVideos} />
-      <Route path="/admin/videos-educacionais" component={VideosEducacionais} />
-      <Route path="/videos-educacionais" component={VideosEducacionaisColaborador} />
-      
-      {/* Rotas de Vídeos Instrucionais */}
-      <Route path="/videos/tutoriais" component={VideosTutoriais} />
-      <Route path="/videos/processo-avd" component={VideosProcessoAVD} />
-      <Route path="/videos/treinamentos" component={VideosTreinamentos} />
-      <Route path="/videos/biblioteca" component={VideosBiblioteca} />
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />

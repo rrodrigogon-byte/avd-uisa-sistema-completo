@@ -30,14 +30,11 @@ export default function DesenvolvimentoFuncionarios() {
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const { data: employeesData, isLoading } = trpc.employees.list.useQuery({
+  const { data: employees, isLoading } = trpc.employees.list.useQuery({
     search: search || undefined,
     departmentId: departmentFilter !== "all" ? parseInt(departmentFilter) : undefined,
     status: statusFilter !== "all" ? (statusFilter as "ativo" | "afastado" | "desligado") : undefined,
   });
-
-  // Extrair array de employees do objeto retornado
-  const employees = employeesData?.employees || [];
 
   const { data: departments } = trpc.departments.list.useQuery();
 
@@ -115,7 +112,7 @@ export default function DesenvolvimentoFuncionarios() {
         <CardHeader>
           <CardTitle>Funcionários</CardTitle>
           <CardDescription>
-            {employees.length} funcionário(s) encontrado(s)
+            {employees?.length || 0} funcionário(s) encontrado(s)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -125,7 +122,7 @@ export default function DesenvolvimentoFuncionarios() {
                 <Skeleton key={i} className="h-16 w-full" />
               ))}
             </div>
-          ) : employees.length > 0 ? (
+          ) : employees && employees.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -139,7 +136,8 @@ export default function DesenvolvimentoFuncionarios() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {safeFilter(employees, (employee: any) => employee.id != null)
+                {employees
+                  .filter((employee: any) => employee.id != null)
                   .map((employee: any, index: number) => (
                   <TableRow key={`employee-${employee.id}-${index}`}>
                     <TableCell className="font-medium">

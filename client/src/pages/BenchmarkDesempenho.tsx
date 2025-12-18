@@ -51,8 +51,7 @@ export default function BenchmarkDesempenho() {
   // Queries
   const { data: departments } = trpc.departments.list.useQuery();
   const { data: positions } = trpc.positions.list.useQuery({ activeOnly: true });
-  const { data: employeesData } = trpc.employees.list.useQuery({ activeOnly: true, limit: 500 });
-  const employees = employeesData?.employees || [];
+  const { data: employees } = trpc.employees.list.useQuery({ activeOnly: true, limit: 500 });
   
   const { data: benchmarks, isLoading: loadingBenchmarks, refetch: refetchBenchmarks } = 
     trpc.performanceBenchmark.list.useQuery({
@@ -409,7 +408,7 @@ export default function BenchmarkDesempenho() {
                       <SelectValue placeholder="Selecione um colaborador..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((emp) => (
+                      {employees?.map((emp) => (
                         <SelectItem key={emp.id} value={emp.id.toString()}>
                           {emp.name}
                         </SelectItem>

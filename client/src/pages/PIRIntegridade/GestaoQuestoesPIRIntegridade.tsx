@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { ArrowLeft, Edit, Loader2, Plus, Shield, Trash2, Upload, Video, X } from "lucide-react";
+import { ArrowLeft, Edit, Loader2, Plus, Shield, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { safeMap, ensureArray } from "@/lib/arrayHelpers";
 
@@ -50,19 +50,7 @@ export default function GestaoQuestoesPIRIntegridade() {
       { value: "c", label: "", score: 0, moralLevel: "conventional" as const },
       { value: "d", label: "", score: 0, moralLevel: "conventional" as const },
     ],
-    // Campos de vídeo
-    videoUrl: "",
-    videoThumbnailUrl: "",
-    videoDuration: 0,
-    requiresVideoWatch: false,
   });
-  
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [uploadingVideo, setUploadingVideo] = useState(false);
-  
-  const uploadVideo = trpc.pirVideoUpload.uploadVideo.useMutation();
-  const uploadThumbnail = trpc.pirVideoUpload.uploadThumbnail.useMutation();
 
   const handleSubmit = () => {
     if (!form.title || !form.question) {
@@ -226,160 +214,6 @@ export default function GestaoQuestoesPIRIntegridade() {
               <div className="flex items-center gap-2">
                 <Switch checked={form.requiresJustification} onCheckedChange={v => setForm(p => ({ ...p, requiresJustification: v }))} />
                 <Label>Requer justificativa</Label>
-              </div>
-              
-              {/* Seção de Upload de Vídeo */}
-              <div className="border-t pt-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-lg font-semibold flex items-center gap-2">
-                    <Video className="h-5 w-5" />
-                    Vídeo da Questão (Opcional)
-                  </Label>
-                  {form.videoUrl && (
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      onClick={() => setForm(p => ({ ...p, videoUrl: "", videoThumbnailUrl: "", videoDuration: 0 }))}
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Remover Vídeo
-                    </Button>
-                  )}
-                </div>
-                
-                {form.videoUrl ? (
-                  <div className="space-y-2">
-                    <video 
-                      src={form.videoUrl} 
-                      controls 
-                      className="w-full rounded-lg border"
-                      poster={form.videoThumbnailUrl || undefined}
-                    />
-                    <p className="text-sm text-gray-600">
-                      Duração: {Math.floor(form.videoDuration / 60)}:{(form.videoDuration % 60).toString().padStart(2, '0')}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div>
-                      <Label>Upload de Vídeo</Label>
-                      <Input 
-                        type="file" 
-                        accept="video/mp4,video/webm,video/quicktime"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setVideoFile(file);
-                            // Obter duração do vídeo
-                            const video = document.createElement('video');
-                            video.preload = 'metadata';
-                            video.onloadedmetadata = () => {
-                              setForm(p => ({ ...p, videoDuration: Math.floor(video.duration) }));
-                            };
-                            video.src = URL.createObjectURL(file);
-                          }
-                        }}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Formatos aceitos: MP4, WebM, MOV. Tamanho máximo: 50MB
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <Label>Thumbnail (Opcional)</Label>
-                      <Input 
-                        type="file" 
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) setThumbnailFile(file);
-                        }}
-                      />
-                    </div>
-                    
-                    {videoFile && (
-                      <Button 
-                        type="button"
-                        onClick={async () => {
-                          setUploadingVideo(true);
-                          try {
-                            // Upload vídeo
-                            const videoBase64 = await new Promise<string>((resolve) => {
-                              const reader = new FileReader();
-                              reader.onloadend = () => {
-                                const base64 = (reader.result as string).split(',')[1];
-                                resolve(base64);
-                              };
-                              reader.readAsDataURL(videoFile);
-                            });
-                            
-                            const videoResult = await uploadVideo.mutateAsync({
-                              questionId: editingQuestion?.id || 0,
-                              videoBase64,
-                              fileName: videoFile.name,
-                              mimeType: videoFile.type,
-                              duration: form.videoDuration,
-                            });
-                            
-                            // Upload thumbnail se houver
-                            let thumbnailUrl = "";
-                            if (thumbnailFile) {
-                              const thumbnailBase64 = await new Promise<string>((resolve) => {
-                                const reader = new FileReader();
-                                reader.onloadend = () => {
-                                  const base64 = (reader.result as string).split(',')[1];
-                                  resolve(base64);
-                                };
-                                reader.readAsDataURL(thumbnailFile);
-                              });
-                              
-                              const thumbnailResult = await uploadThumbnail.mutateAsync({
-                                questionId: editingQuestion?.id || 0,
-                                thumbnailBase64,
-                                fileName: thumbnailFile.name,
-                                mimeType: thumbnailFile.type,
-                              });
-                              thumbnailUrl = thumbnailResult.thumbnailUrl;
-                            }
-                            
-                            setForm(p => ({
-                              ...p,
-                              videoUrl: videoResult.videoUrl,
-                              videoThumbnailUrl: thumbnailUrl,
-                              videoDuration: videoResult.duration || p.videoDuration,
-                            }));
-                            
-                            toast.success("Vídeo enviado com sucesso!");
-                            setVideoFile(null);
-                            setThumbnailFile(null);
-                          } catch (error) {
-                            toast.error("Erro ao enviar vídeo");
-                          } finally {
-                            setUploadingVideo(false);
-                          }
-                        }}
-                        disabled={uploadingVideo}
-                      >
-                        {uploadingVideo ? (
-                          <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Enviando...</>
-                        ) : (
-                          <><Upload className="h-4 w-4 mr-2" />Enviar Vídeo</>
-                        )}
-                      </Button>
-                    )}
-                  </div>
-                )}
-                
-                <div className="flex items-center gap-2">
-                  <Switch 
-                    checked={form.requiresVideoWatch} 
-                    onCheckedChange={v => setForm(p => ({ ...p, requiresVideoWatch: v }))} 
-                    disabled={!form.videoUrl}
-                  />
-                  <Label className={!form.videoUrl ? "text-gray-400" : ""}>
-                    Obrigar assistir vídeo completo antes de responder
-                  </Label>
-                </div>
               </div>
               <div className="space-y-3">
                 <Label>Opções de Resposta</Label>

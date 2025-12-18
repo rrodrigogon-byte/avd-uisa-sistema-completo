@@ -78,8 +78,7 @@ export default function CriarMetaSMART() {
   const { data: pdis = [] } = trpc.pdi.list.useQuery({});
 
   // Buscar lista de funcionários (para admin/RH/gestores)
-  const { data: employeesData } = trpc.employees.list.useQuery();
-  const employees = employeesData?.employees || [];
+  const { data: employees = [] } = trpc.employees.list.useQuery();
 
   // Buscar dados do funcionário atual
   const { data: currentEmployee } = trpc.employees.me.useQuery();
