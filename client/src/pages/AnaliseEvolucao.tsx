@@ -47,7 +47,8 @@ export default function AnaliseEvolucao() {
   const [dateRange, setDateRange] = useState<{ start?: string; end?: string }>({});
 
   // Buscar lista de funcionários
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: employeesData } = trpc.employees.list.useQuery({});
+  const employees = employeesData?.employees || [];
 
   // Buscar evolução do funcionário selecionado
   const { data: evolution, isLoading } = trpc.performanceReports.getEmployeeEvolution.useQuery(
@@ -196,7 +197,7 @@ export default function AnaliseEvolucao() {
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {employees?.map((emp: any) => (
+                    {employees.map((emp: any) => (
                       <SelectItem key={emp.id} value={emp.id.toString()}>
                         {emp.name} ({emp.employeeCode})
                       </SelectItem>

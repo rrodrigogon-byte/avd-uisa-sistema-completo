@@ -7,6 +7,7 @@
 - [x] Corrigir problema de login - OAuth do Manus funciona normalmente
 - [x] Ativar e corrigir envio de emails em todos os testes PIR - Sistema completo implementado
 - [x] Verificar e corrigir fluxo de autenticação OAuth - Funcionando corretamente
+- [x] Corrigir erro "v?.filter is not a function" nas páginas de perfis da equipe e funcionários - RESOLVIDO! Corrigido acesso aos dados em 5 páginas
 
 ### Plano de Correção
 1. **Sistema de Autenticação**
