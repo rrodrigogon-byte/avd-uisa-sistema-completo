@@ -241,7 +241,7 @@ export function EmployeeAttachments({ employeeId, canUpload = false, canDelete =
           </p>
         ) : (
           <div className="space-y-2">
-            {safeMap(ensureArray(attachments), ((attachment) => (
+            {safeMap(ensureArray(attachments), (attachment) => (
               <div
                 key={attachment.id}
                 className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"

@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Streamdown } from "streamdown";
+import { generatePDFFromElement } from "@/lib/pdfGenerator";
 
 export default function PIRReport() {
   const params = useParams();
@@ -79,10 +80,24 @@ export default function PIRReport() {
   const handleExportPDF = async () => {
     try {
       toast.info("Gerando PDF do relatório...");
-      // Aqui você pode adicionar lógica para exportar como PDF
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Gerar PDF do relatório
+      await generatePDFFromElement(
+        'pir-report-content',
+        `Relatorio_PIR_${assessment?.id}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`,
+        {
+          title: 'Relatório PIR - Perfil Individual de Referência',
+          subtitle: `Avaliação #${assessment?.id}`,
+          author: assessment?.employeeName || 'Sistema AVD UISA',
+          orientation: 'portrait',
+          includeHeader: true,
+          includeFooter: true
+        }
+      );
+      
       toast.success("PDF gerado com sucesso!");
     } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
       toast.error("Erro ao gerar PDF");
     }
   };
@@ -187,6 +202,7 @@ export default function PIRReport() {
         </div>
       </div>
 
+      <div id="pir-report-content">
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
@@ -581,6 +597,7 @@ export default function PIRReport() {
           )}
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }

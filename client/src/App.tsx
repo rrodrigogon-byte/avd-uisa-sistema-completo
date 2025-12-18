@@ -32,6 +32,7 @@ import FaceRegistration from "./pages/FaceRegistration";
 import TemporalAnalysis from "./pages/TemporalAnalysis";
 import PIRComparacao from "./pages/PIRComparacao";
 import PIRExportacao from "./pages/PIRExportacao";
+import HistoricoComparacao from "./pages/HistoricoComparacao";
 import PIRIntegridade from "./pages/PIRIntegridade";
 import IntegridadeTestes from "./pages/IntegridadeTestes";
 import IntegridadeResultados from "./pages/IntegridadeResultados";
@@ -467,6 +468,7 @@ function Router() {
       <Route path="/pir/relatorio/:employeeId" component={PIRReport} />
       <Route path="/pir/comparacao" component={PIRComparacao} />
       <Route path="/pir/exportacao" component={PIRExportacao} />
+      <Route path="/historico-comparacao" component={HistoricoComparacao} />
       <Route path="/pir/integridade" component={PIRIntegridade} />
       
       {/* Rotas PIR Integridade - Sistema Completo */}

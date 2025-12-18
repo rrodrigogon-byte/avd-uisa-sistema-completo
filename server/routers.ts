@@ -152,6 +152,8 @@ import { permissionsRouter } from "./routers/permissionsRouter";
 import { movementsRouter } from "./routers/movementsRouter";
 import { emailNotificationsAutoRouter } from "./routers/emailNotificationsAutoRouter";
 import { avdExportRouter } from "./routers/avdExportRouter";
+import { historicalComparisonRouter } from "./routers/historicalComparison";
+import { resultNotificationsRouter } from "./routers/resultNotifications";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -392,6 +394,12 @@ export const appRouter = router({
   temporalAnalysis: temporalAnalysisRouter,
   autoNotifications: autoNotificationsRouter,
   pdfExport: pdfExportRouter,
+  
+  // Novo router - Comparação Temporal de Resultados (17/12/2025)
+  historicalComparison: historicalComparisonRouter,
+  
+  // Novo router - Notificações de Resultados por Email (17/12/2025)
+  resultNotifications: resultNotificationsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

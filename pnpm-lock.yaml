@@ -130,6 +130,9 @@ importers:
       '@trpc/server':
         specifier: ^11.6.0
         version: 11.6.0(typescript@5.9.3)
+      '@types/jspdf':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/node-cron':
         specifier: ^3.0.11
         version: 3.0.11
@@ -2816,6 +2819,10 @@ packages:
 
   '@types/jsdom@27.0.0':
     resolution: {integrity: sha512-NZyFl/PViwKzdEkQg96gtnB8wm+1ljhdDay9ahn4hgb+SfVtPCbm3TlmDUFXTA+MGN3CijicnMhG18SI5H3rFw==}
+
+  '@types/jspdf@2.0.0':
+    resolution: {integrity: sha512-oonYDXI4GegGaG7FFVtriJ+Yqlh4YR3L3NVDiwCEBVG7sbya19SoGx4MW4kg1MCMRPgkbbFTck8YKJL8PrkDfA==}
+    deprecated: This is a stub types definition. jspdf provides its own type definitions, so you do not need this installed.
 
   '@types/katex@0.16.7':
     resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
@@ -9623,6 +9630,10 @@ snapshots:
       '@types/node': 24.7.0
       '@types/tough-cookie': 4.0.5
       parse5: 7.3.0
+
+  '@types/jspdf@2.0.0':
+    dependencies:
+      jspdf: 3.0.3
 
   '@types/katex@0.16.7': {}
 

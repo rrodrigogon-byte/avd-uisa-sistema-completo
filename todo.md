@@ -1007,3 +1007,42 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [x] Adicionar interpretação dos resultados
 - [ ] Implementar exportação de resultados em PDF (estrutura pronta, função a implementar)
 - [x] Testar página de resultados completa
+
+
+---
+
+## 🚀 NOVAS FUNCIONALIDADES - FASE 2 (17/12/2025)
+
+### 📄 Exportação PDF dos Resultados
+- [x] Instalar biblioteca de geração de PDF (jsPDF + html2canvas)
+- [x] Criar procedimento tRPC para gerar PDF do resultado
+- [x] Implementar template de PDF com formatação profissional
+- [x] Adicionar botão de download PDF na página de resultados
+- [x] Incluir gráficos e tabelas no PDF exportado
+- [x] Adicionar cabeçalho e rodapé com logo e informações
+- [x] Implementar exportação para diferentes tipos de resultados (PIR, Competências, Desempenho, PDI)
+
+### 📊 Comparação Temporal de Resultados
+- [x] Adicionar campo de data/timestamp nos resultados salvos (já existe createdAt)
+- [x] Criar query para buscar histórico de resultados do usuário
+- [x] Implementar visualização de evolução (gráfico de linha temporal)
+- [x] Criar página de histórico de testes
+- [x] Adicionar comparação lado a lado de dois resultados
+- [x] Implementar filtros por período (último mês, trimestre, ano)
+- [x] Criar dashboard de evolução com métricas de progresso
+
+### 📧 Notificações por Email
+- [x] Criar procedimento tRPC para envio de email de resultados
+- [x] Implementar template de email HTML com resultados resumidos
+- [x] Adicionar envio automático após conclusão do teste
+- [x] Incluir link direto para visualização detalhada dos resultados
+- [x] Adicionar opção de preferência de notificação no perfil do usuário
+- [x] Implementar envio de relatório semanal/mensal de progresso
+- [x] Criar sistema de lembretes para testes pendentes
+
+### 🔧 Melhorias no PIR Integridade
+- [ ] Completar implementação do sistema de emails PIR
+- [ ] Adicionar mais questões ao banco de dados (meta: 100+ questões)
+- [ ] Implementar sistema de categorização de questões
+- [ ] Criar dashboard de análise de resultados PIR
+- [ ] Adicionar exportação PDF específica para PIR Integridade
