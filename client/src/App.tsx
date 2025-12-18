@@ -302,6 +302,8 @@ import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 import DashboardAprovacoesCargos from "./pages/job-descriptions/DashboardAprovacoes";
 import FormularioCargo from "./pages/job-descriptions/FormularioCargo";
 import TestesIntegridade from "./pages/integrity-tests/TestesIntegridade";
+import DashboardConsolidado from "./pages/DashboardConsolidado";
+import MetasAutomaticas from "./pages/MetasAutomaticas";
 
 function Router() {
   return (
@@ -476,6 +478,10 @@ function Router() {
       <Route path="/pir-integridade/teste/:id" component={TestePIRIntegridade} />
       <Route path="/pir-integridade/resultado/:id" component={ResultadoPIRIntegridade} />
       <Route path="/pir-integridade/questoes" component={GestaoQuestoesPIRIntegridade} />
+      
+      {/* Novas Funcionalidades - Dashboard Consolidado e Metas Automáticas (18/12/2025) */}
+      <Route path="/dashboard-consolidado" component={DashboardConsolidado} />
+      <Route path="/metas-automaticas" component={MetasAutomaticas} />
       
       {/* Rotas de Integridade - 3 páginas */}
       <Route path="/integridade/testes" component={IntegridadeTestes} />

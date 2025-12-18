@@ -6536,6 +6536,12 @@ export const pirIntegrityQuestions = mysqlTable("pirIntegrityQuestions", {
   difficulty: mysqlEnum("difficulty", ["easy", "medium", "hard"]).default("medium").notNull(),
   displayOrder: int("displayOrder").default(0).notNull(),
   active: boolean("active").default(true).notNull(),
+  
+  // Campos de vídeo
+  videoUrl: varchar("videoUrl", { length: 512 }), // URL do vídeo no S3
+  videoThumbnailUrl: varchar("videoThumbnailUrl", { length: 512 }), // URL da thumbnail
+  videoDuration: int("videoDuration"), // Duração em segundos
+  requiresVideoWatch: boolean("requiresVideoWatch").default(false).notNull(), // Obriga assistir vídeo completo
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -8422,3 +8428,273 @@ export const managerChangeHistory = mysqlTable("managerChangeHistory", {
 
 export type ManagerChangeHistory = typeof managerChangeHistory.$inferSelect;
 export type InsertManagerChangeHistory = typeof managerChangeHistory.$inferInsert;
+
+
+// ============================================================================
+// DASHBOARD DE ANÁLISE CONSOLIDADA
+// ============================================================================
+
+/**
+ * Métricas Consolidadas - Cache de métricas agregadas
+ */
+export const consolidatedMetrics = mysqlTable("consolidatedMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  metricType: mysqlEnum("metricType", [
+    "overall_completion_rate",
+    "average_performance",
+    "department_performance",
+    "competency_gap",
+    "pdi_progress",
+    "assessment_distribution"
+  ]).notNull(),
+  
+  // Filtros/Dimensões
+  departmentId: int("departmentId"),
+  positionId: int("positionId"),
+  periodStart: datetime("periodStart").notNull(),
+  periodEnd: datetime("periodEnd").notNull(),
+  
+  // Valores calculados
+  metricValue: int("metricValue").notNull(), // Valor principal (0-100 ou count)
+  metricData: json("metricData"), // Dados detalhados em JSON
+  
+  // Metadados
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // Para cache com expiração
+});
+
+export type ConsolidatedMetric = typeof consolidatedMetrics.$inferSelect;
+export type InsertConsolidatedMetric = typeof consolidatedMetrics.$inferInsert;
+
+/**
+ * Análises por Departamento
+ */
+export const departmentAnalytics = mysqlTable("departmentAnalytics", {
+  id: int("id").autoincrement().primaryKey(),
+  departmentId: int("departmentId").notNull(),
+  periodStart: datetime("periodStart").notNull(),
+  periodEnd: datetime("periodEnd").notNull(),
+  
+  // Métricas de Avaliação
+  totalEmployees: int("totalEmployees").default(0).notNull(),
+  completedAssessments: int("completedAssessments").default(0).notNull(),
+  completionRate: int("completionRate").default(0).notNull(), // 0-100
+  
+  // Métricas de Performance
+  averagePerformanceScore: int("averagePerformanceScore"), // 0-100
+  averageCompetencyScore: int("averageCompetencyScore"), // 0-100
+  averagePirScore: int("averagePirScore"), // 0-100
+  
+  // Gaps e Desenvolvimento
+  criticalGapsCount: int("criticalGapsCount").default(0).notNull(),
+  activePdisCount: int("activePdisCount").default(0).notNull(),
+  pdiCompletionRate: int("pdiCompletionRate").default(0).notNull(), // 0-100
+  
+  // Dados detalhados
+  competencyBreakdown: json("competencyBreakdown"), // {competencyId: avgScore}
+  topGaps: json("topGaps"), // [{competencyId, gapSize, employeeCount}]
+  topPerformers: json("topPerformers"), // [{employeeId, score}]
+  
+  // Metadados
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+});
+
+export type DepartmentAnalytic = typeof departmentAnalytics.$inferSelect;
+export type InsertDepartmentAnalytic = typeof departmentAnalytics.$inferInsert;
+
+/**
+ * Análises de Tendências Temporais
+ */
+export const trendAnalytics = mysqlTable("trendAnalytics", {
+  id: int("id").autoincrement().primaryKey(),
+  trendType: mysqlEnum("trendType", [
+    "performance_evolution",
+    "competency_growth",
+    "gap_reduction",
+    "pdi_effectiveness",
+    "assessment_participation"
+  ]).notNull(),
+  
+  // Filtros
+  departmentId: int("departmentId"),
+  employeeId: int("employeeId"),
+  competencyId: int("competencyId"),
+  
+  // Série temporal (array de {period, value})
+  timeSeriesData: json("timeSeriesData").notNull(),
+  
+  // Análise estatística
+  trend: mysqlEnum("trend", ["increasing", "stable", "decreasing"]),
+  trendStrength: int("trendStrength"), // 0-100
+  projectedValue: int("projectedValue"), // Valor projetado para próximo período
+  
+  // Período analisado
+  periodStart: datetime("periodStart").notNull(),
+  periodEnd: datetime("periodEnd").notNull(),
+  
+  // Metadados
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+});
+
+export type TrendAnalytic = typeof trendAnalytics.$inferSelect;
+export type InsertTrendAnalytic = typeof trendAnalytics.$inferInsert;
+
+// ============================================================================
+// SISTEMA DE METAS E PDI AUTOMÁTICO
+// ============================================================================
+
+/**
+ * Templates de Metas - Templates pré-definidos por competência/gap
+ */
+export const goalTemplates = mysqlTable("goalTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  competencyId: int("competencyId").notNull(),
+  gapLevel: mysqlEnum("gapLevel", ["critico", "alto", "medio", "baixo"]).notNull(),
+  
+  // Template da meta (SMART)
+  titleTemplate: varchar("titleTemplate", { length: 255 }).notNull(), // Ex: "Desenvolver {competency} até nível {target}"
+  descriptionTemplate: text("descriptionTemplate"),
+  
+  // Parâmetros sugeridos
+  suggestedDurationDays: int("suggestedDurationDays").notNull(), // Ex: 90 dias
+  suggestedActions: json("suggestedActions"), // [{actionId, priority}]
+  suggestedResources: json("suggestedResources"), // [{type, name, url}]
+  
+  // Critérios de sucesso
+  successCriteria: json("successCriteria"), // [{criterion, measurement}]
+  targetScore: int("targetScore"), // Score alvo (0-100)
+  
+  // Metadados
+  category: varchar("category", { length: 100 }), // Ex: "tecnica", "comportamental", "lideranca"
+  priority: mysqlEnum("priority", ["baixa", "media", "alta", "critica"]).default("media").notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GoalTemplate = typeof goalTemplates.$inferSelect;
+export type InsertGoalTemplate = typeof goalTemplates.$inferInsert;
+
+/**
+ * Análise de Gaps - Análise estruturada de gaps identificados
+ */
+export const gapAnalysis = mysqlTable("gapAnalysis", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  competencyId: int("competencyId").notNull(),
+  
+  // Fonte do gap
+  sourceType: mysqlEnum("sourceType", ["avaliacao_competencias", "avaliacao_desempenho", "pir", "feedback_360"]).notNull(),
+  sourceId: int("sourceId").notNull(), // ID da avaliação origem
+  
+  // Análise do gap
+  currentScore: int("currentScore").notNull(), // Score atual (0-100)
+  targetScore: int("targetScore").notNull(), // Score desejado (0-100)
+  gapSize: int("gapSize").notNull(), // Diferença (targetScore - currentScore)
+  gapLevel: mysqlEnum("gapLevel", ["critico", "alto", "medio", "baixo"]).notNull(),
+  
+  // Priorização
+  priority: mysqlEnum("priority", ["baixa", "media", "alta", "critica"]).notNull(),
+  impactOnPerformance: int("impactOnPerformance"), // 0-100
+  developmentDifficulty: mysqlEnum("developmentDifficulty", ["facil", "medio", "dificil"]),
+  
+  // Contexto
+  context: text("context"), // Contexto/observações sobre o gap
+  relatedGaps: json("relatedGaps"), // IDs de gaps relacionados
+  
+  // Status
+  status: mysqlEnum("status", ["identificado", "em_desenvolvimento", "resolvido", "ignorado"]).default("identificado").notNull(),
+  resolvedAt: datetime("resolvedAt"),
+  
+  // Metadados
+  identifiedAt: timestamp("identifiedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GapAnalysis = typeof gapAnalysis.$inferSelect;
+export type InsertGapAnalysis = typeof gapAnalysis.$inferInsert;
+
+/**
+ * Metas Auto-Geradas - Metas sugeridas automaticamente baseadas em gaps
+ */
+export const autoGeneratedGoals = mysqlTable("autoGeneratedGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  gapAnalysisId: int("gapAnalysisId").notNull(),
+  templateId: int("templateId"), // Template usado (se aplicável)
+  
+  // Meta SMART
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  specific: text("specific"), // Específico
+  measurable: text("measurable"), // Mensurável
+  achievable: text("achievable"), // Alcançável
+  relevant: text("relevant"), // Relevante
+  timeBound: text("timeBound"), // Temporal
+  
+  // Prazos
+  suggestedStartDate: datetime("suggestedStartDate").notNull(),
+  suggestedEndDate: datetime("suggestedEndDate").notNull(),
+  
+  // Ações sugeridas
+  suggestedActions: json("suggestedActions"), // [{actionId, description, deadline}]
+  suggestedResources: json("suggestedResources"), // [{type, name, url, cost}]
+  
+  // Critérios de sucesso
+  successCriteria: json("successCriteria"),
+  targetScore: int("targetScore"), // Score alvo
+  
+  // Responsáveis sugeridos
+  suggestedOwnerId: int("suggestedOwnerId"), // Normalmente o próprio colaborador
+  suggestedMentorId: int("suggestedMentorId"), // Mentor/gestor sugerido
+  
+  // Status da sugestão
+  status: mysqlEnum("status", ["pendente", "aprovada", "rejeitada", "modificada"]).default("pendente").notNull(),
+  approvedBy: int("approvedBy"),
+  approvedAt: datetime("approvedAt"),
+  rejectionReason: text("rejectionReason"),
+  
+  // Vinculação ao PDI (após aprovação)
+  pdiPlanId: int("pdiPlanId"), // PDI criado a partir desta meta
+  
+  // Metadados
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AutoGeneratedGoal = typeof autoGeneratedGoals.$inferSelect;
+export type InsertAutoGeneratedGoal = typeof autoGeneratedGoals.$inferInsert;
+
+/**
+ * Histórico de Geração de Metas - Auditoria do processo de geração automática
+ */
+export const goalGenerationHistory = mysqlTable("goalGenerationHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Contexto da geração
+  triggerType: mysqlEnum("triggerType", [
+    "avaliacao_concluida",
+    "gap_identificado",
+    "solicitacao_manual",
+    "revisao_periodica"
+  ]).notNull(),
+  triggerId: int("triggerId"), // ID da avaliação/gap que disparou
+  
+  // Resultados
+  gapsAnalyzed: int("gapsAnalyzed").default(0).notNull(),
+  goalsGenerated: int("goalsGenerated").default(0).notNull(),
+  goalsApproved: int("goalsApproved").default(0).notNull(),
+  goalsRejected: int("goalsRejected").default(0).notNull(),
+  
+  // Dados da geração
+  analysisData: json("analysisData"), // Dados da análise realizada
+  generatedGoalIds: json("generatedGoalIds"), // IDs das metas geradas
+  
+  // Metadados
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  generatedBy: int("generatedBy"), // Usuário que solicitou (se manual)
+});
+
+export type GoalGenerationHistory = typeof goalGenerationHistory.$inferSelect;
+export type InsertGoalGenerationHistory = typeof goalGenerationHistory.$inferInsert;

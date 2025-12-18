@@ -134,6 +134,9 @@ import { pirSuspiciousAccessRouter } from "./routers/pirSuspiciousAccessRouter";
 import { pirDepartmentReportsRouter } from "./routers/pirDepartmentReportsRouter";
 import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovalsRouter";
 import { videoUploadRouter } from "./routers/videoUploadRouter";
+import { pirVideoUploadRouter } from "./routers/pirVideoUploadRouter";
+import { autoGoalsRouter } from "./routers/autoGoalsRouter";
+import { consolidatedDashboardRouter } from "./routers/consolidatedDashboardRouter";
 import { abTestRouter } from "./routers/abTestRouter";
 import { npsRouter } from "./routers/npsRouter";
 import { npsTriggerRouter } from "./routers/npsTriggerRouter";
@@ -341,6 +344,9 @@ export const appRouter = router({
   // Novos routers - PIR de Integridade e Aprovações de Cargos com 4 níveis (14/12/2025)
   integrityPIR: integrityPIRRouter,
   pirIntegrity: pirIntegrityRouter,
+  pirVideoUpload: pirVideoUploadRouter,
+  autoGoals: autoGoalsRouter,
+  consolidatedDashboard: consolidatedDashboardRouter,
   pirRiskAlerts: pirRiskAlertsRouter,
   pirSuspiciousAccess: pirSuspiciousAccessRouter,
   pirDepartmentReports: pirDepartmentReportsRouter,
