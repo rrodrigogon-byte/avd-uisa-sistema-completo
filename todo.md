@@ -1146,3 +1146,96 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
   - [ ] Notificação de milestone atingido
   - [ ] Alerta de meta em risco
   - [ ] Relatório semanal de progresso de metas
+
+
+---
+
+## 📊 NOVAS FUNCIONALIDADES - DASHBOARD E IMPORTAÇÃO (18/12/2025)
+
+### Dashboard com Gráficos e Estatísticas
+- [x] Criar procedures para obter estatísticas de funcionários
+  - [x] Procedure para distribuição por departamento
+  - [x] Procedure para distribuição por cargo
+  - [x] Procedure para tempo de empresa (faixas)
+  - [x] Procedure para estatísticas gerais
+- [x] Implementar gráfico de distribuição por departamento
+  - [x] Usar recharts para visualização
+  - [x] Adicionar cores distintas por departamento
+  - [x] Mostrar quantidade e percentual
+- [x] Implementar gráfico de distribuição por cargo
+  - [x] Gráfico de barras horizontal
+  - [x] Ordenar por quantidade
+  - [x] Adicionar tooltip com detalhes
+- [x] Implementar gráfico de tempo de empresa
+  - [x] Agrupar em faixas (0-1 ano, 1-3 anos, 3-5 anos, 5+ anos)
+  - [x] Gráfico de área ou linha
+  - [x] Adicionar média de tempo de empresa
+- [x] Criar página de dashboard com visualizações
+  - [x] Layout responsivo com grid
+  - [x] Cards de estatísticas gerais
+  - [x] Seção de gráficos interativos
+  - [ ] Filtros por período e departamento
+
+### Importação em Lote
+- [x] Criar interface de upload de CSV/Excel
+  - [x] Componente de drag-and-drop
+  - [x] Validação de tipo de arquivo
+  - [x] Limite de tamanho de arquivo
+- [x] Implementar parser de arquivos CSV
+  - [x] Usar papaparse para parsing
+  - [x] Validar estrutura do CSV
+  - [x] Mapear colunas para campos
+- [x] Implementar parser de arquivos Excel
+  - [x] Usar xlsx para parsing
+  - [x] Suportar múltiplas planilhas
+  - [x] Validar formato de células
+- [x] Criar procedure para importação em lote
+  - [x] Validação de dados obrigatórios
+  - [x] Verificação de duplicatas
+  - [x] Inserção em transação
+  - [x] Retornar relatório de erros
+- [x] Adicionar validação de dados importados
+  - [x] Validar CPF único
+  - [x] Validar email único
+  - [x] Validar formato de datas
+  - [x] Validar departamentos e cargos existentes
+- [x] Implementar preview de dados antes da importação
+  - [x] Tabela com dados parseados
+  - [x] Indicadores de erros por linha
+  - [ ] Permitir edição inline
+  - [x] Botão de confirmar importação
+- [x] Adicionar feedback de progresso durante importação
+  - [x] Progress bar com percentual
+  - [x] Contador de registros processados
+  - [x] Lista de erros em tempo real
+  - [x] Relatório final de sucesso/falhas
+
+### Histórico de Alterações
+- [x] Criar tabela de histórico no schema
+  - [x] Tabela employeeHistory
+  - [x] Campos: employeeId, changeType, oldValue, newValue, changedBy, changedAt
+  - [x] Índices para queries rápidas
+- [x] Implementar triggers para registrar alterações
+  - [x] Trigger para mudança de cargo
+  - [x] Trigger para mudança de departamento
+  - [x] Trigger para mudança de salário
+  - [x] Trigger para outras alterações relevantes
+- [x] Criar procedures para consultar histórico
+  - [x] getEmployeeHistory - histórico completo
+  - [x] getHistoryByType - filtrar por tipo
+  - [x] getHistoryByPeriod - filtrar por período
+  - [x] getHistoryStats - estatísticas de mudanças
+- [x] Implementar interface de timeline visual
+  - [x] Componente Timeline vertical
+  - [x] Ícones por tipo de alteração
+  - [x] Cores por categoria
+  - [x] Animações de entrada
+- [x] Adicionar filtros por tipo de alteração
+  - [x] Filtro de tipo (cargo, departamento, salário)
+  - [x] Filtro de período (última semana, mês, ano)
+  - [ ] Filtro de usuário que fez alteração
+- [x] Implementar visualização detalhada de cada alteração
+  - [x] Modal com detalhes completos
+  - [x] Comparação antes/depois
+  - [x] Informações de quem fez e quando
+  - [ ] Botão de reverter alteração (se aplicável)

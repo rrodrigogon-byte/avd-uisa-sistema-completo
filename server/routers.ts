@@ -74,6 +74,9 @@ import { adminRouter } from "./routers/adminRouter";
 import { pushNotificationsRouter } from "./routers/pushNotificationsRouter";
 import { employeesRouter } from "./routers/employeesRouter";
 import { employeeProfileRouter } from "./routers/employeeProfileRouter";
+import { employeeHistoryRouter } from "./routers/employeeHistoryRouter";
+import { dashboardStatsRouter } from "./routers/dashboardStatsRouter";
+import { employeeBulkImportRouter } from "./routers/employeeBulkImportRouter";
 import { evaluationsRouter } from "./routers/evaluationsRouter";
 import { performanceReportsRouter } from "./routers/performanceReportsRouter";
 import { auditRouter } from "./routers/auditRouter";
@@ -522,6 +525,9 @@ export const appRouter = router({
   // ============================================================================
   employees: employeesRouter,
   employeeProfile: employeeProfileRouter,
+  employeeHistory: employeeHistoryRouter,
+  dashboardStats: dashboardStatsRouter,
+  employeeBulkImport: employeeBulkImportRouter,
 
   // ============================================================================
   // METAS (movido para goalsRouter.ts)

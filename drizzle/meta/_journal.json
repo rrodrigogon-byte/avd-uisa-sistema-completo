@@ -176,6 +176,13 @@
       "when": 1766067861395,
       "tag": "0024_flaky_ted_forrester",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1766099637255,
+      "tag": "0025_last_ghost_rider",
+      "breakpoints": true
     }
   ]
 }

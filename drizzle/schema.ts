@@ -8698,3 +8698,51 @@ export const goalGenerationHistory = mysqlTable("goalGenerationHistory", {
 
 export type GoalGenerationHistory = typeof goalGenerationHistory.$inferSelect;
 export type InsertGoalGenerationHistory = typeof goalGenerationHistory.$inferInsert;
+
+
+// ============================================================================
+// HISTÓRICO DE ALTERAÇÕES DE FUNCIONÁRIOS
+// ============================================================================
+
+/**
+ * Employee History - Histórico de todas as alterações de funcionários
+ * Registra mudanças de cargo, departamento, salário e outras informações relevantes
+ */
+export const employeeHistory = mysqlTable("employeeHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  
+  // Tipo de alteração
+  changeType: mysqlEnum("changeType", [
+    "cargo",
+    "departamento",
+    "salario",
+    "gestor",
+    "status",
+    "dados_pessoais",
+    "contratacao",
+    "desligamento",
+    "promocao",
+    "transferencia",
+    "outro"
+  ]).notNull(),
+  
+  // Valores antes e depois
+  fieldName: varchar("fieldName", { length: 100 }).notNull(), // Nome do campo alterado
+  oldValue: text("oldValue"), // Valor anterior (JSON string)
+  newValue: text("newValue"), // Novo valor (JSON string)
+  
+  // Contexto da alteração
+  reason: text("reason"), // Motivo da alteração
+  notes: text("notes"), // Observações adicionais
+  
+  // Metadados de auditoria
+  changedBy: int("changedBy").notNull(), // ID do usuário que fez a alteração
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+  
+  // Dados adicionais (JSON para flexibilidade)
+  metadata: json("metadata"), // Dados extras como aprovações, documentos, etc
+});
+
+export type EmployeeHistory = typeof employeeHistory.$inferSelect;
+export type InsertEmployeeHistory = typeof employeeHistory.$inferInsert;

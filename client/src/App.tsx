@@ -98,6 +98,9 @@ import HistoricoMovimentacoes from "./pages/HistoricoMovimentacoes";
 import HistoricoMudancas from "./pages/HistoricoMudancas";
 import DashboardIntegridade from "./pages/DashboardIntegridade";
 import ExportarOrganograma from "./pages/ExportarOrganograma";
+import DashboardEstatisticas from "./pages/DashboardEstatisticas";
+import ImportacaoFuncionarios from "./pages/ImportacaoFuncionarios";
+import HistoricoAlteracoes from "./pages/HistoricoAlteracoes";
 import NineBox from "./pages/NineBox";
 import Relatorios from "./pages/Relatorios";
 import Calibracao from "./pages/Calibracao";
@@ -401,6 +404,9 @@ function Router() {
       <Route path="/perfil" component={Perfil} />
       <Route path="/historico" component={History} />
       <Route path="/funcionarios" component={Funcionarios} />
+      <Route path="/dashboard/estatisticas" component={DashboardEstatisticas} />
+      <Route path="/funcionarios/importar" component={ImportacaoFuncionarios} />
+      <Route path="/funcionarios/historico" component={HistoricoAlteracoes} />
       <Route path="/funcionarios/:id" component={FuncionarioDetalhes} />
       <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
       <Route path="/desenvolvimento/funcionarios" component={DesenvolvimentoFuncionarios} />
