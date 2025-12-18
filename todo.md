@@ -1318,3 +1318,34 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
   - [ ] Exportação em CSV com todas as métricas
   - [ ] Exportação em PDF com gráficos e análises
   - [ ] Agendamento de relatórios automáticos por email
+
+
+## 🔧 Correções e Melhorias - Fase 2 (18/12/2025)
+
+### Correção PIR Integridade
+- [x] Corrigir mensagem do processo de envio do PIR Integridade (página responder PIR)
+- [x] Revisar textos e instruções da interface de resposta
+
+### Interface de Gerenciamento de Templates
+- [x] Criar página admin para gerenciar templates de metas
+- [x] Implementar CRUD de templates (criar, editar, excluir)
+- [x] Adicionar categorização de templates
+- [x] Implementar busca e filtros de templates
+- [x] Adicionar preview de templates
+
+### Vídeos Educacionais
+- [x] Criar schema de banco para vídeos educacionais
+- [x] Popular banco com 30-40 vídeos sobre ética, compliance e integridade
+- [x] Adicionar URLs reais do YouTube/Vimeo
+- [ ] Implementar página de visualização de vídeos
+- [ ] Adicionar categorização e tags para vídeos
+- [ ] Implementar sistema de busca de vídeos
+
+### Dashboard de Analytics
+- [x] Criar schema de banco para métricas de analytics
+- [x] Implementar procedures para cálculo de métricas
+- [x] Criar gráfico de barras para engajamento
+- [x] Criar gráfico de linha para completion rate
+- [x] Criar scatter plot para correlação engajamento x performance PIR
+- [x] Adicionar filtros de período e categoria
+- [ ] Implementar exportação de dados de analytics

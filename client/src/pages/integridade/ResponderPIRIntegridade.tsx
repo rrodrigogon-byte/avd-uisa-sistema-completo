@@ -396,8 +396,20 @@ export default function ResponderPIRIntegridade() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Instruções</AlertTitle>
                 <AlertDescription>
-                  Este teste contém {questions.length} questões. Responda com sinceridade - não há
-                  respostas certas ou erradas. O teste leva aproximadamente 15-20 minutos.
+                  <p className="mb-3">
+                    Este teste contém {questions.length} questões e leva aproximadamente 15-20 minutos. 
+                    Responda com sinceridade - não há respostas certas ou erradas.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Após o envio:</strong> Suas respostas serão processadas automaticamente e você 
+                    receberá um relatório detalhado do seu perfil de integridade. Os resultados são confidenciais 
+                    e serão compartilhados apenas com você e seu gestor direto, como parte do processo de 
+                    Avaliação de Desempenho AVD UISA.
+                  </p>
+                  <p className="text-sm">
+                    💡 Suas respostas ajudarão a identificar seus pontos fortes e áreas de desenvolvimento 
+                    em competências éticas e comportamentais fundamentais para o ambiente profissional.
+                  </p>
                 </AlertDescription>
               </Alert>
             )}

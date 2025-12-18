@@ -304,6 +304,8 @@ import FormularioCargo from "./pages/job-descriptions/FormularioCargo";
 import TestesIntegridade from "./pages/integrity-tests/TestesIntegridade";
 import DashboardConsolidado from "./pages/DashboardConsolidado";
 import MetasAutomaticas from "./pages/MetasAutomaticas";
+import GerenciarTemplates from "./pages/admin/GerenciarTemplates";
+import AnalyticsVideos from "./pages/admin/AnalyticsVideos";
 
 function Router() {
   return (
@@ -639,6 +641,8 @@ function Router() {
       <Route path="/admin/exportacao-dados" component={ExportacaoDados} />
       <Route path="/admin/notificacoes" component={GerenciamentoNotificacoes} />
       <Route path="/admin/auditoria" component={AuditoriaCompleta} />
+      <Route path="/admin/templates-metas" component={GerenciarTemplates} />
+      <Route path="/admin/analytics-videos" component={AnalyticsVideos} />
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />
