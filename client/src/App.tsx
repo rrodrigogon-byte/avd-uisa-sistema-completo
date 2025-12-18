@@ -306,6 +306,8 @@ import DashboardConsolidado from "./pages/DashboardConsolidado";
 import MetasAutomaticas from "./pages/MetasAutomaticas";
 import GerenciarTemplates from "./pages/admin/GerenciarTemplates";
 import AnalyticsVideos from "./pages/admin/AnalyticsVideos";
+import VideosEducacionais from "./pages/admin/VideosEducacionais";
+import VideosEducacionaisColaborador from "./pages/VideosEducacionais";
 
 function Router() {
   return (
@@ -643,6 +645,8 @@ function Router() {
       <Route path="/admin/auditoria" component={AuditoriaCompleta} />
       <Route path="/admin/templates-metas" component={GerenciarTemplates} />
       <Route path="/admin/analytics-videos" component={AnalyticsVideos} />
+      <Route path="/admin/videos-educacionais" component={VideosEducacionais} />
+      <Route path="/videos-educacionais" component={VideosEducacionaisColaborador} />
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />

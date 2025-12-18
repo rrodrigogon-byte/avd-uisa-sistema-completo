@@ -1349,3 +1349,37 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [x] Criar scatter plot para correlação engajamento x performance PIR
 - [x] Adicionar filtros de período e categoria
 - [ ] Implementar exportação de dados de analytics
+
+
+---
+
+## 🎥 SISTEMA DE VÍDEOS EDUCACIONAIS (18/12/2025)
+
+### Estrutura de Dados
+- [x] Criar tabela `educational_videos` no schema
+- [x] Criar tabela `video_progress` para rastrear progresso dos colaboradores
+- [x] Adicionar relações entre vídeos e dimensões PIR
+
+### Função de Seed (Admin)
+- [x] Adicionar botão de seed na página /admin/videos-educacionais
+- [x] Criar procedimento tRPC para popular 36 vídeos educacionais
+- [x] Implementar validação para evitar duplicação de vídeos
+
+### Interface de Visualização (Colaboradores)
+- [x] Criar página /videos-educacionais para listagem de vídeos
+- [x] Implementar player de vídeo com YouTube embed
+- [x] Adicionar funcionalidade de marcar vídeo como concluído
+- [x] Mostrar progresso geral do colaborador
+- [x] Criar filtros por categoria PIR
+
+### Sistema de Recomendação
+- [x] Criar algoritmo que identifica dimensões PIR com menor pontuação
+- [x] Implementar procedimento tRPC para buscar vídeos recomendados
+- [x] Adicionar seção "Recomendados para Você" na interface
+- [x] Priorizar vídeos não assistidos das dimensões mais fracas
+
+### Testes e Finalização
+- [x] Testar seed de vídeos como admin
+- [x] Testar visualização e conclusão de vídeos como colaborador
+- [x] Validar sistema de recomendação baseado em PIR
+- [ ] Criar checkpoint final

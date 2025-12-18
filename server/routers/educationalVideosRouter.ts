@@ -585,52 +585,52 @@ export const educationalVideosRouter = router({
     // Vídeos (36 vídeos)
     const videos = [
       // Ética Profissional (6 vídeos)
-      { categoryId: 1, title: "Ética no Ambiente de Trabalho", description: "Entenda a importância da ética profissional e como aplicá-la no dia a dia", videoUrl: "https://www.youtube.com/watch?v=3pTKfuRkOXs", duration: 420, tags: ["ética", "profissionalismo", "conduta"], relatedPIRDimensions: ["HON", "RES", "JUS"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
-      { categoryId: 1, title: "Dilemas Éticos no Trabalho", description: "Como tomar decisões éticas em situações complexas", videoUrl: "https://www.youtube.com/watch?v=L0jNz6R7pAI", duration: 540, tags: ["ética", "dilemas", "decisões"], relatedPIRDimensions: ["HON", "COR", "JUS"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 1, title: "Ética Empresarial", description: "Princípios éticos nas organizações modernas", videoUrl: "https://www.youtube.com/watch?v=YJg6T9lKBhE", duration: 480, tags: ["ética", "empresarial", "organizacional"], relatedPIRDimensions: ["HON", "RES", "RSP"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 1, title: "Código de Ética e Conduta", description: "Importância e aplicação do código de ética nas empresas", videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", duration: 360, tags: ["código", "ética", "conduta"], relatedPIRDimensions: ["HON", "RES"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 1, title: "Responsabilidade Profissional", description: "Assumindo responsabilidade por suas ações no trabalho", videoUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk", duration: 390, tags: ["responsabilidade", "profissional", "accountability"], relatedPIRDimensions: ["RES", "CON"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 1, title: "Ética na Tomada de Decisões", description: "Frameworks éticos para decisões complexas", videoUrl: "https://www.youtube.com/watch?v=YJg6T9lKBhE", duration: 540, tags: ["ética", "decisões", "frameworks"], relatedPIRDimensions: ["HON", "JUS", "COR"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 1, title: "Ética no Ambiente de Trabalho", description: "Entenda a importância da ética profissional e como aplicá-la no dia a dia", videoUrl: "https://www.youtube.com/watch?v=3pTKfuRkOXs", duration: 420, tags: ["ética", "profissionalismo", "conduta"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
+      { categoryId: 1, title: "Dilemas Éticos no Trabalho", description: "Como tomar decisões éticas em situações complexas", videoUrl: "https://www.youtube.com/watch?v=L0jNz6R7pAI", duration: 540, tags: ["ética", "dilemas", "decisões"], relatedPIRDimensions: ["IC", "ID", "AU"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 1, title: "Ética Empresarial", description: "Princípios éticos nas organizações modernas", videoUrl: "https://www.youtube.com/watch?v=YJg6T9lKBhE", duration: 480, tags: ["ética", "empresarial", "organizacional"], relatedPIRDimensions: ["IC", "ES", "IP"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 1, title: "Código de Ética e Conduta", description: "Importância e aplicação do código de ética nas empresas", videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", duration: 360, tags: ["código", "ética", "conduta"], relatedPIRDimensions: ["IC", "ES"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 1, title: "Responsabilidade Profissional", description: "Assumindo responsabilidade por suas ações no trabalho", videoUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk", duration: 390, tags: ["responsabilidade", "profissional", "accountability"], relatedPIRDimensions: ["AU", "IC"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 1, title: "Ética na Tomada de Decisões", description: "Frameworks éticos para decisões complexas", videoUrl: "https://www.youtube.com/watch?v=YJg6T9lKBhE", duration: 540, tags: ["ética", "decisões", "frameworks"], relatedPIRDimensions: ["IC", "AU", "ID"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
       
       // Compliance (6 vídeos)
-      { categoryId: 2, title: "Introdução ao Compliance", description: "O que é compliance e por que é importante", videoUrl: "https://www.youtube.com/watch?v=2942BB1JXFk", duration: 600, tags: ["compliance", "conformidade", "regulação"], relatedPIRDimensions: ["HON", "RES"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
-      { categoryId: 2, title: "Programa de Compliance Eficaz", description: "Elementos essenciais de um programa de compliance", videoUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0", duration: 720, tags: ["compliance", "programa", "gestão"], relatedPIRDimensions: ["HON", "RES", "JUS"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
-      { categoryId: 2, title: "Lei Anticorrupção Brasileira", description: "Entenda a Lei 12.846/2013 e suas implicações", videoUrl: "https://www.youtube.com/watch?v=pXRviuL6vMY", duration: 900, tags: ["lei", "anticorrupção", "legislação"], relatedPIRDimensions: ["HON", "JUS", "COR"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
-      { categoryId: 2, title: "Compliance e Cultura Organizacional", description: "Como criar uma cultura de compliance na empresa", videoUrl: "https://www.youtube.com/watch?v=Sv6dMFF_yts", duration: 540, tags: ["compliance", "cultura", "organizacional"], relatedPIRDimensions: ["HON", "RES", "RSP"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
-      { categoryId: 2, title: "Auditoria e Monitoramento de Compliance", description: "Processos de auditoria e controles internos", videoUrl: "https://www.youtube.com/watch?v=3JZ_D3ELwOQ", duration: 660, tags: ["auditoria", "monitoramento", "controles"], relatedPIRDimensions: ["HON", "RES"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
-      { categoryId: 2, title: "Due Diligence e Terceiros", description: "Avaliação de riscos em relações com terceiros", videoUrl: "https://www.youtube.com/watch?v=3pTKfuRkOXs", duration: 660, tags: ["due diligence", "terceiros", "riscos"], relatedPIRDimensions: ["HON", "RES", "JUS"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 2, title: "Introdução ao Compliance", description: "O que é compliance e por que é importante", videoUrl: "https://www.youtube.com/watch?v=2942BB1JXFk", duration: 600, tags: ["compliance", "conformidade", "regulação"], relatedPIRDimensions: ["IC", "ES"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
+      { categoryId: 2, title: "Programa de Compliance Eficaz", description: "Elementos essenciais de um programa de compliance", videoUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0", duration: 720, tags: ["compliance", "programa", "gestão"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 2, title: "Lei Anticorrupção Brasileira", description: "Entenda a Lei 12.846/2013 e suas implicações", videoUrl: "https://www.youtube.com/watch?v=pXRviuL6vMY", duration: 900, tags: ["lei", "anticorrupção", "legislação"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 2, title: "Compliance e Cultura Organizacional", description: "Como criar uma cultura de compliance na empresa", videoUrl: "https://www.youtube.com/watch?v=Sv6dMFF_yts", duration: 540, tags: ["compliance", "cultura", "organizacional"], relatedPIRDimensions: ["IC", "ES", "IP"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 2, title: "Auditoria e Monitoramento de Compliance", description: "Processos de auditoria e controles internos", videoUrl: "https://www.youtube.com/watch?v=3JZ_D3ELwOQ", duration: 660, tags: ["auditoria", "monitoramento", "controles"], relatedPIRDimensions: ["IC", "ES"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 2, title: "Due Diligence e Terceiros", description: "Avaliação de riscos em relações com terceiros", videoUrl: "https://www.youtube.com/watch?v=3pTKfuRkOXs", duration: 660, tags: ["due diligence", "terceiros", "riscos"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
       
       // Integridade (6 vídeos)
-      { categoryId: 3, title: "Integridade Corporativa", description: "Construindo uma cultura de integridade nas organizações", videoUrl: "https://www.youtube.com/watch?v=5NV6Rdv1a3I", duration: 480, tags: ["integridade", "valores", "cultura"], relatedPIRDimensions: ["HON", "CON", "RES"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
-      { categoryId: 3, title: "Valores e Princípios Organizacionais", description: "A importância dos valores na conduta profissional", videoUrl: "https://www.youtube.com/watch?v=L0jNz6R7pAI", duration: 420, tags: ["valores", "princípios", "conduta"], relatedPIRDimensions: ["HON", "RSP", "JUS"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 3, title: "Transparência e Accountability", description: "Prestação de contas e transparência nas relações profissionais", videoUrl: "https://www.youtube.com/watch?v=tO01J-M3g0U", duration: 510, tags: ["transparência", "accountability", "prestação de contas"], relatedPIRDimensions: ["HON", "RES", "CON"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 3, title: "Liderança com Integridade", description: "Como liderar pelo exemplo com integridade", videoUrl: "https://www.youtube.com/watch?v=PSZy6lGgOcI", duration: 600, tags: ["liderança", "integridade", "exemplo"], relatedPIRDimensions: ["HON", "COR", "RES"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
-      { categoryId: 3, title: "Confiança nas Relações Profissionais", description: "Construindo e mantendo confiança no trabalho", videoUrl: "https://www.youtube.com/watch?v=iCvmsMzlF7o", duration: 450, tags: ["confiança", "relações", "profissional"], relatedPIRDimensions: ["CON", "RSP", "HON"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 3, title: "Comunicação Ética", description: "Princípios de comunicação transparente e honesta", videoUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk", duration: 390, tags: ["comunicação", "transparência", "honestidade"], relatedPIRDimensions: ["HON", "RSP", "CON"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 3, title: "Integridade Corporativa", description: "Construindo uma cultura de integridade nas organizações", videoUrl: "https://www.youtube.com/watch?v=5NV6Rdv1a3I", duration: 480, tags: ["integridade", "valores", "cultura"], relatedPIRDimensions: ["IC", "FL", "ES"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
+      { categoryId: 3, title: "Valores e Princípios Organizacionais", description: "A importância dos valores na conduta profissional", videoUrl: "https://www.youtube.com/watch?v=L0jNz6R7pAI", duration: 420, tags: ["valores", "princípios", "conduta"], relatedPIRDimensions: ["IC", "IP", "ES"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 3, title: "Transparência e Accountability", description: "Prestação de contas e transparência nas relações profissionais", videoUrl: "https://www.youtube.com/watch?v=tO01J-M3g0U", duration: 510, tags: ["transparência", "accountability", "prestação de contas"], relatedPIRDimensions: ["IC", "ES", "FL"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 3, title: "Liderança com Integridade", description: "Como liderar pelo exemplo com integridade", videoUrl: "https://www.youtube.com/watch?v=PSZy6lGgOcI", duration: 600, tags: ["liderança", "integridade", "exemplo"], relatedPIRDimensions: ["IC", "AU", "ID"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 3, title: "Confiança nas Relações Profissionais", description: "Construindo e mantendo confiança no trabalho", videoUrl: "https://www.youtube.com/watch?v=iCvmsMzlF7o", duration: 450, tags: ["confiança", "relações", "profissional"], relatedPIRDimensions: ["FL", "IP", "IC"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 3, title: "Comunicação Ética", description: "Princípios de comunicação transparente e honesta", videoUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk", duration: 390, tags: ["comunicação", "transparência", "honestidade"], relatedPIRDimensions: ["IC", "IP", "FL"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
       
       // Prevenção à Corrupção (6 vídeos)
-      { categoryId: 4, title: "O que é Corrupção?", description: "Entendendo os diferentes tipos de corrupção", videoUrl: "https://www.youtube.com/watch?v=Rqq4jZmzXhs", duration: 540, tags: ["corrupção", "definição", "tipos"], relatedPIRDimensions: ["HON", "JUS", "COR"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
-      { categoryId: 4, title: "Identificando Sinais de Corrupção", description: "Como reconhecer práticas corruptas no ambiente de trabalho", videoUrl: "https://www.youtube.com/watch?v=TnlPtaPxXfc", duration: 480, tags: ["corrupção", "identificação", "sinais"], relatedPIRDimensions: ["HON", "COR", "JUS"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 4, title: "Conflito de Interesses", description: "Identificando e gerenciando conflitos de interesse", videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", duration: 420, tags: ["conflito", "interesses", "ética"], relatedPIRDimensions: ["HON", "JUS", "RES"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 4, title: "Denúncia de Irregularidades", description: "Como e quando denunciar práticas irregulares", videoUrl: "https://www.youtube.com/watch?v=5NV6Rdv1a3I", duration: 390, tags: ["denúncia", "irregularidades", "canal de ética"], relatedPIRDimensions: ["COR", "HON", "RES"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 4, title: "Prevenção à Lavagem de Dinheiro", description: "Identificando e prevenindo lavagem de dinheiro", videoUrl: "https://www.youtube.com/watch?v=3JZ_D3ELwOQ", duration: 720, tags: ["lavagem", "dinheiro", "prevenção"], relatedPIRDimensions: ["HON", "JUS", "COR"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
-      { categoryId: 4, title: "Brindes e Presentes Corporativos", description: "Políticas e limites éticos para brindes e presentes", videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", duration: 360, tags: ["brindes", "presentes", "política"], relatedPIRDimensions: ["HON", "JUS", "RES"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 4, title: "O que é Corrupção?", description: "Entendendo os diferentes tipos de corrupção", videoUrl: "https://www.youtube.com/watch?v=Rqq4jZmzXhs", duration: 540, tags: ["corrupção", "definição", "tipos"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
+      { categoryId: 4, title: "Identificando Sinais de Corrupção", description: "Como reconhecer práticas corruptas no ambiente de trabalho", videoUrl: "https://www.youtube.com/watch?v=TnlPtaPxXfc", duration: 480, tags: ["corrupção", "identificação", "sinais"], relatedPIRDimensions: ["IC", "AU", "ES"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 4, title: "Conflito de Interesses", description: "Identificando e gerenciando conflitos de interesse", videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", duration: 420, tags: ["conflito", "interesses", "ética"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 4, title: "Denúncia de Irregularidades", description: "Como e quando denunciar práticas irregulares", videoUrl: "https://www.youtube.com/watch?v=5NV6Rdv1a3I", duration: 390, tags: ["denúncia", "irregularidades", "canal de ética"], relatedPIRDimensions: ["AU", "IC", "ES"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 4, title: "Prevenção à Lavagem de Dinheiro", description: "Identificando e prevenindo lavagem de dinheiro", videoUrl: "https://www.youtube.com/watch?v=3JZ_D3ELwOQ", duration: 720, tags: ["lavagem", "dinheiro", "prevenção"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 4, title: "Brindes e Presentes Corporativos", description: "Políticas e limites éticos para brindes e presentes", videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", duration: 360, tags: ["brindes", "presentes", "política"], relatedPIRDimensions: ["IC", "ES", "AU"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
       
       // LGPD e Privacidade (6 vídeos)
-      { categoryId: 5, title: "Introdução à LGPD", description: "Lei Geral de Proteção de Dados: o que você precisa saber", videoUrl: "https://www.youtube.com/watch?v=Sv6dMFF_yts", duration: 600, tags: ["LGPD", "privacidade", "dados"], relatedPIRDimensions: ["HON", "RES", "RSP"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
-      { categoryId: 5, title: "Direitos dos Titulares de Dados", description: "Conheça os direitos garantidos pela LGPD", videoUrl: "https://www.youtube.com/watch?v=2942BB1JXFk", duration: 480, tags: ["LGPD", "direitos", "titulares"], relatedPIRDimensions: ["RSP", "JUS", "HON"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 5, title: "Segurança da Informação", description: "Boas práticas de segurança da informação no trabalho", videoUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0", duration: 540, tags: ["segurança", "informação", "proteção"], relatedPIRDimensions: ["RES", "HON", "CON"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 5, title: "Tratamento de Dados Pessoais", description: "Como tratar dados pessoais de forma adequada", videoUrl: "https://www.youtube.com/watch?v=pXRviuL6vMY", duration: 660, tags: ["dados", "tratamento", "LGPD"], relatedPIRDimensions: ["RES", "RSP", "HON"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "colaboradores"] },
-      { categoryId: 5, title: "Incidentes de Segurança e LGPD", description: "Como agir em caso de vazamento de dados", videoUrl: "https://www.youtube.com/watch?v=tO01J-M3g0U", duration: 510, tags: ["incidentes", "vazamento", "resposta"], relatedPIRDimensions: ["RES", "HON", "COR"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
-      { categoryId: 5, title: "Privacidade Digital", description: "Protegendo sua privacidade no ambiente digital", videoUrl: "https://www.youtube.com/watch?v=2942BB1JXFk", duration: 480, tags: ["privacidade", "digital", "proteção"], relatedPIRDimensions: ["RES", "HON"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 5, title: "Introdução à LGPD", description: "Lei Geral de Proteção de Dados: o que você precisa saber", videoUrl: "https://www.youtube.com/watch?v=Sv6dMFF_yts", duration: 600, tags: ["LGPD", "privacidade", "dados"], relatedPIRDimensions: ["IC", "ES", "IP"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
+      { categoryId: 5, title: "Direitos dos Titulares de Dados", description: "Conheça os direitos garantidos pela LGPD", videoUrl: "https://www.youtube.com/watch?v=2942BB1JXFk", duration: 480, tags: ["LGPD", "direitos", "titulares"], relatedPIRDimensions: ["IP", "ES", "IC"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 5, title: "Segurança da Informação", description: "Boas práticas de segurança da informação no trabalho", videoUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0", duration: 540, tags: ["segurança", "informação", "proteção"], relatedPIRDimensions: ["ES", "IC", "FL"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 5, title: "Tratamento de Dados Pessoais", description: "Como tratar dados pessoais de forma adequada", videoUrl: "https://www.youtube.com/watch?v=pXRviuL6vMY", duration: 660, tags: ["dados", "tratamento", "LGPD"], relatedPIRDimensions: ["ES", "IP", "IC"], difficultyLevel: "intermediario" as const, targetAudience: ["gestores", "colaboradores"] },
+      { categoryId: 5, title: "Incidentes de Segurança e LGPD", description: "Como agir em caso de vazamento de dados", videoUrl: "https://www.youtube.com/watch?v=tO01J-M3g0U", duration: 510, tags: ["incidentes", "vazamento", "resposta"], relatedPIRDimensions: ["ES", "IC", "AU"], difficultyLevel: "avancado" as const, targetAudience: ["gestores", "lideranca"] },
+      { categoryId: 5, title: "Privacidade Digital", description: "Protegendo sua privacidade no ambiente digital", videoUrl: "https://www.youtube.com/watch?v=2942BB1JXFk", duration: 480, tags: ["privacidade", "digital", "proteção"], relatedPIRDimensions: ["ES", "IC"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
       
       // Diversidade e Inclusão (6 vídeos)
-      { categoryId: 6, title: "Diversidade no Ambiente de Trabalho", description: "A importância da diversidade nas organizações", videoUrl: "https://www.youtube.com/watch?v=PSZy6lGgOcI", duration: 480, tags: ["diversidade", "inclusão", "respeito"], relatedPIRDimensions: ["RSP", "JUS", "HON"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
-      { categoryId: 6, title: "Combate ao Assédio Moral", description: "Identificando e prevenindo assédio moral no trabalho", videoUrl: "https://www.youtube.com/watch?v=iCvmsMzlF7o", duration: 540, tags: ["assédio", "moral", "prevenção"], relatedPIRDimensions: ["RSP", "COR", "JUS"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 6, title: "Combate ao Assédio Sexual", description: "Prevenindo e combatendo assédio sexual no ambiente profissional", videoUrl: "https://www.youtube.com/watch?v=Rqq4jZmzXhs", duration: 510, tags: ["assédio", "sexual", "prevenção"], relatedPIRDimensions: ["RSP", "COR", "JUS"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 6, title: "Equidade de Gênero", description: "Promovendo igualdade de oportunidades entre gêneros", videoUrl: "https://www.youtube.com/watch?v=TnlPtaPxXfc", duration: 450, tags: ["gênero", "equidade", "igualdade"], relatedPIRDimensions: ["JUS", "RSP", "HON"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
-      { categoryId: 6, title: "Inclusão de Pessoas com Deficiência", description: "Criando um ambiente acessível e inclusivo", videoUrl: "https://www.youtube.com/watch?v=5NV6Rdv1a3I", duration: 600, tags: ["inclusão", "deficiência", "acessibilidade"], relatedPIRDimensions: ["RSP", "JUS", "HON"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
-      { categoryId: 6, title: "Respeito à Diversidade Cultural", description: "Valorizando diferentes culturas no ambiente de trabalho", videoUrl: "https://www.youtube.com/watch?v=L0jNz6R7pAI", duration: 420, tags: ["cultura", "diversidade", "respeito"], relatedPIRDimensions: ["RSP", "HON", "JUS"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 6, title: "Diversidade no Ambiente de Trabalho", description: "A importância da diversidade nas organizações", videoUrl: "https://www.youtube.com/watch?v=PSZy6lGgOcI", duration: 480, tags: ["diversidade", "inclusão", "respeito"], relatedPIRDimensions: ["IP", "ES", "IC"], difficultyLevel: "basico" as const, targetAudience: ["todos"], featured: true },
+      { categoryId: 6, title: "Combate ao Assédio Moral", description: "Identificando e prevenindo assédio moral no trabalho", videoUrl: "https://www.youtube.com/watch?v=iCvmsMzlF7o", duration: 540, tags: ["assédio", "moral", "prevenção"], relatedPIRDimensions: ["IP", "AU", "ES"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 6, title: "Combate ao Assédio Sexual", description: "Prevenindo e combatendo assédio sexual no ambiente profissional", videoUrl: "https://www.youtube.com/watch?v=Rqq4jZmzXhs", duration: 510, tags: ["assédio", "sexual", "prevenção"], relatedPIRDimensions: ["IP", "AU", "ES"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 6, title: "Equidade de Gênero", description: "Promovendo igualdade de oportunidades entre gêneros", videoUrl: "https://www.youtube.com/watch?v=TnlPtaPxXfc", duration: 450, tags: ["gênero", "equidade", "igualdade"], relatedPIRDimensions: ["ES", "IP", "IC"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
+      { categoryId: 6, title: "Inclusão de Pessoas com Deficiência", description: "Criando um ambiente acessível e inclusivo", videoUrl: "https://www.youtube.com/watch?v=5NV6Rdv1a3I", duration: 600, tags: ["inclusão", "deficiência", "acessibilidade"], relatedPIRDimensions: ["IP", "ES", "IC"], difficultyLevel: "intermediario" as const, targetAudience: ["todos", "gestores"] },
+      { categoryId: 6, title: "Respeito à Diversidade Cultural", description: "Valorizando diferentes culturas no ambiente de trabalho", videoUrl: "https://www.youtube.com/watch?v=L0jNz6R7pAI", duration: 420, tags: ["cultura", "diversidade", "respeito"], relatedPIRDimensions: ["IP", "IC", "ES"], difficultyLevel: "basico" as const, targetAudience: ["todos"] },
     ];
 
     // Inserir vídeos
@@ -740,4 +740,151 @@ export const educationalVideosRouter = router({
         },
       };
     }),
+
+  /**
+   * Buscar vídeos recomendados baseado em PIR do usuário
+   * Algoritmo: identifica dimensões com menor pontuação e recomenda vídeos relacionados
+   */
+  getRecommendations: protectedProcedure
+    .input(z.object({ limit: z.number().default(10) }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // 1. Buscar último resultado PIR do usuário
+      const pirResultsTable = await db.query.pirResults?.findMany({
+        where: (pirResults: any, { eq }: any) => eq(pirResults.userId, ctx.user.id),
+        orderBy: (pirResults: any, { desc }: any) => [desc(pirResults.createdAt)],
+        limit: 1
+      });
+
+      const latestPIR = pirResultsTable?.[0];
+
+      if (!latestPIR || !latestPIR.dimensionScores) {
+        // Sem PIR, retornar vídeos em destaque
+        const videos = await db
+          .select({
+            video: educationalVideos,
+            category: educationalVideoCategories,
+          })
+          .from(educationalVideos)
+          .leftJoin(educationalVideoCategories, eq(educationalVideos.categoryId, educationalVideoCategories.id))
+          .where(
+            and(
+              eq(educationalVideos.active, true),
+              eq(educationalVideos.featured, true)
+            )
+          )
+          .limit(input.limit);
+
+        return videos.map(v => ({ 
+          ...v.video, 
+          category: v.category,
+          reason: "Vídeo em destaque" 
+        }));
+      }
+
+      // 2. Analisar dimensões PIR e identificar as 2 mais fracas
+      const dimensionScores = latestPIR.dimensionScores as Record<string, number>;
+      const sortedDimensions = Object.entries(dimensionScores)
+        .sort(([, a], [, b]) => a - b)
+        .slice(0, 2)
+        .map(([dim]) => dim);
+
+      // 3. Buscar vídeos não assistidos relacionados às dimensões mais fracas
+      const userProgress = await db
+        .select()
+        .from(videoWatchAnalytics)
+        .where(
+          and(
+            eq(videoWatchAnalytics.userId, ctx.user.id),
+            eq(videoWatchAnalytics.completed, true)
+          )
+        );
+
+      const completedVideoIds = userProgress.map(p => p.videoId);
+
+      // Buscar todos os vídeos ativos
+      const allVideos = await db
+        .select({
+          video: educationalVideos,
+          category: educationalVideoCategories,
+        })
+        .from(educationalVideos)
+        .leftJoin(educationalVideoCategories, eq(educationalVideos.categoryId, educationalVideoCategories.id))
+        .where(eq(educationalVideos.active, true));
+
+      // Filtrar e priorizar vídeos
+      const dimensionNames: Record<string, string> = {
+        IP: "Influência Pessoal",
+        ID: "Influência Direta",
+        IC: "Integridade e Coerência",
+        ES: "Estabilidade",
+        FL: "Flexibilidade",
+        AU: "Autonomia"
+      };
+
+      const recommendedVideos = allVideos
+        .filter(({ video }) => {
+          // Excluir vídeos já concluídos
+          if (completedVideoIds.includes(video.id)) return false;
+
+          // Verificar se o vídeo está relacionado às dimensões fracas
+          const dimensions = (video.relatedPIRDimensions as string[]) || [];
+          return sortedDimensions.some(dim => dimensions.includes(dim));
+        })
+        .map(({ video, category }) => {
+          const dimensions = (video.relatedPIRDimensions as string[]) || [];
+          const matchingDimensions = sortedDimensions.filter(dim => dimensions.includes(dim));
+          
+          // Calcular score de relevância
+          let relevanceScore = 0;
+          if (matchingDimensions.length === 2) relevanceScore += 10;
+          else if (matchingDimensions.length === 1) relevanceScore += 5;
+          if (video.featured) relevanceScore += 3;
+
+          return {
+            ...video,
+            category,
+            reason: `Recomendado para fortalecer: ${matchingDimensions.map(d => dimensionNames[d]).join(", ")}`,
+            relevanceScore,
+            matchingDimensions
+          };
+        })
+        .sort((a, b) => b.relevanceScore - a.relevanceScore)
+        .slice(0, input.limit);
+
+      return recommendedVideos;
+    }),
+
+  /**
+   * Buscar estatísticas do usuário
+   */
+  getUserStats: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const progress = await db
+      .select()
+      .from(videoWatchAnalytics)
+      .where(eq(videoWatchAnalytics.userId, ctx.user.id));
+
+    const [totalVideosResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(educationalVideos)
+      .where(eq(educationalVideos.active, true));
+
+    const completedCount = progress.filter(p => p.completed).length;
+    const totalWatchTime = progress.reduce((sum, p) => sum + (p.totalWatchTime || 0), 0);
+
+    return {
+      totalVideos: totalVideosResult?.count || 0,
+      watchedVideos: progress.length,
+      completedVideos: completedCount,
+      totalWatchTimeMinutes: Math.floor(totalWatchTime / 60),
+      completionRate: totalVideosResult?.count > 0 
+        ? Math.round((completedCount / totalVideosResult.count) * 100) 
+        : 0
+    };
+  }),
 });
