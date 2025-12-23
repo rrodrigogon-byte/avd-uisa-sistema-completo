@@ -217,9 +217,9 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 
 ### Atualização de Navegação
 - [x] Atualizar App.tsx com rotas dos novos passos
-- [ ] Atualizar DashboardLayout com menu dos 5 passos
-- [ ] Adicionar indicador de progresso visual
-- [ ] Implementar proteção de rotas (não pular passos)
+- [x] Atualizar DashboardLayout com menu dos 5 passos - Seção Processo AVD implementada
+- [x] Adicionar indicador de progresso visual - AVDProgressBreadcrumbs criado
+- [x] Implementar proteção de rotas (não pular passos) - AVDStepGuard implementado
 
 
 ## 🚀 PRÓXIMAS MELHORIAS (12/12/2025 - Continuação)
