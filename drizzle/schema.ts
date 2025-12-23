@@ -447,7 +447,7 @@ export const performanceEvaluations = mysqlTable("performanceEvaluations", {
   cycleId: int("cycleId").notNull(),
   employeeId: int("employeeId").notNull(),
   type: mysqlEnum("type", ["360", "180", "90"]).notNull(),
-  status: mysqlEnum("status", ["pendente", "em_andamento", "concluida"]).default("pendente").notNull(),
+  status: mysqlEnum("status", ["pendente", "em_andamento", "concluida", "cancelada"]).default("pendente").notNull(),
   
   // Workflow de etapas sequenciais
   workflowStatus: mysqlEnum("workflowStatus", [
