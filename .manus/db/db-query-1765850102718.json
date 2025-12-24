@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS pirIntegritySuspiciousAccessLogs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  assessmentId INT NOT NULL,\n  employeeId INT NOT NULL,\n  anomalyType ENUM('fast_responses', 'pattern_detected', 'multiple_sessions', 'unusual_time', 'browser_switch', 'copy_paste', 'tab_switch', 'other') NOT NULL,\n  description TEXT NOT NULL,\n  severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium' NOT NULL,\n  ipAddress VARCHAR(45),\n  userAgent TEXT,\n  metadata JSON,\n  status ENUM('pending', 'reviewed', 'dismissed', 'confirmed') DEFAULT 'pending' NOT NULL,\n  reviewedBy INT,\n  reviewedAt DATETIME,\n  reviewNotes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS pirIntegritySuspiciousAccessLogs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  assessmentId INT NOT NULL,\n  employeeId INT NOT NULL,\n  anomalyType ENUM('fast_responses', 'pattern_detected', 'multiple_sessions', 'unusual_time', 'browser_switch', 'copy_paste', 'tab_switch', 'other') NOT NULL,\n  description TEXT NOT NULL,\n  severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium' NOT NULL,\n  ipAddress VARCHAR(45),\n  userAgent TEXT,\n  metadata JSON,\n  status ENUM('pending', 'reviewed', 'dismissed', 'confirmed') DEFAULT 'pending' NOT NULL,\n  reviewedBy INT,\n  reviewedAt DATETIME,\n  reviewNotes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 183
+}

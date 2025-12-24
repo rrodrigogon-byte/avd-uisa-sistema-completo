@@ -1,0 +1,9 @@
+{
+  "query": "CREATE INDEX IF NOT EXISTS idx_employees_status ON employees(status);\nCREATE INDEX IF NOT EXISTS idx_employees_department ON employees(departmentId);\nCREATE INDEX IF NOT EXISTS idx_employees_name ON employees(name);\nCREATE INDEX IF NOT EXISTS idx_eval_instances_employee ON evaluationInstances(employeeId);\nCREATE INDEX IF NOT EXISTS idx_eval_instances_status ON evaluationInstances(status);\nCREATE INDEX IF NOT EXISTS idx_eval_cycles_status ON evaluationCycles(status);\nCREATE INDEX IF NOT EXISTS idx_goals_employee ON goals(employeeId);\nCREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE INDEX IF NOT EXISTS idx_employees_status ON employees(status);\nCREATE INDEX IF NOT EXISTS idx_employees_department ON employees(departmentId);\nCREATE INDEX IF NOT EXISTS idx_employees_name ON employees(name);\nCREATE INDEX IF NOT EXISTS idx_eval_instances_employee ON evaluationInstances(employeeId);\nCREATE INDEX IF NOT EXISTS idx_eval_instances_status ON evaluationInstances(status);\nCREATE INDEX IF NOT EXISTS idx_eval_cycles_status ON evaluationCycles(status);\nCREATE INDEX IF NOT EXISTS idx_goals_employee ON goals(employeeId);\nCREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 4723
+}

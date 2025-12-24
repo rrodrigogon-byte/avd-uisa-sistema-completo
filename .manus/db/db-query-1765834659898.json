@@ -1,0 +1,220 @@
+{
+  "query": "SELECT id, name, email, role, createdAt FROM users ORDER BY id DESC LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, email, role, createdAt FROM users ORDER BY id DESC LIMIT 30;",
+  "rows": [
+    {
+      "id": "31740",
+      "name": "WILSON JOSE GERMANO DA SILVA",
+      "email": "852431@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31739",
+      "name": "WILLIAN DUARTE DA SILVA",
+      "email": "willian.duarte@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31738",
+      "name": "WELLINGTON SILVA DE ARAUJO",
+      "email": "wellington.araujo@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31737",
+      "name": "WELLINGTON DA SILVA SANTOS",
+      "email": "883182@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31736",
+      "name": "WANDERLEY ALVES DE OLIVEIRA",
+      "email": "wanderley.oliveira@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31735",
+      "name": "VINICIUS DE OLIVEIRA VERGA",
+      "email": "vinicius.verga@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31734",
+      "name": "VINICIOS EDUARDO NEVES CARDOSO",
+      "email": "8000820@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31733",
+      "name": "VALTER GONCALVES DA SILVA",
+      "email": "859435@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31732",
+      "name": "VALMIR GOMES DOS SANTOS",
+      "email": "valmir.santos@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31731",
+      "name": "VALDINEI BECKER GONCALVES",
+      "email": "valdinei.goncalves@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31730",
+      "name": "ULISSES RIBEIRO",
+      "email": "ulisses.ribeiro@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31729",
+      "name": "TIAGO GUEDES",
+      "email": "8002489@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31728",
+      "name": "THIAGO DINIZ DUARTE",
+      "email": "thiago.duarte@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31727",
+      "name": "THALLYS FERNANDO DE LIMA",
+      "email": "thallys.lima@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31726",
+      "name": "TALINE DE JESUS OLIVEIRA ALVES",
+      "email": "taline.alves@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31725",
+      "name": "SOLISVALDO DOS SANTOS MELO",
+      "email": "solisvaldo.melo@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31724",
+      "name": "SIMONE AQUINO DE MORAIS",
+      "email": "Endereçoeletrônico@uisanet.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31723",
+      "name": "SILVIA DA SILVA SOBRINHO",
+      "email": "silvia.silva@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31722",
+      "name": "SILVANO MANOEL ORLANDO",
+      "email": "silvano.orlando@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31721",
+      "name": "SIDNEI SILVA SANTOS",
+      "email": "sidnei.santos@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31720",
+      "name": "SIDNEI PATRICK DE ALENCAR ALVES",
+      "email": "8002215@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31719",
+      "name": "SIDINEI NEVES DOS SANTOS",
+      "email": "sidinei.santos@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31718",
+      "name": "SERGIO ROBERTO DE SOUZA",
+      "email": "sergio.roberto@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31717",
+      "name": "SENIVAN SILVA DE ARAUJO GOMES",
+      "email": "8004076@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31716",
+      "name": "SANDOVAL BERTULINO GUIMARAES",
+      "email": "sandoval.guimaraes@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31715",
+      "name": "SAMUEL MARQUES DOS SANTOS",
+      "email": "8003985@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31714",
+      "name": "RUAN JUNIOR ALVES MARQUES",
+      "email": "ruan.marques@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31713",
+      "name": "ROSANGELA ALMEIDA DOS SANTOS",
+      "email": "897248@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31712",
+      "name": "RONE CARLOS DA GUIA DIAS",
+      "email": "rone.dias@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    },
+    {
+      "id": "31711",
+      "name": "ROGERIO DA SILVA CUNHA",
+      "email": "rogerio.cunha@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:20"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\trole\tcreatedAt\n31740\tWILSON JOSE GERMANO DA SILVA\t852431@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31739\tWILLIAN DUARTE DA SILVA\twillian.duarte@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31738\tWELLINGTON SILVA DE ARAUJO\twellington.araujo@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31737\tWELLINGTON DA SILVA SANTOS\t883182@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31736\tWANDERLEY ALVES DE OLIVEIRA\twanderley.oliveira@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31735\tVINICIUS DE OLIVEIRA VERGA\tvinicius.verga@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31734\tVINICIOS EDUARDO NEVES CARDOSO\t8000820@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31733\tVALTER GONCALVES DA SILVA\t859435@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31732\tVALMIR GOMES DOS SANTOS\tvalmir.santos@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31731\tVALDINEI BECKER GONCALVES\tvaldinei.goncalves@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31730\tULISSES RIBEIRO\tulisses.ribeiro@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31729\tTIAGO GUEDES\t8002489@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31728\tTHIAGO DINIZ DUARTE\tthiago.duarte@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31727\tTHALLYS FERNANDO DE LIMA\tthallys.lima@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31726\tTALINE DE JESUS OLIVEIRA ALVES\ttaline.alves@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31725\tSOLISVALDO DOS SANTOS MELO\tsolisvaldo.melo@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31724\tSIMONE AQUINO DE MORAIS\tEndereçoeletrônico@uisanet.com.br\tgestor\t2025-12-15 21:37:20\n31723\tSILVIA DA SILVA SOBRINHO\tsilvia.silva@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31722\tSILVANO MANOEL ORLANDO\tsilvano.orlando@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31721\tSIDNEI SILVA SANTOS\tsidnei.santos@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31720\tSIDNEI PATRICK DE ALENCAR ALVES\t8002215@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31719\tSIDINEI NEVES DOS SANTOS\tsidinei.santos@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31718\tSERGIO ROBERTO DE SOUZA\tsergio.roberto@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31717\tSENIVAN SILVA DE ARAUJO GOMES\t8004076@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31716\tSANDOVAL BERTULINO GUIMARAES\tsandoval.guimaraes@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31715\tSAMUEL MARQUES DOS SANTOS\t8003985@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31714\tRUAN JUNIOR ALVES MARQUES\truan.marques@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31713\tROSANGELA ALMEIDA DOS SANTOS\t897248@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31712\tRONE CARLOS DA GUIA DIAS\trone.dias@uisa.com.br\tgestor\t2025-12-15 21:37:20\n31711\tROGERIO DA SILVA CUNHA\trogerio.cunha@uisa.com.br\tgestor\t2025-12-15 21:37:20\n",
+  "stderr": "",
+  "execution_time_ms": 46
+}

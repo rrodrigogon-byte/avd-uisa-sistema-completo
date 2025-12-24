@@ -1,0 +1,46 @@
+{
+  "query": "SELECT \n  e.hierarchyLevel,\n  COUNT(*) as total_funcionarios,\n  SUM(CASE WHEN e.userId IS NOT NULL THEN 1 ELSE 0 END) as com_usuario,\n  SUM(CASE WHEN e.managerId IS NOT NULL THEN 1 ELSE 0 END) as com_gestor\nFROM employees e\nWHERE e.active = 1\nGROUP BY e.hierarchyLevel\nORDER BY \n  CASE e.hierarchyLevel \n    WHEN 'diretoria' THEN 1 \n    WHEN 'gerencia' THEN 2 \n    WHEN 'coordenacao' THEN 3 \n    WHEN 'supervisao' THEN 4 \n    WHEN 'operacional' THEN 5\n    ELSE 6\n  END;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT \n  e.hierarchyLevel,\n  COUNT(*) as total_funcionarios,\n  SUM(CASE WHEN e.userId IS NOT NULL THEN 1 ELSE 0 END) as com_usuario,\n  SUM(CASE WHEN e.managerId IS NOT NULL THEN 1 ELSE 0 END) as com_gestor\nFROM employees e\nWHERE e.active = 1\nGROUP BY e.hierarchyLevel\nORDER BY \n  CASE e.hierarchyLevel \n    WHEN 'diretoria' THEN 1 \n    WHEN 'gerencia' THEN 2 \n    WHEN 'coordenacao' THEN 3 \n    WHEN 'supervisao' THEN 4 \n    WHEN 'operacional' THEN 5\n    ELSE 6\n  END;",
+  "rows": [
+    {
+      "hierarchyLevel": "diretoria",
+      "total_funcionarios": "10",
+      "com_usuario": "10",
+      "com_gestor": "8"
+    },
+    {
+      "hierarchyLevel": "gerencia",
+      "total_funcionarios": "23",
+      "com_usuario": "23",
+      "com_gestor": "23"
+    },
+    {
+      "hierarchyLevel": "coordenacao",
+      "total_funcionarios": "52",
+      "com_usuario": "52",
+      "com_gestor": "52"
+    },
+    {
+      "hierarchyLevel": "supervisao",
+      "total_funcionarios": "231",
+      "com_usuario": "231",
+      "com_gestor": "231"
+    },
+    {
+      "hierarchyLevel": "operacional",
+      "total_funcionarios": "2842",
+      "com_usuario": "0",
+      "com_gestor": "2818"
+    },
+    {
+      "hierarchyLevel": "NULL",
+      "total_funcionarios": "15",
+      "com_usuario": "4",
+      "com_gestor": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "hierarchyLevel\ttotal_funcionarios\tcom_usuario\tcom_gestor\ndiretoria\t10\t10\t8\ngerencia\t23\t23\t23\ncoordenacao\t52\t52\t52\nsupervisao\t231\t231\t231\noperacional\t2842\t0\t2818\nNULL\t15\t4\t0\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

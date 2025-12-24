@@ -1,0 +1,290 @@
+{
+  "query": "SELECT code, name, category FROM competencies WHERE active = 1 ORDER BY category, code;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT code, name, category FROM competencies WHERE active = 1 ORDER BY category, code;",
+  "rows": [
+    {
+      "code": "COMP_1765815595404_03deat",
+      "name": "Visão Estratégica de Caixa (Gap de Escopo)",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP_1765815595441_yx3pyg",
+      "name": "Delegação e Desenvolvimento de Equipes (Gap de Gestão)",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP_1765815595487_qvpujr",
+      "name": "Comunicação Executiva (Gap de Influência)",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP_1765815595763_5cosig",
+      "name": "Excelência Técnica",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP_1765815595792_o0sml",
+      "name": "Visão Estratégica",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP_1765815595821_tdx4ek",
+      "name": "Planejamento e Execução",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP_1765815595853_nux4vu",
+      "name": "Liderança e Gestão de Pessoas",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP_1765815595887_h2tm3",
+      "name": "Influência e Comunicação",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ADM-001",
+      "name": "Gestão Financeira e Orçamentária",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ADM-002",
+      "name": "Gestão de Contratos e Compras",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ADM-003",
+      "name": "Sistemas de Gestão Integrada",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ADM-004",
+      "name": "Gestão de Pessoas e DHO",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ADM-005",
+      "name": "Segurança do Trabalho e Meio Ambiente",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ADM-006",
+      "name": "Compliance e Certificações",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-AGR-001",
+      "name": "Gestão de Plantio e Colheita",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-AGR-002",
+      "name": "Manejo de Solo e Irrigação",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-AGR-003",
+      "name": "Controle Fitossanitário",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-AGR-004",
+      "name": "Operação de Máquinas Agrícolas",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-AGR-005",
+      "name": "Agricultura de Precisão",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-AGR-006",
+      "name": "Gestão de Frota e Logística Agrícola",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ENE-001",
+      "name": "Operação de Caldeiras",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ENE-002",
+      "name": "Operação de Turbinas e Geradores",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ENE-003",
+      "name": "Gestão de Biomassa",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ENE-004",
+      "name": "Conexão e Comercialização de Energia",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ENE-005",
+      "name": "Eficiência Energética",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ETA-001",
+      "name": "Fermentação Alcoólica",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ETA-002",
+      "name": "Destilação e Retificação",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ETA-003",
+      "name": "Tratamento de Vinhaça e Resíduos",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ETA-004",
+      "name": "Controle de Qualidade de Etanol",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-ETA-005",
+      "name": "Otimização de Rendimento Industrial",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-IND-001",
+      "name": "Processo de Moagem e Extração",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-IND-002",
+      "name": "Tratamento de Caldo",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-IND-003",
+      "name": "Evaporação e Cristalização",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-IND-004",
+      "name": "Centrifugação e Secagem",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-IND-005",
+      "name": "Controle de Qualidade Industrial",
+      "category": "tecnica"
+    },
+    {
+      "code": "TEC-IND-006",
+      "name": "Manutenção Industrial",
+      "category": "tecnica"
+    },
+    {
+      "code": "COMP-001",
+      "name": "Orientação para Resultados",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-002",
+      "name": "Trabalho em Equipe",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-003",
+      "name": "Comunicação Eficaz",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-004",
+      "name": "Resolução de Problemas",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-005",
+      "name": "Adaptabilidade e Flexibilidade",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-006",
+      "name": "Proatividade e Iniciativa",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-007",
+      "name": "Comprometimento e Responsabilidade",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-008",
+      "name": "Ética e Integridade",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-009",
+      "name": "Foco no Cliente",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-010",
+      "name": "Gestão do Tempo e Organização",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-011",
+      "name": "Resiliência",
+      "category": "comportamental"
+    },
+    {
+      "code": "COMP-012",
+      "name": "Consciência de Segurança",
+      "category": "comportamental"
+    },
+    {
+      "code": "LID-001",
+      "name": "Visão Estratégica",
+      "category": "lideranca"
+    },
+    {
+      "code": "LID-002",
+      "name": "Desenvolvimento de Pessoas",
+      "category": "lideranca"
+    },
+    {
+      "code": "LID-003",
+      "name": "Gestão de Equipes",
+      "category": "lideranca"
+    },
+    {
+      "code": "LID-004",
+      "name": "Tomada de Decisão",
+      "category": "lideranca"
+    },
+    {
+      "code": "LID-005",
+      "name": "Gestão de Mudanças",
+      "category": "lideranca"
+    },
+    {
+      "code": "LID-006",
+      "name": "Influência e Negociação",
+      "category": "lideranca"
+    },
+    {
+      "code": "LID-007",
+      "name": "Gestão de Conflitos",
+      "category": "lideranca"
+    },
+    {
+      "code": "LID-008",
+      "name": "Pensamento Sistêmico",
+      "category": "lideranca"
+    }
+  ],
+  "messages": [],
+  "stdout": "code\tname\tcategory\nCOMP_1765815595404_03deat\tVisão Estratégica de Caixa (Gap de Escopo)\ttecnica\nCOMP_1765815595441_yx3pyg\tDelegação e Desenvolvimento de Equipes (Gap de Gestão)\ttecnica\nCOMP_1765815595487_qvpujr\tComunicação Executiva (Gap de Influência)\ttecnica\nCOMP_1765815595763_5cosig\tExcelência Técnica\ttecnica\nCOMP_1765815595792_o0sml\tVisão Estratégica\ttecnica\nCOMP_1765815595821_tdx4ek\tPlanejamento e Execução\ttecnica\nCOMP_1765815595853_nux4vu\tLiderança e Gestão de Pessoas\ttecnica\nCOMP_1765815595887_h2tm3\tInfluência e Comunicação\ttecnica\nTEC-ADM-001\tGestão Financeira e Orçamentária\ttecnica\nTEC-ADM-002\tGestão de Contratos e Compras\ttecnica\nTEC-ADM-003\tSistemas de Gestão Integrada\ttecnica\nTEC-ADM-004\tGestão de Pessoas e DHO\ttecnica\nTEC-ADM-005\tSegurança do Trabalho e Meio Ambiente\ttecnica\nTEC-ADM-006\tCompliance e Certificações\ttecnica\nTEC-AGR-001\tGestão de Plantio e Colheita\ttecnica\nTEC-AGR-002\tManejo de Solo e Irrigação\ttecnica\nTEC-AGR-003\tControle Fitossanitário\ttecnica\nTEC-AGR-004\tOperação de Máquinas Agrícolas\ttecnica\nTEC-AGR-005\tAgricultura de Precisão\ttecnica\nTEC-AGR-006\tGestão de Frota e Logística Agrícola\ttecnica\nTEC-ENE-001\tOperação de Caldeiras\ttecnica\nTEC-ENE-002\tOperação de Turbinas e Geradores\ttecnica\nTEC-ENE-003\tGestão de Biomassa\ttecnica\nTEC-ENE-004\tConexão e Comercialização de Energia\ttecnica\nTEC-ENE-005\tEficiência Energética\ttecnica\nTEC-ETA-001\tFermentação Alcoólica\ttecnica\nTEC-ETA-002\tDestilação e Retificação\ttecnica\nTEC-ETA-003\tTratamento de Vinhaça e Resíduos\ttecnica\nTEC-ETA-004\tControle de Qualidade de Etanol\ttecnica\nTEC-ETA-005\tOtimização de Rendimento Industrial\ttecnica\nTEC-IND-001\tProcesso de Moagem e Extração\ttecnica\nTEC-IND-002\tTratamento de Caldo\ttecnica\nTEC-IND-003\tEvaporação e Cristalização\ttecnica\nTEC-IND-004\tCentrifugação e Secagem\ttecnica\nTEC-IND-005\tControle de Qualidade Industrial\ttecnica\nTEC-IND-006\tManutenção Industrial\ttecnica\nCOMP-001\tOrientação para Resultados\tcomportamental\nCOMP-002\tTrabalho em Equipe\tcomportamental\nCOMP-003\tComunicação Eficaz\tcomportamental\nCOMP-004\tResolução de Problemas\tcomportamental\nCOMP-005\tAdaptabilidade e Flexibilidade\tcomportamental\nCOMP-006\tProatividade e Iniciativa\tcomportamental\nCOMP-007\tComprometimento e Responsabilidade\tcomportamental\nCOMP-008\tÉtica e Integridade\tcomportamental\nCOMP-009\tFoco no Cliente\tcomportamental\nCOMP-010\tGestão do Tempo e Organização\tcomportamental\nCOMP-011\tResiliência\tcomportamental\nCOMP-012\tConsciência de Segurança\tcomportamental\nLID-001\tVisão Estratégica\tlideranca\nLID-002\tDesenvolvimento de Pessoas\tlideranca\nLID-003\tGestão de Equipes\tlideranca\nLID-004\tTomada de Decisão\tlideranca\nLID-005\tGestão de Mudanças\tlideranca\nLID-006\tInfluência e Negociação\tlideranca\nLID-007\tGestão de Conflitos\tlideranca\nLID-008\tPensamento Sistêmico\tlideranca\n",
+  "stderr": "",
+  "execution_time_ms": 46
+}

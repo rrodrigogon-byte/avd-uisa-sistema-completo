@@ -1,0 +1,50 @@
+{
+  "query": "SELECT id, title FROM positions WHERE title LIKE '%Gerente%' OR title LIKE '%Coordenador%' OR title LIKE '%Diretor%' OR title LIKE '%Analista%' OR title LIKE '%Operador%' LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, title FROM positions WHERE title LIKE '%Gerente%' OR title LIKE '%Coordenador%' OR title LIKE '%Diretor%' OR title LIKE '%Analista%' OR title LIKE '%Operador%' LIMIT 10",
+  "rows": [
+    {
+      "id": "4",
+      "title": "Analista de RH"
+    },
+    {
+      "id": "30006",
+      "title": "Analista Laboratorio Agricola II"
+    },
+    {
+      "id": "30007",
+      "title": "Operador Fabricação de Etanol Líder"
+    },
+    {
+      "id": "30008",
+      "title": "Gerente Originação e Parceria Agrícola"
+    },
+    {
+      "id": "30009",
+      "title": "Coordenador de Planejamento e Custos Industriais"
+    },
+    {
+      "id": "30012",
+      "title": "Operador Extração de Caldo Líder"
+    },
+    {
+      "id": "30018",
+      "title": "Operador Fabricação de Etanol III"
+    },
+    {
+      "id": "30020",
+      "title": "Diretor Comercial"
+    },
+    {
+      "id": "30023",
+      "title": "Operador Maquina Movel (Diversas)"
+    },
+    {
+      "id": "30025",
+      "title": "Operador Trat. Caldo/Fábrica de Açúcar II"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\n4\tAnalista de RH\n30006\tAnalista Laboratorio Agricola II\n30007\tOperador Fabricação de Etanol Líder\n30008\tGerente Originação e Parceria Agrícola\n30009\tCoordenador de Planejamento e Custos Industriais\n30012\tOperador Extração de Caldo Líder\n30018\tOperador Fabricação de Etanol III\n30020\tDiretor Comercial\n30023\tOperador Maquina Movel (Diversas)\n30025\tOperador Trat. Caldo/Fábrica de Açúcar II\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

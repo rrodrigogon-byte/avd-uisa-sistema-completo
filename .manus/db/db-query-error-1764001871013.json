@@ -1,0 +1,8 @@
+{
+  "query": "-- Aprovar o ciclo 1\nUPDATE evaluationCycles \nSET status = 'ativo', \n    approvedAt = NOW(),\n    approvedBy = 1,\n    updatedAt = NOW()\nWHERE id = 1;\n\n-- Verificar o ciclo atualizado\nSELECT id, name, status, startDate, endDate, approvedAt, approvedBy \nFROM evaluationCycles \nWHERE id = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute -- Aprovar o ciclo 1\nUPDATE evaluationCycles \nSET status = 'ativo', \n    approvedAt = NOW(),\n    approvedBy = 1,\n    updatedAt = NOW()\nWHERE id = 1;\n\n-- Verificar o ciclo atualizado\nSELECT id, name, status, startDate, endDate, approvedAt, approvedBy \nFROM evaluationCycles \nWHERE id = 1;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 2: Unknown column 'approvedAt' in 'field list'"
+  ]
+}

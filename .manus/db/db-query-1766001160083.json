@@ -1,0 +1,120 @@
+{
+  "query": "SELECT * FROM pirIntegrityDimensions LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT * FROM pirIntegrityDimensions LIMIT 10",
+  "rows": [
+    {
+      "id": "1",
+      "code": "HON",
+      "name": "Honestidade",
+      "description": "Capacidade de ser verdadeiro, transparente e sincero em todas as interações.",
+      "weight": "100",
+      "active": "1",
+      "displayOrder": "1",
+      "createdAt": "2025-12-15 12:13:40",
+      "updatedAt": "2025-12-16 01:10:39"
+    },
+    {
+      "id": "2",
+      "code": "CON",
+      "name": "Confiabilidade",
+      "description": "Capacidade de cumprir compromissos, ser consistente e manter a palavra dada.",
+      "weight": "100",
+      "active": "1",
+      "displayOrder": "2",
+      "createdAt": "2025-12-15 12:13:40",
+      "updatedAt": "2025-12-16 01:11:33"
+    },
+    {
+      "id": "3",
+      "code": "RES",
+      "name": "Resiliência Ética",
+      "description": "Capacidade de manter princípios éticos mesmo sob pressão ou adversidade.",
+      "weight": "100",
+      "active": "1",
+      "displayOrder": "3",
+      "createdAt": "2025-12-15 12:13:40",
+      "updatedAt": "2025-12-16 01:11:41"
+    },
+    {
+      "id": "4",
+      "code": "RSP",
+      "name": "Responsabilidade",
+      "description": "Capacidade de assumir responsabilidade por ações, decisões e suas consequências.",
+      "weight": "100",
+      "active": "1",
+      "displayOrder": "4",
+      "createdAt": "2025-12-15 12:13:40",
+      "updatedAt": "2025-12-16 01:11:55"
+    },
+    {
+      "id": "5",
+      "code": "JUS",
+      "name": "Justiça",
+      "description": "Capacidade de tratar pessoas de forma equitativa e tomar decisões imparciais.",
+      "weight": "100",
+      "active": "1",
+      "displayOrder": "5",
+      "createdAt": "2025-12-15 12:13:40",
+      "updatedAt": "2025-12-16 01:12:02"
+    },
+    {
+      "id": "6",
+      "code": "COR",
+      "name": "Coragem Moral",
+      "description": "Capacidade de agir de acordo com princípios éticos mesmo quando há riscos pessoais.",
+      "weight": "100",
+      "active": "1",
+      "displayOrder": "6",
+      "createdAt": "2025-12-15 12:13:40",
+      "updatedAt": "2025-12-16 01:12:14"
+    },
+    {
+      "id": "7",
+      "code": "IP",
+      "name": "Integridade Pessoal",
+      "description": "Avalia a consistência entre valores pessoais e comportamentos",
+      "weight": "100",
+      "active": "0",
+      "displayOrder": "1",
+      "createdAt": "2025-12-15 16:34:59",
+      "updatedAt": "2025-12-16 01:10:33"
+    },
+    {
+      "id": "8",
+      "code": "ID",
+      "name": "Integridade Decisória",
+      "description": "Avalia a qualidade ética das decisões tomadas",
+      "weight": "100",
+      "active": "0",
+      "displayOrder": "2",
+      "createdAt": "2025-12-15 16:34:59",
+      "updatedAt": "2025-12-16 01:10:33"
+    },
+    {
+      "id": "9",
+      "code": "IC",
+      "name": "Integridade Comportamental",
+      "description": "Avalia a coerência entre discurso e ação",
+      "weight": "100",
+      "active": "0",
+      "displayOrder": "3",
+      "createdAt": "2025-12-15 16:34:59",
+      "updatedAt": "2025-12-16 01:10:33"
+    },
+    {
+      "id": "10",
+      "code": "ES",
+      "name": "Estabilidade",
+      "description": "Avalia a consistência emocional e comportamental ao longo do tempo",
+      "weight": "100",
+      "active": "0",
+      "displayOrder": "4",
+      "createdAt": "2025-12-15 16:34:59",
+      "updatedAt": "2025-12-16 01:10:33"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tname\tdescription\tweight\tactive\tdisplayOrder\tcreatedAt\tupdatedAt\n1\tHON\tHonestidade\tCapacidade de ser verdadeiro, transparente e sincero em todas as interações.\t100\t1\t1\t2025-12-15 12:13:40\t2025-12-16 01:10:39\n2\tCON\tConfiabilidade\tCapacidade de cumprir compromissos, ser consistente e manter a palavra dada.\t100\t1\t2\t2025-12-15 12:13:40\t2025-12-16 01:11:33\n3\tRES\tResiliência Ética\tCapacidade de manter princípios éticos mesmo sob pressão ou adversidade.\t100\t1\t3\t2025-12-15 12:13:40\t2025-12-16 01:11:41\n4\tRSP\tResponsabilidade\tCapacidade de assumir responsabilidade por ações, decisões e suas consequências.\t100\t1\t4\t2025-12-15 12:13:40\t2025-12-16 01:11:55\n5\tJUS\tJustiça\tCapacidade de tratar pessoas de forma equitativa e tomar decisões imparciais.\t100\t1\t5\t2025-12-15 12:13:40\t2025-12-16 01:12:02\n6\tCOR\tCoragem Moral\tCapacidade de agir de acordo com princípios éticos mesmo quando há riscos pessoais.\t100\t1\t6\t2025-12-15 12:13:40\t2025-12-16 01:12:14\n7\tIP\tIntegridade Pessoal\tAvalia a consistência entre valores pessoais e comportamentos\t100\t0\t1\t2025-12-15 16:34:59\t2025-12-16 01:10:33\n8\tID\tIntegridade Decisória\tAvalia a qualidade ética das decisões tomadas\t100\t0\t2\t2025-12-15 16:34:59\t2025-12-16 01:10:33\n9\tIC\tIntegridade Comportamental\tAvalia a coerência entre discurso e ação\t100\t0\t3\t2025-12-15 16:34:59\t2025-12-16 01:10:33\n10\tES\tEstabilidade\tAvalia a consistência emocional e comportamental ao longo do tempo\t100\t0\t4\t2025-12-15 16:34:59\t2025-12-16 01:10:33\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

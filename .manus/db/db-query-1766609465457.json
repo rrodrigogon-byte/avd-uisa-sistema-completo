@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as total_desativados FROM employees WHERE active = 0 AND (employeeCode = '2184889' OR managerId IN (SELECT id FROM employees WHERE employeeCode = '2184889'));",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT COUNT(*) as total_desativados FROM employees WHERE active = 0 AND (employeeCode = '2184889' OR managerId IN (SELECT id FROM employees WHERE employeeCode = '2184889'));",
+  "rows": [
+    {
+      "total_desativados": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_desativados\n2\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

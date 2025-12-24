@@ -1,0 +1,32 @@
+{
+  "query": "SELECT * FROM testResults WHERE id = 30020 LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT * FROM testResults WHERE id = 30020 LIMIT 1;",
+  "rows": [
+    {
+      "id": "30020",
+      "invitationId": "30024",
+      "employeeId": "692765",
+      "testType": "careeranchors",
+      "scores": "{\"competencia_tecnica\":3.4,\"competencia_gerencial\":4.6,\"autonomia\":3,\"seguranca\":4.2,\"criatividade_empreendedora\":3.4,\"servico\":4.2,\"desafio\":3.2,\"estilo_vida\":4.8}",
+      "profileType": "Estilo de Vida",
+      "profileDescription": "Âncora Principal: Estilo de Vida (4.8), Segunda Âncora: Competência Gerencial (4.6)",
+      "strengths": "NULL",
+      "developmentAreas": "NULL",
+      "workStyle": "NULL",
+      "communicationStyle": "NULL",
+      "leadershipStyle": "NULL",
+      "motivators": "NULL",
+      "stressors": "NULL",
+      "teamContribution": "NULL",
+      "careerRecommendations": "NULL",
+      "rawData": "NULL",
+      "completedAt": "2025-12-12 17:09:22",
+      "createdAt": "2025-12-12 17:09:22",
+      "updatedAt": "2025-12-12 17:09:22"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tinvitationId\temployeeId\ttestType\tscores\tprofileType\tprofileDescription\tstrengths\tdevelopmentAreas\tworkStyle\tcommunicationStyle\tleadershipStyle\tmotivators\tstressors\tteamContribution\tcareerRecommendations\trawData\tcompletedAt\tcreatedAt\tupdatedAt\n30020\t30024\t692765\tcareeranchors\t{\"competencia_tecnica\":3.4,\"competencia_gerencial\":4.6,\"autonomia\":3,\"seguranca\":4.2,\"criatividade_empreendedora\":3.4,\"servico\":4.2,\"desafio\":3.2,\"estilo_vida\":4.8}\tEstilo de Vida\tÂncora Principal: Estilo de Vida (4.8), Segunda Âncora: Competência Gerencial (4.6)\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t2025-12-12 17:09:22\t2025-12-12 17:09:22\t2025-12-12 17:09:22\n",
+  "stderr": "",
+  "execution_time_ms": 91
+}

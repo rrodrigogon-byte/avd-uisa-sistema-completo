@@ -1,0 +1,30 @@
+{
+  "query": "SELECT id, title FROM smartGoals WHERE employeeId = 1 ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, title FROM smartGoals WHERE employeeId = 1 ORDER BY id DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "60005",
+      "title": "Lançar 3 Novos Produtos"
+    },
+    {
+      "id": "60004",
+      "title": "Aumentar NPS em 20 pontos"
+    },
+    {
+      "id": "60003",
+      "title": "Reduzir Tempo de Resposta"
+    },
+    {
+      "id": "60002",
+      "title": "Implementar CRM Completo"
+    },
+    {
+      "id": "60001",
+      "title": "Aumentar Vendas em 25%"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\n60005\tLançar 3 Novos Produtos\n60004\tAumentar NPS em 20 pontos\n60003\tReduzir Tempo de Resposta\n60002\tImplementar CRM Completo\n60001\tAumentar Vendas em 25%\n",
+  "stderr": "",
+  "execution_time_ms": 47
+}

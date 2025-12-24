@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `bonusWorkflows` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `description` text,\n  `approver1Id` int,\n  `approver1Role` varchar(100),\n  `approver2Id` int,\n  `approver2Role` varchar(100),\n  `approver3Id` int,\n  `approver3Role` varchar(100),\n  `approver4Id` int,\n  `approver4Role` varchar(100),\n  `approver5Id` int,\n  `approver5Role` varchar(100),\n  `requireAllApprovals` boolean NOT NULL DEFAULT true,\n  `isActive` boolean NOT NULL DEFAULT true,\n  `createdBy` int NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `bonusWorkflows_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `bonusWorkflows` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `description` text,\n  `approver1Id` int,\n  `approver1Role` varchar(100),\n  `approver2Id` int,\n  `approver2Role` varchar(100),\n  `approver3Id` int,\n  `approver3Role` varchar(100),\n  `approver4Id` int,\n  `approver4Role` varchar(100),\n  `approver5Id` int,\n  `approver5Role` varchar(100),\n  `requireAllApprovals` boolean NOT NULL DEFAULT true,\n  `isActive` boolean NOT NULL DEFAULT true,\n  `createdBy` int NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `bonusWorkflows_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 189
+}

@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `employeeHistory` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `employeeId` int NOT NULL,\n  `changeType` enum('cargo','departamento','salario','gestor','status','dados_pessoais','contratacao','desligamento','promocao','transferencia','outro') NOT NULL,\n  `fieldName` varchar(100) NOT NULL,\n  `oldValue` text,\n  `newValue` text,\n  `reason` text,\n  `notes` text,\n  `changedBy` int NOT NULL,\n  `changedAt` timestamp NOT NULL DEFAULT (now()),\n  `metadata` json,\n  CONSTRAINT `employeeHistory_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `employeeHistory` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `employeeId` int NOT NULL,\n  `changeType` enum('cargo','departamento','salario','gestor','status','dados_pessoais','contratacao','desligamento','promocao','transferencia','outro') NOT NULL,\n  `fieldName` varchar(100) NOT NULL,\n  `oldValue` text,\n  `newValue` text,\n  `reason` text,\n  `notes` text,\n  `changedBy` int NOT NULL,\n  `changedAt` timestamp NOT NULL DEFAULT (now()),\n  `metadata` json,\n  CONSTRAINT `employeeHistory_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 246
+}
