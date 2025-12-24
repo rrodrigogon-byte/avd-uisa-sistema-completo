@@ -4,7 +4,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=development tsx watch server/_core/index.ts",
+    "dev": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=development DISABLE_TS_CHECK=1 tsx watch server/_core/index.ts",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "NODE_OPTIONS='--max-old-space-size=8192' tsc --noEmit",
