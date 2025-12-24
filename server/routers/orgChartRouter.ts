@@ -777,4 +777,185 @@ export const orgChartRouter = router({
         alerts: alerts || [],
       };
     }),
+
+  /**
+   * Obter organograma hierárquico completo
+   * Retorna árvore de funcionários com subordinados
+   */
+  getOrgChart: protectedProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      // Buscar todos os funcionários ativos
+      const allEmployees = await db
+        .select({
+          id: employees.id,
+          employeeCode: employees.employeeCode,
+          name: employees.name,
+          email: employees.email,
+          managerId: employees.managerId,
+          departmentId: employees.departmentId,
+          departmentName: departments.name,
+          positionId: employees.positionId,
+          positionTitle: positions.title,
+          photoUrl: employees.photoUrl,
+          active: employees.active,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(employees.positionId, positions.id))
+        .where(eq(employees.active, true));
+      
+      // Construir árvore hierárquica
+      const buildTree = (parentId: number | null): any[] => {
+        return allEmployees
+          .filter(emp => emp.managerId === parentId)
+          .map(emp => ({
+            ...emp,
+            subordinates: buildTree(emp.id),
+          }));
+      };
+      
+      const tree = buildTree(null);
+      
+      return {
+        tree,
+        totalEmployees: allEmployees.length,
+      };
+    }),
+
+  /**
+   * Atualizar gestor de um funcionário
+   */
+  updateManager: protectedProcedure
+    .input(z.object({
+      employeeId: z.number(),
+      newManagerId: z.number().nullable(),
+      reason: z.string().optional(),
+      changeType: z.enum(['promocao', 'transferencia', 'reorganizacao', 'desligamento_gestor', 'ajuste_hierarquico', 'outro']).optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      // Buscar funcionário atual
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, input.employeeId))
+        .limit(1);
+      
+      if (!employee) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Funcionário não encontrado' });
+      }
+      
+      // Validar que não está tentando ser gestor de si mesmo
+      if (input.newManagerId === input.employeeId) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Funcionário não pode ser gestor de si mesmo' });
+      }
+      
+      // Validar ciclo na hierarquia
+      if (input.newManagerId) {
+        let currentManagerId: number | null = input.newManagerId;
+        while (currentManagerId) {
+          if (currentManagerId === input.employeeId) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Esta alteração criaria um ciclo na hierarquia' });
+          }
+          const [manager] = await db
+            .select({ managerId: employees.managerId })
+            .from(employees)
+            .where(eq(employees.id, currentManagerId))
+            .limit(1);
+          currentManagerId = manager?.managerId || null;
+        }
+      }
+      
+      // Registrar no histórico de mudanças
+      await db.insert(managerChangeHistory).values({
+        employeeId: input.employeeId,
+        previousManagerId: employee.managerId,
+        newManagerId: input.newManagerId,
+        changeType: input.changeType || 'ajuste_hierarquico',
+        reason: input.reason || null,
+        changedBy: ctx.user.id,
+        changeDate: new Date(),
+      });
+      
+      // Atualizar gestor do funcionário
+      await db.update(employees)
+        .set({ managerId: input.newManagerId })
+        .where(eq(employees.id, input.employeeId));
+      
+      return {
+        success: true,
+        message: 'Gestor atualizado com sucesso',
+      };
+    }),
+
+  /**
+   * Desativar funcionário e todos os subordinados em cascata
+   * Usa soft delete para manter histórico
+   */
+  deactivateEmployeeAndSubordinates: adminProcedure
+    .input(z.object({
+      employeeId: z.number(),
+      reason: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      // Função recursiva para buscar todos os subordinados
+      const getAllSubordinates = async (managerId: number): Promise<number[]> => {
+        const directSubordinates = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.managerId, managerId));
+        
+        let allSubordinates: number[] = directSubordinates.map(e => e.id);
+        
+        // Recursivamente buscar subordinados dos subordinados
+        for (const subordinate of directSubordinates) {
+          const subSubordinates = await getAllSubordinates(subordinate.id);
+          allSubordinates = [...allSubordinates, ...subSubordinates];
+        }
+        
+        return allSubordinates;
+      };
+      
+      // Buscar todos os subordinados
+      const subordinateIds = await getAllSubordinates(input.employeeId);
+      const allEmployeeIds = [input.employeeId, ...subordinateIds];
+      
+      // Desativar todos os funcionários (soft delete)
+      await db.update(employees)
+        .set({ active: false })
+        .where(sql`${employees.id} IN (${allEmployeeIds.join(',')})`);
+      
+      // Registrar no histórico de movimentações
+      for (const empId of allEmployeeIds) {
+        await db.insert(employeeMovements).values({
+          employeeId: empId,
+          previousDepartmentId: null,
+          previousPositionId: null,
+          previousManagerId: null,
+          newDepartmentId: null,
+          newPositionId: null,
+          newManagerId: null,
+          movementType: 'outro',
+          reason: input.reason || 'Desativação em cascata',
+          notes: `Desativado junto com gestor ID ${input.employeeId}`,
+          effectiveDate: new Date(),
+          createdBy: ctx.user.id,
+        });
+      }
+      
+      return {
+        success: true,
+        message: `${allEmployeeIds.length} funcionário(s) desativado(s) com sucesso`,
+        deactivatedCount: allEmployeeIds.length,
+        deactivatedIds: allEmployeeIds,
+      };
+    }),
 });

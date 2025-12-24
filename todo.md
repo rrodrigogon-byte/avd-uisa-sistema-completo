@@ -1280,3 +1280,58 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
   - [ ] Timeline visual do fluxo
   - [ ] Prazos destacados
   - [ ] Envio de lembretes automáticos
+
+
+---
+
+## 🆕 NOVAS SOLICITAÇÕES (24/12/2025)
+
+### Organograma Interativo Multinível
+- [ ] Corrigir erro atual do organograma
+- [ ] Implementar visualização hierárquica multinível completa
+  - [ ] Nível 1: Conselho (cor específica)
+  - [ ] Nível 2: CEO (cor específica)
+  - [ ] Nível 3: Diretores (cor específica)
+  - [ ] Nível 4: Gerentes (cor específica)
+  - [ ] Níveis subsequentes com cores diferenciadas
+- [ ] Adicionar funcionalidade de expansão/colapso por nível
+- [ ] Implementar navegação interativa entre níveis
+- [ ] Garantir responsividade do organograma em todos os dispositivos
+
+### Interface de Listagem Responsiva
+- [ ] Criar tabela responsiva ajustável
+- [ ] Implementar filtros avançados:
+  - [ ] Filtro por departamento
+  - [ ] Filtro por cargo
+  - [ ] Filtro por status
+- [ ] Corrigir problema de texto cortado na interface
+- [ ] Adicionar paginação eficiente
+- [ ] Implementar busca por nome/email
+
+### Publicação
+- [ ] Criar checkpoint final com todas as correções
+- [ ] Publicar usando botão "Publish" na interface
+
+
+## 🆕 NOVAS SOLICITAÇÕES - Organograma e Exclusão (24/12/2025)
+
+### Exclusão de Funcionários
+- [x] Criar procedure para excluir Alessandro (ID: 2184889) e todos os subordinados em cascata
+- [x] Implementar lógica recursiva para buscar todos os subordinados
+- [x] Desativar funcionários ao invés de deletar (soft delete) para manter histórico
+- [x] Testar exclusão e verificar que todos os 28 subordinados foram desativados
+
+### Organograma - Funcionalidades Pendentes
+- [x] Adicionar filtros por departamento, cargo e status
+- [x] Implementar busca por nome de funcionário
+- [x] Adicionar botões de expansão/colapso de todos os níveis
+- [ ] Implementar drag-and-drop para reorganizar hierarquia
+- [ ] Adicionar modal de edição de gestor
+- [ ] Implementar exportação do organograma como imagem
+
+### Descrição de Cargos - Finalização
+- [x] Verificar se todas as descrições de cargos estão completas
+- [x] Implementar formulário de criação/edição de descrição de cargo
+- [x] Adicionar campos: responsabilidades, requisitos, competências
+- [x] Implementar aprovação de descrições de cargos
+- [x] Criar relatório de descrições de cargos
