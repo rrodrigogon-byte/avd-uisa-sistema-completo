@@ -1340,3 +1340,36 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [x] Adicionar campos: responsabilidades, requisitos, competências
 - [x] Implementar aprovação de descrições de cargos
 - [x] Criar relatório de descrições de cargos
+
+
+## 🆕 MELHORIAS SOLICITADAS (24/12/2025 - Tarde)
+
+### Ajustes de Hierarquia Organizacional
+- [ ] Ajustar relacionamento: Geane ligada a Rodrigo (via SQL)
+- [ ] Reposicionar Conselho acima de Mazuca na hierarquia (via SQL)
+- [ ] Excluir profissionais de Geo do sistema (via SQL)
+
+### Sistema de Movimentação e Exclusão de Funcionários
+- [x] Implementar movimentação de funcionários entre departamentos/líderes
+- [x] Garantir que movimentações reflitam em todo o sistema (avaliações, metas, etc)
+- [x] Implementar exclusão lógica de funcionários (soft delete)
+- [x] Garantir que exclusões reflitam em todo o sistema
+- [x] Criar interface interativa para movimentação em massa
+- [x] Adicionar histórico de movimentações com auditoria
+- [x] Adicionar confirmações e validações antes de movimentações críticas
+
+### Melhorias em Descrições de Cargo
+- [x] Aprimorar interface de criação/edição de descrições de cargo
+- [x] Implementar sistema de aprovação em lote pelo líder
+- [x] Criar painel de aprovações pendentes para líderes
+- [x] Adicionar notificações para aprovações de descrições
+- [x] Implementar histórico de versões das descrições de cargo
+- [x] Adicionar comentários/feedback nas aprovações
+- [x] Permitir aprovação/rejeição em massa de múltiplas descrições
+
+### Infraestrutura e Testes
+- [ ] Criar testes unitários para movimentações de funcionários
+- [ ] Criar testes para sistema de aprovações em lote
+- [x] Validar integridade referencial no banco de dados
+- [x] Documentar novos fluxos de trabalho
+- [x] Criar checkpoint após implementação completa

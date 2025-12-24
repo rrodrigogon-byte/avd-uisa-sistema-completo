@@ -98,6 +98,8 @@ import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
 import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
 import { avdUisaRouter } from "./avdUisaRouter";
+import { employeeManagementRouter } from "./employeeManagementRouter";
+import { jobDescriptionBatchApprovalRouter } from "./jobDescriptionBatchApprovalRouter";
 import { pendenciasRouter } from "./routers/pendenciasRouter";
 import { customReportBuilderRouter } from "./customReportBuilderRouter";
 import { predictiveAnalyticsRouter } from "./predictiveAnalyticsRouter";
@@ -306,6 +308,8 @@ export const appRouter = router({
   avdExport: avdExportRouter,
   pendencias: pendenciasRouter,
   errorMonitoring: errorMonitoringRouter,
+  employeeManagement: employeeManagementRouter,
+  jobDescriptionBatchApproval: jobDescriptionBatchApprovalRouter,
   
   // Novos routers - Três próximos passos
   customReportBuilder: customReportBuilderRouter,

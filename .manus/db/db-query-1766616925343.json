@@ -1,0 +1,19 @@
+{
+  "query": "SELECT \n  id, \n  name, \n  managerId,\n  (SELECT name FROM employees m WHERE m.id = e.managerId) as managerName,\n  gerencia,\n  diretoria,\n  active\nFROM employees e\nWHERE name LIKE '%Geane%' \n   OR name LIKE '%Rodrigo%' \n   OR name LIKE '%Mazuca%' \n   OR name LIKE '%Conselho%'\nORDER BY name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT \n  id, \n  name, \n  managerId,\n  (SELECT name FROM employees m WHERE m.id = e.managerId) as managerName,\n  gerencia,\n  diretoria,\n  active\nFROM employees e\nWHERE name LIKE '%Geane%' \n   OR name LIKE '%Rodrigo%' \n   OR name LIKE '%Mazuca%' \n   OR name LIKE '%Conselho%'\nORDER BY name;",
+  "rows": [
+    {
+      "id": "31294",
+      "name": "Rodrigo Ribeiro goncalves",
+      "managerId": "NULL",
+      "managerName": "NULL",
+      "gerencia": "NULL",
+      "diretoria": "NULL",
+      "active": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tmanagerId\tmanagerName\tgerencia\tdiretoria\tactive\n31294\tRodrigo Ribeiro goncalves\tNULL\tNULL\tNULL\tNULL\t1\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}
