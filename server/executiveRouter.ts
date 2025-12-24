@@ -403,7 +403,7 @@ export const executiveRouter = router({
   /**
    * Tendência de Performance (últimos 6 meses)
    */
-  getPerformanceTrend: adminProcedure.query(async () => {
+  getPerformanceTrend: adminProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -430,7 +430,7 @@ export const executiveRouter = router({
   /**
    * Cobertura de Sucessão (distribuição por nível)
    */
-  getSuccessionCoverage: adminProcedure.query(async () => {
+  getSuccessionCoverage: adminProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

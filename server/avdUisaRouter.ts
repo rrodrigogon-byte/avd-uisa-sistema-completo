@@ -128,7 +128,7 @@ export const avdUisaRouter = router({
   /**
    * Listar minhas avaliações pendentes
    */
-  myPendingEvaluations: protectedProcedure.query(async ({ ctx }) => {
+  myPendingEvaluations: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -431,7 +431,7 @@ export const avdUisaRouter = router({
   /**
    * Listar questões ativas
    */
-  listQuestions: protectedProcedure.query(async ({ ctx }) => {
+  listQuestions: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

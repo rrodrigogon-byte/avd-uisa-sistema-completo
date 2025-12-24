@@ -726,7 +726,7 @@ export const bonusRouter = router({
   /**
    * Obter métricas de aprovação
    */
-  getApprovalMetrics: protectedProcedure.query(async () => {
+  getApprovalMetrics: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

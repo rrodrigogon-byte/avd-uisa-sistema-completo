@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const badgesRouter = router({
   // Buscar todos os badges disponíveis
-  getBadges: protectedProcedure.query(async () => {
+  getBadges: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -101,7 +101,7 @@ export const badgesRouter = router({
     }),
 
   // Estatísticas gerais de badges
-  getStats: protectedProcedure.query(async () => {
+  getStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

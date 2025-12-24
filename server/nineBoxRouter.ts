@@ -193,7 +193,7 @@ export const nineBoxRouter = router({
     }),
 
   // Listar todas as posições disponíveis para comparação
-  getAvailablePositions: protectedProcedure.query(async () => {
+  getAvailablePositions: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const database = await getDb();
     if (!database) return [];
 
@@ -213,7 +213,7 @@ export const nineBoxRouter = router({
   }),
 
   // Buscar líderes (colaboradores com subordinados)
-  getLeaders: protectedProcedure.query(async () => {
+  getLeaders: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const database = await getDb();
     if (!database) return [];
 

@@ -206,7 +206,9 @@ export const pendenciasRouter = router({
   /**
    * Contar pendências por status
    */
-  countByStatus: protectedProcedure.query(async ({ ctx }) => {
+  countByStatus: protectedProcedure
+    .input(z.object({}).optional())
+    .query(async ({ ctx }) => {
     const employee = await db.getUserEmployee(ctx.user.id);
     
     // Se não for admin/rh, contar apenas do usuário

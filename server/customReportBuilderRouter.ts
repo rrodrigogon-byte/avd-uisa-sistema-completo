@@ -38,7 +38,7 @@ export const customReportBuilderRouter = router({
   /**
    * Listar todos os relatórios personalizados do usuário
    */
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

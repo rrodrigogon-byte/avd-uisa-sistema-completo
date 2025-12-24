@@ -1,5 +1,10 @@
 # Sistema AVD UISA - TODO List
 
+## 🚨 CORREÇÕES URGENTES (24/12/2025)
+
+### Problemas Atuais
+- [x] Corrigir erro de validação tRPC: "Invalid input: expected object, received undefined" - 55 procedures corrigidas + testes automatizados
+
 ## 🚨 CORREÇÕES URGENTES (17/12/2025)
 
 ### Problemas Atuais

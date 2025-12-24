@@ -221,7 +221,7 @@ export const accessControlRouter = router({
   /**
    * Obter permissões do usuário atual
    */
-  getMyPermissions: protectedProcedure.query(async ({ ctx }) => {
+  getMyPermissions: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     return getUserPermissions(ctx.user.id);
   }),
 

@@ -323,7 +323,7 @@ export const jobDescriptionRouter = router({
   /**
    * Listar descrições pendentes de aprovação do superior
    */
-  listPendingSuperior: protectedProcedure.query(async ({ ctx }) => {
+  listPendingSuperior: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
 
@@ -334,7 +334,7 @@ export const jobDescriptionRouter = router({
   /**
    * Listar descrições pendentes de aprovação do RH
    */
-  listPendingHR: protectedProcedure.query(async ({ ctx }) => {
+  listPendingHR: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
 
@@ -345,7 +345,7 @@ export const jobDescriptionRouter = router({
   /**
    * Listar todas as descrições de cargo
    */
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
 

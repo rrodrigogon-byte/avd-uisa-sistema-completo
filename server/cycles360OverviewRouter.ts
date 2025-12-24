@@ -196,7 +196,7 @@ export const cycles360OverviewRouter = router({
   /**
    * Obter estatísticas gerais de todos os ciclos
    */
-  getOverallStats: protectedProcedure.query(async ({ ctx }) => {
+  getOverallStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
