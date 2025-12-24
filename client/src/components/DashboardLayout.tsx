@@ -112,6 +112,7 @@ const menuItems = [
       { icon: LayoutDashboard, label: "Dashboard Principal", path: "/" },
       { icon: Gauge, label: "Dashboard Executivo", path: "/dashboard-executivo" },
       { icon: Activity, label: "Visão Integrada", path: "/performance-integrada" },
+      { icon: BarChart, label: "Dashboard de Gestão", path: "/gestao/dashboard" },
     ],
   },
   
@@ -209,7 +210,7 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: Users, label: "Funcionários", path: "/funcionarios" },
-      { icon: Edit3, label: "Gerenciar", path: "/funcionarios/gerenciar" },
+      { icon: UserCog, label: "Gerenciar Funcionários", path: "/funcionarios/gerenciar" },
       { icon: UserCheck, label: "Ativos", path: "/funcionarios-ativos" },
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
       { icon: Briefcase, label: "Centros de Custo", path: "/centros-custos" },
@@ -271,7 +272,7 @@ const menuItems = [
       { icon: Gift, label: "Bônus", path: "/aprovacoes/bonus", badge: "bonus_pendentes" },
       { icon: Calendar, label: "Ciclos", path: "/aprovacoes/ciclos-avaliacao" },
       { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
-      { icon: Briefcase, label: "Descrições de Cargo", path: "/aprovacoes/cargos" },
+      { icon: Briefcase, label: "Aprovação de Descrições", path: "/aprovacoes/cargos", badge: "descricoes_pendentes" },
     ],
   },
   

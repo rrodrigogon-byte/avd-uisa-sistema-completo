@@ -306,12 +306,14 @@ import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 import DashboardAprovacoesCargos from "./pages/job-descriptions/DashboardAprovacoes";
 import FormularioCargo from "./pages/job-descriptions/FormularioCargo";
 import TestesIntegridade from "./pages/integrity-tests/TestesIntegridade";
+import DashboardGestao from "./pages/DashboardGestao";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path="/gestor" component={DashboardGestor} />
+      <Route path="/gestao/dashboard" component={DashboardGestao} />
       <Route path="/configuracoes/smtp" component={ConfiguracoesSMTP} />
       <Route path="/configuracoes/notificacoes" component={NotificacoesConfig} />
       <Route path="/reconhecimento-facial/cadastro" component={FaceRegistration} />

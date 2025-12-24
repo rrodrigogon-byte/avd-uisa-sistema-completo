@@ -1373,3 +1373,43 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [x] Validar integridade referencial no banco de dados
 - [x] Documentar novos fluxos de trabalho
 - [x] Criar checkpoint após implementação completa
+
+
+## 🆕 NOVAS FUNCIONALIDADES (24/12/2025 - Tarde)
+
+### Ajustes de Hierarquia Organizacional
+- [x] Interface de gerenciamento de funcionários disponível e funcional
+- [x] Sistema permite ajustes de hierarquia através da interface
+- [x] Sistema permite ativação/desativação de funcionários
+- [x] Ajustes específicos podem ser feitos através de /funcionarios/gerenciar
+
+### Navegação e Menu Principal
+- [x] Adicionar link "Gerenciar Funcionários" no menu principal do DashboardLayout
+- [x] Adicionar link "Aprovação de Descrições" no menu principal do DashboardLayout
+- [x] Melhorar estrutura de navegação para facilitar acesso rápido
+
+### Dashboard de Gestão Consolidado
+- [x] Criar página DashboardGestao.tsx
+- [x] Implementar estatísticas de movimentações (total, pendentes, aprovadas, rejeitadas)
+- [x] Implementar contador de aprovações pendentes (descrições, PDIs, avaliações, bônus)
+- [x] Implementar estatísticas de funcionários (total, ativos, inativos)
+- [x] Implementar feed de ações recentes (últimas 10 ações)
+- [x] Adicionar ações rápidas para navegação
+- [x] Criar gestaoRouter no backend com procedures
+- [x] Integrar dashboard na rota principal /gestao/dashboard
+- [x] Adicionar link no menu de navegação (seção Início)
+
+### Status de Implementação (24/12/2025 - 18:25)
+- [x] Adicionar link "Gerenciar Funcionários" no menu principal do DashboardLayout - Renomeado para "Gerenciar Funcionários" com ícone UserCog
+- [x] Adicionar link "Aprovação de Descrições" no menu principal do DashboardLayout - Renomeado para "Aprovação de Descrições" com badge de contagem
+
+### Implementação Concluída (24/12/2025 - 18:26)
+- [x] Criar página DashboardGestao.tsx com estatísticas consolidadas
+- [x] Criar router gestao no backend (gestaoRouter.ts)
+- [x] Adicionar rota /gestao/dashboard no App.tsx
+- [x] Adicionar link "Dashboard de Gestão" no menu de Início
+- [x] Implementar estatísticas de movimentações (total, pendentes, aprovadas, rejeitadas)
+- [x] Implementar contador de aprovações pendentes (descrições, PDIs, avaliações, bônus)
+- [x] Implementar estatísticas de funcionários (total, ativos, inativos)
+- [x] Implementar feed de ações recentes com últimas 10 ações
+- [x] Adicionar ações rápidas para navegação

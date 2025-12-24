@@ -98,6 +98,7 @@ import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
 import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
 import { avdUisaRouter } from "./avdUisaRouter";
+import { gestaoRouter } from "./routers/gestaoRouter";
 import { employeeManagementRouter } from "./employeeManagementRouter";
 import { jobDescriptionBatchApprovalRouter } from "./jobDescriptionBatchApprovalRouter";
 import { pendenciasRouter } from "./routers/pendenciasRouter";
@@ -298,6 +299,7 @@ const hierarchyRouter = router({
 export const appRouter = router({
   system: systemRouter,
   admin: adminRouter,
+  gestao: gestaoRouter,
   adminAdvanced: adminAdvancedRouter,
   audit: auditRouter,
   auditAlerts: auditAlertsRouter,
