@@ -2286,39 +2286,76 @@ export type InsertPulseSurveyEmailLog = typeof pulseSurveyEmailLogs.$inferInsert
 export const jobDescriptions = mysqlTable("jobDescriptions", {
   id: int("id").autoincrement().primaryKey(),
   
-  // Informações Básicas (Cabeçalho)
+  // ========== IDENTIFICAÇÃO ==========
   positionId: int("positionId").notNull(), // Vinculação com tabela positions
   positionTitle: varchar("positionTitle", { length: 255 }).notNull(), // Cargo
+  positionCode: varchar("positionCode", { length: 50 }), // Código do cargo
   departmentId: int("departmentId").notNull(),
-  departmentName: varchar("departmentName", { length: 255 }).notNull(), // Depto
+  departmentName: varchar("departmentName", { length: 255 }).notNull(), // Departamento
+  division: varchar("division", { length: 255 }), // Divisão/Área
+  hierarchyLevel: mysqlEnum("hierarchyLevel", ["junior", "pleno", "senior", "coordenacao", "gerencia", "diretoria"]), // Nível hierárquico
   cbo: varchar("cbo", { length: 50 }), // Código Brasileiro de Ocupações
-  division: varchar("division", { length: 255 }), // Divisão (ex: ADMINISTRATIVA)
-  reportsTo: varchar("reportsTo", { length: 255 }), // Superior Imediato (ex: COORDENADOR PLANEJAMENTO CUSTOS)
   revision: varchar("revision", { length: 50 }), // Número da revisão
   
-  // Objetivo Principal do Cargo
-  mainObjective: text("mainObjective").notNull(),
+  // ========== MISSÃO E OBJETIVO ==========
+  mission: text("mission").notNull(), // Missão do cargo (2-3 parágrafos)
+  strategicObjective: text("strategicObjective"), // Objetivo estratégico
+  mainObjective: text("mainObjective"), // Objetivo principal (compatibilidade)
   
-  // Treinamento Obrigatório
-  mandatoryTraining: json("mandatoryTraining"), // Array de strings
+  // ========== RELACIONAMENTOS ==========
+  reportsTo: varchar("reportsTo", { length: 255 }), // Superior imediato
+  subordinates: json("subordinates"), // Array de cargos subordinados
+  internalInterfaces: json("internalInterfaces"), // Áreas de interface interna
+  externalClients: text("externalClients"), // Clientes externos
+  suppliers: text("suppliers"), // Fornecedores
   
-  // Qualificação Desejada
-  educationLevel: varchar("educationLevel", { length: 255 }), // Ex: Ensino Superior
-  requiredExperience: text("requiredExperience"), // Ex: Desejável de 4 a 6 anos no cargo ou posições similares
+  // ========== REQUISITOS TÉCNICOS ==========
+  educationLevel: varchar("educationLevel", { length: 255 }), // Formação acadêmica
+  minimumExperienceYears: int("minimumExperienceYears"), // Anos de experiência mínima
+  requiredExperience: text("requiredExperience"), // Descrição da experiência
+  languages: json("languages"), // Array de {idioma, nivel}
+  certifications: json("certifications"), // Array de certificações
+  mandatoryTraining: json("mandatoryTraining"), // Array de treinamentos obrigatórios
   
-  // e-Social
-  eSocialSpecs: text("eSocialSpecs"), // Especificações do Programa de Medicina e Segurança do Trabalho
+  // ========== INDICADORES DE DESEMPENHO ==========
+  kpis: json("kpis"), // Array de KPIs principais
+  quantitativeGoals: json("quantitativeGoals"), // Array de {metrica, valor}
   
-  // Status e Workflow
-  status: mysqlEnum("status", ["draft", "pending_occupant", "pending_manager", "pending_hr", "approved", "rejected"]).default("draft").notNull(),
+  // ========== CONDIÇÕES DE TRABALHO ==========
+  workSchedule: varchar("workSchedule", { length: 100 }), // Jornada de trabalho
+  workLocation: mysqlEnum("workLocation", ["presencial", "hibrido", "remoto"]).default("presencial"), // Local de trabalho
+  travelFrequency: varchar("travelFrequency", { length: 100 }), // Frequência de viagens
+  specialConditions: text("specialConditions"), // Condições especiais
+  eSocialSpecs: text("eSocialSpecs"), // Especificações e-Social
   
-  // Aprovadores Adicionais (Centro de Custo + Líder C&S)
-  costCenterApproverId: int("costCenterApproverId"), // Aprovador do Centro de Custo
-  salaryLeaderId: int("salaryLeaderId"), // Líder de Cargos e Salários
-  costCenterApprovedAt: datetime("costCenterApprovedAt"), // Data de aprovação do aprovador CC
-  salaryLeaderApprovedAt: datetime("salaryLeaderApprovedAt"), // Data de aprovação do líder C&S
+  // ========== WORKFLOW DE APROVAÇÃO ==========
+  status: mysqlEnum("status", [
+    "draft",                    // Rascunho
+    "pending_leader",           // Aguardando líder da vaga
+    "pending_cs_specialist",    // Aguardando especialista C&S
+    "pending_hr_manager",       // Aguardando gerente RH
+    "pending_director",         // Aguardando diretor
+    "approved",                 // Aprovado
+    "rejected"                  // Rejeitado
+  ]).default("draft").notNull(),
   
-  // Auditoria
+  currentApprovalLevel: int("currentApprovalLevel").default(0), // 0=draft, 1=líder, 2=especialista, 3=gerente, 4=diretor
+  
+  // Campos complementares por aprovadores
+  leaderComments: text("leaderComments"), // Comentários do líder
+  specialistComments: text("specialistComments"), // Comentários do especialista C&S
+  hrManagerComments: text("hrManagerComments"), // Comentários do gerente RH
+  directorComments: text("directorComments"), // Comentários do diretor
+  
+  // ========== PRAZO E NOTIFICAÇÕES ==========
+  approvalDeadline: datetime("approvalDeadline"), // Prazo para aprovação
+  reminderSentAt: datetime("reminderSentAt"), // Última vez que lembrete foi enviado
+  
+  // ========== VERSIONAMENTO ==========
+  versionNumber: int("versionNumber").default(1), // Número da versão
+  previousVersionId: int("previousVersionId"), // ID da versão anterior
+  
+  // ========== AUDITORIA ==========
   createdById: int("createdById").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -5549,44 +5586,59 @@ export type InsertCBOSearchHistory = typeof cboSearchHistory.$inferInsert;
 export const jobDescriptionWorkflow = mysqlTable("jobDescriptionWorkflow", {
   id: int("id").autoincrement().primaryKey(),
   
-  jobDescriptionId: int("jobDescriptionId").notNull(),
+  jobDescriptionId: int("jobDescriptionId").notNull().unique(), // Uma descrição tem um workflow
   
-  // Status geral do workflow
+  // Status geral do workflow (sincronizado com jobDescriptions.status)
   status: mysqlEnum("status", [
     "draft",
-    "pending_cs_specialist",  // Nível 1: Especialista C&S
-    "pending_direct_leader",  // Nível 2: Líder Direto
-    "pending_hr_manager",     // Nível 3: Gerente RH
-    "pending_gai_director",   // Nível 4: Diretor GAI
+    "pending_leader",           // Nível 1: Líder da vaga
+    "pending_cs_specialist",    // Nível 2: Especialista C&S
+    "pending_hr_manager",       // Nível 3: Gerente RH
+    "pending_director",         // Nível 4: Diretor (Rodrigo Gonçalves)
     "approved",
     "rejected"
   ]).default("draft").notNull(),
   
-  // Nível atual de aprovação (1-4)
-  currentLevel: int("currentLevel").default(1).notNull(),
+  // Nível atual de aprovação (0-4)
+  currentLevel: int("currentLevel").default(0).notNull(), // 0=draft, 1-4=níveis de aprovação
   
-  // Aprovadores designados para cada nível
-  csSpecialistId: int("csSpecialistId"), // Nível 1
-  directLeaderId: int("directLeaderId"), // Nível 2
-  hrManagerId: int("hrManagerId"),       // Nível 3
-  gaiDirectorId: int("gaiDirectorId"),   // Nível 4
+  // ========== APROVADORES DESIGNADOS ==========
+  leaderId: int("leaderId"),              // Nível 1: Líder da vaga
+  csSpecialistId: int("csSpecialistId"), // Nível 2: Especialista C&S
+  hrManagerId: int("hrManagerId"),       // Nível 3: Gerente RH
+  directorId: int("directorId"),         // Nível 4: Diretor (Rodrigo Gonçalves)
   
-  // Datas de aprovação de cada nível
+  // ========== STATUS DE APROVAÇÃO POR NÍVEL ==========
+  leaderStatus: mysqlEnum("leaderStatus", ["pending", "approved", "rejected"]).default("pending"),
+  csSpecialistStatus: mysqlEnum("csSpecialistStatus", ["pending", "approved", "rejected"]).default("pending"),
+  hrManagerStatus: mysqlEnum("hrManagerStatus", ["pending", "approved", "rejected"]).default("pending"),
+  directorStatus: mysqlEnum("directorStatus", ["pending", "approved", "rejected"]).default("pending"),
+  
+  // ========== DATAS DE APROVAÇÃO ==========
+  leaderApprovedAt: datetime("leaderApprovedAt"),
   csSpecialistApprovedAt: datetime("csSpecialistApprovedAt"),
-  directLeaderApprovedAt: datetime("directLeaderApprovedAt"),
   hrManagerApprovedAt: datetime("hrManagerApprovedAt"),
-  gaiDirectorApprovedAt: datetime("gaiDirectorApprovedAt"),
+  directorApprovedAt: datetime("directorApprovedAt"),
   
-  // Comentários de cada nível
+  // ========== COMENTÁRIOS E COMPLEMENTOS ==========
+  leaderComments: text("leaderComments"),
   csSpecialistComments: text("csSpecialistComments"),
-  directLeaderComments: text("directLeaderComments"),
   hrManagerComments: text("hrManagerComments"),
-  gaiDirectorComments: text("gaiDirectorComments"),
+  directorComments: text("directorComments"),
   
-  // Auditoria
+  // ========== PRAZOS E LEMBRETES ==========
+  approvalDeadline: datetime("approvalDeadline"), // Prazo geral para conclusão
+  level1Deadline: datetime("level1Deadline"), // Prazo nível 1
+  level2Deadline: datetime("level2Deadline"), // Prazo nível 2
+  level3Deadline: datetime("level3Deadline"), // Prazo nível 3
+  level4Deadline: datetime("level4Deadline"), // Prazo nível 4
+  lastReminderSentAt: datetime("lastReminderSentAt"), // Último lembrete enviado
+  
+  // ========== AUDITORIA ==========
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   completedAt: datetime("completedAt"),
+  submittedAt: datetime("submittedAt"), // Quando foi enviado para aprovação
 });
 
 export type JobDescriptionWorkflow = typeof jobDescriptionWorkflow.$inferSelect;

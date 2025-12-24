@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import OrganogramaVisual from "@/components/OrganogramaVisual";
+import OrganogramaInterativo from "@/components/OrganogramaInterativo";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +43,7 @@ import { Textarea } from "@/components/ui/textarea";
 export default function OrganogramaDinamico() {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [movementDialogOpen, setMovementDialogOpen] = useState(false);
+  const [useInteractiveView, setUseInteractiveView] = useState(true);
   const [movementData, setMovementData] = useState({
     movementType: "transferencia" as const,
     reason: "",
@@ -134,6 +136,12 @@ export default function OrganogramaDinamico() {
             <Button onClick={() => refetch()} variant="outline">
               <RefreshCw className="mr-2 h-4 w-4" />
               Atualizar
+            </Button>
+            <Button 
+              onClick={() => setUseInteractiveView(!useInteractiveView)}
+              variant={useInteractiveView ? "default" : "outline"}
+            >
+              {useInteractiveView ? "Visualização Interativa" : "Visualização Simples"}
             </Button>
             <Button onClick={handleGenerateStructure} disabled={generateMutation.isPending}>
               {generateMutation.isPending ? (
@@ -231,6 +239,16 @@ export default function OrganogramaDinamico() {
                   Clique em "Gerar Estrutura" para criar o organograma automaticamente
                 </p>
               </div>
+            ) : useInteractiveView ? (
+              <OrganogramaInterativo
+                data={structure}
+                onEmployeeClick={(employeeId) => {
+                  console.log('Clicked employee:', employeeId);
+                  // Implementar ação ao clicar no funcionário
+                }}
+                onNodeMove={handleNodeMove}
+                editable={false}
+              />
             ) : (
               <OrganogramaVisual
                 structure={structure.nodes}
