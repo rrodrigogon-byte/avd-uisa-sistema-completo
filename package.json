@@ -99,6 +99,8 @@
     "react": "^19.1.1",
     "react-chartjs-2": "^5.3.1",
     "react-day-picker": "^9.11.1",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.64.0",
     "react-organizational-chart": "^2.2.1",

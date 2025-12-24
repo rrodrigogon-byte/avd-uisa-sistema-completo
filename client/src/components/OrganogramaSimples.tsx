@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronDown, ChevronRight, Users, Loader2, Building2, Search, Filter, Maximize2, Minimize2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Users, Loader2, Building2, Search, Filter, Maximize2, Minimize2, Download, FileText } from "lucide-react";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { trpc } from "@/lib/trpc";
 
 interface Employee {
@@ -193,6 +195,72 @@ export function OrganogramaSimples() {
   const [departmentFilter, setDepartmentFilter] = useState("all");
   const [positionFilter, setPositionFilter] = useState("all");
   const [globalExpanded, setGlobalExpanded] = useState<boolean | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Função para exportar como PNG
+  const exportToPNG = async () => {
+    setIsExporting(true);
+    try {
+      const element = document.getElementById('organograma-container');
+      if (!element) {
+        alert('Erro: Elemento do organograma não encontrado');
+        return;
+      }
+      
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true,
+      });
+      
+      const link = document.createElement('a');
+      const date = new Date().toISOString().split('T')[0];
+      link.download = `organograma-uisa-${date}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (error) {
+      console.error('Erro ao exportar PNG:', error);
+      alert('Erro ao exportar organograma como PNG');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Função para exportar como PDF
+  const exportToPDF = async () => {
+    setIsExporting(true);
+    try {
+      const element = document.getElementById('organograma-container');
+      if (!element) {
+        alert('Erro: Elemento do organograma não encontrado');
+        return;
+      }
+      
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true,
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height],
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      const date = new Date().toISOString().split('T')[0];
+      pdf.save(`organograma-uisa-${date}.pdf`);
+    } catch (error) {
+      console.error('Erro ao exportar PDF:', error);
+      alert('Erro ao exportar organograma como PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Extrair departamentos e cargos únicos
   const { departments, positions } = useMemo(() => {
@@ -310,23 +378,53 @@ export function OrganogramaSimples() {
             </Button>
           </div>
         </div>
+
+        {/* Botões de Exportação */}
+        <div className="flex gap-2 justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={exportToPNG}
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 mr-2" />
+            )}
+            Exportar PNG
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={exportToPDF}
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <FileText className="h-4 w-4 mr-2" />
+            )}
+            Exportar PDF
+          </Button>
+        </div>
+
+        {/* Legenda de Cores por Nível */}
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold mb-3">Legenda de Níveis Hierárquicos</h3>
+          <div className="flex flex-wrap gap-3">
+            {LEVEL_COLORS.map((color, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <div className={`w-4 h-4 rounded ${color.badge}`} />
+                <span className="text-xs">Nível {index + 1}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
       </div>
 
-      {/* Legenda de Cores por Nível */}
-      <Card className="p-4">
-        <h3 className="text-sm font-semibold mb-3">Legenda de Níveis Hierárquicos</h3>
-        <div className="flex flex-wrap gap-3">
-          {LEVEL_COLORS.map((color, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <div className={`w-4 h-4 rounded ${color.badge}`} />
-              <span className="text-xs">Nível {index + 1}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
-
       {/* Organograma */}
-      <div className="overflow-x-auto pb-4">
+      <div id="organograma-container" className="overflow-x-auto pb-4">
         <div className="space-y-6 min-w-max">
           {data.tree.map((employee) => (
             <EmployeeNode 

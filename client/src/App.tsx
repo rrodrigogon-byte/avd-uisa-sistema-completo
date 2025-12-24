@@ -536,7 +536,7 @@ function Router() {
       <Route path="/hierarquia-import" component={HierarquiaImport} />
       <Route path="/hierarquia" component={HierarquiaUISA} />
       <Route path="/hierarquia-busca" component={HierarchyView} />
-      <Route path="/organograma" component={OrganogramaSimples} />
+      <Route path="/organograma" component={Organograma} />
       <Route path="/organograma/hierarquia" component={OrganogramaHierarchy} />
       <Route path="/dashboard/notificacoes" component={DashboardNotificacoes} />
       <Route path="/dashboard/auditoria" component={DashboardAuditoria} />

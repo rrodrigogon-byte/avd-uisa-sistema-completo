@@ -190,6 +190,20 @@
       "when": 1766527314899,
       "tag": "0026_bent_silverclaw",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "5",
+      "when": 1766611024905,
+      "tag": "0027_clear_rictor",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "5",
+      "when": 1766615271027,
+      "tag": "0028_cheerful_supernaut",
+      "breakpoints": true
     }
   ]
 }
