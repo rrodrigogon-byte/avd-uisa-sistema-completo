@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `successionHistory` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `planId` int NOT NULL,\n  `candidateId` int,\n  `userId` int NOT NULL,\n  `actionType` enum('plan_created','plan_updated','plan_deleted','candidate_added','candidate_updated','candidate_removed','risk_updated','timeline_updated','development_updated','test_sent') NOT NULL,\n  `fieldName` varchar(100),\n  `oldValue` text,\n  `newValue` text,\n  `notes` text,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `successionHistory_id` PRIMARY KEY(`id`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `successionHistory` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `planId` int NOT NULL,\n  `candidateId` int,\n  `userId` int NOT NULL,\n  `actionType` enum('plan_created','plan_updated','plan_deleted','candidate_added','candidate_updated','candidate_removed','risk_updated','timeline_updated','development_updated','test_sent') NOT NULL,\n  `fieldName` varchar(100),\n  `oldValue` text,\n  `newValue` text,\n  `notes` text,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `successionHistory_id` PRIMARY KEY(`id`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 244
-}

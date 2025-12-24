@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `employeeBadges` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `employeeId` int NOT NULL,\n  `badgeId` int NOT NULL,\n  `earnedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `notified` boolean NOT NULL DEFAULT false\n)",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `employeeBadges` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `employeeId` int NOT NULL,\n  `badgeId` int NOT NULL,\n  `earnedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `notified` boolean NOT NULL DEFAULT false\n)",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 176
-}

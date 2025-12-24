@@ -1,8 +1,0 @@
-{
-  "query": "ALTER TABLE users \nADD COLUMN faceDescriptor TEXT,\nADD COLUMN facePhotoUrl VARCHAR(512),\nADD COLUMN faceRegisteredAt DATETIME;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE users \nADD COLUMN faceDescriptor TEXT,\nADD COLUMN facePhotoUrl VARCHAR(512),\nADD COLUMN faceRegisteredAt DATETIME;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1060 (42S21) at line 1: Duplicate column name 'faceDescriptor'"
-  ]
-}

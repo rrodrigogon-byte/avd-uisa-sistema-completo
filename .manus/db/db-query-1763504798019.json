@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS calibrationMovements (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  employeeId INT NOT NULL,\n  movedBy INT NOT NULL,\n  fromPerformance ENUM('baixo', 'médio', 'alto'),\n  fromPotential ENUM('baixo', 'médio', 'alto'),\n  toPerformance ENUM('baixo', 'médio', 'alto') NOT NULL,\n  toPotential ENUM('baixo', 'médio', 'alto') NOT NULL,\n  justification TEXT NOT NULL,\n  status ENUM('pending', 'approved_hr', 'approved_people_director', 'approved_area_director', 'rejected') DEFAULT 'pending' NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n)",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS calibrationMovements (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  employeeId INT NOT NULL,\n  movedBy INT NOT NULL,\n  fromPerformance ENUM('baixo', 'médio', 'alto'),\n  fromPotential ENUM('baixo', 'médio', 'alto'),\n  toPerformance ENUM('baixo', 'médio', 'alto') NOT NULL,\n  toPotential ENUM('baixo', 'médio', 'alto') NOT NULL,\n  justification TEXT NOT NULL,\n  status ENUM('pending', 'approved_hr', 'approved_people_director', 'approved_area_director', 'rejected') DEFAULT 'pending' NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n)",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1511
-}

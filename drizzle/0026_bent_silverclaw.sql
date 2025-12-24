@@ -1,1 +1,0 @@
-ALTER TABLE `performanceEvaluations` MODIFY COLUMN `status` enum('pendente','em_andamento','concluida','cancelada') NOT NULL DEFAULT 'pendente';

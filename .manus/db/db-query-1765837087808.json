@@ -1,9 +1,0 @@
-{
-  "query": "\nCREATE TABLE IF NOT EXISTS `individualGoalProgress` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `goalId` int NOT NULL,\n  `previousValue` int,\n  `newValue` int NOT NULL,\n  `previousPercent` int,\n  `newPercent` int NOT NULL,\n  `comment` text,\n  `evidence` text,\n  `recordedBy` int NOT NULL,\n  `recordedAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `individualGoalProgress_id` PRIMARY KEY(`id`)\n);\n",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute \nCREATE TABLE IF NOT EXISTS `individualGoalProgress` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `goalId` int NOT NULL,\n  `previousValue` int,\n  `newValue` int NOT NULL,\n  `previousPercent` int,\n  `newPercent` int NOT NULL,\n  `comment` text,\n  `evidence` text,\n  `recordedBy` int NOT NULL,\n  `recordedAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `individualGoalProgress_id` PRIMARY KEY(`id`)\n);\n",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 174
-}
