@@ -41,7 +41,6 @@ import { goalsRouter } from "./goalsRouter";
 import { goalsCascadeRouter } from "./goalsCascadeRouter";
 import { cyclesRouter } from "./cyclesRouter";
 import { jobDescriptionRouter } from "./jobDescriptionRouter";
-import { jobDescriptionsV2Router } from "./jobDescriptionsV2Router";
 import { bonusRouter } from "./routers/bonusRouter";
 import { bonusWorkflowRouter } from "./routers/bonusWorkflowRouter";
 import { calibrationRouter } from "./calibrationRouter";
@@ -5122,7 +5121,6 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   evaluationCycle: evaluationCycleRouter,
   
   jobDescription: jobDescriptionRouter,
-  jobDescriptionsV2: jobDescriptionsV2Router, // Sistema completo de descrições de cargo
   cycles: cyclesRouter, // Alias para compatibilidade
   
   // Router de   // Templates de Ciclos 360°
