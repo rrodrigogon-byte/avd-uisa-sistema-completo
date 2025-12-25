@@ -1,1 +1,0 @@
-ALTER TABLE `testQuestions` MODIFY COLUMN `testType` enum('disc','bigfive','mbti','ie','vark') NOT NULL;

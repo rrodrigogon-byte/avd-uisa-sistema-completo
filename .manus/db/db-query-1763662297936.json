@@ -1,9 +1,0 @@
-{
-  "query": "ALTER TABLE pulseSurveys \nADD COLUMN IF NOT EXISTS targetGroups JSON COMMENT 'Array de grupos',\nADD COLUMN IF NOT EXISTS targetDepartmentIds JSON COMMENT 'Array de IDs de departamentos',\nADD COLUMN IF NOT EXISTS targetCostCenterIds JSON COMMENT 'Array de IDs de centros de custo',\nADD COLUMN IF NOT EXISTS targetEmails JSON COMMENT 'Array de emails específicos';",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE pulseSurveys \nADD COLUMN IF NOT EXISTS targetGroups JSON COMMENT 'Array de grupos',\nADD COLUMN IF NOT EXISTS targetDepartmentIds JSON COMMENT 'Array de IDs de departamentos',\nADD COLUMN IF NOT EXISTS targetCostCenterIds JSON COMMENT 'Array de IDs de centros de custo',\nADD COLUMN IF NOT EXISTS targetEmails JSON COMMENT 'Array de emails específicos';",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1326
-}

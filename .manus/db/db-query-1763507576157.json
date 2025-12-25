@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO pdiPlans (employeeId, cycleId, targetPositionId, status, startDate, endDate, overallProgress, createdAt, updatedAt) VALUES\n(1, 1, NULL, 'aprovado', '2025-01-01', '2025-12-31', 25, NOW(), NOW()),\n(2, 1, NULL, 'em_andamento', '2025-01-01', '2025-12-31', 40, NOW(), NOW()),\n(3, 1, NULL, 'aprovado', '2025-01-01', '2025-12-31', 15, NOW(), NOW()),\n(4, 1, NULL, 'pendente_aprovacao', '2025-02-01', '2025-12-31', 0, NOW(), NOW()),\n(5, 1, NULL, 'aprovado', '2025-01-01', '2025-12-31', 60, NOW(), NOW());",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute INSERT INTO pdiPlans (employeeId, cycleId, targetPositionId, status, startDate, endDate, overallProgress, createdAt, updatedAt) VALUES\n(1, 1, NULL, 'aprovado', '2025-01-01', '2025-12-31', 25, NOW(), NOW()),\n(2, 1, NULL, 'em_andamento', '2025-01-01', '2025-12-31', 40, NOW(), NOW()),\n(3, 1, NULL, 'aprovado', '2025-01-01', '2025-12-31', 15, NOW(), NOW()),\n(4, 1, NULL, 'pendente_aprovacao', '2025-02-01', '2025-12-31', 0, NOW(), NOW()),\n(5, 1, NULL, 'aprovado', '2025-01-01', '2025-12-31', 60, NOW(), NOW());",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 59
-}

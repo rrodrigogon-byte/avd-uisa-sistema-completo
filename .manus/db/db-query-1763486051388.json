@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS performanceReviews (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  employeeId INT NOT NULL,\n  reviewerId INT NOT NULL,\n  cycleId INT NOT NULL,\n  overallRating DECIMAL(3,2),\n  strengths TEXT,\n  areasForImprovement TEXT,\n  goals TEXT,\n  comments TEXT,\n  status ENUM('draft', 'submitted', 'approved') DEFAULT 'draft',\n  submittedAt DATETIME,\n  approvedAt DATETIME,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (employeeId) REFERENCES employees(id) ON DELETE CASCADE,\n  FOREIGN KEY (reviewerId) REFERENCES employees(id) ON DELETE CASCADE\n)",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS performanceReviews (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  employeeId INT NOT NULL,\n  reviewerId INT NOT NULL,\n  cycleId INT NOT NULL,\n  overallRating DECIMAL(3,2),\n  strengths TEXT,\n  areasForImprovement TEXT,\n  goals TEXT,\n  comments TEXT,\n  status ENUM('draft', 'submitted', 'approved') DEFAULT 'draft',\n  submittedAt DATETIME,\n  approvedAt DATETIME,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (employeeId) REFERENCES employees(id) ON DELETE CASCADE,\n  FOREIGN KEY (reviewerId) REFERENCES employees(id) ON DELETE CASCADE\n)",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1570
-}
