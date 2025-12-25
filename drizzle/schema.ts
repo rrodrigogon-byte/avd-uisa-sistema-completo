@@ -8995,3 +8995,12 @@ export const feedback360Reports = mysqlTable("feedback360Reports", {
 
 export type Feedback360Report = typeof feedback360Reports.$inferSelect;
 export type InsertFeedback360Report = typeof feedback360Reports.$inferInsert;
+
+// Re-export from schema-feedback360.ts
+export * from "./schema-feedback360";
+
+// Re-export from schema-okrs.ts
+export * from "./schema-okrs";
+
+// Re-export from schema-clima.ts
+export * from "./schema-clima";

@@ -48,9 +48,9 @@ export default function Feedback360Cycles() {
   const [selectedCycle, setSelectedCycle] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const { data: cycles, isLoading, refetch } = trpc.feedback360.listCycles.useQuery();
-  const createCycleMutation = trpc.feedback360.createCycle.useMutation();
-  const updateCycleMutation = trpc.feedback360.updateCycle.useMutation();
+  const { data: cycles, isLoading, refetch } = trpc.feedback360New.listCycles.useQuery();
+  const createCycleMutation = trpc.feedback360New.createCycle.useMutation();
+  const updateCycleMutation = trpc.feedback360New.updateCycleStatus.useMutation();
 
   const filteredCycles = cycles?.filter((c) =>
     statusFilter === "all" ? true : c.status === statusFilter
@@ -71,7 +71,7 @@ export default function Feedback360Cycles() {
     try {
       await updateCycleMutation.mutateAsync({
         cycleId,
-        status: newStatus as any,
+        status: newStatus as "draft" | "active" | "closed",
       });
       toast.success("Status atualizado com sucesso!");
       refetch();

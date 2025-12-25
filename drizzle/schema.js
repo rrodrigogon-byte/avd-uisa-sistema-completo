@@ -157,6 +157,13 @@ export const positions = mysqlTable("positions", {
     departmentId: int("departmentId"),
     salaryMin: int("salaryMin"),
     salaryMax: int("salaryMax"),
+    // Campos UISA - Descrição Completa do Cargo
+    mission: text("mission"), // Missão do cargo
+    responsibilities: json("responsibilities").$type(), // Lista de responsabilidades
+    technicalCompetencies: json("technicalCompetencies").$type(), // Competências técnicas
+    behavioralCompetencies: json("behavioralCompetencies").$type(), // Competências comportamentais
+    requirements: json("requirements").$type(), // Requisitos
+    kpis: json("kpis").$type(), // Indicadores de performance
     active: boolean("active").default(true).notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -198,6 +205,24 @@ export const employees = mysqlTable("employees", {
         "supervisao",
         "operacional"
     ]),
+    // Hierarquia organizacional completa (do Excel)
+    empresa: varchar("empresa", { length: 255 }), // EMPRESA
+    chapaPresidente: varchar("chapaPresidente", { length: 50 }), // Chapa do Presidente
+    presidente: varchar("presidente", { length: 255 }), // Nome do Presidente
+    funcaoPresidente: varchar("funcaoPresidente", { length: 255 }), // Função do Presidente
+    emailPresidente: varchar("emailPresidente", { length: 320 }), // Email do Presidente
+    chapaDiretor: varchar("chapaDiretor", { length: 50 }), // Chapa do Diretor
+    diretor: varchar("diretor", { length: 255 }), // Nome do Diretor
+    funcaoDiretor: varchar("funcaoDiretor", { length: 255 }), // Função do Diretor
+    emailDiretor: varchar("emailDiretor", { length: 320 }), // Email do Diretor
+    chapaGestor: varchar("chapaGestor", { length: 50 }), // Chapa do Gestor
+    gestor: varchar("gestor", { length: 255 }), // Nome do Gestor
+    funcaoGestor: varchar("funcaoGestor", { length: 255 }), // Função do Gestor
+    emailGestor: varchar("emailGestor", { length: 320 }), // Email do Gestor
+    chapaCoordenador: varchar("chapaCoordenador", { length: 50 }), // Chapa do Coordenador
+    coordenador: varchar("coordenador", { length: 255 }), // Nome do Coordenador
+    funcaoCoordenador: varchar("funcaoCoordenador", { length: 255 }), // Função do Coordenador
+    emailCoordenador: varchar("emailCoordenador", { length: 320 }), // Email do Coordenador
     photoUrl: varchar("photoUrl", { length: 512 }),
     phone: varchar("phone", { length: 20 }),
     address: text("address"),
@@ -322,7 +347,7 @@ export const performanceEvaluations = mysqlTable("performanceEvaluations", {
     cycleId: int("cycleId").notNull(),
     employeeId: int("employeeId").notNull(),
     type: mysqlEnum("type", ["360", "180", "90"]).notNull(),
-    status: mysqlEnum("status", ["pendente", "em_andamento", "concluida"]).default("pendente").notNull(),
+    status: mysqlEnum("status", ["pendente", "em_andamento", "concluida", "cancelada"]).default("pendente").notNull(),
     // Workflow de etapas sequenciais
     workflowStatus: mysqlEnum("workflowStatus", [
         "pending_self", // Aguardando autoavaliação
@@ -589,6 +614,56 @@ export const auditLogs = mysqlTable("auditLogs", {
     ipAddress: varchar("ipAddress", { length: 45 }),
     userAgent: text("userAgent"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+/**
+ * Alertas Automáticos de Auditoria
+ * Alertas gerados automaticamente quando padrões suspeitos são detectados
+ */
+export const auditAlerts = mysqlTable("auditAlerts", {
+    id: int("id").autoincrement().primaryKey(),
+    alertType: mysqlEnum("alertType", [
+        "multiple_failed_logins",
+        "unusual_activity_volume",
+        "suspicious_time_access",
+        "data_export_anomaly",
+        "privilege_escalation",
+        "unusual_entity_access"
+    ]).notNull(),
+    severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+    userId: int("userId"), // Usuário relacionado ao alerta
+    description: text("description").notNull(),
+    details: text("details"), // JSON com detalhes do padrão detectado
+    status: mysqlEnum("status", ["new", "investigating", "resolved", "false_positive"]).default("new").notNull(),
+    resolvedBy: int("resolvedBy"), // Admin que resolveu
+    resolvedAt: timestamp("resolvedAt"),
+    resolution: text("resolution"), // Descrição da resolução
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Configurações de Regras de Alerta
+ * Define thresholds e regras para geração automática de alertas
+ */
+export const alertRules = mysqlTable("alertRules", {
+    id: int("id").autoincrement().primaryKey(),
+    name: varchar("name", { length: 200 }).notNull(),
+    description: text("description"),
+    alertType: mysqlEnum("alertType", [
+        "multiple_failed_logins",
+        "unusual_activity_volume",
+        "suspicious_time_access",
+        "data_export_anomaly",
+        "privilege_escalation",
+        "unusual_entity_access"
+    ]).notNull(),
+    severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+    threshold: int("threshold").notNull(), // Valor limite para disparar alerta
+    timeWindow: int("timeWindow").notNull(), // Janela de tempo em minutos
+    enabled: boolean("enabled").default(true).notNull(),
+    notifyAdmins: boolean("notifyAdmins").default(true).notNull(),
+    createdBy: int("createdBy").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 /**
  * Histórico de Alterações de Senha
@@ -3198,6 +3273,9 @@ export const pirInvitations = mysqlTable("pirInvitations", {
     createdByName: varchar("createdByName", { length: 255 }),
     purpose: varchar("purpose", { length: 255 }), // Ex: "Processo Seletivo", "Avaliação Anual"
     notes: text("notes"), // Observações internas
+    // Auto-save de respostas
+    savedAnswers: text("savedAnswers"), // JSON com respostas salvas automaticamente
+    lastActivityAt: datetime("lastActivityAt"), // Última atividade do usuário
     // Auditoria
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -4852,6 +4930,11 @@ export const pirIntegrityQuestions = mysqlTable("pirIntegrityQuestions", {
     difficulty: mysqlEnum("difficulty", ["easy", "medium", "hard"]).default("medium").notNull(),
     displayOrder: int("displayOrder").default(0).notNull(),
     active: boolean("active").default(true).notNull(),
+    // Campos de vídeo
+    videoUrl: varchar("videoUrl", { length: 512 }), // URL do vídeo no S3
+    videoThumbnailUrl: varchar("videoThumbnailUrl", { length: 512 }), // URL da thumbnail
+    videoDuration: int("videoDuration"), // Duração em segundos
+    requiresVideoWatch: boolean("requiresVideoWatch").default(false).notNull(), // Obriga assistir vídeo completo
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -6223,4 +6306,456 @@ export const securityMetrics = mysqlTable("securityMetrics", {
     topActions: json("topActions"),
     // Metadados
     createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+// ============================================================================
+// TABELAS DE ORGANOGRAMA E HIERARQUIA
+// ============================================================================
+/**
+ * Histórico de Mudanças de Gestor
+ * Registra todas as alterações na hierarquia organizacional para auditoria
+ */
+export const managerChangeHistory = mysqlTable("managerChangeHistory", {
+    id: int("id").autoincrement().primaryKey(),
+    // Funcionário que teve o gestor alterado
+    employeeId: int("employeeId").notNull(),
+    employeeName: varchar("employeeName", { length: 255 }),
+    employeeCode: varchar("employeeCode", { length: 50 }),
+    // Gestor anterior
+    oldManagerId: int("oldManagerId"),
+    oldManagerName: varchar("oldManagerName", { length: 255 }),
+    // Novo gestor
+    newManagerId: int("newManagerId"),
+    newManagerName: varchar("newManagerName", { length: 255 }),
+    // Motivo da mudança
+    reason: text("reason"),
+    changeType: mysqlEnum("changeType", [
+        "promocao",
+        "transferencia",
+        "reorganizacao",
+        "desligamento_gestor",
+        "ajuste_hierarquico",
+        "outro"
+    ]).default("ajuste_hierarquico").notNull(),
+    // Informações departamentais no momento da mudança
+    departmentId: int("departmentId"),
+    departmentName: varchar("departmentName", { length: 255 }),
+    positionId: int("positionId"),
+    positionTitle: varchar("positionTitle", { length: 255 }),
+    // Quem fez a alteração
+    changedBy: int("changedBy").notNull(),
+    changedByName: varchar("changedByName", { length: 255 }),
+    changedByRole: varchar("changedByRole", { length: 50 }),
+    // Aprovação (se necessário)
+    requiresApproval: boolean("requiresApproval").default(false).notNull(),
+    approvalStatus: mysqlEnum("approvalStatus", ["pendente", "aprovado", "rejeitado"]).default("aprovado"),
+    approvedBy: int("approvedBy"),
+    approvedByName: varchar("approvedByName", { length: 255 }),
+    approvedAt: datetime("approvedAt"),
+    approvalNotes: text("approvalNotes"),
+    // Metadados
+    effectiveDate: datetime("effectiveDate").notNull(), // Data efetiva da mudança
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+// ============================================================================
+// DASHBOARD DE ANÁLISE CONSOLIDADA
+// ============================================================================
+/**
+ * Métricas Consolidadas - Cache de métricas agregadas
+ */
+export const consolidatedMetrics = mysqlTable("consolidatedMetrics", {
+    id: int("id").autoincrement().primaryKey(),
+    metricType: mysqlEnum("metricType", [
+        "overall_completion_rate",
+        "average_performance",
+        "department_performance",
+        "competency_gap",
+        "pdi_progress",
+        "assessment_distribution"
+    ]).notNull(),
+    // Filtros/Dimensões
+    departmentId: int("departmentId"),
+    positionId: int("positionId"),
+    periodStart: datetime("periodStart").notNull(),
+    periodEnd: datetime("periodEnd").notNull(),
+    // Valores calculados
+    metricValue: int("metricValue").notNull(), // Valor principal (0-100 ou count)
+    metricData: json("metricData"), // Dados detalhados em JSON
+    // Metadados
+    calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+    expiresAt: timestamp("expiresAt"), // Para cache com expiração
+});
+/**
+ * Análises por Departamento
+ */
+export const departmentAnalytics = mysqlTable("departmentAnalytics", {
+    id: int("id").autoincrement().primaryKey(),
+    departmentId: int("departmentId").notNull(),
+    periodStart: datetime("periodStart").notNull(),
+    periodEnd: datetime("periodEnd").notNull(),
+    // Métricas de Avaliação
+    totalEmployees: int("totalEmployees").default(0).notNull(),
+    completedAssessments: int("completedAssessments").default(0).notNull(),
+    completionRate: int("completionRate").default(0).notNull(), // 0-100
+    // Métricas de Performance
+    averagePerformanceScore: int("averagePerformanceScore"), // 0-100
+    averageCompetencyScore: int("averageCompetencyScore"), // 0-100
+    averagePirScore: int("averagePirScore"), // 0-100
+    // Gaps e Desenvolvimento
+    criticalGapsCount: int("criticalGapsCount").default(0).notNull(),
+    activePdisCount: int("activePdisCount").default(0).notNull(),
+    pdiCompletionRate: int("pdiCompletionRate").default(0).notNull(), // 0-100
+    // Dados detalhados
+    competencyBreakdown: json("competencyBreakdown"), // {competencyId: avgScore}
+    topGaps: json("topGaps"), // [{competencyId, gapSize, employeeCount}]
+    topPerformers: json("topPerformers"), // [{employeeId, score}]
+    // Metadados
+    calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+});
+/**
+ * Análises de Tendências Temporais
+ */
+export const trendAnalytics = mysqlTable("trendAnalytics", {
+    id: int("id").autoincrement().primaryKey(),
+    trendType: mysqlEnum("trendType", [
+        "performance_evolution",
+        "competency_growth",
+        "gap_reduction",
+        "pdi_effectiveness",
+        "assessment_participation"
+    ]).notNull(),
+    // Filtros
+    departmentId: int("departmentId"),
+    employeeId: int("employeeId"),
+    competencyId: int("competencyId"),
+    // Série temporal (array de {period, value})
+    timeSeriesData: json("timeSeriesData").notNull(),
+    // Análise estatística
+    trend: mysqlEnum("trend", ["increasing", "stable", "decreasing"]),
+    trendStrength: int("trendStrength"), // 0-100
+    projectedValue: int("projectedValue"), // Valor projetado para próximo período
+    // Período analisado
+    periodStart: datetime("periodStart").notNull(),
+    periodEnd: datetime("periodEnd").notNull(),
+    // Metadados
+    calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+});
+// ============================================================================
+// SISTEMA DE METAS E PDI AUTOMÁTICO
+// ============================================================================
+/**
+ * Templates de Metas - Templates pré-definidos por competência/gap
+ */
+export const goalTemplates = mysqlTable("goalTemplates", {
+    id: int("id").autoincrement().primaryKey(),
+    competencyId: int("competencyId").notNull(),
+    gapLevel: mysqlEnum("gapLevel", ["critico", "alto", "medio", "baixo"]).notNull(),
+    // Template da meta (SMART)
+    titleTemplate: varchar("titleTemplate", { length: 255 }).notNull(), // Ex: "Desenvolver {competency} até nível {target}"
+    descriptionTemplate: text("descriptionTemplate"),
+    // Parâmetros sugeridos
+    suggestedDurationDays: int("suggestedDurationDays").notNull(), // Ex: 90 dias
+    suggestedActions: json("suggestedActions"), // [{actionId, priority}]
+    suggestedResources: json("suggestedResources"), // [{type, name, url}]
+    // Critérios de sucesso
+    successCriteria: json("successCriteria"), // [{criterion, measurement}]
+    targetScore: int("targetScore"), // Score alvo (0-100)
+    // Metadados
+    category: varchar("category", { length: 100 }), // Ex: "tecnica", "comportamental", "lideranca"
+    priority: mysqlEnum("priority", ["baixa", "media", "alta", "critica"]).default("media").notNull(),
+    active: boolean("active").default(true).notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Análise de Gaps - Análise estruturada de gaps identificados
+ */
+export const gapAnalysis = mysqlTable("gapAnalysis", {
+    id: int("id").autoincrement().primaryKey(),
+    employeeId: int("employeeId").notNull(),
+    competencyId: int("competencyId").notNull(),
+    // Fonte do gap
+    sourceType: mysqlEnum("sourceType", ["avaliacao_competencias", "avaliacao_desempenho", "pir", "feedback_360"]).notNull(),
+    sourceId: int("sourceId").notNull(), // ID da avaliação origem
+    // Análise do gap
+    currentScore: int("currentScore").notNull(), // Score atual (0-100)
+    targetScore: int("targetScore").notNull(), // Score desejado (0-100)
+    gapSize: int("gapSize").notNull(), // Diferença (targetScore - currentScore)
+    gapLevel: mysqlEnum("gapLevel", ["critico", "alto", "medio", "baixo"]).notNull(),
+    // Priorização
+    priority: mysqlEnum("priority", ["baixa", "media", "alta", "critica"]).notNull(),
+    impactOnPerformance: int("impactOnPerformance"), // 0-100
+    developmentDifficulty: mysqlEnum("developmentDifficulty", ["facil", "medio", "dificil"]),
+    // Contexto
+    context: text("context"), // Contexto/observações sobre o gap
+    relatedGaps: json("relatedGaps"), // IDs de gaps relacionados
+    // Status
+    status: mysqlEnum("status", ["identificado", "em_desenvolvimento", "resolvido", "ignorado"]).default("identificado").notNull(),
+    resolvedAt: datetime("resolvedAt"),
+    // Metadados
+    identifiedAt: timestamp("identifiedAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Metas Auto-Geradas - Metas sugeridas automaticamente baseadas em gaps
+ */
+export const autoGeneratedGoals = mysqlTable("autoGeneratedGoals", {
+    id: int("id").autoincrement().primaryKey(),
+    employeeId: int("employeeId").notNull(),
+    gapAnalysisId: int("gapAnalysisId").notNull(),
+    templateId: int("templateId"), // Template usado (se aplicável)
+    // Meta SMART
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    specific: text("specific"), // Específico
+    measurable: text("measurable"), // Mensurável
+    achievable: text("achievable"), // Alcançável
+    relevant: text("relevant"), // Relevante
+    timeBound: text("timeBound"), // Temporal
+    // Prazos
+    suggestedStartDate: datetime("suggestedStartDate").notNull(),
+    suggestedEndDate: datetime("suggestedEndDate").notNull(),
+    // Ações sugeridas
+    suggestedActions: json("suggestedActions"), // [{actionId, description, deadline}]
+    suggestedResources: json("suggestedResources"), // [{type, name, url, cost}]
+    // Critérios de sucesso
+    successCriteria: json("successCriteria"),
+    targetScore: int("targetScore"), // Score alvo
+    // Responsáveis sugeridos
+    suggestedOwnerId: int("suggestedOwnerId"), // Normalmente o próprio colaborador
+    suggestedMentorId: int("suggestedMentorId"), // Mentor/gestor sugerido
+    // Status da sugestão
+    status: mysqlEnum("status", ["pendente", "aprovada", "rejeitada", "modificada"]).default("pendente").notNull(),
+    approvedBy: int("approvedBy"),
+    approvedAt: datetime("approvedAt"),
+    rejectionReason: text("rejectionReason"),
+    // Vinculação ao PDI (após aprovação)
+    pdiPlanId: int("pdiPlanId"), // PDI criado a partir desta meta
+    // Metadados
+    generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Histórico de Geração de Metas - Auditoria do processo de geração automática
+ */
+export const goalGenerationHistory = mysqlTable("goalGenerationHistory", {
+    id: int("id").autoincrement().primaryKey(),
+    employeeId: int("employeeId").notNull(),
+    // Contexto da geração
+    triggerType: mysqlEnum("triggerType", [
+        "avaliacao_concluida",
+        "gap_identificado",
+        "solicitacao_manual",
+        "revisao_periodica"
+    ]).notNull(),
+    triggerId: int("triggerId"), // ID da avaliação/gap que disparou
+    // Resultados
+    gapsAnalyzed: int("gapsAnalyzed").default(0).notNull(),
+    goalsGenerated: int("goalsGenerated").default(0).notNull(),
+    goalsApproved: int("goalsApproved").default(0).notNull(),
+    goalsRejected: int("goalsRejected").default(0).notNull(),
+    // Dados da geração
+    analysisData: json("analysisData"), // Dados da análise realizada
+    generatedGoalIds: json("generatedGoalIds"), // IDs das metas geradas
+    // Metadados
+    generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+    generatedBy: int("generatedBy"), // Usuário que solicitou (se manual)
+});
+// ============================================================================
+// HISTÓRICO DE ALTERAÇÕES DE FUNCIONÁRIOS
+// ============================================================================
+/**
+ * Employee History - Histórico de todas as alterações de funcionários
+ * Registra mudanças de cargo, departamento, salário e outras informações relevantes
+ */
+export const employeeHistory = mysqlTable("employeeHistory", {
+    id: int("id").autoincrement().primaryKey(),
+    employeeId: int("employeeId").notNull(),
+    // Tipo de alteração
+    changeType: mysqlEnum("changeType", [
+        "cargo",
+        "departamento",
+        "salario",
+        "gestor",
+        "status",
+        "dados_pessoais",
+        "contratacao",
+        "desligamento",
+        "promocao",
+        "transferencia",
+        "outro"
+    ]).notNull(),
+    // Valores antes e depois
+    fieldName: varchar("fieldName", { length: 100 }).notNull(), // Nome do campo alterado
+    oldValue: text("oldValue"), // Valor anterior (JSON string)
+    newValue: text("newValue"), // Novo valor (JSON string)
+    // Contexto da alteração
+    reason: text("reason"), // Motivo da alteração
+    notes: text("notes"), // Observações adicionais
+    // Metadados de auditoria
+    changedBy: int("changedBy").notNull(), // ID do usuário que fez a alteração
+    changedAt: timestamp("changedAt").defaultNow().notNull(),
+    // Dados adicionais (JSON para flexibilidade)
+    metadata: json("metadata"), // Dados extras como aprovações, documentos, etc
+});
+// ============================================================================
+// TABELAS DE IMPORTAÇÃO DE DADOS
+// ============================================================================
+/**
+ * Tabela para rastrear importações de dados do Excel
+ */
+export const dataImports = mysqlTable("dataImports", {
+    id: int("id").autoincrement().primaryKey(),
+    fileName: varchar("fileName", { length: 255 }).notNull(),
+    fileSize: int("fileSize").notNull(), // Tamanho em bytes
+    importType: mysqlEnum("importType", ["employees", "hierarchy", "full"]).notNull(),
+    status: mysqlEnum("status", ["pending", "processing", "completed", "failed"]).default("pending").notNull(),
+    // Estatísticas da importação
+    totalRecords: int("totalRecords").default(0),
+    successfulRecords: int("successfulRecords").default(0),
+    failedRecords: int("failedRecords").default(0),
+    skippedRecords: int("skippedRecords").default(0),
+    // Detalhes e erros
+    summary: json("summary").$type(),
+    errorLog: text("errorLog"), // Log de erros detalhado
+    // Metadados
+    importedBy: int("importedBy").notNull(), // ID do usuário que fez a importação
+    startedAt: timestamp("startedAt").defaultNow().notNull(),
+    completedAt: timestamp("completedAt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+// ============================================================================
+// SISTEMA DE FEEDBACK 360°
+// ============================================================================
+/**
+ * Feedback 360 Cycles - Ciclos de avaliação 360 graus
+ * Permite criar ciclos de feedback onde colaboradores avaliam uns aos outros
+ */
+export const feedback360Cycles = mysqlTable("feedback360Cycles", {
+    id: int("id").autoincrement().primaryKey(),
+    name: varchar("name", { length: 200 }).notNull(),
+    description: text("description"),
+    // Período do ciclo
+    startDate: datetime("startDate").notNull(),
+    endDate: datetime("endDate").notNull(),
+    // Status
+    status: mysqlEnum("status", ["draft", "active", "closed", "archived"]).default("draft").notNull(),
+    // Configurações
+    allowSelfAssessment: boolean("allowSelfAssessment").default(true).notNull(),
+    minEvaluators: int("minEvaluators").default(3).notNull(), // Mínimo de avaliadores por pessoa
+    maxEvaluators: int("maxEvaluators").default(10).notNull(), // Máximo de avaliadores
+    anonymousResponses: boolean("anonymousResponses").default(true).notNull(),
+    // Metadados
+    createdBy: int("createdBy").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Feedback 360 Participants - Participantes de cada ciclo
+ * Define quem está sendo avaliado e quem são os avaliadores
+ */
+export const feedback360Participants = mysqlTable("feedback360Participants", {
+    id: int("id").autoincrement().primaryKey(),
+    cycleId: int("cycleId").notNull(),
+    employeeId: int("employeeId").notNull(), // Pessoa sendo avaliada
+    // Status de participação
+    status: mysqlEnum("status", ["invited", "in_progress", "completed", "skipped"]).default("invited").notNull(),
+    // Datas
+    invitedAt: timestamp("invitedAt").defaultNow().notNull(),
+    startedAt: timestamp("startedAt"),
+    completedAt: timestamp("completedAt"),
+    // Metadados
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Feedback 360 Evaluators - Avaliadores de cada participante
+ * Define quem vai avaliar quem
+ */
+export const feedback360Evaluators = mysqlTable("feedback360Evaluators", {
+    id: int("id").autoincrement().primaryKey(),
+    participantId: int("participantId").notNull(), // Referência ao participante
+    evaluatorId: int("evaluatorId").notNull(), // Funcionário que vai avaliar
+    // Tipo de relação
+    relationshipType: mysqlEnum("relationshipType", [
+        "self", // Auto-avaliação
+        "manager", // Gestor direto
+        "peer", // Colega de mesmo nível
+        "subordinate", // Subordinado
+        "other" // Outro tipo de relação
+    ]).notNull(),
+    // Status
+    status: mysqlEnum("status", ["pending", "in_progress", "completed", "declined"]).default("pending").notNull(),
+    // Datas
+    invitedAt: timestamp("invitedAt").defaultNow().notNull(),
+    startedAt: timestamp("startedAt"),
+    completedAt: timestamp("completedAt"),
+    // Metadados
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Feedback 360 Questions - Questões do feedback 360
+ * Define as perguntas que serão feitas aos avaliadores
+ */
+export const feedback360Questions = mysqlTable("feedback360Questions", {
+    id: int("id").autoincrement().primaryKey(),
+    cycleId: int("cycleId").notNull(),
+    // Conteúdo da questão
+    category: varchar("category", { length: 100 }).notNull(), // Ex: "Liderança", "Comunicação", "Trabalho em Equipe"
+    question: text("question").notNull(),
+    description: text("description"), // Descrição/contexto adicional
+    // Tipo de resposta
+    responseType: mysqlEnum("responseType", ["scale", "text", "multiple_choice"]).default("scale").notNull(),
+    scaleMin: int("scaleMin").default(1),
+    scaleMax: int("scaleMax").default(5),
+    options: json("options").$type(), // Para multiple_choice
+    // Configurações
+    required: boolean("required").default(true).notNull(),
+    order: int("order").notNull(), // Ordem de exibição
+    // Metadados
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Feedback 360 Responses - Respostas do feedback 360
+ * Armazena as respostas de cada avaliador para cada questão
+ */
+export const feedback360Responses = mysqlTable("feedback360Responses", {
+    id: int("id").autoincrement().primaryKey(),
+    evaluatorRecordId: int("evaluatorRecordId").notNull(), // Referência ao feedback360Evaluators
+    questionId: int("questionId").notNull(),
+    // Resposta
+    scaleValue: int("scaleValue"), // Para perguntas tipo scale
+    textValue: text("textValue"), // Para perguntas tipo text
+    selectedOption: varchar("selectedOption", { length: 200 }), // Para multiple_choice
+    // Metadados
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+/**
+ * Feedback 360 Reports - Relatórios consolidados do feedback 360
+ * Armazena relatórios gerados com análise dos feedbacks recebidos
+ */
+export const feedback360Reports = mysqlTable("feedback360Reports", {
+    id: int("id").autoincrement().primaryKey(),
+    participantId: int("participantId").notNull(), // Referência ao participante
+    // Estatísticas gerais
+    totalEvaluators: int("totalEvaluators").notNull(),
+    completedEvaluations: int("completedEvaluations").notNull(),
+    averageScore: int("averageScore"), // Média geral (0-100)
+    // Análise por categoria
+    categoryScores: json("categoryScores").$type(),
+    // Análise por tipo de avaliador
+    scoresByRelationship: json("scoresByRelationship").$type(),
+    // Pontos fortes e áreas de melhoria
+    strengths: json("strengths").$type(),
+    improvementAreas: json("improvementAreas").$type(),
+    // Comentários consolidados (anônimos)
+    comments: json("comments").$type(),
+    // Status
+    status: mysqlEnum("status", ["generating", "completed", "error"]).default("generating").notNull(),
+    // Metadados
+    generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+    generatedBy: int("generatedBy"), // Quem solicitou o relatório
 });

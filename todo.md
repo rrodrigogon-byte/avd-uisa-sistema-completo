@@ -2206,3 +2206,41 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [x] Botão "Editar" adicionado em cada card
 - [x] Dialog de edição de gestor implementado
 - [x] Visualização funcionando com busca, zoom e exportação
+
+
+---
+
+## 🆕 NOVAS FUNCIONALIDADES (25/12/2025)
+
+### Correção de Organograma
+- [x] Corrigir hierarquia: Jacyr (Presidente do Conselho) → Mazuca (CEO) → Rodrigo Gonçalves → Maria Geane
+- [x] Atualizar seed data com hierarquia correta
+- [x] Atualizar interface do organograma
+
+### Módulo de Feedback 360°
+- [x] Criar schema de banco de dados para ciclos de feedback, avaliações e respostas
+- [x] Implementar rotas tRPC para gerenciamento de ciclos de feedback
+- [x] Criar página de configuração de ciclos de feedback
+- [x] Implementar formulário de avaliação interativo
+- [x] Criar dashboard de resultados com gráficos de radar
+- [x] Implementar análise por competência
+- [x] Adicionar visualização de comparação (autoavaliação vs avaliação de outros)
+
+### Módulo de Metas e OKRs
+- [x] Criar schema de banco de dados para objetivos, resultados-chave e progresso
+- [x] Implementar rotas tRPC para gerenciamento de OKRs
+- [x] Criar página de definição de objetivos e resultados-chave
+- [x] Implementar sistema de cascata de objetivos (empresa → departamento → individual)
+- [x] Criar dashboard de acompanhamento com progresso visual
+- [x] Implementar sistema de check-ins periódicos
+- [x] Adicionar visualização de alinhamento estratégico
+
+### Módulo de Pesquisa de Clima Organizacional
+- [x] Criar schema de banco de dados para pesquisas, perguntas e respostas anônimas
+- [x] Implementar rotas tRPC para gerenciamento de pesquisas
+- [x] Criar página de configuração de pesquisas
+- [x] Implementar sistema de perguntas por dimensões (liderança, comunicação, ambiente, etc.)
+- [x] Criar interface de resposta anônima para colaboradores
+- [x] Implementar dashboard de resultados com análise por dimensões
+- [x] Criar heatmap por departamento
+- [x] Adicionar relatórios consolidados com insights e recomendações

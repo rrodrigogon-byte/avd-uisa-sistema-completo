@@ -246,6 +246,20 @@
       "when": 1766684893774,
       "tag": "0034_late_gorgon",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "5",
+      "when": 1766687450871,
+      "tag": "0035_hesitant_bulldozer",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1766688045532,
+      "tag": "0036_giant_captain_britain",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,100 @@
+{
+  "query": "SELECT id, name, email, cargo, chapa, managerId, chapaPresidente FROM employees WHERE cargo LIKE '%CEO%' OR cargo LIKE '%Presidente%' OR cargo LIKE '%Diretor%' ORDER BY id LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, email, cargo, chapa, managerId, chapaPresidente FROM employees WHERE cargo LIKE '%CEO%' OR cargo LIKE '%Presidente%' OR cargo LIKE '%Diretor%' ORDER BY id LIMIT 20",
+  "rows": [
+    {
+      "id": "131",
+      "name": "FABIO LUIZ DAL POSSO",
+      "email": "fabio.posso@uisa.com.br",
+      "cargo": "Diretor de Controladoria",
+      "chapa": "8004672",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "132",
+      "name": "TOMAZ CARRARO PEREIRA",
+      "email": "tomaz.pereira@uisa.com.br",
+      "cargo": "Diretor de Finanças e Relações com Investidores",
+      "chapa": "8004673",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "2077",
+      "name": "JACYR DA SILVA COSTA FILHO",
+      "email": "NULL",
+      "cargo": "Presidente do Conselho",
+      "chapa": "8001267",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "3171",
+      "name": "SERGIO SPINELLI SILVA JUNIOR",
+      "email": "Endereçoeletrônico@uisanet.com.br",
+      "cargo": "Diretor",
+      "chapa": "1001060",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "30049",
+      "name": "RODRIGO RIBEIRO GONCALVES",
+      "email": "rodrigo.goncalves@uisa.com.br",
+      "cargo": "Diretor de Gente, Inovação e Administração",
+      "chapa": "0892106",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "30223",
+      "name": "PAULO CESAR LEITE",
+      "email": "paulo.leite@uisa.com.br",
+      "cargo": "Diretor Comercial",
+      "chapa": "0115258",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "30224",
+      "name": "JOSE FERNANDO MAZUCA FILHO",
+      "email": "jose.mazuca@uisa.com.br",
+      "cargo": "Diretor Presidente",
+      "chapa": "0892394",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "30587",
+      "name": "Administração Industrial",
+      "email": "3130",
+      "cargo": "Diretor Presidente",
+      "chapa": "1.00.12.05.110020201.00.0",
+      "managerId": "NULL",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "30676",
+      "name": "JARI DE SOUZA",
+      "email": "jari.souza@uisa.com.br",
+      "cargo": "Diretor Agroindustrial",
+      "chapa": "0860913",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    },
+    {
+      "id": "31074",
+      "name": "MARIA GEANE MONTEIRO DA SILVA",
+      "email": "geane.monteiro@uisa.com.br",
+      "cargo": "Secretária Diretoria",
+      "chapa": "0434906",
+      "managerId": "472",
+      "chapaPresidente": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tcargo\tchapa\tmanagerId\tchapaPresidente\n131\tFABIO LUIZ DAL POSSO\tfabio.posso@uisa.com.br\tDiretor de Controladoria\t8004672\t472\tNULL\n132\tTOMAZ CARRARO PEREIRA\ttomaz.pereira@uisa.com.br\tDiretor de Finanças e Relações com Investidores\t8004673\t472\tNULL\n2077\tJACYR DA SILVA COSTA FILHO\tNULL\tPresidente do Conselho\t8001267\t472\tNULL\n3171\tSERGIO SPINELLI SILVA JUNIOR\tEndereçoeletrônico@uisanet.com.br\tDiretor\t1001060\t472\tNULL\n30049\tRODRIGO RIBEIRO GONCALVES\trodrigo.goncalves@uisa.com.br\tDiretor de Gente, Inovação e Administração\t0892106\t472\tNULL\n30223\tPAULO CESAR LEITE\tpaulo.leite@uisa.com.br\tDiretor Comercial\t0115258\t472\tNULL\n30224\tJOSE FERNANDO MAZUCA FILHO\tjose.mazuca@uisa.com.br\tDiretor Presidente\t0892394\t472\tNULL\n30587\tAdministração Industrial\t3130\tDiretor Presidente\t1.00.12.05.110020201.00.0\tNULL\tNULL\n30676\tJARI DE SOUZA\tjari.souza@uisa.com.br\tDiretor Agroindustrial\t0860913\t472\tNULL\n31074\tMARIA GEANE MONTEIRO DA SILVA\tgeane.monteiro@uisa.com.br\tSecretária Diretoria\t0434906\t472\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 283
+}

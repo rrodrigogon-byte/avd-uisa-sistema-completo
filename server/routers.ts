@@ -49,6 +49,9 @@ import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./routers/notificationsRouter";
 import { errorMonitoringRouter } from "./errorMonitoringRouter";
 import { feedback360Router } from "./routers/feedback360Router";
+import { feedback360Router as feedback360NewRouter } from "./feedback360Router";
+import { okrsRouter } from "./okrsRouter";
+import { climateRouter } from "./climateRouter";
 import { sendEmail } from "./emailService";
 import { pulseRouter } from "./routers/pulseRouter";
 import { exportRouter } from "./routers/exportRouter";
@@ -405,6 +408,15 @@ export const appRouter = router({
   
   // Novos routers - Melhorias no Sistema (12/12/2025)
   attachments: attachmentsRouter,
+  
+  // Novo router - Feedback 360° Completo (25/12/2025)
+  feedback360New: feedback360NewRouter,
+  
+  // Novo router - Metas e OKRs (25/12/2025)
+  okrs: okrsRouter,
+  
+  // Novo router - Pesquisa de Clima Organizacional (25/12/2025)
+  climate: climateRouter,
   faceRecognition: faceRecognitionRouter,
   faceRecognitionAdvanced: faceRecognitionAdvancedRouter,
   videoAnalysis: videoAnalysisRouter,
