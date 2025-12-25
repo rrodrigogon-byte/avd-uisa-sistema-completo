@@ -1,8 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
 import BackButton from "@/components/BackButton";
-import { OrganogramaDraggable } from "@/components/OrganogramaDraggable";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { OrganogramaContainer } from "@/components/OrganogramaInterativo";
 
 export default function Organograma() {
   const { user } = useAuth();
@@ -15,24 +14,14 @@ export default function Organograma() {
           <div className="mb-4">
             <BackButton />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Organograma</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Organograma Interativo</h1>
           <p className="text-muted-foreground">
-            Visualização hierárquica da estrutura organizacional
+            Visualização hierárquica completa da estrutura organizacional com funcionalidade de drag-and-drop
           </p>
         </div>
 
-        {/* Organograma */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Estrutura Organizacional</CardTitle>
-            <CardDescription>
-              Visualização multinível com cores por nível hierárquico
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <OrganogramaDraggable />
-          </CardContent>
-        </Card>
+        {/* Organograma Interativo */}
+        <OrganogramaContainer />
       </div>
     </DashboardLayout>
   );

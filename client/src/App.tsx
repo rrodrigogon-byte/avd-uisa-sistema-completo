@@ -516,6 +516,7 @@ function Router() {
       <Route path="/dashboard-testes" component={DashboardTestes} />
       <Route path="/teste/:token" component={TestResponse} />
       <Route path="/descricao-cargos/importar" component={ImportadorDescricoesCargo} />
+      <Route path="/descricao-cargos/:id" component={DetalhesDescricaoCargo} />
       <Route path="/descricao-cargos" component={DescricaoCargos} />
       <Route path="/descricao-cargos-uisa" component={DescricaoCargosUISA} />
       <Route path="/descricao-cargos-uisa/criar" component={CriarDescricaoCargo} />

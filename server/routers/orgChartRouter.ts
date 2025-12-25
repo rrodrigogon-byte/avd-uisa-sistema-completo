@@ -778,52 +778,7 @@ export const orgChartRouter = router({
       };
     }),
 
-  /**
-   * Obter organograma hierárquico completo
-   * Retorna árvore de funcionários com subordinados
-   */
-  getOrgChart: protectedProcedure
-    .query(async () => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
-      
-      // Buscar todos os funcionários ativos
-      const allEmployees = await db
-        .select({
-          id: employees.id,
-          employeeCode: employees.employeeCode,
-          name: employees.name,
-          email: employees.email,
-          managerId: employees.managerId,
-          departmentId: employees.departmentId,
-          departmentName: departments.name,
-          positionId: employees.positionId,
-          positionTitle: positions.title,
-          photoUrl: employees.photoUrl,
-          active: employees.active,
-        })
-        .from(employees)
-        .leftJoin(departments, eq(employees.departmentId, departments.id))
-        .leftJoin(positions, eq(employees.positionId, positions.id))
-        .where(eq(employees.active, true));
-      
-      // Construir árvore hierárquica
-      const buildTree = (parentId: number | null): any[] => {
-        return allEmployees
-          .filter(emp => emp.managerId === parentId)
-          .map(emp => ({
-            ...emp,
-            subordinates: buildTree(emp.id),
-          }));
-      };
-      
-      const tree = buildTree(null);
-      
-      return {
-        tree,
-        totalEmployees: allEmployees.length,
-      };
-    }),
+
 
   /**
    * Atualizar gestor de um funcionário
@@ -1003,5 +958,375 @@ export const orgChartRouter = router({
       const tree = buildTree(null);
       
       return tree;
+    }),
+
+  /**
+   * Obter hierarquia completa com todos os níveis e estatísticas
+   */
+  getFullHierarchy: protectedProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      // Buscar todos os colaboradores ativos com informações completas
+      const allEmployees = await db
+        .select({
+          id: employees.id,
+          employeeCode: employees.employeeCode,
+          name: employees.name,
+          email: employees.email,
+          managerId: employees.managerId,
+          departmentId: employees.departmentId,
+          departmentName: departments.name,
+          positionId: employees.positionId,
+          positionTitle: positions.title,
+          photoUrl: employees.photoUrl,
+          hierarchyLevel: employees.hierarchyLevel,
+          active: employees.active,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(employees.positionId, positions.id))
+        .where(eq(employees.active, true));
+      
+      // Construir árvore hierárquica recursiva
+      const buildTree = (parentId: number | null, level: number = 0): any[] => {
+        return allEmployees
+          .filter(emp => emp.managerId === parentId)
+          .map(emp => {
+            const subordinates = buildTree(emp.id, level + 1);
+            return {
+              ...emp,
+              level,
+              subordinates,
+              subordinateCount: subordinates.length,
+              totalTeamSize: subordinates.reduce((sum, sub) => sum + (sub.totalTeamSize || 0) + 1, 0)
+            };
+          });
+      };
+      
+      const tree = buildTree(null);
+      
+      // Calcular estatísticas
+      const stats = {
+        totalEmployees: allEmployees.length,
+        byLevel: {} as Record<string, number>,
+        byDepartment: {} as Record<string, number>,
+        maxDepth: 0,
+        avgSpanOfControl: 0,
+      };
+      
+      // Contar por nível hierárquico
+      allEmployees.forEach(emp => {
+        const level = emp.hierarchyLevel || 'operacional';
+        stats.byLevel[level] = (stats.byLevel[level] || 0) + 1;
+        
+        const dept = emp.departmentName || 'Sem departamento';
+        stats.byDepartment[dept] = (stats.byDepartment[dept] || 0) + 1;
+      });
+      
+      // Calcular profundidade máxima e span of control
+      const calculateDepth = (nodes: any[], currentDepth: number = 0): number => {
+        if (nodes.length === 0) return currentDepth;
+        return Math.max(...nodes.map(node => 
+          calculateDepth(node.subordinates || [], currentDepth + 1)
+        ));
+      };
+      
+      stats.maxDepth = calculateDepth(tree);
+      
+      // Calcular média de subordinados diretos
+      const managersWithSubordinates = allEmployees.filter(emp => 
+        allEmployees.some(e => e.managerId === emp.id)
+      );
+      
+      if (managersWithSubordinates.length > 0) {
+        const totalSubordinates = managersWithSubordinates.reduce((sum, manager) => {
+          const directReports = allEmployees.filter(e => e.managerId === manager.id).length;
+          return sum + directReports;
+        }, 0);
+        stats.avgSpanOfControl = Math.round((totalSubordinates / managersWithSubordinates.length) * 10) / 10;
+      }
+      
+      return {
+        tree,
+        stats,
+        timestamp: new Date().toISOString()
+      };
+    }),
+
+  /**
+   * Obter cadeia hierárquica de um colaborador até o topo
+   */
+  getEmployeeChain: protectedProcedure
+    .input(z.object({
+      employeeId: z.number()
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      const chain: any[] = [];
+      let currentId: number | null = input.employeeId;
+      
+      // Percorrer hierarquia até o topo (máximo 20 níveis para evitar loops)
+      for (let i = 0; i < 20 && currentId !== null; i++) {
+        const [employee] = await db
+          .select({
+            id: employees.id,
+            employeeCode: employees.employeeCode,
+            name: employees.name,
+            email: employees.email,
+            managerId: employees.managerId,
+            departmentName: departments.name,
+            positionTitle: positions.title,
+            photoUrl: employees.photoUrl,
+            hierarchyLevel: employees.hierarchyLevel,
+          })
+          .from(employees)
+          .leftJoin(departments, eq(employees.departmentId, departments.id))
+          .leftJoin(positions, eq(employees.positionId, positions.id))
+          .where(eq(employees.id, currentId))
+          .limit(1);
+        
+        if (!employee) break;
+        
+        chain.push(employee);
+        currentId = employee.managerId;
+      }
+      
+      return {
+        chain,
+        depth: chain.length
+      };
+    }),
+
+  /**
+   * Validar movimentação na hierarquia (detectar ciclos e validações)
+   */
+  validateHierarchyMove: protectedProcedure
+    .input(z.object({
+      employeeId: z.number(),
+      newManagerId: z.number().nullable(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      const errors: string[] = [];
+      const warnings: string[] = [];
+      
+      // Validação 1: Colaborador não pode ser gestor de si mesmo
+      if (input.newManagerId === input.employeeId) {
+        errors.push('Colaborador não pode ser gestor de si mesmo');
+        return { valid: false, errors, warnings };
+      }
+      
+      // Validação 2: Novo gestor deve existir e estar ativo
+      if (input.newManagerId !== null) {
+        const [newManager] = await db
+          .select()
+          .from(employees)
+          .where(eq(employees.id, input.newManagerId))
+          .limit(1);
+        
+        if (!newManager) {
+          errors.push('Novo gestor não encontrado');
+          return { valid: false, errors, warnings };
+        }
+        
+        if (!newManager.active) {
+          errors.push('Novo gestor está inativo');
+          return { valid: false, errors, warnings };
+        }
+      }
+      
+      // Validação 3: Detectar ciclos na hierarquia
+      // Verificar se o novo gestor é subordinado do colaborador sendo movido
+      if (input.newManagerId !== null) {
+        let currentManagerId: number | null = input.newManagerId;
+        const visited = new Set<number>();
+        
+        while (currentManagerId !== null) {
+          if (currentManagerId === input.employeeId) {
+            errors.push('Esta movimentação criaria um ciclo na hierarquia');
+            return { valid: false, errors, warnings };
+          }
+          
+          if (visited.has(currentManagerId)) {
+            warnings.push('Ciclo detectado na hierarquia existente');
+            break;
+          }
+          
+          visited.add(currentManagerId);
+          
+          const [manager] = await db
+            .select({ managerId: employees.managerId })
+            .from(employees)
+            .where(eq(employees.id, currentManagerId))
+            .limit(1);
+          
+          currentManagerId = manager?.managerId || null;
+        }
+      }
+      
+      // Validação 4: Verificar span of control do novo gestor
+      if (input.newManagerId !== null) {
+        const directReports = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(employees)
+          .where(and(
+            eq(employees.managerId, input.newManagerId),
+            eq(employees.active, true)
+          ));
+        
+        const currentCount = Number(directReports[0]?.count || 0);
+        
+        if (currentCount >= 15) {
+          warnings.push(`Novo gestor já possui ${currentCount} subordinados diretos (recomendado: até 15)`);
+        }
+      }
+      
+      return {
+        valid: errors.length === 0,
+        errors,
+        warnings
+      };
+    }),
+
+  /**
+   * Mover colaborador na hierarquia com validações completas
+   */
+  moveEmployeeInHierarchy: protectedProcedure
+    .input(z.object({
+      employeeId: z.number(),
+      newManagerId: z.number().nullable(),
+      reason: z.string().optional(),
+      changeType: z.enum(['promocao', 'transferencia', 'reorganizacao', 'desligamento_gestor', 'ajuste_hierarquico', 'outro']).optional(),
+      effectiveDate: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      // Validar movimentação
+      const validation = await orgChartRouter.createCaller(ctx).validateHierarchyMove({
+        employeeId: input.employeeId,
+        newManagerId: input.newManagerId,
+      });
+      
+      if (!validation.valid) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Movimentação inválida: ${validation.errors.join(', ')}`
+        });
+      }
+      
+      // Buscar dados atuais do colaborador
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, input.employeeId))
+        .limit(1);
+      
+      if (!employee) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Colaborador não encontrado' });
+      }
+      
+      // Registrar no histórico de mudanças
+      await db.insert(managerChangeHistory).values({
+        employeeId: input.employeeId,
+        previousManagerId: employee.managerId,
+        newManagerId: input.newManagerId,
+        changeType: input.changeType || 'ajuste_hierarquico',
+        reason: input.reason || null,
+        changedBy: ctx.user.id,
+        createdAt: new Date(),
+      });
+      
+      // Atualizar gestor do colaborador
+      await db.update(employees)
+        .set({
+          managerId: input.newManagerId,
+          updatedAt: new Date(),
+        })
+        .where(eq(employees.id, input.employeeId));
+      
+      // TODO: Enviar notificações
+      // - Notificar colaborador
+      // - Notificar gestor anterior
+      // - Notificar novo gestor
+      // - Notificar RH
+      
+      return {
+        success: true,
+        message: 'Colaborador movido com sucesso na hierarquia',
+        warnings: validation.warnings
+      };
+    }),
+
+  /**
+   * Obter estatísticas da hierarquia
+   */
+  getHierarchyStats: protectedProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      // Total de colaboradores ativos
+      const [totalResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(employees)
+        .where(eq(employees.active, true));
+      
+      const totalEmployees = Number(totalResult?.count || 0);
+      
+      // Colaboradores por nível hierárquico
+      const byLevel = await db
+        .select({
+          level: employees.hierarchyLevel,
+          count: sql<number>`count(*)`
+        })
+        .from(employees)
+        .where(eq(employees.active, true))
+        .groupBy(employees.hierarchyLevel);
+      
+      // Colaboradores por departamento
+      const byDepartment = await db
+        .select({
+          departmentName: departments.name,
+          count: sql<number>`count(*)`
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .where(eq(employees.active, true))
+        .groupBy(departments.name);
+      
+      // Gestores com mais subordinados
+      const topManagers = await db
+        .select({
+          managerId: employees.managerId,
+          managerName: sql<string>`manager.name`,
+          subordinateCount: sql<number>`count(*)`
+        })
+        .from(employees)
+        .leftJoin(sql`employees as manager`, sql`manager.id = ${employees.managerId}`)
+        .where(and(
+          eq(employees.active, true),
+          sql`${employees.managerId} IS NOT NULL`
+        ))
+        .groupBy(employees.managerId)
+        .orderBy(desc(sql`count(*)`));
+      
+      return {
+        totalEmployees,
+        byLevel: byLevel.map(l => ({ level: l.level || 'operacional', count: Number(l.count) })),
+        byDepartment: byDepartment.map(d => ({ department: d.departmentName || 'Sem departamento', count: Number(d.count) })),
+        topManagers: topManagers.slice(0, 10).map(m => ({
+          managerId: m.managerId,
+          managerName: m.managerName,
+          subordinateCount: Number(m.subordinateCount)
+        }))
+      };
     }),
 });

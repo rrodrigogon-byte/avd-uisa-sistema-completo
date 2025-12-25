@@ -1945,3 +1945,104 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [x] Testar com grande volume de dados (3.659 registros do Excel)
 - [x] Validar performance (importação concluída com sucesso)
 - [ ] Criar testes automatizados vitest
+
+
+## 🚨 CORREÇÕES URGENTES (25/12/2025 - Continuação)
+
+### Correção de Bugs
+- [ ] Corrigir erro 404 ao visualizar descrição de cargos (rota /descricao-cargos/:id)
+
+### Implementação do Roadmap
+- [ ] Revisar ROADMAP_NOVAS_FUNCIONALIDADES.md
+- [ ] Priorizar funcionalidades baseado em urgência/impacto
+- [ ] Implementar funcionalidade prioritária (Fluxo de Aprovação)
+
+
+---
+
+## 🏛️ IMPLEMENTAÇÃO COMPLETA DO ORGANOGRAMA (25/12/2025)
+
+### Fase 1: Backend e Estrutura de Dados
+- [x] Validar schema employees (campo managerId, hierarchyLevel) - Campos existem
+- [x] Adicionar campo hierarchyLevel em employees table - Já existe no schema
+- [ ] Adicionar campo employeeId em orgChartStructure table
+- [x] Criar procedure getFullHierarchy() - Árvore completa com todos os níveis
+- [x] Criar procedure getEmployeeChain(employeeId) - Cadeia hierárquica até o topo
+- [ ] Criar procedure getSubordinates(employeeId, depth?) - Subordinados diretos/indiretos
+- [x] Criar procedure moveEmployeeInHierarchy() - Mover na hierarquia com validações
+- [ ] Criar procedure bulkMoveEmployees() - Mover múltiplos funcionários
+- [x] Criar procedure validateHierarchyMove() - Validar antes de mover (ciclos, etc)
+- [x] Criar procedure getHierarchyStats() - Estatísticas da hierarquia
+- [ ] Criar procedure searchInHierarchy() - Busca por nome/cargo/departamento
+- [ ] Criar procedure exportHierarchy() - Exportar organograma (JSON/CSV/PDF)
+- [ ] Criar procedure getOrganizationalLevels() - Níveis hierárquicos configurados
+- [ ] Implementar validação de ciclos na hierarquia (A → B → C → A)
+- [ ] Implementar validação de auto-gestão (funcionário gestor de si mesmo)
+- [ ] Registrar todas as mudanças em managerChangeHistory
+
+### Fase 2: Interface Interativa do Organograma
+- [x] Criar OrganogramaContainer.tsx (container principal)
+- [x] Criar OrganogramaTree.tsx (visualização em árvore)
+- [x] Criar OrganogramaCard.tsx (card de funcionário com foto e dados)
+- [ ] Criar OrganogramaDragLayer.tsx (layer de drag-and-drop)
+- [x] Criar OrganogramaFilters.tsx (filtros e busca avançada)
+- [x] Criar OrganogramaToolbar.tsx (toolbar com ações)
+- [x] Criar OrganogramaLegend.tsx (legenda de cores por nível)
+- [ ] Criar OrganogramaMinimap.tsx (minimap para navegação)
+- [ ] Criar OrganogramaExport.tsx (exportação PNG/PDF/JSON)
+- [x] Implementar drag-and-drop com react-dnd
+- [x] Implementar validação visual (verde = válido, vermelho = inválido)
+- [ ] Implementar zoom in/out (scroll do mouse)
+- [ ] Implementar pan (arrastar fundo)
+- [x] Implementar colapsar/expandir níveis
+- [ ] Implementar destaque de caminho hierárquico ao hover
+- [x] Implementar cores diferentes por nível hierárquico (7 níveis)
+- [x] Adicionar fotos dos funcionários nos cards
+- [x] Implementar busca por nome, cargo, departamento
+- [x] Implementar filtros (departamento, nível, status)
+
+### Fase 3: Funcionalidades Avançadas
+- [ ] Criar Dashboard do Organograma com métricas
+- [ ] Adicionar KPI: Total de funcionários por nível
+- [ ] Adicionar KPI: Span of control (média de subordinados)
+- [ ] Adicionar KPI: Profundidade da hierarquia
+- [ ] Criar gráfico de distribuição por nível
+- [ ] Criar gráfico de distribuição por departamento
+- [ ] Criar timeline de movimentações
+- [ ] Implementar Relatório de Estrutura Organizacional (PDF/Excel)
+- [ ] Implementar Relatório de Movimentações (histórico)
+- [ ] Implementar Relatório de Span of Control
+- [ ] Implementar Relatório de Sucessão
+- [ ] Criar sistema de notificações para mudanças de gestor
+- [ ] Notificar funcionário ao mudar de gestor
+- [ ] Notificar gestor anterior e novo gestor
+- [ ] Notificar RH em movimentações em massa
+
+### Fase 4: Correções de Descrições de Cargo
+- [x] Adicionar rota /descricao-cargos/:id no App.tsx
+- [ ] Unificar DetalhesDescricaoCargo para ambas as rotas
+- [ ] Adicionar breadcrumbs consistentes
+- [ ] Integrar com organograma (mostrar posição na hierarquia)
+- [ ] Adicionar link para visualizar funcionários no cargo
+- [ ] Melhorar fluxo de aprovação
+- [ ] Validar procedures jobDescriptions.* existem
+- [ ] Criar procedure para listar funcionários por cargo
+- [ ] Criar procedure para vincular cargo ao organograma
+
+### Fase 5: Testes e Validação
+- [ ] Criar testes unitários backend (orgChartRouter.test.ts)
+- [ ] Teste: Retornar hierarquia completa
+- [ ] Teste: Validar ciclo na hierarquia
+- [ ] Teste: Mover funcionário corretamente
+- [ ] Teste: Registrar histórico de mudanças
+- [ ] Teste: Calcular níveis hierárquicos
+- [ ] Criar testes unitários frontend (OrganogramaInterativo.test.tsx)
+- [ ] Teste: Renderizar árvore hierárquica
+- [ ] Teste: Permitir drag-and-drop
+- [ ] Teste: Validar movimentação inválida
+- [ ] Teste: Filtrar por departamento
+- [ ] Teste: Buscar por nome
+- [ ] Testes de integração: Fluxo completo de movimentação
+- [ ] Testes manuais: Performance com 1000+ funcionários
+- [ ] Testes manuais: Responsividade mobile/tablet
+- [ ] Validar que Conselho → CEO Mazuca → Diretores está correto
