@@ -48,6 +48,7 @@ import {
   GestaoQuestoesPIRIntegridade,
 } from "./pages/PIRIntegridade/index";
 import AprovacoesCargos from "./pages/AprovacoesCargos";
+import FuncionariosImportados from "./pages/FuncionariosImportados";
 import FluxoAprovacaoCargos from "./pages/FluxoAprovacaoCargos";
 import ABTestDashboard from "./pages/ABTestDashboard";
 import NPSDashboard from "./pages/NPSDashboard";
@@ -417,6 +418,7 @@ function Router() {
       <Route path="/funcionarios/historico" component={HistoricoAlteracoes} />
       <Route path="/funcionarios/:id" component={FuncionarioDetalhes} />
       <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
+      <Route path="/funcionarios/importados" component={FuncionariosImportados} />
       <Route path="/desenvolvimento/funcionarios" component={DesenvolvimentoFuncionarios} />
       <Route path="/desenvolvimento/funcionarios/:id" component={PerfilFuncionario} />
       <Route path="/funcionarios/:id" component={PerfilFuncionario} />

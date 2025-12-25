@@ -82,6 +82,158 @@ function determineRole(cargo: string | null): "admin" | "rh" | "gestor" | "colab
 
 export const employeeImportRouter = router({
   /**
+   * Importar funcionários diretamente de arquivo Excel (base64)
+   */
+  importFromExcel: protectedProcedure
+    .input(
+      z.object({
+        fileData: z.string(), // Base64 encoded Excel file
+        fileName: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Apenas admins podem executar esta operação
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores podem executar esta operação",
+        });
+      }
+
+      const database = await getDb();
+      if (!database) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Banco de dados não disponível",
+        });
+      }
+
+      try {
+        // Importar XLSX dinamicamente
+        const XLSX = await import("xlsx");
+        
+        // Decodificar base64
+        const fileBuffer = Buffer.from(input.fileData, "base64");
+        
+        // Ler Excel
+        const workbook = XLSX.read(fileBuffer, { type: "buffer" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(worksheet) as any[];
+
+        let imported = 0;
+        let updated = 0;
+        let errors = 0;
+        const errorDetails: Array<{ row: number; message: string }> = [];
+
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          const rowNumber = i + 2; // +2 porque Excel começa em 1 e tem header
+
+          try {
+            // Mapear campos do Excel
+            const employeeCode = row["Chapa"]?.toString() || "";
+            const name = row["Nome"]?.toString() || "";
+            
+            if (!employeeCode || !name) {
+              errorDetails.push({
+                row: rowNumber,
+                message: "Chapa ou Nome não preenchidos",
+              });
+              errors++;
+              continue;
+            }
+
+            const employeeData = {
+              employeeCode,
+              name,
+              email: row["Email"]?.toString() || row["EMAILCORPORATIVO"]?.toString() || null,
+              personalEmail: row["EMAILPESSOAL"]?.toString() || null,
+              corporateEmail: row["Email"]?.toString() || row["EMAILCORPORATIVO"]?.toString() || null,
+              chapa: employeeCode,
+              codSecao: row["Código Seção"]?.toString() || row["CODSEÇÃO"]?.toString() || null,
+              secao: row["Seção"]?.toString() || row["SEÇÃO"]?.toString() || null,
+              codFuncao: row["Código Função"]?.toString() || row["CODFUNÇÃO"]?.toString() || null,
+              funcao: row["Função"]?.toString() || row["FUNÇÃO"]?.toString() || null,
+              situacao: row["SITUAÇÃO"]?.toString() || "Ativo",
+              gerencia: row["GERENCIA"]?.toString() || null,
+              diretoria: row["DIRETORIA"]?.toString() || null,
+              cargo: row["CARGO"]?.toString() || row["Função"]?.toString() || null,
+              telefone: row["TELEFONE"]?.toString() || null,
+              
+              // Hierarquia organizacional
+              empresa: row["Empresa"]?.toString() || null,
+              chapaPresidente: row["Chapa Presidente"]?.toString() || null,
+              presidente: row["Presidente"]?.toString() || null,
+              funcaoPresidente: row["Função Presidente"]?.toString() || null,
+              emailPresidente: row["Email Presidente"]?.toString() || null,
+              chapaDiretor: row["Chapa Diretor"]?.toString() || null,
+              diretor: row["Diretor"]?.toString() || null,
+              funcaoDiretor: row["Função Diretor"]?.toString() || null,
+              emailDiretor: row["Email Diretor"]?.toString() || null,
+              chapaGestor: row["Chapa Gestor"]?.toString() || null,
+              gestor: row["Gestor"]?.toString() || null,
+              funcaoGestor: row["Função Gestor"]?.toString() || null,
+              emailGestor: row["Email Gestor"]?.toString() || null,
+              chapaCoordenador: row["Chapa Coordenador"]?.toString() || null,
+              coordenador: row["Coordenador"]?.toString() || null,
+              funcaoCoordenador: row["Função Coordenador"]?.toString() || null,
+              emailCoordenador: row["Email Coordenador"]?.toString() || null,
+              
+              active: row["SITUAÇÃO"]?.toString().toLowerCase() === "ativo",
+              status: (row["SITUAÇÃO"]?.toString().toLowerCase() === "ativo" ? "ativo" : "desligado") as "ativo" | "afastado" | "desligado",
+            };
+
+            // Verificar se funcionário já existe
+            const existing = await database
+              .select()
+              .from(employees)
+              .where(eq(employees.employeeCode, employeeCode))
+              .limit(1);
+
+            if (existing.length > 0) {
+              // Atualizar funcionário existente
+              await database
+                .update(employees)
+                .set({
+                  ...employeeData,
+                  updatedAt: new Date(),
+                })
+                .where(eq(employees.employeeCode, employeeCode));
+              
+              updated++;
+            } else {
+              // Inserir novo funcionário
+              await database.insert(employees).values(employeeData);
+              imported++;
+            }
+          } catch (error: any) {
+            console.error(`Erro ao processar linha ${rowNumber}:`, error);
+            errorDetails.push({
+              row: rowNumber,
+              message: error.message || "Erro desconhecido",
+            });
+            errors++;
+          }
+        }
+
+        return {
+          success: true,
+          imported,
+          updated,
+          errors,
+          total: data.length,
+          errorDetails: errorDetails.slice(0, 20), // Limitar a 20 erros
+        };
+      } catch (error: any) {
+        console.error("Erro ao importar do Excel:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Erro ao importar do Excel: " + error.message,
+        });
+      }
+    }),
+  /**
    * Limpar usuários não-admin
    * Remove todos os usuários exceto aqueles com role "admin"
    */
