@@ -2046,3 +2046,97 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [ ] Testes manuais: Performance com 1000+ funcionários
 - [ ] Testes manuais: Responsividade mobile/tablet
 - [ ] Validar que Conselho → CEO Mazuca → Diretores está correto
+
+
+---
+
+## 🎯 PRÓXIMOS PASSOS - CONTINUAÇÃO DO DESENVOLVIMENTO (25/12/2025)
+
+### Passo 1: Limpeza de Dados de Teste
+- [x] Excluir todos os funcionários da empresa GeO
+- [x] Excluir todas as pessoas relacionadas a Alessandro
+- [x] Limpar processos AVD relacionados
+- [x] Limpar avaliações e feedbacks relacionados
+- [x] Validar integridade referencial do banco
+
+### Passo 2: Melhorias no Organograma Interativo
+- [x] Implementar drag-and-drop para reorganizar hierarquia
+- [x] Adicionar edição inline de informações de colaboradores
+- [x] Implementar zoom e pan no organograma
+- [x] Adicionar busca e filtros avançados
+- [x] Implementar visualização de detalhes ao clicar em card
+- [x] Adicionar exportação do organograma (PNG/PDF)
+- [x] Implementar diferentes layouts (vertical, horizontal, compacto)
+- [x] Adicionar indicadores visuais (ativos, inativos, subordinados)
+- [x] Melhorar responsividade mobile
+- [ ] Criar testes automatizados
+
+### Passo 3: Sistema de Feedback 360°
+- [x] Criar schema de banco de dados
+  - [x] Tabela feedback360Cycles (ciclos de feedback)
+  - [x] Tabela feedback360Participants (participantes)
+  - [x] Tabela feedback360Evaluators (avaliadores)
+  - [x] Tabela feedback360Questions (questões)
+  - [x] Tabela feedback360Responses (respostas)
+  - [x] Tabela feedback360Reports (relatórios)
+- [ ] Implementar procedures tRPC no backend
+  - [ ] cycles.create - criar ciclo de feedback
+  - [ ] cycles.list - listar ciclos
+  - [ ] cycles.addParticipants - adicionar participantes
+  - [ ] responses.submit - enviar respostas
+  - [ ] reports.generate - gerar relatório consolidado
+- [ ] Desenvolver interfaces frontend
+  - [ ] Página de gestão de ciclos
+  - [ ] Página de seleção de avaliadores
+  - [ ] Formulário de feedback
+  - [ ] Dashboard de resultados 360°
+  - [ ] Relatório individual consolidado
+- [ ] Implementar notificações por email
+- [ ] Criar testes automatizados
+
+### Passo 4: Sistema de Metas e OKRs
+- [ ] Criar schema de banco de dados
+  - [ ] Tabela okrCycles (ciclos de OKR)
+  - [ ] Tabela objectives (objetivos)
+  - [ ] Tabela keyResults (resultados-chave)
+  - [ ] Tabela okrProgress (acompanhamento)
+  - [ ] Tabela okrComments (comentários)
+- [ ] Implementar procedures tRPC no backend
+  - [ ] okrs.create - criar OKR
+  - [ ] okrs.update - atualizar progresso
+  - [ ] okrs.list - listar OKRs
+  - [ ] okrs.getByEmployee - OKRs por colaborador
+  - [ ] okrs.getByDepartment - OKRs por departamento
+  - [ ] okrs.calculateProgress - calcular progresso
+- [ ] Desenvolver interfaces frontend
+  - [ ] Página de gestão de OKRs
+  - [ ] Formulário de criação de objetivos
+  - [ ] Dashboard de acompanhamento
+  - [ ] Visualização em árvore (cascata)
+  - [ ] Gráficos de progresso
+  - [ ] Timeline de check-ins
+- [ ] Implementar sistema de check-ins semanais
+- [ ] Criar testes automatizados
+
+### Passo 5: Pesquisa de Clima Organizacional
+- [ ] Criar schema de banco de dados
+  - [ ] Tabela climateSurveys (pesquisas)
+  - [ ] Tabela climateQuestions (questões)
+  - [ ] Tabela climateResponses (respostas)
+  - [ ] Tabela climateDimensions (dimensões)
+  - [ ] Tabela climateReports (relatórios)
+- [ ] Implementar procedures tRPC no backend
+  - [ ] surveys.create - criar pesquisa
+  - [ ] surveys.launch - lançar pesquisa
+  - [ ] responses.submit - enviar respostas
+  - [ ] reports.generate - gerar relatório
+  - [ ] reports.getByDepartment - relatório por departamento
+- [ ] Desenvolver interfaces frontend
+  - [ ] Página de gestão de pesquisas
+  - [ ] Formulário de resposta (anônimo)
+  - [ ] Dashboard de resultados
+  - [ ] Análise por dimensão
+  - [ ] Comparativo temporal
+  - [ ] Heatmap por departamento
+- [ ] Implementar anonimização de respostas
+- [ ] Criar testes automatizados

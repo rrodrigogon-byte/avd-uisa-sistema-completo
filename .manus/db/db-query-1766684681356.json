@@ -1,0 +1,28 @@
+{
+  "query": "SELECT e.id, e.name, e.email, d.name as department \nFROM employees e \nLEFT JOIN departments d ON e.departmentId = d.id \nWHERE d.name LIKE '%GeO%' OR e.name LIKE '%Alessandro%' OR e.email LIKE '%alessandro%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT e.id, e.name, e.email, d.name as department \nFROM employees e \nLEFT JOIN departments d ON e.departmentId = d.id \nWHERE d.name LIKE '%GeO%' OR e.name LIKE '%Alessandro%' OR e.email LIKE '%alessandro%';",
+  "rows": [
+    {
+      "id": "171",
+      "name": "ALESSANDRO APARECIDO MESSIAS DE CARVALHO DA SILVA",
+      "email": "alessandro.silva@uisa.com.br",
+      "department": "NULL"
+    },
+    {
+      "id": "30078",
+      "name": "ALESSANDRO APARECIDO MESSIAS DE CARVALHO DA SILVA",
+      "email": "alessandro.silva@uisa.com.br",
+      "department": "NULL"
+    },
+    {
+      "id": "31288",
+      "name": "ALESSANDRO MARCELLO CARL VON ARCO GARDEMANN",
+      "email": "alessandro.gardemann@geobiogas.tech",
+      "department": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tdepartment\n171\tALESSANDRO APARECIDO MESSIAS DE CARVALHO DA SILVA\talessandro.silva@uisa.com.br\tNULL\n30078\tALESSANDRO APARECIDO MESSIAS DE CARVALHO DA SILVA\talessandro.silva@uisa.com.br\tNULL\n31288\tALESSANDRO MARCELLO CARL VON ARCO GARDEMANN\talessandro.gardemann@geobiogas.tech\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 104
+}

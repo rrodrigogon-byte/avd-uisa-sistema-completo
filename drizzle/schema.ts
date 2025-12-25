@@ -8798,3 +8798,200 @@ export const dataImports = mysqlTable("dataImports", {
 
 export type DataImport = typeof dataImports.$inferSelect;
 export type InsertDataImport = typeof dataImports.$inferInsert;
+
+
+// ============================================================================
+// SISTEMA DE FEEDBACK 360°
+// ============================================================================
+
+/**
+ * Feedback 360 Cycles - Ciclos de avaliação 360 graus
+ * Permite criar ciclos de feedback onde colaboradores avaliam uns aos outros
+ */
+export const feedback360Cycles = mysqlTable("feedback360Cycles", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  
+  // Período do ciclo
+  startDate: datetime("startDate").notNull(),
+  endDate: datetime("endDate").notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "active", "closed", "archived"]).default("draft").notNull(),
+  
+  // Configurações
+  allowSelfAssessment: boolean("allowSelfAssessment").default(true).notNull(),
+  minEvaluators: int("minEvaluators").default(3).notNull(), // Mínimo de avaliadores por pessoa
+  maxEvaluators: int("maxEvaluators").default(10).notNull(), // Máximo de avaliadores
+  anonymousResponses: boolean("anonymousResponses").default(true).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Feedback360Cycle = typeof feedback360Cycles.$inferSelect;
+export type InsertFeedback360Cycle = typeof feedback360Cycles.$inferInsert;
+
+/**
+ * Feedback 360 Participants - Participantes de cada ciclo
+ * Define quem está sendo avaliado e quem são os avaliadores
+ */
+export const feedback360Participants = mysqlTable("feedback360Participants", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  employeeId: int("employeeId").notNull(), // Pessoa sendo avaliada
+  
+  // Status de participação
+  status: mysqlEnum("status", ["invited", "in_progress", "completed", "skipped"]).default("invited").notNull(),
+  
+  // Datas
+  invitedAt: timestamp("invitedAt").defaultNow().notNull(),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Feedback360Participant = typeof feedback360Participants.$inferSelect;
+export type InsertFeedback360Participant = typeof feedback360Participants.$inferInsert;
+
+/**
+ * Feedback 360 Evaluators - Avaliadores de cada participante
+ * Define quem vai avaliar quem
+ */
+export const feedback360Evaluators = mysqlTable("feedback360Evaluators", {
+  id: int("id").autoincrement().primaryKey(),
+  participantId: int("participantId").notNull(), // Referência ao participante
+  evaluatorId: int("evaluatorId").notNull(), // Funcionário que vai avaliar
+  
+  // Tipo de relação
+  relationshipType: mysqlEnum("relationshipType", [
+    "self", // Auto-avaliação
+    "manager", // Gestor direto
+    "peer", // Colega de mesmo nível
+    "subordinate", // Subordinado
+    "other" // Outro tipo de relação
+  ]).notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "declined"]).default("pending").notNull(),
+  
+  // Datas
+  invitedAt: timestamp("invitedAt").defaultNow().notNull(),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Feedback360Evaluator = typeof feedback360Evaluators.$inferSelect;
+export type InsertFeedback360Evaluator = typeof feedback360Evaluators.$inferInsert;
+
+/**
+ * Feedback 360 Questions - Questões do feedback 360
+ * Define as perguntas que serão feitas aos avaliadores
+ */
+export const feedback360Questions = mysqlTable("feedback360Questions", {
+  id: int("id").autoincrement().primaryKey(),
+  cycleId: int("cycleId").notNull(),
+  
+  // Conteúdo da questão
+  category: varchar("category", { length: 100 }).notNull(), // Ex: "Liderança", "Comunicação", "Trabalho em Equipe"
+  question: text("question").notNull(),
+  description: text("description"), // Descrição/contexto adicional
+  
+  // Tipo de resposta
+  responseType: mysqlEnum("responseType", ["scale", "text", "multiple_choice"]).default("scale").notNull(),
+  scaleMin: int("scaleMin").default(1),
+  scaleMax: int("scaleMax").default(5),
+  options: json("options").$type<string[]>(), // Para multiple_choice
+  
+  // Configurações
+  required: boolean("required").default(true).notNull(),
+  order: int("order").notNull(), // Ordem de exibição
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Feedback360Question = typeof feedback360Questions.$inferSelect;
+export type InsertFeedback360Question = typeof feedback360Questions.$inferInsert;
+
+/**
+ * Feedback 360 Responses - Respostas do feedback 360
+ * Armazena as respostas de cada avaliador para cada questão
+ */
+export const feedback360Responses = mysqlTable("feedback360Responses", {
+  id: int("id").autoincrement().primaryKey(),
+  evaluatorRecordId: int("evaluatorRecordId").notNull(), // Referência ao feedback360Evaluators
+  questionId: int("questionId").notNull(),
+  
+  // Resposta
+  scaleValue: int("scaleValue"), // Para perguntas tipo scale
+  textValue: text("textValue"), // Para perguntas tipo text
+  selectedOption: varchar("selectedOption", { length: 200 }), // Para multiple_choice
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Feedback360Response = typeof feedback360Responses.$inferSelect;
+export type InsertFeedback360Response = typeof feedback360Responses.$inferInsert;
+
+/**
+ * Feedback 360 Reports - Relatórios consolidados do feedback 360
+ * Armazena relatórios gerados com análise dos feedbacks recebidos
+ */
+export const feedback360Reports = mysqlTable("feedback360Reports", {
+  id: int("id").autoincrement().primaryKey(),
+  participantId: int("participantId").notNull(), // Referência ao participante
+  
+  // Estatísticas gerais
+  totalEvaluators: int("totalEvaluators").notNull(),
+  completedEvaluations: int("completedEvaluations").notNull(),
+  averageScore: int("averageScore"), // Média geral (0-100)
+  
+  // Análise por categoria
+  categoryScores: json("categoryScores").$type<{
+    category: string;
+    averageScore: number;
+    responses: number;
+  }[]>(),
+  
+  // Análise por tipo de avaliador
+  scoresByRelationship: json("scoresByRelationship").$type<{
+    relationshipType: string;
+    averageScore: number;
+    count: number;
+  }[]>(),
+  
+  // Pontos fortes e áreas de melhoria
+  strengths: json("strengths").$type<string[]>(),
+  improvementAreas: json("improvementAreas").$type<string[]>(),
+  
+  // Comentários consolidados (anônimos)
+  comments: json("comments").$type<{
+    category: string;
+    comment: string;
+    relationshipType?: string;
+  }[]>(),
+  
+  // Status
+  status: mysqlEnum("status", ["generating", "completed", "error"]).default("generating").notNull(),
+  
+  // Metadados
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  generatedBy: int("generatedBy"), // Quem solicitou o relatório
+});
+
+export type Feedback360Report = typeof feedback360Reports.$inferSelect;
+export type InsertFeedback360Report = typeof feedback360Reports.$inferInsert;

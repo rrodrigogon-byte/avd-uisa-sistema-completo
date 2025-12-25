@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `feedback360Cycles` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(200) NOT NULL,\n  `description` text,\n  `startDate` datetime NOT NULL,\n  `endDate` datetime NOT NULL,\n  `status` enum('draft','active','closed','archived') NOT NULL DEFAULT 'draft',\n  `allowSelfAssessment` boolean NOT NULL DEFAULT true,\n  `minEvaluators` int NOT NULL DEFAULT 3,\n  `maxEvaluators` int NOT NULL DEFAULT 10,\n  `anonymousResponses` boolean NOT NULL DEFAULT true,\n  `createdBy` int NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `feedback360Cycles_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS `feedback360Cycles` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(200) NOT NULL,\n  `description` text,\n  `startDate` datetime NOT NULL,\n  `endDate` datetime NOT NULL,\n  `status` enum('draft','active','closed','archived') NOT NULL DEFAULT 'draft',\n  `allowSelfAssessment` boolean NOT NULL DEFAULT true,\n  `minEvaluators` int NOT NULL DEFAULT 3,\n  `maxEvaluators` int NOT NULL DEFAULT 10,\n  `anonymousResponses` boolean NOT NULL DEFAULT true,\n  `createdBy` int NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `feedback360Cycles_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 207
+}
