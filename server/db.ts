@@ -231,6 +231,277 @@ export async function getEmployeeByUserId(userId: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function getEmployeesByDepartment(departmentId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(employees)
+    .where(and(eq(employees.departmentId, departmentId), eq(employees.status, "ativo")))
+    .orderBy(employees.name);
+}
+
+export async function getEmployeesByPosition(positionId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(employees)
+    .where(and(eq(employees.positionId, positionId), eq(employees.status, "ativo")))
+    .orderBy(employees.name);
+}
+
+export async function getEmployeeProfile(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select({
+      employee: employees,
+      department: departments,
+      position: positions,
+    })
+    .from(employees)
+    .leftJoin(departments, eq(employees.departmentId, departments.id))
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(employees.id, id))
+    .limit(1);
+
+  if (result.length === 0) return undefined;
+
+  // Buscar gestor
+  let manager = undefined;
+  if (result[0].employee.managerId) {
+    const managerResult = await db
+      .select()
+      .from(employees)
+      .where(eq(employees.id, result[0].employee.managerId))
+      .limit(1);
+    manager = managerResult.length > 0 ? managerResult[0] : undefined;
+  }
+
+  // Buscar subordinados
+  const subordinates = await db
+    .select()
+    .from(employees)
+    .where(and(eq(employees.managerId, id), eq(employees.status, "ativo")))
+    .orderBy(employees.name);
+
+  return {
+    ...result[0],
+    manager,
+    subordinates,
+  };
+}
+
+export async function createEmployee(data: InsertEmployee) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(employees).values(data);
+  return result[0].insertId;
+}
+
+export async function updateEmployee(id: number, data: Partial<InsertEmployee>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(employees).set(data).where(eq(employees.id, id));
+}
+
+export async function deleteEmployee(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(employees).set({ status: "desligado" }).where(eq(employees.id, id));
+}
+
+// ============================================================================
+// ORGANOGRAMA E HIERARQUIA
+// ============================================================================
+
+export async function getOrganizationChart() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const allEmployees = await db
+    .select({
+      id: employees.id,
+      name: employees.name,
+      email: employees.email,
+      photoUrl: employees.photoUrl,
+      managerId: employees.managerId,
+      departmentId: employees.departmentId,
+      departmentName: departments.name,
+      positionId: employees.positionId,
+      positionTitle: positions.title,
+      status: employees.status,
+    })
+    .from(employees)
+    .leftJoin(departments, eq(employees.departmentId, departments.id))
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .where(eq(employees.status, "ativo"))
+    .orderBy(employees.name);
+
+  return allEmployees;
+}
+
+export async function getEmployeeSubordinates(managerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(employees)
+    .where(and(eq(employees.managerId, managerId), eq(employees.status, "ativo")))
+    .orderBy(employees.name);
+}
+
+export async function getEmployeeManager(employeeId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const employee = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.id, employeeId))
+    .limit(1);
+
+  if (employee.length === 0 || !employee[0].managerId) return undefined;
+
+  const manager = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.id, employee[0].managerId))
+    .limit(1);
+
+  return manager.length > 0 ? manager[0] : undefined;
+}
+
+export async function updateEmployeeManager(employeeId: number, newManagerId: number | null) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(employees).set({ managerId: newManagerId }).where(eq(employees.id, employeeId));
+}
+
+export async function getEmployeeHierarchyPath(employeeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const path: any[] = [];
+  let currentId: number | null = employeeId;
+
+  while (currentId) {
+    const employee = await db
+      .select({
+        id: employees.id,
+        name: employees.name,
+        positionTitle: positions.title,
+        managerId: employees.managerId,
+      })
+      .from(employees)
+      .leftJoin(positions, eq(employees.positionId, positions.id))
+      .where(eq(employees.id, currentId))
+      .limit(1);
+
+    if (employee.length === 0) break;
+
+    path.unshift(employee[0]);
+    currentId = employee[0].managerId;
+  }
+
+  return path;
+}
+
+// ============================================================================
+// BUSCA GLOBAL
+// ============================================================================
+
+export async function searchGlobal(query: string) {
+  const db = await getDb();
+  if (!db) return { employees: [], positions: [], departments: [] };
+
+  const searchTerm = `%${query}%`;
+
+  // Buscar funcionários
+  const employeesResults = await db
+    .select({
+      id: employees.id,
+      name: employees.name,
+      email: employees.email,
+      positionTitle: positions.title,
+      departmentName: departments.name,
+      type: sql<string>`'employee'`,
+    })
+    .from(employees)
+    .leftJoin(positions, eq(employees.positionId, positions.id))
+    .leftJoin(departments, eq(employees.departmentId, departments.id))
+    .where(
+      and(
+        eq(employees.status, "ativo"),
+        or(
+          sql`${employees.name} LIKE ${searchTerm}`,
+          sql`${employees.email} LIKE ${searchTerm}`,
+          sql`${employees.employeeCode} LIKE ${searchTerm}`
+        )
+      )
+    )
+    .limit(10);
+
+  // Buscar cargos
+  const positionsResults = await db
+    .select({
+      id: positions.id,
+      title: positions.title,
+      description: positions.description,
+      departmentName: departments.name,
+      type: sql<string>`'position'`,
+    })
+    .from(positions)
+    .leftJoin(departments, eq(positions.departmentId, departments.id))
+    .where(
+      and(
+        eq(positions.active, true),
+        or(
+          sql`${positions.title} LIKE ${searchTerm}`,
+          sql`${positions.description} LIKE ${searchTerm}`,
+          sql`${positions.code} LIKE ${searchTerm}`
+        )
+      )
+    )
+    .limit(10);
+
+  // Buscar departamentos
+  const departmentsResults = await db
+    .select({
+      id: departments.id,
+      name: departments.name,
+      description: departments.description,
+      type: sql<string>`'department'`,
+    })
+    .from(departments)
+    .where(
+      and(
+        eq(departments.active, true),
+        or(
+          sql`${departments.name} LIKE ${searchTerm}`,
+          sql`${departments.description} LIKE ${searchTerm}`,
+          sql`${departments.code} LIKE ${searchTerm}`
+        )
+      )
+    )
+    .limit(10);
+
+  return {
+    employees: employeesResults,
+    positions: positionsResults,
+    departments: departmentsResults,
+  };
+}
+
 
 
 /**
@@ -474,6 +745,41 @@ export async function getAllDepartments() {
     .orderBy(departments.name);
 }
 
+export async function getDepartmentById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(departments)
+    .where(eq(departments.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createDepartment(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(departments).values(data);
+  return result[0].insertId;
+}
+
+export async function updateDepartment(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(departments).set(data).where(eq(departments.id, id));
+}
+
+export async function deleteDepartment(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(departments).set({ active: false }).where(eq(departments.id, id));
+}
+
 export async function getAllPositions() {
   const db = await getDb();
   if (!db) return [];
@@ -483,6 +789,52 @@ export async function getAllPositions() {
     .from(positions)
     .where(eq(positions.active, true))
     .orderBy(positions.title);
+}
+
+export async function getPositionById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(positions)
+    .where(eq(positions.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getPositionsByDepartment(departmentId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(positions)
+    .where(and(eq(positions.departmentId, departmentId), eq(positions.active, true)))
+    .orderBy(positions.title);
+}
+
+export async function createPosition(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(positions).values(data);
+  return result[0].insertId;
+}
+
+export async function updatePosition(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(positions).set(data).where(eq(positions.id, id));
+}
+
+export async function deletePosition(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(positions).set({ active: false }).where(eq(positions.id, id));
 }
 
 // ============================================================================

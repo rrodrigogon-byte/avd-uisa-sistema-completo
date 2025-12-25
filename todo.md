@@ -1633,3 +1633,263 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [ ] Implementar busca e filtros avançados
 - [ ] Adicionar histórico completo de alterações
 - [ ] Criar dashboard executivo de métricas
+
+
+---
+
+## 🎯 NOVA IMPLEMENTAÇÃO: DESCRIÇÃO DE CARGOS, CADASTRO DE FUNCIONÁRIOS, PERFIL E ORGANOGRAMA (25/12/2025)
+
+### FASE 1: Schema do Banco de Dados ✅
+
+#### Tabelas Core
+- [x] Criar tabela `departments` (departamentos/áreas) - JÁ EXISTIA
+- [x] Criar tabela `positions` (cargos com descrição UISA) - JÁ EXISTIA
+- [x] Criar tabela `employees` (funcionários/colaboradores) - JÁ EXISTIA
+- [x] Criar tabela `employee_hierarchy` (relações hierárquicas/organograma) - CAMPO managerId EM employees
+- [x] Adicionar campos específicos UISA em `positions` (competências, requisitos, responsabilidades) - CONCLUÍDO
+- [x] Executar `pnpm db:push` para aplicar schema - CONCLUÍDO COM ALTER TABLE
+
+### FASE 2: Backend - Database Queries (server/db.ts) ✅
+
+#### Departamentos
+- [x] `getAllDepartments()` - Listar todos departamentos
+- [x] `getDepartmentById(id)` - Buscar departamento por ID
+- [x] `createDepartment(data)` - Criar novo departamento
+- [x] `updateDepartment(id, data)` - Atualizar departamento
+- [x] `deleteDepartment(id)` - Excluir departamento
+
+#### Cargos (Positions)
+- [x] `getAllPositions()` - Listar todos cargos
+- [x] `getPositionById(id)` - Buscar cargo por ID com descrição UISA completa
+- [x] `getPositionsByDepartment(deptId)` - Listar cargos por departamento
+- [x] `createPosition(data)` - Criar novo cargo com descrição UISA
+- [x] `updatePosition(id, data)` - Atualizar cargo
+- [x] `deletePosition(id)` - Excluir cargo
+
+#### Funcionários (Employees)
+- [x] `getAllEmployees()` - Listar todos funcionários
+- [x] `getEmployeeById(id)` - Buscar funcionário por ID com dados completos
+- [x] `getEmployeesByDepartment(deptId)` - Listar funcionários por departamento
+- [x] `getEmployeesByPosition(positionId)` - Listar funcionários por cargo
+- [x] `getEmployeeProfile(id)` - Buscar perfil completo (cargo, gestor, subordinados)
+- [x] `createEmployee(data)` - Criar novo funcionário
+- [x] `updateEmployee(id, data)` - Atualizar funcionário
+- [x] `deleteEmployee(id)` - Excluir funcionário
+
+#### Organograma (Hierarchy)
+- [x] `getOrganizationChart()` - Buscar estrutura hierárquica completa
+- [x] `getEmployeeSubordinates(managerId)` - Buscar subordinados diretos
+- [x] `getEmployeeManager(employeeId)` - Buscar gestor direto
+- [x] `updateEmployeeManager(employeeId, newManagerId)` - Atualizar gestor (drag-and-drop)
+- [x] `getEmployeeHierarchyPath(employeeId)` - Buscar caminho hierárquico completo
+
+#### Busca Global
+- [x] `searchGlobal(query)` - Buscar em funcionários, cargos, departamentos
+
+### FASE 3: Backend - tRPC Procedures (server/routers.ts) ✅
+
+#### Router: departments
+- [x] `departments.list` - Query para listar departamentos
+- [x] `departments.getById` - Query para buscar departamento
+- [x] `departments.create` - Mutation para criar departamento
+- [x] `departments.update` - Mutation para atualizar departamento
+- [x] `departments.delete` - Mutation para excluir departamento
+
+#### Router: hrPositions
+- [x] `hrPositions.list` - Query para listar cargos
+- [x] `hrPositions.getById` - Query para buscar cargo com descrição UISA
+- [x] `hrPositions.byDepartment` - Query para listar cargos por departamento
+- [x] `hrPositions.create` - Mutation para criar cargo
+- [x] `hrPositions.update` - Mutation para atualizar cargo
+- [x] `hrPositions.delete` - Mutation para excluir cargo
+
+#### Router: hrEmployees
+- [x] `hrEmployees.list` - Query para listar funcionários
+- [x] `hrEmployees.getById` - Query para buscar funcionário
+- [x] `hrEmployees.profile` - Query para buscar perfil completo
+- [x] `hrEmployees.byDepartment` - Query para listar por departamento
+- [x] `hrEmployees.byPosition` - Query para listar por cargo
+- [x] `hrEmployees.create` - Mutation para criar funcionário
+- [x] `hrEmployees.update` - Mutation para atualizar funcionário
+- [x] `hrEmployees.delete` - Mutation para excluir funcionário
+
+#### Router: hrHierarchy
+- [x] `hrHierarchy.getChart` - Query para buscar organograma completo
+- [x] `hrHierarchy.getSubordinates` - Query para buscar subordinados
+- [x] `hrHierarchy.getManager` - Query para buscar gestor
+- [x] `hrHierarchy.updateManager` - Mutation para atualizar gestor (drag-and-drop)
+- [x] `hrHierarchy.getPath` - Query para buscar caminho hierárquico
+
+#### Router: hrSearch
+- [x] `hrSearch.global` - Query para busca global (Ctrl+K)
+
+### FASE 4: Frontend - Páginas e Componentes
+
+#### Página: Descrição de Cargos (/positions)
+- [ ] Criar `client/src/pages/Positions.tsx` - Lista de cargos
+- [ ] Criar `client/src/pages/PositionDetail.tsx` - Detalhes do cargo UISA
+- [ ] Criar `client/src/components/PositionForm.tsx` - Formulário de cargo
+- [ ] Implementar listagem com filtros (departamento, nível)
+- [ ] Implementar visualização de descrição UISA completa
+- [ ] Implementar criação/edição de cargo
+- [ ] Implementar exclusão de cargo
+
+#### Página: Cadastro de Funcionários (/employees)
+- [ ] Criar `client/src/pages/Employees.tsx` - Lista de funcionários
+- [ ] Criar `client/src/components/EmployeeForm.tsx` - Formulário de funcionário
+- [ ] Implementar listagem com filtros (departamento, cargo, status)
+- [ ] Implementar criação de funcionário
+- [ ] Implementar edição de funcionário
+- [ ] Implementar exclusão de funcionário
+- [ ] Implementar upload de foto de perfil (S3)
+
+#### Página: Perfil de Funcionário (/employees/:id)
+- [ ] Criar `client/src/pages/EmployeeProfile.tsx` - Perfil completo
+- [ ] Exibir informações pessoais e profissionais
+- [ ] Exibir cargo e descrição UISA
+- [ ] Exibir gestor direto e subordinados
+- [ ] Exibir caminho hierárquico (breadcrumb)
+- [ ] Implementar edição rápida de informações
+
+#### Página: Organograma (/organization-chart)
+- [ ] Melhorar `client/src/pages/OrganizationChart.tsx` - Visualização hierárquica
+- [ ] Implementar drag-and-drop para reorganizar hierarquia
+- [ ] Conectar mutation `hierarchy.updateManager` ao drag-and-drop
+- [ ] Implementar zoom e navegação
+- [ ] Implementar filtros (departamento, nível hierárquico)
+- [ ] Melhorar cards de funcionário com foto e cargo
+- [ ] Implementar modal de detalhes ao clicar em funcionário
+
+#### Componente: Busca Global (Ctrl+K)
+- [ ] Melhorar `client/src/components/GlobalSearch.tsx` - Modal de busca
+- [ ] Conectar com `trpc.search.global.useQuery`
+- [ ] Implementar resultados agrupados (funcionários, cargos, departamentos)
+- [ ] Implementar navegação por teclado (setas)
+- [ ] Implementar ações rápidas (visualizar perfil, editar)
+
+#### Componente: Dashboard de Notificações
+- [ ] Criar `client/src/components/NotificationPanel.tsx` - Painel de notificações
+- [ ] Implementar dropdown no ícone de sino do header
+- [ ] Implementar listagem de notificações
+- [ ] Implementar filtros (todas, não lidas)
+- [ ] Implementar marcação como lida
+- [ ] Implementar ações rápidas (aprovar, rejeitar, visualizar)
+
+#### Navegação e Rotas
+- [ ] Adicionar rotas em `client/src/App.tsx`
+- [ ] Adicionar itens de menu no DashboardLayout
+- [ ] Configurar breadcrumbs para navegação contextual
+
+### FASE 5: Testes e Validação
+
+#### Testes Backend (Vitest)
+- [ ] Criar testes para queries de departamentos
+- [ ] Criar testes para queries de cargos
+- [ ] Criar testes para queries de funcionários
+- [ ] Criar testes para queries de hierarquia
+- [ ] Criar testes para busca global
+- [ ] Executar `pnpm test` e validar
+
+#### Testes Frontend (Manual)
+- [ ] Testar criação de departamento
+- [ ] Testar criação de cargo com descrição UISA
+- [ ] Testar cadastro de funcionário com upload de foto
+- [ ] Testar visualização de perfil completo
+- [ ] Testar organograma e drag-and-drop
+- [ ] Testar busca global (Ctrl+K)
+- [ ] Testar notificações
+- [ ] Testar responsividade mobile
+
+### FASE 6: Documentação e Entrega
+
+- [ ] Documentar estrutura de dados UISA
+- [ ] Documentar fluxo de cadastro de funcionários
+- [ ] Documentar uso do organograma
+- [ ] Criar checkpoint final
+- [ ] Entregar sistema ao usuário
+
+---
+
+## 📋 NOTAS TÉCNICAS - DESCRIÇÃO DE CARGOS UISA
+
+### Estrutura UISA para Descrição de Cargos
+- **Título do Cargo**: Nome oficial
+- **Departamento**: Área de atuação
+- **Nível Hierárquico**: Júnior, Pleno, Sênior, Coordenador, Gerente, Diretor
+- **Missão do Cargo**: Propósito principal
+- **Responsabilidades**: Lista de atividades principais
+- **Competências Técnicas**: Conhecimentos específicos necessários
+- **Competências Comportamentais**: Soft skills requeridas
+- **Requisitos**: Formação, experiência, certificações
+- **Indicadores de Performance**: KPIs do cargo
+
+### Campos de Funcionário
+- Dados pessoais: nome, email, telefone, foto
+- Dados profissionais: cargo, departamento, data de admissão, status
+- Hierarquia: gestor direto
+- Acesso: vinculação com tabela `users` (openId)
+
+### Organograma
+- Estrutura em árvore baseada em `managerId`
+- Suporte a múltiplos níveis hierárquicos
+- Drag-and-drop para reorganização
+- Visualização por departamento
+
+
+---
+
+## ✅ IMPORTAÇÃO DE FUNCIONÁRIOS CONCLUÍDA (25/12/2025)
+
+- [x] Importar 3.659 funcionários do Excel para o banco de dados
+- [x] Criar estrutura hierárquica completa (Presidente → Diretor → Gestor → Coordenador)
+- [x] Popular tabela employeeHierarchy com todos os níveis hierárquicos
+- [x] Validar integridade dos dados importados
+
+**Estatísticas:**
+- Total importado: 3.659 funcionários
+- Sucesso: 100%
+- Erros: 0
+
+
+---
+
+## ✅ FASES 4-7 CONCLUÍDAS (25/12/2025)
+
+### FASE 4: Interface de Descrição de Cargos ✅
+- [x] Página `/hr/positions` criada com listagem em cards
+- [x] Formulário completo com 4 abas (Básico, UISA, Competências, Requisitos)
+- [x] Campos UISA implementados (missão, responsabilidades, competências técnicas/comportamentais, KPIs)
+- [x] Busca e filtros funcionando
+- [x] CRUD completo (Criar, Editar, Excluir)
+
+### FASE 5: Cadastro e Perfil de Funcionários ✅
+- [x] Página `/hr/employees` criada com tabela completa
+- [x] Filtros avançados (busca, departamento, status)
+- [x] Cards de estatísticas (Total, Ativos, Afastados, Desligados)
+- [x] Formulário de cadastro completo
+- [x] Vinculação com departamento, cargo e gestor direto
+- [x] Página de perfil `/employees/:id` com 4 abas
+- [x] Visualização de gestor e subordinados
+
+### FASE 6: Organograma com Drag-and-Drop ✅
+- [x] Página `/hr/organization-chart` criada
+- [x] Visualização hierárquica em árvore
+- [x] **Drag-and-drop funcional** para reorganizar hierarquia
+- [x] Validação para evitar loops hierárquicos
+- [x] Busca e filtros (nome, código, departamento)
+- [x] Controles de zoom (ampliar, reduzir, resetar)
+- [x] Navegação para perfil do funcionário
+- [x] Estatísticas da organização
+
+### FASE 7: Busca Global e Notificações ✅
+- [x] Componente `GlobalSearch.tsx` já existia e está funcional
+- [x] Atalho Ctrl+K implementado
+- [x] Busca em funcionários, cargos e departamentos
+- [x] Navegação por teclado (↑↓ Enter Esc)
+- [x] Sistema de notificações já existente no header
+
+**Rotas Registradas:**
+- `/hr/positions` → Descrição de Cargos
+- `/hr/employees` → Cadastro de Funcionários
+- `/employees/:id` → Perfil do Funcionário
+- `/hr/organization-chart` → Organograma

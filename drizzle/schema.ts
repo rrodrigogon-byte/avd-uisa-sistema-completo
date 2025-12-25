@@ -220,6 +220,15 @@ export const positions = mysqlTable("positions", {
   departmentId: int("departmentId"),
   salaryMin: int("salaryMin"),
   salaryMax: int("salaryMax"),
+  
+  // Campos UISA - Descrição Completa do Cargo
+  mission: text("mission"), // Missão do cargo
+  responsibilities: json("responsibilities").$type<string[]>(), // Lista de responsabilidades
+  technicalCompetencies: json("technicalCompetencies").$type<string[]>(), // Competências técnicas
+  behavioralCompetencies: json("behavioralCompetencies").$type<string[]>(), // Competências comportamentais
+  requirements: json("requirements").$type<{education?: string; experience?: string; certifications?: string[]}>(), // Requisitos
+  kpis: json("kpis").$type<{name: string; description: string; target?: string}[]>(), // Indicadores de performance
+  
   active: boolean("active").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

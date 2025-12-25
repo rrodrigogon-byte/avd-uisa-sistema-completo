@@ -308,6 +308,10 @@ import DashboardAprovacoesCargos from "./pages/job-descriptions/DashboardAprovac
 import FormularioCargo from "./pages/job-descriptions/FormularioCargo";
 import TestesIntegridade from "./pages/integrity-tests/TestesIntegridade";
 import DashboardGestao from "./pages/DashboardGestao";
+import Positions from "./pages/Positions";
+import Employees from "./pages/Employees";
+import EmployeeProfile from "./pages/EmployeeProfile";
+import OrganizationChart from "./pages/OrganizationChart";
 
 function Router() {
   return (
@@ -541,6 +545,10 @@ function Router() {
       <Route path="/hierarquia" component={HierarquiaUISA} />
       <Route path="/hierarquia-busca" component={HierarchyView} />
       <Route path="/organograma" component={Organograma} />
+      <Route path="/hr/positions" component={Positions} />
+      <Route path="/hr/employees" component={Employees} />
+      <Route path="/employees/:id" component={EmployeeProfile} />
+      <Route path="/hr/organization-chart" component={OrganizationChart} />
       <Route path="/organograma/hierarquia" component={OrganogramaHierarchy} />
       <Route path="/dashboard/notificacoes" component={DashboardNotificacoes} />
       <Route path="/dashboard/auditoria" component={DashboardAuditoria} />

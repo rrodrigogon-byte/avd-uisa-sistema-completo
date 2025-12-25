@@ -98,6 +98,13 @@ import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
 import { cycles360OverviewRouter } from "./cycles360OverviewRouter";
 import { usersRouter } from "./routers/usersRouter";
 import { avdUisaRouter } from "./avdUisaRouter";
+import { 
+  departmentsRouter, 
+  positionsRouter as hrPositionsRouter, 
+  employeesRouter as hrEmployeesRouter, 
+  hierarchyRouter as hrHierarchyRouter, 
+  searchRouter as hrSearchRouter 
+} from "./routers/hrManagementRouter";
 import { gestaoRouter } from "./routers/gestaoRouter";
 import { employeeManagementRouter } from "./employeeManagementRouter";
 import { jobDescriptionBatchApprovalRouter } from "./jobDescriptionBatchApprovalRouter";
@@ -409,6 +416,13 @@ export const appRouter = router({
   
   // Novo router - Notificações de Resultados por Email (17/12/2025)
   resultNotifications: resultNotificationsRouter,
+  
+  // Novos routers - Gestão de RH: Departamentos, Cargos e Funcionários (25/12/2025)
+  departments: departmentsRouter,
+  hrPositions: hrPositionsRouter,
+  hrEmployees: hrEmployeesRouter,
+  hrHierarchy: hrHierarchyRouter,
+  hrSearch: hrSearchRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -6611,6 +6625,15 @@ async function createNotification(data: {
   return notification;
 }
 
+// ============================================================================
+// NOVOS ROUTERS - GESTÃO DE RH: DEPARTAMENTOS, CARGOS E FUNCIONÁRIOS (25/12/2025)
+// ============================================================================
 
+// Nota: Os routers abaixo foram adicionados ao appRouter:
+// - departments: departmentsRouter
+// - hrPositions: hrPositionsRouter
+// - hrEmployees: hrEmployeesRouter
+// - hrHierarchy: hrHierarchyRouter
+// - hrSearch: hrSearchRouter
 
 export type AppRouter = typeof appRouter;
