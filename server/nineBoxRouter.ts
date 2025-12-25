@@ -28,7 +28,7 @@ export const nineBoxRouter = router({
         performanceFilter: z.enum(["baixa", "media", "alta"]).optional(),
         potentialFilter: z.enum(["baixo", "medio", "alto"]).optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const database = await getDb();
       if (!database) return [];

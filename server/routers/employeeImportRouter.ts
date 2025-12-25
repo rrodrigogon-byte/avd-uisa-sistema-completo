@@ -420,7 +420,7 @@ export const employeeImportRouter = router({
   /**
    * Obter estatísticas de importação
    */
-  getImportStats: protectedProcedure.query(async ({ ctx }) => {
+  getImportStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const database = await getDb();
     if (!database) {
       throw new TRPCError({

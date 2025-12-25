@@ -16,7 +16,7 @@ export const evaluationTemplatesRouter = router({
       z.object({
         onlyActive: z.boolean().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

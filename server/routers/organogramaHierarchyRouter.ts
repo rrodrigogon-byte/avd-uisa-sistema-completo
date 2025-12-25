@@ -20,7 +20,7 @@ export const organogramaHierarchyRouter = router({
       secao: z.string().optional(),
       funcao: z.string().optional(),
       searchTerm: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -104,7 +104,7 @@ export const organogramaHierarchyRouter = router({
     .input(z.object({
       empresa: z.string().optional(),
       rootChapa: z.string().optional(), // Chapa do nó raiz (Presidente, Diretor, etc)
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -251,7 +251,7 @@ export const organogramaHierarchyRouter = router({
   /**
    * Buscar opções de filtro (empresas, seções, funções)
    */
-  getFilterOptions: protectedProcedure.query(async () => {
+  getFilterOptions: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -288,7 +288,7 @@ export const organogramaHierarchyRouter = router({
   /**
    * Buscar estatísticas do organograma
    */
-  getHierarchyStats: protectedProcedure.query(async () => {
+  getHierarchyStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

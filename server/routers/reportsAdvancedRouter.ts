@@ -362,7 +362,7 @@ export const reportsAdvancedRouter = router({
     .input(z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

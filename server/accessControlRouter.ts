@@ -201,7 +201,7 @@ export const accessControlRouter = router({
     z.object({
       userId: z.number().optional(),
     })
-  ).query(async ({ input, ctx }) => {
+  .optional()).query(async ({ input, ctx }) => {
     const userId = input.userId || ctx.user.id;
 
     // Apenas admin pode ver perfis de outros usuários

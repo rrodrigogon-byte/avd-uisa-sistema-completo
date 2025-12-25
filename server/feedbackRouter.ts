@@ -58,7 +58,7 @@ export const feedbackRouter = router({
     .input(z.object({
       employeeId: z.number().optional(),
       type: z.enum(["positivo", "construtivo", "desenvolvimento"]).optional(),
-    }))
+    }).optional())
     .query(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) return [];
@@ -141,7 +141,7 @@ export const feedbackRouter = router({
   getStats: protectedProcedure
     .input(z.object({
       employeeId: z.number().optional(),
-    }))
+    }).optional())
     .query(async ({ input, ctx }) => {
       const database = await getDb();
       if (!database) return { total: 0, positivo: 0, construtivo: 0, desenvolvimento: 0 };

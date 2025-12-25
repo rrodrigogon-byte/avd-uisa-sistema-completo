@@ -179,7 +179,7 @@ export const exportRouter = router({
         departmentId: z.number().optional(),
         status: z.string().optional(),
       })
-    )
+    .optional())
     .mutation(async ({ input, ctx }) => {
       try {
         // Aqui você buscaria os dados reais do banco de dados
@@ -215,7 +215,7 @@ export const exportRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional(),
       })
-    )
+    .optional())
     .mutation(async ({ input, ctx }) => {
       try {
         const csvData = [

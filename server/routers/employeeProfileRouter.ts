@@ -194,7 +194,7 @@ export const employeeProfileRouter = router({
   /**
    * Listar todas as competências disponíveis
    */
-  listAvailableCompetencies: protectedProcedure.query(async () => {
+  listAvailableCompetencies: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

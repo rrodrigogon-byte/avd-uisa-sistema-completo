@@ -241,7 +241,7 @@ export const jobDescriptionWorkflowRouter = router({
   /**
    * Lista lotes de aprovação do usuário
    */
-  listMyBatches: protectedProcedure.query(async ({ ctx }) => {
+  listMyBatches: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const batches = await getBatchApprovalsByApprover(ctx.user.id);
 
     return {
@@ -253,7 +253,7 @@ export const jobDescriptionWorkflowRouter = router({
   /**
    * Obtém estatísticas de aprovações pendentes
    */
-  getApprovalStats: protectedProcedure.query(async ({ ctx }) => {
+  getApprovalStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     // Busca pendências em todos os níveis
     const level1 = await getPendingJobDescriptionsByLevel(1, ctx.user.id);
     const level2 = await getPendingJobDescriptionsByLevel(2, ctx.user.id);

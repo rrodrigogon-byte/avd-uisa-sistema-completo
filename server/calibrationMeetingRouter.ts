@@ -71,7 +71,7 @@ export const calibrationMeetingRouter = router({
     .input(z.object({
       cycleId: z.number().optional(),
       status: z.enum(["agendada", "em_andamento", "concluida"]).optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];

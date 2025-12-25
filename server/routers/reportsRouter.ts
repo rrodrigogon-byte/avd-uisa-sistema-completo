@@ -22,7 +22,7 @@ export const reportsRouter = router({
         departmentId: z.number().optional(),
         period: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
@@ -90,7 +90,7 @@ export const reportsRouter = router({
         departmentId: z.number().optional(),
         period: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
@@ -161,7 +161,7 @@ export const reportsRouter = router({
         departmentId: z.number().optional(),
         period: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
@@ -223,7 +223,7 @@ export const reportsRouter = router({
         cycleId: z.number().optional(),
         departmentId: z.number().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) {

@@ -223,7 +223,7 @@ export const pendenciasRouter = router({
   /**
    * Buscar pendências do responsável
    */
-  myPendencias: protectedProcedure.query(async ({ ctx }) => {
+  myPendencias: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const employee = await db.getUserEmployee(ctx.user.id);
     
     if (!employee) {

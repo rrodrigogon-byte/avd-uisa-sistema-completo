@@ -36,7 +36,7 @@ export const adminAdvancedRouter = router({
   /**
    * Dashboard administrativo com estatísticas gerais
    */
-  getDashboardStats: protectedProcedure.query(async ({ ctx }) => {
+  getDashboardStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     requireAdmin(ctx);
 
     const db = await getDb();

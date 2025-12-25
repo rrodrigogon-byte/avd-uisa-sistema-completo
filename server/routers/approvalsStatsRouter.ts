@@ -28,7 +28,7 @@ export const approvalsStatsRouter = router({
         endDate: z.string().optional(),
         context: z.enum(["metas", "avaliacoes", "pdi", "descricao_cargo", "ciclo_360", "bonus", "todos"]).optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const database = await getDb();
       if (!database) throw new Error("Database not available");

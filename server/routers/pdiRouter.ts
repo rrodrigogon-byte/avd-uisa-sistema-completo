@@ -34,7 +34,7 @@ export const pdiRouter = router({
     .input(z.object({
       employeeId: z.number().optional(),
       status: z.enum(["rascunho", "pendente_aprovacao", "aprovado", "em_andamento", "concluido", "cancelado"]).optional(),
-    }))
+    }).optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -55,10 +55,10 @@ export const pdiRouter = router({
       .orderBy(desc(pdiPlans.createdAt))
       .$dynamic();
 
-      if (input.employeeId) {
+      if (input?.employeeId) {
         query = query.where(eq(pdiPlans.employeeId, input.employeeId));
       }
-      if (input.status) {
+      if (input?.status) {
         query = query.where(eq(pdiPlans.status, input.status));
       }
 
@@ -755,7 +755,7 @@ export const pdiRouter = router({
       departmentId: z.number().optional(),
       startDate: z.date().optional(),
       endDate: z.date().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -865,7 +865,7 @@ export const pdiRouter = router({
       departmentId: z.number().optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });

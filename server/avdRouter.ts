@@ -1181,7 +1181,7 @@ export const avdRouter = router({
       endDate: z.date().optional(),
       departmentId: z.number().optional(),
       status: z.enum(['em_andamento', 'concluido', 'cancelado']).optional(),
-    }))
+    }).optional())
     .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -1282,7 +1282,7 @@ export const avdRouter = router({
   getExportData: protectedProcedure
     .input(z.object({
       status: z.enum(['em_andamento', 'concluido', 'cancelado']).optional(),
-    }))
+    }).optional())
     .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

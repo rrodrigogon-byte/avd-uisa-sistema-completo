@@ -134,7 +134,7 @@ export const employeeHistoryRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return { total: 0, byType: [] };

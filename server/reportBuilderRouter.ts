@@ -6,7 +6,7 @@ import { eq, sql, and, gte, lte, count, avg } from "drizzle-orm";
 
 export const reportBuilderRouter = router({
   // Listar relatórios customizados
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
 
@@ -213,7 +213,7 @@ export const reportBuilderRouter = router({
     }),
 
   // Obter métricas disponíveis
-  getAvailableMetrics: protectedProcedure.query(() => {
+  getAvailableMetrics: protectedProcedure.input(z.object({}).optional()).query(() => {
     return [
       { id: "headcount", name: "Total de Colaboradores", category: "geral" },
       { id: "avgPerformance", name: "Performance Média", category: "performance" },
@@ -227,7 +227,7 @@ export const reportBuilderRouter = router({
   }),
 
   // Listar departamentos para filtros
-  getDepartments: protectedProcedure.query(async () => {
+  getDepartments: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -243,7 +243,7 @@ export const reportBuilderRouter = router({
   }),
 
   // Listar posições para filtros
-  getPositions: protectedProcedure.query(async () => {
+  getPositions: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 

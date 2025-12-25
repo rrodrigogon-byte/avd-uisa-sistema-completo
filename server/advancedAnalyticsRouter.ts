@@ -357,7 +357,7 @@ export const advancedAnalyticsRouter = router({
       z.object({
         departmentId: z.number().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

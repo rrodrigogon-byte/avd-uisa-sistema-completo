@@ -264,7 +264,7 @@ export const continuousFeedbackRouter = router({
         periodStart: z.string().optional(),
         periodEnd: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

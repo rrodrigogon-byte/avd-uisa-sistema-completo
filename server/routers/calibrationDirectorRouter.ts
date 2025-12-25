@@ -15,7 +15,7 @@ export const calibrationDirectorRouter = router({
       z.object({
         status: z.enum(["draft", "in_progress", "completed"]).optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

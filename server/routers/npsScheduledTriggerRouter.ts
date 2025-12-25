@@ -73,7 +73,7 @@ export const npsScheduledTriggerRouter = router({
       detractorThreshold: z.number().min(0).max(10).optional(),
       alertRecipientEmails: z.string().optional(),
       surveyExpirationDays: z.number().min(1).max(30).optional(),
-    }))
+    }).optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database não disponível");
@@ -155,7 +155,7 @@ export const npsScheduledTriggerRouter = router({
   listDetractorAlerts: adminProcedure
     .input(z.object({
       status: z.enum(["new", "acknowledged", "in_progress", "resolved", "dismissed"]).optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];

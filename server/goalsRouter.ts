@@ -369,7 +369,7 @@ export const goalsRouter = router({
           .enum(["financial", "behavioral", "corporate", "development"])
           .optional(),
         goalType: z.enum(["individual", "corporate"]).optional(),
-      })
+      }).optional()
     )
     .query(async ({ ctx, input }) => {
       const db = await getDb();
@@ -385,10 +385,10 @@ export const goalsRouter = router({
       if (!employee) return [];
 
       const conditions = [eq(smartGoals.employeeId, employee.id)];
-      if (input.cycleId) conditions.push(eq(smartGoals.cycleId, input.cycleId));
-      if (input.status) conditions.push(eq(smartGoals.status, input.status));
-      if (input.category) conditions.push(eq(smartGoals.category, input.category));
-      if (input.goalType) conditions.push(eq(smartGoals.goalType, input.goalType));
+      if (input?.cycleId) conditions.push(eq(smartGoals.cycleId, input.cycleId));
+      if (input?.status) conditions.push(eq(smartGoals.status, input.status));
+      if (input?.category) conditions.push(eq(smartGoals.category, input.category));
+      if (input?.goalType) conditions.push(eq(smartGoals.goalType, input.goalType));
 
       const goals = await db
         .select()
@@ -990,7 +990,7 @@ export const goalsRouter = router({
    * Dashboard de metas (KPIs e estatísticas)
    */
   getDashboard: protectedProcedure
-    .input(z.object({ cycleId: z.number().optional() }))
+    .input(z.object({ cycleId: z.number().optional() }).optional())
     .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db)
@@ -1731,7 +1731,7 @@ export const goalsRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');
@@ -1997,7 +1997,7 @@ export const goalsRouter = router({
    * Contar metas por ciclo (para dashboard de acompanhamento)
    */
   countByCycle: protectedProcedure
-    .input(z.object({ cycleId: z.number().optional() }))
+    .input(z.object({ cycleId: z.number().optional() }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];

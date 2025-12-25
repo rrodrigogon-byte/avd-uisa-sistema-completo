@@ -18,7 +18,7 @@ export const jobDescriptionsApprovalsRouter = router({
         department: z.string().optional(),
         search: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       return await db.listJobDescriptions(input);
     }),
@@ -214,7 +214,7 @@ export const jobDescriptionsApprovalsRouter = router({
    * Listar aprovações pendentes
    */
   listPendingApprovals: protectedProcedure
-    .input(z.object({ approverId: z.number().optional() }))
+    .input(z.object({ approverId: z.number().optional() }).optional())
     .query(async ({ input, ctx }) => {
       const approverId = input.approverId || ctx.user.id;
       return await db.listPendingJobApprovals(approverId);

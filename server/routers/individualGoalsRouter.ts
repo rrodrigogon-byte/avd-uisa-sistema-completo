@@ -389,7 +389,7 @@ export const individualGoalsRouter = router({
       employeeId: z.number().optional(),
       departmentId: z.number().optional(),
       cycleId: z.number().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

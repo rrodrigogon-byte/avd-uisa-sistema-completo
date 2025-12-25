@@ -135,7 +135,7 @@ export const auditRouter = router({
   /**
    * Estatísticas de atividade
    */
-  stats: protectedProcedure.query(async ({ ctx }) => {
+  stats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -200,7 +200,7 @@ export const auditRouter = router({
   /**
    * Detectar atividades suspeitas
    */
-  detectSuspiciousActivity: protectedProcedure.query(async ({ ctx }) => {
+  detectSuspiciousActivity: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

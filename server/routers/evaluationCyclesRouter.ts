@@ -18,7 +18,7 @@ export const evaluationCyclesRouter = router({
       z.object({
         testEmails: z.array(z.string().email()).optional(), // Emails de teste
       })
-    )
+    .optional())
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -240,7 +240,7 @@ export const evaluationCyclesRouter = router({
       };
     }),
 
-  list: protectedProcedure.query(async () => {
+  list: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -252,7 +252,7 @@ export const evaluationCyclesRouter = router({
     return cycles;
   }),
 
-  listActive: protectedProcedure.query(async () => {
+  listActive: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -580,7 +580,7 @@ export const evaluationCyclesRouter = router({
       return { success: true };
     }),
 
-  getActiveCycles: protectedProcedure.query(async () => {
+  getActiveCycles: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -593,7 +593,7 @@ export const evaluationCyclesRouter = router({
     return cycles;
   }),
 
-  getCycleStats: protectedProcedure.query(async () => {
+  getCycleStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return null;
 

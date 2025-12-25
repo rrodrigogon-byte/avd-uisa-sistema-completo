@@ -23,7 +23,7 @@ export const pirDepartmentReportsRouter = router({
     .input(z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return { departments: [], organizationAverage: 0 };
@@ -113,7 +113,7 @@ export const pirDepartmentReportsRouter = router({
       dimensionId: z.number().optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return { dimensions: [], departments: [] };
@@ -515,7 +515,7 @@ export const pirDepartmentReportsRouter = router({
     .input(z.object({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return null;

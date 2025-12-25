@@ -95,7 +95,7 @@ export const notificationsRouter = router({
     }),
 
   // Contar notificações não lidas
-  countUnread: protectedProcedure.query(async ({ ctx }) => {
+  countUnread: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -123,7 +123,7 @@ export const notificationsRouter = router({
     }),
 
   // Marcar todas como lidas
-  markAllAsRead: protectedProcedure.mutation(async ({ ctx }) => {
+  markAllAsRead: protectedProcedure.input(z.object({}).optional()).mutation(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -136,7 +136,7 @@ export const notificationsRouter = router({
   }),
 
   // Buscar notificações in-app (alias para compatibilidade com InAppNotifications)
-  getInApp: protectedProcedure.query(async ({ ctx }) => {
+  getInApp: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

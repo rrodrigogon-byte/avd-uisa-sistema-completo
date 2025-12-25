@@ -11,7 +11,7 @@ export const integrityTestsRouter = router({
    * Listar testes de integridade disponíveis
    */
   listTests: protectedProcedure
-    .input(z.object({ activeOnly: z.boolean().optional().default(true) }))
+    .input(z.object({ activeOnly: z.boolean().optional().default(true) }).optional())
     .query(async ({ input }) => {
       return await db.listIntegrityTests(input.activeOnly);
     }),

@@ -21,7 +21,7 @@ export const organogramaRouter = router({
   getHierarchy: protectedProcedure
     .input(z.object({
       departmentId: z.number().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -324,7 +324,7 @@ export const organogramaRouter = router({
     .input(z.object({
       startDate: z.date().optional(),
       endDate: z.date().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

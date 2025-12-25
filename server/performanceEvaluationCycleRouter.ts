@@ -80,7 +80,7 @@ export const performanceEvaluationCycleRouter = router({
     .input(z.object({
       status: z.enum(["planejado", "aberto", "em_andamento", "em_avaliacao", "concluido", "cancelado"]).optional(),
       year: z.number().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];

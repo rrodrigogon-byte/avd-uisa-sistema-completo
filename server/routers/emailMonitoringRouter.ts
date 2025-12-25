@@ -14,7 +14,7 @@ export const emailMonitoringRouter = router({
   /**
    * Buscar estatísticas gerais de e-mails
    */
-  getEmailStats: protectedProcedure.query(async ({ ctx }) => {
+  getEmailStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== 'admin') {
       throw new TRPCError({
         code: 'FORBIDDEN',
@@ -101,7 +101,7 @@ export const emailMonitoringRouter = router({
   /**
    * Buscar e-mails por tipo
    */
-  getEmailsByType: protectedProcedure.query(async ({ ctx }) => {
+  getEmailsByType: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== 'admin') {
       throw new TRPCError({
         code: 'FORBIDDEN',

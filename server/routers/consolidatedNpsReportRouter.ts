@@ -22,7 +22,7 @@ export const consolidatedNpsReportRouter = router({
       startDate: z.date().optional(),
       endDate: z.date().optional(),
       departmentId: z.number().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       return await generateConsolidatedReport(
         input.startDate,
@@ -34,7 +34,7 @@ export const consolidatedNpsReportRouter = router({
   /**
    * Obter resumo rápido para dashboard
    */
-  getDashboardSummary: protectedProcedure.query(async () => {
+  getDashboardSummary: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return null;
 
@@ -100,7 +100,7 @@ export const consolidatedNpsReportRouter = router({
     .input(z.object({
       startDate: z.date().optional(),
       endDate: z.date().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];

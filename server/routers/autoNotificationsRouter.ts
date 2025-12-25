@@ -63,7 +63,7 @@ export const autoNotificationsRouter = router({
   /**
    * Listar regras de notificação
    */
-  listRules: protectedProcedure.query(async () => {
+  listRules: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const rules = await db.getActiveNotificationRules();
     
     return rules.map(rule => ({
@@ -117,7 +117,7 @@ export const autoNotificationsRouter = router({
   /**
    * Processar fila de notificações
    */
-  processQueue: protectedProcedure.mutation(async () => {
+  processQueue: protectedProcedure.input(z.object({}).optional()).mutation(async () => {
     const pending = await db.getPendingNotifications(50);
     
     let processed = 0;
@@ -212,7 +212,7 @@ export const autoNotificationsRouter = router({
       z.object({
         limit: z.number().optional().default(50),
       })
-    )
+    .optional())
     .query(async ({ input, ctx }) => {
       const history = await db.getUserNotificationHistory(ctx.user.id, input.limit);
       
@@ -241,7 +241,7 @@ export const autoNotificationsRouter = router({
   /**
    * Buscar preferências de notificação
    */
-  getMyPreferences: protectedProcedure.query(async ({ ctx }) => {
+  getMyPreferences: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const prefs = await db.getUserNotificationPreferences(ctx.user.id);
     return prefs;
   }),
@@ -267,7 +267,7 @@ export const autoNotificationsRouter = router({
         digestMode: z.boolean().optional(),
         digestFrequency: z.enum(["diario", "semanal"]).optional(),
       })
-    )
+    .optional())
     .mutation(async ({ input, ctx }) => {
       await db.updateUserNotificationPreferences(ctx.user.id, input);
       return { success: true };

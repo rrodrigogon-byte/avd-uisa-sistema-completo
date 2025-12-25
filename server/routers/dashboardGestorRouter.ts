@@ -27,7 +27,7 @@ export const dashboardGestorRouter = router({
       startDate: z.string().optional(),
       endDate: z.string().optional(),
       departmentId: z.number().optional(),
-    }))
+    }).optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -225,7 +225,7 @@ export const dashboardGestorRouter = router({
       managerId: z.number().optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -446,7 +446,7 @@ export const dashboardGestorRouter = router({
       managerId: z.number().optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }))
+    }).optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

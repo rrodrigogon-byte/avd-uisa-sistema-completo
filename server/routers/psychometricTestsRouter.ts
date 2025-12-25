@@ -532,28 +532,28 @@ export const psychometricTestsRouter = router({
   /**
    * Listar todos os resultados (admin)
    */
-  listAllResults: protectedProcedure.query(async () => {
+  listAllResults: protectedProcedure.input(z.object({}).optional()).query(async () => {
     return await getAllTestResults();
   }),
 
   /**
    * Estatísticas de conclusão
    */
-  getCompletionStats: protectedProcedure.query(async () => {
+  getCompletionStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     return await getTestCompletionStats();
   }),
 
   /**
    * Resultados por tipo de teste
    */
-  getResultsByType: protectedProcedure.query(async () => {
+  getResultsByType: protectedProcedure.input(z.object({}).optional()).query(async () => {
     return await getTestResultsByType();
   }),
 
   /**
    * Buscar testes completados do usuário logado
    */
-  getTests: protectedProcedure.query(async ({ ctx }) => {
+  getTests: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const { getDb } = await import("../db");
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -667,7 +667,7 @@ export const psychometricTestsRouter = router({
   /**
    * Listar convites pendentes
    */
-  listPendingInvitations: protectedProcedure.query(async () => {
+  listPendingInvitations: protectedProcedure.input(z.object({}).optional()).query(async () => {
     return await getAllPendingInvitations();
   }),
 
@@ -692,7 +692,7 @@ export const psychometricTestsRouter = router({
   /**
    * Listar testes pendentes de validação
    */
-  listPendingValidation: protectedProcedure.query(async () => {
+  listPendingValidation: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const db = await getDb();
     if (!db) throw new Error("Database not available");
@@ -726,7 +726,7 @@ export const psychometricTestsRouter = router({
       z.object({
         status: z.enum(["aprovado", "reprovado"]).optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const { getDb } = await import("../db");
       const db = await getDb();
@@ -928,7 +928,7 @@ export const psychometricTestsRouter = router({
   /**
    * Obter estatísticas de validação
    */
-  getValidationStats: protectedProcedure.query(async () => {
+  getValidationStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const db = await getDb();
     if (!db) throw new Error("Database not available");

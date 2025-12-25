@@ -147,7 +147,7 @@ export const errorMonitoringRouter = router({
         level: z.enum(["error", "warn", "info", "debug", "all"]).optional().default("all"),
         limit: z.number().min(1).max(100).optional().default(50),
       })
-    )
+    .optional())
     .query(({ input }) => {
       let filteredLogs = errorLogs;
       

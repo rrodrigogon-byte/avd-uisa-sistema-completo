@@ -31,7 +31,7 @@ export const executiveRouter = router({
         departmentId: z.number().optional(),
         costCenter: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -143,7 +143,7 @@ export const executiveRouter = router({
       z.object({
         costCenter: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input, ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

@@ -209,7 +209,7 @@ export const pdfExportRouter = router({
       z.object({
         limit: z.number().optional().default(20),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       // Aqui você poderia ter uma tabela de histórico de exports
       // Por enquanto, retornar array vazio

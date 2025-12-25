@@ -139,7 +139,7 @@ export const reportExportRouter = router({
         departmentId: z.number().optional(),
         movementType: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

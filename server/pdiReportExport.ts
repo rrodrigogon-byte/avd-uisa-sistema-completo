@@ -17,7 +17,7 @@ export const pdiReportExportRouter = router({
   exportComparativePDF: protectedProcedure
     .input(z.object({
       cycleId: z.number().optional(),
-    }))
+    }).optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) {
@@ -136,7 +136,7 @@ export const pdiReportExportRouter = router({
   exportComparativeExcel: protectedProcedure
     .input(z.object({
       cycleId: z.number().optional(),
-    }))
+    }).optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) {

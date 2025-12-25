@@ -19,7 +19,7 @@ export const evaluationProcessesRouter = router({
   /**
    * Listar todos os processos avaliativos
    */
-  list: protectedProcedure.query(async () => {
+  list: protectedProcedure.input(z.object({}).optional()).query(async () => {
     return await getAllEvaluationProcesses();
   }),
 

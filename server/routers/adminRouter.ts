@@ -14,7 +14,7 @@ export const adminRouter = router({
   /**
    * Obter estatísticas de e-mails
    */
-  getEmailStats: protectedProcedure.query(async ({ ctx }) => {
+  getEmailStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== 'admin') {
       throw new TRPCError({
         code: 'FORBIDDEN',
@@ -83,7 +83,7 @@ export const adminRouter = router({
   /**
    * Obter configurações SMTP
    */
-  getSmtpConfig: protectedProcedure.query(async ({ ctx }) => {
+  getSmtpConfig: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== 'admin') {
       throw new TRPCError({
         code: 'FORBIDDEN',
@@ -271,7 +271,7 @@ export const adminRouter = router({
   /**
    * Obter histórico de e-mails enviados
    */
-  getEmailHistory: protectedProcedure.query(async ({ ctx }) => {
+  getEmailHistory: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== 'admin') {
       throw new TRPCError({
         code: 'FORBIDDEN',

@@ -241,10 +241,10 @@ const hierarchyRouter = router({
 
   // Gerar relatório de span of control
   getSpanOfControlReport: protectedProcedure
-    .input(z.object({ managerId: z.number().optional() }))
+    .input(z.object({ managerId: z.number().optional() }).optional())
     .query(async ({ input }) => {
       const { generateSpanOfControlReport } = await import('./db-hierarchy-reports');
-      const report = await generateSpanOfControlReport(input.managerId);
+      const report = await generateSpanOfControlReport(input?.managerId);
       return report;
     }),
 
@@ -547,13 +547,13 @@ export const appRouter = router({
       .input(z.object({
         employeeId: z.number().optional(),
         cycleId: z.number().optional(),
-      }))
+      }).optional())
       .query(async ({ input, ctx }) => {
-        const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
+        const employeeId = input?.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
           return [];
         }
-        return await db.getEvaluationsByEmployee(employeeId, input.cycleId);
+        return await db.getEvaluationsByEmployee(employeeId, input?.cycleId);
       }),
 
     getById: protectedProcedure
@@ -610,7 +610,7 @@ export const appRouter = router({
         evaluatorId: z.number().optional(),
         status: z.string().optional(),
         cycleId: z.number().optional(),
-      }))
+      }).optional())
       .query(async ({ input, ctx }) => {
         const database = await getDb();
         if (!database) return [];
@@ -1225,13 +1225,13 @@ export const appRouter = router({
       .input(z.object({
         employeeId: z.number().optional(),
         cycleId: z.number().optional(),
-      }))
+      }).optional())
       .query(async ({ input, ctx }) => {
-        const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
+        const employeeId = input?.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
           return [];
         }
-        return await db.getPDIsByEmployee(employeeId, input.cycleId);
+        return await db.getPDIsByEmployee(employeeId, input?.cycleId);
       }),
 
     getById: protectedProcedure
@@ -1652,7 +1652,7 @@ export const appRouter = router({
     getImportMetrics: protectedProcedure
       .input(z.object({
         period: z.enum(['week', 'month', 'year']).optional().default('month'),
-      }))
+      }).optional())
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) {
@@ -1843,7 +1843,7 @@ export const appRouter = router({
       .input(z.object({
         employeeId: z.number().optional(),
         cycleId: z.number().optional(),
-      }))
+      }).optional())
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -2257,7 +2257,7 @@ export const appRouter = router({
     getComparison: protectedProcedure
       .input(z.object({
         cycleId: z.number().optional(),
-      }))
+      }).optional())
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) {
@@ -2986,9 +2986,9 @@ export const appRouter = router({
       .input(z.object({
         employeeId: z.number().optional(),
         cycleId: z.number().optional(),
-      }))
+      }).optional())
       .query(async ({ input, ctx }) => {
-        const employeeId = input.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
+        const employeeId = input?.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
           // Retornar dados vazios se colaborador não existir
           return {
@@ -3003,7 +3003,7 @@ export const appRouter = router({
             evaluationsCount: 0,
           };
         }
-        return await db.getDashboardStats(employeeId, input.cycleId);
+        return await db.getDashboardStats(employeeId, input?.cycleId);
       }),
   }),
 
@@ -3244,13 +3244,13 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   nineBoxCalibration: router({
     // Listar colaboradores para calibração
     list: protectedProcedure
-      .input(z.object({ cycleId: z.number(), departmentId: z.number().optional() }))
+      .input(z.object({ cycleId: z.number(), departmentId: z.number().optional() }).optional())
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) return [];
 
-        const conditions = [eq(nineBoxPositions.cycleId, input.cycleId)];
-        if (input.departmentId) {
+        const conditions = [eq(nineBoxPositions.cycleId, input?.cycleId)];
+        if (input?.departmentId) {
           conditions.push(eq(employees.departmentId, input.departmentId));
         }
 
@@ -4877,7 +4877,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       .input(z.object({
         cycleId: z.number().optional(),
         departmentId: z.number().optional(),
-      }))
+      }).optional())
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -5148,7 +5148,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         ruleType: z.enum(["departamento", "centro_custo", "individual", "todos"]).optional(),
         approvalContext: z.enum(["metas", "avaliacoes", "pdi", "descricao_cargo", "ciclo_360", "bonus", "promocao", "todos"]).optional(),
         isActive: z.boolean().optional(),
-      }))
+      }).optional())
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -5425,7 +5425,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       }),
       
     getHistory: protectedProcedure
-      .input(z.object({ ruleId: z.number().optional() }))
+      .input(z.object({ ruleId: z.number().optional() }).optional())
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];
@@ -5438,7 +5438,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         .leftJoin(employees, eq(approvalRuleHistory.changedBy, employees.id))
         .orderBy(desc(approvalRuleHistory.changedAt));
         
-        if (input.ruleId) {
+        if (input?.ruleId) {
           const results = await query.where(eq(approvalRuleHistory.ruleId, input.ruleId));
           return results.map(r => ({
             ...r.history,
@@ -6172,7 +6172,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         employeeId: z.number().optional(),
         cycleId: z.number().optional(),
         status: z.enum(["pendente", "em_andamento", "concluida", "cancelada"]).optional(),
-      }))
+      }).optional())
       .query(async ({ input }) => {
         const database = await getDb();
         if (!database) return [];

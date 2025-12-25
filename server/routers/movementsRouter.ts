@@ -97,7 +97,7 @@ export const movementsRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) {
@@ -212,7 +212,7 @@ export const movementsRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) {

@@ -131,7 +131,7 @@ export const pirExportRouter = router({
         endDate: z.string().optional(),
         department: z.string().optional()
       })
-    )
+    .optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');
@@ -223,7 +223,7 @@ export const pirExportRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional()
       })
-    )
+    .optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');

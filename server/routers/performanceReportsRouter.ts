@@ -16,7 +16,7 @@ export const performanceReportsRouter = router({
   /**
    * Dashboard principal - KPIs gerais
    */
-  dashboard: protectedProcedure.query(async ({ ctx }) => {
+  dashboard: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const { getDb } = await import("../db");
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -164,7 +164,7 @@ export const performanceReportsRouter = router({
         endDate: z.string().optional(),
         testTypes: z.array(z.string()).optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const { getDb } = await import("../db");
       const db = await getDb();

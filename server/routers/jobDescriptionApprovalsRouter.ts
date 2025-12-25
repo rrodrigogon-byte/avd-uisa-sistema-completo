@@ -83,7 +83,7 @@ export const jobDescriptionApprovalsRouter = router({
       z.object({
         level: z.number().min(1).max(4).optional(), // Filtrar por nível específico
       })
-    )
+    .optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) return [];

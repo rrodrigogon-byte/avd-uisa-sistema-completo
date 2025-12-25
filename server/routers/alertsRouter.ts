@@ -288,7 +288,7 @@ export const alertsRouter = router({
     .input(z.object({
       alertIds: z.array(z.number()).optional(), // Se não especificado, notifica todos os alertas críticos ativos
       managerEmails: z.array(z.string().email()).optional(), // Emails dos gestores (se não especificado, busca do sistema)
-    }))
+    }).optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

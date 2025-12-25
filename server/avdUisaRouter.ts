@@ -34,7 +34,7 @@ export const avdUisaRouter = router({
         year: z.number().optional(),
         status: z.enum(["planejado", "ativo", "concluido", "cancelado"]).optional(),
       })
-    )
+    .optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -492,7 +492,7 @@ export const avdUisaRouter = router({
         cycleId: z.number().optional(),
         departmentId: z.number().optional(),
       })
-    )
+    .optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

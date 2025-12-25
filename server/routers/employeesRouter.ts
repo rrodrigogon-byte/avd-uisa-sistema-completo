@@ -77,7 +77,7 @@ export const employeesRouter = router({
   /**
    * Obter funcionário do usuário logado
    */
-  getCurrent: protectedProcedure.query(async ({ ctx }) => {
+  getCurrent: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (!ctx.user) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
@@ -92,7 +92,7 @@ export const employeesRouter = router({
   /**
    * Obter funcionário do usuário logado (alias para getCurrent)
    */
-  me: protectedProcedure.query(async ({ ctx }) => {
+  me: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (!ctx.user) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
@@ -477,7 +477,7 @@ export const employeesRouter = router({
   /**
    * Obter lista de departamentos
    */
-  getDepartments: protectedProcedure.query(async () => {
+  getDepartments: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getAllDepartments } = await import("../db");
     return await getAllDepartments();
   }),
@@ -508,7 +508,7 @@ export const employeesRouter = router({
   /**
    * Listar líderes de cargos e salários
    */
-  listSalaryLeads: protectedProcedure.query(async () => {
+  listSalaryLeads: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const { users } = await import("../../drizzle/schema");
     const { eq } = await import("drizzle-orm");
@@ -565,7 +565,7 @@ export const employeesRouter = router({
   /**
    * Hierarquia organizacional
    */
-  getHierarchy: protectedProcedure.query(async () => {
+  getHierarchy: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const { employees, departments, positions } = await import("../../drizzle/schema");
     const { eq } = await import("drizzle-orm");
@@ -601,7 +601,7 @@ export const employeesRouter = router({
   /**
    * Exportar relatório de hierarquia
    */
-  exportHierarchyReport: protectedProcedure.query(async () => {
+  exportHierarchyReport: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const { employees, departments, positions } = await import("../../drizzle/schema");
     const database = await getDb();
@@ -706,7 +706,7 @@ export const employeesRouter = router({
   /**
    * Obter centros de custo
    */
-  getCostCenters: protectedProcedure.query(async () => {
+  getCostCenters: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const { costCenters } = await import("../../drizzle/schema");
     const { eq } = await import("drizzle-orm");
@@ -720,7 +720,7 @@ export const employeesRouter = router({
   /**
    * Obter gestores
    */
-  getManagers: protectedProcedure.query(async () => {
+  getManagers: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const { employees } = await import("../../drizzle/schema");
     const database = await getDb();
@@ -733,7 +733,7 @@ export const employeesRouter = router({
   /**
    * Buscar todos os líderes (colaboradores com subordinados)
    */
-  getLeaders: protectedProcedure.query(async () => {
+  getLeaders: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const { getDb } = await import("../db");
     const { employees, departments, positions } = await import("../../drizzle/schema");
     const database = await getDb();
@@ -845,7 +845,7 @@ export const employeesRouter = router({
         startDate: z.string().optional(),
         endDate: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const { getDb } = await import("../db");
       const { employees, passwordChangeHistory } = await import("../../drizzle/schema");

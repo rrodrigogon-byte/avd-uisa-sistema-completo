@@ -171,7 +171,7 @@ export const avdExportRouter = router({
     .input(z.object({
       employeeIds: z.array(z.number()).optional(),
       departmentId: z.number().optional(),
-    }))
+    }).optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database não disponível");
@@ -241,7 +241,7 @@ export const avdExportRouter = router({
     .input(z.object({
       employeeIds: z.array(z.number()).optional(),
       departmentId: z.number().optional(),
-    }))
+    }).optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database não disponível");

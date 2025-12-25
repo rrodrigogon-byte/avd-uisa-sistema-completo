@@ -224,7 +224,7 @@ export const pirSuspiciousAccessRouter = router({
     .input(z.object({
       startDate: z.date().optional(),
       endDate: z.date().optional(),
-    }))
+    }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return null;

@@ -63,7 +63,7 @@ export const productivityGoalsRouter = router({
     .input(z.object({
       targetType: z.enum(["individual", "team", "department"]).optional(),
       targetUserId: z.number().optional(),
-    }))
+    }).optional())
     .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

@@ -435,7 +435,7 @@ export const evaluation360EnhancedRouter = router({
         status: z.enum(["planejado", "ativo", "concluido", "cancelado"]).optional(),
         year: z.number().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];

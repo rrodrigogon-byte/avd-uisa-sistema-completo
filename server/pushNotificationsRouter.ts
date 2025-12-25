@@ -119,7 +119,7 @@ export const pushNotificationsRouter = router({
   /**
    * Verificar se usuário tem subscription ativa
    */
-  hasSubscription: protectedProcedure.query(async ({ ctx }) => {
+  hasSubscription: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -140,7 +140,7 @@ export const pushNotificationsRouter = router({
   /**
    * Enviar notificação push de teste
    */
-  sendTestNotification: protectedProcedure.mutation(async ({ ctx }) => {
+  sendTestNotification: protectedProcedure.input(z.object({}).optional()).mutation(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -217,7 +217,7 @@ export const pushNotificationsRouter = router({
   /**
    * Listar subscriptions do usuário
    */
-  listSubscriptions: protectedProcedure.query(async ({ ctx }) => {
+  listSubscriptions: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

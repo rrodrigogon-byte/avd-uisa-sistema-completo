@@ -24,7 +24,7 @@ export const bonusRouter = router({
   /**
    * Listar configurações de bônus
    */
-  listConfigs: protectedProcedure.query(async () => {
+  listConfigs: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -119,7 +119,7 @@ export const bonusRouter = router({
   /**
    * Listar workflows de aprovação
    */
-  listWorkflows: protectedProcedure.query(async () => {
+  listWorkflows: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -609,7 +609,7 @@ export const bonusRouter = router({
   /**
    * Listar aprovações pendentes para o usuário atual
    */
-  myPendingApprovals: protectedProcedure.query(async ({ ctx }) => {
+  myPendingApprovals: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -679,7 +679,7 @@ export const bonusRouter = router({
       z.object({
         cycleId: z.number().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -733,7 +733,7 @@ export const bonusRouter = router({
   /**
    * Listar cálculos de bônus pendentes
    */
-  listCalculations: protectedProcedure.query(async () => {
+  listCalculations: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -804,7 +804,7 @@ export const bonusRouter = router({
    * Rejeitar bônus em lote
    */
   rejectBatch: protectedProcedure
-    .input(z.object({ ids: z.array(z.number()), reason: z.string().optional() }))
+    .input(z.object({ ids: z.array(z.number()), reason: z.string().optional() }).optional())
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });

@@ -27,7 +27,7 @@ import { protectedProcedure, router } from "./_core/trpc";
 
 export const successionRouter = router({
   // Listar todos os planos de sucessão
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const database = await getDb();
     if (!database) return [];
 
@@ -821,7 +821,7 @@ export const successionRouter = router({
         riskLevel: z.string().optional(),
         searchQuery: z.string().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const database = await getDb();
       if (!database) return [];
@@ -890,7 +890,7 @@ export const successionRouter = router({
       z.object({
         departmentId: z.number().optional(),
       })
-    )
+    .optional())
     .query(async ({ input }) => {
       const database = await getDb();
       if (!database) {
@@ -945,7 +945,7 @@ export const successionRouter = router({
         readinessLevel: z.string().optional(),
         riskLevel: z.string().optional(),
       })
-    )
+    .optional())
     .mutation(async ({ input }) => {
       // TODO: Implementar exportação real
       const filename = `relatorio-sucessao-${Date.now()}.xlsx`;
