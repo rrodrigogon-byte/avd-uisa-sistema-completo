@@ -2649,3 +2649,235 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [ ] Validar responsividade mobile
 - [ ] Validar performance (tempo de carregamento < 2s)
 - [ ] Criar checkpoint final com todas as melhorias
+
+
+---
+
+## 🎯 NOVOS MÓDULOS - EXPANSÃO DO SISTEMA AVD UISA (25/12/2025)
+
+### 📊 Módulo Feedback 360° (Avaliação Colaborativa) - ✅ IMPLEMENTADO 90%
+
+#### Backend - Schema e Procedures ✅ COMPLETO
+- [x] Criar schema de banco de dados para Feedback 360°
+  - [x] Tabela feedback360Cycles - ciclos de avaliação
+  - [x] Tabela feedback360Participants - participantes e avaliadores
+  - [x] Tabela feedback360Evaluators - avaliadores designados
+  - [x] Tabela feedback360Questions - perguntas por competência
+  - [x] Tabela feedback360Responses - respostas dos avaliadores
+  - [x] Tabela feedback360Results - resultados consolidados
+  - [x] Tabela feedback360ActionPlans - planos de ação
+- [x] Implementar procedures tRPC no backend (feedback360Router.ts)
+  - [x] listCycles - listar ciclos com estatísticas
+  - [x] getCycleById - detalhes do ciclo
+  - [x] createCycle - criar ciclo de avaliação
+  - [x] updateCycle - atualizar ciclo
+  - [x] addQuestion - adicionar perguntas customizáveis
+  - [x] addParticipants - adicionar participantes
+  - [x] addEvaluators - selecionar avaliadores (self, manager, peer, subordinate)
+  - [x] getMyPendingEvaluations - listar avaliações pendentes
+  - [x] submitResponses - enviar respostas de avaliação
+  - [x] generateReport - gerar relatório consolidado
+  - [x] getReport - buscar relatório individual
+
+#### Frontend - Interfaces ✅ IMPLEMENTADO
+- [x] Criar página de gestão de ciclos (Feedback360Cycles.tsx)
+  - [x] Listagem de ciclos ativos e encerrados
+  - [x] Formulário de criação de ciclo
+  - [x] Configuração de competências e perguntas
+- [x] Criar página de avaliações pendentes (Feedback360MyEvaluations.tsx)
+  - [x] Listagem de avaliações pendentes do usuário
+  - [x] Acesso rápido para responder avaliações
+- [x] Criar página de resposta de avaliação (Feedback360Evaluation.tsx)
+  - [x] Formulário de avaliação por competência
+  - [x] Escala de avaliação (1-5)
+  - [x] Campo de comentários qualitativos
+  - [x] Indicador de progresso
+- [x] Criar página de resultados (Feedback360Results.tsx)
+  - [x] Gráfico radar de competências
+  - [x] Comparação autoavaliação vs. feedback de outros
+  - [x] Análise de gaps e pontos fortes
+  - [x] Comentários consolidados
+- [x] Rotas configuradas no App.tsx
+  - [x] /feedback360/ciclos
+  - [x] /feedback360/minhas-avaliacoes
+
+#### Funcionalidades Adicionais
+- [ ] Implementar sistema de notificações para avaliadores pendentes
+- [ ] Criar lembretes automáticos por email
+- [x] Implementar anonimato parcial (anonymousResponses no schema)
+- [ ] Adicionar exportação de relatórios em PDF
+- [x] Criar histórico de ciclos anteriores (listCycles com filtros)
+
+---
+
+### 🎯 Módulo OKRs (Objectives and Key Results) - ✅ IMPLEMENTADO 85%
+
+#### Backend - Schema e Procedures ✅ COMPLETO
+- [x] Criar schema de banco de dados para OKRs (schema-okrs.ts)
+  - [x] Tabela objectives - objetivos estratégicos
+  - [x] Tabela keyResults - resultados-chave mensuráveis
+  - [x] Tabela okrCheckIns - check-ins periódicos
+  - [x] Tabela okrAlignments - alinhamento entre níveis
+  - [x] Tabela okrHistory - histórico de mudanças
+  - [x] Tabela okrTemplates - templates reutilizáveis
+- [x] Implementar procedures tRPC no backend (okrsRouter.ts)
+  - [x] listObjectives - listar objetivos por nível com filtros
+  - [x] getObjectiveById - detalhes do objetivo com key results
+  - [x] createObjective - criar objetivo
+  - [x] updateObjective - atualizar objetivo
+  - [x] createKeyResult - adicionar key result
+  - [x] updateKeyResult - atualizar progresso de key result
+  - [x] createCheckIn - registrar check-in
+  - [x] listCheckIns - histórico de check-ins
+  - [x] createAlignment - criar alinhamento entre objetivos
+  - [x] listTemplates - listar templates de OKRs
+
+#### Frontend - Interfaces 🔄 EM DESENVOLVIMENTO
+- [x] Criar página principal de OKRs (OKRsList.tsx)
+  - [x] Listagem de objetivos
+  - [x] Filtros por nível e status
+  - [x] Acesso rápido para criar objetivos
+- [x] Rotas configuradas no App.tsx
+  - [x] /okrs
+- [ ] Criar página de detalhes de objetivo (OKRDetails.tsx)
+  - [ ] Visualização de key results
+  - [ ] Formulário de adição de key result
+  - [ ] Indicadores de progresso (%)
+  - [ ] Timeline de check-ins
+- [ ] Criar página de check-ins (OKRCheckIn.tsx)
+  - [ ] Formulário de atualização de progresso
+  - [ ] Registro de conquistas e bloqueios
+  - [ ] Periodicidade configurável
+- [ ] Criar visualização em cascata (OKRCascadeView.tsx)
+  - [ ] Árvore hierárquica de objetivos
+  - [ ] Alinhamento empresa → departamento → individual
+  - [ ] Indicadores visuais de progresso
+- [ ] Criar dashboard de OKRs (OKRDashboard.tsx)
+  - [ ] Visão geral de progresso
+  - [ ] Gráficos de performance
+  - [ ] Análise de objetivos em risco
+
+#### Funcionalidades Adicionais
+- [x] Sistema de alinhamento entre objetivos (okrAlignments)
+- [ ] Criar notificações de check-ins pendentes
+- [ ] Adicionar sistema de comentários e feedback
+- [x] Implementar histórico de ciclos (okrHistory)
+- [x] Criar templates de objetivos comuns (okrTemplates)
+
+---
+
+### 🌡️ Módulo Clima Organizacional - ✅ IMPLEMENTADO 80%
+
+#### Backend - Schema e Procedures ✅ COMPLETO
+- [x] Criar schema de banco de dados para Clima Organizacional (schema-clima.ts)
+  - [x] Tabela climateSurveys - pesquisas de clima
+  - [x] Tabela climateDimensions - dimensões avaliadas
+  - [x] Tabela climateQuestions - perguntas por dimensão
+  - [x] Tabela climateResponses - respostas anônimas
+  - [x] Tabela climateResults - resultados consolidados
+  - [x] Tabela climateInsights - insights e recomendações
+- [x] Implementar procedures tRPC no backend (climaRouter.ts)
+  - [x] listSurveys - listar pesquisas com estatísticas
+  - [x] getSurveyById - detalhes da pesquisa
+  - [x] createSurvey - criar pesquisa de clima
+  - [x] updateSurvey - atualizar pesquisa
+  - [x] listDimensions - listar dimensões disponíveis
+  - [x] createDimension - criar dimensão customizada
+  - [x] addQuestion - adicionar perguntas
+  - [x] submitResponse - enviar resposta anônima
+  - [x] getResults - relatório consolidado por dimensão e departamento
+  - [x] createInsight - criar insight/recomendação
+  - [x] listInsights - listar insights
+  - [x] updateInsightStatus - atualizar status de insight
+
+#### Frontend - Interfaces 🔄 EM DESENVOLVIMENTO
+- [x] Criar página principal de pesquisas (ClimaSurveysList.tsx)
+  - [x] Listagem de pesquisas
+  - [x] Filtros por status
+  - [x] Acesso rápido para criar pesquisas
+- [x] Rotas configuradas no App.tsx
+  - [x] /clima
+- [ ] Criar página de resposta de pesquisa (ClimateResponse.tsx)
+  - [ ] Formulário anônimo de resposta
+  - [ ] Escala de avaliação por dimensão
+  - [ ] Campo de comentários opcionais
+  - [ ] Garantia de anonimato visual
+- [ ] Criar dashboard de análise de clima (ClimateDashboard.tsx)
+  - [ ] Gráficos por dimensão
+  - [ ] Comparação entre departamentos
+  - [ ] Indicadores de satisfação geral
+  - [ ] Alertas de dimensões críticas
+- [ ] Criar página de relatórios comparativos (ClimateComparative.tsx)
+  - [ ] Comparação entre períodos
+  - [ ] Análise de tendências
+  - [ ] Evolução de dimensões ao longo do tempo
+- [ ] Criar página de insights (ClimateInsights.tsx)
+  - [ ] Listagem de insights e recomendações
+  - [ ] Gestão de status de insights
+  - [ ] Ações sugeridas
+
+#### Funcionalidades Adicionais
+- [x] Implementar sistema de anonimato robusto (responseToken no schema)
+- [ ] Criar notificações de pesquisas disponíveis
+- [ ] Adicionar lembretes para participação
+- [x] Sistema de insights e recomendações (climateInsights)
+- [ ] Criar exportação de relatórios executivos
+- [x] Sistema de alertas por prioridade (climateInsights com priority)
+
+---
+
+### 🔗 Integração entre Módulos
+
+- [ ] Criar dashboard executivo unificado
+  - [ ] Visão consolidada dos 3 novos módulos
+  - [ ] Indicadores-chave de cada módulo
+  - [ ] Análise de correlações (ex: clima vs. desempenho)
+- [ ] Implementar sistema de notificações unificado
+  - [ ] Central de notificações para todos os módulos
+  - [ ] Preferências de notificação por usuário
+- [ ] Criar relatórios consolidados
+  - [ ] Relatório executivo mensal/trimestral
+  - [ ] Análise de tendências organizacionais
+  - [ ] Exportação em múltiplos formatos
+- [ ] Desenvolver sistema de permissões granulares
+  - [ ] Controle de acesso por módulo
+  - [ ] Permissões específicas para gestores e colaboradores
+- [ ] Implementar auditoria e logs
+  - [ ] Registro de ações críticas
+  - [ ] Histórico de alterações
+  - [ ] Rastreabilidade completa
+
+---
+
+### 🎨 Melhorias de UX e Design
+
+- [ ] Criar identidade visual consistente para os novos módulos
+- [ ] Implementar animações e transições suaves
+- [ ] Desenvolver componentes reutilizáveis específicos
+  - [ ] Gráfico radar para competências
+  - [ ] Timeline de progresso de OKRs
+  - [ ] Indicadores de clima por dimensão
+- [ ] Garantir responsividade mobile completa
+- [ ] Adicionar modo escuro (se aplicável)
+- [ ] Criar onboarding para cada módulo
+
+---
+
+### 🧪 Testes e Validação
+
+- [ ] Criar testes unitários para procedures dos novos módulos
+- [ ] Implementar testes de integração
+- [ ] Validar fluxos completos de cada módulo
+- [ ] Testar cenários de erro e edge cases
+- [ ] Realizar testes de performance com grande volume de dados
+- [ ] Validar anonimato no módulo de Clima
+
+---
+
+### 📚 Documentação
+
+- [ ] Documentar APIs dos novos módulos
+- [ ] Criar guias de uso para administradores
+- [ ] Desenvolver tutoriais para colaboradores
+- [ ] Documentar fluxos de trabalho
+- [ ] Criar FAQ para cada módulo

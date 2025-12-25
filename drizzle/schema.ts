@@ -9301,3 +9301,5 @@ export const positionCompetencyMatrix = mysqlTable("positionCompetencyMatrix", {
 
 export type PositionCompetencyMatrix = typeof positionCompetencyMatrix.$inferSelect;
 export type InsertPositionCompetencyMatrix = typeof positionCompetencyMatrix.$inferInsert;
+
+
