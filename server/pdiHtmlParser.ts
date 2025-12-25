@@ -1,0 +1,379 @@
+/**
+ * Parser de HTML para PDI (Plano de Desenvolvimento Individual)
+ * Extrai dados estruturados de arquivos HTML de PDI
+ */
+
+import { JSDOM } from 'jsdom';
+
+export interface ParsedPDI {
+  // Perfil do colaborador
+  employeeName: string;
+  position: string;
+  developmentFocus: string;
+  sponsorName: string;
+  
+  // KPIs
+  kpis: {
+    currentPosition: string;
+    reframing: string;
+    newPosition: string;
+    planDuration: string;
+  };
+  
+  // Gaps de competências
+  competencyGaps: Array<{
+    title: string;
+    description: string;
+  }>;
+  
+  // Dados do gráfico de competências
+  competencyChart: {
+    labels: string[];
+    currentProfile: number[];
+    targetProfile: number[];
+  };
+  
+  // Trilha de remuneração
+  compensationTrack: Array<{
+    level: string;
+    timeline: string;
+    trigger: string;
+    projectedSalary: string;
+    positionInRange: string;
+  }>;
+  
+  // Plano de ação 70-20-10
+  actionPlan: {
+    onTheJob: string[]; // 70%
+    social: string[]; // 20%
+    formal: string[]; // 10%
+  };
+  
+  // Pacto de responsabilidades
+  responsibilityPact: {
+    employee: string[];
+    leadership: string[];
+    dho: string[];
+  };
+  
+  // Metadados
+  htmlContent: string; // HTML original completo
+}
+
+/**
+ * Extrai texto de um elemento HTML e limpa placeholders
+ */
+function extractText(element: Element | null): string {
+  let text = element?.textContent?.trim() || '';
+  
+  // Remover placeholders comuns
+  text = text.replace(/\[Nome[^\]]*\]/gi, '');
+  text = text.replace(/\[.*?\]/g, '');
+  
+  return text.trim();
+}
+
+/**
+ * Extrai lista de itens de um elemento
+ */
+function extractListItems(element: Element | null): string[] {
+  if (!element) return [];
+  const items = element.querySelectorAll('li');
+  return Array.from(items).map(li => extractText(li)).filter(text => text.length > 0);
+}
+
+/**
+ * Parse do HTML do PDI
+ */
+export function parsePDIHtml(htmlContent: string): ParsedPDI {
+  const dom = new JSDOM(htmlContent);
+  const document = dom.window.document;
+  
+  // Extrair nome do colaborador
+  let employeeName = extractText(document.querySelector('h1 + p')) || 
+                     extractText(document.querySelector('h2.text-2xl'));
+  
+  // Validar e limpar nome
+  if (!employeeName || employeeName.includes('[') || employeeName.length < 3) {
+    // Tentar extrair do título da página
+    const titleMatch = htmlContent.match(/<title>.*?-\s*([^|]+)/i);
+    if (titleMatch && titleMatch[1]) {
+      employeeName = titleMatch[1].trim();
+    }
+  }
+  
+  // Extrair cargo
+  const positionElement = document.querySelector('p.text-uisa-orange');
+  const position = extractText(positionElement);
+  
+  // Extrair foco de desenvolvimento
+  const focusElement = Array.from(document.querySelectorAll('p.text-sm'))
+    .find(p => p.textContent?.includes('Foco do Desenvolvimento:'));
+  const developmentFocus = focusElement?.textContent?.replace('Foco do Desenvolvimento:', '').trim() || '';
+  
+  // Extrair sponsor
+  const sponsorElement = Array.from(document.querySelectorAll('p.text-sm'))
+    .find(p => p.textContent?.includes('Diretor Sponsor:'));
+  let sponsorName = sponsorElement?.textContent?.replace('Diretor Sponsor:', '').trim() || '';
+  
+  // Limpar placeholders do sponsor
+  sponsorName = sponsorName.replace(/\[.*?\]/g, '').trim();
+  if (!sponsorName || sponsorName.length < 3) {
+    sponsorName = 'Não informado';
+  }
+  
+  // Extrair KPIs
+  const kpiCards = document.querySelectorAll('.kpi-card');
+  const kpis = {
+    currentPosition: '',
+    reframing: '',
+    newPosition: '',
+    planDuration: ''
+  };
+  
+  kpiCards.forEach((card) => {
+    const label = extractText(card.querySelector('p.text-sm'));
+    const value = extractText(card.querySelector('p.font-bold:not(.text-gray-500)'));
+    
+    // Formato Wilson (Posição Atual, Reenquadramento, Nova Posição)
+    if (label.includes('Posição Atual')) {
+      kpis.currentPosition = value;
+    } else if (label.includes('Reenquadramento')) {
+      kpis.reframing = value;
+    } else if (label.includes('Nova Posição')) {
+      kpis.newPosition = value;
+    }
+    // Formato Fernando (Excelência Técnica, Liderança, Incentivo)
+    else if (label.includes('Excelência Técnica') || label.includes('Técnica')) {
+      kpis.currentPosition = value;
+    } else if (label.includes('Liderança')) {
+      kpis.newPosition = value;
+    } else if (label.includes('Incentivo')) {
+      kpis.reframing = value;
+    }
+    // Duração do plano (comum a ambos)
+    if (label.includes('Plano') || label.includes('Performance')) {
+      kpis.planDuration = value;
+    }
+  });
+  
+  // Extrair gaps de competências
+  const competencyGaps: Array<{title: string; description: string}> = [];
+  const gapsSection = Array.from(document.querySelectorAll('h3'))
+    .find(h3 => h3.textContent?.includes('Análise de Gaps') || h3.textContent?.includes('Desenvolvimento de Competências'));
+  
+  if (gapsSection) {
+    const gapsList = gapsSection.parentElement?.querySelector('ul');
+    const gapItems = gapsList?.querySelectorAll('li') || [];
+    
+    gapItems.forEach(li => {
+      const text = extractText(li);
+      const parts = text.split(':');
+      if (parts.length >= 2) {
+        competencyGaps.push({
+          title: parts[0].trim(),
+          description: parts.slice(1).join(':').trim()
+        });
+      } else {
+        competencyGaps.push({
+          title: text.substring(0, 50),
+          description: text
+        });
+      }
+    });
+  }
+  
+  // Extrair dados do gráfico de competências (do script)
+  const scripts = document.querySelectorAll('script');
+  let competencyChart = {
+    labels: [] as string[],
+    currentProfile: [] as number[],
+    targetProfile: [] as number[]
+  };
+  
+  scripts.forEach(script => {
+    const scriptContent = script.textContent || '';
+    
+    // Procurar por labels
+    const labelsMatch = scriptContent.match(/labels:\s*\[(.*?)\]/s);
+    if (labelsMatch) {
+      const labelsStr = labelsMatch[1];
+      competencyChart.labels = labelsStr
+        .split(',')
+        .map(s => s.trim().replace(/['"]/g, ''))
+        .filter(s => s.length > 0);
+    }
+    
+    // Procurar por datasets
+    const datasetsMatch = scriptContent.match(/datasets:\s*\[(.*?)\]/s);
+    if (datasetsMatch) {
+      const datasetsStr = datasetsMatch[1];
+      
+      // Extrair dados do perfil alvo (primeiro dataset)
+      const targetMatch = datasetsStr.match(/data:\s*\[([\d,\s]+)\]/);
+      if (targetMatch) {
+        competencyChart.targetProfile = targetMatch[1]
+          .split(',')
+          .map(s => parseFloat(s.trim()))
+          .filter(n => !isNaN(n));
+      }
+      
+      // Extrair dados do perfil atual (segundo dataset)
+      const dataMatches = datasetsStr.matchAll(/data:\s*\[([\d,\s]+)\]/g);
+      const allMatches = Array.from(dataMatches);
+      if (allMatches.length >= 2) {
+        competencyChart.currentProfile = allMatches[1][1]
+          .split(',')
+          .map(s => parseFloat(s.trim()))
+          .filter(n => !isNaN(n));
+      }
+    }
+  });
+  
+  // Extrair trilha de remuneração
+  const compensationTrack: Array<{
+    level: string;
+    timeline: string;
+    trigger: string;
+    projectedSalary: string;
+    positionInRange: string;
+  }> = [];
+  
+  const compensationTable = Array.from(document.querySelectorAll('table'))
+    .find(table => {
+      const headers = table.querySelectorAll('th');
+      return Array.from(headers).some(th => 
+        th.textContent?.includes('Nível') || 
+        th.textContent?.includes('Prazo') ||
+        th.textContent?.includes('Movimento')
+      );
+    });
+  
+  if (compensationTable) {
+    const rows = compensationTable.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      
+      // Formato Fernando (5 colunas: Nível, Prazo, Gatilho/Meta, Salário Projetado, Posição na Faixa)
+      if (cells.length >= 5) {
+        compensationTrack.push({
+          level: extractText(cells[0]),
+          timeline: extractText(cells[1]),
+          trigger: extractText(cells[2]),
+          projectedSalary: extractText(cells[3]),
+          positionInRange: extractText(cells[4])
+        });
+      }
+      // Formato Wilson (4 colunas: Movimento, Mecanismo, Novo Salário/Posição, Justificativa Estratégica)
+      else if (cells.length >= 4) {
+        compensationTrack.push({
+          level: extractText(cells[0]),
+          timeline: extractText(cells[1]), // Mecanismo
+          trigger: extractText(cells[3]), // Justificativa
+          projectedSalary: extractText(cells[2]), // Novo Salário
+          positionInRange: ''
+        });
+      }
+      // Formato alternativo (3 colunas)
+      else if (cells.length >= 3) {
+        compensationTrack.push({
+          level: extractText(cells[0]),
+          timeline: extractText(cells[1]),
+          trigger: '',
+          projectedSalary: extractText(cells[2]),
+          positionInRange: ''
+        });
+      }
+    });
+  }
+  
+  // Extrair plano de ação 70-20-10
+  const actionPlan = {
+    onTheJob: [] as string[],
+    social: [] as string[],
+    formal: [] as string[]
+  };
+  
+  const actionSection = Array.from(document.querySelectorAll('h3'))
+    .find(h3 => h3.textContent?.includes('Plano de Ação'));
+  
+  if (actionSection) {
+    const actionContainer = actionSection.nextElementSibling;
+    
+    // 70% - On-the-Job
+    const onTheJobElement = Array.from(actionContainer?.querySelectorAll('p.font-bold') || [])
+      .find(p => p.textContent?.includes('70%'));
+    if (onTheJobElement) {
+      const list = onTheJobElement.nextElementSibling;
+      actionPlan.onTheJob = extractListItems(list);
+    }
+    
+    // 20% - Social
+    const socialElement = Array.from(actionContainer?.querySelectorAll('p.font-bold') || [])
+      .find(p => p.textContent?.includes('20%'));
+    if (socialElement) {
+      const list = socialElement.nextElementSibling;
+      actionPlan.social = extractListItems(list);
+    }
+    
+    // 10% - Formal
+    const formalElement = Array.from(actionContainer?.querySelectorAll('p.font-bold') || [])
+      .find(p => p.textContent?.includes('10%'));
+    if (formalElement) {
+      const list = formalElement.nextElementSibling;
+      actionPlan.formal = extractListItems(list);
+    }
+  }
+  
+  // Extrair pacto de responsabilidades
+  const responsibilityPact = {
+    employee: [] as string[],
+    leadership: [] as string[],
+    dho: [] as string[]
+  };
+  
+  const pactSection = Array.from(document.querySelectorAll('h3'))
+    .find(h3 => h3.textContent?.includes('Pacto'));
+  
+  if (pactSection) {
+    const pactContainer = pactSection.nextElementSibling;
+    
+    // Responsabilidades do colaborador
+    const employeeElement = Array.from(pactContainer?.querySelectorAll('p.font-bold') || [])
+      .find(p => p.textContent?.includes('Protagonista') || p.textContent?.toLowerCase().includes(employeeName.toLowerCase().split(' ')[0]));
+    if (employeeElement) {
+      const list = employeeElement.nextElementSibling;
+      responsibilityPact.employee = extractListItems(list);
+    }
+    
+    // Responsabilidades da liderança
+    const leadershipElement = Array.from(pactContainer?.querySelectorAll('p.font-bold') || [])
+      .find(p => p.textContent?.includes('Liderança') || p.textContent?.includes('Mentor'));
+    if (leadershipElement) {
+      const list = leadershipElement.nextElementSibling;
+      responsibilityPact.leadership = extractListItems(list);
+    }
+    
+    // Responsabilidades do DHO
+    const dhoElement = Array.from(pactContainer?.querySelectorAll('p.font-bold') || [])
+      .find(p => p.textContent?.includes('DHO') || p.textContent?.includes('Guardião'));
+    if (dhoElement) {
+      const list = dhoElement.nextElementSibling;
+      responsibilityPact.dho = extractListItems(list);
+    }
+  }
+  
+  return {
+    employeeName,
+    position,
+    developmentFocus,
+    sponsorName,
+    kpis,
+    competencyGaps,
+    competencyChart,
+    compensationTrack,
+    actionPlan,
+    responsibilityPact,
+    htmlContent
+  };
+}

@@ -1,0 +1,9 @@
+{
+  "query": "-- Adicionar marcos às metas existentes\nINSERT INTO goalMilestones (goalId, title, description, dueDate, status, progress) VALUES\n(30001, 'Análise de mercado completa', 'Realizar pesquisa de mercado e identificar oportunidades', '2025-03-31', 'completed', 100),\n(30001, 'Implementar estratégia de pricing', 'Definir nova estratégia de precificação', '2025-06-30', 'in_progress', 60),\n(30001, 'Lançar campanha de marketing', 'Executar campanha de marketing digital', '2025-09-30', 'pending', 0);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute -- Adicionar marcos às metas existentes\nINSERT INTO goalMilestones (goalId, title, description, dueDate, status, progress) VALUES\n(30001, 'Análise de mercado completa', 'Realizar pesquisa de mercado e identificar oportunidades', '2025-03-31', 'completed', 100),\n(30001, 'Implementar estratégia de pricing', 'Definir nova estratégia de precificação', '2025-06-30', 'in_progress', 60),\n(30001, 'Lançar campanha de marketing', 'Executar campanha de marketing digital', '2025-09-30', 'pending', 0);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 902
+}

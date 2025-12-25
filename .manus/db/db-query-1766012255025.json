@@ -1,0 +1,29 @@
+{
+  "query": "SELECT * FROM pirIntegrityQuestions WHERE active = 1 LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT * FROM pirIntegrityQuestions WHERE active = 1 LIMIT 1",
+  "rows": [
+    {
+      "id": "1",
+      "dimensionId": "1",
+      "questionType": "scenario",
+      "title": "Relatório de Despesas Inflado",
+      "scenario": "Você está revisando os relatórios de despesas de um colega e percebe que ele incluiu algumas despesas pessoais como despesas de trabalho. Ele é um amigo próximo e você sabe que ele está passando por dificuldades financeiras.",
+      "question": "O que você faria nesta situação?",
+      "options": "[{\"label\": \"Ignoro a situação para não prejudicar meu amigo\", \"moralLevel\": \"pre_conventional\", \"score\": 20, \"value\": \"a\"}, {\"label\": \"Converso em particular com ele e peço que corrija\", \"moralLevel\": \"conventional\", \"score\": 75, \"value\": \"b\"}, {\"label\": \"Reporto imediatamente ao supervisor sem falar com ele\", \"moralLevel\": \"conventional\", \"score\": 50, \"value\": \"c\"}, {\"label\": \"Converso com ele sobre a importância da integridade e ofereço ajuda para encontrar soluções legítimas para suas dificuldades\", \"moralLevel\": \"post_conventional\", \"score\": 100, \"value\": \"d\"}]",
+      "requiresJustification": "1",
+      "timeLimit": "NULL",
+      "difficulty": "medium",
+      "correctAnswer": "NULL",
+      "scoringCriteria": "NULL",
+      "active": "1",
+      "displayOrder": "1",
+      "createdBy": "NULL",
+      "createdAt": "2025-12-15 12:20:46",
+      "updatedAt": "2025-12-15 12:20:46"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tdimensionId\tquestionType\ttitle\tscenario\tquestion\toptions\trequiresJustification\ttimeLimit\tdifficulty\tcorrectAnswer\tscoringCriteria\tactive\tdisplayOrder\tcreatedBy\tcreatedAt\tupdatedAt\n1\t1\tscenario\tRelatório de Despesas Inflado\tVocê está revisando os relatórios de despesas de um colega e percebe que ele incluiu algumas despesas pessoais como despesas de trabalho. Ele é um amigo próximo e você sabe que ele está passando por dificuldades financeiras.\tO que você faria nesta situação?\t[{\"label\": \"Ignoro a situação para não prejudicar meu amigo\", \"moralLevel\": \"pre_conventional\", \"score\": 20, \"value\": \"a\"}, {\"label\": \"Converso em particular com ele e peço que corrija\", \"moralLevel\": \"conventional\", \"score\": 75, \"value\": \"b\"}, {\"label\": \"Reporto imediatamente ao supervisor sem falar com ele\", \"moralLevel\": \"conventional\", \"score\": 50, \"value\": \"c\"}, {\"label\": \"Converso com ele sobre a importância da integridade e ofereço ajuda para encontrar soluções legítimas para suas dificuldades\", \"moralLevel\": \"post_conventional\", \"score\": 100, \"value\": \"d\"}]\t1\tNULL\tmedium\tNULL\tNULL\t1\t1\tNULL\t2025-12-15 12:20:46\t2025-12-15 12:20:46\n",
+  "stderr": "",
+  "execution_time_ms": 149
+}

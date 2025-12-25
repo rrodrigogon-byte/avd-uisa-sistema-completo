@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE evaluationCycles SET status = 'planejado' WHERE status = 'planejamento';\nALTER TABLE evaluationCycles \nADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true,\nMODIFY COLUMN status enum('planejado','em_andamento','concluido','cancelado') NOT NULL DEFAULT 'planejado';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute UPDATE evaluationCycles SET status = 'planejado' WHERE status = 'planejamento';\nALTER TABLE evaluationCycles \nADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true,\nMODIFY COLUMN status enum('planejado','em_andamento','concluido','cancelado') NOT NULL DEFAULT 'planejado';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1265 (01000) at line 1: Data truncated for column '%s' at row %d"
+  ]
+}

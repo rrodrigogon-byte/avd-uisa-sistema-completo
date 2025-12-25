@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE positions \nADD COLUMN IF NOT EXISTS mission TEXT,\nADD COLUMN IF NOT EXISTS responsibilities JSON,\nADD COLUMN IF NOT EXISTS technicalCompetencies JSON,\nADD COLUMN IF NOT EXISTS behavioralCompetencies JSON,\nADD COLUMN IF NOT EXISTS requirements JSON,\nADD COLUMN IF NOT EXISTS kpis JSON;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute ALTER TABLE positions \nADD COLUMN IF NOT EXISTS mission TEXT,\nADD COLUMN IF NOT EXISTS responsibilities JSON,\nADD COLUMN IF NOT EXISTS technicalCompetencies JSON,\nADD COLUMN IF NOT EXISTS behavioralCompetencies JSON,\nADD COLUMN IF NOT EXISTS requirements JSON,\nADD COLUMN IF NOT EXISTS kpis JSON;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2054
+}

@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as total_employees FROM employees;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT COUNT(*) as total_employees FROM employees;",
+  "rows": [
+    {
+      "total_employees": "3044"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_employees\n3044\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

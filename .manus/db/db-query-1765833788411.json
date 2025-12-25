@@ -1,0 +1,15 @@
+{
+  "query": "SELECT \n  (SELECT COUNT(*) FROM employees) as total_employees,\n  (SELECT COUNT(*) FROM departments) as total_departments,\n  (SELECT COUNT(*) FROM positions) as total_positions;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT \n  (SELECT COUNT(*) FROM employees) as total_employees,\n  (SELECT COUNT(*) FROM departments) as total_departments,\n  (SELECT COUNT(*) FROM positions) as total_positions;",
+  "rows": [
+    {
+      "total_employees": "3173",
+      "total_departments": "189",
+      "total_positions": "405"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_employees\ttotal_departments\ttotal_positions\n3173\t189\t405\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

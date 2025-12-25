@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS reportAnalytics (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  reportId INT,\n  reportName VARCHAR(255),\n  action ENUM('view', 'export_pdf', 'export_excel', 'create', 'update', 'delete') NOT NULL,\n  userId INT NOT NULL,\n  metrics JSON,\n  filters JSON,\n  executionTimeMs INT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute CREATE TABLE IF NOT EXISTS reportAnalytics (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  reportId INT,\n  reportName VARCHAR(255),\n  action ENUM('view', 'export_pdf', 'export_excel', 'create', 'update', 'delete') NOT NULL,\n  userId INT NOT NULL,\n  metrics JSON,\n  filters JSON,\n  executionTimeMs INT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 224
+}

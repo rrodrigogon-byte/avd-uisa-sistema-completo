@@ -1,0 +1,29 @@
+{
+  "query": "SELECT * FROM evaluationCycles WHERE id = 31;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT * FROM evaluationCycles WHERE id = 31;",
+  "rows": [
+    {
+      "id": "31",
+      "name": "Ciclo de Avaliação 2025/2026",
+      "year": "2025",
+      "type": "anual",
+      "startDate": "2025-01-01 00:00:00",
+      "endDate": "2026-06-30 00:00:00",
+      "status": "ativo",
+      "active": "1",
+      "description": "Ciclo de avaliação de desempenho para o período 2025/2026. Inclui avaliação de competências, metas e desenvolvimento individual.",
+      "selfEvaluationDeadline": "2025-03-31 00:00:00",
+      "managerEvaluationDeadline": "2025-04-30 00:00:00",
+      "consensusDeadline": "2025-05-31 00:00:00",
+      "approvedForGoals": "0",
+      "approvedForGoalsAt": "NULL",
+      "approvedForGoalsBy": "NULL",
+      "createdAt": "2025-12-15 21:37:20",
+      "updatedAt": "2025-12-15 21:37:20"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tyear\ttype\tstartDate\tendDate\tstatus\tactive\tdescription\tselfEvaluationDeadline\tmanagerEvaluationDeadline\tconsensusDeadline\tapprovedForGoals\tapprovedForGoalsAt\tapprovedForGoalsBy\tcreatedAt\tupdatedAt\n31\tCiclo de Avaliação 2025/2026\t2025\tanual\t2025-01-01 00:00:00\t2026-06-30 00:00:00\tativo\t1\tCiclo de avaliação de desempenho para o período 2025/2026. Inclui avaliação de competências, metas e desenvolvimento individual.\t2025-03-31 00:00:00\t2025-04-30 00:00:00\t2025-05-31 00:00:00\t0\tNULL\tNULL\t2025-12-15 21:37:20\t2025-12-15 21:37:20\n",
+  "stderr": "",
+  "execution_time_ms": 46
+}

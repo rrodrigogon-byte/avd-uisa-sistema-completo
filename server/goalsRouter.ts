@@ -1,0 +1,2066 @@
+import { TRPCError } from "@trpc/server";
+import { and, desc, eq, gte, lte, sql, or } from "drizzle-orm";
+import { z } from "zod";
+import { notifySmartGoalActivity } from "./adminRhEmailService";
+import { sendGoalCreatedEmail, sendGoalCompletedEmail } from "./_core/email";
+import {
+  goalApprovals,
+  goalComments,
+  goalMilestones,
+  smartGoals,
+  employees,
+  evaluationCycles,
+  pdiPlans,
+  notifications,
+} from "../drizzle/schema";
+import { getDb, getUserEmployee } from "./db";
+import { protectedProcedure, router } from "./_core/trpc";
+
+/**
+ * Router de Metas SMART
+ * Sistema completo de criação, validação, aprovação e acompanhamento de metas
+ * com elegibilidade para bônus financeiro
+ */
+
+export const goalsRouter = router({
+  /**
+   * Validar critérios SMART de uma meta
+   */
+  validateSMART: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        measurementUnit: z.string().optional(),
+        targetValueCents: z.number().optional(), // Valor em centavos
+        startDate: z.string(),
+        endDate: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const validation = {
+        isSpecific: false,
+        isMeasurable: false,
+        isAchievable: false,
+        isRelevant: false,
+        isTimeBound: false,
+        score: 0,
+        feedback: [] as string[],
+      };
+
+      // S - Específica: título e descrição detalhados
+      if (
+        input.title.length >= 10 &&
+        input.description.length >= 10 &&
+        /\b(aumentar|reduzir|melhorar|implementar|criar|desenvolver)\b/i.test(
+          input.description
+        )
+      ) {
+        validation.isSpecific = true;
+        validation.score += 20;
+      } else {
+        validation.feedback.push(
+          "Meta precisa ser mais específica com verbo de ação claro"
+        );
+      }
+
+      // M - Mensurável: tem unidade de medida e valor alvo
+      if (input.measurementUnit && input.targetValueCents !== undefined) {
+        validation.isMeasurable = true;
+        validation.score += 20;
+      } else {
+        validation.feedback.push(
+          "Meta precisa ter unidade de medida e valor alvo definidos"
+        );
+      }
+
+      // A - Atingível: valor alvo razoável (heurística simples)
+      if (input.targetValueCents && input.targetValueCents > 0 && input.targetValueCents < 100000000) {
+        validation.isAchievable = true;
+        validation.score += 20;
+      } else {
+        validation.feedback.push("Valor alvo deve ser realista e atingível");
+      }
+
+      // R - Relevante: descrição menciona impacto ou benefício
+      if (
+        /\b(impacto|resultado|benefício|objetivo|estratégia|crescimento|melhoria)\b/i.test(
+          input.description
+        )
+      ) {
+        validation.isRelevant = true;
+        validation.score += 20;
+      } else {
+        validation.feedback.push(
+          "Meta precisa demonstrar relevância e alinhamento estratégico"
+        );
+      }
+
+      // T - Temporal: tem prazo definido (mínimo 1 mês, máximo 2 anos)
+      const start = new Date(input.startDate);
+      const end = new Date(input.endDate);
+      const diffMonths =
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30);
+      if (diffMonths >= 1 && diffMonths <= 24) {
+        validation.isTimeBound = true;
+        validation.score += 20;
+      } else {
+        validation.feedback.push("Prazo deve estar entre 1 mês e 24 meses");
+      }
+
+      return { data: validation, feedback: validation.feedback };
+    }),
+
+  /**
+   * Criar nova meta SMART
+   */
+  createSMART: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().min(5, "Título deve ter no mínimo 5 caracteres"),
+        description: z.string().min(5, "Descrição deve ter no mínimo 5 caracteres"),
+        type: z.enum(["individual", "team", "organizational"]),
+        goalType: z.enum(["individual", "corporate"]).default("individual"), // Nova: corporativa ou individual
+        category: z.enum(["financial", "behavioral", "corporate", "development"]),
+        measurementUnit: z.string().optional(),
+        targetValueCents: z.number().optional(), // Valor em centavos
+        weight: z.number().min(1).max(100).default(10),
+        startDate: z.string(),
+        endDate: z.string(),
+        bonusEligible: z.boolean().default(false),
+        bonusPercentage: z.number().optional(),
+        bonusAmountCents: z.number().optional(), // Valor em centavos
+        pdiPlanId: z.number().optional(),
+        cycleId: z.number(),
+        targetEmployeeId: z.number().optional(), // Permitir vincular a outro profissional
+        departmentId: z.number().optional(), // Para metas de equipe
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar employeeId correto do usuário logado
+      // Admin e RH podem criar metas sem ser funcionários
+      const currentEmployee = await getUserEmployee(ctx.user.id);
+      const isAdminOrRH = ctx.user.role === 'admin' || ctx.user.role === 'rh';
+      
+      // Se não for admin/RH e não tiver vínculo de funcionário, bloquear
+      if (!currentEmployee && !isAdminOrRH) {
+        throw new TRPCError({ 
+          code: "NOT_FOUND", 
+          message: "Colaborador não encontrado. Apenas administradores e RH podem criar metas sem vínculo de funcionário." 
+        });
+      }
+
+      // Validar datas
+      const startDate = new Date(input.startDate);
+      const endDate = new Date(input.endDate);
+      
+      if (startDate >= endDate) {
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "A data de início deve ser anterior à data de término" 
+        });
+      }
+      
+      // Verificar se há sobreposição com ciclos existentes
+      const overlappingCycles = await db.select()
+        .from(evaluationCycles)
+        .where(
+          and(
+            eq(evaluationCycles.id, input.cycleId),
+            or(
+              and(
+                lte(evaluationCycles.startDate, startDate),
+                gte(evaluationCycles.endDate, startDate)
+              ),
+              and(
+                lte(evaluationCycles.startDate, endDate),
+                gte(evaluationCycles.endDate, endDate)
+              )
+            )
+          )
+        );
+      
+      if (overlappingCycles.length === 0) {
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "As datas da meta devem estar dentro do período do ciclo de avaliação" 
+        });
+      }
+
+      // Determinar o employeeId alvo baseado no tipo de meta
+      let targetEmployeeId: number | null = null;
+      
+      if (input.type === "organizational") {
+        // Metas organizacionais não têm employeeId específico
+        targetEmployeeId = null;
+      } else if (input.type === "team") {
+        // Metas de equipe precisam de departmentId
+        if (!input.departmentId) {
+          throw new TRPCError({ 
+            code: "BAD_REQUEST", 
+            message: "Metas de equipe precisam ter um departamento especificado" 
+          });
+        }
+        targetEmployeeId = null; // Metas de equipe não têm employeeId específico
+      } else if (input.type === "individual") {
+        // Metas individuais precisam de employeeId
+        if (input.targetEmployeeId) {
+          // Validar permissão para criar meta para outro profissional
+          const isManager = currentEmployee?.managerId !== null;
+          
+          if (!isAdminOrRH && !isManager) {
+            throw new TRPCError({ 
+              code: "FORBIDDEN", 
+              message: "Apenas gestores e administradores podem criar metas para outros profissionais" 
+            });
+          }
+          
+          targetEmployeeId = input.targetEmployeeId;
+        } else {
+          targetEmployeeId = currentEmployee?.id || null;
+          if (!targetEmployeeId) {
+            throw new TRPCError({ 
+              code: "BAD_REQUEST", 
+              message: "Você deve especificar o funcionário alvo da meta individual" 
+            });
+          }
+        }
+      }
+
+      // Validar critérios SMART automaticamente
+      const validation = {
+        isSpecific: input.title.length >= 10 && input.description.length >= 10 && /\b(aumentar|reduzir|melhorar|implementar|criar|desenvolver)\b/i.test(input.description),
+        isMeasurable: !!(input.measurementUnit && input.targetValueCents !== undefined),
+        isAchievable: !!(input.targetValueCents && input.targetValueCents > 0 && input.targetValueCents < 100000000),
+        isRelevant: /\b(impacto|resultado|benefício|objetivo|estratégia|crescimento|melhoria)\b/i.test(input.description),
+        isTimeBound: (() => {
+          const start = new Date(input.startDate);
+          const end = new Date(input.endDate);
+          const diffMonths = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30);
+          return diffMonths >= 1 && diffMonths <= 24;
+        })(),
+        score: 0,
+        feedback: [] as string[],
+      };
+      validation.score = [validation.isSpecific, validation.isMeasurable, validation.isAchievable, validation.isRelevant, validation.isTimeBound].filter(Boolean).length * 20;
+
+      // Criar meta
+      const [result] = await db.insert(smartGoals).values({
+        employeeId: targetEmployeeId,
+        departmentId: input.departmentId ?? null,
+        cycleId: input.cycleId,
+        pdiPlanId: input.pdiPlanId ?? null,
+        title: input.title,
+        description: input.description,
+        type: input.type,
+        goalType: input.goalType,
+        category: input.category,
+        measurementUnit: input.measurementUnit ?? null,
+        targetValueCents: input.targetValueCents ?? null,
+        weight: input.weight,
+        startDate: new Date(input.startDate),
+        endDate: new Date(input.endDate),
+        bonusEligible: input.bonusEligible,
+        bonusPercentage: input.bonusPercentage ?? null,
+        bonusAmountCents: input.bonusAmountCents ?? null,
+        isSpecific: validation.isSpecific,
+        isMeasurable: validation.isMeasurable,
+        isAchievable: validation.isAchievable,
+        isRelevant: validation.isRelevant,
+        isTimeBound: validation.isTimeBound,
+        // Metas corporativas e organizacionais não precisam de aprovação
+        status: (input.goalType === "corporate" || input.type === "organizational") ? "approved" : "draft",
+        approvalStatus: (input.goalType === "corporate" || input.type === "organizational") ? "approved" : "not_submitted",
+        createdBy: ctx.user.id,
+      });
+
+      // Notificar Admin e RH sobre nova meta criada
+      try {
+        if (targetEmployeeId) {
+          const targetEmployee = await db.select()
+            .from(employees)
+            .where(eq(employees.id, targetEmployeeId))
+            .limit(1);
+          
+          if (targetEmployee.length > 0) {
+            await notifySmartGoalActivity(
+              'criada',
+              input.title,
+              targetEmployee[0].name,
+              (input.goalType === "corporate" || input.type === "organizational") ? "approved" : "draft"
+            );
+            
+            // Enviar email para o colaborador sobre a nova meta
+            if (targetEmployee[0].email) {
+              await sendGoalCreatedEmail(
+                targetEmployee[0].email,
+                targetEmployee[0].name,
+                input.title,
+                new Date(input.endDate)
+              );
+            }
+          }
+        } else {
+          // Meta organizacional ou de equipe - notificar admin/RH
+          await notifySmartGoalActivity(
+            'criada',
+            input.title,
+            input.type === "organizational" ? "Todos os funcionários" : "Equipe",
+            "approved"
+          );
+        }
+      } catch (error) {
+        console.error('[GoalsRouter] Failed to send email notification:', error);
+      }
+
+      return { goalId: result.insertId, validation };
+    }),
+
+  /**
+   * Listar metas por ciclo e funcionário
+   */
+  listByCycle: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number(),
+        employeeId: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.cycleId, input.cycleId),
+            eq(smartGoals.employeeId, input.employeeId)
+          )
+        )
+        .orderBy(desc(smartGoals.createdAt));
+
+      return goals;
+    }),
+
+  /**
+   * Listar metas do colaborador
+   */
+  list: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number().optional(),
+        status: z
+          .enum([
+            "draft",
+            "pending_approval",
+            "approved",
+            "rejected",
+            "in_progress",
+            "completed",
+            "cancelled",
+          ])
+          .optional(),
+        category: z
+          .enum(["financial", "behavioral", "corporate", "development"])
+          .optional(),
+        goalType: z.enum(["individual", "corporate"]).optional(),
+      }).optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Buscar employee vinculado ao usuário
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      if (!employee) return [];
+
+      const conditions = [eq(smartGoals.employeeId, employee.id)];
+      if (input?.cycleId) conditions.push(eq(smartGoals.cycleId, input.cycleId));
+      if (input?.status) conditions.push(eq(smartGoals.status, input.status));
+      if (input?.category) conditions.push(eq(smartGoals.category, input.category));
+      if (input?.goalType) conditions.push(eq(smartGoals.goalType, input.goalType));
+
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(and(...conditions))
+        .orderBy(desc(smartGoals.createdAt));
+
+      return goals;
+    }),
+
+  /**
+   * Listar metas de um colaborador especifico
+   */
+  listByEmployee: protectedProcedure
+    .input(z.object({ employeeId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Buscar metas SMART
+      const smartGoalsData = await db
+        .select()
+        .from(smartGoals)
+        .where(eq(smartGoals.employeeId, input.employeeId))
+        .orderBy(desc(smartGoals.createdAt));
+
+      // Buscar metas antigas (tabela goals)
+      const { goals: goalsTable } = await import("../drizzle/schema");
+      const oldGoals = await db
+        .select()
+        .from(goalsTable)
+        .where(eq(goalsTable.employeeId, input.employeeId))
+        .orderBy(desc(goalsTable.createdAt));
+
+      // Combinar e formatar ambas
+      const allGoals = [
+        ...smartGoalsData.map(goal => ({
+          id: goal.id,
+          title: goal.title,
+          description: goal.description,
+          status: goal.status,
+          progress: goal.progress || 0,
+          deadline: goal.endDate,
+          createdAt: goal.createdAt,
+          source: 'smart' as const,
+        })),
+        ...oldGoals.map(goal => ({
+          id: goal.id,
+          title: goal.title,
+          description: goal.description,
+          status: goal.status,
+          progress: goal.progress || 0,
+          deadline: goal.endDate,
+          createdAt: goal.createdAt,
+          source: 'legacy' as const,
+        })),
+      ];
+
+      // Ordenar por data de criação (mais recente primeiro)
+      return allGoals.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }),
+
+  /**
+   * Buscar meta por ID com detalhes completos
+   */
+  getById: protectedProcedure
+    .input(z.object({ goalId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      const [goal] = await db
+        .select()
+        .from(smartGoals)
+        .where(eq(smartGoals.id, input.goalId))
+        .limit(1);
+
+      if (!goal) return null;
+
+      // Buscar marcos
+      const milestones = await db
+        .select()
+        .from(goalMilestones)
+        .where(eq(goalMilestones.goalId, input.goalId))
+        .orderBy(goalMilestones.dueDate);
+
+      // Buscar aprovações (com tratamento de erro)
+      let approvals: any[] = [];
+      try {
+        const approvalsData = await db
+          .select()
+          .from(goalApprovals)
+          .leftJoin(employees, eq(goalApprovals.approverId, employees.id))
+          .where(eq(goalApprovals.goalId, input.goalId));
+
+        approvals = approvalsData.map((row) => ({
+          id: row.goalApprovals.id,
+          approverId: row.goalApprovals.approverId,
+          approverRole: row.goalApprovals.approverRole,
+          status: row.goalApprovals.status,
+          comments: row.goalApprovals.comments,
+          createdAt: row.goalApprovals.createdAt,
+          approvedAt: row.goalApprovals.approvedAt,
+          approverName: row.employees?.name || null,
+        }));
+      } catch (error) {
+        console.error("[goalsRouter] Erro ao buscar aprovações:", error);
+      }
+
+      // Buscar comentários (com tratamento de erro)
+      let comments: any[] = [];
+      try {
+        comments = await db
+          .select({
+            id: goalComments.id,
+            authorId: goalComments.authorId,
+            comment: goalComments.comment,
+            createdAt: goalComments.createdAt,
+            authorName: employees.name,
+          })
+          .from(goalComments)
+          .leftJoin(employees, eq(goalComments.authorId, employees.id))
+          .where(eq(goalComments.goalId, input.goalId))
+          .orderBy(desc(goalComments.createdAt));
+      } catch (error) {
+        console.error("[goalsRouter] Erro ao buscar comentários:", error);
+      }
+
+      // Buscar evidências (com tratamento de erro)
+      let evidences: any[] = [];
+      try {
+        const { goalEvidences } = await import("../drizzle/schema");
+        evidences = await db
+          .select()
+          .from(goalEvidences)
+          .where(eq(goalEvidences.goalId, input.goalId))
+          .orderBy(desc(goalEvidences.uploadedAt));
+      } catch (error) {
+        console.error("[goalsRouter] Erro ao buscar evidências:", error);
+      }
+
+      return {
+        ...goal,
+        milestones,
+        approvals,
+        comments,
+        evidences,
+      };
+    }),
+
+  /**
+   * Atualizar progresso da meta
+   * Admin pode editar qualquer meta
+   */
+  updateProgress: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        currentValueCents: z.number().optional(), // Valor em centavos
+        progress: z.number().min(0).max(100),
+        comment: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar employee vinculado ao usuário
+      const employee = await getUserEmployee(ctx.user.id);
+      if (!employee) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Employee não encontrado para este usuário",
+        });
+      }
+
+      // Verificar permissão: admin pode editar qualquer meta
+      if (ctx.user.role !== 'admin') {
+        // Verificar se a meta pertence ao funcionário
+        const [goal] = await db
+          .select()
+          .from(smartGoals)
+          .where(eq(smartGoals.id, input.goalId))
+          .limit(1);
+        
+        if (!goal || goal.employeeId !== employee.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Você não tem permissão para editar esta meta",
+          });
+        }
+      }
+
+      // Atualizar meta
+      const updateData: any = {
+        progress: input.progress,
+        status: input.progress === 100 ? "completed" : "in_progress",
+        completedAt: input.progress === 100 ? new Date() : undefined,
+      };
+      
+      // Adicionar currentValueCents apenas se fornecido
+      if (input.currentValueCents !== undefined) {
+        updateData.currentValueCents = input.currentValueCents;
+      }
+
+      await db
+        .update(smartGoals)
+        .set(updateData)
+        .where(eq(smartGoals.id, input.goalId));
+
+      // Adicionar comentário se fornecido
+      if (input.comment) {
+        await db.insert(goalComments).values({
+          goalId: input.goalId,
+          authorId: employee.id, // Usar employee.id em vez de ctx.user.id
+          comment: input.comment,
+        });
+      }
+
+      // Notificar Admin e RH sobre atualização de meta
+      try {
+        const [goal] = await db.select()
+          .from(smartGoals)
+          .where(eq(smartGoals.id, input.goalId))
+          .limit(1);
+        
+        if (goal) {
+          const [targetEmployee] = await db.select()
+            .from(employees)
+            .where(eq(employees.id, goal.employeeId))
+            .limit(1);
+          
+          if (targetEmployee) {
+            await notifySmartGoalActivity(
+              'atualizada',
+              goal.title,
+              targetEmployee.name,
+              updateData.status
+            );
+            
+            // Enviar email quando meta é concluída
+            if (input.progress === 100 && targetEmployee.email) {
+              await sendGoalCompletedEmail(
+                targetEmployee.email,
+                targetEmployee.name,
+                goal.title
+              );
+            }
+          }
+        }
+      } catch (error) {
+        console.error('[GoalsRouter] Failed to send email notification:', error);
+      }
+
+      return { success: true };
+    }),
+
+  /**
+   * Adicionar marco à meta
+   */
+  addMilestone: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        title: z.string(),
+        description: z.string().optional(),
+        dueDate: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      const [milestone] = await db.insert(goalMilestones).values({
+        goalId: input.goalId,
+        title: input.title,
+        description: input.description,
+        dueDate: new Date(input.dueDate),
+        status: "pending",
+      });
+
+      return { milestoneId: milestone.insertId };
+    }),
+
+  /**
+   * Atualizar marco
+   */
+  updateMilestone: protectedProcedure
+    .input(
+      z.object({
+        milestoneId: z.number(),
+        status: z.enum(["pending", "in_progress", "completed", "delayed"]),
+        progress: z.number().min(0).max(100),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      await db
+        .update(goalMilestones)
+        .set({
+          status: input.status,
+          progress: input.progress,
+          completedAt: input.status === "completed" ? new Date() : undefined,
+        })
+        .where(eq(goalMilestones.id, input.milestoneId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Enviar meta para aprovação
+   */
+  submitForApproval: protectedProcedure
+    .input(z.object({ goalId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar meta
+      const [goal] = await db
+        .select()
+        .from(smartGoals)
+        .where(eq(smartGoals.id, input.goalId))
+        .limit(1);
+
+      if (!goal) throw new TRPCError({ code: "NOT_FOUND" });
+
+      // Buscar gestor do colaborador
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, goal.employeeId))
+        .limit(1);
+
+      if (!employee?.managerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Colaborador não tem gestor definido",
+        });
+      }
+
+      // Atualizar status da meta
+      await db
+        .update(smartGoals)
+        .set({
+          status: "pending_approval",
+          approvalStatus: "pending_manager",
+        })
+        .where(eq(smartGoals.id, input.goalId));
+
+      // Criar aprovação para o gestor
+      await db.insert(goalApprovals).values({
+        goalId: input.goalId,
+        approverId: employee.managerId,
+        approverRole: "manager",
+        status: "pending",
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Aprovar meta
+   */
+  approve: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        comments: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar aprovação pendente
+      const [approval] = await db
+        .select()
+        .from(goalApprovals)
+        .where(
+          and(
+            eq(goalApprovals.goalId, input.goalId),
+            eq(goalApprovals.approverId, ctx.user.id),
+            eq(goalApprovals.status, "pending")
+          )
+        )
+        .limit(1);
+
+      if (!approval) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Aprovação não encontrada",
+        });
+      }
+
+      // Atualizar aprovação
+      await db
+        .update(goalApprovals)
+        .set({
+          status: "approved",
+          comments: input.comments,
+          approvedAt: new Date(),
+        })
+        .where(eq(goalApprovals.id, approval.id));
+
+      // Se for aprovação do gestor, criar aprovação para RH
+      if (approval.approverRole === "manager") {
+        await db
+          .update(smartGoals)
+          .set({ approvalStatus: "pending_hr" })
+          .where(eq(smartGoals.id, input.goalId));
+
+        // TODO: Buscar RH responsável e criar aprovação
+        // Por enquanto, aprovar automaticamente
+        await db
+          .update(smartGoals)
+          .set({
+            status: "approved",
+            approvalStatus: "approved",
+          })
+          .where(eq(smartGoals.id, input.goalId));
+      } else {
+        // Aprovação final
+        await db
+          .update(smartGoals)
+          .set({
+            status: "approved",
+            approvalStatus: "approved",
+          })
+          .where(eq(smartGoals.id, input.goalId));
+      }
+
+      return { success: true };
+    }),
+
+  /**
+   * Rejeitar meta
+   */
+  reject: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        comments: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar aprovação pendente
+      const [approval] = await db
+        .select()
+        .from(goalApprovals)
+        .where(
+          and(
+            eq(goalApprovals.goalId, input.goalId),
+            eq(goalApprovals.approverId, ctx.user.id),
+            eq(goalApprovals.status, "pending")
+          )
+        )
+        .limit(1);
+
+      if (!approval) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Aprovação não encontrada",
+        });
+      }
+
+      // Atualizar aprovação
+      await db
+        .update(goalApprovals)
+        .set({
+          status: "rejected",
+          comments: input.comments,
+          approvedAt: new Date(),
+        })
+        .where(eq(goalApprovals.id, approval.id));
+
+      // Atualizar meta
+      await db
+        .update(smartGoals)
+        .set({
+          status: "rejected",
+          approvalStatus: "rejected",
+        })
+        .where(eq(smartGoals.id, input.goalId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Calcular bônus baseado em metas concluídas
+   */
+  calculateBonus: protectedProcedure
+    .input(
+      z.object({
+        employeeId: z.number(),
+        cycleId: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { totalBonus: 0, goals: [] };
+
+      // Buscar metas elegíveis para bônus
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.employeeId, input.employeeId),
+            eq(smartGoals.cycleId, input.cycleId),
+            eq(smartGoals.bonusEligible, true),
+            eq(smartGoals.status, "completed")
+          )
+        );
+
+      let totalBonus = 0;
+      const bonusDetails = goals.map((goal) => {
+        const progress = goal.progress || 0;
+        let bonus = 0;
+
+        if (goal.bonusAmountCents) {
+          // Bônus fixo proporcional ao progresso (em centavos)
+          bonus = (goal.bonusAmountCents / 100 * progress) / 100;
+        } else if (goal.bonusPercentage) {
+          // Bônus percentual (precisa do salário base)
+          // TODO: Buscar salário do colaborador
+          bonus = 0; // Implementar quando tiver salário
+        }
+
+        totalBonus += bonus;
+
+        return {
+          goalId: goal.id,
+          title: goal.title,
+          progress,
+          bonusAmount: bonus,
+        };
+      });
+
+      return {
+        totalBonus,
+        goals: bonusDetails,
+      };
+    }),
+
+  /**
+   * Vincular meta com PDI
+   */
+  linkToPDI: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        pdiPlanId: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      await db
+        .update(smartGoals)
+        .set({ pdiPlanId: input.pdiPlanId })
+        .where(eq(smartGoals.id, input.goalId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Adicionar comentário à meta
+   */
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        comment: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      const [comment] = await db.insert(goalComments).values({
+        goalId: input.goalId,
+        authorId: ctx.user.id,
+        comment: input.comment,
+      });
+
+      return { commentId: comment.insertId };
+    }),
+
+  /**
+   * Dashboard de metas (KPIs e estatísticas)
+   */
+  getDashboard: protectedProcedure
+    .input(z.object({ cycleId: z.number().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db)
+        return {
+          activeGoals: 0,
+          completedGoals: 0,
+          completionRate: 0,
+          potentialBonus: 0,
+        };
+
+      // Buscar employee vinculado ao usuário
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.userId, ctx.user.id))
+        .limit(1);
+
+      if (!employee)
+        return {
+          activeGoals: 0,
+          completedGoals: 0,
+          completionRate: 0,
+          potentialBonus: 0,
+        };
+
+      const conditions = [eq(smartGoals.employeeId, employee.id)];
+      if (input.cycleId) conditions.push(eq(smartGoals.cycleId, input.cycleId));
+
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(and(...conditions));
+
+      const activeGoals = goals.filter((g) =>
+        ["approved", "in_progress"].includes(g.status)
+      ).length;
+      const completedGoals = goals.filter((g) => g.status === "completed").length;
+      const completionRate =
+        goals.length > 0 ? (completedGoals / goals.length) * 100 : 0;
+
+      // Calcular bônus potencial
+      const bonusGoals = goals.filter((g) => g.bonusEligible);
+      const potentialBonus = bonusGoals.reduce((sum, goal) => {
+        if (goal.bonusAmountCents) {
+          return sum + (goal.bonusAmountCents / 100);
+        }
+        return sum;
+      }, 0);
+
+      return {
+        activeGoals,
+        completedGoals,
+        completionRate: Math.round(completionRate),
+        potentialBonus,
+        totalGoals: goals.length,
+        byCategory: {
+          financial: goals.filter((g) => g.category === "financial").length,
+          behavioral: goals.filter((g) => g.category === "behavioral").length,
+          corporate: goals.filter((g) => g.category === "corporate").length,
+          development: goals.filter((g) => g.category === "development").length,
+        },
+        byStatus: {
+          draft: goals.filter((g) => g.status === "draft").length,
+          pending_approval: goals.filter((g) => g.status === "pending_approval")
+            .length,
+          approved: goals.filter((g) => g.status === "approved").length,
+          in_progress: goals.filter((g) => g.status === "in_progress").length,
+          completed: goals.filter((g) => g.status === "completed").length,
+          rejected: goals.filter((g) => g.status === "rejected").length,
+        },
+      };
+    }),
+
+  /**
+   * Atualizar meta (apenas em rascunho)
+   */
+  update: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        type: z.enum(["individual", "team", "organizational"]).optional(),
+        category: z.enum(["financial", "behavioral", "corporate", "development"]).optional(),
+        measurementUnit: z.string().optional(),
+        targetValueCents: z.number().optional(), // Valor em centavos
+        weight: z.number().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        bonusEligible: z.boolean().optional(),
+        bonusPercentage: z.number().optional(),
+        bonusAmountCents: z.number().optional(), // Valor em centavos
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Verificar se meta existe e está em rascunho
+      const [existingGoal] = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.id, input.goalId),
+            eq(smartGoals.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!existingGoal) {
+        throw new Error("Meta não encontrada");
+      }
+
+      if (existingGoal.status !== "draft") {
+        throw new Error("Apenas metas em rascunho podem ser editadas");
+      }
+
+      // Atualizar meta
+      const updateData: any = {};
+      if (input.title !== undefined) updateData.title = input.title;
+      if (input.description !== undefined) updateData.description = input.description;
+      if (input.type !== undefined) updateData.type = input.type;
+      if (input.category !== undefined) updateData.category = input.category;
+      if (input.measurementUnit !== undefined) updateData.measurementUnit = input.measurementUnit ?? null;
+      if (input.targetValueCents !== undefined) updateData.targetValueCents = input.targetValueCents ?? null;
+      if (input.weight !== undefined) updateData.weight = input.weight;
+      if (input.startDate !== undefined) updateData.startDate = new Date(input.startDate);
+      if (input.endDate !== undefined) updateData.endDate = new Date(input.endDate);
+      if (input.bonusEligible !== undefined) updateData.bonusEligible = input.bonusEligible;
+      if (input.bonusPercentage !== undefined) updateData.bonusPercentage = input.bonusPercentage ?? null;
+      if (input.bonusAmountCents !== undefined) updateData.bonusAmountCents = input.bonusAmountCents ?? null;
+
+      await db
+        .update(smartGoals)
+        .set(updateData)
+        .where(eq(smartGoals.id, input.goalId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Exportar meta individual em PDF
+   */
+  exportPDF: protectedProcedure
+    .input(z.object({ goalId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar meta completa
+      const [goal] = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.id, input.goalId),
+            eq(smartGoals.employeeId, ctx.user.id)
+          )
+        )
+        .limit(1);
+
+      if (!goal) {
+        throw new Error("Meta não encontrada");
+      }
+
+      // Buscar marcos
+      const milestones = await db
+        .select()
+        .from(goalMilestones)
+        .where(eq(goalMilestones.goalId, input.goalId))
+        .orderBy(goalMilestones.dueDate);
+
+      // Buscar comentários
+      const comments = await db
+        .select()
+        .from(goalComments)
+        .where(eq(goalComments.goalId, input.goalId))
+        .orderBy(desc(goalComments.createdAt));
+
+      // Buscar informações do colaborador
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, goal.employeeId))
+        .limit(1);
+
+      // Buscar ciclo
+      const [cycle] = await db
+        .select()
+        .from(evaluationCycles)
+        .where(eq(evaluationCycles.id, goal.cycleId))
+        .limit(1);
+
+      const goalData = {
+        ...goal,
+        employeeName: employee?.name || "N/A",
+        cycleName: cycle?.name || "N/A",
+        milestones,
+        comments,
+      };
+
+      // Gerar PDF
+      const { generateGoalPDF } = await import("./utils/goalsPDF.js");
+      const pdfBuffer = generateGoalPDF(goalData as any);
+
+      // Retornar base64 para download no frontend
+      return {
+        filename: `meta-${goal.id}-${Date.now()}.pdf`,
+        data: pdfBuffer.toString("base64"),
+      };
+    }),
+
+  /**
+   * Exportar relatório consolidado de metas em PDF
+   */
+  exportConsolidatedPDF: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number().optional(),
+        status: z
+          .enum([
+            "draft",
+            "pending_approval",
+            "approved",
+            "rejected",
+            "in_progress",
+            "completed",
+            "cancelled",
+          ])
+          .optional(),
+        category: z
+          .enum(["financial", "behavioral", "corporate", "development"])
+          .optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar metas com filtros
+      const conditions = [eq(smartGoals.employeeId, ctx.user.id)];
+
+      if (input.cycleId) {
+        conditions.push(eq(smartGoals.cycleId, input.cycleId));
+      }
+      if (input.status) {
+        conditions.push(eq(smartGoals.status, input.status));
+      }
+      if (input.category) {
+        conditions.push(eq(smartGoals.category, input.category));
+      }
+
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(and(...conditions))
+        .orderBy(desc(smartGoals.createdAt));
+
+      if (goals.length === 0) {
+        throw new Error("Nenhuma meta encontrada com os filtros selecionados");
+      }
+
+      // Buscar informações do colaborador
+      const [employee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, ctx.user.id))
+        .limit(1);
+
+      // Adicionar nome do colaborador em cada meta
+      const goalsData = goals.map((g) => ({
+        ...g,
+        employeeName: employee?.name || "N/A",
+      }));
+
+      // Gerar PDF
+      const { generateGoalsConsolidatedPDF } = await import("./utils/goalsPDF.js");
+      const pdfBuffer = generateGoalsConsolidatedPDF(
+        goalsData as any,
+        `Relatório de Metas - ${employee?.name || "Colaborador"}`
+      );
+
+      // Retornar base64 para download no frontend
+      return {
+        filename: `relatorio-metas-${ctx.user.id}-${Date.now()}.pdf`,
+        data: pdfBuffer.toString("base64"),
+      };
+    }),
+
+  /**
+   * Calcular bônus total por colaborador/ciclo
+   */
+  calculateBonusTotal: protectedProcedure
+    .input(
+      z.object({
+        employeeId: z.number().optional(),
+        cycleId: z.number(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const targetEmployeeId = input.employeeId || ctx.user.id;
+
+      // Buscar metas concluídas e elegíveis para bônus
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            eq(smartGoals.employeeId, targetEmployeeId),
+            eq(smartGoals.cycleId, input.cycleId),
+            eq(smartGoals.bonusEligible, true),
+            eq(smartGoals.status, "completed")
+          )
+        );
+
+      let totalBonusAmount = 0;
+      let totalBonusPercentage = 0;
+      const bonusDetails = [];
+
+      for (const goal of goals) {
+        const bonusAmount = goal.bonusAmountCents ? (goal.bonusAmountCents / 100) : 0;
+        const bonusPercentage = goal.bonusPercentage
+          ? parseFloat(goal.bonusPercentage)
+          : 0;
+
+        totalBonusAmount += bonusAmount;
+        totalBonusPercentage += bonusPercentage;
+
+        bonusDetails.push({
+          goalId: goal.id,
+          goalTitle: goal.title,
+          bonusAmount,
+          bonusPercentage,
+          progress: goal.progress,
+          weight: goal.weight,
+        });
+      }
+
+      return {
+        employeeId: targetEmployeeId,
+        cycleId: input.cycleId,
+        totalBonusAmount,
+        totalBonusPercentage,
+        eligibleGoals: goals.length,
+        bonusDetails,
+      };
+    }),
+
+  /**
+   * Exportar planilha Excel de bônus para RH/Financeiro
+   */
+  exportBonusExcel: protectedProcedure
+    .input(
+      z.object({
+        cycleId: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar todas as metas concluídas e elegíveis para bônus no ciclo
+      const goals = await db
+        .select({
+          goalId: smartGoals.id,
+          goalTitle: smartGoals.title,
+          employeeId: smartGoals.employeeId,
+          employeeName: employees.name,
+          departmentId: employees.departmentId,
+          bonusAmountCents: smartGoals.bonusAmountCents,
+          bonusPercentage: smartGoals.bonusPercentage,
+          progress: smartGoals.progress,
+          weight: smartGoals.weight,
+        })
+        .from(smartGoals)
+        .leftJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(
+          and(
+            eq(smartGoals.cycleId, input.cycleId),
+            eq(smartGoals.bonusEligible, true),
+            eq(smartGoals.status, "completed")
+          )
+        )
+        .orderBy(employees.name);
+
+      // Agrupar por colaborador
+      const bonusByEmployee = new Map<number, any>();
+
+      for (const goal of goals) {
+        const empId = goal.employeeId;
+        if (!bonusByEmployee.has(empId)) {
+          bonusByEmployee.set(empId, {
+            employeeId: empId,
+            employeeName: goal.employeeName || "N/A",
+            department: goal.departmentId?.toString() || "N/A",
+            totalBonusAmount: 0,
+            totalBonusPercentage: 0,
+            goalsCount: 0,
+            goals: [],
+          });
+        }
+
+        const empData = bonusByEmployee.get(empId);
+        const bonusAmount = goal.bonusAmountCents ? (goal.bonusAmountCents / 100) : 0;
+        const bonusPercentage = goal.bonusPercentage
+          ? parseFloat(goal.bonusPercentage)
+          : 0;
+
+        empData.totalBonusAmount += bonusAmount;
+        empData.totalBonusPercentage += bonusPercentage;
+        empData.goalsCount += 1;
+        empData.goals.push({
+          title: goal.goalTitle,
+          bonusAmount,
+          bonusPercentage,
+        });
+      }
+
+      // Gerar Excel
+      const { generateBonusExcel } = await import("./utils/bonusExcel.js");
+      const excelBuffer = await generateBonusExcel(
+        Array.from(bonusByEmployee.values()),
+        input.cycleId
+      );
+
+      return {
+        filename: `bonus-ciclo-${input.cycleId}-${Date.now()}.xlsx`,
+        data: excelBuffer.toString("base64"),
+      };
+    }),
+
+  // ==================== EVIDÊNCIAS DE METAS ====================
+
+  /**
+   * Upload de arquivo de evidência para S3
+   */
+  uploadEvidenceFile: protectedProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64
+        contentType: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { storagePut } = await import("./storage");
+
+      // Gerar chave única para o arquivo
+      const randomSuffix = Math.random().toString(36).substring(7);
+      const fileKey = `evidences/${ctx.user.id}/${Date.now()}-${randomSuffix}-${input.fileName}`;
+
+      // Converter base64 para Buffer
+      const fileBuffer = Buffer.from(input.fileData, "base64");
+
+      // Upload para S3
+      const { url } = await storagePut(fileKey, fileBuffer, input.contentType);
+
+      return {
+        url,
+        fileKey,
+        success: true,
+      };
+    }),
+
+  /**
+   * Adicionar evidência a uma meta
+   */
+  addEvidence: protectedProcedure
+    .input(
+      z.object({
+        goalId: z.number(),
+        description: z.string(),
+        attachmentUrl: z.string().optional(),
+        attachmentName: z.string().optional(),
+        attachmentType: z.string().optional(),
+        attachmentSize: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      const result = await db.insert(goalEvidences).values({
+        goalId: input.goalId,
+        description: input.description,
+        attachmentUrl: input.attachmentUrl || null,
+        attachmentName: input.attachmentName || null,
+        attachmentType: input.attachmentType || null,
+        attachmentSize: input.attachmentSize || null,
+        uploadedBy: ctx.user.id,
+        isVerified: false,
+      });
+
+      return { id: Number((result as any).insertId), success: true };
+    }),
+
+  /**
+   * Listar evidências de uma meta
+   */
+  listEvidences: protectedProcedure
+    .input(z.object({ goalId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      const evidences = await db
+        .select()
+        .from(goalEvidences)
+        .where(eq(goalEvidences.goalId, input.goalId))
+        .orderBy(desc(goalEvidences.uploadedAt));
+
+      return evidences;
+    }),
+
+  /**
+   * Verificar evidência (para auditoria)
+   */
+  verifyEvidence: protectedProcedure
+    .input(
+      z.object({
+        evidenceId: z.number(),
+        isVerified: z.boolean(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      await db
+        .update(goalEvidences)
+        .set({
+          isVerified: input.isVerified,
+          verifiedBy: ctx.user.id,
+          verifiedAt: new Date(),
+        })
+        .where(eq(goalEvidences.id, input.evidenceId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Deletar evidência
+   */
+  deleteEvidence: protectedProcedure
+    .input(z.object({ evidenceId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { goalEvidences } = await import("../drizzle/schema");
+
+      await db.delete(goalEvidences).where(eq(goalEvidences.id, input.evidenceId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Obter analytics de metas
+   */
+  getAnalytics: protectedProcedure
+    .input(
+      z.object({
+        period: z.number().default(30),
+        departmentId: z.number().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { smartGoals, employees, departments } = await import("../drizzle/schema");
+      const { sql, and, gte, eq } = await import("drizzle-orm");
+
+      const periodStart = new Date();
+      periodStart.setDate(periodStart.getDate() - input.period);
+
+      // Buscar todas as metas do período
+      const allGoals = await db
+        .select()
+        .from(smartGoals)
+        .leftJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(gte(smartGoals.createdAt, periodStart));
+
+      // Filtrar por departamento se especificado
+      const filteredGoals = input.departmentId
+        ? allGoals.filter((g) => g.employees?.departmentId === input.departmentId)
+        : allGoals;
+
+      const totalGoals = filteredGoals.length;
+      const completedGoals = filteredGoals.filter(
+        (g) => g.smartGoals.status === "completed"
+      ).length;
+      const inProgressGoals = filteredGoals.filter(
+        (g) => g.smartGoals.status === "in_progress"
+      ).length;
+      const overdueGoals = filteredGoals.filter(
+        (g) =>
+          g.smartGoals.endDate < new Date() && g.smartGoals.status !== "completed"
+      ).length;
+      const approvedGoals = filteredGoals.filter(
+        (g) => g.smartGoals.approvalStatus === "approved"
+      ).length;
+      const approvalRate = totalGoals > 0 ? (approvedGoals / totalGoals) * 100 : 0;
+
+      // Tempo médio de conclusão
+      const completedWithTime = filteredGoals.filter(
+        (g) => g.smartGoals.status === "completed" && g.smartGoals.completedAt
+      );
+      const avgCompletionTime =
+        completedWithTime.length > 0
+          ? Math.round(
+              completedWithTime.reduce((sum, g) => {
+                const start = new Date(g.smartGoals.startDate).getTime();
+                const end = new Date(g.smartGoals.completedAt!).getTime();
+                return sum + (end - start) / (1000 * 60 * 60 * 24);
+              }, 0) / completedWithTime.length
+            )
+          : 0;
+
+      // Tendências semanais
+      const trends = [];
+      for (let i = 0; i < 4; i++) {
+        const weekStart = new Date();
+        weekStart.setDate(weekStart.getDate() - (i + 1) * 7);
+        const weekEnd = new Date();
+        weekEnd.setDate(weekEnd.getDate() - i * 7);
+
+        const weekGoals = filteredGoals.filter(
+          (g) =>
+            new Date(g.smartGoals.createdAt) >= weekStart &&
+            new Date(g.smartGoals.createdAt) < weekEnd
+        );
+        const weekCompleted = weekGoals.filter(
+          (g) => g.smartGoals.status === "completed"
+        ).length;
+
+        trends.unshift({
+          period: `Semana ${4 - i}`,
+          total: weekGoals.length,
+          completed: weekCompleted,
+        });
+      }
+
+      // Performance por departamento
+      const deptMap = new Map<number, any>();
+      filteredGoals.forEach((g) => {
+        if (!g.employees?.departmentId) return;
+        const deptId = g.employees.departmentId;
+        if (!deptMap.has(deptId)) {
+          deptMap.set(deptId, {
+            departmentId: deptId,
+            departmentName: "",
+            totalGoals: 0,
+            completed: 0,
+            approved: 0,
+          });
+        }
+        const dept = deptMap.get(deptId)!;
+        dept.totalGoals++;
+        if (g.smartGoals.status === "completed") dept.completed++;
+        if (g.smartGoals.approvalStatus === "approved") dept.approved++;
+      });
+
+      // Buscar nomes dos departamentos
+      const deptIds = Array.from(deptMap.keys());
+      if (deptIds.length > 0) {
+        const deptNames = await db
+          .select({ id: departments.id, name: departments.name })
+          .from(departments);
+
+        deptNames.forEach((d) => {
+          const dept = deptMap.get(d.id);
+          if (dept) dept.departmentName = d.name;
+        });
+      }
+
+      const byDepartment = Array.from(deptMap.values()).map((d) => ({
+        ...d,
+        approvalRate: d.totalGoals > 0 ? (d.approved / d.totalGoals) * 100 : 0,
+        completionRate: d.totalGoals > 0 ? (d.completed / d.totalGoals) * 100 : 0,
+      }));
+
+      // Performance por categoria
+      const catMap = new Map<string, any>();
+      filteredGoals.forEach((g) => {
+        const cat = g.smartGoals.category || "Outros";
+        if (!catMap.has(cat)) {
+          catMap.set(cat, { category: cat, totalGoals: 0, totalDays: 0 });
+        }
+        const catData = catMap.get(cat)!;
+        catData.totalGoals++;
+        if (g.smartGoals.status === "completed" && g.smartGoals.completedAt) {
+          const start = new Date(g.smartGoals.startDate).getTime();
+          const end = new Date(g.smartGoals.completedAt).getTime();
+          catData.totalDays += (end - start) / (1000 * 60 * 60 * 24);
+        }
+      });
+
+      const byCategory = Array.from(catMap.values()).map((c) => ({
+        category: c.category,
+        totalGoals: c.totalGoals,
+        avgDays: c.totalGoals > 0 ? Math.round(c.totalDays / c.totalGoals) : 0,
+      }));
+
+      return {
+        stats: {
+          totalGoals,
+          completedGoals,
+          inProgressGoals,
+          overdueGoals,
+          approvalRate,
+          avgCompletionTime,
+        },
+        trends,
+        byDepartment,
+        byCategory,
+      };
+    }),
+
+  /**
+   * Relatório de adesão de metas corporativas
+   */
+  getCorporateGoalsAdherence: protectedProcedure
+    .input(
+      z.object({
+        departmentId: z.number().optional(),
+        goalId: z.number().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+      })
+    .optional())
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+
+      // Buscar todas as metas corporativas ativas
+      let goalsQuery = db
+        .select({
+          goalId: smartGoals.id,
+          goalTitle: smartGoals.title,
+          goalCategory: smartGoals.category,
+          goalDeadline: smartGoals.endDate,
+          employeeId: employees.id,
+          employeeName: employees.name,
+          employeeEmail: employees.email,
+          departmentId: employees.departmentId,
+          currentValue: smartGoals.currentValue,
+          targetValue: smartGoals.targetValue,
+          progress: smartGoals.progress,
+          lastUpdate: smartGoals.updatedAt,
+          status: smartGoals.status,
+        })
+        .from(smartGoals)
+        .innerJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(eq(smartGoals.goalType, 'corporate'));
+
+      // Aplicar filtros
+      const conditions = [eq(smartGoals.goalType, 'corporate')];
+      if (input.departmentId) {
+        conditions.push(eq(employees.departmentId, input.departmentId));
+      }
+      if (input.goalId) {
+        conditions.push(eq(smartGoals.id, input.goalId));
+      }
+      if (input.startDate) {
+        conditions.push(gte(smartGoals.updatedAt, new Date(input.startDate)));
+      }
+      if (input.endDate) {
+        conditions.push(lte(smartGoals.updatedAt, new Date(input.endDate)));
+      }
+
+      const goalsData = await db
+        .select({
+          goalId: smartGoals.id,
+          goalTitle: smartGoals.title,
+          goalCategory: smartGoals.category,
+          goalDeadline: smartGoals.endDate,
+          employeeId: employees.id,
+          employeeName: employees.name,
+          employeeEmail: employees.email,
+          departmentId: employees.departmentId,
+          currentValue: smartGoals.currentValue,
+          targetValue: smartGoals.targetValue,
+          progress: smartGoals.progress,
+          lastUpdate: smartGoals.updatedAt,
+          status: smartGoals.status,
+        })
+        .from(smartGoals)
+        .innerJoin(employees, eq(smartGoals.employeeId, employees.id))
+        .where(and(...conditions));
+
+      // Calcular estatísticas
+      const totalEmployees = new Set(goalsData.map(g => g.employeeId)).size;
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const employeesWithRecentUpdate = new Set(
+        goalsData
+          .filter(g => g.lastUpdate >= sevenDaysAgo)
+          .map(g => g.employeeId)
+      ).size;
+
+      const employeesDelayed = new Set(
+        goalsData
+          .filter(g => g.lastUpdate < sevenDaysAgo && g.status === 'in_progress')
+          .map(g => g.employeeId)
+      ).size;
+
+      const adherenceRate = totalEmployees > 0 
+        ? Math.round((employeesWithRecentUpdate / totalEmployees) * 100)
+        : 0;
+
+      // Agrupar por departamento
+      const deptMap = new Map<number, {
+        departmentId: number;
+        totalEmployees: number;
+        updated: number;
+        delayed: number;
+        adherenceRate: number;
+      }>();
+
+      goalsData.forEach(g => {
+        if (!g.departmentId) return;
+        
+        if (!deptMap.has(g.departmentId)) {
+          deptMap.set(g.departmentId, {
+            departmentId: g.departmentId,
+            totalEmployees: 0,
+            updated: 0,
+            delayed: 0,
+            adherenceRate: 0,
+          });
+        }
+
+        const dept = deptMap.get(g.departmentId)!;
+        dept.totalEmployees++;
+        
+        if (g.lastUpdate >= sevenDaysAgo) {
+          dept.updated++;
+        } else if (g.status === 'in_progress') {
+          dept.delayed++;
+        }
+      });
+
+      const byDepartment = Array.from(deptMap.values()).map(d => ({
+        ...d,
+        adherenceRate: d.totalEmployees > 0 
+          ? Math.round((d.updated / d.totalEmployees) * 100)
+          : 0,
+      }));
+
+      // Listar funcionários atrasados
+      const delayedEmployees = goalsData
+        .filter(g => g.lastUpdate < sevenDaysAgo && g.status === 'in_progress')
+        .map(g => ({
+          employeeId: g.employeeId,
+          employeeName: g.employeeName,
+          employeeEmail: g.employeeEmail,
+          goalId: g.goalId,
+          goalTitle: g.goalTitle,
+          daysWithoutUpdate: Math.floor(
+            (new Date().getTime() - g.lastUpdate.getTime()) / (1000 * 60 * 60 * 24)
+          ),
+          progress: g.progress || 0,
+          lastUpdate: g.lastUpdate,
+        }));
+
+      return {
+        stats: {
+          totalEmployees,
+          employeesWithRecentUpdate,
+          employeesDelayed,
+          adherenceRate,
+        },
+        byDepartment,
+        delayedEmployees,
+      };
+    }),
+
+  /**
+   * Listar metas corporativas
+   */
+  listCorporateGoals: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    // Buscar todas as metas corporativas
+    const goals = await db
+      .select({
+        id: smartGoals.id,
+        title: smartGoals.title,
+        description: smartGoals.description,
+        status: smartGoals.status,
+        progress: smartGoals.progress,
+        deadline: smartGoals.endDate,
+        goalType: smartGoals.goalType,
+        category: smartGoals.category,
+        createdAt: smartGoals.createdAt,
+      })
+      .from(smartGoals)
+      .where(eq(smartGoals.goalType, 'corporate'))
+      .orderBy(desc(smartGoals.createdAt));
+
+    return goals;
+  }),
+
+  /**
+   * Enviar lembretes de adesão para funcionários atrasados
+   */
+  sendAdherenceReminders: protectedProcedure
+    .input(
+      z.object({
+        employeeIds: z.array(z.number()).optional(),
+        departmentId: z.number().optional(),
+        goalId: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      // Buscar funcionários que precisam de lembrete
+      let employeesToNotify: number[] = [];
+
+      if (input.employeeIds && input.employeeIds.length > 0) {
+        employeesToNotify = input.employeeIds;
+      } else {
+        // Buscar funcionários atrasados baseado nos filtros
+        const conditions = [];
+        if (input.departmentId) {
+          conditions.push(eq(employees.departmentId, input.departmentId));
+        }
+        conditions.push(eq(employees.status, "ativo"));
+
+        const employeesList = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(and(...conditions));
+
+        employeesToNotify = employeesList.map((e) => e.id);
+      }
+
+      // Enviar notificações para cada funcionário
+      for (const employeeId of employeesToNotify) {
+        await db.insert(notifications).values({
+          userId: employeeId,
+          type: "meta_atrasada",
+          title: "Lembrete: Atualizar progresso de meta",
+          message: "Você não atualiza o progresso de suas metas há mais de 7 dias. Por favor, atualize o status.",
+          read: false,
+        });
+      }
+
+      return {
+        success: true,
+        count: employeesToNotify.length,
+      };
+    }),
+
+  /**
+   * Buscar metas da equipe (para gestores)
+   */
+  getTeamGoals: protectedProcedure
+    .input(z.object({ managerId: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Buscar funcionários subordinados ao gestor
+      const teamMembers = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.managerId, input.managerId));
+
+      if (teamMembers.length === 0) return [];
+
+      const teamMemberIds = teamMembers.map((e) => e.id);
+
+      // Buscar metas dos membros da equipe
+      const goals = await db
+        .select()
+        .from(smartGoals)
+        .where(
+          and(
+            sql`${smartGoals.employeeId} IN (${sql.join(teamMemberIds, sql`, `)})`
+          )
+        )
+        .orderBy(desc(smartGoals.createdAt));
+
+      return goals;
+    }),
+
+  /**
+   * Contar metas por ciclo (para dashboard de acompanhamento)
+   */
+  countByCycle: protectedProcedure
+    .input(z.object({ cycleId: z.number().optional() }).optional())
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      // Se cycleId for fornecido, buscar apenas para esse ciclo
+      // Senão, buscar para todos os ciclos aprovados
+      const cyclesQuery = input.cycleId
+        ? await db.select().from(evaluationCycles).where(eq(evaluationCycles.id, input.cycleId))
+        : await db.select().from(evaluationCycles).where(eq(evaluationCycles.approvedForGoals, true));
+
+      const results = [];
+      for (const cycle of cyclesQuery) {
+        // Contar total de funcionários ativos
+        const totalEmployees = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(employees)
+          .where(eq(employees.status, "ativo"));
+
+        // Contar quantos funcionários criaram metas neste ciclo
+        const employeesWithGoals = await db
+          .select({ count: sql<number>`COUNT(DISTINCT ${smartGoals.employeeId})` })
+          .from(smartGoals)
+          .where(eq(smartGoals.cycleId, cycle.id));
+
+        // Contar total de metas criadas
+        const totalGoals = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(smartGoals)
+          .where(eq(smartGoals.cycleId, cycle.id));
+
+        // Contar metas aprovadas
+        const approvedGoals = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(smartGoals)
+          .where(and(
+            eq(smartGoals.cycleId, cycle.id),
+            eq(smartGoals.status, "approved")
+          ));
+
+        // Contar metas pendentes de aprovação
+        const pendingGoals = await db
+          .select({ count: sql<number>`COUNT(*)` })
+          .from(smartGoals)
+          .where(and(
+            eq(smartGoals.cycleId, cycle.id),
+            eq(smartGoals.status, "pending_approval")
+          ));
+
+        results.push({
+          cycleId: cycle.id,
+          cycleName: cycle.name,
+          cycleYear: cycle.year,
+          totalEmployees: Number(totalEmployees[0]?.count || 0),
+          employeesWithGoals: Number(employeesWithGoals[0]?.count || 0),
+          totalGoals: Number(totalGoals[0]?.count || 0),
+          approvedGoals: Number(approvedGoals[0]?.count || 0),
+          pendingGoals: Number(pendingGoals[0]?.count || 0),
+          adherencePercentage: totalEmployees[0]?.count
+            ? Math.round((Number(employeesWithGoals[0]?.count || 0) / Number(totalEmployees[0]?.count)) * 100)
+            : 0,
+        });
+      }
+
+      return results;
+    }),
+});

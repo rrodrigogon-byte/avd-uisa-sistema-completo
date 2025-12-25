@@ -1,0 +1,319 @@
+{
+  "query": "SHOW TABLES",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SHOW TABLES",
+  "rows": [
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "activityLogs"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "alerts"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "approvalRuleHistory"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "approvalRules"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "auditLogs"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "badges"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "bonusApprovalComments"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "bonusApprovals"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "bonusAuditLogs"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "bonusCalculations"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "bonusConfigs"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "bonusPolicies"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "bonusWorkflows"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "calibrationApprovals"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "calibrationMessages"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "calibrationMovements"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "calibrationReviews"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "calibrationSessions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "calibrationWorkflows"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "competencies"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "competencyLevels"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "customReports"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "cycle360Drafts"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "cycle360Templates"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "departmentPerformanceSummary"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "departments"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "developmentActions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "developmentPlans"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "emailMetrics"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "employeeActivities"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "employeeAuditLog"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "employeeBadges"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "employeeCompetencies"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "employeeImportHistory"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "employees"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluation360CycleCompetencies"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluation360CycleParticipants"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluation360CycleWeights"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationComments"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationCriteria"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationCriteriaResponses"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationCycles"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationInstances"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationQuestions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationResponses"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "evaluationTemplates"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "feedbacks"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "generatedReports"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "goalApprovals"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "goalComments"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "goalEvidences"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "goalMilestones"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "goalUpdates"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "goals"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "jobCompetencies"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "jobDescriptionApprovals"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "jobDescriptions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "jobKnowledge"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "jobResponsibilities"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "marketBenchmarks"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "nineBoxPositions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "notifications"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "passwordChangeHistory"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "passwordResetTokens"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiActions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiCompetencyGaps"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiGovernanceReviews"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiIntelligentDetails"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiItems"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiPlans"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiProgress"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiReviews"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pdiRisks"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "performanceEvaluations"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "performanceHistory"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "performanceMetrics"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "performanceReviews"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "positionCompetencies"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "positions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "psychometricTests"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pulseSurveyResponses"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pulseSurveys"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pushNotificationLogs"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "pushSubscriptions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "reportAnalytics"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "reportExecutionLogs"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "reportTemplates"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "scheduledReports"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "smartGoals"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "successionCandidates"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "successionHistory"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "successionPlans"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "systemSettings"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "templateCriteria"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "templateQuestions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "testQuestions"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "timeClockRecords"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "timeDiscrepancies"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "users"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "workflowInstances"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "workflowStepApprovals"
+    },
+    {
+      "Tables_in_Vd5BJ8toX8cUC4zST6itFN": "workflows"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_Vd5BJ8toX8cUC4zST6itFN\n__drizzle_migrations\nactivityLogs\nalerts\napprovalRuleHistory\napprovalRules\nauditLogs\nbadges\nbonusApprovalComments\nbonusApprovals\nbonusAuditLogs\nbonusCalculations\nbonusConfigs\nbonusPolicies\nbonusWorkflows\ncalibrationApprovals\ncalibrationMessages\ncalibrationMovements\ncalibrationReviews\ncalibrationSessions\ncalibrationWorkflows\ncompetencies\ncompetencyLevels\ncustomReports\ncycle360Drafts\ncycle360Templates\ndepartmentPerformanceSummary\ndepartments\ndevelopmentActions\ndevelopmentPlans\nemailMetrics\nemployeeActivities\nemployeeAuditLog\nemployeeBadges\nemployeeCompetencies\nemployeeImportHistory\nemployees\nevaluation360CycleCompetencies\nevaluation360CycleParticipants\nevaluation360CycleWeights\nevaluationComments\nevaluationCriteria\nevaluationCriteriaResponses\nevaluationCycles\nevaluationInstances\nevaluationQuestions\nevaluationResponses\nevaluationTemplates\nfeedbacks\ngeneratedReports\ngoalApprovals\ngoalComments\ngoalEvidences\ngoalMilestones\ngoalUpdates\ngoals\njobCompetencies\njobDescriptionApprovals\njobDescriptions\njobKnowledge\njobResponsibilities\nmarketBenchmarks\nnineBoxPositions\nnotifications\npasswordChangeHistory\npasswordResetTokens\npdiActions\npdiCompetencyGaps\npdiGovernanceReviews\npdiIntelligentDetails\npdiItems\npdiPlans\npdiProgress\npdiReviews\npdiRisks\nperformanceEvaluations\nperformanceHistory\nperformanceMetrics\nperformanceReviews\npositionCompetencies\npositions\npsychometricTests\npulseSurveyResponses\npulseSurveys\npushNotificationLogs\npushSubscriptions\nreportAnalytics\nreportExecutionLogs\nreportTemplates\nscheduledReports\nsmartGoals\nsuccessionCandidates\nsuccessionHistory\nsuccessionPlans\nsystemSettings\ntemplateCriteria\ntemplateQuestions\ntestQuestions\ntimeClockRecords\ntimeDiscrepancies\nusers\nworkflowInstances\nworkflowStepApprovals\nworkflows\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

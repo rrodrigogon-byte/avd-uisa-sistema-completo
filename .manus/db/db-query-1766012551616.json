@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE pirIntegrityQuestions SET title = CONCAT('Cenário de Integridade - Questão ', id), question = CONCAT('Você presencia uma situação onde um colega está agindo de forma questionável. Como você reagiria? (Questão ', id, ')'), scenario = 'Você está trabalhando em um projeto importante e percebe que um colega está tomando atalhos que comprometem a qualidade do trabalho.' WHERE active = 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute UPDATE pirIntegrityQuestions SET title = CONCAT('Cenário de Integridade - Questão ', id), question = CONCAT('Você presencia uma situação onde um colega está agindo de forma questionável. Como você reagiria? (Questão ', id, ')'), scenario = 'Você está trabalhando em um projeto importante e percebe que um colega está tomando atalhos que comprometem a qualidade do trabalho.' WHERE active = 1",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 116
+}
