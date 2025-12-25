@@ -1945,3 +1945,35 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [x] Testar com grande volume de dados (3.659 registros do Excel)
 - [x] Validar performance (importação concluída com sucesso)
 - [ ] Criar testes automatizados vitest
+
+
+---
+
+## 🆕 NOVAS FUNCIONALIDADES (25/12/2025)
+
+### Upload de Excel para Importação de Dados
+- [x] Instalar biblioteca de processamento de Excel (xlsx)
+- [x] Criar endpoint tRPC para upload de arquivos Excel
+- [x] Implementar parser de Excel para extrair dados de colaboradores
+- [x] Validar estrutura e dados do arquivo Excel (colunas obrigatórias, formatos)
+- [x] Processar e salvar dados no banco de dados (colaboradores, departamentos, hierarquia)
+- [x] Criar página de upload com drag-and-drop
+- [x] Exibir preview dos dados antes de importar
+- [x] Mostrar feedback de progresso durante importação
+- [x] Implementar tratamento de erros e validações
+- [x] Criar template de Excel para download como referência
+
+### Visualização de Organograma Interativo
+- [x] Pesquisar e escolher biblioteca de visualização de organograma (react-organizational-chart, react-org-chart, ou D3.js)
+- [x] Instalar biblioteca escolhida
+- [x] Criar endpoint tRPC para buscar dados hierárquicos formatados
+- [x] Implementar transformação de dados para formato da biblioteca
+- [x] Criar componente de organograma interativo
+- [x] Adicionar funcionalidades de zoom e pan
+- [x] Implementar navegação por clique em nós
+- [x] Exibir card com informações detalhadas ao clicar em colaborador
+- [x] Adicionar filtros (por departamento, cargo, etc.)
+- [x] Implementar busca de colaboradores no organograma
+- [x] Adicionar opção de expandir/colapsar níveis hierárquicos
+- [x] Integrar com dados de avaliação (mostrar status, scores)
+- [x] Criar visualização responsiva para mobile

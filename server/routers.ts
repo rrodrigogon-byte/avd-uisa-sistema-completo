@@ -148,6 +148,7 @@ import { pirDepartmentReportsRouter } from "./routers/pirDepartmentReportsRouter
 import { jobDescriptionApprovalsRouter } from "./routers/jobDescriptionApprovalsRouter";
 import { videoUploadRouter } from "./routers/videoUploadRouter";
 import { abTestRouter } from "./routers/abTestRouter";
+import { excelUploadRouter } from "./routers/excelUploadRouter";
 import { npsRouter } from "./routers/npsRouter";
 import { npsTriggerRouter } from "./routers/npsTriggerRouter";
 import { abTestLayoutRouter } from "./routers/abTestLayoutRouter";
@@ -347,6 +348,7 @@ export const appRouter = router({
   
   // Novos routers - Sistema de Cargos CBO e Aprovações (14/12/2025)
   cbo: cboRouter,
+  excelUpload: excelUploadRouter,
   jobDescriptionWorkflow: jobDescriptionWorkflowRouter,
   integrity: integrityRouter,
   

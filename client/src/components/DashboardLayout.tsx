@@ -227,6 +227,7 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: GitBranch, label: "Organograma", path: "/organograma" },
+      { icon: Network, label: "Organograma Interativo", path: "/organograma/visualizar" },
       { icon: FileBarChart, label: "Relatórios Hierárquicos", path: "/relatorios/hierarquia" },
     ],
   },
@@ -239,6 +240,7 @@ const menuItems = [
     children: [
       { icon: Clock, label: "Minhas Atividades", path: "/minhas-atividades" },
       { icon: Upload, label: "Importar Ponto", path: "/importacao-ponto" },
+      { icon: FileSpreadsheet, label: "Importar Excel", path: "/importacao-excel" },
       { icon: AlertTriangle, label: "Discrepâncias", path: "/discrepancias" },
       { icon: CheckCircle, label: "Validação Líder", path: "/validacao-lider" },
       { icon: FileSearch, label: "Análise de Gaps", path: "/analise-gaps" },

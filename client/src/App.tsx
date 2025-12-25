@@ -23,6 +23,8 @@ import Departamentos from "./pages/Departamentos";
 import CentrosCustos from "./pages/CentrosCustos";
 import SucessaoInteligente from "./pages/SucessaoInteligente";
 import ImportacaoPonto from "@/pages/ImportacaoPonto";
+import ImportacaoExcel from "@/pages/ImportacaoExcel";
+import OrganogramaVisualizar from "@/pages/OrganogramaVisualizar";
 import SecurityDashboard from "./pages/SecurityDashboard";
 import TestMonitoringDashboard from "./pages/TestMonitoringDashboard";
 import PsychometricResults from "./pages/PsychometricResults";
@@ -530,6 +532,8 @@ function Router() {
       <Route path="/sucessao-inteligente" component={SucessaoInteligente} />
       <Route path="/sucessao/dashboard-filtros" component={DashboardSucessaoFiltros} />
       <Route path="/importacao-ponto" component={ImportacaoPonto} />
+      <Route path="/importacao-excel" component={ImportacaoExcel} />
+      <Route path="/organograma/visualizar" component={OrganogramaVisualizar} />
       <Route path="/validacao-lider" component={ValidacaoLider} />
       <Route path="/analise-gaps" component={AnaliseGaps} />
       <Route path="/importacao-descricoes" component={ImportacaoDescricoes} />
