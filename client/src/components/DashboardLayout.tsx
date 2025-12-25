@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo, AlertCircle, Home, Sparkles, Users2, TrendingDown, FileBarChart, Database, Bell, Megaphone, FlaskConical } from "lucide-react";
+import { BarChart3, FileText, Goal, LayoutDashboard, LogOut, PanelLeft, Settings, Target, TrendingUp, User as UserIcon, Users, History as HistoryIcon, ChevronDown, ChevronRight, Activity, RefreshCw, Star, Scale, Grid3x3, GraduationCap, Lightbulb, GitBranch, CheckSquare, UsersRound, Building2, DollarSign, Workflow, Gift, Inbox, BarChart, Brain, Mail, FileSearch, MessageSquare, Trophy, Calendar, Clock, CheckCircle, AlertTriangle, Upload, Search, UserCheck, Gauge, Award, BookOpen, Briefcase, ClipboardList, Timer, UserCog, Shield, PieChart, LineChart, Zap, UserPlus, Edit3, ListTodo, AlertCircle, Home, Sparkles, Users2, TrendingDown, FileBarChart, Database, Bell, Megaphone, FlaskConical, ThermometerSun } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -188,6 +188,35 @@ const menuItems = [
       { icon: MessageSquare, label: "Feedback Contínuo", path: "/feedback" },
       { icon: Trophy, label: "Conquistas", path: "/badges" },
       { icon: Megaphone, label: "Pesquisas Pulse", path: "/pesquisas-pulse" },
+    ],
+  },
+  
+  // 🔄 NOVOS MÓDULOS
+  {
+    icon: Sparkles,
+    label: "Feedback 360°",
+    isSection: true,
+    children: [
+      { icon: Users2, label: "Ciclos de Feedback", path: "/feedback360/ciclos" },
+      { icon: ClipboardList, label: "Minhas Avaliações", path: "/feedback360/minhas-avaliacoes" },
+    ],
+  },
+  
+  {
+    icon: Target,
+    label: "OKRs",
+    isSection: true,
+    children: [
+      { icon: Target, label: "Objetivos", path: "/okrs" },
+    ],
+  },
+  
+  {
+    icon: ThermometerSun,
+    label: "Clima Organizacional",
+    isSection: true,
+    children: [
+      { icon: ThermometerSun, label: "Pesquisas de Clima", path: "/clima" },
     ],
   },
   

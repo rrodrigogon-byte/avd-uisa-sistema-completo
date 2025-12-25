@@ -100,6 +100,8 @@ import HistoricoMovimentacoes from "./pages/HistoricoMovimentacoes";
 import HistoricoMudancas from "./pages/HistoricoMudancas";
 import Feedback360Cycles from "./pages/Feedback360Cycles";
 import Feedback360MyEvaluations from "./pages/Feedback360MyEvaluations";
+import OKRsList from "./pages/OKRsList";
+import ClimaSurveysList from "./pages/ClimaSurveysList";
 import DashboardIntegridade from "./pages/DashboardIntegridade";
 import ExportarOrganograma from "./pages/ExportarOrganograma";
 import DashboardEstatisticas from "./pages/DashboardEstatisticas";
@@ -552,6 +554,8 @@ function Router() {
       <Route path="/organograma" component={Organograma} />
       <Route path="/feedback360/ciclos" component={Feedback360Cycles} />
       <Route path="/feedback360/minhas-avaliacoes" component={Feedback360MyEvaluations} />
+      <Route path="/okrs" component={OKRsList} />
+      <Route path="/clima" component={ClimaSurveysList} />
       <Route path="/hr/positions" component={Positions} />
       <Route path="/hr/employees" component={Employees} />
       <Route path="/employees/:id" component={EmployeeProfile} />

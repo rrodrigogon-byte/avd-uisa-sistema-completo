@@ -2244,3 +2244,65 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [x] Implementar dashboard de resultados com análise por dimensões
 - [x] Criar heatmap por departamento
 - [x] Adicionar relatórios consolidados com insights e recomendações
+
+
+---
+
+## 🆕 NOVOS MÓDULOS - FEEDBACK 360°, OKRs E CLIMA ORGANIZACIONAL (25/12/2025)
+
+### Módulo 1: Feedback 360°
+
+#### Backend
+- [x] Criar schema de tabelas para processos de feedback, participantes e respostas
+- [x] Implementar helpers de banco de dados para feedback 360°
+- [x] Criar procedures tRPC para gerenciar processos de feedback
+- [x] Criar procedures tRPC para submissão e visualização de respostas
+
+#### Frontend
+- [ ] Criar página de listagem de processos de feedback
+- [ ] Criar página de criação/edição de processo de feedback
+- [ ] Criar página de visualização de detalhes do processo
+- [ ] Criar interface para responder questionários de feedback
+- [ ] Criar dashboard de resultados e relatórios
+
+### Módulo 2: OKRs (Objectives and Key Results)
+
+#### Backend
+- [x] Criar schema de tabelas para objetivos, resultados-chave e check-ins
+- [x] Implementar helpers de banco de dados para OKRs
+- [x] Criar procedures tRPC para gerenciar objetivos
+- [x] Criar procedures tRPC para resultados-chave e progresso
+- [x] Criar procedures tRPC para check-ins periódicos
+
+###### Frontend
+- [x] Criar página de listagem de OKRs
+- [ ] Criar página de criação/edição de objetivos
+- [ ] Criar interface para resultados-chave
+- [ ] Criar interface para check-ins
+- [ ] Criar dashboard de acompanhamentoboard de visualização de progresso e métricas
+
+### Módulo 3: Pesquisa de Clima Organizacional
+
+#### Backend
+- [x] Criar schema de tabelas para pesquisas, perguntas e respostas
+- [x] Implementar helpers de banco de dados para pesquisas de clima
+- [x] Criar procedures tRPC para gerenciar pesquisas
+- [x] Criar procedures tRPC para submissão de respostas
+- [x] Criar procedures tRPC para análise de resultados
+
+#### Frontend
+- [x] Criar página de listagem de pesquisas de clima
+- [ ] Criar página de criação/edição de pesquisas
+- [ ] Criar interface para responder pesquisas
+- [ ] Criar dashboard de resultados e análises
+- [ ] Criar visualizações gráficas de dados de clima
+
+### Integração e Finalização
+
+- [x] Adicionar links dos três módulos no menu de navegação do DashboardLayout
+- [x] Executar `pnpm db:push` para aplicar schemas no banco de dados
+- [x] Criar páginas de listagem para cada módulo
+- [x] Adicionar rotas no App.tsx
+- [ ] Testar fluxos completos de cada módulo
+- [ ] Verificar responsividade e acessibilidade
+- [ ] Criar checkpoint final dos novos módulos
