@@ -28,7 +28,7 @@ interface TemplateSelectorProps {
 }
 
 export function TemplateSelector({ open, onClose, onSelect }: TemplateSelectorProps) {
-  const { data: templates, isLoading } = trpc.cycles360Templates.list.useQuery(undefined, {
+  const { data: templates, isLoading } = trpc.cycles360Templates.list.useQuery({}, {
     enabled: open,
   });
 

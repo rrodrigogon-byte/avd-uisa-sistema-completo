@@ -958,4 +958,50 @@ export const orgChartRouter = router({
         deactivatedIds: allEmployeeIds,
       };
     }),
+
+  /**
+   * Obter organograma hierárquico completo
+   * Retorna estrutura de árvore com colaboradores e seus subordinados
+   */
+  getOrgChart: protectedProcedure
+    .input(z.object({}).optional())
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
+      // Buscar todos os colaboradores ativos com seus departamentos e cargos
+      const allEmployees = await db
+        .select({
+          id: employees.id,
+          employeeCode: employees.employeeCode,
+          name: employees.name,
+          email: employees.email,
+          managerId: employees.managerId,
+          departmentId: employees.departmentId,
+          departmentName: departments.name,
+          positionId: employees.positionId,
+          positionTitle: positions.title,
+          photoUrl: employees.photoUrl,
+          active: employees.active,
+        })
+        .from(employees)
+        .leftJoin(departments, eq(employees.departmentId, departments.id))
+        .leftJoin(positions, eq(employees.positionId, positions.id))
+        .where(eq(employees.active, true));
+      
+      // Construir árvore hierárquica
+      const buildTree = (parentId: number | null): any[] => {
+        return allEmployees
+          .filter(emp => emp.managerId === parentId)
+          .map(emp => ({
+            ...emp,
+            subordinates: buildTree(emp.id)
+          }));
+      };
+      
+      // Retornar árvore começando dos colaboradores sem gestor (nível mais alto)
+      const tree = buildTree(null);
+      
+      return tree;
+    }),
 });

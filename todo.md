@@ -1,5 +1,10 @@
 # Sistema AVD UISA - TODO List
 
+## 🚨 CORREÇÕES URGENTES (25/12/2025)
+
+### Problemas Atuais
+- [x] Corrigir erro de validação tRPC na página de organograma: "Invalid input: expected object, received undefined" - Procedure getOrgChart adicionada + 3 testes automatizados passando
+
 ## 🚨 CORREÇÕES URGENTES (24/12/2025)
 
 ### Problemas Atuais

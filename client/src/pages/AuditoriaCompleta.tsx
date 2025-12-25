@@ -44,7 +44,7 @@ export default function AuditoriaCompleta() {
   );
 
   // Buscar usuários para filtro
-  const { data: users } = trpc.users.list.useQuery(undefined, {
+  const { data: users } = trpc.users.list.useQuery({}, {
     enabled: user?.role === "admin",
   });
 

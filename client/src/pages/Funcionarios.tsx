@@ -41,10 +41,11 @@ export default function Funcionarios() {
   });
 
   // Buscar funcionários
-  const { data: employees, isLoading, refetch } = trpc.employees.list.useQuery();
+  const { data: employeesData, isLoading, refetch } = trpc.employees.list.useQuery({});
+  const employees = employeesData?.employees || [];
 
   // Buscar departamentos
-  const { data: departments } = trpc.departments.list.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
 
   // Mutation para criar funcionário
   const createMutation = trpc.employees.create.useMutation({
@@ -89,7 +90,7 @@ export default function Funcionarios() {
   };
 
   // Filtrar funcionários
-  const filteredEmployees = employees?.filter((emp) => {
+  const filteredEmployees = employees.filter((emp) => {
     // Validar que emp e emp.employee existem
     if (!emp || !emp.employee) return false;
     
