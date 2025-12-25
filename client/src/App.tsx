@@ -48,6 +48,7 @@ import {
   GestaoQuestoesPIRIntegridade,
 } from "./pages/PIRIntegridade/index";
 import AprovacoesCargos from "./pages/AprovacoesCargos";
+import FluxoAprovacaoCargos from "./pages/FluxoAprovacaoCargos";
 import ABTestDashboard from "./pages/ABTestDashboard";
 import NPSDashboard from "./pages/NPSDashboard";
 import ConsolidatedNpsReport from "./pages/ConsolidatedNpsReport";
@@ -499,6 +500,7 @@ function Router() {
       
       {/* Rota de Aprovações de Cargos com workflow de 4 níveis */}
       <Route path="/aprovacoes/cargos" component={AprovacoesCargos} />
+      <Route path="/fluxo-aprovacao-cargos" component={FluxoAprovacaoCargos} />
       <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />

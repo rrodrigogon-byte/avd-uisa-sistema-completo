@@ -1413,3 +1413,218 @@ Expandir proteções para os 140 componentes restantes, executar testes E2E em s
 - [x] Implementar estatísticas de funcionários (total, ativos, inativos)
 - [x] Implementar feed de ações recentes com últimas 10 ações
 - [x] Adicionar ações rápidas para navegação
+
+
+---
+
+## 📋 DESCRIÇÕES DE CARGOS UISA E APROVAÇÕES (25/12/2025)
+
+### 1. Estrutura de Descrições de Cargos UISA
+- [ ] Criar schema de banco de dados para descrições de cargos
+  - [ ] Tabela jobDescriptions (descrições de cargos)
+  - [ ] Tabela jobDescriptionVersions (histórico de versões)
+  - [ ] Tabela jobDescriptionApprovals (fluxo de aprovação)
+  - [ ] Tabela jobDescriptionComments (comentários e ajustes)
+- [ ] Implementar campos da descrição UISA
+  - [ ] Informações básicas (título, código, departamento, nível)
+  - [ ] Missão do cargo
+  - [ ] Responsabilidades principais (lista estruturada)
+  - [ ] Competências técnicas requeridas
+  - [ ] Competências comportamentais
+  - [ ] Requisitos de formação e experiência
+  - [ ] Indicadores de desempenho (KPIs)
+  - [ ] Relacionamentos internos e externos
+
+### 2. CRUD de Descrições de Cargos
+- [ ] Implementar procedures tRPC backend
+  - [ ] jobDescriptions.create - criar nova descrição
+  - [ ] jobDescriptions.list - listar descrições com filtros
+  - [ ] jobDescriptions.getById - buscar descrição por ID
+  - [ ] jobDescriptions.update - atualizar descrição
+  - [ ] jobDescriptions.duplicate - duplicar descrição
+  - [ ] jobDescriptions.archive - arquivar descrição
+  - [ ] jobDescriptions.getVersionHistory - histórico de versões
+- [ ] Implementar páginas frontend
+  - [ ] ListaDescricoesCargos.tsx - listagem com filtros e busca
+  - [ ] CriarDescricaoCargo.tsx - formulário de criação
+  - [ ] EditarDescricaoCargo.tsx - formulário de edição
+  - [ ] VisualizarDescricaoCargo.tsx - visualização detalhada
+  - [ ] HistoricoVersoes.tsx - histórico de alterações
+
+### 3. Sistema de Aprovação de Descrições
+- [ ] Implementar fluxo de aprovação multinível
+  - [ ] Submeter para aprovação (status: pendente)
+  - [ ] Aprovação RH (primeiro nível)
+  - [ ] Aprovação Gestor (segundo nível)
+  - [ ] Aprovação Diretoria (terceiro nível)
+  - [ ] Rejeição com comentários
+  - [ ] Solicitação de ajustes
+- [ ] Criar procedures tRPC de aprovação
+  - [ ] approvals.submit - submeter para aprovação
+  - [ ] approvals.approve - aprovar descrição
+  - [ ] approvals.reject - rejeitar descrição
+  - [ ] approvals.requestChanges - solicitar ajustes
+  - [ ] approvals.getPending - listar aprovações pendentes
+  - [ ] approvals.getHistory - histórico de aprovações
+  - [ ] approvals.approveBatch - aprovar em lote
+- [ ] Implementar páginas de aprovação
+  - [ ] DashboardAprovacoes.tsx - dashboard de aprovações pendentes
+  - [ ] AprovarDescricao.tsx - página de aprovação/rejeição
+  - [ ] HistoricoAprovacoes.tsx - histórico completo
+
+### 4. Sistema de Comentários e Ajustes
+- [ ] Implementar sistema de comentários
+  - [ ] Adicionar comentários em descrições
+  - [ ] Responder comentários
+  - [ ] Marcar comentários como resolvidos
+  - [ ] Notificar autor sobre comentários
+- [ ] Criar procedures tRPC de comentários
+  - [ ] comments.create - criar comentário
+  - [ ] comments.list - listar comentários por descrição
+  - [ ] comments.reply - responder comentário
+  - [ ] comments.resolve - marcar como resolvido
+
+### 5. Carga de Dados Mestres
+- [ ] Implementar importação de funcionários
+  - [ ] Template CSV/Excel para importação
+  - [ ] Validação de dados (CPF, email, datas)
+  - [ ] Procedure de importação em lote
+  - [ ] Logs de importação com erros
+  - [ ] Página de importação com preview
+- [ ] Implementar importação de hierarquias
+  - [ ] Template CSV/Excel para hierarquia organizacional
+  - [ ] Validação de estrutura (gestor → subordinados)
+  - [ ] Procedure de importação de hierarquias
+  - [ ] Visualização de árvore hierárquica
+- [ ] Implementar importação de departamentos
+  - [ ] Template CSV/Excel para departamentos
+  - [ ] Validação de códigos e nomes
+  - [ ] Procedure de importação de departamentos
+  - [ ] Gestão de departamentos pai/filho
+- [ ] Criar procedures tRPC de importação
+  - [ ] dataImport.uploadEmployees - importar funcionários
+  - [ ] dataImport.uploadHierarchies - importar hierarquias
+  - [ ] dataImport.uploadDepartments - importar departamentos
+  - [ ] dataImport.validateData - validar dados antes de importar
+  - [ ] dataImport.getLogs - buscar logs de importação
+- [ ] Implementar páginas de importação
+  - [ ] ImportarDados.tsx - página principal de importação
+  - [ ] PreviewImportacao.tsx - preview antes de confirmar
+  - [ ] LogsImportacao.tsx - histórico de importações
+
+### 6. Visualização de Fluxos e Hierarquias
+- [ ] Criar visualização de fluxo de aprovação
+  - [ ] Timeline visual do processo de aprovação
+  - [ ] Status de cada etapa (pendente, aprovado, rejeitado)
+  - [ ] Indicadores de tempo de aprovação
+  - [ ] Notificações de pendências
+- [ ] Criar visualização de hierarquia organizacional
+  - [ ] Organograma interativo
+  - [ ] Árvore hierárquica navegável
+  - [ ] Filtros por departamento
+  - [ ] Busca por funcionário
+- [ ] Implementar procedures tRPC de visualização
+  - [ ] hierarchy.getOrgChart - buscar organograma completo
+  - [ ] hierarchy.getByDepartment - filtrar por departamento
+  - [ ] hierarchy.getSubordinates - buscar subordinados
+  - [ ] hierarchy.getManagerChain - cadeia de gestores
+- [ ] Criar páginas de visualização
+  - [ ] FluxoAprovacao.tsx - visualizar fluxo de aprovação
+  - [ ] OrganogramaEmpresa.tsx - organograma completo
+  - [ ] HierarquiaDepartamento.tsx - hierarquia por departamento
+
+### 7. Notificações e Alertas
+- [ ] Implementar notificações de aprovação
+  - [ ] Notificar aprovadores sobre novas solicitações
+  - [ ] Notificar autor sobre aprovação/rejeição
+  - [ ] Notificar sobre solicitações de ajustes
+  - [ ] Lembretes de aprovações pendentes
+- [ ] Criar procedures tRPC de notificações
+  - [ ] notifications.sendApprovalRequest - notificar aprovador
+  - [ ] notifications.sendApprovalResult - notificar resultado
+  - [ ] notifications.sendReminder - enviar lembrete
+  - [ ] notifications.markAsRead - marcar como lida
+
+### 8. Relatórios e Exportações
+- [ ] Implementar exportação de descrições
+  - [ ] Exportar descrição individual em PDF
+  - [ ] Exportar múltiplas descrições em lote
+  - [ ] Template profissional de PDF
+  - [ ] Incluir histórico de aprovações
+- [ ] Implementar relatórios gerenciais
+  - [ ] Relatório de descrições por departamento
+  - [ ] Relatório de aprovações pendentes
+  - [ ] Relatório de tempo médio de aprovação
+  - [ ] Relatório de descrições desatualizadas
+- [ ] Criar procedures tRPC de relatórios
+  - [ ] reports.exportPDF - exportar descrição em PDF
+  - [ ] reports.getByDepartment - relatório por departamento
+  - [ ] reports.getPendingApprovals - aprovações pendentes
+  - [ ] reports.getApprovalMetrics - métricas de aprovação
+
+### 9. Testes e Validação
+- [ ] Criar testes unitários vitest
+  - [ ] Testes de CRUD de descrições
+  - [ ] Testes de fluxo de aprovação
+  - [ ] Testes de importação de dados
+  - [ ] Testes de validações
+- [ ] Testar fluxos completos
+  - [ ] Criar → Submeter → Aprovar → Publicar
+  - [ ] Criar → Submeter → Rejeitar → Ajustar → Resubmeter
+  - [ ] Importação de dados em lote
+  - [ ] Exportação de relatórios
+
+### 10. Integração com Sistema AVD
+- [ ] Vincular descrições de cargos ao processo AVD
+  - [ ] Usar competências da descrição na avaliação
+  - [ ] Usar KPIs da descrição no desempenho
+  - [ ] Sugerir PDI baseado em gaps da descrição
+- [ ] Criar procedures de integração
+  - [ ] integration.getCompetenciesByJob - buscar competências do cargo
+  - [ ] integration.getKPIsByJob - buscar KPIs do cargo
+  - [ ] integration.suggestPDI - sugerir PDI baseado em gaps
+
+
+---
+
+## ✅ IMPLEMENTAÇÃO CONCLUÍDA - FLUXO DE APROVAÇÃO CARGOS (25/12/2025)
+
+### Página de Demonstração Criada
+- [x] Criar página FluxoAprovacaoCargos.tsx com visualização completa
+- [x] Implementar 4 tabs principais:
+  - [x] Tab 1: Fluxo de Aprovação (4 níveis com timeline visual)
+  - [x] Tab 2: Carga de Dados (status de importações)
+  - [x] Tab 3: Hierarquia (visualização organizacional)
+  - [x] Tab 4: Integração AVD (fluxo completo de integração)
+- [x] Adicionar métricas gerais (total, aprovadas, pendentes, rejeitadas, tempo médio)
+- [x] Criar visualização de progresso por nível
+- [x] Implementar cards de estatísticas de aprovação
+- [x] Adicionar templates de importação
+- [x] Criar exemplo prático de integração com AVD
+- [x] Adicionar ações rápidas (Nova Descrição, Importar, Aprovar, Relatórios)
+- [x] Integrar rota no App.tsx
+- [x] Adicionar item no menu de navegação (seção Aprovações)
+
+### Funcionalidades Demonstradas
+- [x] Fluxo de aprovação 4 níveis (Ocupante → Gestor → RH C&S → Diretoria)
+- [x] Timeline visual com status de cada nível
+- [x] Sistema de comentários e feedback
+- [x] Aprovação/rejeição em cada nível
+- [x] Status de importações (Funcionários, Hierarquias, Departamentos, Descrições)
+- [x] Validações de dados (CPF, email, hierarquia, departamentos, cargos)
+- [x] Visualização de hierarquia organizacional
+- [x] Integração completa com sistema AVD (4 passos)
+- [x] Métricas de aprovação por nível
+- [x] Tempo médio de aprovação por nível
+- [x] Templates de importação para download
+- [x] Exemplo prático de uso (Analista de Planejamento e Custos)
+
+### Próximos Passos Sugeridos
+- [ ] Implementar funcionalidade real de aprovação (conectar com backend)
+- [ ] Criar sistema de upload de arquivos CSV/Excel
+- [ ] Implementar validações em tempo real durante importação
+- [ ] Adicionar notificações por email em cada etapa
+- [ ] Criar relatórios PDF de descrições de cargos
+- [ ] Implementar busca e filtros avançados
+- [ ] Adicionar histórico completo de alterações
+- [ ] Criar dashboard executivo de métricas

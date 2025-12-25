@@ -273,6 +273,7 @@ const menuItems = [
       { icon: Calendar, label: "Ciclos", path: "/aprovacoes/ciclos-avaliacao" },
       { icon: Workflow, label: "Workflows", path: "/aprovacoes/workflows" },
       { icon: Briefcase, label: "Aprovação de Descrições", path: "/aprovacoes/cargos", badge: "descricoes_pendentes" },
+      { icon: Workflow, label: "Fluxo de Aprovação", path: "/fluxo-aprovacao-cargos" },
     ],
   },
   
