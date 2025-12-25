@@ -141,6 +141,7 @@ const menuItems = [
       { icon: Building2, label: "Metas Corporativas", path: "/metas/corporativas" },
       { icon: CheckCircle, label: "Adesão de Metas", path: "/metas/corporativas/adesao" },
       { icon: GitBranch, label: "Metas em Cascata", path: "/metas-cascata" },
+      { icon: TrendingUp, label: "OKRs", path: "/okrs" },
     ],
   },
   
@@ -151,6 +152,8 @@ const menuItems = [
     isSection: true,
     children: [
       { icon: Sparkles, label: "360° Enhanced", path: "/360-enhanced" },
+      { icon: MessageSquare, label: "Feedback 360°", path: "/feedback360" },
+      { icon: Inbox, label: "Meus Feedbacks", path: "/feedback360/meus-feedbacks" },
       { icon: ClipboardList, label: "Minhas Avaliações", path: "/avaliacoes" },
       { icon: Calendar, label: "Ciclos Ativos", path: "/ciclos/ativos" },
       { icon: Scale, label: "Calibração", path: "/calibracao" },

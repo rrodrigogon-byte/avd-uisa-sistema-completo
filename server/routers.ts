@@ -48,9 +48,11 @@ import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./routers/notificationsRouter";
 import { errorMonitoringRouter } from "./errorMonitoringRouter";
+import { okrRouter } from "./routers/okrRouter";
 import { feedback360Router } from "./routers/feedback360Router";
 import { feedback360Router as feedback360NewRouter } from "./feedback360Router";
 import { okrsRouter } from "./routers/okrsRouter";
+import { dashboardsRouter } from "./dashboardsRouter";
 import { climaRouter } from "./routers/climaRouter";
 import { sendEmail } from "./emailService";
 import { pulseRouter } from "./routers/pulseRouter";
@@ -371,6 +373,9 @@ export const appRouter = router({
   movements: movementsRouter,
   emailNotificationsAuto: emailNotificationsAutoRouter,
   
+  // Novos routers - OKRs (25/12/2025)
+  okr: okrRouter,
+  
   // Novos routers - Exportação de Relatórios e Preferências de Notificações (16/12/2025)
   reportExport: reportExportRouter,
   notificationPreferences: notificationPreferencesRouter,
@@ -417,6 +422,9 @@ export const appRouter = router({
   
   // Novo router - Pesquisa de Clima Organizacional (25/12/2025)
   clima: climaRouter,
+  
+  // Novo router - Dashboards de Análise Avançados (25/12/2025)
+  dashboards: dashboardsRouter,
   faceRecognition: faceRecognitionRouter,
   faceRecognitionAdvanced: faceRecognitionAdvancedRouter,
   videoAnalysis: videoAnalysisRouter,

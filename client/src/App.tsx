@@ -286,6 +286,14 @@ import CiclosAtivos from "./pages/CiclosAtivos";
 import GerenciarCiclosAvaliacao from "./pages/GerenciarCiclosAvaliacao";
 import AdesaoMetasCorporativas from "./pages/metas/AdesaoMetasCorporativas";
 
+// Feedback 360°
+import ListaCiclos from "./pages/Feedback360/ListaCiclos";
+import CriarCiclo from "./pages/Feedback360/CriarCiclo";
+import MeusFeedbacks from "./pages/Feedback360/MeusFeedbacks";
+
+// OKRs
+import ListaOKRs from "./pages/OKRs/ListaOKRs";
+
 // Testes Geriátricos
 import Patients from "./pages/geriatric/Patients";
 import PatientHistory from "./pages/geriatric/PatientHistory";
@@ -351,6 +359,13 @@ function Router() {
       <Route path="/bonus/auditoria" component={BonusAuditoria} />
       <Route path="/avaliacoes-pendentes" component={AvaliacoesPendentes} />
 
+      {/* Feedback 360° */}
+      <Route path="/feedback360" component={ListaCiclos} />
+      <Route path="/feedback360/criar" component={CriarCiclo} />
+      <Route path="/feedback360/meus-feedbacks" component={MeusFeedbacks} />
+
+      {/* OKRs */}
+      <Route path="/okrs" component={ListaOKRs} />
 
           {/* Ciclo de Avaliação de Desempenho */}
           <Route path="/ciclos-avaliacao" component={CiclosAvaliacaoLista} />

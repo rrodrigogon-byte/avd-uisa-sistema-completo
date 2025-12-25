@@ -2306,3 +2306,346 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [ ] Testar fluxos completos de cada módulo
 - [ ] Verificar responsividade e acessibilidade
 - [ ] Criar checkpoint final dos novos módulos
+
+
+---
+
+## 🚀 NOVAS FUNCIONALIDADES AVANÇADAS (25/12/2025)
+
+### Fase 2: Páginas de Detalhes e Edição
+- [ ] Criar página de detalhes de objetivo individual (OKR)
+- [ ] Criar formulário de edição de objetivo com validações
+- [ ] Criar página de detalhes de ciclo de feedback
+- [ ] Criar formulário de edição de ciclo de feedback
+- [ ] Criar página de detalhes de pesquisa de clima
+- [ ] Criar formulário de edição de pesquisa de clima
+- [ ] Adicionar histórico de alterações em cada módulo
+- [ ] Implementar sistema de versionamento de dados
+
+### Fase 3: Dashboards de Análise com Gráficos Interativos
+- [ ] Criar dashboard de análise de Feedback 360° com gráficos
+  - [ ] Gráfico radar de competências avaliadas
+  - [ ] Gráfico de barras comparativo entre avaliadores
+  - [ ] Gráfico de evolução temporal do feedback
+  - [ ] Análise de gaps entre autoavaliação e feedback externo
+- [ ] Criar dashboard de progresso de OKRs com visualizações
+  - [ ] Gráfico de progresso por objetivo
+  - [ ] Gráfico de distribuição de status (em dia, atrasado, concluído)
+  - [ ] Timeline de key results
+  - [ ] Análise de correlação entre objetivos
+- [ ] Criar dashboard de insights de clima organizacional
+  - [ ] Gráfico de evolução do clima ao longo do tempo
+  - [ ] Análise de sentimento por departamento
+  - [ ] Wordcloud de comentários
+  - [ ] Índice de engajamento e satisfação
+- [ ] Implementar filtros avançados nos dashboards
+  - [ ] Filtro por período (mensal, trimestral, anual)
+  - [ ] Filtro por departamento e cargo
+  - [ ] Filtro por gestor e equipe
+  - [ ] Comparação entre períodos
+- [ ] Criar sistema de relatórios exportáveis
+  - [ ] Exportação em PDF com gráficos
+  - [ ] Exportação em Excel com dados brutos
+  - [ ] Relatórios agendados automáticos
+  - [ ] Templates personalizáveis de relatórios
+
+### Fase 4: Funcionalidades Avançadas
+- [ ] Implementar sistema de check-ins periódicos para OKRs
+  - [ ] Formulário de check-in semanal/quinzenal
+  - [ ] Registro de progresso e bloqueios
+  - [ ] Notificações automáticas de check-in
+  - [ ] Dashboard de acompanhamento de check-ins
+- [ ] Criar sistema de notificações automáticas
+  - [ ] Notificações de prazos de feedback próximos
+  - [ ] Alertas de objetivos em risco
+  - [ ] Lembretes de check-ins pendentes
+  - [ ] Notificações de novas pesquisas de clima
+  - [ ] Configuração de preferências de notificação
+- [ ] Implementar análise preditiva de tendências
+  - [ ] Predição de clima organizacional futuro
+  - [ ] Identificação de padrões de desempenho
+  - [ ] Alertas de risco de turnover
+  - [ ] Recomendações automáticas de ações
+- [ ] Adicionar sistema de auditoria completo
+  - [ ] Log de todas as alterações
+  - [ ] Rastreamento de usuários e ações
+  - [ ] Relatórios de auditoria
+  - [ ] Conformidade com LGPD
+
+### Fase 5: Melhorias no Organograma e Descrição de Cargos
+- [ ] Melhorar visualização do organograma
+  - [ ] Implementar drag-and-drop para reorganização
+  - [ ] Adicionar zoom e pan no organograma
+  - [ ] Visualização em diferentes layouts (vertical, horizontal, radial)
+  - [ ] Exportação do organograma em imagem
+- [ ] Adicionar edição inline no organograma
+  - [ ] Editar nome e cargo diretamente no organograma
+  - [ ] Adicionar/remover colaboradores visualmente
+  - [ ] Mover colaboradores entre departamentos
+  - [ ] Validações em tempo real
+- [ ] Expandir sistema de descrição de cargos
+  - [ ] Adicionar matriz de competências por cargo
+  - [ ] Definir níveis de proficiência esperados
+  - [ ] Criar trilhas de carreira
+  - [ ] Vincular competências a treinamentos
+- [ ] Adicionar templates de descrição de cargos
+  - [ ] Biblioteca de templates por área
+  - [ ] Personalização de templates
+  - [ ] Importação/exportação de templates
+  - [ ] Versionamento de descrições
+- [ ] Implementar comparação entre cargos
+  - [ ] Comparação de competências requeridas
+  - [ ] Análise de gaps entre cargos
+  - [ ] Sugestões de progressão de carreira
+  - [ ] Mapeamento de mobilidade interna
+
+
+## ✅ ATUALIZAÇÃO DO SCHEMA (25/12/2025)
+
+- [x] Verificar schema existente - Sistema já possui todas as tabelas necessárias
+- [x] Identificar tabelas já implementadas:
+  - okrCheckIns - Check-ins de OKRs já existe
+  - auditLog - Sistema de auditoria já existe  
+  - notificationRules e notificationHistory - Sistema de notificações já existe
+  - climatePredictions - Análise preditiva já implementada
+  - orgChartHistory - Histórico de organograma já existe
+  - positionTemplates - Templates de cargos já existem
+- [x] Decisão: Focar em procedures tRPC e interfaces frontend ao invés de criar novas tabelas
+
+
+## ✅ PROCEDURES tRPC IMPLEMENTADAS (25/12/2025)
+
+### OKRs Router (okrsRouter.ts)
+- [x] updateObjective - Editar objetivo
+- [x] updateKeyResult - Editar key result
+- [x] listCheckIns - Listar check-ins de objetivo ou key result
+- [x] createCheckIn - Criar check-in manual com progresso e status
+- [x] getOKRsDashboard - Dashboard de análise de OKRs com estatísticas
+
+### Dashboards Router (dashboardsRouter.ts) - NOVO
+- [x] getFeedback360Dashboard - Dashboard de Feedback 360° com gráficos
+- [x] getClimateDashboard - Dashboard de Clima Organizacional
+- [x] getConsolidatedDashboard - Dashboard consolidado com visão geral
+
+### Próximas Procedures a Implementar
+- [ ] Procedures para edição de ciclos de feedback
+- [ ] Procedures para edição de pesquisas de clima
+- [ ] Procedures para análise preditiva
+- [ ] Procedures para notificações automáticas
+
+
+## ✅ PÁGINAS FRONTEND CRIADAS (25/12/2025)
+
+### Dashboard Consolidado
+- [x] Criar DashboardConsolidado.tsx com visão geral do sistema
+- [x] Implementar cards de métricas principais (OKRs, Feedback 360°, Clima)
+- [x] Adicionar gráficos de progresso com Progress bars
+- [x] Implementar seção de atividade recente
+- [x] Adicionar cards de insights com scores
+- [x] Criar links rápidos para módulos principais
+
+### Próximas Páginas a Criar
+- [ ] Página de detalhes de OKR com check-ins
+- [ ] Página de edição de objetivo
+- [ ] Dashboard de análise de Feedback 360°
+- [ ] Dashboard de análise de Clima Organizacional
+- [ ] Melhorias no organograma com edição inline
+
+
+---
+
+## 🚀 PLANO ESTRATÉGICO DE MELHORIAS (25/12/2025)
+
+### Fase 1: Módulo Feedback 360° Completo
+
+#### Backend - Feedback 360°
+- [x] Criar `server/routers/feedback360Router.ts` - Já existia completo
+- [x] Procedure `createCycle` - Criar ciclo de feedback
+- [x] Procedure `addParticipants` - Adicionar participantes ao ciclo
+- [x] Procedure `addEvaluators` - Adicionar avaliadores (gestor, pares, subordinados, auto)
+- [x] Procedure `getQuestions` - Listar questões do ciclo
+- [x] Procedure `submitResponses` - Submeter respostas de feedback
+- [x] Procedure `getReport` - Gerar relatório individual
+- [x] Procedure `getConsolidatedReport` - Relatório consolidado por equipe
+- [x] Procedure `listCycles` - Listar todos os ciclos
+- [x] Procedure `getCycleDetails` - Detalhes completos do ciclo
+- [x] Procedure `updateCycleStatus` - Atualizar status do ciclo
+- [x] Procedure `getPendingFeedbacks` - Feedbacks pendentes do usuário
+
+#### Frontend - Feedback 360°
+- [x] Criar `client/src/pages/Feedback360/ListaCiclos.tsx` - Listagem de ciclos
+- [x] Criar `client/src/pages/Feedback360/CriarCiclo.tsx` - Criar/editar ciclo
+- [ ] Criar `client/src/pages/Feedback360/DetalhesCiclo.tsx` - Detalhes e gestão
+- [ ] Criar `client/src/pages/Feedback360/ResponderFeedback.tsx` - Formulário de resposta
+- [x] Criar `client/src/pages/Feedback360/MeusFeedbacks.tsx` - Feedbacks pendentes
+- [ ] Criar `client/src/pages/Feedback360/RelatorioIndividual.tsx` - Relatório individual
+- [ ] Criar `client/src/pages/Feedback360/DashboardFeedback.tsx` - Dashboard consolidado
+- [ ] Implementar sistema de pesos por tipo de avaliador
+- [ ] Implementar gráficos radar comparando autoavaliação vs percepção
+- [ ] Implementar análise de gaps e pontos cegos
+- [ ] Implementar exportação de relatórios em PDF
+- [x] Adicionar rotas no App.tsx
+- [x] Adicionar menu no DashboardLayout
+
+### Fase 2: Módulo OKRs (Objetivos e Resultados-Chave)
+
+#### Backend - OKRs
+- [x] Criar tabela `objectives` - Objetivos (O) - Já existia em schema-okrs.ts
+- [x] Criar tabela `keyResults` - Resultados-Chave (KR) - Já existia
+- [x] Criar tabela `okrAlignments` - Alinhamento cascata - Já existia
+- [x] Criar tabela `okrCheckIns` - Check-ins - Já existia
+- [x] Criar tabela `okrHistory` - Histórico - Já existia
+- [x] Criar tabela `okrTemplates` - Templates - Já existia
+- [x] Executar `pnpm db:push` - Schema já estava no banco
+- [x] Criar `server/routers/okrRouter.ts`
+- [x] Procedure `createObjective` - Criar objetivo
+- [x] Procedure `addKeyResult` - Adicionar resultado-chave
+- [x] Procedure `updateKeyResultProgress` - Atualizar progresso (0-100%)
+- [x] Procedure `createCheckIn` - Registrar check-in
+- [x] Procedure `getCascade` - Visualizar cascata de OKRs
+- [x] Procedure `getProgress` - Progresso individual/time/empresa
+- [x] Procedure `getHistory` - Histórico de OKRs
+- [x] Procedure `listObjectives` - Listar objetivos com filtros
+- [x] Procedure `getObjectiveById` - Detalhes completos
+- [x] Procedure `updateObjective` - Atualizar objetivo
+- [x] Procedure `listTemplates` - Templates de OKRs
+- [x] Registrar okrRouter no server/routers.ts
+
+#### Frontend - OKRs
+- [x] Criar `client/src/pages/OKRs/ListaOKRs.tsx` - Lista de objetivos com filtros, cards de resumo e progresso visual
+- [ ] Criar `client/src/pages/OKRs/CriarOKR.tsx` - Criar/editar objetivo
+- [ ] Criar `client/src/pages/OKRs/DetalhesOKR.tsx` - Detalhes e check-ins
+- [ ] Criar `client/src/pages/OKRs/VisualizacaoCascata.tsx` - Cascata de OKRs
+- [ ] Criar `client/src/pages/OKRs/DashboardOKR.tsx` - Dashboard de progresso
+- [ ] Criar `client/src/components/OKR/ProgressBar.tsx` - Barra de progresso visual
+- [ ] Criar `client/src/components/OKR/CheckInForm.tsx` - Formulário de check-in
+- [ ] Implementar cascata de OKRs (empresa → departamento → time → indivíduo)
+- [ ] Implementar sistema de check-ins periódicos
+- [ ] Implementar visualização de progresso em tempo real
+- [ ] Implementar alertas de OKRs em risco
+- [ ] Implementar gráficos de evolução temporal
+- [ ] Integrar com PDI (metas do PDI viram OKRs)
+- [x] Adicionar rotas no App.tsx
+- [x] Adicionar menu no DashboardLayout
+
+### Fase 3: Módulo Clima Organizacional
+
+#### Backend - Clima
+- [ ] Criar tabela `climateSurveys` - Pesquisas de clima
+- [ ] Criar tabela `climateDimensions` - Dimensões (liderança, comunicação, etc.)
+- [ ] Criar tabela `climateQuestions` - Questões por dimensão
+- [ ] Criar tabela `climateResponses` - Respostas anônimas
+- [ ] Criar tabela `climateAnalytics` - Analytics agregados
+- [ ] Executar `pnpm db:push`
+- [ ] Criar `server/routers/climateRouter.ts`
+- [ ] Procedure `createSurvey` - Criar pesquisa
+- [ ] Procedure `submitResponse` - Resposta anônima
+- [ ] Procedure `getResults` - Resultados agregados
+- [ ] Procedure `getHeatmap` - Heatmap por departamento/dimensão
+- [ ] Procedure `getTrends` - Tendências ao longo do tempo
+- [ ] Procedure `getAlerts` - Alertas de dimensões críticas
+
+#### Frontend - Clima
+- [ ] Criar `client/src/pages/Clima/ListaPesquisas.tsx` - Lista de pesquisas
+- [ ] Criar `client/src/pages/Clima/CriarPesquisa.tsx` - Criar pesquisa
+- [ ] Criar `client/src/pages/Clima/ResponderPesquisa.tsx` - Responder (anônimo)
+- [ ] Criar `client/src/pages/Clima/DashboardClima.tsx` - Dashboard com heatmap
+- [ ] Criar `client/src/pages/Clima/Tendencias.tsx` - Análise de tendências
+- [ ] Criar `client/src/components/Clima/HeatmapChart.tsx` - Heatmap interativo
+- [ ] Implementar respostas 100% anônimas
+- [ ] Implementar heatmap por departamento e dimensão
+- [ ] Implementar análise de tendências
+- [ ] Implementar alertas automáticos para dimensões críticas
+- [ ] Implementar exportação de relatórios executivos
+- [ ] Adicionar rotas no App.tsx
+- [ ] Adicionar menu no DashboardLayout
+
+### Fase 4: Melhorias de UX e Performance
+
+#### Performance
+- [ ] Implementar cache de dados entre passos do processo AVD
+- [ ] Otimizar queries de carregamento (adicionar índices no banco)
+- [ ] Implementar paginação eficiente em todas as listagens
+- [ ] Adicionar loading states consistentes (skeleton loaders)
+- [ ] Implementar lazy loading de componentes pesados
+
+#### UX
+- [ ] Melhorar responsividade mobile em todos os formulários
+- [ ] Adicionar animações de transição entre passos
+- [ ] Implementar tour guiado para novos usuários
+- [ ] Melhorar feedback visual de salvamento automático
+- [ ] Adicionar atalhos de teclado (Ctrl+K para busca global)
+- [ ] Implementar breadcrumbs consistentes em todas as páginas
+
+#### Organograma Avançado
+- [ ] Implementar drag-and-drop para reorganizar hierarquia
+- [ ] Adicionar zoom e pan (navegação)
+- [ ] Implementar minimap para navegação rápida
+- [ ] Adicionar exportação como imagem (PNG/PDF)
+- [ ] Implementar edição inline de informações
+- [ ] Adicionar destaque de caminho hierárquico ao hover
+
+### Fase 5: Dashboards Executivos e Relatórios Avançados
+
+#### Dashboard Executivo Unificado
+- [ ] Criar `client/src/pages/DashboardExecutivo.tsx`
+- [ ] KPI: Total de colaboradores e distribuição por departamento
+- [ ] KPI: Taxa de conclusão de processos AVD
+- [ ] KPI: Média de performance por departamento
+- [ ] KPI: Taxa de resposta de feedbacks 360°
+- [ ] KPI: Progresso médio de OKRs
+- [ ] KPI: Score de clima organizacional
+- [ ] Gráfico: Evolução temporal de performance
+- [ ] Gráfico: Distribuição de talentos (Nine Box)
+- [ ] Gráfico: Heatmap de clima por departamento
+- [ ] Gráfico: Progresso de OKRs por time
+- [ ] Gráfico: Taxa de turnover e risco
+
+#### Relatórios Avançados
+- [ ] Relatório de Performance Consolidado (PDF/Excel)
+- [ ] Relatório de Feedback 360° por Equipe
+- [ ] Relatório de Progresso de OKRs
+- [ ] Relatório de Clima Organizacional
+- [ ] Relatório de Estrutura Organizacional
+- [ ] Relatório de Movimentações e Sucessão
+- [ ] Relatório de Gaps de Competências
+- [ ] Relatório de Bônus e Remuneração
+
+#### Analytics Avançados
+- [ ] Análise preditiva de turnover (ML)
+- [ ] Identificação automática de high performers
+- [ ] Sugestões de sucessão baseadas em performance
+- [ ] Alertas de risco de desengajamento
+- [ ] Análise de correlação (clima x performance)
+
+### Fase 6: Integrações e Automações
+
+#### Sistema de Notificações Inteligentes
+- [ ] Notificações de prazos (processos AVD, feedbacks, check-ins)
+- [ ] Notificações de aprovações pendentes
+- [ ] Notificações de mudanças de gestor
+- [ ] Notificações de alertas de performance
+- [ ] Notificações push no navegador
+- [ ] Configuração de preferências de notificações
+
+#### Jobs Automáticos (Cron)
+- [ ] Envio automático de lembretes de processos pendentes
+- [ ] Envio de relatórios semanais para gestores
+- [ ] Cálculo automático de bônus mensais
+- [ ] Atualização de métricas consolidadas
+- [ ] Limpeza de dados antigos (LGPD)
+
+#### Importação/Exportação
+- [ ] Importação em massa de funcionários (Excel/CSV)
+- [ ] Importação de estrutura organizacional
+- [ ] Exportação de dados para BI externo
+- [ ] Backup automático de dados críticos
+
+### Testes e Validação Final
+- [ ] Criar testes vitest para módulo Feedback 360°
+- [ ] Criar testes vitest para módulo OKRs
+- [ ] Criar testes vitest para módulo Clima
+- [ ] Testar fluxos completos de cada módulo
+- [ ] Validar responsividade mobile
+- [ ] Validar performance (tempo de carregamento < 2s)
+- [ ] Criar checkpoint final com todas as melhorias

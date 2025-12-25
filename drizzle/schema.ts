@@ -9004,3 +9004,300 @@ export * from "./schema-okrs";
 
 // Re-export from schema-clima.ts
 export * from "./schema-clima";
+
+
+// ============================================================================
+// CHECK-INS DE OKRs
+// ============================================================================
+
+/**
+ * Check-ins periódicos de OKRs
+ * Registra atualizações regulares de progresso dos objetivos
+ */
+export const okrCheckIns = mysqlTable("okrCheckIns", {
+  id: int("id").autoincrement().primaryKey(),
+  objectiveId: int("objectiveId").notNull(), // Referência ao objetivo
+  keyResultId: int("keyResultId"), // Opcional: check-in de key result específico
+  
+  // Dados do check-in
+  progress: int("progress").notNull(), // Progresso atual (0-100)
+  previousProgress: int("previousProgress"), // Progresso anterior para comparação
+  
+  // Status e saúde
+  status: mysqlEnum("status", ["on_track", "at_risk", "off_track"]).notNull(),
+  confidence: mysqlEnum("confidence", ["low", "medium", "high"]).notNull(),
+  
+  // Detalhes
+  achievements: text("achievements"), // O que foi conquistado
+  blockers: text("blockers"), // Bloqueios e desafios
+  nextSteps: text("nextSteps"), // Próximos passos
+  needsHelp: boolean("needsHelp").default(false).notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type OkrCheckIn = typeof okrCheckIns.$inferSelect;
+export type InsertOkrCheckIn = typeof okrCheckIns.$inferInsert;
+
+// ============================================================================
+// HISTÓRICO DE ALTERAÇÕES (AUDITORIA)
+// ============================================================================
+
+/**
+ * Histórico de alterações para auditoria
+ * Registra todas as modificações importantes no sistema
+ */
+export const auditLog = mysqlTable("auditLog", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificação da entidade
+  entityType: varchar("entityType", { length: 100 }).notNull(), // okr, feedback360, survey, employee, etc
+  entityId: int("entityId").notNull(),
+  
+  // Tipo de ação
+  action: mysqlEnum("action", ["create", "update", "delete", "status_change"]).notNull(),
+  
+  // Dados da alteração
+  fieldChanged: varchar("fieldChanged", { length: 100 }), // Campo alterado
+  oldValue: text("oldValue"), // Valor anterior (JSON)
+  newValue: text("newValue"), // Novo valor (JSON)
+  
+  // Contexto
+  description: text("description"), // Descrição da alteração
+  ipAddress: varchar("ipAddress", { length: 45 }), // IP do usuário
+  userAgent: text("userAgent"), // User agent do navegador
+  
+  // Metadados
+  userId: int("userId").notNull(), // Quem fez a alteração
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AuditLog = typeof auditLog.$inferSelect;
+export type InsertAuditLog = typeof auditLog.$inferInsert;
+
+// ============================================================================
+// ANÁLISE PREDITIVA
+// ============================================================================
+
+/**
+ * Predições de clima organizacional
+ * Armazena predições baseadas em tendências históricas
+ */
+export const climatePredictions = mysqlTable("climatePredictions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Escopo da predição
+  departmentId: int("departmentId"), // null = empresa toda
+  
+  // Período
+  predictionDate: date("predictionDate").notNull(), // Data futura prevista
+  
+  // Scores previstos
+  predictedEngagementScore: int("predictedEngagementScore"), // 0-100
+  predictedSatisfactionScore: int("predictedSatisfactionScore"), // 0-100
+  predictedTurnoverRisk: int("predictedTurnoverRisk"), // 0-100 (maior = mais risco)
+  
+  // Confiança da predição
+  confidence: int("confidence").notNull(), // 0-100
+  
+  // Fatores influenciadores
+  keyFactors: json("keyFactors").$type<{
+    factor: string;
+    impact: number; // -100 a +100
+    description: string;
+  }[]>(),
+  
+  // Recomendações
+  recommendations: json("recommendations").$type<{
+    priority: "high" | "medium" | "low";
+    action: string;
+    expectedImpact: string;
+  }[]>(),
+  
+  // Metadados
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+  basedOnDataUntil: date("basedOnDataUntil").notNull(), // Última data de dados reais usados
+});
+
+export type ClimatePrediction = typeof climatePredictions.$inferSelect;
+export type InsertClimatePrediction = typeof climatePredictions.$inferInsert;
+
+/**
+ * Alertas de risco de turnover
+ * Identifica colaboradores com alto risco de saída
+ */
+export const turnoverRiskAlerts = mysqlTable("turnoverRiskAlerts", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Colaborador
+  employeeId: int("employeeId").notNull(),
+  
+  // Nível de risco
+  riskLevel: mysqlEnum("riskLevel", ["low", "medium", "high", "critical"]).notNull(),
+  riskScore: int("riskScore").notNull(), // 0-100
+  
+  // Fatores de risco
+  riskFactors: json("riskFactors").$type<{
+    factor: string;
+    weight: number;
+    description: string;
+  }[]>(),
+  
+  // Sinais identificados
+  signals: json("signals").$type<{
+    type: string;
+    detected: string; // Data de detecção
+    description: string;
+  }[]>(),
+  
+  // Ações recomendadas
+  recommendedActions: json("recommendedActions").$type<{
+    priority: "high" | "medium" | "low";
+    action: string;
+    owner: string; // Quem deve executar
+  }[]>(),
+  
+  // Status
+  status: mysqlEnum("status", ["active", "monitoring", "resolved", "dismissed"]).default("active").notNull(),
+  resolvedAt: timestamp("resolvedAt"),
+  resolutionNotes: text("resolutionNotes"),
+  
+  // Metadados
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+  lastUpdatedAt: timestamp("lastUpdatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TurnoverRiskAlert = typeof turnoverRiskAlerts.$inferSelect;
+export type InsertTurnoverRiskAlert = typeof turnoverRiskAlerts.$inferInsert;
+
+// ============================================================================
+// MELHORIAS NO ORGANOGRAMA
+// ============================================================================
+
+/**
+ * Histórico de mudanças no organograma
+ * Rastreia todas as alterações na estrutura organizacional
+ */
+export const orgChartHistory = mysqlTable("orgChartHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Colaborador afetado
+  employeeId: int("employeeId").notNull(),
+  
+  // Tipo de mudança
+  changeType: mysqlEnum("changeType", [
+    "hire",
+    "promotion",
+    "transfer",
+    "manager_change",
+    "department_change",
+    "termination"
+  ]).notNull(),
+  
+  // Dados da mudança
+  oldPositionId: int("oldPositionId"),
+  newPositionId: int("newPositionId"),
+  oldDepartmentId: int("oldDepartmentId"),
+  newDepartmentId: int("newDepartmentId"),
+  oldManagerId: int("oldManagerId"),
+  newManagerId: int("newManagerId"),
+  
+  // Detalhes
+  reason: text("reason"),
+  notes: text("notes"),
+  
+  // Data efetiva
+  effectiveDate: date("effectiveDate").notNull(),
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type OrgChartHistory = typeof orgChartHistory.$inferSelect;
+export type InsertOrgChartHistory = typeof orgChartHistory.$inferInsert;
+
+/**
+ * Templates de descrição de cargos
+ * Biblioteca de templates reutilizáveis para descrições de cargo
+ */
+export const positionTemplates = mysqlTable("positionTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificação
+  name: varchar("name", { length: 200 }).notNull(),
+  category: varchar("category", { length: 100 }), // Ex: "Tecnologia", "Vendas", "Administrativo"
+  level: mysqlEnum("level", ["junior", "pleno", "senior", "especialista", "gerente", "diretor"]),
+  
+  // Conteúdo do template
+  summary: text("summary"), // Resumo do cargo
+  responsibilities: json("responsibilities").$type<string[]>(), // Lista de responsabilidades
+  requirements: json("requirements").$type<{
+    type: "education" | "experience" | "skill" | "certification";
+    description: string;
+    required: boolean;
+  }[]>(),
+  
+  // Competências esperadas
+  competencies: json("competencies").$type<{
+    competencyId: number;
+    requiredLevel: number; // 1-5
+    weight: number; // Peso/importância
+  }[]>(),
+  
+  // Trilha de carreira
+  careerPath: json("careerPath").$type<{
+    nextPosition: string;
+    requirements: string[];
+    estimatedTime: string;
+  }[]>(),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  isPublic: boolean("isPublic").default(false).notNull(), // Compartilhável entre empresas
+  
+  // Metadados
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PositionTemplate = typeof positionTemplates.$inferSelect;
+export type InsertPositionTemplate = typeof positionTemplates.$inferInsert;
+
+/**
+ * Matriz de competências por cargo
+ * Define competências requeridas e níveis esperados para cada cargo
+ */
+export const positionCompetencyMatrix = mysqlTable("positionCompetencyMatrix", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Relacionamentos
+  positionId: int("positionId").notNull(),
+  competencyId: int("competencyId").notNull(),
+  
+  // Níveis esperados
+  requiredLevel: int("requiredLevel").notNull(), // 1-5
+  desiredLevel: int("desiredLevel"), // Nível desejado (pode ser maior que o requerido)
+  
+  // Importância
+  weight: int("weight").default(1).notNull(), // Peso da competência para este cargo (1-5)
+  isCritical: boolean("isCritical").default(false).notNull(), // Competência crítica
+  
+  // Desenvolvimento
+  developmentResources: json("developmentResources").$type<{
+    type: "course" | "book" | "mentoring" | "project";
+    title: string;
+    url?: string;
+    duration?: string;
+  }[]>(),
+  
+  // Metadados
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PositionCompetencyMatrix = typeof positionCompetencyMatrix.$inferSelect;
+export type InsertPositionCompetencyMatrix = typeof positionCompetencyMatrix.$inferInsert;
