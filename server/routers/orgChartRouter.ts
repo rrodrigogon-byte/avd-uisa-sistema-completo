@@ -931,12 +931,14 @@ export const orgChartRouter = router({
           employeeCode: employees.employeeCode,
           name: employees.name,
           email: employees.email,
+          phone: employees.phone,
           managerId: employees.managerId,
           departmentId: employees.departmentId,
           departmentName: departments.name,
           positionId: employees.positionId,
           positionTitle: positions.title,
           photoUrl: employees.photoUrl,
+          hireDate: employees.hireDate,
           active: employees.active,
         })
         .from(employees)
@@ -957,7 +959,11 @@ export const orgChartRouter = router({
       // Retornar árvore começando dos colaboradores sem gestor (nível mais alto)
       const tree = buildTree(null);
       
-      return tree;
+      return {
+        tree,
+        totalEmployees: allEmployees.length,
+        activeEmployees: allEmployees.filter(e => e.active).length
+      };
     }),
 
   /**

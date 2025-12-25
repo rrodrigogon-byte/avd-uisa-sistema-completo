@@ -98,6 +98,8 @@ import PDIListagem from "./pages/PDIListagem";
 import OrganogramaDinamico from "./pages/OrganogramaDinamico";
 import HistoricoMovimentacoes from "./pages/HistoricoMovimentacoes";
 import HistoricoMudancas from "./pages/HistoricoMudancas";
+import Feedback360Cycles from "./pages/Feedback360Cycles";
+import Feedback360MyEvaluations from "./pages/Feedback360MyEvaluations";
 import DashboardIntegridade from "./pages/DashboardIntegridade";
 import ExportarOrganograma from "./pages/ExportarOrganograma";
 import DashboardEstatisticas from "./pages/DashboardEstatisticas";
@@ -548,6 +550,8 @@ function Router() {
       <Route path="/hierarquia" component={HierarquiaUISA} />
       <Route path="/hierarquia-busca" component={HierarchyView} />
       <Route path="/organograma" component={Organograma} />
+      <Route path="/feedback360/ciclos" component={Feedback360Cycles} />
+      <Route path="/feedback360/minhas-avaliacoes" component={Feedback360MyEvaluations} />
       <Route path="/hr/positions" component={Positions} />
       <Route path="/hr/employees" component={Employees} />
       <Route path="/employees/:id" component={EmployeeProfile} />

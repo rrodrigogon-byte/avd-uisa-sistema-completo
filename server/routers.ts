@@ -48,6 +48,7 @@ import { gamificationRouter } from "./gamificationRouter";
 import { integrationsRouter } from "./integrationsRouter";
 import { notificationsRouter } from "./routers/notificationsRouter";
 import { errorMonitoringRouter } from "./errorMonitoringRouter";
+import { feedback360Router } from "./routers/feedback360Router";
 import { sendEmail } from "./emailService";
 import { pulseRouter } from "./routers/pulseRouter";
 import { exportRouter } from "./routers/exportRouter";
@@ -416,6 +417,9 @@ export const appRouter = router({
   
   // Novo router - Notificações de Resultados por Email (17/12/2025)
   resultNotifications: resultNotificationsRouter,
+  
+  // Novo router - Feedback 360° Completo (25/12/2025)
+  feedback360: feedback360Router,
   
   // Novos routers - Gestão de RH: Departamentos, Cargos e Funcionários (25/12/2025)
   departments: departmentsRouter,

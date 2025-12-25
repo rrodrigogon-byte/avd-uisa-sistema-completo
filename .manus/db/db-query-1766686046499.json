@@ -1,0 +1,100 @@
+{
+  "query": "SELECT id, name, employeeCode, managerId, departmentId, positionId, active FROM employees LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, employeeCode, managerId, departmentId, positionId, active FROM employees LIMIT 10",
+  "rows": [
+    {
+      "id": "31",
+      "name": "Fernando Henrique",
+      "employeeCode": "TEST_EMP_001",
+      "managerId": "NULL",
+      "departmentId": "NULL",
+      "positionId": "NULL",
+      "active": "1"
+    },
+    {
+      "id": "41",
+      "name": "VALDEMIR DE OLIVEIRA GOMES",
+      "employeeCode": "8002437",
+      "managerId": "121",
+      "departmentId": "NULL",
+      "positionId": "NULL",
+      "active": "1"
+    },
+    {
+      "id": "42",
+      "name": "WDSON GONCALVES DE ANDRADE",
+      "employeeCode": "8003002",
+      "managerId": "121",
+      "departmentId": "NULL",
+      "positionId": "NULL",
+      "active": "1"
+    },
+    {
+      "id": "43",
+      "name": "MARCIA EDWVIGES",
+      "employeeCode": "797189",
+      "managerId": "1391",
+      "departmentId": "NULL",
+      "positionId": "2",
+      "active": "1"
+    },
+    {
+      "id": "44",
+      "name": "ELTON BENTO DE LIMA",
+      "employeeCode": "882003",
+      "managerId": "2119",
+      "departmentId": "NULL",
+      "positionId": "3",
+      "active": "1"
+    },
+    {
+      "id": "45",
+      "name": "FAUSTO HENRIQUE RONCHETE DA SILVA",
+      "employeeCode": "8000900",
+      "managerId": "45",
+      "departmentId": "NULL",
+      "positionId": "4",
+      "active": "1"
+    },
+    {
+      "id": "46",
+      "name": "LUIS GUSTAVO BARBOSA DA SILVA",
+      "employeeCode": "897094",
+      "managerId": "2571",
+      "departmentId": "NULL",
+      "positionId": "5",
+      "active": "1"
+    },
+    {
+      "id": "47",
+      "name": "VANESSA PIMENTA CARNEIRO",
+      "employeeCode": "8001215",
+      "managerId": "2571",
+      "departmentId": "NULL",
+      "positionId": "6",
+      "active": "1"
+    },
+    {
+      "id": "48",
+      "name": "ISRAEL CARDOSO DOS SANTOS",
+      "employeeCode": "879282",
+      "managerId": "1390",
+      "departmentId": "NULL",
+      "positionId": "7",
+      "active": "1"
+    },
+    {
+      "id": "49",
+      "name": "EVERTON DA ROCHA OLIVEIRA",
+      "employeeCode": "779008",
+      "managerId": "2571",
+      "departmentId": "NULL",
+      "positionId": "8",
+      "active": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temployeeCode\tmanagerId\tdepartmentId\tpositionId\tactive\n31\tFernando Henrique\tTEST_EMP_001\tNULL\tNULL\tNULL\t1\n41\tVALDEMIR DE OLIVEIRA GOMES\t8002437\t121\tNULL\tNULL\t1\n42\tWDSON GONCALVES DE ANDRADE\t8003002\t121\tNULL\tNULL\t1\n43\tMARCIA EDWVIGES\t797189\t1391\tNULL\t2\t1\n44\tELTON BENTO DE LIMA\t882003\t2119\tNULL\t3\t1\n45\tFAUSTO HENRIQUE RONCHETE DA SILVA\t8000900\t45\tNULL\t4\t1\n46\tLUIS GUSTAVO BARBOSA DA SILVA\t897094\t2571\tNULL\t5\t1\n47\tVANESSA PIMENTA CARNEIRO\t8001215\t2571\tNULL\t6\t1\n48\tISRAEL CARDOSO DOS SANTOS\t879282\t1390\tNULL\t7\t1\n49\tEVERTON DA ROCHA OLIVEIRA\t779008\t2571\tNULL\t8\t1\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

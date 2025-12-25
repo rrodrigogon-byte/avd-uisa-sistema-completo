@@ -197,7 +197,16 @@ function EmployeeCard({
               onClick={() => onViewDetails?.(employee)}
             >
               <Eye className="h-3 w-3 mr-1" />
-              Ver Detalhes
+              Detalhes
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 h-8 text-xs"
+              onClick={() => onEdit?.(employee)}
+            >
+              <Edit className="h-3 w-3 mr-1" />
+              Editar
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -429,7 +438,7 @@ interface MoveEmployeeDialogProps {
     reason: string;
     changeType: string;
   }) => void;
-  availableManagers: Employee[];
+  allEmployees: Employee[];
 }
 
 function MoveEmployeeDialog({
@@ -437,11 +446,12 @@ function MoveEmployeeDialog({
   open,
   onClose,
   onConfirm,
-  availableManagers,
+  allEmployees,
 }: MoveEmployeeDialogProps) {
-  const [newManagerId, setNewManagerId] = useState<string>("");
+  const [newManagerId, setNewManagerId] = useState<string>(employee?.managerId?.toString() || "");
   const [reason, setReason] = useState("");
-  const [changeType, setChangeType] = useState("ajuste_hierarquico");
+  const [changeType, setChangeType] = useState("mudanca_gestor");
+  const [searchManager, setSearchManager] = useState("");
 
   const handleConfirm = () => {
     if (!reason.trim()) {
@@ -481,7 +491,7 @@ function MoveEmployeeDialog({
               <SelectContent>
                 <SelectItem value="null">Sem gestor (CEO/Diretor)</SelectItem>
                 {safeMap(
-                  safeFilter(availableManagers, (m) => m.id !== employee.id && m.active),
+                  safeFilter(allEmployees, (m) => m.id !== employee.id && m.active),
                   (manager) => (
                     <SelectItem key={manager.id} value={manager.id.toString()}>
                       {manager.name} - {manager.positionTitle || "Sem cargo"}

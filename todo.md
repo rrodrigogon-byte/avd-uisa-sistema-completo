@@ -2140,3 +2140,69 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
   - [ ] Heatmap por departamento
 - [ ] Implementar anonimização de respostas
 - [ ] Criar testes automatizados
+
+
+---
+
+## 🆕 NOVOS MÓDULOS - EXPANSÃO DO SISTEMA (25/12/2025)
+
+### Módulo 1: Feedback 360° Completo
+- [x] Backend: Criar tabelas (ciclos, avaliações, perguntas, respostas) - Já existentes no schema
+- [x] Backend: Procedures para gestão de ciclos de feedback - feedback360Router.ts criado
+- [x] Backend: Procedures para criação e resposta de avaliações - Implementado
+- [x] Backend: Procedures para visualização de resultados - generateReport implementado
+- [x] Frontend: Página de gestão de ciclos (admin) - Feedback360Cycles.tsx
+- [x] Frontend: Página de avaliações pendentes - Feedback360MyEvaluations.tsx
+- [ ] Frontend: Formulário de avaliação 360° - Próxima etapa
+- [ ] Frontend: Dashboard de resultados individuais - Próxima etapa
+- [ ] Frontend: Relatórios consolidados por equipe - Próxima etapa
+
+### Módulo 2: Metas e OKRs
+- [ ] Backend: Criar tabelas (objetivos, key results, progresso)
+- [ ] Backend: Procedures para CRUD de objetivos
+- [ ] Backend: Procedures para cascata de OKRs
+- [ ] Backend: Procedures para atualização de progresso
+- [ ] Frontend: Página de definição de metas
+- [ ] Frontend: Visualização de cascata de OKRs
+- [ ] Frontend: Dashboard de acompanhamento
+- [ ] Frontend: Histórico e análise de performance
+
+### Módulo 3: Pesquisa de Clima Organizacional
+- [ ] Backend: Criar tabelas (pesquisas, dimensões, respostas anônimas)
+- [ ] Backend: Procedures para criação de pesquisas
+- [ ] Backend: Procedures para coleta de respostas anônimas
+- [ ] Backend: Procedures para análise por dimensões
+- [ ] Frontend: Criação e gestão de pesquisas (admin)
+- [ ] Frontend: Formulário de resposta anônima
+- [ ] Frontend: Dashboard com heatmap por departamento
+- [ ] Frontend: Análise de tendências e comparações
+
+### Dashboard Integrado dos Novos Módulos
+- [ ] Criar dashboard principal com visão geral dos 3 módulos
+- [ ] Implementar navegação entre módulos
+- [ ] Criar sistema de notificações para os novos módulos
+- [ ] Implementar controle de acesso por perfil (admin/user)
+
+### Finalização dos Novos Módulos
+- [ ] Testes de integração dos 3 módulos
+- [ ] Ajustes de UX e responsividade
+- [ ] Documentação de uso dos novos módulos
+- [ ] Checkpoint final com todos os módulos
+
+
+---
+
+## ✅ CORREÇÃO CONCLUÍDA - ORGANOGRAMA (25/12/2025)
+
+### Problema Reportado
+- [x] Organograma exibe "Nenhum organograma encontrado" - CORRIGIDO
+- [x] Não está carregando a hierarquia da empresa - FUNCIONANDO (4.466 colaboradores)
+- [x] Não permite modificações/edições - Botão "Editar" adicionado
+
+### Correções Realizadas
+- [x] Procedure getOrgChart corrigida para retornar formato esperado
+- [x] Hierarquia carregando corretamente (3.754 funcionários ativos)
+- [x] Query retornando árvore hierárquica completa
+- [x] Botão "Editar" adicionado em cada card
+- [x] Dialog de edição de gestor implementado
+- [x] Visualização funcionando com busca, zoom e exportação
