@@ -12,8 +12,8 @@ export function usePushNotifications() {
   const [permission, setPermission] = useState<NotificationPermission>("default");
 
   const utils = trpc.useUtils();
-  const { data: publicKeyData } = trpc.pushNotifications.getPublicKey.useQuery();
-  const { data: subscriptionStatus } = trpc.pushNotifications.hasSubscription.useQuery();
+  const { data: publicKeyData } = trpc.pushNotifications.getPublicKey.useQuery({});
+  const { data: subscriptionStatus } = trpc.pushNotifications.hasSubscription.useQuery({});
   const subscribeMutation = trpc.pushNotifications.subscribe.useMutation();
   const unsubscribeMutation = trpc.pushNotifications.unsubscribe.useMutation();
   const testNotificationMutation = trpc.pushNotifications.sendTestNotification.useMutation();

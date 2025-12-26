@@ -13,7 +13,7 @@ export default function HierarchyView() {
   const [selectedChapa, setSelectedChapa] = useState<string | null>(null);
 
   // Buscar estatísticas
-  const { data: stats, isLoading: statsLoading } = trpc.hierarchy.getStats.useQuery();
+  const { data: stats, isLoading: statsLoading } = trpc.hierarchy.getStats.useQuery({});
 
   // Buscar hierarquia por chapa
   const { data: hierarchy, isLoading: hierarchyLoading, refetch } = trpc.hierarchy.getByChapa.useQuery(

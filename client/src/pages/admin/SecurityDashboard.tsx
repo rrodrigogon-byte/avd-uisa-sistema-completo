@@ -11,9 +11,9 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export default function SecurityDashboard() {
-  const { data: stats, isLoading: statsLoading } = trpc.audit.stats.useQuery();
+  const { data: stats, isLoading: statsLoading } = trpc.audit.stats.useQuery({});
   const { data: suspicious, isLoading: suspiciousLoading } =
-    trpc.audit.detectSuspiciousActivity.useQuery();
+    trpc.audit.detectSuspiciousActivity.useQuery({});
 
   const { data: recentLogs, isLoading: logsLoading } = trpc.audit.list.useQuery({
     limit: 10,

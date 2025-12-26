@@ -38,7 +38,7 @@ export default function Passo3Competencias() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Buscar competências disponíveis
-  const { data: competencies, isLoading: loadingCompetencies } = trpc.avd.listCompetencies.useQuery();
+  const { data: competencies, isLoading: loadingCompetencies } = trpc.avd.listCompetencies.useQuery({});
 
   // Buscar avaliação existente (se houver)
   const { data: existingAssessment } = trpc.avd.getCompetencyAssessmentByProcess.useQuery(

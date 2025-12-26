@@ -40,7 +40,7 @@ export default function ConstrutorFormularios() {
   const [questions, setQuestions] = useState<any[]>([]);
 
   // Queries
-  const { data: templates = [], isLoading, refetch } = trpc.formBuilder.templates.list.useQuery();
+  const { data: templates = [], isLoading, refetch } = trpc.formBuilder.templates.list.useQuery({});
 
   // Mutations
   const createTemplateMutation = trpc.formBuilder.templates.create.useMutation({

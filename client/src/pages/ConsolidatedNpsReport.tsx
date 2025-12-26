@@ -40,8 +40,8 @@ export default function ConsolidatedNpsReport() {
     endDate: new Date(),
   });
 
-  const { data: summary } = trpc.consolidatedNpsReport.getDashboardSummary.useQuery();
-  const { data: pirIntegrity } = trpc.consolidatedNpsReport.checkPirIntegrity.useQuery();
+  const { data: summary } = trpc.consolidatedNpsReport.getDashboardSummary.useQuery({});
+  const { data: pirIntegrity } = trpc.consolidatedNpsReport.checkPirIntegrity.useQuery({});
   const { data: trends } = trpc.consolidatedNpsReport.getTrends.useQuery({ months: 6 });
 
   const exportReport = trpc.consolidatedNpsReport.exportReport.useMutation({

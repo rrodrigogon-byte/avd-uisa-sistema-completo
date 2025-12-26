@@ -37,10 +37,10 @@ export default function PDIInteligenteImport() {
 
   // Queries
   const { data: availableImports, isLoading: isLoadingImports } = 
-    trpc.pdiHtmlImport.listAvailableImports.useQuery();
+    trpc.pdiHtmlImport.listAvailableImports.useQuery({});
 
   const { data: cycles, isLoading: isLoadingCycles } = 
-    trpc.cycles.list.useQuery();
+    trpc.cycles.list.useQuery({});
 
   const { data: preview, isLoading: isLoadingPreview } = 
     trpc.pdiHtmlImport.previewImport.useQuery(

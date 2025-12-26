@@ -35,7 +35,7 @@ export default function PsychometricTests() {
   const [, setLocation] = useLocation();
 
   // Buscar testes realizados
-  const { data: tests, isLoading } = trpc.psychometric.getTests.useQuery();
+  const { data: tests, isLoading } = trpc.psychometric.getTests.useQuery({});
 
   const discTests = tests?.filter(t => t.testType === "disc") || [];
   const bigFiveTests = tests?.filter(t => t.testType === "bigfive") || [];

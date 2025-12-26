@@ -34,7 +34,7 @@ export default function HistoricoSenhas() {
 
   // Queries
   const { data: history, isLoading } = trpc.employees.getPasswordHistory.useQuery(filters);
-  const { data: leaders } = trpc.employees.getLeaders.useQuery();
+  const { data: leaders } = trpc.employees.getLeaders.useQuery({});
 
   // Função de exportação
   const handleExport = () => {

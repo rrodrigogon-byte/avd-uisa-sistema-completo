@@ -20,7 +20,7 @@ export default function Metas() {
   const [editingGoal, setEditingGoal] = useState<any>(null);
   
   const { data: goals, refetch } = trpc.goals.list.useQuery({});
-  const { data: employee } = trpc.employees.getCurrent.useQuery();
+  const { data: employee } = trpc.employees.getCurrent.useQuery({});
   const createGoal = trpc.goals.create.useMutation();
   const updateProgress = trpc.goals.updateProgress.useMutation();
 

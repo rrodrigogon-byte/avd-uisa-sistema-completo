@@ -15,12 +15,12 @@ export default function DashboardPIRIntegridade() {
   const [, navigate] = useLocation();
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const { data: stats } = trpc.pirIntegrity.getDashboardStats.useQuery();
+  const { data: stats } = trpc.pirIntegrity.getDashboardStats.useQuery({});
   const { data: assessmentsData, isLoading: loadingAssessments } = trpc.pirIntegrity.listAssessments.useQuery({
     status: statusFilter === "all" ? undefined : statusFilter as any,
     limit: 10,
   });
-  const { data: dimensionsData } = trpc.pirIntegrity.listDimensions.useQuery();
+  const { data: dimensionsData } = trpc.pirIntegrity.listDimensions.useQuery({});
 
   const getRiskBadge = (level: string | null) => {
     switch (level) {

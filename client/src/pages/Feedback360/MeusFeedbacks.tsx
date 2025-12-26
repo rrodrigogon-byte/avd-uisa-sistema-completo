@@ -22,7 +22,7 @@ export default function MeusFeedbacks() {
   const [, setLocation] = useLocation();
 
   const { data: pendingEvaluations, isLoading } =
-    trpc.feedback360.getMyPendingEvaluations.useQuery();
+    trpc.feedback360.getMyPendingEvaluations.useQuery({});
 
   const getRelationshipLabel = (type: string) => {
     const labels: Record<string, string> = {

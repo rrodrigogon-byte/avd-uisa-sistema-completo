@@ -49,8 +49,8 @@ export default function SecurityDashboard() {
   const [activityType, setActivityType] = useState<string>("all");
 
   // Queries
-  const { data: stats, refetch: refetchStats } = trpc.audit.getStats.useQuery();
-  const { data: suspicious, refetch: refetchSuspicious } = trpc.audit.getSuspiciousActivities.useQuery();
+  const { data: stats, refetch: refetchStats } = trpc.audit.getStats.useQuery({});
+  const { data: suspicious, refetch: refetchSuspicious } = trpc.audit.getSuspiciousActivities.useQuery({});
   const { data: logs, refetch: refetchLogs } = trpc.audit.getLogs.useQuery({
     startDate: new Date(startDate),
     endDate: new Date(endDate),

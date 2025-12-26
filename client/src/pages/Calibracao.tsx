@@ -47,8 +47,8 @@ export default function Calibracao() {
   const { data: evaluations, isLoading, refetch } = trpc.calibration.getEvaluations.useQuery({});
 
   // Buscar departamentos e ciclos para filtros
-  const { data: departments } = trpc.employees.getDepartments.useQuery();
-  const { data: cycles } = trpc.evaluationCycles.list.useQuery();
+  const { data: departments } = trpc.employees.getDepartments.useQuery({});
+  const { data: cycles } = trpc.evaluationCycles.list.useQuery({});
 
   // Filtrar avaliações
   const filteredEvaluations = evaluations?.filter((evaluation) => {

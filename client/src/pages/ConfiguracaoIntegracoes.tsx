@@ -21,7 +21,7 @@ export default function ConfiguracaoIntegracoes() {
   const utils = trpc.useUtils();
 
   // Queries
-  const { data: config, isLoading } = trpc.integrations.getConfig.useQuery();
+  const { data: config, isLoading } = trpc.integrations.getConfig.useQuery({});
 
   // Mutations
   const saveConfigMutation = trpc.integrations.saveConfig.useMutation({

@@ -28,7 +28,7 @@ export default function ImportadorDescricoesCargo() {
   const isAdmin = user?.role === 'admin';
 
   // Buscar descrições já importadas
-  const { data: jobDescriptions, refetch } = trpc.jobDescription.list.useQuery();
+  const { data: jobDescriptions, refetch } = trpc.jobDescription.list.useQuery({});
 
   const uploadMutation = trpc.jobDescription.bulkImport.useMutation({
     onSuccess: (data) => {

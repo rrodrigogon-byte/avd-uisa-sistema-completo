@@ -53,7 +53,7 @@ export default function NotificacoesAnalytics() {
   });
 
   const { data: hourlyEngagement, isLoading: loadingHourly } =
-    trpc.pushNotifications.getEngagementByHour.useQuery();
+    trpc.pushNotifications.getEngagementByHour.useQuery({});
 
   // Usar endpoint real de logs
   const { data: realLogs, isLoading: loadingHistory } = trpc.pushNotifications.getRealLogs.useQuery({

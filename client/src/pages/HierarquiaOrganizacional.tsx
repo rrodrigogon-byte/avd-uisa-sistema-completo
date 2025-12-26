@@ -31,9 +31,9 @@ export default function HierarquiaOrganizacional() {
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
 
   // Queries
-  const { data: hierarchy, isLoading: loadingHierarchy, refetch } = trpc.employees.getHierarchy.useQuery();
-  const { data: departments } = trpc.employees.getDepartments.useQuery();
-  const { data: managers } = trpc.employees.getManagers.useQuery();
+  const { data: hierarchy, isLoading: loadingHierarchy, refetch } = trpc.employees.getHierarchy.useQuery({});
+  const { data: departments } = trpc.employees.getDepartments.useQuery({});
+  const { data: managers } = trpc.employees.getManagers.useQuery({});
 
   // Queries para relatório
   const { data: reportData, refetch: refetchReport } = trpc.employees.exportHierarchyReport.useQuery({}, {

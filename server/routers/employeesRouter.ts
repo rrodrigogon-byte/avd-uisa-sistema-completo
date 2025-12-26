@@ -34,7 +34,20 @@ export const employeesRouter = router({
       const limit = params.limit ?? 100;
       const offset = params.offset ?? 0;
       
-      const employees = await listEmployees(params);
+      const rawEmployees = await listEmployees(params);
+      
+      // Transformar estrutura aninhada para flat
+      const employees = rawEmployees.map((item: any) => {
+        // Se já está flat, retornar como está
+        if (!item.employee) return item;
+        
+        // Se está aninhado, fazer flat
+        return {
+          ...item.employee,
+          departmentName: item.department?.name || null,
+          positionName: item.position?.name || null,
+        };
+      });
       
       // Aplicar paginação
       const paginatedEmployees = employees.slice(offset, offset + limit);

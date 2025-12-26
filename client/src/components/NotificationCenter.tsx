@@ -44,7 +44,7 @@ export default function NotificationCenter() {
   const notifications = notificationsData?.data || [];
 
   // Contar não lidas
-  const { data: unreadCount } = trpc.notifications.countUnread.useQuery();
+  const { data: unreadCount } = trpc.notifications.countUnread.useQuery({});
 
   // Mutation para marcar como lida
   const markAsReadMutation = trpc.notifications.markAsRead.useMutation({

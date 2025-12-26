@@ -60,7 +60,7 @@ export default function TestesIntegridade() {
 
   // Query para listar funcionários
   const { data: employees, isLoading: employeesLoading } =
-    trpc.employees.list.useQuery();
+    trpc.employees.list.useQuery({});
 
   // Query para listar testes disponíveis
   const { data: tests, isLoading: testsLoading } =

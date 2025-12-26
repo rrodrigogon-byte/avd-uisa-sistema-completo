@@ -29,7 +29,7 @@ export default function ConfiguracoesSMTP() {
   const [testEmail, setTestEmail] = useState("rodrigo.goncalves@uisa.com.br");
 
   // Buscar configuração existente
-  const { data: existingConfig, isLoading } = trpc.smtpConfig.get.useQuery();
+  const { data: existingConfig, isLoading } = trpc.smtpConfig.get.useQuery({});
 
   // Mutation para salvar configuração
   const saveConfigMutation = trpc.smtpConfig.save.useMutation({

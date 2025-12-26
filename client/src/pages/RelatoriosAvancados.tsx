@@ -129,8 +129,8 @@ export default function RelatoriosAvancados() {
   const [activeTab, setActiveTab] = useState("templates");
 
   // Queries
-  const { data: departments } = trpc.departments.list.useQuery();
-  const { data: cycles } = trpc.evaluationCycles.list.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: cycles } = trpc.evaluationCycles.list.useQuery({});
 
   const handleGenerateReport = async () => {
     if (!selectedTemplate) {

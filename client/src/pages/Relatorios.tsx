@@ -16,7 +16,7 @@ export default function Relatorios() {
   const { data: goals } = trpc.goals.list.useQuery({});
   const { data: evaluations } = trpc.evaluations.list.useQuery({});
   const { data: pdis } = trpc.pdi.list.useQuery({});
-  const { data: employeesData } = trpc.employees.list.useQuery();
+  const { data: employeesData } = trpc.employees.list.useQuery({});
 
   // Calculate statistics
   const totalGoals = goals?.length || 0;

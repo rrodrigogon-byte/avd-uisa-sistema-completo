@@ -9,7 +9,7 @@ import { BarChart3, Goal, Target, TrendingUp, Users, AlertCircle } from "lucide-
 import { Link } from "wouter";
 
 export default function Home() {
-  const { data: employee } = trpc.employees.getCurrent.useQuery();
+  const { data: employee } = trpc.employees.getCurrent.useQuery({});
   const { data: stats } = trpc.dashboard.getStats.useQuery({}, {
     retry: false,
     refetchOnWindowFocus: false,

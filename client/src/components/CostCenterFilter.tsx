@@ -22,7 +22,7 @@ export function CostCenterFilter({
   showLabel = true 
 }: CostCenterFilterProps) {
   // Buscar centros de custos
-  const { data: costCenters, isLoading } = trpc.costCenters.list.useQuery();
+  const { data: costCenters, isLoading } = trpc.costCenters.list.useQuery({});
 
   if (isLoading) {
     return (

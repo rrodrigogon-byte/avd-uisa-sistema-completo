@@ -28,7 +28,7 @@ export default function Feedback360Evaluation() {
   }>>({});
 
   // Queries
-  const { data: evaluator, isLoading: loadingEvaluator } = trpc.feedback360New.getMyPendingEvaluations.useQuery();
+  const { data: evaluator, isLoading: loadingEvaluator } = trpc.feedback360New.getMyPendingEvaluations.useQuery({});
   
   // TODO: Buscar competências do ciclo
   // Por enquanto, vamos usar competências mock

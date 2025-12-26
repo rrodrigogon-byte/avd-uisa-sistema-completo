@@ -21,7 +21,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function AdminDashboard() {
-  const { data: stats, isLoading, error } = trpc.adminAdvanced.getDashboardStats.useQuery();
+  const { data: stats, isLoading, error } = trpc.adminAdvanced.getDashboardStats.useQuery({});
 
   if (isLoading) {
     return (

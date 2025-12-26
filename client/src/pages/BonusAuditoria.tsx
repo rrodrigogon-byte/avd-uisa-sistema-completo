@@ -34,7 +34,7 @@ export default function BonusAuditoria() {
     limit: 200,
   });
 
-  const { data: metrics } = trpc.bonus.getApprovalMetrics.useQuery();
+  const { data: metrics } = trpc.bonus.getApprovalMetrics.useQuery({});
 
   const handleExportToExcel = async () => {
     try {

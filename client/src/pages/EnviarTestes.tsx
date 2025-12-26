@@ -50,10 +50,10 @@ export default function EnviarTestes() {
   } = useEmployeeSearch();
 
   // Buscar departamentos
-  const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery();
+  const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery({});
 
   // Buscar centros de custo
-  const { data: costCenters, isLoading: loadingCostCenters } = trpc.costCenters.list.useQuery();
+  const { data: costCenters, isLoading: loadingCostCenters } = trpc.costCenters.list.useQuery({});
 
   // Mutation para enviar convites
   const sendInviteMutation = trpc.psychometric.sendTestInvite.useMutation({

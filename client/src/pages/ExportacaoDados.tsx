@@ -23,7 +23,7 @@ export default function ExportacaoDados() {
   const [isExporting, setIsExporting] = useState(false);
 
   // Buscar departamentos para filtro
-  const { data: departments } = trpc.departments.list.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
 
   // Mutations para exportação
   const exportEmployeesMutation = trpc.export.exportEmployeesCSV.useMutation();

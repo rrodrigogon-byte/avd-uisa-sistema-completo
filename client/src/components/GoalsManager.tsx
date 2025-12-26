@@ -48,7 +48,7 @@ export default function GoalsManager({ employeeId, goals, isLoading }: GoalsMana
   });
 
   const utils = trpc.useUtils();
-  const { data: cycles } = trpc.cycles.list.useQuery();
+  const { data: cycles } = trpc.cycles.list.useQuery({});
 
   const createMutation = trpc.employeeProfile.createGoal.useMutation({
     onSuccess: () => {

@@ -71,7 +71,7 @@ export default function ConfigurarAvaliacoes() {
   );
 
   // Queries
-  const { data: cycles, isLoading, refetch } = trpc.evaluationCycles.list.useQuery();
+  const { data: cycles, isLoading, refetch } = trpc.evaluationCycles.list.useQuery({});
 
   // Mutations
   const createCycleMutation = trpc.evaluationCycles.create.useMutation({

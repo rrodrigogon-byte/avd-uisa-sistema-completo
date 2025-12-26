@@ -25,8 +25,8 @@ export default function EmployeeProfile() {
   const employeeId = parseInt(params.id as string);
 
   const { data: employee, isLoading } = trpc.hrEmployees.profile.useQuery({ id: employeeId });
-  const { data: positions } = trpc.hrPositions.list.useQuery();
-  const { data: departments } = trpc.departments.list.useQuery();
+  const { data: positions } = trpc.hrPositions.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery({});
 
   const getInitials = (name: string) => {
     return name

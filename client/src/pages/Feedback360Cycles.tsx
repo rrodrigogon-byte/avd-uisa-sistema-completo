@@ -48,7 +48,7 @@ export default function Feedback360Cycles() {
   const [selectedCycle, setSelectedCycle] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const { data: cycles, isLoading, refetch } = trpc.feedback360New.listCycles.useQuery();
+  const { data: cycles, isLoading, refetch } = trpc.feedback360New.listCycles.useQuery({});
   const createCycleMutation = trpc.feedback360New.createCycle.useMutation();
   const updateCycleMutation = trpc.feedback360New.updateCycleStatus.useMutation();
 

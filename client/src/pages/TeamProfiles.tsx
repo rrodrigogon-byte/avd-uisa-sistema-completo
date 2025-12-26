@@ -15,7 +15,7 @@ type TestType = "disc" | "bigfive" | "mbti" | "ie";
 
 export default function TeamProfiles() {
   const { user } = useAuth();
-  const { data: employee } = trpc.employees.getCurrent.useQuery();
+  const { data: employee } = trpc.employees.getCurrent.useQuery({});
   const [activeTab, setActiveTab] = useState<TestType>("disc");
 
   const { data: teamData, isLoading } = trpc.pdiIntelligent.getTeamPsychometricProfiles.useQuery(

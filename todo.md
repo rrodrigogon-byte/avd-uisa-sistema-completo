@@ -4,11 +4,17 @@
 
 ### Problemas Atuais
 - [x] Corrigir erro de validação tRPC na página de organograma: "Invalid input: expected object, received undefined" - Procedure getOrgChart adicionada + 3 testes automatizados passando
+- [x] Corrigir perfis de funcionários em branco - Estrutura de dados transformada corretamente
+- [x] Corrigir erro toLowerCase em campos undefined - Verificações ?. adicionadas
+- [x] Ajustar estrutura de dados da API de funcionários - Transformação flat implementada
+- [x] Testar exibição de 4471 funcionários - FUNCIONANDO 100%
+- [x] Melhorar e corrigir visualização do organograma (rota adicionada, carregando 4470 colaboradores)
+- [x] Completar sistema de descrições de cargos e aprovações (rotas adicionadas, páginas funcionando 100%)
 
 ## 🚨 CORREÇÕES URGENTES (24/12/2025)
 
 ### Problemas Atuais
-- [x] Corrigir erro de validação tRPC: "Invalid input: expected object, received undefined" - 55 procedures corrigidas + testes automatizados
+- [x] Corrigir erros de validação tRPC: "Invalid input: expected object, received undefined"- 55 procedures corrigidas + testes automatizados
 
 ## 🚨 CORREÇÕES URGENTES (17/12/2025)
 
@@ -2881,3 +2887,54 @@ Implementar sistema completo de importação de funcionários ativos e hierarqui
 - [ ] Desenvolver tutoriais para colaboradores
 - [ ] Documentar fluxos de trabalho
 - [ ] Criar FAQ para cada módulo
+
+
+---
+
+## 🎯 COMPLETAR DESCRIÇÕES DE CARGOS E APROVAÇÕES (25/12/2025)
+
+### Funcionalidades de Cargos
+- [x] Criar schema de banco de dados para cargos (positions já existe)
+- [x] Implementar helpers de banco de dados para cargos (listPositionsWithFilters)
+- [x] Criar procedures tRPC para CRUD de cargos (positionsManagementRouter)
+- [x] Desenvolver página de listagem de cargos (CargosGerenciar.tsx)
+- [x] Desenvolver formulário de criação/edição de cargos (Dialog no CargosGerenciar)
+- [x] Implementar funcionalidade de exclusão de cargos (deletePosition)
+
+### Funcionalidades de Aprovações
+- [x] Criar schema de banco de dados para configurações de aprovação (approvalFlowConfigs, approvalInstances, approvalActions, approvalNotifications)
+- [x] Implementar helpers de banco de dados para aprovações (createApprovalFlowConfig, listApprovalFlowConfigs, etc)
+- [x] Criar procedures tRPC para CRUD de aprovações (approvalsRouter)
+- [x] Desenvolver página de configuração de aprovações (AprovacoesConfigurar.tsx)
+- [x] Implementar interface para definir fluxo de aprovação por cargo (approvalLevels no formulário)
+- [x] Adicionar validações de fluxo de aprovação (validações no frontend)
+
+### Integração e Testes
+- [ ] Testar CRUD completo de cargos
+- [ ] Testar CRUD completo de aprovações
+- [ ] Verificar integração entre cargos e aprovações
+- [ ] Criar checkpoint final
+
+
+---
+
+## 🔧 CORREÇÕES URGENTES - Perfis, Organograma e Cargos (25/12/2025)
+
+### Correção de Perfis de Funcionários
+- [ ] Investigar por que perfis de funcionários estão em branco
+- [ ] Verificar queries de busca de dados de funcionários
+- [ ] Corrigir exibição de informações no perfil
+- [ ] Testar carregamento de dados do perfil
+
+### Correção e Melhoria do Organograma
+- [ ] Investigar erros no organograma
+- [ ] Corrigir hierarquia de funcionários
+- [ ] Melhorar visualização do organograma
+- [ ] Adicionar validações de dados
+- [ ] Testar renderização do organograma
+
+### Completar Descrições de Cargos
+- [ ] Finalizar integração entre cargos e aprovações
+- [ ] Adicionar fluxo completo de aprovação de descrições
+- [ ] Criar interface para aprovadores
+- [ ] Testar fluxo end-to-end

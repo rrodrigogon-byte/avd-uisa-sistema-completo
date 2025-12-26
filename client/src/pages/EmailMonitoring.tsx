@@ -29,7 +29,7 @@ export default function EmailMonitoring() {
   const { user, loading: authLoading } = useAuth();
   
   // Buscar estatísticas de emails
-  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.admin.getEmailStats.useQuery();
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.admin.getEmailStats.useQuery({});
   
   // Buscar histórico recente
   const { data: recentEmails, isLoading: historyLoading, refetch: refetchHistory } = trpc.admin.getRecentEmails.useQuery({
@@ -37,7 +37,7 @@ export default function EmailMonitoring() {
   });
 
   // Buscar emails por tipo
-  const { data: emailsByType } = trpc.admin.getEmailsByType.useQuery();
+  const { data: emailsByType } = trpc.admin.getEmailsByType.useQuery({});
 
   const handleRefresh = () => {
     refetchStats();

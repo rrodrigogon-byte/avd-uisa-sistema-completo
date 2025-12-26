@@ -38,12 +38,12 @@ export default function DashboardRelatorios() {
   const [selectedMonth, setSelectedMonth] = useState<string>("all");
 
   // Queries
-  const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery();
-  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery();
+  const { data: departments, isLoading: loadingDepartments } = trpc.departments.list.useQuery({});
+  const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery({});
   const { data: goals, isLoading: loadingGoals } = trpc.goals.list.useQuery({});
   const { data: evaluations, isLoading: loadingEvaluations } = trpc.evaluations.list.useQuery({});
   const { data: pdis, isLoading: loadingPDIs } = trpc.pdi.list.useQuery({});
-  const { data: cycles360, isLoading: loadingCycles } = trpc.cycles360.list.useQuery();
+  const { data: cycles360, isLoading: loadingCycles } = trpc.cycles360.list.useQuery({});
 
   const isLoading = loadingDepartments || loadingEmployees || loadingGoals || loadingEvaluations || loadingPDIs || loadingCycles;
 

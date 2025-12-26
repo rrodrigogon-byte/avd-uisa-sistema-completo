@@ -21,7 +21,7 @@ import { ptBR } from "date-fns/locale";
 export default function Feedback360MyEvaluations() {
   const { user } = useAuth();
 
-  const { data: evaluations, isLoading } = trpc.feedback360.getMyPendingEvaluations.useQuery();
+  const { data: evaluations, isLoading } = trpc.feedback360.getMyPendingEvaluations.useQuery({});
 
   const getRelationshipLabel = (type: string) => {
     const labels: Record<string, string> = {

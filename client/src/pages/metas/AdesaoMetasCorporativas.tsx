@@ -37,8 +37,8 @@ export default function AdesaoMetasCorporativas() {
     goalId: selectedGoal === "all" ? undefined : parseInt(selectedGoal),
   });
 
-  const { data: departments } = trpc.departments.list.useQuery();
-  const { data: corporateGoals } = trpc.goals.listCorporateGoals.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: corporateGoals } = trpc.goals.listCorporateGoals.useQuery({});
 
   const sendReminders = trpc.goals.sendAdherenceReminders.useMutation({
     onSuccess: () => {

@@ -50,8 +50,8 @@ export default function CreateEditRuleModal({
   const [searchApprover, setSearchApprover] = useState("");
 
   // Queries
-  const { data: departments = [] } = trpc.approvalRules.getDepartments.useQuery();
-  const { data: costCenters = [] } = trpc.approvalRules.getCostCenters.useQuery();
+  const { data: departments = [] } = trpc.approvalRules.getDepartments.useQuery({});
+  const { data: costCenters = [] } = trpc.approvalRules.getCostCenters.useQuery({});
   const { data: employees = [] } = trpc.approvalRules.getEmployees.useQuery({
     search: searchEmployee,
   });

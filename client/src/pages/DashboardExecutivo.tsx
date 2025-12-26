@@ -47,9 +47,9 @@ export default function DashboardExecutivo() {
   const { data: performanceByDept, isLoading: perfDeptLoading } =
     trpc.executive.getPerformanceByDepartment.useQuery({});
   const { data: performanceTrend, isLoading: perfTrendLoading } =
-    trpc.executive.getPerformanceTrend.useQuery();
+    trpc.executive.getPerformanceTrend.useQuery({});
   const { data: successionCoverage, isLoading: successionLoading } =
-    trpc.executive.getSuccessionCoverage.useQuery();
+    trpc.executive.getSuccessionCoverage.useQuery({});
   const { data: topPerformers, isLoading: topPerfLoading } =
     trpc.executive.getTopPerformers.useQuery({ limit: 10 });
   const { data: flightRisk, isLoading: flightRiskLoading } =

@@ -92,14 +92,14 @@ export default function MapaSucessaoUISA() {
   const [selectedSuccessor, setSelectedSuccessor] = useState<any | null>(null);
 
   // Queries
-  const { data: plansRaw, isLoading, refetch } = trpc.succession.list.useQuery();
+  const { data: plansRaw, isLoading, refetch } = trpc.succession.list.useQuery({});
   const {
     searchTerm: employeeSearch,
     setSearchTerm: setEmployeeSearch,
     employees,
     isLoading: loadingEmployees
   } = useEmployeeSearch();
-  const { data: positions } = trpc.positions.list.useQuery();
+  const { data: positions } = trpc.positions.list.useQuery({});
 
   // Mutations
   const updateSuccessorMutation = trpc.succession.updateSuccessor.useMutation({

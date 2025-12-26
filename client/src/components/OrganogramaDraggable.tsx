@@ -252,7 +252,7 @@ function EmployeeNode({
 }
 
 export function OrganogramaDraggable() {
-  const { data, isLoading, refetch } = trpc.orgChart.getOrgChart.useQuery();
+  const { data, isLoading, refetch } = trpc.orgChart.getOrgChart.useQuery({});
   const updateManagerMutation = trpc.orgChart.updateManager.useMutation();
   
   const [searchTerm, setSearchTerm] = useState("");

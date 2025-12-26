@@ -87,9 +87,9 @@ export default function GerenciarFuncionarios() {
     includeInactive,
   });
 
-  const { data: departments } = trpc.employeeManagement.listDepartments.useQuery();
-  const { data: positions } = trpc.employeeManagement.listPositions.useQuery();
-  const { data: managers } = trpc.employeeManagement.listManagers.useQuery();
+  const { data: departments } = trpc.employeeManagement.listDepartments.useQuery({});
+  const { data: positions } = trpc.employeeManagement.listPositions.useQuery({});
+  const { data: managers } = trpc.employeeManagement.listManagers.useQuery({});
 
   // Mutations
   const moveEmployee = trpc.employeeManagement.moveEmployee.useMutation({

@@ -56,7 +56,7 @@ interface PulseSurvey {
 
 export default function PesquisasPulse() {
   const [, setLocation] = useLocation();
-  const { data: surveys = [], isLoading } = trpc.pulse.list.useQuery();
+  const { data: surveys = [], isLoading } = trpc.pulse.list.useQuery({});
   const createSurveyMutation = trpc.pulse.create.useMutation({
     onSuccess: () => {
       toast.success("Pesquisa criada e enviada com sucesso!");

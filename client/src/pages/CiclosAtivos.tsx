@@ -29,8 +29,8 @@ export default function CiclosAtivos() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Queries
-  const { data: activeCycles, isLoading, refetch } = trpc.evaluationCycles.getActiveCycles.useQuery();
-  const { data: cycleStats } = trpc.evaluationCycles.getCycleStats.useQuery();
+  const { data: activeCycles, isLoading, refetch } = trpc.evaluationCycles.getActiveCycles.useQuery({});
+  const { data: cycleStats } = trpc.evaluationCycles.getCycleStats.useQuery({});
 
   // Mutations
   const sendReminders = trpc.evaluationCycles.sendReminders.useMutation({

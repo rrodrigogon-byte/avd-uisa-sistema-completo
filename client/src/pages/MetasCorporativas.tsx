@@ -22,10 +22,10 @@ export default function MetasCorporativas() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Buscar metas corporativas
-  const { data: corporateGoals, isLoading, refetch } = trpc.goals.listCorporateGoals.useQuery();
+  const { data: corporateGoals, isLoading, refetch } = trpc.goals.listCorporateGoals.useQuery({});
 
   // Buscar departamentos
-  const { data: departments } = trpc.employees.getDepartments.useQuery();
+  const { data: departments } = trpc.employees.getDepartments.useQuery({});
 
   // Calcular KPIs
   const totalCorporateGoals = corporateGoals?.length || 0;
@@ -33,7 +33,7 @@ export default function MetasCorporativas() {
   const completedGoals = corporateGoals?.filter(g => g.status === "completed").length || 0;
   
   // Calcular funcionários impactados (todas as metas corporativas aplicam a todos)
-  const { data: allEmployees } = trpc.employees.list.useQuery();
+  const { data: allEmployees } = trpc.employees.list.useQuery({});
   const totalEmployees = allEmployees?.length || 0;
 
   // Taxa de adesão (progresso médio das metas ativas)

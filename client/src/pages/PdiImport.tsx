@@ -20,8 +20,8 @@ export default function PdiImport() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Queries
-  const { data: cycles } = trpc.cycles.list.useQuery();
-  const { data: importedPDIs, refetch: refetchImported } = trpc.pdiHtmlImport.listImportedPDIs.useQuery();
+  const { data: cycles } = trpc.cycles.list.useQuery({});
+  const { data: importedPDIs, refetch: refetchImported } = trpc.pdiHtmlImport.listImportedPDIs.useQuery({});
   
   // Mutations
   const previewMutation = trpc.pdiHtmlImport.previewHtml.useMutation();

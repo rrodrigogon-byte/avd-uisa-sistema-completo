@@ -29,7 +29,7 @@ export default function ProcessosAvaliativos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
 
-  const { data: processes, isLoading, refetch } = trpc.evaluationProcesses.list.useQuery();
+  const { data: processes, isLoading, refetch } = trpc.evaluationProcesses.list.useQuery({});
   const startMutation = trpc.evaluationProcesses.start.useMutation();
   const completeMutation = trpc.evaluationProcesses.complete.useMutation();
   const cancelMutation = trpc.evaluationProcesses.cancel.useMutation();

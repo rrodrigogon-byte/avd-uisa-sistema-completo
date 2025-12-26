@@ -77,7 +77,7 @@ export default function GerenciarCiclosAvaliacao() {
   const [selectedTypes, setSelectedTypes] = useState<string[]>(["360"]);
 
   // Buscar ciclos
-  const { data: cycles = [], refetch } = trpc.cycles.list.useQuery();
+  const { data: cycles = [], refetch } = trpc.cycles.list.useQuery({});
 
   // Criar ciclo
   const createCycle = trpc.cycles.create.useMutation({

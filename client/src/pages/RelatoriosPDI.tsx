@@ -53,7 +53,7 @@ export default function RelatoriosPDI() {
   const [selectedPlan, setSelectedPlan] = useState<number | undefined>(undefined);
 
   // Buscar funcionários
-  const { data: employees } = trpc.employees.list.useQuery();
+  const { data: employees } = trpc.employees.list.useQuery({});
 
   // Buscar PDIs do funcionário selecionado
   const { data: pdiPlans } = trpc.pdiIntelligent.list.useQuery(

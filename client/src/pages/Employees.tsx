@@ -41,9 +41,33 @@ export default function Employees() {
   const [filterDepartment, setFilterDepartment] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
-  const { data: employees, isLoading, refetch } = trpc.hrEmployees.list.useQuery();
-  const { data: departments } = trpc.departments.list.useQuery();
-  const { data: positions } = trpc.hrPositions.list.useQuery();
+  const { data: employeesData, isLoading, refetch } = trpc.hrEmployees.list.useQuery({});
+  
+  // Lidar com diferentes estruturas de retorno
+  let employees = [];
+  if (Array.isArray(employeesData)) {
+    // Se retornar array direto
+    employees = employeesData;
+  } else if (employeesData?.employees) {
+    // Se retornar {employees: [...]}
+    employees = employeesData.employees;
+  }
+  
+  // Transformar estrutura aninhada para flat se necessário
+  employees = employees.map((item: any) => {
+    if (item.employee) {
+      // Estrutura aninhada - fazer flat
+      return {
+        ...item.employee,
+        departmentName: item.department?.name || null,
+        positionName: item.position?.name || null,
+      };
+    }
+    // Já está flat
+    return item;
+  });
+  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: positions } = trpc.hrPositions.list.useQuery({});
 
   const createMutation = trpc.hrEmployees.create.useMutation({
     onSuccess: () => {
@@ -174,10 +198,10 @@ export default function Employees() {
     );
   };
 
-  const filteredEmployees = employees?.filter((emp) => {
+  const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
-      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.employeeCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.employeeCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesDepartment =
@@ -264,7 +288,7 @@ export default function Employees() {
             <CardTitle className="text-sm font-medium">Total de Funcionários</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{employees?.length || 0}</div>
+            <div className="text-2xl font-bold">{employees.length || 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -273,7 +297,7 @@ export default function Employees() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {employees?.filter((e) => e.status === "ativo").length || 0}
+              {employees.filter((e) => e.status === "ativo").length || 0}
             </div>
           </CardContent>
         </Card>
@@ -283,7 +307,7 @@ export default function Employees() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
-              {employees?.filter((e) => e.status === "afastado").length || 0}
+              {employees.filter((e) => e.status === "afastado").length || 0}
             </div>
           </CardContent>
         </Card>
@@ -293,7 +317,7 @@ export default function Employees() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {employees?.filter((e) => e.status === "desligado").length || 0}
+              {employees.filter((e) => e.status === "desligado").length || 0}
             </div>
           </CardContent>
         </Card>
@@ -315,7 +339,7 @@ export default function Employees() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredEmployees?.map((employee) => (
+              {filteredEmployees.map((employee) => (
                 <TableRow key={employee.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -378,7 +402,7 @@ export default function Employees() {
             </TableBody>
           </Table>
 
-          {filteredEmployees?.length === 0 && (
+          {filteredEmployees.length === 0 && (
             <div className="text-center py-12">
               <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">Nenhum funcionário encontrado</h3>

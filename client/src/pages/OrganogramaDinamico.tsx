@@ -48,7 +48,7 @@ export default function OrganogramaDinamico() {
     notes: "",
   });
 
-  const { data: structure, isLoading, refetch } = trpc.orgChart.getStructure.useQuery();
+  const { data: structure, isLoading, refetch } = trpc.orgChart.getStructure.useQuery({});
 
   const generateMutation = trpc.orgChart.generateFromDepartments.useMutation({
     onSuccess: (data) => {

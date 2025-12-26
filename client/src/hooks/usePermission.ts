@@ -25,7 +25,7 @@ export function usePermission(resource: string, action: string) {
  * Hook para obter todas as permissões do usuário atual
  */
 export function useMyPermissions() {
-  const { data: permissions, isLoading } = trpc.accessControl.getMyPermissions.useQuery();
+  const { data: permissions, isLoading } = trpc.accessControl.getMyPermissions.useQuery({});
 
   const permissionsMap = useMemo(() => {
     if (!permissions) return new Map<string, Set<string>>();

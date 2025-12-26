@@ -21,8 +21,8 @@ export default function DashboardEmails() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
 
   // Queries
-  const { data: emailMetrics, isLoading, refetch } = trpc.emails.getMetrics.useQuery();
-  const { data: emailHistory } = trpc.emails.getHistory.useQuery();
+  const { data: emailMetrics, isLoading, refetch } = trpc.emails.getMetrics.useQuery({});
+  const { data: emailHistory } = trpc.emails.getHistory.useQuery({});
 
   // Mutations
   const resendEmailMutation = trpc.emails.resend.useMutation({

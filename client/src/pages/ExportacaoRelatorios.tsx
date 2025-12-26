@@ -46,7 +46,7 @@ export default function ExportacaoRelatorios() {
 
   // Buscar dados
   const { data: employees } = trpc.employees.list.useQuery({});
-  const { data: departments } = trpc.departments.list.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
 
   const { data: exportData, isLoading } = trpc.performanceReports.getExportData.useQuery(
     {

@@ -55,10 +55,10 @@ export default function ProgressoCiclos() {
   const [periodFilter, setPeriodFilter] = useState<string>("all");
 
   // Buscar ciclos
-  const { data: cycles = [] } = trpc.evaluationCycles.list.useQuery();
+  const { data: cycles = [] } = trpc.evaluationCycles.list.useQuery({});
 
   // Buscar departamentos
-  const { data: departments = [] } = trpc.departments.list.useQuery();
+  const { data: departments = [] } = trpc.departments.list.useQuery({});
 
   // Buscar progresso de avaliações 360°
   const { data: evaluationsProgress = [] } = trpc.cycleReports.getEvaluationsProgress.useQuery({

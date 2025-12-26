@@ -75,7 +75,7 @@ export default function DashboardAdminAVD() {
   }
 
   // Buscar estatísticas
-  const { data: stats, isLoading: loadingStats, refetch: refetchStats } = trpc.avd.getAdminStats.useQuery();
+  const { data: stats, isLoading: loadingStats, refetch: refetchStats } = trpc.avd.getAdminStats.useQuery({});
 
   // Buscar processos
   const { data: processes, isLoading: loadingProcesses, refetch: refetchProcesses } = trpc.avd.listAllProcesses.useQuery({
@@ -90,7 +90,7 @@ export default function DashboardAdminAVD() {
   });
 
   // Buscar departamentos para filtro
-  const { data: departments } = trpc.departments.list.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
 
   // Filtrar processos localmente
   const filteredProcesses = useMemo(() => {

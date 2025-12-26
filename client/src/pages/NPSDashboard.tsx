@@ -19,7 +19,7 @@ export default function NPSDashboard() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedSurvey, setSelectedSurvey] = useState<number | null>(null);
 
-  const { data: surveys, refetch } = trpc.nps.listSurveys.useQuery();
+  const { data: surveys, refetch } = trpc.nps.listSurveys.useQuery({});
   const { data: results } = trpc.nps.getResults.useQuery({ surveyId: selectedSurvey! }, { enabled: !!selectedSurvey });
   const { data: analytics } = trpc.nps.getAnalytics.useQuery({ surveyId: selectedSurvey! }, { enabled: !!selectedSurvey });
 

@@ -58,10 +58,10 @@ export default function AdminRhEmailDashboard() {
   });
 
   // Buscar estatísticas
-  const { data: stats, isLoading: loadingStats, refetch: refetchStats } = trpc.adminRhEmailDashboard.stats.useQuery();
+  const { data: stats, isLoading: loadingStats, refetch: refetchStats } = trpc.adminRhEmailDashboard.stats.useQuery({});
 
   // Buscar dados do gráfico
-  const { data: chartData, isLoading: loadingChart } = trpc.adminRhEmailDashboard.chartData.useQuery();
+  const { data: chartData, isLoading: loadingChart } = trpc.adminRhEmailDashboard.chartData.useQuery({});
 
   const handleRefresh = () => {
     refetchEmails();

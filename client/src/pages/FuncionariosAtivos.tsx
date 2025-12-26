@@ -44,9 +44,9 @@ export default function FuncionariosAtivos() {
 
   // Queries
   const utils = trpc.useUtils();
-  const { data: employees, isLoading } = trpc.employees.list.useQuery();
-  const { data: departments } = trpc.departments.list.useQuery();
-  const { data: positions } = trpc.positions.list.useQuery();
+  const { data: employees, isLoading } = trpc.employees.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: positions } = trpc.positions.list.useQuery({});
 
   // Mutations
   const updateEmployeeMutation = trpc.employees.update.useMutation({

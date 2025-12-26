@@ -48,7 +48,7 @@ export default function CycleManagement() {
   );
 
   // Queries
-  const { data: cycles, refetch: refetchCycles } = trpc.cycles.list.useQuery();
+  const { data: cycles, refetch: refetchCycles } = trpc.cycles.list.useQuery({});
 
   // Mutations
   const runCompleteCycle = trpc.evaluationCycle.runCompleteCycle.useMutation({

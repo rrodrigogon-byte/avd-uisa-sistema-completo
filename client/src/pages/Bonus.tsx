@@ -31,9 +31,9 @@ export default function Bonus() {
   const [selectedPolicy, setSelectedPolicy] = useState<number | null>(null);
 
   // Queries
-  const { data: policies, refetch } = trpc.bonus.list.useQuery();
-  const { data: stats } = trpc.bonus.getStats.useQuery();
-  const { data: positions } = trpc.positionsManagement.list.useQuery();
+  const { data: policies, refetch } = trpc.bonus.list.useQuery({});
+  const { data: stats } = trpc.bonus.getStats.useQuery({});
+  const { data: positions } = trpc.positionsManagement.list.useQuery({});
 
   // Mutations
   const createMutation = trpc.bonus.create.useMutation({

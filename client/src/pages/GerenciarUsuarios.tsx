@@ -31,8 +31,8 @@ export default function GerenciarUsuarios() {
   const [filterSalaryLead, setFilterSalaryLead] = useState<string>("todos");
 
   // Queries
-  const { data: allUsers = [], isLoading, refetch } = trpc.employees.list.useQuery();
-  const { data: salaryLeads = [] } = trpc.employees.listSalaryLeads.useQuery();
+  const { data: allUsers = [], isLoading, refetch } = trpc.employees.list.useQuery({});
+  const { data: salaryLeads = [] } = trpc.employees.listSalaryLeads.useQuery({});
 
   // Mutations
   const updateSalaryLeadMutation = trpc.employees.updateSalaryLeadFlag.useMutation({

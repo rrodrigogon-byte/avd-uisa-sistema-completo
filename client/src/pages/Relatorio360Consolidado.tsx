@@ -40,9 +40,9 @@ export default function Relatorio360Consolidado() {
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | null>(null);
 
   // Queries
-  const { data: cycles, isLoading: loadingCycles } = trpc.evaluationCycles.list.useQuery();
+  const { data: cycles, isLoading: loadingCycles } = trpc.evaluationCycles.list.useQuery({});
   const { data: employees, isLoading: loadingEmployees } = trpc.employees.list.useQuery({});
-  const { data: departments } = trpc.organization.listDepartments.useQuery();
+  const { data: departments } = trpc.organization.listDepartments.useQuery({});
 
   // Query de dados consolidados
   const { data: consolidatedData, isLoading: loadingData } = trpc.evaluations.get360Consolidated.useQuery(

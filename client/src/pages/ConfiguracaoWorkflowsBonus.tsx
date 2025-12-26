@@ -49,7 +49,7 @@ export default function ConfiguracaoWorkflowsBonus() {
   const [selectedRole, setSelectedRole] = useState<string>("manager");
 
   // Buscar workflows existentes
-  const { data: workflows, refetch } = trpc.bonus.listWorkflows.useQuery();
+  const { data: workflows, refetch } = trpc.bonus.listWorkflows.useQuery({});
 
   // Buscar funcionários para seleção de aprovadores
   const {

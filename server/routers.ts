@@ -98,6 +98,8 @@ import { notificationTemplatesRouter } from "./notificationTemplatesRouter";
 import { cycles360TemplatesRouter } from "./cycles360TemplatesRouter";
 import { timeTrackingRouter } from "./routers/timeTrackingRouter";
 import { evaluationCyclesRouter } from "./routers/evaluationCyclesRouter";
+import { positionsManagementRouter } from "./routers/positionsManagementRouter";
+import { approvalsRouter } from "./routers/approvalsRouter";
 import { emailFailuresRouter } from "./routers/emailFailuresRouter";
 import { adminRhEmailDashboardRouter } from "./routers/adminRhEmailDashboardRouter";
 import { evaluation360EnhancedRouter } from "./evaluation360EnhancedRouter";
@@ -447,6 +449,10 @@ export const appRouter = router({
   hrEmployees: hrEmployeesRouter,
   hrHierarchy: hrHierarchyRouter,
   hrSearch: hrSearchRouter,
+  
+  // Novos routers - Gestão de Cargos e Aprovações Completas (25/12/2025)
+  positionsManagement: positionsManagementRouter,
+  approvals: approvalsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

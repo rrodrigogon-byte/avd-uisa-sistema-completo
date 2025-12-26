@@ -62,9 +62,9 @@ export default function DashboardBonusRH() {
     cycleId: selectedCycleId,
   });
 
-  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery();
-  const { data: workflows = [] } = trpc.bonusWorkflow.listWorkflows.useQuery();
-  const { data: pendingApprovals = [] } = trpc.bonusWorkflow.myPendingApprovals.useQuery();
+  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery({});
+  const { data: workflows = [] } = trpc.bonusWorkflow.listWorkflows.useQuery({});
+  const { data: pendingApprovals = [] } = trpc.bonusWorkflow.myPendingApprovals.useQuery({});
 
   // Mutations
   const initiateMutation = trpc.bonusWorkflow.initiateApproval.useMutation({

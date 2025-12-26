@@ -960,11 +960,9 @@ export async function listEmployees(filters?: {
   // Construir condições WHERE
   const conditions = [];
   
-  // Status padrão: ativo
+  // Filtro de status (opcional, sem padrão)
   if (filters?.status) {
     conditions.push(eq(employees.status, filters.status as any));
-  } else {
-    conditions.push(eq(employees.status, "ativo"));
   }
 
   // Filtros adicionais
@@ -987,7 +985,7 @@ export async function listEmployees(filters?: {
   }
 
   // Executar query com todas as condições
-  const results = await db
+  let query = db
     .select({
       employee: employees,
       department: departments,
@@ -995,23 +993,26 @@ export async function listEmployees(filters?: {
     })
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
-    .leftJoin(positions, eq(employees.positionId, positions.id))
-    .where(and(...conditions));
+    .leftJoin(positions, eq(employees.positionId, positions.id));
+  
+  // Adicionar WHERE apenas se houver condições
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions));
+  }
+  
+  const results = await query;
     // Removido limite de 100 - retornar todos os funcionários
 
-  // Retornar estrutura com objetos aninhados para compatibilidade com o frontend
+  // Retornar estrutura flat com todos os campos do employee no nível raiz
   // Filtrar apenas registros com ID válido para evitar erros no frontend
   return results
     .filter((row) => row.employee && row.employee.id && row.employee.id > 0)
     .map((row) => ({
-      id: row.employee.id, // Adicionar ID no nível raiz para facilitar acesso
-      employee: row.employee,
-      department: row.department,
-      position: row.position,
-      // Adicionar campos calculados para facilitar uso no frontend
-      status: row.employee.status,
-      name: row.employee.name,
-      email: row.employee.email,
+      // Campos do employee no nível raiz
+      ...row.employee,
+      // Adicionar informações de departamento e posição
+      departmentName: row.department?.name || null,
+      positionName: row.position?.name || null,
     }));
 }
 
@@ -4538,4 +4539,392 @@ export async function getIntegrityAnalysis(employeeId: number, testId?: number) 
   }));
 
   return analysis;
+}
+
+// ============================================================================
+// CARGOS E DESCRIÇÕES DE CARGO - Funções adicionais
+// ============================================================================
+// Nota: Funções básicas de CRUD já existem acima (getPositionById, createPosition, updatePosition, deletePosition)
+
+/**
+ * Listar todos os cargos com filtros avançados
+ */
+export async function listPositionsWithFilters(filters?: {
+  departmentId?: number;
+  level?: string;
+  active?: boolean;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+  
+  if (filters?.departmentId) {
+    conditions.push(eq(positions.departmentId, filters.departmentId));
+  }
+  
+  if (filters?.level) {
+    conditions.push(eq(positions.level, filters.level as any));
+  }
+  
+  if (filters?.active !== undefined) {
+    conditions.push(eq(positions.active, filters.active));
+  }
+
+  const query = conditions.length > 0
+    ? db.select().from(positions).where(and(...conditions))
+    : db.select().from(positions);
+
+  return await query;
+}
+
+// ============================================================================
+// SISTEMA DE APROVAÇÕES
+// ============================================================================
+
+/**
+ * Criar configuração de fluxo de aprovação
+ */
+export async function createApprovalFlowConfig(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.execute(
+    `INSERT INTO approvalFlowConfigs 
+    (name, description, processType, scope, departmentId, positionId, hierarchyLevel, 
+     approvalLevels, allowParallelApproval, allowSkipLevels, requireComments, 
+     notifyOnEachLevel, active, isDefault, priority, createdBy) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      data.name,
+      data.description || null,
+      data.processType,
+      data.scope || 'global',
+      data.departmentId || null,
+      data.positionId || null,
+      data.hierarchyLevel || null,
+      JSON.stringify(data.approvalLevels),
+      data.allowParallelApproval || false,
+      data.allowSkipLevels || false,
+      data.requireComments || false,
+      data.notifyOnEachLevel !== false,
+      data.active !== false,
+      data.isDefault || false,
+      data.priority || 0,
+      data.createdBy
+    ]
+  );
+
+  return result[0].insertId;
+}
+
+/**
+ * Listar configurações de fluxo de aprovação
+ */
+export async function listApprovalFlowConfigs(filters?: {
+  processType?: string;
+  scope?: string;
+  active?: boolean;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let query = 'SELECT * FROM approvalFlowConfigs WHERE 1=1';
+  const params: any[] = [];
+
+  if (filters?.processType) {
+    query += ' AND processType = ?';
+    params.push(filters.processType);
+  }
+
+  if (filters?.scope) {
+    query += ' AND scope = ?';
+    params.push(filters.scope);
+  }
+
+  if (filters?.active !== undefined) {
+    query += ' AND active = ?';
+    params.push(filters.active);
+  }
+
+  query += ' ORDER BY priority DESC, createdAt DESC';
+
+  const result = await db.execute(query, params);
+  return result[0] as any[];
+}
+
+/**
+ * Buscar configuração de fluxo por ID
+ */
+export async function getApprovalFlowConfigById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.execute(
+    'SELECT * FROM approvalFlowConfigs WHERE id = ? LIMIT 1',
+    [id]
+  );
+
+  const rows = result[0] as any[];
+  return rows[0] || null;
+}
+
+/**
+ * Atualizar configuração de fluxo
+ */
+export async function updateApprovalFlowConfig(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const updates: string[] = [];
+  const params: any[] = [];
+
+  if (data.name !== undefined) {
+    updates.push('name = ?');
+    params.push(data.name);
+  }
+
+  if (data.description !== undefined) {
+    updates.push('description = ?');
+    params.push(data.description);
+  }
+
+  if (data.approvalLevels !== undefined) {
+    updates.push('approvalLevels = ?');
+    params.push(JSON.stringify(data.approvalLevels));
+  }
+
+  if (data.active !== undefined) {
+    updates.push('active = ?');
+    params.push(data.active);
+  }
+
+  if (data.isDefault !== undefined) {
+    updates.push('isDefault = ?');
+    params.push(data.isDefault);
+  }
+
+  if (updates.length === 0) return;
+
+  updates.push('updatedAt = NOW()');
+  params.push(id);
+
+  await db.execute(
+    `UPDATE approvalFlowConfigs SET ${updates.join(', ')} WHERE id = ?`,
+    params
+  );
+}
+
+/**
+ * Criar instância de aprovação
+ */
+export async function createApprovalInstance(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.execute(
+    `INSERT INTO approvalInstances 
+    (flowConfigId, processType, processId, processTitle, requesterId, requesterName, 
+     status, currentLevel, processData, metadata, submittedAt) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      data.flowConfigId,
+      data.processType,
+      data.processId,
+      data.processTitle || null,
+      data.requesterId,
+      data.requesterName || null,
+      data.status || 'draft',
+      data.currentLevel || 1,
+      data.processData ? JSON.stringify(data.processData) : null,
+      data.metadata ? JSON.stringify(data.metadata) : null,
+      data.submittedAt || null
+    ]
+  );
+
+  return result[0].insertId;
+}
+
+/**
+ * Listar instâncias de aprovação
+ */
+export async function listApprovalInstances(filters?: {
+  processType?: string;
+  status?: string;
+  requesterId?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let query = 'SELECT * FROM approvalInstances WHERE 1=1';
+  const params: any[] = [];
+
+  if (filters?.processType) {
+    query += ' AND processType = ?';
+    params.push(filters.processType);
+  }
+
+  if (filters?.status) {
+    query += ' AND status = ?';
+    params.push(filters.status);
+  }
+
+  if (filters?.requesterId) {
+    query += ' AND requesterId = ?';
+    params.push(filters.requesterId);
+  }
+
+  query += ' ORDER BY createdAt DESC';
+
+  const result = await db.execute(query, params);
+  return result[0] as any[];
+}
+
+/**
+ * Buscar instância de aprovação por ID
+ */
+export async function getApprovalInstanceById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.execute(
+    'SELECT * FROM approvalInstances WHERE id = ? LIMIT 1',
+    [id]
+  );
+
+  const rows = result[0] as any[];
+  return rows[0] || null;
+}
+
+/**
+ * Atualizar instância de aprovação
+ */
+export async function updateApprovalInstance(id: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const updates: string[] = [];
+  const params: any[] = [];
+
+  if (data.status !== undefined) {
+    updates.push('status = ?');
+    params.push(data.status);
+  }
+
+  if (data.currentLevel !== undefined) {
+    updates.push('currentLevel = ?');
+    params.push(data.currentLevel);
+  }
+
+  if (data.completedAt !== undefined) {
+    updates.push('completedAt = ?');
+    params.push(data.completedAt);
+  }
+
+  if (updates.length === 0) return;
+
+  updates.push('updatedAt = NOW()');
+  params.push(id);
+
+  await db.execute(
+    `UPDATE approvalInstances SET ${updates.join(', ')} WHERE id = ?`,
+    params
+  );
+}
+
+/**
+ * Criar ação de aprovação
+ */
+export async function createApprovalAction(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.execute(
+    `INSERT INTO approvalActions 
+    (instanceId, level, approverId, approverName, approverRole, action, comments, 
+     attachments, delegatedTo, delegatedToName) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      data.instanceId,
+      data.level,
+      data.approverId,
+      data.approverName || null,
+      data.approverRole || null,
+      data.action,
+      data.comments || null,
+      data.attachments ? JSON.stringify(data.attachments) : null,
+      data.delegatedTo || null,
+      data.delegatedToName || null
+    ]
+  );
+
+  return result[0].insertId;
+}
+
+/**
+ * Listar ações de uma instância
+ */
+export async function getApprovalActionsByInstance(instanceId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db.execute(
+    'SELECT * FROM approvalActions WHERE instanceId = ? ORDER BY createdAt ASC',
+    [instanceId]
+  );
+
+  return result[0] as any[];
+}
+
+/**
+ * Criar notificação de aprovação
+ */
+export async function createApprovalNotification(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.execute(
+    `INSERT INTO approvalNotifications 
+    (instanceId, recipientId, recipientEmail, notificationType, subject, message, status) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [
+      data.instanceId,
+      data.recipientId,
+      data.recipientEmail || null,
+      data.notificationType,
+      data.subject || null,
+      data.message || null,
+      data.status || 'pending'
+    ]
+  );
+
+  return result[0].insertId;
+}
+
+/**
+ * Listar notificações pendentes
+ */
+export async function getPendingApprovalNotifications() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db.execute(
+    'SELECT * FROM approvalNotifications WHERE status = ? ORDER BY createdAt ASC LIMIT 100',
+    ['pending']
+  );
+
+  return result[0] as any[];
+}
+
+/**
+ * Marcar notificação como enviada
+ */
+export async function markApprovalNotificationAsSent(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.execute(
+    'UPDATE approvalNotifications SET status = ?, sentAt = NOW() WHERE id = ?',
+    ['sent', id]
+  );
 }

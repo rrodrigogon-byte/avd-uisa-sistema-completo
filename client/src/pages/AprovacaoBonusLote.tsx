@@ -48,7 +48,7 @@ export default function AprovacaoBonusLote() {
     status: "calculado",
   });
 
-  const { data: departments } = trpc.organization.departments.list.useQuery();
+  const { data: departments } = trpc.organization.departments.list.useQuery({});
 
   // Mutations
   const approveBatch = trpc.bonus.approveBatch.useMutation({

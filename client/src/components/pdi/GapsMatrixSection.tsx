@@ -26,7 +26,7 @@ export default function GapsMatrixSection({ pdiId, gaps }: GapsMatrixSectionProp
   });
 
   const utils = trpc.useUtils();
-  const { data: competencies } = trpc.competencies.list.useQuery();
+  const { data: competencies } = trpc.competencies.list.useQuery({});
 
   const addGapMutation = trpc.pdiIntelligent.addGap.useMutation({
     onSuccess: () => {

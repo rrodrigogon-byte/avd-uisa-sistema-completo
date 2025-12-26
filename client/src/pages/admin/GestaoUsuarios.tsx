@@ -75,7 +75,7 @@ type UserFormData = z.infer<typeof userSchema>;
 
 export default function GestaoUsuarios() {
   const { user, loading: authLoading } = useAuth();
-  const { data: users, isLoading, refetch } = trpc.users.list.useQuery();
+  const { data: users, isLoading, refetch } = trpc.users.list.useQuery({});
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

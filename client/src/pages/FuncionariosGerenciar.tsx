@@ -51,8 +51,8 @@ export default function FuncionariosGerenciar() {
     departmentId: selectedDepartment !== "all" ? parseInt(selectedDepartment) : undefined,
   });
 
-  const { data: departments } = trpc.employees.getDepartments.useQuery();
-  const { data: positions } = trpc.positions.list.useQuery();
+  const { data: departments } = trpc.employees.getDepartments.useQuery({});
+  const { data: positions } = trpc.positions.list.useQuery({});
 
   // Mutations
   const createMutation = trpc.employees.create.useMutation({

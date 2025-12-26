@@ -43,10 +43,10 @@ export default function EmailMetrics() {
   const { user } = useAuth();
 
   // Buscar estatísticas agregadas
-  const { data: stats, isLoading } = trpc.admin.getEmailStats.useQuery();
+  const { data: stats, isLoading } = trpc.admin.getEmailStats.useQuery({});
 
   // Buscar histórico de e-mails
-  const { data: emailHistory } = trpc.admin.getEmailHistory.useQuery();
+  const { data: emailHistory } = trpc.admin.getEmailHistory.useQuery({});
 
   // Verificar se é admin
   if (user?.role !== "admin") {

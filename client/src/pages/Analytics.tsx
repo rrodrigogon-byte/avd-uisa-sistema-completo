@@ -26,10 +26,10 @@ export default function Analytics() {
   const { data: headcountByPosition } = trpc.analytics.getHeadcountByPosition.useQuery(
     selectedCostCenter !== "all" ? { costCenter: selectedCostCenter } : undefined
   );
-  const { data: turnoverRate } = trpc.analytics.getTurnoverRate.useQuery();
-  const { data: averageTenure } = trpc.analytics.getAverageTenure.useQuery();
-  const { data: diversity } = trpc.analytics.getDiversityAnalysis.useQuery();
-  const { data: growthProjection } = trpc.analytics.getGrowthProjection.useQuery();
+  const { data: turnoverRate } = trpc.analytics.getTurnoverRate.useQuery({});
+  const { data: averageTenure } = trpc.analytics.getAverageTenure.useQuery({});
+  const { data: diversity } = trpc.analytics.getDiversityAnalysis.useQuery({});
+  const { data: growthProjection } = trpc.analytics.getGrowthProjection.useQuery({});
 
   const handleExport = () => {
     toast.info("Exportando relatório de Analytics...");

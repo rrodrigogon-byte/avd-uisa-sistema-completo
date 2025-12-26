@@ -19,8 +19,8 @@ export default function DashboardsAnaliticos() {
   const [activeTab, setActiveTab] = useState("geral");
 
   // Queries
-  const { data: departments = [] } = trpc.employees.listDepartments.useQuery();
-  const { data: processes = [] } = trpc.evaluationProcesses.list.useQuery();
+  const { data: departments = [] } = trpc.employees.listDepartments.useQuery({});
+  const { data: processes = [] } = trpc.evaluationProcesses.list.useQuery({});
 
   // Mock data para demonstração - substituir por queries reais
   const kpiData = {

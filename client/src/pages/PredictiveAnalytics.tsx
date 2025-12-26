@@ -19,15 +19,15 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 export default function PredictiveAnalytics() {
   const [selectedEmployee, setSelectedEmployee] = useState<number | null>(null);
 
-  const { data: turnoverRisks, isLoading: loadingTurnover } = trpc.predictiveAnalytics.turnoverRisk.useQuery();
+  const { data: turnoverRisks, isLoading: loadingTurnover } = trpc.predictiveAnalytics.turnoverRisk.useQuery({});
   const { data: performanceTrend, isLoading: loadingPerformance } = trpc.predictiveAnalytics.performanceTrend.useQuery(
     { employeeId: selectedEmployee || undefined },
     { enabled: !!selectedEmployee }
   );
-  const { data: trainingNeeds, isLoading: loadingTraining } = trpc.predictiveAnalytics.trainingNeeds.useQuery();
-  const { data: promotionReadiness, isLoading: loadingPromotion } = trpc.predictiveAnalytics.promotionReadiness.useQuery();
-  const { data: engagementScores, isLoading: loadingEngagement } = trpc.predictiveAnalytics.engagementScore.useQuery();
-  const { data: proactiveAlerts } = trpc.predictiveAnalytics.proactiveAlerts.useQuery();
+  const { data: trainingNeeds, isLoading: loadingTraining } = trpc.predictiveAnalytics.trainingNeeds.useQuery({});
+  const { data: promotionReadiness, isLoading: loadingPromotion } = trpc.predictiveAnalytics.promotionReadiness.useQuery({});
+  const { data: engagementScores, isLoading: loadingEngagement } = trpc.predictiveAnalytics.engagementScore.useQuery({});
+  const { data: proactiveAlerts } = trpc.predictiveAnalytics.proactiveAlerts.useQuery({});
 
   const getRiskColor = (score: number) => {
     if (score >= 70) return "destructive";

@@ -33,8 +33,8 @@ export default function RankingGamificacao() {
     limit: 10,
   });
 
-  const { data: departments } = trpc.departments.list.useQuery();
-  const { data: levels } = trpc.gamification.getLevels.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: levels } = trpc.gamification.getLevels.useQuery({});
   const { data: myStats } = trpc.gamification.getEmployeeStats.useQuery(
     { employeeId: user?.id || 0 },
     { enabled: !!user?.id }

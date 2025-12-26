@@ -13,7 +13,7 @@ export default function CiclosAvaliacaoLista() {
   const { user } = useAuth();
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
 
-  const { data: cycles, isLoading } = trpc.performanceEvaluationCycle.listCycles.useQuery();
+  const { data: cycles, isLoading } = trpc.performanceEvaluationCycle.listCycles.useQuery({});
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {

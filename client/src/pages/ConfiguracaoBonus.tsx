@@ -47,8 +47,8 @@ export default function ConfiguracaoBonus() {
   const [extraBonusPercentage, setExtraBonusPercentage] = useState("");
 
   // Queries
-  const { data: configs = [], refetch } = trpc.bonus.listConfigs.useQuery();
-  const { data: positions = [] } = trpc.positions.list.useQuery();
+  const { data: configs = [], refetch } = trpc.bonus.listConfigs.useQuery({});
+  const { data: positions = [] } = trpc.positions.list.useQuery({});
 
   // Mutations
   const createMutation = trpc.bonus.createConfig.useMutation({

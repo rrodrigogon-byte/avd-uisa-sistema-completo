@@ -36,7 +36,7 @@ export default function CyclePreview({
   onSubmit,
   isSubmitting
 }: CyclePreviewProps) {
-  const { data: competencies } = trpc.competencies.list.useQuery();
+  const { data: competencies } = trpc.competencies.list.useQuery({});
   const { employees } = useEmployeeSearch("");
 
   const selectedCompetenciesDetails = competencies?.filter(c => 

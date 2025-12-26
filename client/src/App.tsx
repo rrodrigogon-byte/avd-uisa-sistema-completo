@@ -50,6 +50,8 @@ import {
 import AprovacoesCargos from "./pages/AprovacoesCargos";
 import FuncionariosImportados from "./pages/FuncionariosImportados";
 import FluxoAprovacaoCargos from "./pages/FluxoAprovacaoCargos";
+import CargosGerenciar from "./pages/CargosGerenciar";
+import AprovacoesConfigurar from "./pages/AprovacoesConfigurar";
 import ABTestDashboard from "./pages/ABTestDashboard";
 import NPSDashboard from "./pages/NPSDashboard";
 import ConsolidatedNpsReport from "./pages/ConsolidatedNpsReport";
@@ -526,6 +528,12 @@ function Router() {
       {/* Rota de Aprovações de Cargos com workflow de 4 níveis */}
       <Route path="/aprovacoes/cargos" component={AprovacoesCargos} />
       <Route path="/fluxo-aprovacao-cargos" component={FluxoAprovacaoCargos} />
+      
+      {/* Gestão de Cargos e Aprovações Completas (25/12/2025) */}
+      <Route path="/cargos/gerenciar" component={CargosGerenciar} />
+      <Route path="/hr/cargos/gerenciar" component={CargosGerenciar} />
+      <Route path="/aprovacoes/configurar" component={AprovacoesConfigurar} />
+      <Route path="/hr/aprovacoes/configurar" component={AprovacoesConfigurar} />
       <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
       <Route path="/testes/enviar" component={EnviarTestes} />
       <Route path="/testes-psicometricos/enviar" component={EnviarTestes} />
@@ -575,6 +583,7 @@ function Router() {
       <Route path="/hr/employees" component={Employees} />
       <Route path="/employees/:id" component={EmployeeProfile} />
       <Route path="/hr/organization-chart" component={OrganizationChart} />
+      <Route path="/hr/org-chart" component={Organograma} />
       <Route path="/organograma/hierarquia" component={OrganogramaHierarchy} />
       <Route path="/dashboard/notificacoes" component={DashboardNotificacoes} />
       <Route path="/dashboard/auditoria" component={DashboardAuditoria} />

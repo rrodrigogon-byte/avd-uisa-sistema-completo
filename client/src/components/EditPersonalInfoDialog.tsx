@@ -39,8 +39,8 @@ export default function EditPersonalInfoDialog({
     hireDate: employee.hireDate ? new Date(employee.hireDate).toISOString().split("T")[0] : "",
   });
 
-  const { data: departments } = trpc.departments.list.useQuery();
-  const { data: positions } = trpc.positionsManagement.list.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: positions } = trpc.positionsManagement.list.useQuery({});
 
   const updateMutation = trpc.employeeProfile.updatePersonalInfo.useMutation({
     onSuccess: () => {

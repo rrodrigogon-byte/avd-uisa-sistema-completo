@@ -167,7 +167,7 @@ export function OrgChartHierarchical() {
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
   const [autoExpandLevel, setAutoExpandLevel] = useState(2);
 
-  const { data: orgData, isLoading } = trpc.orgChart.getOrgChart.useQuery();
+  const { data: orgData, isLoading } = trpc.orgChart.getOrgChart.useQuery({});
 
   // Auto-expandir primeiros níveis
   const handleToggleExpand = (id: number) => {

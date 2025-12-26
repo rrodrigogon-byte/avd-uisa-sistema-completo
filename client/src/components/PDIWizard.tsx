@@ -32,7 +32,7 @@ export default function PDIWizard({ onComplete, onCancel }: PDIWizardProps) {
     }
     return acc;
   }, []) || [];
-  const { data: employee } = trpc.employees.getCurrent.useQuery();
+  const { data: employee } = trpc.employees.getCurrent.useQuery({});
 
   const totalSteps = 6;
   const progressPercentage = (currentStep / totalSteps) * 100;

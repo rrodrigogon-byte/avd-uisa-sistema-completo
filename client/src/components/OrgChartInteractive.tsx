@@ -278,7 +278,7 @@ export function OrgChartInteractive() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [moveDialogOpen, setMoveDialogOpen] = useState(false);
 
-  const { data: orgData, isLoading, refetch } = trpc.orgChart.getOrgChart.useQuery();
+  const { data: orgData, isLoading, refetch } = trpc.orgChart.getOrgChart.useQuery({});
   const updateManagerMutation = trpc.orgChart.updateManager.useMutation();
 
   const utils = trpc.useUtils();

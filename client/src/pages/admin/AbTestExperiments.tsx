@@ -37,7 +37,7 @@ export default function AbTestExperiments() {
 
   // Queries
   const { data: experiments, isLoading: loadingExperiments, refetch: refetchExperiments } = 
-    trpc.abTestLayout.listLayoutExperiments.useQuery();
+    trpc.abTestLayout.listLayoutExperiments.useQuery({});
   
   const { data: comparison, isLoading: loadingComparison } = 
     trpc.abTestMetrics.getComparison.useQuery(

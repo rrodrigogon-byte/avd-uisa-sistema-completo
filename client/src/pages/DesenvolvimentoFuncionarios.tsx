@@ -36,7 +36,7 @@ export default function DesenvolvimentoFuncionarios() {
     status: statusFilter !== "all" ? (statusFilter as "ativo" | "afastado" | "desligado") : undefined,
   });
 
-  const { data: departments } = trpc.departments.list.useQuery();
+  const { data: departments } = trpc.departments.list.useQuery({});
 
   const handleViewProfile = (employeeId: number) => {
     setLocation(`/desenvolvimento/funcionarios/${employeeId}`);

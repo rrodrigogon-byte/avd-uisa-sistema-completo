@@ -151,7 +151,7 @@ export default function DashboardGestor() {
   }, { enabled: !!user?.id });
 
   // Buscar departamentos para filtro
-  const { data: departments } = trpc.organization.getDepartments.useQuery();
+  const { data: departments } = trpc.organization.getDepartments.useQuery({});
 
   const isLoading = statsLoading || periodLoading || deptLoading || evaluationsLoading;
 

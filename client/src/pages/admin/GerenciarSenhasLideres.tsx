@@ -18,7 +18,7 @@ export default function GerenciarSenhasLideres() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Buscar todos os líderes (employees com subordinados)
-  const { data: leaders, isLoading, refetch } = trpc.employees.getLeaders.useQuery();
+  const { data: leaders, isLoading, refetch } = trpc.employees.getLeaders.useQuery({});
 
   // Mutation para atualizar senha
   const updatePasswordMutation = trpc.employees.updatePassword.useMutation({

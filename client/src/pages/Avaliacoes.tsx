@@ -39,8 +39,8 @@ export default function Avaliacoes() {
   });
 
   const { data: evaluations } = trpc.evaluations.list.useQuery({});
-  const { data: employee } = trpc.employees.getCurrent.useQuery();
-  const { data: cycles, refetch: refetchCycles } = trpc.evaluationCycles.list.useQuery();
+  const { data: employee } = trpc.employees.getCurrent.useQuery({});
+  const { data: cycles, refetch: refetchCycles } = trpc.evaluationCycles.list.useQuery({});
 
   // Mutation para criar ciclo
   const createCycleMutation = trpc.evaluationCycles.create.useMutation({

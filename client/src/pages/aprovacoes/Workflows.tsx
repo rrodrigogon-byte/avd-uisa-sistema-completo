@@ -49,7 +49,7 @@ export default function Workflows() {
   });
 
   // Buscar workflows do backend
-  const { data: backendWorkflows, refetch } = trpc.workflows.list.useQuery();
+  const { data: backendWorkflows, refetch } = trpc.workflows.list.useQuery({});
 
   // Mutation para criar workflow
   const createWorkflowMutation = trpc.workflows.create.useMutation({

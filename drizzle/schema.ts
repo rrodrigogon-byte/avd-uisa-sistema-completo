@@ -9303,3 +9303,260 @@ export type PositionCompetencyMatrix = typeof positionCompetencyMatrix.$inferSel
 export type InsertPositionCompetencyMatrix = typeof positionCompetencyMatrix.$inferInsert;
 
 
+// ============================================================================
+// SISTEMA DE CONFIGURAÇÃO DE APROVAÇÕES
+// ============================================================================
+
+/**
+ * Configuração de Fluxos de Aprovação
+ * Define fluxos de aprovação personalizados por tipo de processo e cargo
+ */
+export const approvalFlowConfigs = mysqlTable("approvalFlowConfigs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identificação
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Tipo de processo que usa este fluxo
+  processType: mysqlEnum("processType", [
+    "job_description",      // Descrição de cargo
+    "performance_review",   // Avaliação de desempenho
+    "salary_adjustment",    // Ajuste salarial
+    "promotion",            // Promoção
+    "bonus_approval",       // Aprovação de bônus
+    "pdi_approval",         // Aprovação de PDI
+    "hiring",               // Contratação
+    "termination",          // Desligamento
+    "transfer",             // Transferência
+    "custom"                // Fluxo customizado
+  ]).notNull(),
+  
+  // Escopo de aplicação
+  scope: mysqlEnum("scope", ["global", "department", "position", "level"]).default("global").notNull(),
+  departmentId: int("departmentId"), // Se scope = department
+  positionId: int("positionId"),     // Se scope = position
+  hierarchyLevel: varchar("hierarchyLevel", { length: 50 }), // Se scope = level
+  
+  // Configuração dos níveis de aprovação (array de níveis)
+  approvalLevels: json("approvalLevels").$type<{
+    level: number;
+    name: string;
+    description?: string;
+    roleRequired?: string; // Role necessária (admin, rh, gestor, etc)
+    specificApproverId?: number; // ID de aprovador específico (opcional)
+    autoApprove?: boolean; // Aprovação automática neste nível
+    requiredAll?: boolean; // Requer aprovação de todos os aprovadores do nível
+    timeoutDays?: number; // Dias para timeout
+  }[]>().notNull(),
+  
+  // Regras de negócio
+  allowParallelApproval: boolean("allowParallelApproval").default(false).notNull(), // Permite aprovação paralela em um nível
+  allowSkipLevels: boolean("allowSkipLevels").default(false).notNull(), // Permite pular níveis
+  requireComments: boolean("requireComments").default(false).notNull(), // Requer comentários em todas as aprovações
+  notifyOnEachLevel: boolean("notifyOnEachLevel").default(true).notNull(), // Notificar a cada mudança de nível
+  
+  // Status e controle
+  active: boolean("active").default(true).notNull(),
+  isDefault: boolean("isDefault").default(false).notNull(), // Fluxo padrão para o tipo de processo
+  priority: int("priority").default(0).notNull(), // Prioridade na seleção (maior = mais prioritário)
+  
+  // Auditoria
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApprovalFlowConfig = typeof approvalFlowConfigs.$inferSelect;
+export type InsertApprovalFlowConfig = typeof approvalFlowConfigs.$inferInsert;
+
+/**
+ * Instâncias de Aprovação
+ * Registra cada processo de aprovação em andamento
+ */
+export const approvalInstances = mysqlTable("approvalInstances", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Vinculação com o fluxo de aprovação
+  flowConfigId: int("flowConfigId").notNull(),
+  
+  // Identificação do processo
+  processType: varchar("processType", { length: 50 }).notNull(),
+  processId: int("processId").notNull(), // ID do registro sendo aprovado
+  processTitle: varchar("processTitle", { length: 500 }), // Título/descrição do processo
+  
+  // Solicitante
+  requesterId: int("requesterId").notNull(),
+  requesterName: varchar("requesterName", { length: 255 }),
+  
+  // Status atual
+  status: mysqlEnum("status", [
+    "draft",
+    "pending",
+    "in_progress",
+    "approved",
+    "rejected",
+    "cancelled",
+    "expired"
+  ]).default("draft").notNull(),
+  
+  currentLevel: int("currentLevel").default(1).notNull(),
+  
+  // Dados do processo (snapshot)
+  processData: json("processData"), // Dados relevantes do processo
+  
+  // Metadados
+  metadata: json("metadata"), // Informações adicionais
+  
+  // Datas importantes
+  submittedAt: datetime("submittedAt"),
+  completedAt: datetime("completedAt"),
+  expiresAt: datetime("expiresAt"),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApprovalInstance = typeof approvalInstances.$inferSelect;
+export type InsertApprovalInstance = typeof approvalInstances.$inferInsert;
+
+/**
+ * Ações de Aprovação
+ * Registra cada ação tomada em um processo de aprovação
+ */
+export const approvalActions = mysqlTable("approvalActions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Vinculação
+  instanceId: int("instanceId").notNull(),
+  level: int("level").notNull(),
+  
+  // Aprovador
+  approverId: int("approverId").notNull(),
+  approverName: varchar("approverName", { length: 255 }),
+  approverRole: varchar("approverRole", { length: 100 }),
+  
+  // Ação
+  action: mysqlEnum("action", [
+    "approved",
+    "rejected",
+    "returned",
+    "delegated",
+    "commented"
+  ]).notNull(),
+  
+  // Detalhes
+  comments: text("comments"),
+  attachments: json("attachments").$type<{
+    name: string;
+    url: string;
+    type: string;
+  }[]>(),
+  
+  // Delegação (se aplicável)
+  delegatedTo: int("delegatedTo"),
+  delegatedToName: varchar("delegatedToName", { length: 255 }),
+  
+  // Timestamp
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ApprovalAction = typeof approvalActions.$inferSelect;
+export type InsertApprovalAction = typeof approvalActions.$inferInsert;
+
+/**
+ * Notificações de Aprovação
+ * Gerencia notificações enviadas durante o processo de aprovação
+ */
+export const approvalNotifications = mysqlTable("approvalNotifications", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Vinculação
+  instanceId: int("instanceId").notNull(),
+  
+  // Destinatário
+  recipientId: int("recipientId").notNull(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }),
+  
+  // Tipo de notificação
+  notificationType: mysqlEnum("notificationType", [
+    "approval_request",
+    "approval_reminder",
+    "approval_approved",
+    "approval_rejected",
+    "approval_completed",
+    "approval_expired",
+    "approval_delegated"
+  ]).notNull(),
+  
+  // Conteúdo
+  subject: varchar("subject", { length: 500 }),
+  message: text("message"),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "sent", "failed"]).default("pending").notNull(),
+  sentAt: datetime("sentAt"),
+  
+  // Auditoria
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ApprovalNotification = typeof approvalNotifications.$inferSelect;
+export type InsertApprovalNotification = typeof approvalNotifications.$inferInsert;
+
+// Relations
+export const approvalFlowConfigsRelations = relations(approvalFlowConfigs, ({ one, many }) => ({
+  department: one(departments, {
+    fields: [approvalFlowConfigs.departmentId],
+    references: [departments.id],
+  }),
+  position: one(positions, {
+    fields: [approvalFlowConfigs.positionId],
+    references: [positions.id],
+  }),
+  creator: one(users, {
+    fields: [approvalFlowConfigs.createdBy],
+    references: [users.id],
+  }),
+  instances: many(approvalInstances),
+}));
+
+export const approvalInstancesRelations = relations(approvalInstances, ({ one, many }) => ({
+  flowConfig: one(approvalFlowConfigs, {
+    fields: [approvalInstances.flowConfigId],
+    references: [approvalFlowConfigs.id],
+  }),
+  requester: one(users, {
+    fields: [approvalInstances.requesterId],
+    references: [users.id],
+  }),
+  actions: many(approvalActions),
+  notifications: many(approvalNotifications),
+}));
+
+export const approvalActionsRelations = relations(approvalActions, ({ one }) => ({
+  instance: one(approvalInstances, {
+    fields: [approvalActions.instanceId],
+    references: [approvalInstances.id],
+  }),
+  approver: one(users, {
+    fields: [approvalActions.approverId],
+    references: [users.id],
+  }),
+  delegatedToUser: one(users, {
+    fields: [approvalActions.delegatedTo],
+    references: [users.id],
+  }),
+}));
+
+export const approvalNotificationsRelations = relations(approvalNotifications, ({ one }) => ({
+  instance: one(approvalInstances, {
+    fields: [approvalNotifications.instanceId],
+    references: [approvalInstances.id],
+  }),
+  recipient: one(users, {
+    fields: [approvalNotifications.recipientId],
+    references: [users.id],
+  }),
+}));
