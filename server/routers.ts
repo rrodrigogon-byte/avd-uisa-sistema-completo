@@ -80,6 +80,8 @@ import { adminRouter } from "./routers/adminRouter";
 import { pushNotificationsRouter } from "./routers/pushNotificationsRouter";
 import { employeesRouter } from "./routers/employeesRouter";
 import { employeeProfileRouter } from "./routers/employeeProfileRouter";
+import { userRolesRouter } from "./routers/userRolesRouter";
+import { managerReviewRouter } from "./routers/managerReviewRouter";
 import { employeeHistoryRouter } from "./routers/employeeHistoryRouter";
 import { dashboardStatsRouter } from "./routers/dashboardStatsRouter";
 import { employeeBulkImportRouter } from "./routers/employeeBulkImportRouter";
@@ -321,6 +323,8 @@ export const appRouter = router({
   auditAlerts: auditAlertsRouter,
   search: searchRouter,
   users: usersRouter,
+  userRoles: userRolesRouter,
+  managerReview: managerReviewRouter,
   avdUisa: avdUisaRouter,
   avd: avdRouter,
   avdExport: avdExportRouter,
@@ -1484,7 +1488,7 @@ export const appRouter = router({
         return { id: itemId, success: true };
       }),
 
-    getDevelopmentActions: protectedProcedure.input(z.object({})).query(async () => {
+    getDevelopmentActions: protectedProcedure.query(async () => {
       return await db.getDevelopmentActions();
     }),
 
@@ -3059,11 +3063,11 @@ export const appRouter = router({
   // CICLOS, DEPARTAMENTOS E CARGOS (Legacy)
   // ============================================================================
   cyclesLegacy: router({
-    list: protectedProcedure.input(z.object({})).query(async () => {
+    list: protectedProcedure.query(async () => {
       return await db.getAllCycles();
     }),
 
-    getActive: protectedProcedure.input(z.object({})).query(async () => {
+    getActive: protectedProcedure.query(async () => {
       return await db.getActiveCycle();
     }),
 
@@ -3082,13 +3086,13 @@ export const appRouter = router({
   }),
 
   departments: router({
-    list: protectedProcedure.input(z.object({})).query(async () => {
+    list: protectedProcedure.query(async () => {
       return await db.getAllDepartments();
     }),
   }),
 
   positions: router({
-    list: protectedProcedure.input(z.object({})).query(async () => {
+    list: protectedProcedure.query(async () => {
       return await db.getAllPositions();
     }),
   }),
@@ -3097,7 +3101,7 @@ export const appRouter = router({
   // COMPETÊNCIAS
   // ============================================================================
   competencies: router({
-    list: protectedProcedure.input(z.object({})).query(async () => {
+    list: protectedProcedure.query(async () => {
       return await db.getAllCompetencies();
     }),
     
@@ -3482,7 +3486,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Planos de Sucessão
   successionPlans: router({
-    list: protectedProcedure.input(z.object({})).query(async () => {
+    list: protectedProcedure.query(async () => {
       const database = await getDb();
       if (!database) return [];
 
@@ -4412,7 +4416,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       }),
 
     // Buscar TODOS os testes (apenas RH/Admin)
-    getAllTests: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    getAllTests: protectedProcedure.query(async ({ ctx }) => {
       const database = await getDb();
       if (!database) return [];
 
@@ -4461,7 +4465,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     }),
 
     // Buscar testes de um colaborador
-    getTests: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    getTests: protectedProcedure.query(async ({ ctx }) => {
       const database = await getDb();
       if (!database) return [];
 
@@ -4834,7 +4838,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       }),
 
     // Obter estatísticas do dashboard de testes psicométricos
-    getDashboardStats: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    getDashboardStats: protectedProcedure.query(async ({ ctx }) => {
       // Verificar se é RH ou Admin
       if (ctx.user!.role !== 'admin' && ctx.user!.role !== 'rh') {
         throw new TRPCError({
@@ -5501,13 +5505,13 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         }));
       }),
       
-    getDepartments: protectedProcedure.input(z.object({})).query(async () => {
+    getDepartments: protectedProcedure.query(async () => {
       const database = await getDb();
       if (!database) return [];
       return database.select().from(departments).where(eq(departments.active, true)).orderBy(departments.name);
     }),
     
-    getCostCenters: protectedProcedure.input(z.object({})).query(async () => {
+    getCostCenters: protectedProcedure.query(async () => {
       const database = await getDb();
       if (!database) return [];
       return database.select().from(costCenters).where(eq(costCenters.active, true)).orderBy(costCenters.name);
@@ -5684,7 +5688,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // Router de Emails
   emails: router({
     // Buscar métricas de emails
-    getMetrics: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    getMetrics: protectedProcedure.query(async ({ ctx }) => {
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -5706,7 +5710,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     }),
 
     // Buscar histórico de emails
-    getHistory: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    getHistory: protectedProcedure.query(async ({ ctx }) => {
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -5892,7 +5896,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // Router de Centros de Custos
   costCenters: router({
     // Listar todos os centros de custos ativos
-    list: publicProcedure.input(z.object({})).query(async () => {
+    list: publicProcedure.query(async () => {
       const database = await getDb();
       if (!database) return [];
 
@@ -5979,7 +5983,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // E-MAIL
   // ============================================================================
   smtpConfig: router({
-    get: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    get: protectedProcedure.query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
@@ -6081,7 +6085,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // ============================================================================
   workflows: router({
     // Listar todos os workflows
-    list: protectedProcedure.input(z.object({})).query(async () => {
+    list: protectedProcedure.query(async () => {
       const database = await getDb();
       if (!database) return [];
 

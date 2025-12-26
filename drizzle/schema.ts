@@ -486,6 +486,11 @@ export const performanceEvaluations = mysqlTable("performanceEvaluations", {
   managerScore: int("managerScore"), // Nota do gestor (0-100)
   finalScore: int("finalScore"), // Nota final (0-100)
   managerComments: text("managerComments"), // Comentários do gestor
+  
+  // Revisão do Gestor
+  managerReviewStatus: mysqlEnum("managerReviewStatus", ["approved", "rejected", "needs_revision"]),
+  managerReviewedAt: datetime("managerReviewedAt"),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   completedAt: datetime("completedAt"),

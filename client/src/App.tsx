@@ -51,6 +51,9 @@ import AprovacoesCargos from "./pages/AprovacoesCargos";
 import FuncionariosImportados from "./pages/FuncionariosImportados";
 import FluxoAprovacaoCargos from "./pages/FluxoAprovacaoCargos";
 import CargosGerenciar from "./pages/CargosGerenciar";
+import ImportacaoCargos from "./pages/ImportacaoCargos";
+import GerenciarPapeis from "./pages/GerenciarPapeis";
+import RevisaoLiderados from "./pages/RevisaoLiderados";
 import AprovacoesConfigurar from "./pages/AprovacoesConfigurar";
 import ABTestDashboard from "./pages/ABTestDashboard";
 import NPSDashboard from "./pages/NPSDashboard";
@@ -533,7 +536,11 @@ function Router() {
       
       {/* Gestão de Cargos e Aprovações Completas (25/12/2025) */}
       <Route path="/cargos/gerenciar" component={CargosGerenciar} />
+      <Route path="/cargos/importar" component={ImportacaoCargos} />
+      <Route path="/admin/papeis" component={GerenciarPapeis} />
+      <Route path="/gestor/revisao-liderados" component={RevisaoLiderados} />
       <Route path="/hr/cargos/gerenciar" component={CargosGerenciar} />
+      <Route path="/hr/cargos/importar" component={ImportacaoCargos} />
       <Route path="/aprovacoes/configurar" component={AprovacoesConfigurar} />
       <Route path="/hr/aprovacoes/configurar" component={AprovacoesConfigurar} />
       <Route path="/resultado-candidato/:id" component={ResultadoCandidato} />
