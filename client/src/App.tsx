@@ -142,6 +142,9 @@ import NineBoxComparativo from "./pages/NineBoxComparativo";
 import ReportBuilder from "./pages/ReportBuilder";
 import ReportAnalytics from "./pages/ReportAnalytics";
 import GestaoAprovadores from "./pages/GestaoAprovadores";
+import ImportarDiretoriaTAI from "./pages/ImportarDiretoriaTAI";
+import MonitoramentoAprovadores from "./pages/MonitoramentoAprovadores";
+import PrimeirosPassos from "./pages/PrimeirosPassos";
 import DashboardAprovacoes from "./pages/DashboardAprovacoes";
 import GerenciarUsuarios from "./pages/GerenciarUsuarios";
 import SuccessionImport from "./pages/SuccessionImport";
@@ -613,6 +616,9 @@ function Router() {
       <Route path="/avaliar-360/:id" component={Avaliar360} />
       <Route path="/admin/audit-log" component={AuditTrail} />
       <Route path="/admin/gestao-aprovadores" component={GestaoAprovadores} />
+      <Route path="/admin/importar-diretoria-tai" component={ImportarDiretoriaTAI} />
+      <Route path="/admin/monitoramento-aprovadores" component={MonitoramentoAprovadores} />
+      <Route path="/primeiros-passos" component={PrimeirosPassos} />
       <Route path="/admin/analytics" component={Analytics} />
       <Route path="/feedback" component={Feedbacks} />
       <Route path="/ciclos/:cycleId/criar-metas" component={CriarMetasCiclo} />

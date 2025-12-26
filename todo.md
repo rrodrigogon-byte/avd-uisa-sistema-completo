@@ -500,8 +500,48 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - **Tempo de resposta API:** < 200ms (média)
 - **Tamanho do bundle:** ~500KB (gzipped)
 
----
+----
 
+## 🆕 MELHORIAS DE USABILIDADE E MONITORAMENTO (26/12/2025 - Sprint 4)
+
+### Busca Global com Ctrl+K
+- [x] Implementar modal de busca global acionado por Ctrl+K
+- [x] Adicionar busca de funcionários por nome, email, cargo
+- [x] Adicionar busca de metas por título e descrição
+- [x] Adicionar busca de avaliações por colaborador e período
+- [x] Adicionar busca de PDIs por colaborador e status
+- [x] Implementar navegação rápida para resultados
+- [x] Adicionar histórico de buscas recentes (localStorage)
+- [x] Implementar destaque de termos encontrados
+
+### Monitoramento de Aprovadores
+- [x] Criar dashboard de status de aprovadores (/admin/monitoramento-aprovadores)
+- [x] Implementar alerta automático quando aprovador for desativado
+- [x] Adicionar notificação para administradores sobre aprovadores inativos
+- [x] Criar relatório de aprovadores por papel/função
+- [x] Implementar verificação periódica de status de aprovadores (procedure checkAndAlert)
+- [x] Adicionar sugestões de substituição automática (procedure getSuggestions)
+- [ ] Criar log de histórico de mudanças de aprovadores (TODO: tabela de auditoria)
+
+### Importação de Dados Diretoria TAI
+- [x] Processar arquivo DIRETORIATAI.xlsx com 154 funcionários
+- [x] Mapear campos do Excel para schema do banco de dados
+- [x] Identificar e cadastrar líderes da diretoria (19 líderes identificados)
+- [x] Importar todos os usuários da Diretoria de Gente, Inovação e Administração
+- [x] Validar hierarquia organizacional (gerências e diretorias)
+- [x] Configurar emails corporativos e pessoais
+- [x] Atribuir papéis e permissões adequadas (135 users, 13 RH, 6 líderes)
+- [x] Criar interface de importação (/admin/importar-diretoria-tai)
+
+### Instruções de Configuração Inicial
+- [x] Adicionar wizard de configuração inicial de aprovadores (Página Primeiros Passos)
+- [x] Criar página de ajuda "Primeiros Passos" (/primeiros-passos)
+- [x] Implementar tooltips e guias contextuais na gestão de aprovadores
+- [x] Adicionar validação de configuração mínima necessária
+- [x] Criar checklist de configuração inicial do sistema (4 passos)
+- [x] Implementar notificação de configuração incompleta (alertas na página)
+
+---
 ## 🎉 MARCOS ALCANÇADOS
 
 - ✅ **10/12/2025** - Projeto iniciado

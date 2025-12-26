@@ -116,6 +116,8 @@ import {
   searchRouter as hrSearchRouter 
 } from "./routers/hrManagementRouter";
 import { gestaoRouter } from "./routers/gestaoRouter";
+import { importTaiRouter } from "./routers/importTaiRouter";
+import { approverMonitoringRouter } from "./routers/approverMonitoringRouter";
 import { employeeManagementRouter } from "./employeeManagementRouter";
 import { jobDescriptionBatchApprovalRouter } from "./jobDescriptionBatchApprovalRouter";
 import { pendenciasRouter } from "./routers/pendenciasRouter";
@@ -319,6 +321,8 @@ export const appRouter = router({
   system: systemRouter,
   admin: adminRouter,
   gestao: gestaoRouter,
+  importTai: importTaiRouter,
+  approverMonitoring: approverMonitoringRouter,
   adminAdvanced: adminAdvancedRouter,
   audit: auditRouter,
   auditAlerts: auditAlertsRouter,
