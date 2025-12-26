@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, openId, name, email, role, createdAt, lastSignedIn FROM users WHERE email LIKE '%alexsandra%' OR name LIKE '%Alexsandra%' OR name LIKE '%Fernando Pinto%' OR email LIKE '%fernando%'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, openId, name, email, role, createdAt, lastSignedIn FROM users WHERE email LIKE '%alexsandra%' OR name LIKE '%Alexsandra%' OR name LIKE '%Fernando Pinto%' OR email LIKE '%fernando%'",
+  "rows": [
+    {
+      "id": "31446",
+      "openId": "leader_569efb2fd359420a",
+      "name": "FERNANDO RAPHAEL MODESTO DE OLIVEIRA",
+      "email": "fernando.modesto@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:18",
+      "lastSignedIn": "2025-12-15 21:37:18"
+    },
+    {
+      "id": "31481",
+      "openId": "leader_0b0a3fd4b1c84a71",
+      "name": "FERNANDO PINTO",
+      "email": "fernando.fpinto@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:18",
+      "lastSignedIn": "2025-12-15 21:37:18"
+    },
+    {
+      "id": "31594",
+      "openId": "leader_d67cfa866a9c4ff8",
+      "name": "FERNANDO TRIBUTINO",
+      "email": "fernando.tributino@uisa.com.br",
+      "role": "gestor",
+      "createdAt": "2025-12-15 21:37:19",
+      "lastSignedIn": "2025-12-15 21:37:19"
+    },
+    {
+      "id": "511399",
+      "openId": "temp_alexsandra.oliveira@uisa.com.br_1766758481399",
+      "name": "ALEXSANDRA TAVARES SOBRAL DE OLIVEIRA",
+      "email": "alexsandra.oliveira@uisa.com.br",
+      "role": "rh",
+      "createdAt": "2025-12-26 14:14:41",
+      "lastSignedIn": "2025-12-26 14:14:41"
+    },
+    {
+      "id": "511400",
+      "openId": "temp_alexsandra.oliveira@uisa.com.br_1766758500496",
+      "name": "ALEXSANDRA TAVARES SOBRAL DE OLIVEIRA",
+      "email": "alexsandra.oliveira@uisa.com.br",
+      "role": "rh",
+      "createdAt": "2025-12-26 14:15:00",
+      "lastSignedIn": "2025-12-26 14:15:00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\tcreatedAt\tlastSignedIn\n31446\tleader_569efb2fd359420a\tFERNANDO RAPHAEL MODESTO DE OLIVEIRA\tfernando.modesto@uisa.com.br\tgestor\t2025-12-15 21:37:18\t2025-12-15 21:37:18\n31481\tleader_0b0a3fd4b1c84a71\tFERNANDO PINTO\tfernando.fpinto@uisa.com.br\tgestor\t2025-12-15 21:37:18\t2025-12-15 21:37:18\n31594\tleader_d67cfa866a9c4ff8\tFERNANDO TRIBUTINO\tfernando.tributino@uisa.com.br\tgestor\t2025-12-15 21:37:19\t2025-12-15 21:37:19\n511399\ttemp_alexsandra.oliveira@uisa.com.br_1766758481399\tALEXSANDRA TAVARES SOBRAL DE OLIVEIRA\talexsandra.oliveira@uisa.com.br\trh\t2025-12-26 14:14:41\t2025-12-26 14:14:41\n511400\ttemp_alexsandra.oliveira@uisa.com.br_1766758500496\tALEXSANDRA TAVARES SOBRAL DE OLIVEIRA\talexsandra.oliveira@uisa.com.br\trh\t2025-12-26 14:15:00\t2025-12-26 14:15:00\n",
+  "stderr": "",
+  "execution_time_ms": 92
+}

@@ -1,0 +1,9 @@
+{
+  "query": "SELECT \n  jda.id as approvalId,\n  jda.jobDescriptionId,\n  jda.currentLevel,\n  jda.overallStatus,\n  \n  -- Nível 2 (Alexsandra)\n  jda.level2ApproverId,\n  jda.level2ApproverName,\n  e2.active as level2Active,\n  e2.email as level2Email,\n  \n  -- Nível 3 (André)\n  jda.level3ApproverId,\n  jda.level3ApproverName,\n  e3.active as level3Active,\n  e3.email as level3Email,\n  \n  -- Nível 4 (Rodrigo)\n  jda.level4ApproverId,\n  jda.level4ApproverName,\n  e4.active as level4Active,\n  e4.email as level4Email\n  \nFROM jobDescriptionApprovals jda\nLEFT JOIN employees e2 ON jda.level2ApproverId = e2.id\nLEFT JOIN employees e3 ON jda.level3ApproverId = e3.id\nLEFT JOIN employees e4 ON jda.level4ApproverId = e4.id\nWHERE e2.active = 0 OR e3.active = 0 OR e4.active = 0\nLIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT \n  jda.id as approvalId,\n  jda.jobDescriptionId,\n  jda.currentLevel,\n  jda.overallStatus,\n  \n  -- Nível 2 (Alexsandra)\n  jda.level2ApproverId,\n  jda.level2ApproverName,\n  e2.active as level2Active,\n  e2.email as level2Email,\n  \n  -- Nível 3 (André)\n  jda.level3ApproverId,\n  jda.level3ApproverName,\n  e3.active as level3Active,\n  e3.email as level3Email,\n  \n  -- Nível 4 (Rodrigo)\n  jda.level4ApproverId,\n  jda.level4ApproverName,\n  e4.active as level4Active,\n  e4.email as level4Email\n  \nFROM jobDescriptionApprovals jda\nLEFT JOIN employees e2 ON jda.level2ApproverId = e2.id\nLEFT JOIN employees e3 ON jda.level3ApproverId = e3.id\nLEFT JOIN employees e4 ON jda.level4ApproverId = e4.id\nWHERE e2.active = 0 OR e3.active = 0 OR e4.active = 0\nLIMIT 10",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 56
+}

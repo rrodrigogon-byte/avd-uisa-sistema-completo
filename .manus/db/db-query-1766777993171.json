@@ -1,0 +1,90 @@
+{
+  "query": "SELECT e.id, e.name, e.email, e.cargo, e.active, e.userId, u.email as userEmail, u.role as userRole FROM employees e LEFT JOIN users u ON e.userId = u.id WHERE e.email LIKE '%alexsandra%' OR e.name LIKE '%Alexsandra%' OR e.name LIKE '%Fernando Pinto%' OR e.email LIKE '%fernando%' LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT e.id, e.name, e.email, e.cargo, e.active, e.userId, u.email as userEmail, u.role as userRole FROM employees e LEFT JOIN users u ON e.userId = u.id WHERE e.email LIKE '%alexsandra%' OR e.name LIKE '%Alexsandra%' OR e.name LIKE '%Fernando Pinto%' OR e.email LIKE '%fernando%' LIMIT 20",
+  "rows": [
+    {
+      "id": "522",
+      "name": "FERNANDO RAPHAEL MODESTO DE OLIVEIRA",
+      "email": "fernando.modesto@uisa.com.br",
+      "cargo": "Gerente de Filial",
+      "active": "1",
+      "userId": "31446",
+      "userEmail": "fernando.modesto@uisa.com.br",
+      "userRole": "gestor"
+    },
+    {
+      "id": "1853",
+      "name": "FERNANDO PINTO",
+      "email": "fernando.fpinto@uisa.com.br",
+      "cargo": "Coordenador de Planejamento e Custos",
+      "active": "1",
+      "userId": "31481",
+      "userEmail": "fernando.fpinto@uisa.com.br",
+      "userRole": "gestor"
+    },
+    {
+      "id": "1966",
+      "name": "FERNANDO TRIBUTINO",
+      "email": "fernando.tributino@uisa.com.br",
+      "cargo": "NULL",
+      "active": "1",
+      "userId": "31594",
+      "userEmail": "fernando.tributino@uisa.com.br",
+      "userRole": "gestor"
+    },
+    {
+      "id": "2568",
+      "name": "ALEXSANDRA TAVARES SOBRAL DE OLIVEIRA",
+      "email": "alexsandra.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "active": "1",
+      "userId": "511399",
+      "userEmail": "alexsandra.oliveira@uisa.com.br",
+      "userRole": "rh"
+    },
+    {
+      "id": "30801",
+      "name": "FERNANDO TRIBUTINO",
+      "email": "fernando.tributino@uisa.com.br",
+      "cargo": "Líder Operações Agrícolas I",
+      "active": "1",
+      "userId": "NULL",
+      "userEmail": "NULL",
+      "userRole": "NULL"
+    },
+    {
+      "id": "31071",
+      "name": "ALEXSANDRA TAVARES SOBRAL DE OLIVEIRA",
+      "email": "alexsandra.oliveira@uisa.com.br",
+      "cargo": "Analista Estrutura e Remuneração SR",
+      "active": "1",
+      "userId": "NULL",
+      "userEmail": "NULL",
+      "userRole": "NULL"
+    },
+    {
+      "id": "31287",
+      "name": "FERNANDO MATHEUS DE SOUZA VERONEZE",
+      "email": "fernando.veroneze@geobiogas.tech",
+      "cargo": "NULL",
+      "active": "1",
+      "userId": "NULL",
+      "userEmail": "NULL",
+      "userRole": "NULL"
+    },
+    {
+      "id": "60017",
+      "name": "Fernando Pinto",
+      "email": "NULL",
+      "cargo": "Coordenador de Planejamento e Custos",
+      "active": "1",
+      "userId": "NULL",
+      "userEmail": "NULL",
+      "userRole": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tcargo\tactive\tuserId\tuserEmail\tuserRole\n522\tFERNANDO RAPHAEL MODESTO DE OLIVEIRA\tfernando.modesto@uisa.com.br\tGerente de Filial\t1\t31446\tfernando.modesto@uisa.com.br\tgestor\n1853\tFERNANDO PINTO\tfernando.fpinto@uisa.com.br\tCoordenador de Planejamento e Custos\t1\t31481\tfernando.fpinto@uisa.com.br\tgestor\n1966\tFERNANDO TRIBUTINO\tfernando.tributino@uisa.com.br\tNULL\t1\t31594\tfernando.tributino@uisa.com.br\tgestor\n2568\tALEXSANDRA TAVARES SOBRAL DE OLIVEIRA\talexsandra.oliveira@uisa.com.br\tNULL\t1\t511399\talexsandra.oliveira@uisa.com.br\trh\n30801\tFERNANDO TRIBUTINO\tfernando.tributino@uisa.com.br\tLíder Operações Agrícolas I\t1\tNULL\tNULL\tNULL\n31071\tALEXSANDRA TAVARES SOBRAL DE OLIVEIRA\talexsandra.oliveira@uisa.com.br\tAnalista Estrutura e Remuneração SR\t1\tNULL\tNULL\tNULL\n31287\tFERNANDO MATHEUS DE SOUZA VERONEZE\tfernando.veroneze@geobiogas.tech\tNULL\t1\tNULL\tNULL\tNULL\n60017\tFernando Pinto\tNULL\tCoordenador de Planejamento e Custos\t1\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 71
+}

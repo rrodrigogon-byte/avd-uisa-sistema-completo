@@ -128,6 +128,7 @@ import { reportsAdvancedRouter } from "./routers/reportsAdvancedRouter";
 import { psychometricTestsRouter } from "./routers/psychometricTestsRouter";
 import { reportExportRouter } from "./routers/reportExportRouter";
 import { notificationPreferencesRouter } from "./routers/notificationPreferencesRouter";
+import { approverManagementRouter } from "./routers/approverManagementRouter";
 import { geriatricRouter } from "./routers/geriatricRouter";
 import { adminAdvancedRouter } from "./routers/adminAdvancedRouter";
 import { evaluationProcessesRouter } from "./routers/evaluationProcessesRouter";
@@ -389,6 +390,9 @@ export const appRouter = router({
   // Novos routers - Exportação de Relatórios e Preferências de Notificações (16/12/2025)
   reportExport: reportExportRouter,
   notificationPreferences: notificationPreferencesRouter,
+  
+  // Novo router - Gestão de Aprovadores (26/12/2025)
+  approverManagement: approverManagementRouter,
   
   // Novos routers - Upload de Vídeo, Testes A/B e NPS (15/12/2025)
   videoUpload: videoUploadRouter,

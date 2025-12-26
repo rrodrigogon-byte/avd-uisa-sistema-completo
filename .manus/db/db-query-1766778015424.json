@@ -1,0 +1,37 @@
+{
+  "query": "SELECT DISTINCT\n  e.id,\n  e.name,\n  e.email,\n  e.cargo,\n  e.active,\n  e.situacao,\n  'Nível 2 - RH C&S' as papel\nFROM employees e\nWHERE e.name LIKE '%Alexsandra%' OR e.email LIKE '%alexsandra%'\n\nUNION\n\nSELECT DISTINCT\n  e.id,\n  e.name,\n  e.email,\n  e.cargo,\n  e.active,\n  e.situacao,\n  'Coordenador de Custos' as papel\nFROM employees e\nWHERE e.name LIKE '%Fernando Pinto%' OR (e.cargo LIKE '%Custo%' AND e.name LIKE '%Fernando%')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT DISTINCT\n  e.id,\n  e.name,\n  e.email,\n  e.cargo,\n  e.active,\n  e.situacao,\n  'Nível 2 - RH C&S' as papel\nFROM employees e\nWHERE e.name LIKE '%Alexsandra%' OR e.email LIKE '%alexsandra%'\n\nUNION\n\nSELECT DISTINCT\n  e.id,\n  e.name,\n  e.email,\n  e.cargo,\n  e.active,\n  e.situacao,\n  'Coordenador de Custos' as papel\nFROM employees e\nWHERE e.name LIKE '%Fernando Pinto%' OR (e.cargo LIKE '%Custo%' AND e.name LIKE '%Fernando%')",
+  "rows": [
+    {
+      "id": "31071",
+      "name": "ALEXSANDRA TAVARES SOBRAL DE OLIVEIRA",
+      "email": "alexsandra.oliveira@uisa.com.br",
+      "cargo": "Analista Estrutura e Remuneração SR",
+      "active": "1",
+      "situacao": "Ativo",
+      "papel": "Nível 2 - RH C&S"
+    },
+    {
+      "id": "60017",
+      "name": "Fernando Pinto",
+      "email": "NULL",
+      "cargo": "Coordenador de Planejamento e Custos",
+      "active": "1",
+      "situacao": "NULL",
+      "papel": "Coordenador de Custos"
+    },
+    {
+      "id": "2568",
+      "name": "ALEXSANDRA TAVARES SOBRAL DE OLIVEIRA",
+      "email": "alexsandra.oliveira@uisa.com.br",
+      "cargo": "NULL",
+      "active": "1",
+      "situacao": "NULL",
+      "papel": "Nível 2 - RH C&S"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tcargo\tactive\tsituacao\tpapel\n31071\tALEXSANDRA TAVARES SOBRAL DE OLIVEIRA\talexsandra.oliveira@uisa.com.br\tAnalista Estrutura e Remuneração SR\t1\tAtivo\tNível 2 - RH C&S\n60017\tFernando Pinto\tNULL\tCoordenador de Planejamento e Custos\t1\tNULL\tCoordenador de Custos\n2568\tALEXSANDRA TAVARES SOBRAL DE OLIVEIRA\talexsandra.oliveira@uisa.com.br\tNULL\t1\tNULL\tNível 2 - RH C&S\n",
+  "stderr": "",
+  "execution_time_ms": 71
+}

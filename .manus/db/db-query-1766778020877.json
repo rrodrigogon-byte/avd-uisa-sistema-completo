@@ -1,0 +1,21 @@
+{
+  "query": "SELECT \n  'Aprovadores RH' as categoria,\n  e.id,\n  e.name,\n  e.email,\n  e.cargo,\n  e.active,\n  e.situacao,\n  u.role as userRole,\n  u.email as userEmail\nFROM employees e\nLEFT JOIN users u ON e.userId = u.id\nWHERE e.cargo LIKE '%RH%' OR e.cargo LIKE '%Recursos Humanos%' OR e.gerencia LIKE '%RH%'\nORDER BY e.active DESC, e.name\nLIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT \n  'Aprovadores RH' as categoria,\n  e.id,\n  e.name,\n  e.email,\n  e.cargo,\n  e.active,\n  e.situacao,\n  u.role as userRole,\n  u.email as userEmail\nFROM employees e\nLEFT JOIN users u ON e.userId = u.id\nWHERE e.cargo LIKE '%RH%' OR e.cargo LIKE '%Recursos Humanos%' OR e.gerencia LIKE '%RH%'\nORDER BY e.active DESC, e.name\nLIMIT 20",
+  "rows": [
+    {
+      "categoria": "Aprovadores RH",
+      "id": "1428",
+      "name": "ANDRE ROGERIO SBARDELLINI CARDOSO",
+      "email": "andre.sbardellini@uisa.com.br",
+      "cargo": "Gerente Executivo de Recursos Humanos",
+      "active": "1",
+      "situacao": "Ativo",
+      "userRole": "rh",
+      "userEmail": "andre.sbardellini@uisa.com.br"
+    }
+  ],
+  "messages": [],
+  "stdout": "categoria\tid\tname\temail\tcargo\tactive\tsituacao\tuserRole\tuserEmail\nAprovadores RH\t1428\tANDRE ROGERIO SBARDELLINI CARDOSO\tandre.sbardellini@uisa.com.br\tGerente Executivo de Recursos Humanos\t1\tAtivo\trh\tandre.sbardellini@uisa.com.br\n",
+  "stderr": "",
+  "execution_time_ms": 70
+}

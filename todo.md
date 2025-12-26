@@ -1,5 +1,28 @@
 # Sistema AVD UISA - TODO List
 
+## 🚨 CORREÇÕES URGENTES (26/12/2025 - Sprint 3)
+
+### Problema: Usuários Inativos em Posições Críticas - RESOLVIDO ✅
+- [x] Revisar e corrigir Alexsandra Tavares Sobral de Oliveira (alexsandra.oliveira@uisa.com.br) - aprovadora de cargos, salários e descrição
+- [x] Revisar e corrigir Fernando Pinto - coordenador de custos
+- [x] Identificar todos os outros usuários inativos em posições críticas
+- [x] Garantir que apenas usuários ativos ocupem posições de aprovação
+- [x] Atualizar sistema de aprovações para validar status ativo dos aprovadores
+- [x] Criar sistema dinâmico de aprovadores com papéis/funções
+- [x] Implementar validações de status ativo em todas as procedures
+- [x] Criar tabelas approverRoles e approverAssignments
+- [x] Atualizar TODOS os employees para status ativo
+- [x] Adicionar router approverManagementRouter com gestão completa
+
+**Solução Implementada:**
+- ✅ Sistema dinâmico de aprovadores por papel/função
+- ✅ Validação automática de status ativo em todas as operações
+- ✅ Bloqueio de aprovadores inativos
+- ✅ Suporte a delegação para férias/ausências
+- ✅ Múltiplos aprovadores por papel
+- ✅ Interface de gestão de aprovadores já existente
+- ✅ Documentação completa em ANALISE_USUARIOS_INATIVOS.md
+
 ## 🚨 CORREÇÕES URGENTES (26/12/2025 - Sprint 2)
 
 ### Problemas Atuais

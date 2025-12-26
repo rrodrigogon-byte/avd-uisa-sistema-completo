@@ -12,11 +12,13 @@ import { TRPCError } from "@trpc/server";
 
 /**
  * Router para Aprovações de Descrições de Cargo
- * Workflow de 4 níveis obrigatórios:
- * 1. Líder Imediato
- * 2. Alexsandra Oliveira (RH C&S)
- * 3. André (Gerente RH)
- * 4. Rodrigo Ribeiro Gonçalves (Diretor)
+ * Workflow de 4 níveis obrigatórios com sistema dinâmico de aprovadores:
+ * 1. Líder Imediato (papel: lider_imediato)
+ * 2. RH - Cargos e Salários (papel: rh_cargos_salarios)
+ * 3. Gerente de RH (papel: gerente_rh)
+ * 4. Diretor (papel: diretor)
+ * 
+ * IMPORTANTE: Aprovadores são buscados dinamicamente por papel e validados como ATIVOS
  */
 export const jobDescriptionApprovalsRouter = router({
   /**
@@ -96,6 +98,14 @@ export const jobDescriptionApprovalsRouter = router({
         .limit(1);
 
       if (!employee) return [];
+
+      // VALIDAÇÃO DE STATUS ATIVO: Verificar se employee está ativo
+      if (!employee.active) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Usuário inativo não pode visualizar aprovações",
+        });
+      }
 
       // Construir query baseada no nível
       let conditions: any[] = [];
@@ -233,6 +243,14 @@ export const jobDescriptionApprovalsRouter = router({
         });
       }
 
+      // VALIDAÇÃO DE STATUS ATIVO: Verificar se employee está ativo
+      if (!employee.active) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Funcionário inativo não pode aprovar/rejeitar",
+        });
+      }
+
       // Verificar se o usuário é o aprovador do nível
       const approverIdField = `level${input.level}ApproverId` as keyof typeof approval;
       if (approval[approverIdField] !== employee.id) {
@@ -314,6 +332,14 @@ export const jobDescriptionApprovalsRouter = router({
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Funcionário não encontrado",
+        });
+      }
+
+      // VALIDAÇÃO DE STATUS ATIVO: Verificar se employee está ativo
+      if (!employee.active) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Funcionário inativo não pode aprovar/rejeitar",
         });
       }
 

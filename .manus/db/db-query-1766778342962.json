@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO approverRoles (code, name, description, level, active) VALUES\n('lider_imediato', 'Líder Imediato', 'Líder direto do colaborador', 1, 1),\n('rh_cargos_salarios', 'RH - Cargos e Salários', 'Responsável por cargos e salários no RH', 2, 1),\n('gerente_rh', 'Gerente de RH', 'Gerente da área de Recursos Humanos', 3, 1),\n('diretor', 'Diretor', 'Diretor da empresa', 4, 1)\nON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute INSERT INTO approverRoles (code, name, description, level, active) VALUES\n('lider_imediato', 'Líder Imediato', 'Líder direto do colaborador', 1, 1),\n('rh_cargos_salarios', 'RH - Cargos e Salários', 'Responsável por cargos e salários no RH', 2, 1),\n('gerente_rh', 'Gerente de RH', 'Gerente da área de Recursos Humanos', 3, 1),\n('diretor', 'Diretor', 'Diretor da empresa', 4, 1)\nON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 67
+}

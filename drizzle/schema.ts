@@ -2478,6 +2478,54 @@ export const jobDescriptionApprovals = mysqlTable("jobDescriptionApprovals", {
 export type JobDescriptionApproval = typeof jobDescriptionApprovals.$inferSelect;
 export type InsertJobDescriptionApproval = typeof jobDescriptionApprovals.$inferInsert;
 
+/**
+ * Papéis de Aprovadores - Sistema dinâmico e flexível
+ * Permite configurar múltiplos aprovadores por papel/função
+ */
+export const approverRoles = mysqlTable("approverRoles", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 100 }).notNull().unique(), // Ex: rh_cargos_salarios, gerente_rh, diretor
+  name: varchar("name", { length: 255 }).notNull(), // Nome amigável
+  description: text("description"),
+  level: int("level").notNull(), // Nível no workflow (1-4)
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApproverRole = typeof approverRoles.$inferSelect;
+export type InsertApproverRole = typeof approverRoles.$inferInsert;
+
+/**
+ * Atribuições de Aprovadores - Vincula employees a papéis
+ * Permite múltiplos aprovadores por papel e validação de status ativo
+ */
+export const approverAssignments = mysqlTable("approverAssignments", {
+  id: int("id").autoincrement().primaryKey(),
+  roleId: int("roleId").notNull(), // FK para approverRoles
+  employeeId: int("employeeId").notNull(), // FK para employees
+  
+  // Controle de vigência
+  startDate: datetime("startDate").notNull(),
+  endDate: datetime("endDate"), // null = sem data fim
+  
+  // Controle de delegação (para férias/ausências)
+  isDelegated: boolean("isDelegated").default(false).notNull(),
+  delegatedBy: int("delegatedBy"), // ID do aprovador original
+  delegationReason: text("delegationReason"),
+  
+  // Status
+  active: boolean("active").default(true).notNull(),
+  
+  // Auditoria
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApproverAssignment = typeof approverAssignments.$inferSelect;
+export type InsertApproverAssignment = typeof approverAssignments.$inferInsert;
+
 // ============================================================================
 // REGISTRO DE ATIVIDADES E TAREFAS
 // ============================================================================
