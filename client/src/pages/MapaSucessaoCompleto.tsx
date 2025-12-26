@@ -47,7 +47,7 @@ export default function MapaSucessaoCompleto() {
   });
 
   // Queries
-  const { data: plansRaw, isLoading, refetch } = trpc.succession.list.useQuery({});
+  const { data: plansRaw, isLoading, refetch } = trpc.succession.list.useQuery(undefined);
   const { employees, isLoading: loadingEmployees, search: employeeSearch, setSearch: setEmployeeSearch } = useEmployeeSearch();
   
   // Mutation para adicionar sucessor

@@ -68,15 +68,15 @@ export default function PsychometricTestsAdmin() {
   const [expiresInDays, setExpiresInDays] = useState(7);
 
   // Queries
-  const { data: employees } = trpc.avdUisa.listEmployees.useQuery({});
+  const { data: employees } = trpc.avdUisa.listEmployees.useQuery(undefined);
   const { data: pendingInvitations, refetch: refetchPending } =
-    trpc.psychometricTests.listPendingInvitations.useQuery({});
+    trpc.psychometricTests.listPendingInvitations.useQuery(undefined);
   const { data: allResults, refetch: refetchResults } =
-    trpc.psychometricTests.listAllResults.useQuery({});
+    trpc.psychometricTests.listAllResults.useQuery(undefined);
   const { data: stats, refetch: refetchStats } =
-    trpc.psychometricTests.getCompletionStats.useQuery({});
+    trpc.psychometricTests.getCompletionStats.useQuery(undefined);
   const { data: resultsByType } =
-    trpc.psychometricTests.getResultsByType.useQuery({});
+    trpc.psychometricTests.getResultsByType.useQuery(undefined);
 
   // Mutations
   const sendIndividual = trpc.psychometricTests.sendIndividualInvitation.useMutation({

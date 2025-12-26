@@ -56,7 +56,7 @@ export default function HistoricoComparacao() {
   const [compareIds, setCompareIds] = useState<[number | null, number | null]>([null, null]);
 
   // Buscar lista de colaboradores
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
 
   // Buscar estatísticas de evolução
   const { data: evolutionStats, isLoading: loadingStats } = trpc.historicalComparison.getEvolutionStats.useQuery(

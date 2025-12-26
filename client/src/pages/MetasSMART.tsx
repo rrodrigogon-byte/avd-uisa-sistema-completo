@@ -81,10 +81,10 @@ export default function MetasSMART() {
   });
 
   // Buscar ciclos disponíveis
-  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery({});
+  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery(undefined);
 
   // Buscar metas do PDI
-  const { data: pdiGoals = [], isLoading: loadingPDI } = trpc.pdi.list.useQuery({});
+  const { data: pdiGoals = [], isLoading: loadingPDI } = trpc.pdi.list.useQuery(undefined);
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {

@@ -22,10 +22,10 @@ export default function OrganogramaHierarchy() {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
   // Buscar opções de filtro
-  const { data: filterOptions, isLoading: loadingFilters } = trpc.organogramaHierarchy.getFilterOptions.useQuery({});
+  const { data: filterOptions, isLoading: loadingFilters } = trpc.organogramaHierarchy.getFilterOptions.useQuery(undefined);
 
   // Buscar estatísticas
-  const { data: stats, isLoading: loadingStats } = trpc.organogramaHierarchy.getHierarchyStats.useQuery({});
+  const { data: stats, isLoading: loadingStats } = trpc.organogramaHierarchy.getHierarchyStats.useQuery(undefined);
 
   // Buscar hierarquia completa
   const { data: hierarchyData, isLoading: loadingHierarchy } = trpc.organogramaHierarchy.getFullHierarchy.useQuery({

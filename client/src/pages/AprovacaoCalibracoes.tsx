@@ -33,7 +33,7 @@ export default function AprovacaoCalibracoes() {
 
   // Queries
   const { data: pendingMovements, isLoading } =
-    trpc.calibrationDiretoria.listPendingMovements.useQuery({});
+    trpc.calibrationDiretoria.listPendingMovements.useQuery(undefined);
 
   // Mutations
   const approveMutation = trpc.calibrationDiretoria.approveMovement.useMutation({

@@ -37,7 +37,7 @@ export default function PIRReport() {
   const [isPublishing, setIsPublishing] = useState(false);
 
   // Buscar avaliação PIR
-  const { data: assessments, isLoading, refetch } = trpc.pirVideo.list.useQuery({});
+  const { data: assessments, isLoading, refetch } = trpc.pirVideo.list.useQuery(undefined);
   const assessment = assessments?.find(a => a.id === assessmentId);
 
   // Mutation para análise de vídeo

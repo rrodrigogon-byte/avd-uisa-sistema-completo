@@ -15,7 +15,7 @@ export default function ResultadoPIRIntegridade() {
   const assessmentId = parseInt(params.id || "0");
 
   const { data, isLoading } = trpc.pirIntegrity.getAssessment.useQuery({ id: assessmentId });
-  const { data: dimensionsData } = trpc.pirIntegrity.listDimensions.useQuery({});
+  const { data: dimensionsData } = trpc.pirIntegrity.listDimensions.useQuery(undefined);
   const generateReport = trpc.pirIntegrity.generateReport.useMutation();
 
   const getRiskColor = (level: string | null) => {

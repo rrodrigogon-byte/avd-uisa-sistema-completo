@@ -37,10 +37,10 @@ export default function CalibrationMeetingsList() {
   const [scheduledDate, setScheduledDate] = useState("");
   const [selectedParticipants, setSelectedParticipants] = useState<number[]>([]);
 
-  const { data: meetings, refetch } = trpc.calibrationMeeting.listMeetings.useQuery({});
-  const { data: cycles } = trpc.evaluationCycles.list.useQuery({});
-  const { data: departments } = trpc.departments.list.useQuery({});
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: meetings, refetch } = trpc.calibrationMeeting.listMeetings.useQuery(undefined);
+  const { data: cycles } = trpc.evaluationCycles.list.useQuery(undefined);
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
 
   const createMeeting = trpc.calibrationMeeting.createMeeting.useMutation({
     onSuccess: (data) => {

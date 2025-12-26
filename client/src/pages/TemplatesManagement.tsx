@@ -19,8 +19,8 @@ export default function TemplatesManagement() {
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const utils = trpc.useUtils();
-  const { data: templates, isLoading } = trpc.cycles360Templates.list.useQuery({});
-  const { data: competencies } = trpc.competencies.list.useQuery({});
+  const { data: templates, isLoading } = trpc.cycles360Templates.list.useQuery(undefined);
+  const { data: competencies } = trpc.competencies.list.useQuery(undefined);
 
   const deleteTemplate = trpc.cycles360Templates.delete.useMutation({
     onSuccess: () => {

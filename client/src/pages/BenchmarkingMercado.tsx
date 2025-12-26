@@ -84,7 +84,7 @@ export default function BenchmarkingMercado() {
   const [testType, setTestType] = useState<"disc" | "bigFive">("disc");
 
   // Query para buscar médias da UISA (comentado - implementar endpoint depois)
-  // const { data: uisaAverages, isLoading } = trpc.psychometric.getAverages.useQuery({});
+  // const { data: uisaAverages, isLoading } = trpc.psychometric.getAverages.useQuery(undefined);
   const isLoading = false;
 
   // Dados do perfil selecionado

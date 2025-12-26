@@ -64,7 +64,7 @@ export default function IntegridadeTestes() {
     limit: 100,
   });
 
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
 
   // Mutations
   const createInvitation = trpc.integrityPIR.createInvitation.useMutation({

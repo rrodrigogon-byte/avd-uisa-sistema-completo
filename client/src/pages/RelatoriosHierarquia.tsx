@@ -46,13 +46,13 @@ export default function RelatoriosHierarquia() {
 
   // Buscar relatórios
   const { data: spanReport, isLoading: loadingSpan } =
-    trpc.hierarchy.getSpanOfControlReport.useQuery({});
+    trpc.hierarchy.getSpanOfControlReport.useQuery(undefined);
 
   const { data: depthReport, isLoading: loadingDepth } =
-    trpc.hierarchy.getDepthReport.useQuery({});
+    trpc.hierarchy.getDepthReport.useQuery(undefined);
 
   const { data: distributionReport, isLoading: loadingDistribution } =
-    trpc.hierarchy.getDistributionReport.useQuery({});
+    trpc.hierarchy.getDistributionReport.useQuery(undefined);
 
   const isLoading = loadingSpan || loadingDepth || loadingDistribution;
 

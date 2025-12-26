@@ -190,7 +190,7 @@ function EmployeeNode({
 }
 
 export function OrganogramaSimples() {
-  const { data, isLoading } = trpc.orgChart.getOrgChart.useQuery({});
+  const { data, isLoading } = trpc.orgChart.getOrgChart.useQuery(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("all");
   const [positionFilter, setPositionFilter] = useState("all");

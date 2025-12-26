@@ -25,7 +25,7 @@ export function usePermission(resource: string, action: string) {
  * Hook para obter todas as permissões do usuário atual
  */
 export function useMyPermissions() {
-  const { data: permissions, isLoading } = trpc.accessControl.getMyPermissions.useQuery({});
+  const { data: permissions, isLoading } = trpc.accessControl.getMyPermissions.useQuery(undefined);
 
   const permissionsMap = useMemo(() => {
     if (!permissions) return new Map<string, Set<string>>();
@@ -70,7 +70,7 @@ export function useMyPermissions() {
  * Hook para obter perfis do usuário atual
  */
 export function useMyProfiles() {
-  const { data: profiles, isLoading } = trpc.accessControl.getUserProfiles.useQuery({});
+  const { data: profiles, isLoading } = trpc.accessControl.getUserProfiles.useQuery(undefined);
 
   const isAdmin = useMemo(() => {
     return profiles?.some((p) => p.code === "admin") ?? false;

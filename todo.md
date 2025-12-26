@@ -4,6 +4,7 @@
 
 ### Problemas Atuais
 - [x] Corrigir erro de validação tRPC "expected object, received undefined" em procedures com z.object({}).optional() - 186 procedures corrigidos + 24 testes automatizados passando
+- [x] Corrigir erro de validação tRPC "Invalid input: expected object, received undefined" - 330 substituições em 190 arquivos (.useQuery({}) → .useQuery(undefined))
 
 ## 🚨 CORREÇÕES URGENTES (25/12/2025)
 
@@ -522,3 +523,325 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
   - [x] Criar procedures tRPC para dados de onboarding
   - [x] Adicionar rota no App.tsx
   - [x] Adicionar item no menu do DashboardLayout
+
+
+---
+
+## 🆕 EXPANSÃO: GESTÃO COMPLETA DE CARGOS, FUNCIONÁRIOS E LÍDERES (26/12/2025)
+
+### Análise e Planejamento
+- [ ] Analisar estrutura atual de cargos e funcionários no banco de dados
+- [ ] Mapear relacionamentos entre cargos, funcionários e líderes
+- [ ] Definir modelo de hierarquia organizacional
+- [ ] Planejar fluxo de aprovação de descrições de cargos
+- [ ] Definir competências e requisitos por cargo
+
+### 1. Gestão Avançada de Cargos
+
+#### 1.1 Descrição Detalhada de Cargos
+- [ ] Criar modelo de dados para descrição completa de cargos
+  - [ ] Objetivo do cargo
+  - [ ] Responsabilidades principais
+  - [ ] Requisitos técnicos
+  - [ ] Requisitos comportamentais
+  - [ ] Formação acadêmica necessária
+  - [ ] Experiência profissional requerida
+  - [ ] Certificações necessárias
+- [ ] Interface para cadastro de descrição de cargo
+- [ ] Editor rico de texto para descrições
+- [ ] Versionamento de descrições de cargos
+- [ ] Histórico de alterações
+
+#### 1.2 Competências por Cargo
+- [ ] Definir competências técnicas por cargo
+- [ ] Definir competências comportamentais por cargo
+- [ ] Níveis de proficiência esperados (básico, intermediário, avançado, expert)
+- [ ] Pesos de importância por competência
+- [ ] Matriz de competências organizacional
+
+#### 1.3 Níveis e Progressão de Carreira
+- [ ] Criar modelo de níveis hierárquicos (júnior, pleno, sênior, especialista, etc)
+- [ ] Definir trilhas de carreira por cargo
+- [ ] Critérios de progressão entre níveis
+- [ ] Visualização de plano de carreira
+- [ ] Simulador de progressão
+
+#### 1.4 Aprovação de Descrições de Cargos
+- [ ] Fluxo de aprovação de descrição de cargo
+- [ ] Notificação para aprovadores
+- [ ] Interface de revisão e aprovação
+- [ ] Comentários e sugestões de alteração
+- [ ] Histórico de aprovações
+
+### 2. Gestão Completa de Funcionários
+
+#### 2.1 Perfil Detalhado do Funcionário
+- [ ] Dados pessoais completos
+- [ ] Informações contratuais (tipo de contrato, carga horária, salário)
+- [ ] Histórico profissional na empresa
+- [ ] Histórico de cargos ocupados
+- [ ] Histórico de departamentos
+- [ ] Histórico de líderes
+- [ ] Certificações e formações
+- [ ] Documentos anexados
+
+#### 2.2 Gestão de Equipes
+- [ ] Visualização de equipe por líder
+- [ ] Organograma da equipe
+- [ ] Distribuição de cargos na equipe
+- [ ] Estatísticas da equipe
+- [ ] Comparativo de desempenho da equipe
+
+#### 2.3 Movimentações de Funcionários
+- [ ] Registro de promoções
+- [ ] Registro de transferências de departamento
+- [ ] Registro de mudança de líder
+- [ ] Registro de mudança de cargo
+- [ ] Histórico completo de movimentações
+- [ ] Notificações de movimentações
+
+#### 2.4 Onboarding e Offboarding
+- [ ] Checklist de onboarding
+- [ ] Atribuição de mentor/buddy
+- [ ] Plano de integração 30-60-90 dias
+- [ ] Checklist de offboarding
+- [ ] Entrevista de desligamento
+
+### 3. Gestão de Liderança
+
+#### 3.1 Perfil do Líder
+- [ ] Dashboard específico para líderes
+- [ ] Visão consolidada da equipe
+- [ ] Indicadores de desempenho da equipe
+- [ ] Alertas e pendências da equipe
+- [ ] Histórico de liderança
+
+#### 3.2 Ferramentas de Gestão para Líderes
+- [ ] Agenda de 1:1 com liderados
+- [ ] Registro de conversas e feedbacks
+- [ ] Acompanhamento de PDIs da equipe
+- [ ] Gestão de metas da equipe
+- [ ] Solicitações e aprovações
+
+#### 3.3 Avaliação de Liderança
+- [ ] Avaliação 360° específica para líderes
+- [ ] Competências de liderança
+- [ ] Feedback dos liderados sobre liderança
+- [ ] Plano de desenvolvimento de liderança
+- [ ] Indicadores de clima da equipe
+
+#### 3.4 Sucessão de Liderança
+- [ ] Identificação de potenciais sucessores
+- [ ] Plano de sucessão por cargo de liderança
+- [ ] Desenvolvimento de pipeline de líderes
+- [ ] Matriz 9-box (desempenho x potencial)
+
+### 4. Hierarquia e Organograma
+
+#### 4.1 Organograma Interativo
+- [ ] Visualização hierárquica completa
+- [ ] Zoom e navegação no organograma
+- [ ] Busca de funcionários no organograma
+- [ ] Filtros por departamento
+- [ ] Exportação do organograma (PDF, PNG)
+- [ ] Organograma por cargo
+- [ ] Organograma por localização
+
+#### 4.2 Gestão de Hierarquia
+- [ ] Definição de relacionamentos hierárquicos
+- [ ] Gestão de múltiplos líderes (matriz)
+- [ ] Gestão de liderança funcional vs administrativa
+- [ ] Validação de ciclos hierárquicos
+- [ ] Histórico de mudanças hierárquicas
+
+### 5. Relatórios e Analytics
+
+#### 5.1 Relatórios de Cargos
+- [ ] Distribuição de funcionários por cargo
+- [ ] Cargos mais e menos ocupados
+- [ ] Análise de gap de competências por cargo
+- [ ] Relatório de descrições de cargos pendentes
+- [ ] Mapa de calor de competências organizacionais
+
+#### 5.2 Relatórios de Funcionários
+- [ ] Headcount por departamento
+- [ ] Turnover por cargo/departamento
+- [ ] Tempo médio de permanência
+- [ ] Distribuição etária
+- [ ] Distribuição por tempo de casa
+- [ ] Análise de diversidade
+
+#### 5.3 Relatórios de Liderança
+- [ ] Span of control (amplitude de controle)
+- [ ] Distribuição de líderes por nível
+- [ ] Efetividade de liderança
+- [ ] Índice de retenção por líder
+- [ ] Clima organizacional por equipe
+
+#### 5.4 Dashboards Executivos
+- [ ] Dashboard de RH estratégico
+- [ ] Indicadores de gestão de pessoas
+- [ ] Análise de custo por cargo
+- [ ] Projeções de headcount
+- [ ] ROI de desenvolvimento
+
+### 6. Integrações e Automações
+
+#### 6.1 Importação de Dados
+- [ ] Importação em massa de cargos (CSV/Excel)
+- [ ] Importação em massa de funcionários (CSV/Excel)
+- [ ] Validação de dados importados
+- [ ] Relatório de erros de importação
+- [ ] Atualização em massa
+
+#### 6.2 Notificações Automáticas
+- [ ] Notificação de aniversário de empresa
+- [ ] Notificação de vencimento de certificações
+- [ ] Notificação de revisão de descrição de cargo
+- [ ] Notificação de avaliação de desempenho próxima
+- [ ] Lembretes de 1:1 para líderes
+
+#### 6.3 Workflows Automáticos
+- [ ] Workflow de aprovação de promoção
+- [ ] Workflow de aprovação de transferência
+- [ ] Workflow de revisão salarial
+- [ ] Workflow de atualização de descrição de cargo
+- [ ] Workflow de offboarding
+
+### 7. Configurações Avançadas
+
+#### 7.1 Personalização do Sistema
+- [ ] Campos customizados para cargos
+- [ ] Campos customizados para funcionários
+- [ ] Templates de descrição de cargo
+- [ ] Configuração de níveis hierárquicos
+- [ ] Configuração de tipos de contrato
+
+#### 7.2 Regras de Negócio
+- [ ] Regras de aprovação por nível hierárquico
+- [ ] Regras de acesso por perfil
+- [ ] Regras de notificação
+- [ ] Regras de progressão de carreira
+- [ ] Políticas de remuneração
+
+### 8. Segurança e Auditoria
+
+#### 8.1 Controle de Acesso
+- [ ] Permissões granulares por módulo
+- [ ] Acesso restrito a dados sensíveis
+- [ ] Logs de acesso a dados de funcionários
+- [ ] Controle de exportação de dados
+- [ ] Mascaramento de dados sensíveis
+
+#### 8.2 Auditoria
+- [ ] Log de todas as alterações em cargos
+- [ ] Log de todas as alterações em funcionários
+- [ ] Log de movimentações
+- [ ] Relatório de auditoria
+- [ ] Rastreabilidade completa
+
+### 9. Mobile e Acessibilidade
+
+#### 9.1 Responsividade
+- [ ] Interface mobile-first
+- [ ] Otimização para tablets
+- [ ] Touch gestures no organograma
+- [ ] Performance em dispositivos móveis
+
+#### 9.2 Acessibilidade
+- [ ] Conformidade WCAG 2.1
+- [ ] Navegação por teclado
+- [ ] Screen reader support
+- [ ] Alto contraste
+- [ ] Textos alternativos em imagens
+
+### 10. Testes e Documentação
+
+#### 10.1 Testes Automatizados
+- [ ] Testes unitários de procedures de cargos
+- [ ] Testes unitários de procedures de funcionários
+- [ ] Testes de integração de hierarquia
+- [ ] Testes de fluxo de aprovação
+- [ ] Testes de relatórios
+
+#### 10.2 Documentação
+- [ ] Documentação de API
+- [ ] Manual do usuário
+- [ ] Manual do administrador
+- [ ] Guia de boas práticas
+- [ ] Vídeos tutoriais
+
+
+---
+
+## 🚨 CORREÇÃO URGENTE - CADASTRO DE FUNCIONÁRIOS EM BRANCO (26/12/2025)
+
+### Problema Identificado
+- [ ] Investigar por que o cadastro de funcionários está aparecendo em branco
+- [ ] Verificar se dados existem no banco de dados
+- [ ] Verificar procedures tRPC de listagem de funcionários
+- [ ] Verificar componente frontend de listagem
+- [ ] Identificar problemas de hierarquia
+
+### Correção da Hierarquia
+- [ ] Garantir que campo managerId está correto
+- [ ] Validar relacionamentos entre funcionários e líderes
+- [ ] Corrigir ciclos hierárquicos se existirem
+- [ ] Implementar validação de hierarquia no backend
+
+### Correção do Frontend
+- [ ] Corrigir componente de listagem de funcionários
+- [ ] Adicionar tratamento de dados undefined/null
+- [ ] Implementar estados de loading e empty
+- [ ] Corrigir exibição de hierarquia
+
+### Correção do Backend
+- [ ] Revisar procedure de listagem de funcionários
+- [ ] Garantir que retorna dados completos com relacionamentos
+- [ ] Adicionar joins necessários (cargo, departamento, líder)
+- [ ] Otimizar query de listagem
+
+### Testes
+- [ ] Testar listagem de funcionários
+- [ ] Testar exibição de hierarquia
+- [ ] Testar filtros e busca
+- [ ] Validar que não há regressões
+
+
+### Correção de Hierarquia
+- [ ] Identificar página de hierarquia que está mostrando todos os funcionários
+- [ ] Implementar filtro para mostrar apenas líderes
+- [ ] Criar visualização hierárquica em árvore
+- [ ] Adicionar opção de expandir/colapsar níveis
+- [ ] Mostrar quantidade de liderados por líder
+- [ ] Implementar busca na hierarquia
+- [ ] Adicionar filtro por departamento na hierarquia
+
+
+---
+
+## ✅ CORREÇÕES CONCLUÍDAS (26/12/2025 - Tarde)
+
+### Correção do Cadastro de Funcionários
+- [x] Investigado problema de listagem em branco
+- [x] Identificada estrutura de dados flat vs aninhada
+- [x] Corrigida procedure employees.list no backend
+- [x] Corrigido acesso aos dados no frontend (Funcionarios.tsx)
+- [x] Verificado que 4.471 funcionários existem no banco
+- [x] Confirmado que 4.433 funcionários têm líder definido
+
+### Correção da Hierarquia
+- [x] Identificada página HierarquiaUISA.tsx mostrando todos os funcionários
+- [x] Adicionada procedure getStats ao hierarchyRouter
+- [x] Adicionada procedure getFullTree ao hierarchyRouter
+- [x] Implementado filtro para mostrar apenas líderes (filterLeadersOnly)
+- [x] Implementado cálculo recursivo de subordinados
+- [x] Implementado mapeamento de níveis hierárquicos (presidente, diretor, gestor, coordenador, funcionario)
+- [x] Árvore hierárquica agora mostra apenas estrutura de liderança
+
+### Melhorias Implementadas
+- [x] Estrutura flat consistente em employees.list
+- [x] Tratamento de dados null/undefined no frontend
+- [x] Exibição correta de status dos funcionários
+- [x] Hierarquia mostra apenas líderes com subordinados
+- [x] Contagem precisa de subordinados diretos e indiretos

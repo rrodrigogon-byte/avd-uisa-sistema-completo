@@ -116,10 +116,10 @@ export default function NineBoxComparativo() {
   };
 
   // Queries
-  const { data: positions, isLoading: loadingPositions } = trpc.nineBoxComparative.getAvailablePositions.useQuery({});
-  const { data: leaders } = trpc.nineBoxComparative.getLeaders.useQuery({});
-  const { data: departments } = trpc.employees.getDepartments.useQuery({});
-  const { data: costCenters } = trpc.employees.getCostCenters.useQuery({});
+  const { data: positions, isLoading: loadingPositions } = trpc.nineBoxComparative.getAvailablePositions.useQuery(undefined);
+  const { data: leaders } = trpc.nineBoxComparative.getLeaders.useQuery(undefined);
+  const { data: departments } = trpc.employees.getDepartments.useQuery(undefined);
+  const { data: costCenters } = trpc.employees.getCostCenters.useQuery(undefined);
   const { data: comparative, isLoading: loadingComparative } = trpc.nineBoxComparative.getComparative.useQuery(
     { 
       positionIds: selectedPositions.length > 0 ? selectedPositions : undefined,

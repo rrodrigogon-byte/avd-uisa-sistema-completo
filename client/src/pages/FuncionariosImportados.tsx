@@ -37,7 +37,7 @@ export default function FuncionariosImportados() {
   });
 
   // Buscar estatísticas
-  const { data: stats } = trpc.employeeImport.getImportStats.useQuery({});
+  const { data: stats } = trpc.employeeImport.getImportStats.useQuery(undefined);
 
   const employees = employeesData?.employees || [];
   const total = employeesData?.total || 0;

@@ -32,8 +32,8 @@ export default function SucessaoMelhorado() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Queries
-  const { data: plans, isLoading } = trpc.succession.list.useQuery({});
-  const { data: kpis } = trpc.executive.getKPIs.useQuery({});
+  const { data: plans, isLoading } = trpc.succession.list.useQuery(undefined);
+  const { data: kpis } = trpc.executive.getKPIs.useQuery(undefined);
 
   // Calcular KPIs específicos de sucessão
   const posicoescriticas = plans?.filter((p) => p.isCritical).length || 0;

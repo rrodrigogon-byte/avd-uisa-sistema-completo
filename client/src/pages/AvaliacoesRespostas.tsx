@@ -48,7 +48,7 @@ export default function AvaliacoesRespostas() {
   const [selectedEvaluation, setSelectedEvaluation] = useState<number | null>(null);
 
   // Buscar todas as avaliações (admin/RH vê todas)
-  const { data: allEvaluations, isLoading } = trpc.evaluations.listAll.useQuery({});
+  const { data: allEvaluations, isLoading } = trpc.evaluations.listAll.useQuery(undefined);
 
   // Buscar detalhes da avaliação selecionada
   const { data: evaluationDetails } = trpc.evaluations.getById.useQuery(

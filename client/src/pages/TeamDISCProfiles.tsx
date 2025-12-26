@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 export default function TeamDISCProfiles() {
   const { user } = useAuth();
-  const { data: employee } = trpc.employees.getCurrent.useQuery({});
+  const { data: employee } = trpc.employees.getCurrent.useQuery(undefined);
 
   const { data: teamData, isLoading } = trpc.pdiIntelligent.getTeamDISCProfiles.useQuery(
     { managerId: employee?.employee.id || 0 },

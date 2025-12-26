@@ -66,7 +66,7 @@ export default function DashboardIntegridade() {
     departmentId: selectedDepartment,
   });
 
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   const getSpanOfControlStatus = (count: number) => {
     if (count <= 5) return { label: "Ideal", variant: "outline" as const, color: "text-green-600" };

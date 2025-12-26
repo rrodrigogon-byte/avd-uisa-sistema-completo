@@ -25,7 +25,7 @@ export default function GestaoQuestoesPIRIntegridade() {
     dimensionId: filterDimension === "all" ? undefined : parseInt(filterDimension),
     limit: 100,
   });
-  const { data: dimensionsData } = trpc.pirIntegrity.listDimensions.useQuery({});
+  const { data: dimensionsData } = trpc.pirIntegrity.listDimensions.useQuery(undefined);
   
   const createQuestion = trpc.pirIntegrity.createQuestion.useMutation({
     onSuccess: () => { toast.success("Questão criada!"); refetch(); setIsDialogOpen(false); },

@@ -72,7 +72,7 @@ export default function AprovacaoDescricoesLote() {
     status: selectedStatus,
   });
 
-  const { data: stats } = trpc.jobDescriptionBatchApproval.getApprovalStats.useQuery({});
+  const { data: stats } = trpc.jobDescriptionBatchApproval.getApprovalStats.useQuery(undefined);
 
   const { data: history } = trpc.jobDescriptionBatchApproval.getApprovalHistory.useQuery(
     { descriptionId: selectedDescription?.id || 0 },

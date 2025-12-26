@@ -19,7 +19,7 @@ export default function RelatorioCompliance() {
   const [selectedCycleId, setSelectedCycleId] = useState<number>();
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<number>();
 
-  const { data: cycles } = trpc.avdUisa.listCycles.useQuery({});
+  const { data: cycles } = trpc.avdUisa.listCycles.useQuery(undefined);
   const { data: report, isLoading } = trpc.avdUisa.complianceReport.useQuery(
     {
       cycleId: selectedCycleId!,

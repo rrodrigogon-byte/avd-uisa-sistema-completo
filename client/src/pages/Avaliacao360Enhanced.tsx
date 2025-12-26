@@ -43,7 +43,7 @@ export default function Avaliacao360Enhanced() {
   const [selectedEvaluation, setSelectedEvaluation] = useState<number | null>(null);
 
   // Buscar lista de avaliações 360°
-  const { data: evaluations, isLoading } = trpc.evaluation360.list.useQuery({});
+  const { data: evaluations, isLoading } = trpc.evaluation360.list.useQuery(undefined);
 
   // Buscar detalhes da avaliação selecionada
   const { data: detailsRaw } = trpc.evaluation360.getDetails.useQuery(

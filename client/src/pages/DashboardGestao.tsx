@@ -30,7 +30,7 @@ export default function DashboardGestao() {
   const [, setLocation] = useLocation();
   
   // Buscar estatísticas consolidadas
-  const { data: stats, isLoading: loadingStats } = trpc.gestao.getConsolidatedStats.useQuery({});
+  const { data: stats, isLoading: loadingStats } = trpc.gestao.getConsolidatedStats.useQuery(undefined);
   const { data: recentActions, isLoading: loadingActions } = trpc.gestao.getRecentActions.useQuery({ limit: 10 });
 
   if (loadingStats) {

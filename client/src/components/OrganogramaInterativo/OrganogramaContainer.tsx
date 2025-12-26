@@ -46,7 +46,7 @@ export default function OrganogramaContainer() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
   // Buscar hierarquia completa
-  const { data, isLoading, refetch } = trpc.orgChart.getFullHierarchy.useQuery({});
+  const { data, isLoading, refetch } = trpc.orgChart.getFullHierarchy.useQuery(undefined);
   
   // Mutation para mover funcionário
   const moveEmployeeMutation = trpc.orgChart.moveEmployeeInHierarchy.useMutation({

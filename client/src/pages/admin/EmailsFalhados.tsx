@@ -52,7 +52,7 @@ export default function EmailsFalhados() {
     type: filterType === "all" ? undefined : filterType,
   });
 
-  const { data: stats } = trpc.emailFailures.getFailureStats.useQuery({});
+  const { data: stats } = trpc.emailFailures.getFailureStats.useQuery(undefined);
 
   // Mutations
   const resendMutation = trpc.emailFailures.resendEmail.useMutation({

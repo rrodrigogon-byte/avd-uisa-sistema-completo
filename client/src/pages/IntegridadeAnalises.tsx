@@ -33,7 +33,7 @@ export default function IntegridadeAnalises() {
     limit: 1000,
   });
 
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   // Calcular estatísticas
   const stats = {

@@ -7,10 +7,10 @@ import { Trophy, Award, Star, Lock, TrendingUp } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 export default function Badges() {
-  const { data: allBadges, isLoading: loadingBadges } = trpc.badges.getBadges.useQuery({});
-  const { data: myBadges, isLoading: loadingMyBadges } = trpc.badges.getEmployeeBadges.useQuery({});
+  const { data: allBadges, isLoading: loadingBadges } = trpc.badges.getBadges.useQuery(undefined);
+  const { data: myBadges, isLoading: loadingMyBadges } = trpc.badges.getEmployeeBadges.useQuery(undefined);
   const { data: ranking, isLoading: loadingRanking } = trpc.badges.getRanking.useQuery({ limit: 10 });
-  const { data: stats } = trpc.badges.getStats.useQuery({});
+  const { data: stats } = trpc.badges.getStats.useQuery(undefined);
 
   const earnedBadgeIds = new Set(myBadges?.badges.map((b: any) => b.badgeId) || []);
 

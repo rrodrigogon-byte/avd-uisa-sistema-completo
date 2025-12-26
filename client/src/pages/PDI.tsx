@@ -16,8 +16,8 @@ import { useLocation } from "wouter";
 export default function PDI() {
   const [showWizard, setShowWizard] = useState(false);
   const [, setLocation] = useLocation();
-  const { data: pdis } = trpc.pdi.list.useQuery({});
-  const { data: employee } = trpc.employees.getCurrent.useQuery({});
+  const { data: pdis } = trpc.pdi.list.useQuery(undefined);
+  const { data: employee } = trpc.employees.getCurrent.useQuery(undefined);
 
   const activePDI = pdis?.find(p => p.status === "aprovado" || p.status === "em_andamento");
   const { data: pdiItems } = trpc.pdi.getItems.useQuery(

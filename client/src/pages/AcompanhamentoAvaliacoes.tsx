@@ -42,7 +42,7 @@ export default function AcompanhamentoAvaliacoes() {
   const [selectedCycle, setSelectedCycle] = useState<number | null>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
 
-  const { data: cycles, isLoading: cyclesLoading } = trpc.evaluationCycles.listActive.useQuery({});
+  const { data: cycles, isLoading: cyclesLoading } = trpc.evaluationCycles.listActive.useQuery(undefined);
   const { data: stats, isLoading: statsLoading } = trpc.evaluationCycles.getProgressStats.useQuery(
     { cycleId: selectedCycle ?? 0 },
     { enabled: !!selectedCycle }

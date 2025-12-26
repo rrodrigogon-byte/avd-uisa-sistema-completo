@@ -47,7 +47,7 @@ export default function AnaliseEvolucao() {
   const [dateRange, setDateRange] = useState<{ start?: string; end?: string }>({});
 
   // Buscar lista de funcionários
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
 
   // Buscar evolução do funcionário selecionado
   const { data: evolution, isLoading } = trpc.performanceReports.getEmployeeEvolution.useQuery(

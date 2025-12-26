@@ -28,7 +28,7 @@ export default function RelatoriosProdutividade() {
     departmentId: departmentFilter === "all" ? undefined : parseInt(departmentFilter),
   });
 
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {

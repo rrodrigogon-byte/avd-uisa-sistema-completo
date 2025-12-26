@@ -35,9 +35,9 @@ export default function OrganizationChart() {
   const [zoom, setZoom] = useState(1);
   const [draggedEmployee, setDraggedEmployee] = useState<number | null>(null);
 
-  const { data: employees, isLoading, refetch } = trpc.hrEmployees.list.useQuery({});
-  const { data: departments } = trpc.departments.list.useQuery({});
-  const { data: positions } = trpc.hrPositions.list.useQuery({});
+  const { data: employees, isLoading, refetch } = trpc.hrEmployees.list.useQuery(undefined);
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
+  const { data: positions } = trpc.hrPositions.list.useQuery(undefined);
 
   const updateManagerMutation = trpc.hrHierarchy.updateManager.useMutation({
     onSuccess: () => {

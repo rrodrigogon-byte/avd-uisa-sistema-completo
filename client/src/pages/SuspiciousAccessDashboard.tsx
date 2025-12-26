@@ -102,7 +102,7 @@ export default function SuspiciousAccessDashboard() {
   });
 
   // Query para estatísticas
-  const { data: stats, isLoading: loadingStats } = trpc.pirSuspiciousAccess.getStats.useQuery({});
+  const { data: stats, isLoading: loadingStats } = trpc.pirSuspiciousAccess.getStats.useQuery(undefined);
 
   // Mutation para revisar alerta
   const reviewMutation = trpc.pirSuspiciousAccess.reviewAlert.useMutation({

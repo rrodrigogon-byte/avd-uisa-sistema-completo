@@ -69,13 +69,13 @@ export default function PIRDashboard() {
   const [selectedPositionId, setSelectedPositionId] = useState<number | undefined>(undefined);
 
   // Buscar ciclos disponíveis
-  const { data: cycles, isLoading: loadingCycles } = trpc.pirDashboard.listCycles.useQuery({});
+  const { data: cycles, isLoading: loadingCycles } = trpc.pirDashboard.listCycles.useQuery(undefined);
 
   // Buscar departamentos
-  const { data: departments } = trpc.pirDashboard.listDepartments.useQuery({});
+  const { data: departments } = trpc.pirDashboard.listDepartments.useQuery(undefined);
 
   // Buscar cargos
-  const { data: positions } = trpc.pirDashboard.listPositions.useQuery({});
+  const { data: positions } = trpc.pirDashboard.listPositions.useQuery(undefined);
 
   // Criar filtros estáveis
   const statsFilters = useMemo(() => ({

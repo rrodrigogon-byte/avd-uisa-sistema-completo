@@ -44,11 +44,11 @@ export default function Calibracao() {
   });
 
   // Buscar avaliações
-  const { data: evaluations, isLoading, refetch } = trpc.calibration.getEvaluations.useQuery({});
+  const { data: evaluations, isLoading, refetch } = trpc.calibration.getEvaluations.useQuery(undefined);
 
   // Buscar departamentos e ciclos para filtros
-  const { data: departments } = trpc.employees.getDepartments.useQuery({});
-  const { data: cycles } = trpc.evaluationCycles.list.useQuery({});
+  const { data: departments } = trpc.employees.getDepartments.useQuery(undefined);
+  const { data: cycles } = trpc.evaluationCycles.list.useQuery(undefined);
 
   // Filtrar avaliações
   const filteredEvaluations = evaluations?.filter((evaluation) => {

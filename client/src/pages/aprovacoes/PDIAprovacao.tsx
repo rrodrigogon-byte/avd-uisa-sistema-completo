@@ -53,7 +53,7 @@ export default function PDIAprovacao() {
   const [currentPdiId, setCurrentPdiId] = useState<number | null>(null);
 
   // Query para listar PDIs pendentes de aprovação
-  const { data: pendingPdis, isLoading, refetch } = trpc.pdi.listPendingApproval.useQuery({});
+  const { data: pendingPdis, isLoading, refetch } = trpc.pdi.listPendingApproval.useQuery(undefined);
 
   // Query para detalhes do PDI selecionado
   const { data: pdiDetails } = trpc.pdi.getImportedDetails.useQuery(

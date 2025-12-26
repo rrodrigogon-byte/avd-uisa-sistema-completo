@@ -553,7 +553,7 @@ export function OrgChartAdvanced() {
   const [layout, setLayout] = useState<LayoutType>("vertical");
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const { data: orgData, isLoading, refetch } = trpc.orgChart.getOrgChart.useQuery({});
+  const { data: orgData, isLoading, refetch } = trpc.orgChart.getOrgChart.useQuery(undefined);
   const updateManagerMutation = trpc.orgChart.updateManager.useMutation();
 
   const utils = trpc.useUtils();

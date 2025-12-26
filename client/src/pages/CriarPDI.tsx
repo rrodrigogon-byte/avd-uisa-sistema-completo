@@ -55,8 +55,8 @@ export default function CriarPDI() {
 
   // Queries
   const { data: employee } = trpc.employees.getById.useQuery({ id: employeeId });
-  const { data: positions } = trpc.positions.list.useQuery({});
-  const { data: cycles } = trpc.cycles.list.useQuery({});
+  const { data: positions } = trpc.positions.list.useQuery(undefined);
+  const { data: cycles } = trpc.cycles.list.useQuery(undefined);
 
   // Mutations
   const createPDI = trpc.pdi.create.useMutation({

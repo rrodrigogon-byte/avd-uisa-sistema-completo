@@ -67,7 +67,7 @@ export default function PDIList() {
   });
 
   // Buscar departamentos para filtro
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   const handleSort = (column: typeof orderBy) => {
     if (orderBy === column) {

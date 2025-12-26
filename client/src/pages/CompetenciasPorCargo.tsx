@@ -51,7 +51,7 @@ export default function CompetenciasPorCargo() {
 
   // Queries
   const { data: positions, isLoading: loadingPositions } = trpc.positions.list.useQuery({ activeOnly: true });
-  const { data: competencies, isLoading: loadingCompetencies } = trpc.competencyValidation.listCompetencies.useQuery({});
+  const { data: competencies, isLoading: loadingCompetencies } = trpc.competencyValidation.listCompetencies.useQuery(undefined);
   const { data: positionCompetencies, isLoading: loadingPositionCompetencies, refetch: refetchPositionCompetencies } = 
     trpc.positionCompetencies.listByPosition.useQuery(
       { positionId: selectedPositionId! },

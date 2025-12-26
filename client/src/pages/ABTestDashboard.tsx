@@ -20,7 +20,7 @@ export default function ABTestDashboard() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedExperiment, setSelectedExperiment] = useState<number | null>(null);
   
-  const { data: experiments, refetch } = trpc.abTest.listAll.useQuery({});
+  const { data: experiments, refetch } = trpc.abTest.listAll.useQuery(undefined);
   const { data: analytics } = trpc.abTest.getAnalytics.useQuery(
     { experimentId: selectedExperiment! },
     { enabled: !!selectedExperiment }

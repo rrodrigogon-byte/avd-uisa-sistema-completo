@@ -76,8 +76,8 @@ export default function Aprovadores() {
     isActive: true,
   });
 
-  const { data: departments } = trpc.approvalRules.getDepartments.useQuery({});
-  const { data: costCenters } = trpc.approvalRules.getCostCenters.useQuery({});
+  const { data: departments } = trpc.approvalRules.getDepartments.useQuery(undefined);
+  const { data: costCenters } = trpc.approvalRules.getCostCenters.useQuery(undefined);
   const { data: employees } = trpc.approvalRules.getEmployees.useQuery({ search: searchApprover });
 
   // Mutations

@@ -49,7 +49,7 @@ export default function BenchmarkDesempenho() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
 
   // Queries
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
   const { data: positions } = trpc.positions.list.useQuery({ activeOnly: true });
   const { data: employees } = trpc.employees.list.useQuery({ activeOnly: true, limit: 500 });
   

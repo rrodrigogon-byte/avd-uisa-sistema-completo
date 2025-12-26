@@ -51,7 +51,7 @@ export default function HistoricoMudancas() {
     limit: 100,
   });
 
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   // Filtrar por termo de busca
   const filteredHistory = useMemo(() => {

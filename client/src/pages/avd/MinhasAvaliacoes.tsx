@@ -14,7 +14,7 @@ import { useLocation } from "wouter";
 
 export default function MinhasAvaliacoes() {
   const [, setLocation] = useLocation();
-  const { data, isLoading } = trpc.avdUisa.myPendingEvaluations.useQuery({});
+  const { data, isLoading } = trpc.avdUisa.myPendingEvaluations.useQuery(undefined);
 
   const selfEvaluations = data?.selfEvaluations || [];
   const managerEvaluations = data?.managerEvaluations || [];

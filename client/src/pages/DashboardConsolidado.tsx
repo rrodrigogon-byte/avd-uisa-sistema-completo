@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  */
 export default function DashboardConsolidado() {
   const { user, loading: authLoading } = useAuth();
-  const { data: dashboardData, isLoading } = trpc.dashboards.getConsolidatedDashboard.useQuery({});
+  const { data: dashboardData, isLoading } = trpc.dashboards.getConsolidatedDashboard.useQuery(undefined);
 
   if (authLoading || isLoading) {
     return (

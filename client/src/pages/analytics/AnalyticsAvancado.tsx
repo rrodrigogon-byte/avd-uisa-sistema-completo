@@ -41,7 +41,7 @@ export default function AnalyticsAvancado() {
   const [selectedMonths, setSelectedMonths] = useState(12);
 
   // Queries
-  const { data: stats } = trpc.advancedAnalytics.getAdvancedStats.useQuery({});
+  const { data: stats } = trpc.advancedAnalytics.getAdvancedStats.useQuery(undefined);
   const { data: goalsAdherence } = trpc.advancedAnalytics.getGoalsAdherenceTrend.useQuery({
     departmentId: selectedDepartment,
     months: selectedMonths,
@@ -49,7 +49,7 @@ export default function AnalyticsAvancado() {
   const { data: performanceEvolution } = trpc.advancedAnalytics.getPerformanceEvolutionByDepartment.useQuery({
     months: selectedMonths,
   });
-  const { data: cyclesComparison } = trpc.advancedAnalytics.getEvaluationCyclesComparison.useQuery({});
+  const { data: cyclesComparison } = trpc.advancedAnalytics.getEvaluationCyclesComparison.useQuery(undefined);
   const { data: pdiTrend } = trpc.advancedAnalytics.getPDICompletionTrend.useQuery({
     months: selectedMonths,
     departmentId: selectedDepartment,

@@ -23,7 +23,7 @@ export default function AprovacaoGeralCiclo() {
     comments: "",
   });
 
-  const { data: cycles } = trpc.performanceEvaluationCycle.listCycles.useQuery({});
+  const { data: cycles } = trpc.performanceEvaluationCycle.listCycles.useQuery(undefined);
   const { data: participants, refetch } = trpc.performanceEvaluationCycle.listParticipants.useQuery(
     { cycleId: selectedCycleId || 0 },
     { enabled: !!selectedCycleId }

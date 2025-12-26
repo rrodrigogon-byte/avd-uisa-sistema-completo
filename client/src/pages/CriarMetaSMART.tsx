@@ -61,7 +61,7 @@ export default function CriarMetaSMART() {
   });
 
   // Buscar ciclos
-  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery({});
+  const { data: cycles = [] } = trpc.cyclesLegacy.list.useQuery(undefined);
 
   // Definir ciclo padrão quando os ciclos forem carregados
   useEffect(() => {
@@ -75,16 +75,16 @@ export default function CriarMetaSMART() {
   }, [cycles]);
 
   // Buscar PDIs do colaborador
-  const { data: pdis = [] } = trpc.pdi.list.useQuery({});
+  const { data: pdis = [] } = trpc.pdi.list.useQuery(undefined);
 
   // Buscar lista de funcionários (para admin/RH/gestores)
-  const { data: employees = [] } = trpc.employees.list.useQuery({});
+  const { data: employees = [] } = trpc.employees.list.useQuery(undefined);
 
   // Buscar dados do funcionário atual
-  const { data: currentEmployee } = trpc.employees.me.useQuery({});
+  const { data: currentEmployee } = trpc.employees.me.useQuery(undefined);
 
   // Buscar lista de departamentos
-  const { data: departments = [] } = trpc.departments.list.useQuery({});
+  const { data: departments = [] } = trpc.departments.list.useQuery(undefined);
 
   // Validação SMART
   const [validation, setValidation] = useState<any>(null);

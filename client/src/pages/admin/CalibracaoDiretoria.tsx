@@ -170,7 +170,7 @@ export default function CalibracaoDiretoria() {
   const sensors = useSensors(useSensor(PointerSensor));
 
   // Queries
-  const { data: sessions } = trpc.calibrationDirector.listSessions.useQuery({});
+  const { data: sessions } = trpc.calibrationDirector.listSessions.useQuery(undefined);
   const { data: employees, refetch: refetchEmployees } =
     trpc.calibrationDirector.getEmployeesForCalibration.useQuery(
       {

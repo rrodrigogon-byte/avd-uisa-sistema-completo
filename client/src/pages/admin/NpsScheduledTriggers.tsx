@@ -37,15 +37,15 @@ export default function NpsScheduledTriggers() {
 
   // Queries
   const { data: settings, isLoading: loadingSettings, refetch: refetchSettings } = 
-    trpc.npsScheduledTrigger.getSettings.useQuery({});
+    trpc.npsScheduledTrigger.getSettings.useQuery(undefined);
   const { data: triggers, isLoading: loadingTriggers, refetch: refetchTriggers } = 
     trpc.npsScheduledTrigger.listScheduledTriggers.useQuery({ limit: 50 });
   const { data: alerts, isLoading: loadingAlerts, refetch: refetchAlerts } = 
-    trpc.npsScheduledTrigger.listDetractorAlerts.useQuery({});
+    trpc.npsScheduledTrigger.listDetractorAlerts.useQuery(undefined);
   const { data: stats, isLoading: loadingStats } = 
-    trpc.npsScheduledTrigger.getTriggerStats.useQuery({});
+    trpc.npsScheduledTrigger.getTriggerStats.useQuery(undefined);
   const { data: pendingProcesses, isLoading: loadingPending } = 
-    trpc.npsScheduledTrigger.checkPendingProcesses.useQuery({});
+    trpc.npsScheduledTrigger.checkPendingProcesses.useQuery(undefined);
 
   // Mutations
   const updateSettings = trpc.npsScheduledTrigger.updateSettings.useMutation({

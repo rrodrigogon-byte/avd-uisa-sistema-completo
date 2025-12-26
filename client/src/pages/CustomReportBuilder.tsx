@@ -55,7 +55,7 @@ export default function CustomReportBuilder() {
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [visualizationType, setVisualizationType] = useState<string>("table");
 
-  const { data: reports, refetch: refetchReports } = trpc.customReportBuilder.list.useQuery({});
+  const { data: reports, refetch: refetchReports } = trpc.customReportBuilder.list.useQuery(undefined);
   const createReportMutation = trpc.customReportBuilder.create.useMutation();
   const executeReportMutation = trpc.customReportBuilder.execute.useMutation();
   const deleteReportMutation = trpc.customReportBuilder.delete.useMutation();

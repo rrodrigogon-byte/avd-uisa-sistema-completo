@@ -67,13 +67,13 @@ export default function RelatorioBonus() {
   });
 
   // Buscar estatísticas
-  const { data: stats } = trpc.bonus.getStats.useQuery({});
+  const { data: stats } = trpc.bonus.getStats.useQuery(undefined);
 
   // Buscar tendências mensais (com filtro de período)
   const { data: monthlyTrends } = trpc.bonus.getMonthlyTrends.useQuery({ months: chartPeriod });
 
   // Buscar distribuição por departamento
-  const { data: deptDistribution } = trpc.bonus.getDepartmentDistribution.useQuery({});
+  const { data: deptDistribution } = trpc.bonus.getDepartmentDistribution.useQuery(undefined);
   
   // Filtrar distribuição por departamento selecionado
   const filteredDeptDistribution = selectedDepartment
@@ -81,7 +81,7 @@ export default function RelatorioBonus() {
     : deptDistribution;
   
   // Buscar lista de departamentos para o filtro
-  const { data: departments } = trpc.organization.departments.list.useQuery({});
+  const { data: departments } = trpc.organization.departments.list.useQuery(undefined);
 
   // Filtrar por termo de busca
   const filteredCalculations = calculations?.filter((calc: any) => {

@@ -23,7 +23,7 @@ export default function AvaliacoesAprovacao() {
   const [rejectReason, setRejectReason] = useState("");
   const [, navigate] = useLocation();
   
-  const { data: cycles } = trpc.evaluationCycles.list.useQuery({});
+  const { data: cycles } = trpc.evaluationCycles.list.useQuery(undefined);
   const { data: pendingEvaluations, isLoading, refetch } = trpc.evaluations.listPending.useQuery({
     status: selectedTab === "pendentes" ? "pending_consensus" : "completed",
     cycleId: selectedCycleId,

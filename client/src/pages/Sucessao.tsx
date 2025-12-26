@@ -62,14 +62,14 @@ export default function Sucessao() {
   });
 
   // Queries
-  const { data: plans, isLoading, refetch } = trpc.succession.list.useQuery({});
+  const { data: plans, isLoading, refetch } = trpc.succession.list.useQuery(undefined);
   const { data: selectedPlan } = trpc.succession.getById.useQuery(
     { id: selectedPlanId! },
     { enabled: !!selectedPlanId }
   );
-  const { data: positions } = trpc.positions.list.useQuery({});
-  const { data: employees } = trpc.employees.list.useQuery({});
-  const { data: departments } = trpc.employees.getDepartments.useQuery({});
+  const { data: positions } = trpc.positions.list.useQuery(undefined);
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
+  const { data: departments } = trpc.employees.getDepartments.useQuery(undefined);
   const { data: history } = trpc.succession.getHistory.useQuery(
     { planId: selectedPlanId! },
     { enabled: !!selectedPlanId && isHistoryDialogOpen }

@@ -35,7 +35,7 @@ export default function DescricaoCargosUISA() {
   const [comments, setComments] = useState("");
   const [selectedApprovalId, setSelectedApprovalId] = useState<number | null>(null);
 
-  const { data: jobDescriptions, refetch } = trpc.jobDescriptions.list.useQuery({});
+  const { data: jobDescriptions, refetch } = trpc.jobDescriptions.list.useQuery(undefined);
 
   const approveMutation = trpc.jobDescriptions.approve.useMutation({
     onSuccess: () => {

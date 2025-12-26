@@ -45,8 +45,8 @@ export default function ExportacaoRelatorios() {
   const [selectedTestTypes, setSelectedTestTypes] = useState<Set<string>>(new Set());
 
   // Buscar dados
-  const { data: employees } = trpc.employees.list.useQuery({});
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   const { data: exportData, isLoading } = trpc.performanceReports.getExportData.useQuery(
     {

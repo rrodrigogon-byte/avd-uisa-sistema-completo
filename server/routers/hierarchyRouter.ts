@@ -12,6 +12,145 @@ import { TRPCError } from "@trpc/server";
 
 export const hierarchyRouter = router({
   /**
+   * Obter estatísticas da hierarquia
+   */
+  getStats: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    // Total de funcionários ativos
+    const [{ count: totalEmployees }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(employees)
+      .where(eq(employees.status, "ativo"));
+
+    // Contar por nível hierárquico (baseado em hierarchyLevel ou positionTitle)
+    const levelCounts = await db
+      .select({
+        level: employees.hierarchyLevel,
+        count: sql<number>`count(*)`,
+      })
+      .from(employees)
+      .where(eq(employees.status, "ativo"))
+      .groupBy(employees.hierarchyLevel);
+
+    // Contar quantos são líderes (têm subordinados)
+    const leadersResult = await db
+      .select({
+        managerId: employees.managerId,
+        count: sql<number>`count(*)`,
+      })
+      .from(employees)
+      .where(sql`${employees.status} = 'ativo' AND ${employees.managerId} IS NOT NULL`)
+      .groupBy(employees.managerId);
+
+    const uniqueManagers = leadersResult.length;
+    const uniqueDirectors = levelCounts.find(l => l.level === "diretor")?.count || 0;
+    const uniqueCoordinators = levelCounts.find(l => l.level === "coordenador")?.count || 0;
+
+    return {
+      totalEmployees: Number(totalEmployees),
+      uniqueManagers,
+      uniqueDirectors: Number(uniqueDirectors),
+      uniqueCoordinators: Number(uniqueCoordinators),
+      levelCounts,
+    };
+  }),
+
+  /**
+   * Obter árvore hierárquica completa (formato UISA)
+   */
+  getFullTree: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    // Buscar todos os funcionários ativos
+    const allEmployees = await db
+      .select({
+        id: employees.id,
+        chapa: employees.employeeCode,
+        name: employees.name,
+        function: employees.positionTitle,
+        email: employees.email,
+        managerId: employees.managerId,
+        hierarchyLevel: employees.hierarchyLevel,
+      })
+      .from(employees)
+      .where(eq(employees.status, "ativo"));
+
+    // Mapear nível hierárquico para formato UISA
+    const mapLevel = (level: string | null): "presidente" | "diretor" | "gestor" | "coordenador" | "funcionario" => {
+      if (!level) return "funcionario";
+      const levelLower = level.toLowerCase();
+      if (levelLower.includes("presidente") || levelLower.includes("reitor")) return "presidente";
+      if (levelLower.includes("diretor") || levelLower.includes("pró-reitor")) return "diretor";
+      if (levelLower.includes("gestor") || levelLower.includes("gerente")) return "gestor";
+      if (levelLower.includes("coordenador")) return "coordenador";
+      return "funcionario";
+    };
+
+    // Construir mapa de funcionários com subordinados
+    const employeeMap = new Map(
+      allEmployees.map(emp => [
+        emp.id,
+        {
+          id: emp.id,
+          chapa: emp.chapa || "",
+          name: emp.name || "",
+          function: emp.function || "",
+          email: emp.email || undefined,
+          level: mapLevel(emp.hierarchyLevel),
+          children: [] as any[],
+          subordinatesCount: 0,
+        },
+      ])
+    );
+
+    // Construir árvore hierárquica
+    const roots: any[] = [];
+
+    allEmployees.forEach(emp => {
+      const employee = employeeMap.get(emp.id)!;
+      if (emp.managerId && employeeMap.has(emp.managerId)) {
+        const manager = employeeMap.get(emp.managerId)!;
+        manager.children.push(employee);
+      } else {
+        // Sem gestor = raiz da árvore
+        roots.push(employee);
+      }
+    });
+
+    // Calcular contagem de subordinados recursivamente
+    const calculateSubordinatesCount = (node: any): number => {
+      if (node.children.length === 0) return 0;
+      const directCount = node.children.length;
+      const indirectCount = node.children.reduce(
+        (sum: number, child: any) => sum + calculateSubordinatesCount(child),
+        0
+      );
+      node.subordinatesCount = directCount + indirectCount;
+      return node.subordinatesCount;
+    };
+
+    roots.forEach(calculateSubordinatesCount);
+
+    // Filtrar apenas líderes (que têm subordinados) ou nós raiz
+    const filterLeadersOnly = (nodes: any[]): any[] => {
+      return nodes
+        .filter(node => node.children.length > 0 || !node.managerId)
+        .map(node => ({
+          ...node,
+          children: filterLeadersOnly(node.children),
+        }));
+    };
+
+    // Retornar apenas líderes (não mostrar todos os 4471 funcionários)
+    const leadersTree = filterLeadersOnly(roots);
+
+    return leadersTree;
+  }),
+
+  /**
    * Obter árvore hierárquica completa
    */
   getOrganizationTree: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {

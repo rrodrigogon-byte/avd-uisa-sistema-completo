@@ -22,7 +22,7 @@ interface CompetenciesSelectorProps {
 
 export default function CompetenciesSelector({ data, onChange, onNext, onBack }: CompetenciesSelectorProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const { data: competencies, isLoading } = trpc.competencies.list.useQuery({});
+  const { data: competencies, isLoading } = trpc.competencies.list.useQuery(undefined);
 
   const filteredCompetencies = useMemo(() => {
     if (!competencies) return [];

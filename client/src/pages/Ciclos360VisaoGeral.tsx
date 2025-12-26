@@ -43,7 +43,7 @@ export default function Ciclos360VisaoGeral() {
   });
 
   // Buscar estatísticas gerais
-  const { data: stats, isLoading: statsLoading } = trpc.cycles360Overview.getOverallStats.useQuery({});
+  const { data: stats, isLoading: statsLoading } = trpc.cycles360Overview.getOverallStats.useQuery(undefined);
 
   // Buscar ciclos com filtros
   const { data: cycles, isLoading: cyclesLoading } = trpc.cycles360Overview.listCycles.useQuery(filters);

@@ -1,0 +1,100 @@
+{
+  "query": "SELECT id, name, email, positionId, departmentId, managerId, active FROM employees LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2zjpxFGuGsCP7jR.root --database Vd5BJ8toX8cUC4zST6itFN --execute SELECT id, name, email, positionId, departmentId, managerId, active FROM employees LIMIT 10",
+  "rows": [
+    {
+      "id": "31",
+      "name": "Fernando Henrique",
+      "email": "NULL",
+      "positionId": "NULL",
+      "departmentId": "NULL",
+      "managerId": "NULL",
+      "active": "1"
+    },
+    {
+      "id": "41",
+      "name": "VALDEMIR DE OLIVEIRA GOMES",
+      "email": "valdemir.gomes@uisa.com.br",
+      "positionId": "NULL",
+      "departmentId": "NULL",
+      "managerId": "121",
+      "active": "1"
+    },
+    {
+      "id": "42",
+      "name": "WDSON GONCALVES DE ANDRADE",
+      "email": "wdson.andrade@uisa.com.br",
+      "positionId": "NULL",
+      "departmentId": "NULL",
+      "managerId": "121",
+      "active": "1"
+    },
+    {
+      "id": "43",
+      "name": "MARCIA EDWVIGES",
+      "email": "marcia.edwviges@uisa.com.br",
+      "positionId": "2",
+      "departmentId": "NULL",
+      "managerId": "1391",
+      "active": "1"
+    },
+    {
+      "id": "44",
+      "name": "ELTON BENTO DE LIMA",
+      "email": "elton.lima@uisa.com.br",
+      "positionId": "3",
+      "departmentId": "NULL",
+      "managerId": "2119",
+      "active": "1"
+    },
+    {
+      "id": "45",
+      "name": "FAUSTO HENRIQUE RONCHETE DA SILVA",
+      "email": "fausto.silva@uisa.com.br",
+      "positionId": "4",
+      "departmentId": "NULL",
+      "managerId": "45",
+      "active": "1"
+    },
+    {
+      "id": "46",
+      "name": "LUIS GUSTAVO BARBOSA DA SILVA",
+      "email": "luis.silva@uisa.com.br",
+      "positionId": "5",
+      "departmentId": "NULL",
+      "managerId": "2571",
+      "active": "1"
+    },
+    {
+      "id": "47",
+      "name": "VANESSA PIMENTA CARNEIRO",
+      "email": "vanessa.carneiro@uisa.com.br",
+      "positionId": "6",
+      "departmentId": "NULL",
+      "managerId": "2571",
+      "active": "1"
+    },
+    {
+      "id": "48",
+      "name": "ISRAEL CARDOSO DOS SANTOS",
+      "email": "israel.santos@uisa.com.br",
+      "positionId": "7",
+      "departmentId": "NULL",
+      "managerId": "1390",
+      "active": "1"
+    },
+    {
+      "id": "49",
+      "name": "EVERTON DA ROCHA OLIVEIRA",
+      "email": "everton.oliveira@uisa.com.br",
+      "positionId": "8",
+      "departmentId": "NULL",
+      "managerId": "2571",
+      "active": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tpositionId\tdepartmentId\tmanagerId\tactive\n31\tFernando Henrique\tNULL\tNULL\tNULL\tNULL\t1\n41\tVALDEMIR DE OLIVEIRA GOMES\tvaldemir.gomes@uisa.com.br\tNULL\tNULL\t121\t1\n42\tWDSON GONCALVES DE ANDRADE\twdson.andrade@uisa.com.br\tNULL\tNULL\t121\t1\n43\tMARCIA EDWVIGES\tmarcia.edwviges@uisa.com.br\t2\tNULL\t1391\t1\n44\tELTON BENTO DE LIMA\telton.lima@uisa.com.br\t3\tNULL\t2119\t1\n45\tFAUSTO HENRIQUE RONCHETE DA SILVA\tfausto.silva@uisa.com.br\t4\tNULL\t45\t1\n46\tLUIS GUSTAVO BARBOSA DA SILVA\tluis.silva@uisa.com.br\t5\tNULL\t2571\t1\n47\tVANESSA PIMENTA CARNEIRO\tvanessa.carneiro@uisa.com.br\t6\tNULL\t2571\t1\n48\tISRAEL CARDOSO DOS SANTOS\tisrael.santos@uisa.com.br\t7\tNULL\t1390\t1\n49\tEVERTON DA ROCHA OLIVEIRA\teverton.oliveira@uisa.com.br\t8\tNULL\t2571\t1\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

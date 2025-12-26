@@ -36,8 +36,8 @@ export default function ImportacaoFuncionarios() {
   const [importResults, setImportResults] = useState<any>(null);
   const [dragActive, setDragActive] = useState(false);
 
-  const { data: template } = trpc.employeeBulkImport.getImportTemplate.useQuery({});
-  const { data: options } = trpc.employeeBulkImport.getAvailableOptions.useQuery({});
+  const { data: template } = trpc.employeeBulkImport.getImportTemplate.useQuery(undefined);
+  const { data: options } = trpc.employeeBulkImport.getAvailableOptions.useQuery(undefined);
   const validateMutation = trpc.employeeBulkImport.validateImport.useMutation();
   const importMutation = trpc.employeeBulkImport.bulkImport.useMutation();
 

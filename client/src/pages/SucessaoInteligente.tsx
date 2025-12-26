@@ -54,15 +54,15 @@ export default function SucessaoInteligente() {
   const isAdmin = user?.role === 'admin';
 
   // Buscar dados reais do banco
-  const { data: positions } = trpc.positionsManagement.list.useQuery({});
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: positions } = trpc.positionsManagement.list.useQuery(undefined);
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
   const { data: successorsData } = trpc.succession.listCandidates.useQuery(
     { positionId: selectedPosition },
     { enabled: !!selectedPosition }
   );
-  const { data: pdiPlans } = trpc.pdiIntelligent.list.useQuery({});
-  const { data: nineBoxData } = trpc.nineBox.list.useQuery({});
-  const { data: performanceData } = trpc.evaluations.list.useQuery({});
+  const { data: pdiPlans } = trpc.pdiIntelligent.list.useQuery(undefined);
+  const { data: nineBoxData } = trpc.nineBox.list.useQuery(undefined);
+  const { data: performanceData } = trpc.evaluations.list.useQuery(undefined);
 
   // Mutations
   const addSuccessorMutation = trpc.succession.addCandidate.useMutation({

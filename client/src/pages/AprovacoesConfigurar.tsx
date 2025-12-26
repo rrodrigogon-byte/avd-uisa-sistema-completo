@@ -56,8 +56,8 @@ export default function AprovacoesConfigurar() {
   });
 
   // Queries
-  const { data: flows = [], isLoading, refetch } = trpc.approvals.listFlowConfigs.useQuery({});
-  const { data: stats } = trpc.approvals.stats.useQuery({});
+  const { data: flows = [], isLoading, refetch } = trpc.approvals.listFlowConfigs.useQuery(undefined);
+  const { data: stats } = trpc.approvals.stats.useQuery(undefined);
 
   // Mutations
   const createMutation = trpc.approvals.createFlowConfig.useMutation({

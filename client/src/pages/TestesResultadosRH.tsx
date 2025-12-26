@@ -38,8 +38,8 @@ export default function TestesResultadosRH() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Buscar todos os testes (apenas RH/Admin)
-  const { data: allTests, isLoading } = trpc.psychometric.getAllTests.useQuery({});
-  const { data: departments } = trpc.employees.getDepartments.useQuery({});
+  const { data: allTests, isLoading } = trpc.psychometric.getAllTests.useQuery(undefined);
+  const { data: departments } = trpc.employees.getDepartments.useQuery(undefined);
 
   if (isLoading) {
     return (

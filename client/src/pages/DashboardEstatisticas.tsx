@@ -9,11 +9,11 @@ import { Users, Building2, Briefcase, Clock, TrendingUp, UserCheck } from "lucid
  * Exibe gráficos e métricas sobre distribuição de funcionários
  */
 export default function DashboardEstatisticas() {
-  const { data: generalStats, isLoading: loadingGeneral } = trpc.dashboardStats.getGeneralStats.useQuery({});
-  const { data: byDepartment, isLoading: loadingDepartment } = trpc.dashboardStats.getByDepartment.useQuery({});
-  const { data: byPosition, isLoading: loadingPosition } = trpc.dashboardStats.getByPosition.useQuery({});
-  const { data: byTenure, isLoading: loadingTenure } = trpc.dashboardStats.getByTenure.useQuery({});
-  const { data: averageTenure, isLoading: loadingAverage } = trpc.dashboardStats.getAverageTenure.useQuery({});
+  const { data: generalStats, isLoading: loadingGeneral } = trpc.dashboardStats.getGeneralStats.useQuery(undefined);
+  const { data: byDepartment, isLoading: loadingDepartment } = trpc.dashboardStats.getByDepartment.useQuery(undefined);
+  const { data: byPosition, isLoading: loadingPosition } = trpc.dashboardStats.getByPosition.useQuery(undefined);
+  const { data: byTenure, isLoading: loadingTenure } = trpc.dashboardStats.getByTenure.useQuery(undefined);
+  const { data: averageTenure, isLoading: loadingAverage } = trpc.dashboardStats.getAverageTenure.useQuery(undefined);
   const { data: topDepartments, isLoading: loadingTop } = trpc.dashboardStats.getTopDepartments.useQuery({ limit: 10 });
 
   // Cores para os gráficos

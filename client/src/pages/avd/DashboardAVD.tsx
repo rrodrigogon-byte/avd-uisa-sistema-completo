@@ -14,7 +14,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 export default function DashboardAVD() {
   const [selectedCycleId, setSelectedCycleId] = useState<number>();
 
-  const { data: cycles } = trpc.avdUisa.listCycles.useQuery({});
+  const { data: cycles } = trpc.avdUisa.listCycles.useQuery(undefined);
   const { data: dashboard, isLoading } = trpc.avdUisa.executiveDashboard.useQuery(
     { cycleId: selectedCycleId },
     { enabled: !!selectedCycleId }

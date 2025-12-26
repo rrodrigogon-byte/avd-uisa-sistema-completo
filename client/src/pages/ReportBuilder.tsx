@@ -24,10 +24,10 @@ export default function ReportBuilder() {
   const [filterEndDate, setFilterEndDate] = useState<string>("");
   const [previewData, setPreviewData] = useState<any>(null);
 
-  const { data: availableMetrics, isLoading: metricsLoading, error: metricsError } = trpc.reportBuilder.getAvailableMetrics.useQuery({});
-  const { data: savedReports } = trpc.reportBuilder.list.useQuery({});
-  const { data: departments } = trpc.reportBuilder.getDepartments.useQuery({});
-  const { data: positions } = trpc.reportBuilder.getPositions.useQuery({});
+  const { data: availableMetrics, isLoading: metricsLoading, error: metricsError } = trpc.reportBuilder.getAvailableMetrics.useQuery(undefined);
+  const { data: savedReports } = trpc.reportBuilder.list.useQuery(undefined);
+  const { data: departments } = trpc.reportBuilder.getDepartments.useQuery(undefined);
+  const { data: positions } = trpc.reportBuilder.getPositions.useQuery(undefined);
   
   const executeReport = trpc.reportBuilder.execute.useQuery(
     { metrics: selectedMetrics, filters },

@@ -66,7 +66,7 @@ export default function Passo5PDI() {
   );
 
   // Buscar competências para vincular ações
-  const { data: competencies } = trpc.avd.listCompetencies.useQuery({});
+  const { data: competencies } = trpc.avd.listCompetencies.useQuery(undefined);
 
   // Buscar PDI existente (se houver)
   const { data: existingPDI } = trpc.avd.getDevelopmentPlanByProcess.useQuery(

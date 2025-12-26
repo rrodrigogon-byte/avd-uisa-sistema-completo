@@ -17,7 +17,7 @@ export default function PIRComparacao() {
   const [selectedPeriod, setSelectedPeriod] = useState<'3months' | '6months' | '1year' | 'all'>('6months');
 
   // Buscar lista de funcionários com avaliações PIR
-  const { data: employees, isLoading: loadingEmployees } = trpc.pir.getEmployeesWithAssessments.useQuery({});
+  const { data: employees, isLoading: loadingEmployees } = trpc.pir.getEmployeesWithAssessments.useQuery(undefined);
 
   // Buscar histórico de avaliações do funcionário selecionado
   const { data: assessmentHistory, isLoading: loadingHistory } = trpc.pir.getAssessmentHistory.useQuery(

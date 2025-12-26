@@ -41,8 +41,8 @@ ChartJS.register(
  */
 
 export default function TemplatesAnalytics() {
-  const { data: templates, isLoading } = trpc.cycles360Templates.list.useQuery({});
-  const { data: analytics } = trpc.cycles360Templates.getAnalytics.useQuery({});
+  const { data: templates, isLoading } = trpc.cycles360Templates.list.useQuery(undefined);
+  const { data: analytics } = trpc.cycles360Templates.getAnalytics.useQuery(undefined);
 
   if (isLoading) {
     return (

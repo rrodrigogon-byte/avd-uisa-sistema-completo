@@ -11,7 +11,7 @@ export default function OrganogramaSimples() {
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
 
   // Buscar funcionários - CORRIGIDO: extrair array do objeto retornado
-  const { data: employeesData, isLoading } = trpc.employees.list.useQuery({});
+  const { data: employeesData, isLoading } = trpc.employees.list.useQuery(undefined);
   const employees = employeesData?.employees || [];
 
   // Construir árvore hierárquica

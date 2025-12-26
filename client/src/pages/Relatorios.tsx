@@ -13,10 +13,10 @@ export default function Relatorios() {
   const [selectedPeriod, setSelectedPeriod] = useState("2025");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
 
-  const { data: goals } = trpc.goals.list.useQuery({});
-  const { data: evaluations } = trpc.evaluations.list.useQuery({});
-  const { data: pdis } = trpc.pdi.list.useQuery({});
-  const { data: employeesData } = trpc.employees.list.useQuery({});
+  const { data: goals } = trpc.goals.list.useQuery(undefined);
+  const { data: evaluations } = trpc.evaluations.list.useQuery(undefined);
+  const { data: pdis } = trpc.pdi.list.useQuery(undefined);
+  const { data: employeesData } = trpc.employees.list.useQuery(undefined);
 
   // Calculate statistics
   const totalGoals = goals?.length || 0;

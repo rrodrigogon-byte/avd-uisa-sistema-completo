@@ -61,7 +61,7 @@ export default function PDIInteligenteNovo() {
   const { employees, isLoading: employeesLoading, search: employeeSearch, setSearch: setEmployeeSearch } = useEmployeeSearch("", 300, { status: "ativo" });
 
   // Queries
-  const { data: positions, isLoading: positionsLoading } = trpc.positions.list.useQuery({});
+  const { data: positions, isLoading: positionsLoading } = trpc.positions.list.useQuery(undefined);
 
   // Mutations
   const createPDI = trpc.pdiIntelligent.create.useMutation({

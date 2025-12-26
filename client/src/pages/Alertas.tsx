@@ -41,7 +41,7 @@ export default function Alertas() {
   const utils = trpc.useUtils();
 
   // Queries
-  const { data: stats } = trpc.alerts.getStats.useQuery({});
+  const { data: stats } = trpc.alerts.getStats.useQuery(undefined);
   const { data: alerts = [], isLoading } = trpc.alerts.list.useQuery({
     status: selectedStatus,
     severity: selectedSeverity === "all" ? undefined : selectedSeverity,

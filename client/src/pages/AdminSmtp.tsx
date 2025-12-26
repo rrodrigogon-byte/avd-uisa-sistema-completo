@@ -22,7 +22,7 @@ export default function AdminSmtp() {
   const [isTesting, setIsTesting] = useState(false);
 
   // Buscar configurações SMTP
-  const { data: smtpConfig, isLoading, refetch } = trpc.admin.getSmtpConfig.useQuery({});
+  const { data: smtpConfig, isLoading, refetch } = trpc.admin.getSmtpConfig.useQuery(undefined);
 
   // Mutation para salvar configurações
   const saveMutation = trpc.admin.saveSmtpConfig.useMutation({

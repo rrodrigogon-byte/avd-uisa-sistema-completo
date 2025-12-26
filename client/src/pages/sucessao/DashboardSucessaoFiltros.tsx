@@ -44,7 +44,7 @@ export default function DashboardSucessaoFiltros() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Buscar departamentos
-  const { data: departments = [] } = trpc.departments.list.useQuery({});
+  const { data: departments = [] } = trpc.departments.list.useQuery(undefined);
 
   // Buscar planos de sucessão com filtros
   const { data: successionPlans = [], isLoading } = trpc.succession.listWithFilters.useQuery({

@@ -37,7 +37,7 @@ export default function AnalyticsMetas() {
   });
 
   // Buscar departamentos para filtro
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   if (isLoading) {
     return (

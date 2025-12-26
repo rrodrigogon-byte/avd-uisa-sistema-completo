@@ -13,7 +13,7 @@ const DISC_COLORS = {
 };
 
 export function PsychometricDashboard() {
-  const { data: stats, isLoading } = trpc.psychometric.getDashboardStats.useQuery({});
+  const { data: stats, isLoading } = trpc.psychometric.getDashboardStats.useQuery(undefined);
   const { data: commonProfiles } = trpc.psychometric.getMostCommonProfiles.useQuery({ limit: 4 });
 
   if (isLoading) {

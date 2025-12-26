@@ -36,7 +36,7 @@ export default function DescricaoCargos() {
   });
 
   // Buscar departamentos para filtro
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   const descriptions = jobDescriptions || [];
 

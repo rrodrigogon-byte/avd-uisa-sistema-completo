@@ -30,8 +30,8 @@ export default function Positions() {
   const [editingPosition, setEditingPosition] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: positions, isLoading, refetch } = trpc.hrPositions.list.useQuery({});
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: positions, isLoading, refetch } = trpc.hrPositions.list.useQuery(undefined);
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   const createMutation = trpc.hrPositions.create.useMutation({
     onSuccess: () => {

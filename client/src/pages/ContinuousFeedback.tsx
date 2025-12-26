@@ -47,10 +47,10 @@ export default function ContinuousFeedback() {
   const [specificExamples, setSpecificExamples] = useState("");
   const [additionalComments, setAdditionalComments] = useState("");
 
-  const { data: pendingRequests, refetch: refetchPending } = trpc.continuousFeedback.pendingRequests.useQuery({});
-  const { data: dashboard } = trpc.continuousFeedback.myFeedbackDashboard.useQuery({});
-  const { data: templates } = trpc.continuousFeedback.listTemplates.useQuery({});
-  const { data: evolution } = trpc.continuousFeedback.feedbackEvolution.useQuery({});
+  const { data: pendingRequests, refetch: refetchPending } = trpc.continuousFeedback.pendingRequests.useQuery(undefined);
+  const { data: dashboard } = trpc.continuousFeedback.myFeedbackDashboard.useQuery(undefined);
+  const { data: templates } = trpc.continuousFeedback.listTemplates.useQuery(undefined);
+  const { data: evolution } = trpc.continuousFeedback.feedbackEvolution.useQuery(undefined);
 
   const requestFeedbackMutation = trpc.continuousFeedback.requestFeedback.useMutation();
   const respondFeedbackMutation = trpc.continuousFeedback.respondFeedback.useMutation();

@@ -19,19 +19,19 @@ export default function DashboardTestes() {
   const [, setLocation] = useLocation();
 
   // Buscar testes pendentes
-  const { data: pendingTests } = trpc.psychometricTests.listPendingValidation.useQuery({});
+  const { data: pendingTests } = trpc.psychometricTests.listPendingValidation.useQuery(undefined);
 
   // Buscar testes validados
-  const { data: validatedTests } = trpc.psychometricTests.listValidatedTests.useQuery({});
+  const { data: validatedTests } = trpc.psychometricTests.listValidatedTests.useQuery(undefined);
 
   // Buscar estatísticas
-  const { data: stats } = trpc.psychometricTests.getValidationStats.useQuery({});
+  const { data: stats } = trpc.psychometricTests.getValidationStats.useQuery(undefined);
 
   // Buscar estatísticas de conclusão
-  const { data: completionStats } = trpc.psychometricTests.getCompletionStats.useQuery({});
+  const { data: completionStats } = trpc.psychometricTests.getCompletionStats.useQuery(undefined);
 
   // Buscar resultados por tipo
-  const { data: resultsByType } = trpc.psychometricTests.getResultsByType.useQuery({});
+  const { data: resultsByType } = trpc.psychometricTests.getResultsByType.useQuery(undefined);
 
   const testTypeNames: Record<string, string> = {
     disc: "DISC",

@@ -40,7 +40,7 @@ export default function AprovacaoCiclos() {
   const utils = trpc.useUtils();
 
   // Buscar todos os ciclos
-  const { data: cycles, isLoading } = trpc.cycles.list.useQuery({});
+  const { data: cycles, isLoading } = trpc.cycles.list.useQuery(undefined);
   
   const approveMutation = trpc.cycles.approveForGoals.useMutation({
     onSuccess: () => {

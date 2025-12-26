@@ -126,8 +126,8 @@ export default function Pendencias() {
     prioridade: prioridadeFilter !== "all" ? prioridadeFilter : undefined,
   });
 
-  const { data: stats } = trpc.pendencias.countByStatus.useQuery({});
-  const { data: employees } = trpc.employees.list.useQuery({});
+  const { data: stats } = trpc.pendencias.countByStatus.useQuery(undefined);
+  const { data: employees } = trpc.employees.list.useQuery(undefined);
 
   // Mutations
   const createMutation = trpc.pendencias.create.useMutation({

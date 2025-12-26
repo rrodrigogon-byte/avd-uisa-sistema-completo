@@ -34,7 +34,7 @@ export default function CiclosAvaliacao() {
     description: "",
   });
 
-  const { data: cycles, isLoading, refetch } = trpc.evaluationCycles.list.useQuery({});
+  const { data: cycles, isLoading, refetch } = trpc.evaluationCycles.list.useQuery(undefined);
 
   const createMutation = trpc.evaluationCycles.create.useMutation({
     onSuccess: () => {

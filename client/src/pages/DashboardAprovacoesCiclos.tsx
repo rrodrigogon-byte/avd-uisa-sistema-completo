@@ -17,7 +17,7 @@ import { Link } from "wouter";
  * Visualizar quais ciclos estão aprovados e quantos funcionários já preencheram suas metas
  */
 export default function DashboardAprovacoesCiclos() {
-  const { data: cycles, isLoading: loadingCycles } = trpc.cycles.list.useQuery({});
+  const { data: cycles, isLoading: loadingCycles } = trpc.cycles.list.useQuery(undefined);
   const { employees } = useEmployeeSearch();
   const utils = trpc.useUtils();
 

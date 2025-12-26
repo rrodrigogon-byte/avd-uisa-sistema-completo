@@ -36,8 +36,8 @@ export default function CriarPesquisaPulse() {
   const [targetEmails, setTargetEmails] = useState<string>("");
 
   // Buscar departamentos e centros de custo
-  const { data: departments = [] } = trpc.departments.list.useQuery({});
-  const { data: costCenters = [] } = trpc.costCenters.list.useQuery({});
+  const { data: departments = [] } = trpc.departments.list.useQuery(undefined);
+  const { data: costCenters = [] } = trpc.costCenters.list.useQuery(undefined);
 
   // Mutation para criar pesquisa
   const createMutation = trpc.pulse.create.useMutation({

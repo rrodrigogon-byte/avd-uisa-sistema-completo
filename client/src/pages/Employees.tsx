@@ -41,7 +41,7 @@ export default function Employees() {
   const [filterDepartment, setFilterDepartment] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
-  const { data: employeesData, isLoading, refetch } = trpc.hrEmployees.list.useQuery({});
+  const { data: employeesData, isLoading, refetch } = trpc.hrEmployees.list.useQuery(undefined);
   
   // Lidar com diferentes estruturas de retorno
   let employees = [];
@@ -66,8 +66,8 @@ export default function Employees() {
     // Já está flat
     return item;
   });
-  const { data: departments } = trpc.departments.list.useQuery({});
-  const { data: positions } = trpc.hrPositions.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
+  const { data: positions } = trpc.hrPositions.list.useQuery(undefined);
 
   const createMutation = trpc.hrEmployees.create.useMutation({
     onSuccess: () => {

@@ -59,8 +59,8 @@ export default function FuncionariosGerenciar() {
     assessmentStatus: assessmentStatus !== "all" ? (assessmentStatus as any) : undefined,
   });
 
-  const { data: departments } = trpc.employees.getDepartments.useQuery({});
-  const { data: positions } = trpc.positions.list.useQuery({});
+  const { data: departments } = trpc.employees.getDepartments.useQuery(undefined);
+  const { data: positions } = trpc.positions.list.useQuery(undefined);
 
   // Mutations
   const createMutation = trpc.employees.create.useMutation({

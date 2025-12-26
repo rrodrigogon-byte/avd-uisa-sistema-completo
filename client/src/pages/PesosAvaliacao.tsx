@@ -82,7 +82,7 @@ export default function PesosAvaliacao() {
   const [scopeFilter, setScopeFilter] = useState<string>("all");
 
   // Queries
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
   const { data: positions } = trpc.positions.list.useQuery({ activeOnly: true });
   const { data: configs, isLoading: loadingConfigs, refetch: refetchConfigs } = trpc.evaluationWeights.list.useQuery({
     scope: scopeFilter !== "all" ? scopeFilter as any : undefined,

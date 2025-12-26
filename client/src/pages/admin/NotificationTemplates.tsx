@@ -59,7 +59,7 @@ export default function NotificationTemplates() {
   });
 
   // Queries
-  const { data: templates, isLoading, refetch } = trpc.notificationTemplates.list.useQuery({});
+  const { data: templates, isLoading, refetch } = trpc.notificationTemplates.list.useQuery(undefined);
 
   // Mutations
   const createMutation = trpc.notificationTemplates.create.useMutation({

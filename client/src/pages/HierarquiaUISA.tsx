@@ -35,10 +35,10 @@ export default function HierarquiaUISA() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Buscar estatísticas
-  const { data: stats, isLoading: statsLoading } = trpc.hierarchy.getStats.useQuery({});
+  const { data: stats, isLoading: statsLoading } = trpc.hierarchy.getStats.useQuery(undefined);
 
   // Buscar hierarquia completa
-  const { data: fullHierarchy, isLoading: hierarchyLoading } = trpc.hierarchy.getFullTree.useQuery({});
+  const { data: fullHierarchy, isLoading: hierarchyLoading } = trpc.hierarchy.getFullTree.useQuery(undefined);
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);

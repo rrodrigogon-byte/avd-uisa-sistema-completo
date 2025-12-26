@@ -28,10 +28,10 @@ ChartJS.register(
 );
 
 export default function ReportAnalytics() {
-  const { data: stats, isLoading: statsLoading } = trpc.reportAnalytics.getUsageStats.useQuery({});
-  const { data: mostUsedMetrics, isLoading: metricsLoading } = trpc.reportAnalytics.getMostUsedMetrics.useQuery({});
+  const { data: stats, isLoading: statsLoading } = trpc.reportAnalytics.getUsageStats.useQuery(undefined);
+  const { data: mostUsedMetrics, isLoading: metricsLoading } = trpc.reportAnalytics.getMostUsedMetrics.useQuery(undefined);
   const { data: exportHistory, isLoading: historyLoading } = trpc.reportAnalytics.getExportHistory.useQuery({ limit: 20 });
-  const { data: trends, isLoading: trendsLoading } = trpc.reportAnalytics.getTrends.useQuery({});
+  const { data: trends, isLoading: trendsLoading } = trpc.reportAnalytics.getTrends.useQuery(undefined);
 
   // Dados para gráfico de métricas mais usadas
   const metricsChartData = {

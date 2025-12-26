@@ -52,8 +52,8 @@ export default function CargosGerenciar() {
   });
 
   // Queries
-  const { data: positions = [], isLoading, refetch } = trpc.positionsManagement.list.useQuery({});
-  const { data: stats } = trpc.positionsManagement.stats.useQuery({});
+  const { data: positions = [], isLoading, refetch } = trpc.positionsManagement.list.useQuery(undefined);
+  const { data: stats } = trpc.positionsManagement.stats.useQuery(undefined);
 
   // Mutations
   const createMutation = trpc.positionsManagement.create.useMutation({

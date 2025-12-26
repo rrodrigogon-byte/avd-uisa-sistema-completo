@@ -41,11 +41,11 @@ export default function Funcionarios() {
   });
 
   // Buscar funcionários
-  const { data: employeesData, isLoading, refetch } = trpc.employees.list.useQuery({});
+  const { data: employeesData, isLoading, refetch } = trpc.employees.list.useQuery(undefined);
   const employees = employeesData?.employees || [];
 
   // Buscar departamentos
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   // Mutation para criar funcionário
   const createMutation = trpc.employees.create.useMutation({
@@ -91,16 +91,16 @@ export default function Funcionarios() {
 
   // Filtrar funcionários
   const filteredEmployees = employees.filter((emp) => {
-    // Validar que emp e emp.employee existem
-    if (!emp || !emp.employee) return false;
+    // Validar que emp existe
+    if (!emp) return false;
     
-    const matchesSearch = (emp.employee.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (emp.employee.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (emp.employee.cpf || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (emp.employee.employeeCode || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = selectedDepartment === "all" || emp.employee.departmentId === parseInt(selectedDepartment);
-    const matchesStatus = selectedStatus === "all" || emp.employee.status === selectedStatus;
-    const matchesCargo = selectedCargo === "all" || (emp.employee.positionTitle || '').toLowerCase().includes(selectedCargo.toLowerCase());
+    const matchesSearch = (emp.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.cpf || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (emp.employeeCode || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDepartment = selectedDepartment === "all" || emp.departmentId === parseInt(selectedDepartment);
+    const matchesStatus = selectedStatus === "all" || emp.status === selectedStatus;
+    const matchesCargo = selectedCargo === "all" || (emp.positionName || '').toLowerCase().includes(selectedCargo.toLowerCase());
     return matchesSearch && matchesDepartment && matchesStatus && matchesCargo;
   });
 
@@ -228,15 +228,15 @@ export default function Funcionarios() {
                 </TableHeader>
                 <TableBody>
                   {filteredEmployees?.map((emp: any) => (
-                    <TableRow key={emp.employee?.id || Math.random()}>
-                      <TableCell className="font-mono text-sm">{emp.employee?.employeeCode || "-"}</TableCell>
-                      <TableCell className="font-medium">{emp.employee?.name || "-"}</TableCell>
-                      <TableCell>{emp.employee?.email || "-"}</TableCell>
-                      <TableCell>{emp.position?.title || "-"}</TableCell>
-                      <TableCell>{emp.department?.name || "-"}</TableCell>
+                    <TableRow key={emp.id || Math.random()}>
+                      <TableCell className="font-mono text-sm">{emp.employeeCode || "-"}</TableCell>
+                      <TableCell className="font-medium">{emp.name || "-"}</TableCell>
+                      <TableCell>{emp.email || "-"}</TableCell>
+                      <TableCell>{emp.positionName || "-"}</TableCell>
+                      <TableCell>{emp.departmentName || "-"}</TableCell>
                       <TableCell>
                         <Badge variant="default">
-                          Ativo
+                          {emp.status === "ativo" ? "Ativo" : emp.status === "afastado" ? "Afastado" : emp.status === "desligado" ? "Desligado" : "Ativo"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -244,7 +244,7 @@ export default function Funcionarios() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => setLocation(`/funcionarios/${emp.employee.id}`)}
+                            onClick={() => setLocation(`/funcionarios/${emp.id}`)}
                             title="Ver Perfil"
                           >
                             <Eye className="h-4 w-4" />

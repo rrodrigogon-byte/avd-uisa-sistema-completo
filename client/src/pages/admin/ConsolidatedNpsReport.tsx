@@ -37,9 +37,9 @@ export default function ConsolidatedNpsReport() {
   const [selectedPeriod, setSelectedPeriod] = useState<string>("90");
 
   // Queries
-  const { data: dashboardSummary, isLoading: loadingSummary } = trpc.consolidatedNpsReport.getDashboardSummary.useQuery({});
+  const { data: dashboardSummary, isLoading: loadingSummary } = trpc.consolidatedNpsReport.getDashboardSummary.useQuery(undefined);
   const { data: trends, isLoading: loadingTrends } = trpc.consolidatedNpsReport.getTrends.useQuery({ months: 6 });
-  const { data: pirIntegrity, isLoading: loadingIntegrity } = trpc.consolidatedNpsReport.checkPirIntegrity.useQuery({});
+  const { data: pirIntegrity, isLoading: loadingIntegrity } = trpc.consolidatedNpsReport.checkPirIntegrity.useQuery(undefined);
   
   // Mutations
   const exportCsv = trpc.consolidatedNpsReport.exportReport.useMutation({

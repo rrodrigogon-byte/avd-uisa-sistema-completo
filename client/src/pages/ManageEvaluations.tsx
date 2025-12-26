@@ -22,7 +22,7 @@ export default function ManageEvaluations() {
   const [, setLocation] = useLocation();
   const { user, loading: authLoading } = useAuth();
 
-  const { data: evaluations, isLoading, refetch } = trpc.evaluations.list.useQuery({});
+  const { data: evaluations, isLoading, refetch } = trpc.evaluations.list.useQuery(undefined);
   const sendNotificationMutation = trpc.evaluations.sendNotification.useMutation({
     onSuccess: () => {
       toast.success("Notificação enviada com sucesso!");

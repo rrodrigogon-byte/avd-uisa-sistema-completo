@@ -22,13 +22,13 @@ export default function ValidacaoTestes() {
   const utils = trpc.useUtils();
 
   // Buscar testes pendentes
-  const { data: pendingTests, isLoading: loadingPending } = trpc.psychometricTests.listPendingValidation.useQuery({});
+  const { data: pendingTests, isLoading: loadingPending } = trpc.psychometricTests.listPendingValidation.useQuery(undefined);
 
   // Buscar testes validados
-  const { data: validatedTests, isLoading: loadingValidated } = trpc.psychometricTests.listValidatedTests.useQuery({});
+  const { data: validatedTests, isLoading: loadingValidated } = trpc.psychometricTests.listValidatedTests.useQuery(undefined);
 
   // Buscar estatísticas
-  const { data: stats } = trpc.psychometricTests.getValidationStats.useQuery({});
+  const { data: stats } = trpc.psychometricTests.getValidationStats.useQuery(undefined);
 
   // Mutation para validar teste
   const validateMutation = trpc.psychometricTests.validateTest.useMutation({

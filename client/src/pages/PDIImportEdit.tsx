@@ -118,7 +118,7 @@ export default function PDIImportEdit() {
     { enabled: !!importId }
   );
 
-  const { data: cycles } = trpc.cycles.list.useQuery({});
+  const { data: cycles } = trpc.cycles.list.useQuery(undefined);
   const { data: employees } = trpc.employees.list.useQuery({ limit: 1000 });
 
   // Mutations

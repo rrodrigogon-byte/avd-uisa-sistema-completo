@@ -66,7 +66,7 @@ export default function CentrosCustos() {
     search,
     departmentId: departmentFilter,
   });
-  const { data: departments } = trpc.organization.departments.list.useQuery({});
+  const { data: departments } = trpc.organization.departments.list.useQuery(undefined);
 
   const createMutation = trpc.organization.costCenters.create.useMutation({
     onSuccess: () => {

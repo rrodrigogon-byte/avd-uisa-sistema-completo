@@ -43,19 +43,19 @@ export default function DashboardExecutivo() {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("todos");
 
   // Queries
-  const { data: kpis, isLoading: kpisLoading } = trpc.executive.getKPIs.useQuery({});
+  const { data: kpis, isLoading: kpisLoading } = trpc.executive.getKPIs.useQuery(undefined);
   const { data: performanceByDept, isLoading: perfDeptLoading } =
-    trpc.executive.getPerformanceByDepartment.useQuery({});
+    trpc.executive.getPerformanceByDepartment.useQuery(undefined);
   const { data: performanceTrend, isLoading: perfTrendLoading } =
-    trpc.executive.getPerformanceTrend.useQuery({});
+    trpc.executive.getPerformanceTrend.useQuery(undefined);
   const { data: successionCoverage, isLoading: successionLoading } =
-    trpc.executive.getSuccessionCoverage.useQuery({});
+    trpc.executive.getSuccessionCoverage.useQuery(undefined);
   const { data: topPerformers, isLoading: topPerfLoading } =
     trpc.executive.getTopPerformers.useQuery({ limit: 10 });
   const { data: flightRisk, isLoading: flightRiskLoading } =
     trpc.executive.getFlightRisk.useQuery({ riskLevel: "alto", limit: 10 });
   const { data: nineBoxData, isLoading: nineBoxLoading } =
-    trpc.executive.getPerformanceDistribution.useQuery({});
+    trpc.executive.getPerformanceDistribution.useQuery(undefined);
   
   // Novos endpoints de tendência temporal
   const { data: nineBoxTrend, isLoading: nineBoxTrendLoading } =

@@ -24,7 +24,7 @@ export default function ExportarOrganograma() {
   const [includeInactive, setIncludeInactive] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { data: departments } = trpc.departments.list.useQuery({});
+  const { data: departments } = trpc.departments.list.useQuery(undefined);
 
   const exportMutation = trpc.orgChart.exportHierarchy.useQuery(
     {

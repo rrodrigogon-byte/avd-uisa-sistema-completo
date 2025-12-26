@@ -34,7 +34,7 @@ export default function CompetenciesManager({ employeeId }: CompetenciesManagerP
 
   const utils = trpc.useUtils();
   const { data: competencies, isLoading } = trpc.employeeProfile.listCompetencies.useQuery({ employeeId });
-  const { data: availableCompetencies } = trpc.employeeProfile.listAvailableCompetencies.useQuery({});
+  const { data: availableCompetencies } = trpc.employeeProfile.listAvailableCompetencies.useQuery(undefined);
 
   const addMutation = trpc.employeeProfile.addCompetency.useMutation({
     onSuccess: () => {

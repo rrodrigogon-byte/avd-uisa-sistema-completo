@@ -22,7 +22,7 @@ export default function PIRExportacao() {
   const [department, setDepartment] = useState('');
 
   // Buscar avaliações disponíveis para exportação individual
-  const { data: assessments, isLoading: loadingAssessments } = trpc.pir.getEmployeesWithAssessments.useQuery({});
+  const { data: assessments, isLoading: loadingAssessments } = trpc.pir.getEmployeesWithAssessments.useQuery(undefined);
 
   // Mutations de exportação
   const exportIndividualExcel = trpc.pirExport.exportIndividualExcel.useMutation({
