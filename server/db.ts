@@ -955,6 +955,9 @@ export async function listEmployees(filters?: {
   positionId?: number;
   status?: string;
   search?: string;
+  hireDateFrom?: string;
+  hireDateTo?: string;
+  assessmentStatus?: string;
 }) {
   const db = await getDb();
   if (!db) return [];
@@ -988,6 +991,14 @@ export async function listEmployees(filters?: {
     );
   }
 
+  // Filtro de data de admissão (range)
+  if (filters?.hireDateFrom) {
+    conditions.push(sql`${employees.hireDate} >= ${filters.hireDateFrom}`);
+  }
+  if (filters?.hireDateTo) {
+    conditions.push(sql`${employees.hireDate} <= ${filters.hireDateTo}`);
+  }
+
   // Executar query com todas as condições
   let query = db
     .select({
@@ -1004,8 +1015,42 @@ export async function listEmployees(filters?: {
     query = query.where(and(...conditions));
   }
   
-  const results = await query;
+  let results = await query;
     // Removido limite de 100 - retornar todos os funcionários
+
+  // Aplicar filtro de assessmentStatus se necessário
+  if (filters?.assessmentStatus) {
+    const { evaluationProcesses } = await import("../drizzle/schema");
+    
+    // Buscar IDs de funcionários com avaliações
+    const employeesWithAssessments = await db
+      .select({ employeeId: evaluationProcesses.employeeId })
+      .from(evaluationProcesses)
+      .where(
+        filters.assessmentStatus === "in_progress"
+          ? eq(evaluationProcesses.status, "in_progress")
+          : filters.assessmentStatus === "completed"
+          ? eq(evaluationProcesses.status, "completed")
+          : undefined
+      );
+    
+    const assessmentEmployeeIds = new Set(employeesWithAssessments.map(e => e.employeeId));
+    
+    // Filtrar resultados baseado no status de avaliação
+    results = results.filter((row) => {
+      const hasAssessment = assessmentEmployeeIds.has(row.employee.id);
+      
+      if (filters.assessmentStatus === "with_assessment") {
+        return hasAssessment;
+      } else if (filters.assessmentStatus === "without_assessment") {
+        return !hasAssessment;
+      } else if (filters.assessmentStatus === "in_progress" || filters.assessmentStatus === "completed") {
+        return hasAssessment;
+      }
+      
+      return true;
+    });
+  }
 
   // Retornar estrutura flat com todos os campos do employee no nível raiz
   // Filtrar apenas registros com ID válido para evitar erros no frontend

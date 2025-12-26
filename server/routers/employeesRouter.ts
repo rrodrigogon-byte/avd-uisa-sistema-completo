@@ -25,6 +25,9 @@ export const employeesRouter = router({
         positionId: z.number().optional(),
         status: z.enum(["ativo", "afastado", "desligado"]).optional(),
         search: z.string().optional(),
+        hireDateFrom: z.string().optional(),
+        hireDateTo: z.string().optional(),
+        assessmentStatus: z.enum(["with_assessment", "without_assessment", "in_progress", "completed"]).optional(),
         limit: z.number().min(1).max(1000).optional().default(100),
         offset: z.number().min(0).optional().default(0),
       }).optional()

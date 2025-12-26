@@ -119,6 +119,7 @@ import Funcionarios from "./pages/Funcionarios";
 import FuncionarioDetalhes from "./pages/FuncionarioDetalhes";
 import FuncionariosAtivos from "./pages/FuncionariosAtivos";
 import FuncionariosGerenciar from "./pages/FuncionariosGerenciar";
+import OnboardingDashboard from "./pages/OnboardingDashboard";
 import DesenvolvimentoFuncionarios from "./pages/DesenvolvimentoFuncionarios";
 import AprovacoesD from "./pages/aprovacoes/Dashboard";
 import MinhasSolicitacoes from "./pages/aprovacoes/MinhasSolicitacoes";
@@ -440,6 +441,7 @@ function Router() {
       <Route path="/funcionarios/:id" component={FuncionarioDetalhes} />
       <Route path="/funcionarios/gerenciar" component={FuncionariosGerenciar} />
       <Route path="/funcionarios/importados" component={FuncionariosImportados} />
+      <Route path="/funcionarios/onboarding" component={OnboardingDashboard} />
       <Route path="/desenvolvimento/funcionarios" component={DesenvolvimentoFuncionarios} />
       <Route path="/desenvolvimento/funcionarios/:id" component={PerfilFuncionario} />
       <Route path="/funcionarios/:id" component={PerfilFuncionario} />

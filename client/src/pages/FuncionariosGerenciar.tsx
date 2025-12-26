@@ -24,6 +24,10 @@ export default function FuncionariosGerenciar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("ativo");
+  const [selectedPosition, setSelectedPosition] = useState<string>("all");
+  const [hireDateFrom, setHireDateFrom] = useState<string>("");
+  const [hireDateTo, setHireDateTo] = useState<string>("");
+  const [assessmentStatus, setAssessmentStatus] = useState<string>("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -49,6 +53,10 @@ export default function FuncionariosGerenciar() {
     search: searchTerm,
     status: selectedStatus !== "all" ? (selectedStatus as any) : undefined,
     departmentId: selectedDepartment !== "all" ? parseInt(selectedDepartment) : undefined,
+    positionId: selectedPosition !== "all" ? parseInt(selectedPosition) : undefined,
+    hireDateFrom: hireDateFrom || undefined,
+    hireDateTo: hireDateTo || undefined,
+    assessmentStatus: assessmentStatus !== "all" ? (assessmentStatus as any) : undefined,
   });
 
   const { data: departments } = trpc.employees.getDepartments.useQuery({});

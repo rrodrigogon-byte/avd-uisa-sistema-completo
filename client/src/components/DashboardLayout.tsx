@@ -244,6 +244,7 @@ const menuItems = [
       { icon: Users, label: "Funcionários", path: "/funcionarios" },
       { icon: UserCog, label: "Gerenciar Funcionários", path: "/funcionarios/gerenciar" },
       { icon: UserCheck, label: "Ativos", path: "/funcionarios-ativos" },
+      { icon: UserPlus, label: "Onboarding", path: "/funcionarios/onboarding" },
       { icon: Building2, label: "Departamentos", path: "/departamentos" },
       { icon: Briefcase, label: "Centros de Custo", path: "/centros-custos" },
       { icon: FileText, label: "Descrição de Cargos", path: "/descricao-cargos" },

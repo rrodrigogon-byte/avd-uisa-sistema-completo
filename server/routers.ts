@@ -118,6 +118,7 @@ import { employeeManagementRouter } from "./employeeManagementRouter";
 import { jobDescriptionBatchApprovalRouter } from "./jobDescriptionBatchApprovalRouter";
 import { pendenciasRouter } from "./routers/pendenciasRouter";
 import { customReportBuilderRouter } from "./customReportBuilderRouter";
+import { onboardingRouter } from "./routers/onboardingRouter";
 import { predictiveAnalyticsRouter } from "./predictiveAnalyticsRouter";
 import { continuousFeedbackRouter } from "./continuousFeedbackRouter";
 import { dashboardGestorRouter } from "./routers/dashboardGestorRouter";
@@ -336,6 +337,9 @@ export const appRouter = router({
   reportsAdvanced: reportsAdvancedRouter,
   psychometricTests: psychometricTestsRouter,
   geriatric: geriatricRouter,
+  
+  // Novos routers - Onboarding (26/12/2025)
+  onboarding: onboardingRouter,
   
   // Ondas 1, 2 e 3 - Processos Avaliativos e Formulários Dinâmicos
   evaluationProcesses: evaluationProcessesRouter,

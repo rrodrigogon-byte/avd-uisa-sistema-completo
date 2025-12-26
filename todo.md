@@ -489,3 +489,36 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 
 ### Prioridade
 **ALTA** - Impacta gestão de funcionários e acesso ao sistema
+
+
+## 🚀 MELHORIAS DE USABILIDADE E GESTÃO (26/12/2025)
+
+### Busca Global e Filtros
+- [x] Implementar busca global (Ctrl+K) com integração de funcionários
+  - [x] Criar componente GlobalSearch com modal
+  - [x] Adicionar atalho de teclado Ctrl+K
+  - [x] Integrar busca de funcionários
+  - [x] Adicionar navegação rápida para perfis
+  - [x] Implementar histórico de buscas recentes
+
+### Filtros Avançados na Gestão de Funcionários
+- [x] Adicionar filtros avançados na gestão de funcionários
+  - [x] Filtro por cargo
+  - [x] Filtro por data de admissão (range de datas)
+  - [x] Filtro por status (ativo/inativo)
+  - [x] Filtro por departamento
+  - [x] Implementar combinação de múltiplos filtros
+  - [x] Adicionar botão "Limpar filtros"
+  - [ ] Salvar preferências de filtros do usuário
+
+### Dashboard de Onboarding
+- [x] Criar dashboard de onboarding para novos colaboradores
+  - [x] Criar página OnboardingDashboard.tsx
+  - [x] Implementar card de novos funcionários (últimos 30 dias)
+  - [x] Adicionar card de documentação pendente
+  - [x] Criar card de integração inicial (checklist)
+  - [x] Implementar gráfico de evolução de onboarding
+  - [x] Adicionar tabela de novos colaboradores com status
+  - [x] Criar procedures tRPC para dados de onboarding
+  - [x] Adicionar rota no App.tsx
+  - [x] Adicionar item no menu do DashboardLayout
