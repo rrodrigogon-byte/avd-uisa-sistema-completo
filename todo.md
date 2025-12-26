@@ -455,3 +455,37 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 **Status do sistema:** ✅ Operacional
 **Cobertura de testes:** 100% dos módulos críticos
 **Bugs críticos:** 0
+
+
+## 🚨 MELHORIAS URGENTES - USUÁRIOS E FUNCIONÁRIOS (26/12/2025)
+
+### Problemas Identificados
+- [x] Funcionários não aparecem na busca (Fernando Pinto, Caroline Mendes, etc.) - RESOLVIDO: busca case-insensitive por nome, email, código e CPF
+- [x] Edição de funcionários não traz todos os dados cadastrais - RESOLVIDO: campos phone e address adicionados
+- [x] Faltam usuários do sistema cadastrados (líderes, RH, TI) - RESOLVIDO: todos cadastrados
+
+### Plano de Correção
+1. **Corrigir Sistema de Busca de Funcionários**
+   - [x] Investigar por que alguns funcionários não aparecem na busca
+   - [x] Verificar query de busca no backend
+   - [x] Testar com nomes específicos: Fernando Pinto, Caroline Mendes
+   - [x] Validar indexação e filtros
+
+2. **Melhorar Edição de Funcionários**
+   - [x] Trazer todos os dados cadastrais ao clicar em Edição
+   - [x] Permitir complementação de dados faltantes
+   - [x] Adicionar validação de campos obrigatórios
+   - [x] Testar salvamento de dados complementares
+
+3. **Cadastrar Usuários do Sistema**
+   - [x] Rodrigo Ribeiro Gonçalves (admin - já existia)
+   - [x] André Sbardelline (rh - Gerente de RH)
+   - [x] Caroline Mendes (rh - Coordenadora de DHO)
+   - [x] Lucas dos Passos Silva (admin - TI)
+   - [x] Bernardo Mendes (gestor - Coordenador de Comunicação)
+   - [x] Fabio Leite (rh - Coordenador de RH)
+   - [x] Alexsandra (rh - Especialista em cargos e salários)
+   - [x] Diego Mamani (admin - já existia)
+
+### Prioridade
+**ALTA** - Impacta gestão de funcionários e acesso ao sistema

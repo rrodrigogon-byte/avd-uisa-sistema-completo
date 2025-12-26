@@ -204,6 +204,8 @@ export async function getEmployeeById(id: number) {
       positionTitle: positions.title,
       managerId: employees.managerId,
       salary: employees.salary,
+      phone: employees.phone,
+      address: employees.address,
       status: employees.status,
       userId: employees.userId,
       createdAt: employees.createdAt,
@@ -973,13 +975,15 @@ export async function listEmployees(filters?: {
     conditions.push(eq(employees.positionId, filters.positionId));
   }
 
-  // Busca por nome ou email (SQL LIKE para performance)
+  // Busca por nome, email, código ou CPF (SQL LIKE case-insensitive para performance)
   if (filters?.search && filters.search.trim()) {
     const searchPattern = `%${filters.search.trim()}%`;
     conditions.push(
       or(
-        sql`${employees.name} LIKE ${searchPattern}`,
-        sql`${employees.email} LIKE ${searchPattern}`
+        sql`LOWER(${employees.name}) LIKE LOWER(${searchPattern})`,
+        sql`LOWER(${employees.email}) LIKE LOWER(${searchPattern})`,
+        sql`${employees.employeeCode} LIKE ${searchPattern}`,
+        sql`${employees.cpf} LIKE ${searchPattern}`
       )
     );
   }
