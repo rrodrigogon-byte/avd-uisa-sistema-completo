@@ -19,7 +19,7 @@ export const gestaoRouter = router({
    * Obter estatísticas consolidadas do sistema
    * Retorna contadores de movimentações, aprovações pendentes e funcionários
    */
-  getConsolidatedStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  getConsolidatedStats: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) {
       throw new Error("Database not available");

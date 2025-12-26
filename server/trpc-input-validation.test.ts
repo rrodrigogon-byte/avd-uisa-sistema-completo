@@ -11,8 +11,8 @@ import { z } from 'zod';
 
 describe('tRPC Input Validation', () => {
   describe('Schema validation', () => {
-    it('deve aceitar undefined quando input é z.object({}).optional()', () => {
-      const schema = z.object({}).optional();
+    it('deve aceitar undefined quando input é z.object({})', () => {
+      const schema = z.object({});
       
       // Deve aceitar undefined
       expect(() => schema.parse(undefined)).not.toThrow();
@@ -22,14 +22,14 @@ describe('tRPC Input Validation', () => {
     });
 
     it('deve aceitar undefined quando input não é fornecido', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       
       const result = schema.safeParse(undefined);
       expect(result.success).toBe(true);
     });
 
     it('deve rejeitar valores não-objeto quando input espera objeto', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       
       // String não deve ser aceita
       const result1 = schema.safeParse("string");
@@ -46,8 +46,8 @@ describe('tRPC Input Validation', () => {
   });
 
   describe('Procedure patterns', () => {
-    it('protectedProcedure.input(z.object({}).optional()).query() deve aceitar undefined', () => {
-      const inputSchema = z.object({}).optional();
+    it('protectedProcedure.input(z.object({})).query() deve aceitar undefined', () => {
+      const inputSchema = z.object({});
       
       // Simular chamada com undefined
       const input = undefined;
@@ -56,8 +56,8 @@ describe('tRPC Input Validation', () => {
       expect(result.success).toBe(true);
     });
 
-    it('publicProcedure.input(z.object({}).optional()).query() deve aceitar undefined', () => {
-      const inputSchema = z.object({}).optional();
+    it('publicProcedure.input(z.object({})).query() deve aceitar undefined', () => {
+      const inputSchema = z.object({});
       
       // Simular chamada com undefined
       const input = undefined;
@@ -66,8 +66,8 @@ describe('tRPC Input Validation', () => {
       expect(result.success).toBe(true);
     });
 
-    it('adminProcedure.input(z.object({}).optional()).query() deve aceitar undefined', () => {
-      const inputSchema = z.object({}).optional();
+    it('adminProcedure.input(z.object({})).query() deve aceitar undefined', () => {
+      const inputSchema = z.object({});
       
       // Simular chamada com undefined
       const input = undefined;
@@ -79,7 +79,7 @@ describe('tRPC Input Validation', () => {
 
   describe('Edge cases', () => {
     it('deve rejeitar null (null não é undefined)', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       
       // null é diferente de undefined e NÃO é aceito por z.object().optional()
       const result = schema.safeParse(null);
@@ -87,7 +87,7 @@ describe('tRPC Input Validation', () => {
     });
 
     it('deve aceitar objeto com propriedades extras', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       
       // Objeto com propriedades extras deve ser aceito (passthrough)
       const result = schema.safeParse({ extra: 'value' });
@@ -97,7 +97,7 @@ describe('tRPC Input Validation', () => {
 
   describe('Regression prevention', () => {
     it('deve prevenir erro "expected object, received undefined"', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       
       // Este era o caso que causava o erro antes da correção
       const result = schema.safeParse(undefined);
@@ -107,7 +107,7 @@ describe('tRPC Input Validation', () => {
     });
 
     it('deve funcionar com useQuery(undefined, options)', () => {
-      const inputSchema = z.object({}).optional();
+      const inputSchema = z.object({});
       
       // Simular padrão comum: trpc.procedure.useQuery(undefined, { refetchInterval: 30000 })
       const input = undefined;
@@ -119,25 +119,25 @@ describe('tRPC Input Validation', () => {
 
   describe('Specific procedures fixed', () => {
     it('pendencias.countByStatus deve aceitar undefined', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       const result = schema.safeParse(undefined);
       expect(result.success).toBe(true);
     });
 
     it('departments.list deve aceitar undefined', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       const result = schema.safeParse(undefined);
       expect(result.success).toBe(true);
     });
 
     it('competencies.list deve aceitar undefined', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       const result = schema.safeParse(undefined);
       expect(result.success).toBe(true);
     });
 
     it('costCenters.list deve aceitar undefined', () => {
-      const schema = z.object({}).optional();
+      const schema = z.object({});
       const result = schema.safeParse(undefined);
       expect(result.success).toBe(true);
     });

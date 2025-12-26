@@ -919,7 +919,7 @@ export const orgChartRouter = router({
    * Retorna estrutura de árvore com colaboradores e seus subordinados
    */
   getOrgChart: protectedProcedure
-    .input(z.object({}).optional())
+    .input(z.object({}))
     .query(async () => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });

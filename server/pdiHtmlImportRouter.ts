@@ -27,7 +27,7 @@ export const pdiHtmlImportRouter = router({
   /**
    * Listar arquivos HTML de PDI disponíveis para importação
    */
-  listAvailableImports: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listAvailableImports: protectedProcedure.input(z.object({})).query(async () => {
     try {
       // Buscar arquivos HTML na pasta do projeto
       const projectPath = path.join(process.cwd());
@@ -692,7 +692,7 @@ export const pdiHtmlImportRouter = router({
   /**
    * Listar PDIs já importados
    */
-  listImportedPDIs: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listImportedPDIs: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

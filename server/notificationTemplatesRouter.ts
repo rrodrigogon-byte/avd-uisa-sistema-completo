@@ -14,7 +14,7 @@ export const notificationTemplatesRouter = router({
   /**
    * Listar todos os templates de notificações
    */
-  list: adminProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  list: adminProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

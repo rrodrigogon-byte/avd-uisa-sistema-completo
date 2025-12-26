@@ -15,7 +15,7 @@ export const cyclesRouter = router({
   /**
    * Listar todos os ciclos
    */
-  list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  list: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -413,7 +413,7 @@ export const cyclesRouter = router({
   /**
    * Buscar ciclos ativos com estatísticas de progresso
    */
-  getActiveCycles: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getActiveCycles: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -492,7 +492,7 @@ export const cyclesRouter = router({
   /**
    * Buscar estatísticas gerais de ciclos
    */
-  getCycleStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getCycleStats: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return null;
 

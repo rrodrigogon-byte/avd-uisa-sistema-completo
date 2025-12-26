@@ -285,7 +285,7 @@ export const pirDashboardRouter = router({
   /**
    * Buscar lista de ciclos disponíveis
    */
-  listCycles: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listCycles: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -300,7 +300,7 @@ export const pirDashboardRouter = router({
   /**
    * Buscar lista de departamentos
    */
-  listDepartments: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listDepartments: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -315,7 +315,7 @@ export const pirDashboardRouter = router({
   /**
    * Buscar lista de cargos
    */
-  listPositions: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listPositions: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return [];
 

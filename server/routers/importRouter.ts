@@ -214,7 +214,7 @@ export const importRouter = router({
    * Importação em massa (mantido para compatibilidade)
    */
   importBulk: protectedProcedure
-    .input(z.object({}).optional())
+    .input(z.object({}))
     .mutation(async ({ ctx }) => {
       // Simular importação de 100+ arquivos
       const totalFiles = 105;

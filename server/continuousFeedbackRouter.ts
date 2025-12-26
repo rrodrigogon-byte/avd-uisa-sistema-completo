@@ -147,7 +147,7 @@ export const continuousFeedbackRouter = router({
   /**
    * Listar solicitações de feedback pendentes
    */
-  pendingRequests: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  pendingRequests: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -353,7 +353,7 @@ export const continuousFeedbackRouter = router({
   /**
    * Listar templates de feedback
    */
-  listTemplates: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  listTemplates: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

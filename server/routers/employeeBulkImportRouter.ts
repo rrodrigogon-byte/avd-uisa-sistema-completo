@@ -230,7 +230,7 @@ export const employeeBulkImportRouter = router({
   /**
    * Obter template CSV para importação
    */
-  getImportTemplate: protectedProcedure.input(z.object({}).optional()).query(() => {
+  getImportTemplate: protectedProcedure.input(z.object({})).query(() => {
     return {
       headers: [
         "name",
@@ -262,7 +262,7 @@ export const employeeBulkImportRouter = router({
   /**
    * Obter lista de departamentos e cargos disponíveis
    */
-  getAvailableOptions: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getAvailableOptions: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return { departments: [], positions: [] };
 

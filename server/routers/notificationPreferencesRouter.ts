@@ -11,7 +11,7 @@ export const notificationPreferencesRouter = router({
   /**
    * Obter preferências do usuário atual
    */
-  get: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  get: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -103,7 +103,7 @@ export const notificationPreferencesRouter = router({
   /**
    * Resetar preferências para valores padrão
    */
-  reset: protectedProcedure.input(z.object({}).optional()).mutation(async ({ ctx }) => {
+  reset: protectedProcedure.input(z.object({})).mutation(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

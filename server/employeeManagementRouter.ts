@@ -584,7 +584,7 @@ export const employeeManagementRouter = router({
    * Listar gestores ativos
    */
   listManagers: adminProcedure
-    .input(z.object({}).optional())
+    .input(z.object({}))
     .query(async () => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -613,7 +613,7 @@ export const employeeManagementRouter = router({
    * Listar departamentos ativos
    */
   listDepartments: adminProcedure
-    .input(z.object({}).optional())
+    .input(z.object({}))
     .query(async () => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -636,7 +636,7 @@ export const employeeManagementRouter = router({
    * Listar cargos ativos
    */
   listPositions: adminProcedure
-    .input(z.object({}).optional())
+    .input(z.object({}))
     .query(async () => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

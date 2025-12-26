@@ -536,7 +536,7 @@ export const pirRiskAlertsRouter = router({
   /**
    * Obter estatísticas de risco por departamento
    */
-  getRiskStatsByDepartment: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getRiskStatsByDepartment: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return { stats: [] };
 
@@ -603,7 +603,7 @@ export const pirRiskAlertsRouter = router({
   /**
    * Configurar alertas automáticos
    */
-  getAlertSettings: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getAlertSettings: protectedProcedure.input(z.object({})).query(async () => {
     // Por enquanto, retornar configurações padrão
     // Futuramente, buscar do banco de dados
     return {

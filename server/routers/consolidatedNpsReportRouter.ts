@@ -34,7 +34,7 @@ export const consolidatedNpsReportRouter = router({
   /**
    * Obter resumo rápido para dashboard
    */
-  getDashboardSummary: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getDashboardSummary: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return null;
 

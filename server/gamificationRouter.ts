@@ -195,14 +195,14 @@ export const gamificationRouter = router({
   /**
    * Obter configuração de níveis
    */
-  getLevels: protectedProcedure.input(z.object({}).optional()).query(() => {
+  getLevels: protectedProcedure.input(z.object({})).query(() => {
     return LEVELS;
   }),
 
   /**
    * Obter configuração de pontos por ação
    */
-  getPointsConfig: protectedProcedure.input(z.object({}).optional()).query(() => {
+  getPointsConfig: protectedProcedure.input(z.object({})).query(() => {
     return POINTS_CONFIG;
   }),
 

@@ -24,7 +24,7 @@ export const bonusRouter = router({
   /**
    * Listar configurações de bônus
    */
-  listConfigs: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listConfigs: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -119,7 +119,7 @@ export const bonusRouter = router({
   /**
    * Listar workflows de aprovação
    */
-  listWorkflows: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listWorkflows: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -609,7 +609,7 @@ export const bonusRouter = router({
   /**
    * Listar aprovações pendentes para o usuário atual
    */
-  myPendingApprovals: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  myPendingApprovals: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -733,7 +733,7 @@ export const bonusRouter = router({
   /**
    * Listar cálculos de bônus pendentes
    */
-  listCalculations: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  listCalculations: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) return [];
 

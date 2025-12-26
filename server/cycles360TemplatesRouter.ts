@@ -9,7 +9,7 @@ export const cycles360TemplatesRouter = router({
   /**
    * Listar templates disponíveis (públicos + próprios)
    */
-  list: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  list: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -245,7 +245,7 @@ export const cycles360TemplatesRouter = router({
   /**
    * Obter analytics de templates
    */
-  getAnalytics: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  getAnalytics: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

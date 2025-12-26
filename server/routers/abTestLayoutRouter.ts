@@ -228,7 +228,7 @@ export const abTestLayoutRouter = router({
   /**
    * Obter configurações de layout disponíveis
    */
-  getAvailableLayoutConfigs: protectedProcedure.input(z.object({}).optional()).query(() => {
+  getAvailableLayoutConfigs: protectedProcedure.input(z.object({})).query(() => {
     return {
       default: {
         name: "Layout Padrão",

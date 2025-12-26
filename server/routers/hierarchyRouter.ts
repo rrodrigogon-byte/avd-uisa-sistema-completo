@@ -14,7 +14,7 @@ export const hierarchyRouter = router({
   /**
    * Obter árvore hierárquica completa
    */
-  getOrganizationTree: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  getOrganizationTree: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -203,7 +203,7 @@ export const hierarchyRouter = router({
   /**
    * Obter estatísticas de hierarquia
    */
-  getHierarchyStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  getHierarchyStats: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

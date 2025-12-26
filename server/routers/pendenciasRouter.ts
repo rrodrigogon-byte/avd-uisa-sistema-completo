@@ -207,7 +207,7 @@ export const pendenciasRouter = router({
    * Contar pendências por status
    */
   countByStatus: protectedProcedure
-    .input(z.object({}).optional())
+    .input(z.object({}))
     .query(async ({ ctx }) => {
     const employee = await db.getUserEmployee(ctx.user.id);
     
@@ -223,7 +223,7 @@ export const pendenciasRouter = router({
   /**
    * Buscar pendências do responsável
    */
-  myPendencias: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  myPendencias: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const employee = await db.getUserEmployee(ctx.user.id);
     
     if (!employee) {

@@ -1480,7 +1480,7 @@ export const appRouter = router({
         return { id: itemId, success: true };
       }),
 
-    getDevelopmentActions: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    getDevelopmentActions: protectedProcedure.input(z.object({})).query(async () => {
       return await db.getDevelopmentActions();
     }),
 
@@ -3055,11 +3055,11 @@ export const appRouter = router({
   // CICLOS, DEPARTAMENTOS E CARGOS (Legacy)
   // ============================================================================
   cyclesLegacy: router({
-    list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    list: protectedProcedure.input(z.object({})).query(async () => {
       return await db.getAllCycles();
     }),
 
-    getActive: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    getActive: protectedProcedure.input(z.object({})).query(async () => {
       return await db.getActiveCycle();
     }),
 
@@ -3078,13 +3078,13 @@ export const appRouter = router({
   }),
 
   departments: router({
-    list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    list: protectedProcedure.input(z.object({})).query(async () => {
       return await db.getAllDepartments();
     }),
   }),
 
   positions: router({
-    list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    list: protectedProcedure.input(z.object({})).query(async () => {
       return await db.getAllPositions();
     }),
   }),
@@ -3093,7 +3093,7 @@ export const appRouter = router({
   // COMPETÊNCIAS
   // ============================================================================
   competencies: router({
-    list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    list: protectedProcedure.input(z.object({})).query(async () => {
       return await db.getAllCompetencies();
     }),
     
@@ -3478,7 +3478,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
 
   // Router de Planos de Sucessão
   successionPlans: router({
-    list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    list: protectedProcedure.input(z.object({})).query(async () => {
       const database = await getDb();
       if (!database) return [];
 
@@ -4408,7 +4408,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       }),
 
     // Buscar TODOS os testes (apenas RH/Admin)
-    getAllTests: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    getAllTests: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
       const database = await getDb();
       if (!database) return [];
 
@@ -4457,7 +4457,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     }),
 
     // Buscar testes de um colaborador
-    getTests: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    getTests: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
       const database = await getDb();
       if (!database) return [];
 
@@ -4830,7 +4830,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
       }),
 
     // Obter estatísticas do dashboard de testes psicométricos
-    getDashboardStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    getDashboardStats: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
       // Verificar se é RH ou Admin
       if (ctx.user!.role !== 'admin' && ctx.user!.role !== 'rh') {
         throw new TRPCError({
@@ -5497,13 +5497,13 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
         }));
       }),
       
-    getDepartments: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    getDepartments: protectedProcedure.input(z.object({})).query(async () => {
       const database = await getDb();
       if (!database) return [];
       return database.select().from(departments).where(eq(departments.active, true)).orderBy(departments.name);
     }),
     
-    getCostCenters: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    getCostCenters: protectedProcedure.input(z.object({})).query(async () => {
       const database = await getDb();
       if (!database) return [];
       return database.select().from(costCenters).where(eq(costCenters.active, true)).orderBy(costCenters.name);
@@ -5680,7 +5680,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // Router de Emails
   emails: router({
     // Buscar métricas de emails
-    getMetrics: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    getMetrics: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -5702,7 +5702,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
     }),
 
     // Buscar histórico de emails
-    getHistory: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    getHistory: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -5888,7 +5888,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // Router de Centros de Custos
   costCenters: router({
     // Listar todos os centros de custos ativos
-    list: publicProcedure.input(z.object({}).optional()).query(async () => {
+    list: publicProcedure.input(z.object({})).query(async () => {
       const database = await getDb();
       if (!database) return [];
 
@@ -5975,7 +5975,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // E-MAIL
   // ============================================================================
   smtpConfig: router({
-    get: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    get: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
@@ -6077,7 +6077,7 @@ Gere 6-8 ações de desenvolvimento específicas, práticas e mensuráveis, dist
   // ============================================================================
   workflows: router({
     // Listar todos os workflows
-    list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    list: protectedProcedure.input(z.object({})).query(async () => {
       const database = await getDb();
       if (!database) return [];
 

@@ -27,7 +27,7 @@ import { protectedProcedure, router } from "./_core/trpc";
 
 export const successionRouter = router({
   // Listar todos os planos de sucessão
-  list: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  list: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const database = await getDb();
     if (!database) return [];
 

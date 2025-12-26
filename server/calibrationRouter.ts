@@ -79,7 +79,7 @@ export const calibrationRouter = router({
   /**
    * Listar movimentações pendentes de aprovação
    */
-  listPendingMovements: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  listPendingMovements: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -316,7 +316,7 @@ export const calibrationRouter = router({
   /**
    * Obter estatísticas de calibração
    */
-  getCalibrationStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getCalibrationStats: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

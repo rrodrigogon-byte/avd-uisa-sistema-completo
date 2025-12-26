@@ -73,7 +73,7 @@ export const pushNotificationsRouter = router({
   /**
    * Listar subscriptions ativas do usuário
    */
-  listUserSubscriptions: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  listUserSubscriptions: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -378,7 +378,7 @@ export const pushNotificationsRouter = router({
   /**
    * Obter chave pública VAPID
    */
-  getPublicKey: protectedProcedure.input(z.object({}).optional()).query(() => {
+  getPublicKey: protectedProcedure.input(z.object({})).query(() => {
     // Retornar chave pública VAPID (em produção, usar variável de ambiente)
     return {
       publicKey: process.env.VAPID_PUBLIC_KEY || "BEl62iUYgUivxIkv69yViEuiBIa-Ib37J8xQmrysGRcck3-SgVYevXqilhWluXcs1uD5ffz7Y6CtBUez09yV77c"
@@ -388,7 +388,7 @@ export const pushNotificationsRouter = router({
   /**
    * Verificar se usuário tem subscription ativa
    */
-  hasSubscription: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  hasSubscription: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return { hasSubscription: false };
 

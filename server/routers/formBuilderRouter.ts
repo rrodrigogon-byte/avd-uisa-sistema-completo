@@ -23,7 +23,7 @@ export const formBuilderRouter = router({
     /**
      * Listar todos os templates
      */
-    list: protectedProcedure.input(z.object({}).optional()).query(async () => {
+    list: protectedProcedure.input(z.object({})).query(async () => {
       return await getAllFormTemplates();
     }),
 

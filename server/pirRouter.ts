@@ -12,7 +12,7 @@ export const pirRouter = router({
   /**
    * Buscar funcionários que possuem avaliações PIR
    */
-  getEmployeesWithAssessments: protectedProcedure.input(z.object({}).optional()).query(async () => {
+  getEmployeesWithAssessments: protectedProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) throw new Error('Database not available');
 

@@ -134,7 +134,7 @@ export const integrationsRouter = router({
   /**
    * Obter configurações de integração
    */
-  getConfig: adminProcedure.input(z.object({}).optional()).query(async () => {
+  getConfig: adminProcedure.input(z.object({})).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

@@ -50,7 +50,7 @@ export const emailFailuresRouter = router({
   /**
    * Obter estatísticas de emails falhados
    */
-  getFailureStats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+  getFailureStats: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     // Apenas admin e RH podem ver estatísticas
     if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
       throw new TRPCError({
