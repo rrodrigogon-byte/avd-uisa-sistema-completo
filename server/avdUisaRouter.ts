@@ -795,6 +795,8 @@ export const avdUisaRouter = router({
       })),
     }))
     .mutation(async ({ ctx, input }) => {
+      console.log('[savePirAssessment] Input recebido:', JSON.stringify({ processId: input.processId, responsesCount: input.responses?.length, hasResponses: !!input.responses }));
+      
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 

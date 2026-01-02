@@ -558,3 +558,12 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 **Última atualização:** 26/12/2025
 **Versão:** 2.0.0
 **Status:** Em desenvolvimento ativo 🚀
+
+## Correções PIR - Concluídas
+
+- [x] Adicionar logs de depuração no frontend (handleSave e handleComplete)
+- [x] Adicionar logs de depuração no backend (savePirAssessment)
+- [x] Melhorar tratamento de erros para mostrar detalhes completos do Zod
+- [x] Adicionar validação robusta antes de enviar dados
+- [x] Garantir que responses seja sempre um array válido
+- [x] Adicionar try-catch no handleComplete para capturar erros

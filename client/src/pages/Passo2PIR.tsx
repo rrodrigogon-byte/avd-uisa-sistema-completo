@@ -74,7 +74,9 @@ export default function Passo2PIR() {
       setIsSaving(false);
     },
     onError: (error) => {
-      toast.error(`Erro ao salvar: ${error.message}`);
+      console.error('Erro completo ao salvar PIR:', error);
+      const errorMessage = error.data?.zodError?.fieldErrors?.responses?.[0] || error.message || 'Erro desconhecido';
+      toast.error(`Erro ao salvar: ${JSON.stringify(errorMessage)}`);
       setIsSaving(false);
     },
   });
@@ -86,7 +88,9 @@ export default function Passo2PIR() {
       navigate(`/avd/processo/passo3/${processId}`);
     },
     onError: (error) => {
-      toast.error(`Erro ao completar passo: ${error.message}`);
+      console.error('Erro completo ao completar passo:', error);
+      const errorMessage = error.message || 'Erro desconhecido';
+      toast.error(`Erro ao completar passo: ${errorMessage}`);
       setIsSaving(false);
     },
   });
@@ -142,9 +146,18 @@ export default function Passo2PIR() {
       response,
     }));
 
+    // Validação robusta antes de enviar
+    if (!Array.isArray(answersArray) || answersArray.length === 0) {
+      toast.error("Erro: nenhuma resposta para salvar");
+      setIsSaving(false);
+      return;
+    }
+
+    console.log('[handleSave] Enviando:', { processId, responsesCount: answersArray.length });
+
     savePirMutation.mutate({
       processId,
-      answers: answersArray,
+      responses: answersArray,
     });
   };
 
@@ -161,23 +174,37 @@ export default function Passo2PIR() {
 
     setIsSaving(true);
 
-    // Converter respostas para array
-    const answersArray = Object.entries(responses).map(([questionId, response]) => ({
-      questionId: parseInt(questionId),
-      response,
-    }));
+    try {
+      // Converter respostas para array
+      const answersArray = Object.entries(responses).map(([questionId, response]) => ({
+        questionId: parseInt(questionId),
+        response,
+      }));
 
-    // Salvar respostas
-    await savePirMutation.mutateAsync({
-      processId,
-      answers: answersArray,
-    });
+      console.log('Enviando respostas PIR:', { processId, responsesCount: answersArray.length });
 
-    // Completar passo
-    completeStepMutation.mutate({
-      processId,
-      step: 2,
-    });
+      // Garantir que responses é um array válido
+      if (!Array.isArray(answersArray) || answersArray.length === 0) {
+        toast.error("Erro: nenhuma resposta encontrada");
+        setIsSaving(false);
+        return;
+      }
+
+      // Salvar respostas
+      await savePirMutation.mutateAsync({
+        processId,
+        responses: answersArray,
+      });
+
+      // Completar passo
+      completeStepMutation.mutate({
+        processId,
+        step: 2,
+      });
+    } catch (error) {
+      console.error('Erro ao completar PIR:', error);
+      setIsSaving(false);
+    }
   };
 
   if (!user) {
