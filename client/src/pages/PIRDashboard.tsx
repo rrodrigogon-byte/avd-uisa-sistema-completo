@@ -11,6 +11,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
+import * as XLSX from 'xlsx';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,8 @@ import {
   Filter,
   Download,
   Shield,
+  FileSpreadsheet,
+  Calendar,
 } from "lucide-react";
 
 const COLORS = {
@@ -67,6 +70,8 @@ export default function PIRDashboard() {
   const [selectedCycleId, setSelectedCycleId] = useState<number | undefined>(undefined);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | undefined>(undefined);
   const [selectedPositionId, setSelectedPositionId] = useState<number | undefined>(undefined);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
   // Buscar ciclos disponíveis
   const { data: cycles, isLoading: loadingCycles } = trpc.pirDashboard.listCycles.useQuery(undefined);
@@ -82,7 +87,9 @@ export default function PIRDashboard() {
     cycleId: selectedCycleId,
     departmentId: selectedDepartmentId,
     positionId: selectedPositionId,
-  }), [selectedCycleId, selectedDepartmentId, selectedPositionId]);
+    startDate: startDate || undefined,
+    endDate: endDate || undefined,
+  }), [selectedCycleId, selectedDepartmentId, selectedPositionId, startDate, endDate]);
 
   // Buscar estatísticas gerais
   const { data: stats, isLoading: loadingStats } = trpc.pirDashboard.getStats.useQuery(
@@ -187,6 +194,57 @@ export default function PIRDashboard() {
       ]
     : [];
 
+  // Função para exportar dados para Excel
+  const exportToExcel = () => {
+    if (!stats || !dimensionDistribution) {
+      alert('Não há dados para exportar');
+      return;
+    }
+
+    // Preparar dados para exportação
+    const worksheetData = [
+      ['Dashboard PIR - Relatório de Análise'],
+      ['Data de Geração:', new Date().toLocaleDateString('pt-BR')],
+      [''],
+      ['ESTATÍSTICAS GERAIS'],
+      ['Total de Avaliações', stats.totalAssessments],
+      ['Nota Média Geral', stats.averageScore?.toFixed(2) || 'N/A'],
+      [''],
+      ['DISTRIBUIÇÃO POR FAIXA DE DESEMPENHO'],
+      ['Faixa', 'Quantidade'],
+      ['Excepcional (90-100)', stats.scoreRanges?.excepcional || 0],
+      ['Supera (75-89)', stats.scoreRanges?.supera || 0],
+      ['Atende (60-74)', stats.scoreRanges?.atende || 0],
+      ['Abaixo (0-59)', stats.scoreRanges?.abaixo || 0],
+      [''],
+      ['DISTRIBUIÇÃO POR DIMENSÃO'],
+      ['Dimensão', 'Média'],
+      ['Influência Pessoal (IP)', dimensionDistribution.IP?.toFixed(2) || 'N/A'],
+      ['Iniciativa e Decisão (ID)', dimensionDistribution.ID?.toFixed(2) || 'N/A'],
+      ['Inovação e Criatividade (IC)', dimensionDistribution.IC?.toFixed(2) || 'N/A'],
+      ['Estabilidade (ES)', dimensionDistribution.ES?.toFixed(2) || 'N/A'],
+      ['Flexibilidade (FL)', dimensionDistribution.FL?.toFixed(2) || 'N/A'],
+      ['Autonomia (AU)', dimensionDistribution.AU?.toFixed(2) || 'N/A'],
+      [''],
+      ['FILTROS APLICADOS'],
+      ['Ciclo', selectedCycleId ? cycles?.find(c => c.id === selectedCycleId)?.name || 'N/A' : 'Todos'],
+      ['Departamento', selectedDepartmentId ? departments?.find(d => d.id === selectedDepartmentId)?.name || 'N/A' : 'Todos'],
+      ['Cargo', selectedPositionId ? positions?.find(p => p.id === selectedPositionId)?.name || 'N/A' : 'Todos'],
+      ['Período', startDate && endDate ? `${startDate} a ${endDate}` : startDate ? `A partir de ${startDate}` : endDate ? `Até ${endDate}` : 'Todos os períodos'],
+    ];
+
+    // Criar workbook e worksheet
+    const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Dashboard PIR');
+
+    // Gerar nome do arquivo com data
+    const fileName = `dashboard-pir-${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    // Salvar arquivo
+    XLSX.writeFile(wb, fileName);
+  };
+
   return (
     <div className="container py-8 space-y-6">
       {/* Header */}
@@ -206,6 +264,10 @@ export default function PIRDashboard() {
             <Download className="h-4 w-4 mr-2" />
             Exportar PDF
           </Button>
+          <Button variant="outline" onClick={exportToExcel}>
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            Exportar Excel
+          </Button>
         </div>
       </div>
 
@@ -218,7 +280,7 @@ export default function PIRDashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-5">
             {/* Filtro de Ciclo */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Ciclo</label>
@@ -281,7 +343,49 @@ export default function PIRDashboard() {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Filtro de Data Inicial */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                Data Inicial
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            {/* Filtro de Data Final */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                Data Final
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
           </div>
+          {(startDate || endDate) && (
+            <div className="mt-4 flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setStartDate("");
+                  setEndDate("");
+                }}
+              >
+                Limpar Filtros de Data
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

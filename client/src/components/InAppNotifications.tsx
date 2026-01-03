@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { safeMap, safeFilter, safeFind, safeReduce, safeLength, ensureArray, isEmpty } from "@/lib/arrayHelpers";
 import { Button } from "@/components/ui/button";
@@ -35,12 +35,24 @@ export function InAppNotifications() {
   
   // Buscar notificações do usuário
   const { data: notifications = [], refetch } = trpc.notifications.getInApp.useQuery(
-    undefined,
+    { limit: 10 },
     { 
       refetchInterval: 60000, // Atualizar a cada 1 minuto
       enabled: true 
     }
   );
+
+  // Mutation para detectar testes pendentes
+  const detectPendingTestsMutation = trpc.notifications.detectPendingTests.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  // Detectar testes pendentes ao montar o componente
+  useEffect(() => {
+    detectPendingTestsMutation.mutate();
+  }, []);
 
   const markAsReadMutation = trpc.notifications.markAsRead.useMutation({
     onSuccess: () => {

@@ -181,6 +181,8 @@ import { emailNotificationsAutoRouter } from "./routers/emailNotificationsAutoRo
 import { avdExportRouter } from "./routers/avdExportRouter";
 import { historicalComparisonRouter } from "./routers/historicalComparison";
 import { resultNotificationsRouter } from "./routers/resultNotifications";
+import { inAppNotificationsRouter } from "./routers/inAppNotificationsRouter";
+import { integrityMetricsRouter } from "./routers/integrityMetricsRouter";
 import { and, desc, eq, sql, gte, lte, or } from "drizzle-orm";
 import { 
   sendWelcomeEmail, 
@@ -365,6 +367,8 @@ export const appRouter = router({
   pirExport: pirExportRouter,
   accessControl: accessControlRouter,
   export: exportRouter,
+  inAppNotifications: inAppNotificationsRouter,
+  integrityMetrics: integrityMetricsRouter,
   
   // Novos routers - Sistema de Cargos CBO e Aprovações (14/12/2025)
   cbo: cboRouter,

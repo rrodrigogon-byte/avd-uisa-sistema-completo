@@ -98,6 +98,8 @@ export const pirDashboardRouter = router({
       cycleId: z.number().optional(),
       departmentId: z.number().optional(),
       positionId: z.number().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
     }).default({}))
     .query(async ({ input }) => {
       const db = await getDb();
@@ -106,6 +108,8 @@ export const pirDashboardRouter = router({
       // Construir condições de filtro
       const conditions = [eq(pirAssessments.status, "concluida")];
       if (input.cycleId) conditions.push(eq(pirAssessments.cycleId, input.cycleId));
+      if (input.startDate) conditions.push(gte(pirAssessments.completedAt, new Date(input.startDate)));
+      if (input.endDate) conditions.push(lte(pirAssessments.completedAt, new Date(input.endDate)));
 
       // Buscar avaliações PIR concluídas com respostas
       const assessmentsData = await db

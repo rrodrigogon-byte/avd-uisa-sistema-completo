@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { notifications, notificationHistory } from "../../drizzle/schema";
-import { desc, eq, and, gte, lte, sql } from "drizzle-orm";
+import { notifications, notificationHistory, pirIntegrityAssessments, employees } from "../../drizzle/schema";
+import { desc, eq, and, gte, lte, sql, isNull } from "drizzle-orm";
 
 /**
  * Router de Notificações com Analytics
@@ -369,5 +369,95 @@ export const notificationsRouter = router({
         .limit(input.limit);
 
       return items;
+    }),
+
+  /**
+   * Detectar e criar notificações para testes de integridade pendentes
+   */
+  detectPendingTests: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Buscar employee_id do usuário logado
+      const employeeResult = await db
+        .select({ id: employees.id, name: employees.name })
+        .from(employees)
+        .where(eq(employees.email, ctx.user.email || ""))
+        .limit(1);
+
+      if (employeeResult.length === 0) {
+        return { created: 0 };
+      }
+
+      const employee = employeeResult[0];
+
+      // Buscar testes pendentes (não completados)
+      const pendingTests = await db
+        .select({
+          id: pirIntegrityAssessments.id,
+          expiresAt: pirIntegrityAssessments.expiresAt,
+        })
+        .from(pirIntegrityAssessments)
+        .where(and(
+          eq(pirIntegrityAssessments.employeeId, employee.id),
+          isNull(pirIntegrityAssessments.completedAt)
+        ));
+
+      let createdCount = 0;
+      const now = new Date();
+      const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+      for (const test of pendingTests) {
+        const expiresAt = test.expiresAt ? new Date(test.expiresAt) : null;
+
+        // Verificar se já existe notificação para este teste
+        const existingNotification = await db
+          .select()
+          .from(notifications)
+          .where(and(
+            eq(notifications.userId, employee.id),
+            eq(notifications.type, "pending_integrity_test"),
+            eq(notifications.link, `/integridade/pir/teste/${test.id}`)
+          ))
+          .limit(1);
+
+        if (existingNotification.length > 0) {
+          continue; // Já existe notificação
+        }
+
+        // Determinar tipo de alerta
+        let title = "";
+        let message = "";
+
+        if (expiresAt && expiresAt <= now) {
+          // Teste expirado
+          title = "⚠️ Teste de Integridade Expirado";
+          message = `Olá ${employee.name}, seu teste de integridade expirou. Entre em contato com o RH.`;
+        } else if (expiresAt && expiresAt <= threeDaysFromNow) {
+          // Teste próximo de expirar (3 dias ou menos)
+          const daysLeft = Math.ceil((expiresAt.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+          title = `⏰ Teste de Integridade Expira em ${daysLeft} dia${daysLeft > 1 ? 's' : ''}`;
+          message = `Olá ${employee.name}, você tem um teste de integridade pendente que expira em breve. Complete-o o quanto antes!`;
+        } else {
+          // Teste pendente normal
+          title = "📋 Teste de Integridade Pendente";
+          message = `Olá ${employee.name}, você tem um teste de integridade aguardando sua resposta.`;
+        }
+
+        // Criar notificação
+        await db.insert(notifications).values({
+          userId: employee.id,
+          type: "pending_integrity_test",
+          title,
+          message,
+          link: `/integridade/pir/teste/${test.id}`,
+          read: false,
+        });
+
+        createdCount++;
+      }
+
+      return { created: createdCount };
     }),
 });

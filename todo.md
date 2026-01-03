@@ -638,3 +638,34 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - [x] Corrigir erro ao enviar teste de integridade (email não está sendo enviado)
 - [x] Corrigir lista de funcionários vazia no convite para teste de integridade
 - [x] Corrigir procedures tRPC com validação incorreta (goals.list, pdi.list, dashboard.getStats)
+
+
+## 🆕 NOVAS FUNCIONALIDADES SOLICITADAS (03/01/2026)
+
+### 1. Filtros e Exportação Excel no PIR Dashboard
+- [x] Adicionar filtros de período específico (data inicial e final)
+- [x] Implementar exportação de relatórios em formato Excel (.xlsx)
+- [x] Manter funcionalidade existente de exportação PDF
+- [x] Adicionar interface de seleção de filtros no dashboard
+- [x] Implementar lógica de filtragem no backend
+- [x] Adicionar botão de exportação Excel na interface
+
+### 2. Sistema de Notificações In-App
+- [x] Criar tabela de notificações no banco de dados (schema) - Já existia
+- [x] Implementar lógica de detecção de testes pendentes
+- [x] Criar sistema de alertas para prazos próximos de expiração
+- [x] Desenvolver componente de notificações no frontend - Já existia, atualizado
+- [x] Adicionar badge de contador de notificações não lidas - Já existia
+- [x] Implementar marcação de notificações como lidas - Já existia
+- [x] Criar procedures tRPC para notificações (criar, listar, marcar como lida) - Adicionada detectPendingTests
+- [x] Adicionar ícone de sino no header com dropdown de notificações - Já existia
+
+### 3. Dashboard de Métricas de Integridade
+- [x] Criar nova rota e página para métricas de integridade
+- [x] Implementar queries para histórico de testes
+- [x] Calcular taxa de conclusão de testes
+- [x] Criar visualizações de tendências por período
+- [x] Adicionar gráficos interativos (linha do tempo, barras, pizza)
+- [x] Implementar filtros por colaborador e período
+- [x] Adicionar exportação de métricas (PDF e Excel)
+- [x] Criar procedures tRPC para métricas (getHistory, getCompletionRate, getTrends)
