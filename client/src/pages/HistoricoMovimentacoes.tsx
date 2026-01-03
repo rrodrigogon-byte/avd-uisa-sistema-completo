@@ -46,6 +46,8 @@ export default function HistoricoMovimentacoes() {
   const [selectedMovement, setSelectedMovement] = useState<any>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
+  const utils = trpc.useUtils();
+
   const { data: movements, isLoading } = trpc.orgChart.listMovements.useQuery({
     employeeId: filters.employeeId,
     movementType: filters.movementType as any,
@@ -70,6 +72,26 @@ export default function HistoricoMovimentacoes() {
   const handleViewDetails = (movement: any) => {
     setSelectedMovement(movement);
     setDetailsDialogOpen(true);
+  };
+
+  const applyMovementMutation = trpc.movements.applyMovement.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      if (data.changes.length > 0) {
+        toast.info(`Alterações aplicadas:\n${data.changes.join('\n')}`);
+      }
+      utils.orgChart.listMovements.invalidate();
+      setDetailsDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(`Erro ao aplicar movimentação: ${error.message}`);
+    },
+  });
+
+  const handleApplyMovement = (movementId: number) => {
+    if (confirm('Tem certeza que deseja aplicar esta movimentação? Os dados do colaborador serão atualizados imediatamente.')) {
+      applyMovementMutation.mutate({ movementId });
+    }
   };
 
   const handleExportCSV = () => {
@@ -247,6 +269,7 @@ export default function HistoricoMovimentacoes() {
                       <TableHead>Colaborador</TableHead>
                       <TableHead>Mudança</TableHead>
                       <TableHead>Tipo</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Data Efetiva</TableHead>
                       <TableHead>Motivo</TableHead>
                       <TableHead>Ações</TableHead>
@@ -289,6 +312,21 @@ export default function HistoricoMovimentacoes() {
                         </TableCell>
                         <TableCell>{getMovementTypeBadge(movement.movementType)}</TableCell>
                         <TableCell>
+                          <Badge 
+                            variant={
+                              movement.approvalStatus === 'aprovado' ? 'default' :
+                              movement.approvalStatus === 'pendente' ? 'secondary' :
+                              movement.approvalStatus === 'rejeitado' ? 'destructive' :
+                              'outline'
+                            }
+                          >
+                            {movement.approvalStatus === 'aprovado' ? 'Aprovado' :
+                             movement.approvalStatus === 'pendente' ? 'Pendente' :
+                             movement.approvalStatus === 'rejeitado' ? 'Rejeitado' :
+                             movement.approvalStatus || 'Desconhecido'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
                           {movement.effectiveDate
                             ? new Date(movement.effectiveDate).toLocaleDateString("pt-BR")
                             : "-"}
@@ -299,13 +337,26 @@ export default function HistoricoMovimentacoes() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleViewDetails(movement)}
-                          >
-                            Ver Detalhes
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleViewDetails(movement)}
+                            >
+                              Ver Detalhes
+                            </Button>
+                            {movement.approvalStatus === 'aprovado' && (
+                              <Button
+                                size="sm"
+                                variant="default"
+                                className="bg-[#F39200] hover:bg-[#d67f00]"
+                                onClick={() => handleApplyMovement(movement.id)}
+                                disabled={applyMovementMutation.isPending}
+                              >
+                                {applyMovementMutation.isPending ? 'Aplicando...' : 'Aplicar'}
+                              </Button>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -362,9 +413,29 @@ export default function HistoricoMovimentacoes() {
                   </div>
                 </div>
 
-                <div>
-                  <Label className="text-muted-foreground">Tipo de Movimentação</Label>
-                  <div className="mt-1">{getMovementTypeBadge(selectedMovement.movementType)}</div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-muted-foreground">Tipo de Movimentação</Label>
+                    <div className="mt-1">{getMovementTypeBadge(selectedMovement.movementType)}</div>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Status de Aprovação</Label>
+                    <div className="mt-1">
+                      <Badge 
+                        variant={
+                          selectedMovement.approvalStatus === 'aprovado' ? 'default' :
+                          selectedMovement.approvalStatus === 'pendente' ? 'secondary' :
+                          selectedMovement.approvalStatus === 'rejeitado' ? 'destructive' :
+                          'outline'
+                        }
+                      >
+                        {selectedMovement.approvalStatus === 'aprovado' ? 'Aprovado' :
+                         selectedMovement.approvalStatus === 'pendente' ? 'Pendente' :
+                         selectedMovement.approvalStatus === 'rejeitado' ? 'Rejeitado' :
+                         selectedMovement.approvalStatus || 'Desconhecido'}
+                      </Badge>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
@@ -397,6 +468,22 @@ export default function HistoricoMovimentacoes() {
                     </div>
                   </div>
                 </div>
+
+                {/* Botão de Aplicar Movimentação */}
+                {selectedMovement?.approvalStatus === 'aprovado' && (
+                  <div className="pt-4 border-t">
+                    <Button
+                      onClick={() => handleApplyMovement(selectedMovement.id)}
+                      disabled={applyMovementMutation.isPending}
+                      className="w-full bg-[#F39200] hover:bg-[#d67f00]"
+                    >
+                      {applyMovementMutation.isPending ? 'Aplicando Movimentação...' : 'Aplicar Movimentação Agora'}
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-2 text-center">
+                      Esta ação irá atualizar imediatamente os dados do colaborador no sistema
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </DialogContent>

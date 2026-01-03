@@ -567,3 +567,65 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - [x] Adicionar validação robusta antes de enviar dados
 - [x] Garantir que responses seja sempre um array válido
 - [x] Adicionar try-catch no handleComplete para capturar erros
+
+
+## 🚨 VALIDAÇÃO COMPLETA E CHECKLIST DE PUBLICAÇÃO (03/01/2026)
+
+### Problemas Reportados
+- [x] Corrigir problema ao aplicar movimentações de funcionários
+- [x] Criar suite de testes automatizados de validação completa
+- [x] Criar checklist completo de publicação (CHECKLIST_PUBLICACAO.md)
+- [ ] **BLOQUEANTE:** Executar pnpm db:push para criar tabelas faltantes (employeeMovements, etc)
+- [ ] Testar fluxo completo do PIR manualmente - Criar processo AVD, responder 60 questões, verificar salvamento
+- [ ] Validar outros testes psicométricos manualmente - DISC, Big Five, MBTI, IE, VARK, Leadership, Career Anchors
+
+### Detalhamento Técnico - Movimentações
+- [x] Investigar erro ao aplicar movimentações
+- [x] Verificar procedures de movimentação no backend
+- [x] Testar criação de movimentação
+- [x] Testar aprovação de movimentação
+- [x] Testar aplicação de movimentação
+- [x] Validar atualização de dados do funcionário após movimentação
+- [x] Criar procedure dedicada applyMovement para aplicar movimentações manualmente
+- [x] Adicionar botão "Aplicar" na interface de histórico de movimentações
+- [x] Adicionar coluna de status de aprovação na tabela
+- [x] Implementar logging detalhado para debug de movimentações
+
+### Detalhamento Técnico - Validação PIR
+- [ ] Criar processo AVD completo
+- [ ] Responder todas as 60 questões do PIR
+- [ ] Verificar salvamento de respostas
+- [ ] Testar navegação entre passos (anterior/próxima)
+- [ ] Validar cálculo de resultados
+- [ ] Testar envio de emails de convite
+- [ ] Testar envio de emails de conclusão
+
+### Detalhamento Técnico - Testes Psicométricos
+- [ ] Validar DISC - criar teste, responder questões, verificar resultados
+- [ ] Validar Big Five - criar teste, responder questões, verificar resultados
+- [ ] Validar MBTI - criar teste, responder questões, verificar resultados
+- [ ] Validar IE (Inteligência Emocional) - criar teste, responder questões, verificar resultados
+- [ ] Validar VARK - criar teste, responder questões, verificar resultados
+- [ ] Validar Leadership - criar teste, responder questões, verificar resultados
+- [ ] Validar Career Anchors - criar teste, responder questões, verificar resultados
+
+### Detalhamento Técnico - Testes Automatizados E2E
+- [ ] Configurar Playwright para testes E2E
+- [ ] Criar testes E2E para fluxo PIR completo
+- [ ] Criar testes E2E para gestão de funcionários
+- [ ] Criar testes E2E para movimentações
+- [ ] Criar testes E2E para aprovações
+- [ ] Criar testes E2E para testes psicométricos
+- [ ] Integrar testes E2E no CI/CD
+
+### Checklist de Publicação
+- [ ] Todos os testes unitários passando (vitest)
+- [ ] Todos os testes E2E passando (playwright)
+- [ ] Validação manual de fluxos críticos concluída
+- [ ] Documentação atualizada
+- [ ] Variáveis de ambiente configuradas
+- [ ] Banco de dados com dados de produção
+- [ ] Performance validada (tempo de carregamento < 3s)
+- [ ] Segurança validada (autenticação, autorização, CORS)
+- [ ] Backup do banco de dados criado
+- [ ] Plano de rollback definido

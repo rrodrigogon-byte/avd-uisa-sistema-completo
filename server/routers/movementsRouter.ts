@@ -471,11 +471,21 @@ export const movementsRouter = router({
           updateData.managerId = movement.newManagerId;
         }
 
+        console.log('[MovementsRouter] Aplicando movimentação:', {
+          movementId: input.movementId,
+          employeeId: movement.employeeId,
+          updateData,
+        });
+
         if (Object.keys(updateData).length > 0) {
-          await db
+          const result = await db
             .update(employees)
             .set(updateData)
             .where(eq(employees.id, movement.employeeId));
+          
+          console.log('[MovementsRouter] Movimentação aplicada com sucesso:', result);
+        } else {
+          console.warn('[MovementsRouter] Nenhum dado para atualizar na movimentação:', movement);
         }
       }
 
@@ -542,5 +552,135 @@ export const movementsRouter = router({
         .limit(1);
 
       return movement;
+    }),
+
+  /**
+   * Aplicar movimentação aprovada manualmente
+   * Útil para reprocessar movimentações que falharam na aplicação automática
+   */
+  applyMovement: protectedProcedure
+    .input(
+      z.object({
+        movementId: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Banco de dados não disponível",
+        });
+      }
+
+      // Apenas admin e RH podem aplicar movimentações
+      const userRole = ctx.user.role;
+      if (userRole !== "admin" && userRole !== "rh") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Apenas administradores e RH podem aplicar movimentações",
+        });
+      }
+
+      // Buscar movimentação
+      const [movement] = await db
+        .select()
+        .from(employeeMovements)
+        .where(eq(employeeMovements.id, input.movementId))
+        .limit(1);
+
+      if (!movement) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Movimentação não encontrada",
+        });
+      }
+
+      // Verificar se está aprovada
+      if (movement.approvalStatus !== "aprovado") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Movimentação deve estar aprovada para ser aplicada. Status atual: ${movement.approvalStatus}`,
+        });
+      }
+
+      // Buscar dados atuais do colaborador
+      const [currentEmployee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, movement.employeeId))
+        .limit(1);
+
+      if (!currentEmployee) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Colaborador não encontrado",
+        });
+      }
+
+      // Preparar dados de atualização
+      const updateData: any = {};
+      const changes: string[] = [];
+
+      if (movement.newDepartmentId && movement.newDepartmentId !== currentEmployee.departmentId) {
+        updateData.departmentId = movement.newDepartmentId;
+        changes.push(`Departamento: ${currentEmployee.departmentId} → ${movement.newDepartmentId}`);
+      }
+
+      if (movement.newPositionId && movement.newPositionId !== currentEmployee.positionId) {
+        updateData.positionId = movement.newPositionId;
+        changes.push(`Cargo: ${currentEmployee.positionId} → ${movement.newPositionId}`);
+      }
+
+      if (movement.newManagerId && movement.newManagerId !== currentEmployee.managerId) {
+        updateData.managerId = movement.newManagerId;
+        changes.push(`Gestor: ${currentEmployee.managerId} → ${movement.newManagerId}`);
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        return {
+          success: true,
+          message: "Movimentação já estava aplicada. Nenhuma alteração necessária.",
+          changes: [],
+          movement,
+          currentEmployee,
+        };
+      }
+
+      // Aplicar mudanças
+      console.log('[MovementsRouter.applyMovement] Aplicando movimentação:', {
+        movementId: input.movementId,
+        employeeId: movement.employeeId,
+        employeeName: currentEmployee.name,
+        updateData,
+        changes,
+      });
+
+      await db
+        .update(employees)
+        .set(updateData)
+        .where(eq(employees.id, movement.employeeId));
+
+      // Buscar colaborador atualizado
+      const [updatedEmployee] = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.id, movement.employeeId))
+        .limit(1);
+
+      console.log('[MovementsRouter.applyMovement] Movimentação aplicada com sucesso:', {
+        movementId: input.movementId,
+        employeeId: movement.employeeId,
+        changes,
+        updatedEmployee,
+      });
+
+      return {
+        success: true,
+        message: `Movimentação aplicada com sucesso! ${changes.length} alteração(ões) realizada(s).`,
+        changes,
+        movement,
+        updatedEmployee,
+      };
     }),
 });
