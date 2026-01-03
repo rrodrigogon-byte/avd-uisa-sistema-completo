@@ -369,7 +369,7 @@ export const goalsRouter = router({
           .enum(["financial", "behavioral", "corporate", "development"])
           .optional(),
         goalType: z.enum(["individual", "corporate"]).optional(),
-      }).optional()
+      }).default({})
     )
     .query(async ({ ctx, input }) => {
       const db = await getDb();

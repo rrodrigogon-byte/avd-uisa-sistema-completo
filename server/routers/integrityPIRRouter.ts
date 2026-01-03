@@ -266,6 +266,37 @@ export const integrityPIRRouter = router({
         })
         .where(eq(pirInvitations.id, invitation.id));
 
+      // Enviar email de notificação ao RH sobre conclusão do teste
+      try {
+        const candidateName = invitation.candidateName || invitation.candidateEmail || "Candidato";
+        const emailBody = `
+          <h2>Teste PIR de Integridade Concluído</h2>
+          <p><strong>Candidato:</strong> ${candidateName}</p>
+          <p><strong>Email:</strong> ${invitation.candidateEmail || "N/A"}</p>
+          <p><strong>Pontuação Geral:</strong> ${input.overallScore.toFixed(1)}</p>
+          <p><strong>Classificação:</strong> ${input.overallScore >= 80 ? "Muito Alto" : input.overallScore >= 60 ? "Alto" : input.overallScore >= 40 ? "Médio" : input.overallScore >= 20 ? "Baixo" : "Muito Baixo"}</p>
+          <p><strong>Data de Conclusão:</strong> ${format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
+          <br>
+          <p>Acesse o sistema para visualizar os resultados completos.</p>
+        `;
+
+        await queueEmail({
+          destinatario: invitation.createdByEmail || ENV.ownerEmail || "rh@uisa.com.br",
+          assunto: `Teste PIR de Integridade Concluído - ${candidateName}`,
+          corpo: emailBody,
+          tipoEmail: "notificacao_conclusao_pir",
+          prioridade: "alta",
+          metadados: {
+            invitationId: invitation.id,
+            resultId: testResult.insertId,
+            overallScore: input.overallScore,
+          },
+        });
+      } catch (emailError) {
+        console.error("Erro ao enviar email de notificação:", emailError);
+        // Não falhar a submissão se o email falhar
+      }
+
       return {
         success: true,
         resultId: testResult.insertId,

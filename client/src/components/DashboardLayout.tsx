@@ -173,7 +173,7 @@ const menuItems = [
       { icon: FileText, label: "Meus PDIs", path: "/pdi" },
       { icon: Edit3, label: "Criar PDI", path: "/pdi/criar" },
       { icon: Upload, label: "Importar PDI", path: "/pdi/import" },
-      { icon: BarChart, label: "Visualizar PDIs", path: "/pdi/visualizar" },
+      { icon: BarChart, label: "Visualizar PDIs", path: "/pdi/listagem" },
     ],
   },
   

@@ -629,3 +629,12 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - [ ] Segurança validada (autenticação, autorização, CORS)
 - [ ] Backup do banco de dados criado
 - [ ] Plano de rollback definido
+
+## Problemas Críticos Reportados (03/01/2026)
+
+- [x] Corrigir erro 404 na visualização de PDI (/pdi/visualizar)
+- [x] Corrigir erro ao publicar checkpoint: "failed to get checkpoint: record not found" (Não aplicável - problema da plataforma Manus)
+- [x] Otimizar carregamento do PIR Dashboard (lentidão)
+- [x] Corrigir erro ao enviar teste de integridade (email não está sendo enviado)
+- [x] Corrigir lista de funcionários vazia no convite para teste de integridade
+- [x] Corrigir procedures tRPC com validação incorreta (goals.list, pdi.list, dashboard.getStats)

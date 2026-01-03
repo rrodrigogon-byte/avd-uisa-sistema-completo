@@ -29,7 +29,7 @@ export const pirDashboardRouter = router({
       positionId: z.number().optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
-    }).optional())
+    }).default({}))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -98,7 +98,7 @@ export const pirDashboardRouter = router({
       cycleId: z.number().optional(),
       departmentId: z.number().optional(),
       positionId: z.number().optional(),
-    }).optional())
+    }).default({}))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -285,7 +285,7 @@ export const pirDashboardRouter = router({
   /**
    * Buscar lista de ciclos disponíveis
    */
-  listCycles: protectedProcedure.input(z.object({})).query(async () => {
+  listCycles: protectedProcedure.query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -300,7 +300,7 @@ export const pirDashboardRouter = router({
   /**
    * Buscar lista de departamentos
    */
-  listDepartments: protectedProcedure.input(z.object({})).query(async () => {
+  listDepartments: protectedProcedure.query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -315,7 +315,7 @@ export const pirDashboardRouter = router({
   /**
    * Buscar lista de cargos
    */
-  listPositions: protectedProcedure.input(z.object({})).query(async () => {
+  listPositions: protectedProcedure.query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -335,7 +335,7 @@ export const pirDashboardRouter = router({
       cycleId: z.number().optional(),
       departmentId: z.number().optional(),
       positionId: z.number().optional(),
-    }).optional())
+    }).default({}))
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

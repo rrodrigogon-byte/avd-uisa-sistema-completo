@@ -30,7 +30,7 @@ export const employeesRouter = router({
         assessmentStatus: z.enum(["with_assessment", "without_assessment", "in_progress", "completed"]).optional(),
         limit: z.number().min(1).max(1000).optional().default(100),
         offset: z.number().min(0).optional().default(0),
-      }).optional()
+      }).default({})
     )
     .query(async ({ input }) => {
       try {
