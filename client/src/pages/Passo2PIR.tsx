@@ -140,25 +140,51 @@ export default function Passo2PIR() {
 
     setIsSaving(true);
 
-    // Converter respostas para array
-    const answersArray = Object.entries(responses).map(([questionId, response]) => ({
-      questionId: parseInt(questionId),
-      response,
-    }));
+    try {
+      // Converter respostas para array
+      const answersArray = Object.entries(responses).map(([questionId, response]) => ({
+        questionId: parseInt(questionId),
+        response,
+      }));
 
-    // Validação robusta antes de enviar
-    if (!Array.isArray(answersArray) || answersArray.length === 0) {
-      toast.error("Erro: nenhuma resposta para salvar");
+      // Validação robusta antes de enviar
+      if (!Array.isArray(answersArray) || answersArray.length === 0) {
+        toast.error("Erro: nenhuma resposta para salvar");
+        setIsSaving(false);
+        return;
+      }
+
+      // Validação adicional: garantir que todos os itens têm questionId e response válidos
+      const isValid = answersArray.every(item => 
+        item && 
+        typeof item.questionId === 'number' && 
+        !isNaN(item.questionId) &&
+        typeof item.response === 'number' &&
+        !isNaN(item.response)
+      );
+
+      if (!isValid) {
+        toast.error("Erro: algumas respostas estão em formato inválido");
+        setIsSaving(false);
+        return;
+      }
+
+      console.log('[handleSave] Enviando:', { 
+        processId, 
+        responsesCount: answersArray.length,
+        firstResponse: answersArray[0],
+        lastResponse: answersArray[answersArray.length - 1]
+      });
+
+      savePirMutation.mutate({
+        processId,
+        responses: answersArray,
+      });
+    } catch (error) {
+      console.error('[handleSave] Erro ao preparar dados:', error);
+      toast.error("Erro ao preparar dados para salvamento");
       setIsSaving(false);
-      return;
     }
-
-    console.log('[handleSave] Enviando:', { processId, responsesCount: answersArray.length });
-
-    savePirMutation.mutate({
-      processId,
-      responses: answersArray,
-    });
   };
 
   const handleComplete = async () => {
@@ -181,7 +207,12 @@ export default function Passo2PIR() {
         response,
       }));
 
-      console.log('Enviando respostas PIR:', { processId, responsesCount: answersArray.length });
+      console.log('[handleComplete] Preparando envio:', { 
+        processId, 
+        responsesCount: answersArray.length,
+        totalQuestions,
+        isComplete: answersArray.length === totalQuestions
+      });
 
       // Garantir que responses é um array válido
       if (!Array.isArray(answersArray) || answersArray.length === 0) {
@@ -190,11 +221,41 @@ export default function Passo2PIR() {
         return;
       }
 
+      // Validação adicional: garantir que todos os itens têm questionId e response válidos
+      const isValid = answersArray.every(item => 
+        item && 
+        typeof item.questionId === 'number' && 
+        !isNaN(item.questionId) &&
+        typeof item.response === 'number' &&
+        !isNaN(item.response)
+      );
+
+      if (!isValid) {
+        console.error('[handleComplete] Respostas inválidas detectadas:', answersArray.filter(item => 
+          !item || 
+          typeof item.questionId !== 'number' || 
+          isNaN(item.questionId) ||
+          typeof item.response !== 'number' ||
+          isNaN(item.response)
+        ));
+        toast.error("Erro: algumas respostas estão em formato inválido");
+        setIsSaving(false);
+        return;
+      }
+
+      console.log('[handleComplete] Enviando respostas PIR:', { 
+        processId, 
+        responsesCount: answersArray.length,
+        sample: answersArray.slice(0, 3)
+      });
+
       // Salvar respostas
       await savePirMutation.mutateAsync({
         processId,
         responses: answersArray,
       });
+
+      console.log('[handleComplete] Respostas salvas com sucesso, completando passo...');
 
       // Completar passo
       completeStepMutation.mutate({
@@ -202,7 +263,8 @@ export default function Passo2PIR() {
         step: 2,
       });
     } catch (error) {
-      console.error('Erro ao completar PIR:', error);
+      console.error('[handleComplete] Erro ao completar PIR:', error);
+      toast.error(`Erro ao completar: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
       setIsSaving(false);
     }
   };

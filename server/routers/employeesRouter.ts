@@ -33,21 +33,34 @@ export const employeesRouter = router({
       }).optional()
     )
     .query(async ({ input }) => {
-      const params = input || {};
-      const limit = params.limit ?? 100;
-      const offset = params.offset ?? 0;
-      
-      // listEmployees já retorna estrutura flat correta
-      const allEmployees = await listEmployees(params);
-      
-      // Aplicar paginação
-      const paginatedEmployees = allEmployees.slice(offset, offset + limit);
-      
-      return {
-        employees: paginatedEmployees,
-        total: allEmployees.length,
-        hasMore: offset + limit < allEmployees.length,
-      };
+      try {
+        const params = input || {};
+        const limit = params.limit ?? 100;
+        const offset = params.offset ?? 0;
+        
+        // listEmployees já retorna estrutura flat correta
+        const allEmployees = await listEmployees(params);
+        
+        // Garantir que allEmployees é um array válido
+        const safeEmployees = Array.isArray(allEmployees) ? allEmployees : [];
+        
+        // Aplicar paginação
+        const paginatedEmployees = safeEmployees.slice(offset, offset + limit);
+        
+        return {
+          employees: paginatedEmployees,
+          total: safeEmployees.length,
+          hasMore: offset + limit < safeEmployees.length,
+        };
+      } catch (error) {
+        console.error('[employees.list] Erro ao listar funcionários:', error);
+        // Retornar array vazio ao invés de erro para não quebrar a UI
+        return {
+          employees: [],
+          total: 0,
+          hasMore: false,
+        };
+      }
     }),
 
   /**

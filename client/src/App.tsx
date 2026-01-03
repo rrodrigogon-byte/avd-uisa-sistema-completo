@@ -695,6 +695,7 @@ function Router() {
       <Route path="/admin/ab-experiments" component={AbTestExperiments} />
       
       {/* Dashboard de Movimentações */}
+      <Route path="/movimentacoes" component={DashboardMovimentacoes} />
       <Route path="/admin/movimentacoes" component={DashboardMovimentacoes} />
       
       {/* Ferramentas Administrativas */}

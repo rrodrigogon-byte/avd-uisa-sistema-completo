@@ -792,10 +792,31 @@ export const avdUisaRouter = router({
       responses: z.array(z.object({
         questionId: z.number(),
         response: z.number(),
-      })),
+      })).min(1, "Pelo menos uma resposta é necessária"),
     }))
     .mutation(async ({ ctx, input }) => {
-      console.log('[savePirAssessment] Input recebido:', JSON.stringify({ processId: input.processId, responsesCount: input.responses?.length, hasResponses: !!input.responses }));
+      console.log('[savePirAssessment] Input recebido:', JSON.stringify({ 
+        processId: input.processId, 
+        responsesCount: input.responses?.length, 
+        hasResponses: !!input.responses,
+        responsesType: typeof input.responses,
+        isArray: Array.isArray(input.responses),
+        firstResponse: input.responses?.[0],
+        userId: ctx.user?.id
+      }));
+      
+      // Validação adicional de segurança
+      if (!input.responses || !Array.isArray(input.responses) || input.responses.length === 0) {
+        console.error('[savePirAssessment] ERRO: responses inválido:', { 
+          responses: input.responses,
+          type: typeof input.responses,
+          isArray: Array.isArray(input.responses)
+        });
+        throw new TRPCError({ 
+          code: "BAD_REQUEST", 
+          message: "Nenhuma resposta fornecida. Por favor, responda pelo menos uma questão." 
+        });
+      }
       
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
