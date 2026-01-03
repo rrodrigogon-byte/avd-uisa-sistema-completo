@@ -9,17 +9,17 @@ import { BarChart3, Goal, Target, TrendingUp, Users, AlertCircle } from "lucide-
 import { Link } from "wouter";
 
 export default function Home() {
-  const { data: employee } = trpc.employees.getCurrent.useQuery();
-  const { data: stats } = trpc.dashboard.getStats.useQuery(undefined, {
+  const { data: employee } = trpc.employees.getCurrent.useQuery(undefined);
+  const { data: stats } = trpc.dashboard.getStats.useQuery({}, {
     retry: false,
     refetchOnWindowFocus: false,
   });
-  const { data: goals, error: goalsError } = trpc.goals.list.useQuery(undefined, {
+  const { data: goals, error: goalsError } = trpc.goals.list.useQuery({}, {
     enabled: !!employee,
     retry: false,
     refetchOnWindowFocus: false,
   });
-  const { data: pdis, error: pdisError } = trpc.pdi.list.useQuery(undefined, {
+  const { data: pdis, error: pdisError } = trpc.pdi.list.useQuery({}, {
     enabled: !!employee,
     retry: false,
     refetchOnWindowFocus: false,
