@@ -31,7 +31,7 @@ export default function PsychometricResults() {
   const [, navigate] = useLocation();
 
   // Buscar testes do usuário logado
-  const { data: tests, isLoading } = trpc.psychometric.getTests.useQuery({}, {
+  const { data: tests, isLoading } = trpc.psychometric.getTests.useQuery(undefined, {
     enabled: !!user,
   });
 

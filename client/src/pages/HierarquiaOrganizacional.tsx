@@ -36,7 +36,7 @@ export default function HierarquiaOrganizacional() {
   const { data: managers } = trpc.employees.getManagers.useQuery(undefined);
 
   // Queries para relatório
-  const { data: reportData, refetch: refetchReport } = trpc.employees.exportHierarchyReport.useQuery({}, {
+  const { data: reportData, refetch: refetchReport } = trpc.employees.exportHierarchyReport.useQuery(undefined, {
     enabled: false,
   });
 

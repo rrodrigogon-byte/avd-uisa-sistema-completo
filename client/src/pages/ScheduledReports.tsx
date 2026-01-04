@@ -26,7 +26,7 @@ export default function ScheduledReports() {
   const [selectedReport, setSelectedReport] = useState<any>(null);
 
   // Queries - DEVEM estar antes dos returns condicionais
-  const { data: reports, isLoading, refetch } = trpc.scheduledReports.list.useQuery({}, { enabled: !loading && user?.role === 'admin' });
+  const { data: reports, isLoading, refetch } = trpc.scheduledReports.list.useQuery(undefined, { enabled: !loading && user?.role === 'admin' });
 
   // Mutations
   const createMutation = trpc.scheduledReports.create.useMutation({

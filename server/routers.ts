@@ -1289,7 +1289,7 @@ export const appRouter = router({
       .input(z.object({
         employeeId: z.number().optional(),
         cycleId: z.number().optional(),
-      }).default({}))
+      }).optional())
       .query(async ({ input, ctx }) => {
         const employeeId = input?.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {
@@ -3050,7 +3050,7 @@ export const appRouter = router({
       .input(z.object({
         employeeId: z.number().optional(),
         cycleId: z.number().optional(),
-      }).default({}))
+      }).optional())
       .query(async ({ input, ctx }) => {
         const employeeId = input?.employeeId || (await db.getEmployeeByUserId(ctx.user!.id))?.id;
         if (!employeeId) {

@@ -56,9 +56,9 @@ export default function RevisaoLiderados() {
   const isManager = user?.role === 'gestor' || user?.role === 'admin';
 
   // Queries
-  const { data: teamMembers = [], isLoading: loadingTeam } = trpc.managerReview.listMyTeam.useQuery({});
-  const { data: pendingReviews = [], isLoading: loadingReviews, refetch } = trpc.managerReview.listPendingReviews.useQuery({});
-  const { data: stats } = trpc.managerReview.teamStats.useQuery({});
+  const { data: teamMembers = [], isLoading: loadingTeam } = trpc.managerReview.listMyTeam.useQuery(undefined);
+  const { data: pendingReviews = [], isLoading: loadingReviews, refetch } = trpc.managerReview.listPendingReviews.useQuery(undefined);
+  const { data: stats } = trpc.managerReview.teamStats.useQuery(undefined);
 
   // Mutations
   const reviewMutation = trpc.managerReview.reviewEvaluation.useMutation({

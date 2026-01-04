@@ -526,7 +526,7 @@ function DashboardLayoutContent({
   const sidebarRef = useRef<HTMLDivElement>(null);
   
   // Buscar contagem de pendências para badges
-  const { data: pendenciasStats } = trpc.pendencias.countByStatus.useQuery({}, {
+  const { data: pendenciasStats } = trpc.pendencias.countByStatus.useQuery(undefined, {
     refetchInterval: 30000, // Atualizar a cada 30 segundos
   });
   

@@ -10,16 +10,16 @@ import { Link } from "wouter";
 
 export default function Home() {
   const { data: employee } = trpc.employees.getCurrent.useQuery(undefined);
-  const { data: stats } = trpc.dashboard.getStats.useQuery({}, {
+  const { data: stats } = trpc.dashboard.getStats.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false,
   });
-  const { data: goals, error: goalsError } = trpc.goals.list.useQuery({}, {
+  const { data: goals, error: goalsError } = trpc.goals.list.useQuery(undefined, {
     enabled: !!employee,
     retry: false,
     refetchOnWindowFocus: false,
   });
-  const { data: pdis, error: pdisError } = trpc.pdi.list.useQuery({}, {
+  const { data: pdis, error: pdisError } = trpc.pdi.list.useQuery(undefined, {
     enabled: !!employee,
     retry: false,
     refetchOnWindowFocus: false,

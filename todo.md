@@ -669,3 +669,15 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - [x] Implementar filtros por colaborador e período
 - [x] Adicionar exportação de métricas (PDF e Excel)
 - [x] Criar procedures tRPC para métricas (getHistory, getCompletionRate, getTrends)
+
+## 🚨 CORREÇÃO URGENTE (03/01/2026) - RESOLVIDO ✅
+
+### Problema: Erro de validação tRPC "expected object, received undefined"
+- [x] Corrigir procedures que usam .default({}) mas ainda falham quando chamadas sem parâmetros do frontend
+- [x] Investigar se o problema está no cliente (chamadas com {}) ou no servidor (validação do input)
+- [x] Atualizar chamadas do frontend para passar undefined ao invés de {} quando não há parâmetros
+
+**Solução Implementada:**
+- ✅ Frontend: Todas as chamadas `.useQuery({})` foram substituídas por `.useQuery(undefined)`
+- ✅ Backend: Procedures `dashboard.getStats`, `pdi.list` e `goals.list` alteradas de `.default({})` para `.optional()`
+- ✅ Erro completamente eliminado - 0 ocorrências no console
