@@ -38,7 +38,7 @@ export const npsRouter = router({
       return { success: true, surveyId: Number(result[0].insertId) };
     }),
 
-  listSurveys: protectedProcedure.input(z.object({})).query(async () => {
+  listSurveys: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 

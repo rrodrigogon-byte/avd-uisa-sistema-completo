@@ -14,7 +14,7 @@ export const managerReviewRouter = router({
    * Listar liderados diretos do gestor logado
    */
   listMyTeam: protectedProcedure
-    .input(z.object({}))
+    .input(z.object({}).optional())
     .query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -354,7 +354,7 @@ export const managerReviewRouter = router({
    * Estatísticas de avaliações da equipe
    */
   teamStats: protectedProcedure
-    .input(z.object({}))
+    .input(z.object({}).optional())
     .query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

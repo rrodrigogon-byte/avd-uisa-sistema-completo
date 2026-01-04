@@ -40,7 +40,7 @@ export const reportAnalyticsRouter = router({
     }),
 
   // Obter estatísticas de uso
-  getUsageStats: protectedProcedure.input(z.object({})).query(async () => {
+  getUsageStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const database = await getDb();
     if (!database) return null;
 
@@ -84,7 +84,7 @@ export const reportAnalyticsRouter = router({
   }),
 
   // Obter métricas mais usadas
-  getMostUsedMetrics: protectedProcedure.input(z.object({})).query(async () => {
+  getMostUsedMetrics: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const database = await getDb();
     if (!database) return [];
 
@@ -153,7 +153,7 @@ export const reportAnalyticsRouter = router({
     }),
 
   // Obter tendências de uso (últimos 30 dias)
-  getTrends: protectedProcedure.input(z.object({})).query(async () => {
+  getTrends: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const database = await getDb();
     if (!database) return [];
 

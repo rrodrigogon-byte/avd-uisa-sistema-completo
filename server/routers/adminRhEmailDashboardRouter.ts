@@ -123,7 +123,7 @@ export const adminRhEmailDashboardRouter = router({
   /**
    * Obter estatísticas de emails Admin/RH
    */
-  stats: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  stats: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     // Apenas admin e RH podem acessar
     if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
       throw new TRPCError({
@@ -290,7 +290,7 @@ export const adminRhEmailDashboardRouter = router({
   /**
    * Obter gráfico de emails por dia (últimos 30 dias)
    */
-  chartData: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  chartData: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     // Apenas admin e RH podem acessar
     if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {
       throw new TRPCError({

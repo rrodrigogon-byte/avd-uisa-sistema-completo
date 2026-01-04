@@ -393,7 +393,7 @@ export const jobDescriptionBatchApprovalRouter = router({
    * Obter estatísticas de aprovações pendentes
    */
   getApprovalStats: protectedProcedure
-    .input(z.object({}))
+    .input(z.object({}).optional())
     .query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

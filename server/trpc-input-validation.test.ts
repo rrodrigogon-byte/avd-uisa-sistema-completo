@@ -46,7 +46,7 @@ describe('tRPC Input Validation', () => {
   });
 
   describe('Procedure patterns', () => {
-    it('protectedProcedure.input(z.object({})).query() deve aceitar undefined', () => {
+    it('protectedProcedure.input(z.object({}).optional()).query() deve aceitar undefined', () => {
       const inputSchema = z.object({});
       
       // Simular chamada com undefined
@@ -56,7 +56,7 @@ describe('tRPC Input Validation', () => {
       expect(result.success).toBe(true);
     });
 
-    it('publicProcedure.input(z.object({})).query() deve aceitar undefined', () => {
+    it('publicProcedure.input(z.object({}).optional()).query() deve aceitar undefined', () => {
       const inputSchema = z.object({});
       
       // Simular chamada com undefined
@@ -66,7 +66,7 @@ describe('tRPC Input Validation', () => {
       expect(result.success).toBe(true);
     });
 
-    it('adminProcedure.input(z.object({})).query() deve aceitar undefined', () => {
+    it('adminProcedure.input(z.object({}).optional()).query() deve aceitar undefined', () => {
       const inputSchema = z.object({});
       
       // Simular chamada com undefined

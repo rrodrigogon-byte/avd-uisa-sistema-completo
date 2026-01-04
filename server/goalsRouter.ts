@@ -1883,7 +1883,7 @@ export const goalsRouter = router({
   /**
    * Listar metas corporativas
    */
-  listCorporateGoals: protectedProcedure.input(z.object({})).query(async () => {
+  listCorporateGoals: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 

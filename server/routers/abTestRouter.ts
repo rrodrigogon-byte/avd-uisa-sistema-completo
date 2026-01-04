@@ -57,7 +57,7 @@ export const abTestRouter = router({
       return { success: true, variantId: Number(result[0].insertId) };
     }),
 
-  listAll: protectedProcedure.input(z.object({})).query(async () => {
+  listAll: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -68,7 +68,7 @@ export const abTestRouter = router({
     return experiments;
   }),
 
-  listActive: protectedProcedure.input(z.object({})).query(async () => {
+  listActive: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 

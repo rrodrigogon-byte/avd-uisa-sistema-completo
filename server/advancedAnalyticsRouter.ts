@@ -160,7 +160,7 @@ export const advancedAnalyticsRouter = router({
   /**
    * Análise de ciclos de avaliação (comparação ano a ano)
    */
-  getEvaluationCyclesComparison: protectedProcedure.input(z.object({})).query(async () => {
+  getEvaluationCyclesComparison: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 
@@ -489,7 +489,7 @@ export const advancedAnalyticsRouter = router({
   /**
    * Estatísticas gerais do dashboard avançado
    */
-  getAdvancedStats: protectedProcedure.input(z.object({})).query(async () => {
+  getAdvancedStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
 

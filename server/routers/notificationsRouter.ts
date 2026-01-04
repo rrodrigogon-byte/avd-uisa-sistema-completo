@@ -343,7 +343,7 @@ export const notificationsRouter = router({
         .from(notifications)
         .where(eq(notifications.userId, ctx.user.id))
         .orderBy(desc(notifications.createdAt))
-        .limit(input.limit);
+        .limit(input?.limit ?? 10);
 
       return items;
     }),
@@ -355,7 +355,7 @@ export const notificationsRouter = router({
     .input(
       z.object({
         limit: z.number().min(1).max(50).default(10),
-      })
+      }).optional()
     )
     .query(async ({ ctx, input }) => {
       const db = await getDb();
@@ -366,7 +366,7 @@ export const notificationsRouter = router({
         .from(notifications)
         .where(eq(notifications.userId, ctx.user.id))
         .orderBy(desc(notifications.createdAt))
-        .limit(input.limit);
+        .limit(input?.limit ?? 10);
 
       return items;
     }),

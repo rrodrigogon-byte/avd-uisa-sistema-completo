@@ -12,7 +12,7 @@ import { protectedProcedure, router } from "./_core/trpc";
 
 export const analyticsRouter = router({
   // Buscar dados de tendências de performance
-  getPerformanceTrends: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getPerformanceTrends: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -46,7 +46,7 @@ export const analyticsRouter = router({
   }),
 
   // Buscar distribuição Nine Box
-  getNineBoxDistribution: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getNineBoxDistribution: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -71,7 +71,7 @@ export const analyticsRouter = router({
   }),
 
   // Buscar taxas de conclusão
-  getCompletionRates: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getCompletionRates: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -208,7 +208,7 @@ export const analyticsRouter = router({
   }),
 
   // Taxa de turnover mensal (simulado)
-  getTurnoverRate: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getTurnoverRate: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -235,7 +235,7 @@ export const analyticsRouter = router({
   }),
 
   // Tempo médio de permanência por departamento (simulado)
-  getAverageTenure: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getAverageTenure: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -257,7 +257,7 @@ export const analyticsRouter = router({
   }),
 
   // Análise de diversidade
-  getDiversityAnalysis: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getDiversityAnalysis: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }
@@ -288,7 +288,7 @@ export const analyticsRouter = router({
   }),
 
   // Projeção de crescimento
-  getGrowthProjection: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getGrowthProjection: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new Error("Acesso negado");
     }

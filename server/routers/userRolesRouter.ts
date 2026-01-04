@@ -196,7 +196,7 @@ export const userRolesRouter = router({
    * Procedure específica para a configuração inicial
    */
   configureAlexsandra: adminProcedure
-    .input(z.object({}))
+    .input(z.object({}).optional())
     .mutation(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -247,7 +247,7 @@ export const userRolesRouter = router({
    * Listar líderes de cargos e salários
    */
   listSalaryLeads: protectedProcedure
-    .input(z.object({}))
+    .input(z.object({}).optional())
     .query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -271,7 +271,7 @@ export const userRolesRouter = router({
    * Listar gestores (para atribuição de liderados)
    */
   listManagers: protectedProcedure
-    .input(z.object({}))
+    .input(z.object({}).optional())
     .query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -294,7 +294,7 @@ export const userRolesRouter = router({
    * Estatísticas de papéis
    */
   stats: protectedProcedure
-    .input(z.object({}))
+    .input(z.object({}).optional())
     .query(async () => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

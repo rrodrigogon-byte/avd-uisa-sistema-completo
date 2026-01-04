@@ -57,7 +57,7 @@ export const integrityRouter = router({
   /**
    * Lista categorias ativas
    */
-  listCategories: protectedProcedure.input(z.object({})).query(async () => {
+  listCategories: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const categories = await listIntegrityCategories();
 
     return {
@@ -130,7 +130,7 @@ export const integrityRouter = router({
   /**
    * Lista todas as questões ativas
    */
-  listAllQuestions: protectedProcedure.input(z.object({})).query(async () => {
+  listAllQuestions: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const questions = await listAllIntegrityQuestions();
 
     return {

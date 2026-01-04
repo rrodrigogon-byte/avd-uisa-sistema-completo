@@ -339,7 +339,7 @@ export const faceRecognitionAdvancedRouter = router({
   /**
    * Estatísticas de reconhecimento facial
    */
-  getFaceRecognitionStats: protectedProcedure.input(z.object({})).query(async () => {
+  getFaceRecognitionStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const database = await db.getDb();
     if (!database) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
     

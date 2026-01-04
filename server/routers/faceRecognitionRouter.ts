@@ -230,7 +230,7 @@ export const faceRecognitionRouter = router({
   /**
    * Listar todos os logs de fraude pendentes (admin/RH)
    */
-  getPendingFraudLogs: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getPendingFraudLogs: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     try {
       // Apenas admin e RH
       if (ctx.user.role !== "admin" && ctx.user.role !== "rh") {

@@ -52,7 +52,7 @@ describe("Bug Fix: tRPC Validation Error", () => {
   });
 
   it("deve aceitar undefined em procedures com input optional - employees.getCurrent", async () => {
-    // Esta procedure tem .input(z.object({}))
+    // Esta procedure tem .input(z.object({}).optional())
     // Deve aceitar {} ou undefined
     const result = await caller.employees.getCurrent({});
     
@@ -76,7 +76,7 @@ describe("Bug Fix: tRPC Validation Error", () => {
   });
 
   it("deve aceitar undefined em procedures com input optional - cycles.list", async () => {
-    // Esta procedure tem .input(z.object({}))
+    // Esta procedure tem .input(z.object({}).optional())
     const result = await caller.cycles.list({});
     
     expect(result).toBeDefined();
@@ -84,7 +84,7 @@ describe("Bug Fix: tRPC Validation Error", () => {
   });
 
   it("deve aceitar undefined em procedures com input optional - departments.list", async () => {
-    // Esta procedure tem .input(z.object({}))
+    // Esta procedure tem .input(z.object({}).optional())
     const result = await caller.departments.list({});
     
     expect(result).toBeDefined();
@@ -92,7 +92,7 @@ describe("Bug Fix: tRPC Validation Error", () => {
   });
 
   it("deve aceitar undefined em procedures com input optional - positions.list", async () => {
-    // Esta procedure tem .input(z.object({}))
+    // Esta procedure tem .input(z.object({}).optional())
     const result = await caller.positions.list({});
     
     expect(result).toBeDefined();
@@ -100,7 +100,7 @@ describe("Bug Fix: tRPC Validation Error", () => {
   });
 
   it("deve aceitar undefined em procedures com input optional - competencies.list", async () => {
-    // Esta procedure tem .input(z.object({}))
+    // Esta procedure tem .input(z.object({}).optional())
     const result = await caller.competencies.list({});
     
     expect(result).toBeDefined();
@@ -108,7 +108,7 @@ describe("Bug Fix: tRPC Validation Error", () => {
   });
 
   it("deve aceitar undefined em procedures com input optional - orgChart.getOrgChart", async () => {
-    // Esta procedure tem .input(z.object({}))
+    // Esta procedure tem .input(z.object({}).optional())
     const result = await caller.orgChart.getOrgChart({});
     
     expect(result).toBeDefined();

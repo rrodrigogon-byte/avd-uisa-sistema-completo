@@ -170,7 +170,7 @@ export const permissionsRouter = router({
    * Verifica se o usuário pode editar dados organizacionais
    * Apenas admin e RH podem editar estrutura organizacional
    */
-  canEditOrganization: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  canEditOrganization: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const userRole = ctx.user.role;
 
     if (userRole === "admin" || userRole === "rh") {
@@ -262,7 +262,7 @@ export const permissionsRouter = router({
   /**
    * Retorna as permissões do usuário atual
    */
-  getMyPermissions: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getMyPermissions: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) {
       throw new TRPCError({

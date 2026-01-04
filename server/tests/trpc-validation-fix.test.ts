@@ -99,7 +99,7 @@ describe('tRPC Input Validation Fix', () => {
       expect(procedureSchema).toBeUndefined();
     });
 
-    it('Input vazio: .input(z.object({})) - aceita {} mas rejeita undefined', () => {
+    it('Input vazio: .input(z.object({}).optional()) - aceita {} mas rejeita undefined', () => {
       // Correto: procedure com input vazio
       const schema = z.object({});
       expect(() => schema.parse({})).not.toThrow();

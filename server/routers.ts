@@ -3113,7 +3113,9 @@ export const appRouter = router({
   // COMPETÊNCIAS
   // ============================================================================
   competencies: router({
-    list: protectedProcedure.query(async () => {
+    list: protectedProcedure
+      .input(z.object({}).optional())
+      .query(async () => {
       return await db.getAllCompetencies();
     }),
     

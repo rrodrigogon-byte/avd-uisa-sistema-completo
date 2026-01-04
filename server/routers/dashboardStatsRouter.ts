@@ -11,7 +11,7 @@ export const dashboardStatsRouter = router({
   /**
    * Obter estatísticas gerais de funcionários
    */
-  getGeneralStats: protectedProcedure.input(z.object({})).query(async () => {
+  getGeneralStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) {
       return {
@@ -45,7 +45,7 @@ export const dashboardStatsRouter = router({
   /**
    * Obter distribuição por departamento
    */
-  getByDepartment: protectedProcedure.input(z.object({})).query(async () => {
+  getByDepartment: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -73,7 +73,7 @@ export const dashboardStatsRouter = router({
   /**
    * Obter distribuição por cargo
    */
-  getByPosition: protectedProcedure.input(z.object({})).query(async () => {
+  getByPosition: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -102,7 +102,7 @@ export const dashboardStatsRouter = router({
   /**
    * Obter distribuição por tempo de empresa
    */
-  getByTenure: protectedProcedure.input(z.object({})).query(async () => {
+  getByTenure: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 
@@ -146,7 +146,7 @@ export const dashboardStatsRouter = router({
   /**
    * Obter média de tempo de empresa
    */
-  getAverageTenure: protectedProcedure.input(z.object({})).query(async () => {
+  getAverageTenure: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return { averageYears: 0, averageMonths: 0 };
 
@@ -171,7 +171,7 @@ export const dashboardStatsRouter = router({
   /**
    * Obter distribuição por status (ativo/inativo)
    */
-  getByStatus: protectedProcedure.input(z.object({})).query(async () => {
+  getByStatus: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return [];
 

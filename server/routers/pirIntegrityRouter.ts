@@ -589,7 +589,7 @@ Data da Avaliação: ${assessment.completedAt?.toLocaleDateString('pt-BR')}
     }),
 
   // ============ DASHBOARD STATS ============
-  getDashboardStats: protectedProcedure.input(z.object({})).query(async () => {
+  getDashboardStats: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const db = await getDb();
     if (!db) return { total: 0, completed: 0, inProgress: 0, avgScore: 0, riskDistribution: {} };
 

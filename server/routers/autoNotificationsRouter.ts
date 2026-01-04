@@ -63,7 +63,7 @@ export const autoNotificationsRouter = router({
   /**
    * Listar regras de notificação
    */
-  listRules: protectedProcedure.input(z.object({})).query(async () => {
+  listRules: protectedProcedure.input(z.object({}).optional()).query(async () => {
     const rules = await db.getActiveNotificationRules();
     
     return rules.map(rule => ({
@@ -117,7 +117,7 @@ export const autoNotificationsRouter = router({
   /**
    * Processar fila de notificações
    */
-  processQueue: protectedProcedure.input(z.object({})).mutation(async () => {
+  processQueue: protectedProcedure.input(z.object({}).optional()).mutation(async () => {
     const pending = await db.getPendingNotifications(50);
     
     let processed = 0;
@@ -241,7 +241,7 @@ export const autoNotificationsRouter = router({
   /**
    * Buscar preferências de notificação
    */
-  getMyPreferences: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  getMyPreferences: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const prefs = await db.getUserNotificationPreferences(ctx.user.id);
     return prefs;
   }),

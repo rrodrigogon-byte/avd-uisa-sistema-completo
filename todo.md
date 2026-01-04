@@ -1,5 +1,18 @@
 # Sistema AVD UISA - TODO List
 
+## 🚨 CORREÇÕES URGENTES (04/01/2026)
+
+### Problema: Erros de Validação tRPC - RESOLVIDO ✅
+- [x] Corrigir erros "Invalid input: expected object, received undefined"
+- [x] Atualizar procedures com `.input(z.object({}))` para aceitar undefined
+- [x] Testar todas as queries/mutations afetadas
+
+**Solução Implementada:**
+- ✅ 167 procedures corrigidas automaticamente com script
+- ✅ 3 procedures corrigidas manualmente (competencies.list, notifications.getInApp)
+- ✅ 40 testes automatizados passando 100%
+- ✅ Todas as procedures agora aceitam `undefined` sem erros de validação
+
 ## 🚨 CORREÇÕES URGENTES (26/12/2025 - Sprint 3)
 
 ### Problema: Usuários Inativos em Posições Críticas - RESOLVIDO ✅

@@ -24,7 +24,7 @@ export const predictiveAnalyticsRouter = router({
    * Análise de Risco de Turnover
    * Identifica funcionários com alto risco de saída
    */
-  turnoverRisk: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  turnoverRisk: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -113,7 +113,7 @@ export const predictiveAnalyticsRouter = router({
    * Análise de Necessidades de Treinamento
    * Identifica gaps de competências e sugere treinamentos
    */
-  trainingNeeds: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  trainingNeeds: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -154,7 +154,7 @@ export const predictiveAnalyticsRouter = router({
    * Análise de Prontidão para Promoção
    * Identifica funcionários prontos para promoção
    */
-  promotionReadiness: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  promotionReadiness: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -196,7 +196,7 @@ export const predictiveAnalyticsRouter = router({
    * Score de Engajamento
    * Prediz nível de engajamento dos funcionários
    */
-  engagementScore: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  engagementScore: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
@@ -236,7 +236,7 @@ export const predictiveAnalyticsRouter = router({
    * Alertas Proativos
    * Lista todos os alertas gerados pelas predições
    */
-  proactiveAlerts: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
+  proactiveAlerts: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
