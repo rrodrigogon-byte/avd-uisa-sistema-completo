@@ -342,7 +342,7 @@ export async function logAudit(context: AuditContext, details?: {
       action: context.action,
       entity: context.resource, // Campo obrigatório no schema
       entityId: context.resourceId,
-      changes: Object.keys(changes).length > 0 ? JSON.stringify(changes) : undefined,
+      changes: safeObjectKeys(changes).length > 0 ? JSON.stringify(changes) : undefined,
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
     };

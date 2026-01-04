@@ -22,6 +22,7 @@ import {
 } from "../drizzle/schema";
 import { getDb } from "./db";
 import { protectedProcedure, router } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 import { TRPCError } from "@trpc/server";
 
 /**
@@ -40,7 +41,7 @@ function generateTestSummary(result: any): string {
       
       case 'big_five':
         const traits = data.traits || {};
-        const topTrait = Object.entries(traits)
+        const topTrait = safeObjectEntries(traits)
           .sort(([,a]: any, [,b]: any) => (b as number) - (a as number))[0];
         return topTrait ? `Traço dominante: ${topTrait[0]}` : 'Perfil Big Five';
       
@@ -1526,7 +1527,7 @@ Retorne um JSON no formato:
           } else if (input.testType === 'bigfive' && member.profile.traits) {
             // Para Big Five, usar o traço dominante
             const traits = member.profile.traits;
-            const topTrait = Object.entries(traits)
+            const topTrait = safeObjectEntries(traits)
               .sort(([,a]: any, [,b]: any) => (b as number) - (a as number))[0];
             profileKey = topTrait ? topTrait[0] : "N/A";
           } else if (input.testType === 'ie' && member.profile.totalScore) {

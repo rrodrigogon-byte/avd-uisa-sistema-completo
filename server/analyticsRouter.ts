@@ -9,6 +9,7 @@ import {
   employees 
 } from "../drizzle/schema";
 import { protectedProcedure, router } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 
 export const analyticsRouter = router({
   // Buscar dados de tendências de performance
@@ -64,7 +65,7 @@ export const analyticsRouter = router({
       distribution[key] = (distribution[key] || 0) + 1;
     });
 
-    return Object.entries(distribution).map(([key, count]) => {
+    return safeObjectEntries(distribution).map(([key, count]) => {
       const [performance, potential] = key.split('-');
       return { performance, potential, count };
     });

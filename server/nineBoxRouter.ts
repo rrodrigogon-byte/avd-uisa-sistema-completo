@@ -8,6 +8,7 @@ import {
   departments
 } from "../drizzle/schema";
 import { protectedProcedure, router } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 
 /**
  * Nine Box Router
@@ -141,7 +142,7 @@ export const nineBoxRouter = router({
       }
 
       // Calcular distribuição Nine Box por cargo
-      const comparative = Object.entries(byPosition).map(([positionTitle, items]) => {
+      const comparative = safeObjectEntries(byPosition).map(([positionTitle, items]) => {
         // Contar distribuição na matriz 3x3
         const distribution = {
           baixo_desempenho_baixo_potencial: 0, // Perf 1, Pot 1

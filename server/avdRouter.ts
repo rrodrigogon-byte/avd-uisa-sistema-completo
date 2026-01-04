@@ -4,7 +4,8 @@
  */
 
 import { z } from "zod";
-import { router, protectedProcedure } from "./_core/trpc";
+import { protectedProcedure, router } from "./_core/trpc";
+import { safeObjectKeys } from "./utils/objectHelpers";
 import { getDb } from "./db";
 import { 
   avdAssessmentProcesses,
@@ -563,7 +564,7 @@ export const avdRouter = router({
         processId: input.processId,
         step: input.step,
         employeeId: input.employeeId,
-        dataKeys: Object.keys(input.data || {}),
+        dataKeys: safeObjectKeys(input.data),
       });
 
       const db = await getDb();

@@ -54,6 +54,7 @@ import {
   type InsertIntegrityTestResult,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
+import { safeObjectKeys } from "./utils/objectHelpers";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -120,7 +121,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.lastSignedIn = new Date();
     }
 
-    if (Object.keys(updateSet).length === 0) {
+    if (safeObjectKeys(updateSet).length === 0) {
       updateSet.lastSignedIn = new Date();
     }
 
@@ -876,12 +877,26 @@ export async function logAudit(
 
 export async function getDashboardStats(employeeId: number, cycleId?: number) {
   const db = await getDb();
-  if (!db) return null;
+  if (!db) {
+    return {
+      cycle: null,
+      goalsCount: 0,
+      pdisCount: 0,
+      evaluationsCount: 0,
+    };
+  }
 
   const cycle = cycleId ? await db.select().from(evaluationCycles).where(eq(evaluationCycles.id, cycleId)).limit(1) : [];
   const activeCycle = cycle.length > 0 ? cycle[0] : await getActiveCycle();
 
-  if (!activeCycle) return null;
+  if (!activeCycle) {
+    return {
+      cycle: null,
+      goalsCount: 0,
+      pdisCount: 0,
+      evaluationsCount: 0,
+    };
+  }
 
   // Contar metas
   const goalsCount = await db

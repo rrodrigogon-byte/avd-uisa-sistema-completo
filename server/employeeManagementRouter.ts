@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { router, adminProcedure, protectedProcedure } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
 import { employees, auditLogs, departments, positions } from "../drizzle/schema";
@@ -157,7 +158,7 @@ export const employeeManagementRouter = router({
         changes.push(`Cargo alterado`);
       }
 
-      if (Object.keys(updates).length === 0) {
+      if (safeObjectKeys(updates).length === 0) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Nenhuma alteração especificada" });
       }
 
@@ -238,7 +239,7 @@ export const employeeManagementRouter = router({
           if (input.managerId !== undefined) updates.managerId = input.managerId;
           if (input.positionId !== undefined) updates.positionId = input.positionId;
 
-          if (Object.keys(updates).length === 0) continue;
+          if (safeObjectKeys(updates).length === 0) continue;
 
           // Atualizar
           await db

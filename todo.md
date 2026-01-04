@@ -825,3 +825,5 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - ✅ Procedure getEngagementMetrics no pirIntegrityRouter
 - ✅ Rota /pir-integridade/metricas disponível
 - ✅ 15 testes automatizados criados e passando 100%
+
+- [x] Corrigir erro "Cannot convert undefined or null to object" nas mutações da API

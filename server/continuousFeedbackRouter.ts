@@ -5,6 +5,7 @@
 
 import { z } from "zod";
 import { router, protectedProcedure } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 import { getDb } from "./db";
 import {
   feedbacks,
@@ -70,7 +71,7 @@ function extractCommonThemes(texts: string[]): Array<{ theme: string; count: num
     });
   });
   
-  return Object.entries(themes)
+  return safeObjectEntries(themes)
     .map(([theme, examples]) => ({
       theme,
       count: examples.length,
@@ -442,7 +443,7 @@ export const continuousFeedbackRouter = router({
       });
 
       // Calcular médias mensais
-      const evolution = Object.entries(monthlyData).map(([month, data]) => ({
+      const evolution = safeObjectEntries(monthlyData).map(([month, data]) => ({
         month,
         averageRating: data.ratings.reduce((a, b) => a + b, 0) / data.ratings.length,
         feedbackCount: data.count,

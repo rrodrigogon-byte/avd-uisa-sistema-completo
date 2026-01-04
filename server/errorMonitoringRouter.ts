@@ -5,6 +5,7 @@
 
 import { z } from "zod";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 import { logger } from "./_core/logger";
 
 // Em produção, você pode armazenar logs em banco de dados
@@ -120,7 +121,7 @@ export const errorMonitoringRouter = router({
         });
       
       // Top 10 erros mais frequentes
-      const topErrors = Object.entries(errorsByMessage)
+      const topErrors = safeObjectEntries(errorsByMessage)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 10)
         .map(([message, count]) => ({ message, count }));

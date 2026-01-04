@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { eq, desc, and } from "drizzle-orm";
 import { adminProcedure, protectedProcedure, router } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 import { getDb } from "./db";
 import { notificationTemplates, InsertNotificationTemplate } from "../drizzle/schema";
 import { TRPCError } from "@trpc/server";
@@ -453,7 +454,7 @@ export const notificationTemplatesRouter = router({
 function replaceVariables(text: string, variables: Record<string, any>): string {
   let result = text;
   
-  for (const [key, value] of Object.entries(variables)) {
+  for (const [key, value] of safeObjectEntries(variables)) {
     const regex = new RegExp(`\\{\\{${key}\\}\\}`, "g");
     result = result.replace(regex, String(value));
   }

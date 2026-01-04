@@ -13,6 +13,7 @@ import {
 } from "../drizzle/schema";
 import { getDb } from "./db";
 import { adminProcedure, router } from "./_core/trpc";
+import { safeObjectKeys, safeObjectEntries, safeObjectValues, ensureObject } from "./utils/objectHelpers";
 
 /**
  * Router de Dashboard Executivo
@@ -576,7 +577,7 @@ export const executiveRouter = router({
         });
       });
 
-      return Object.entries(grouped).map(([quarter, data]) => ({
+      return safeObjectEntries(grouped).map(([quarter, data]) => ({
         quarter,
         distribution: data,
         total: data.reduce((sum, item) => sum + item.count, 0),

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "./_core/trpc";
+import { safeObjectKeys } from "./utils/objectHelpers";
 import { getDb } from "./db";
 import {
   employees,
@@ -330,7 +331,7 @@ export const advancedAnalyticsRouter = router({
 
       return {
         year: input.year,
-        departments: Object.keys(heatmapData),
+        departments: safeObjectKeys(heatmapData),
         months: [
           "Jan",
           "Fev",
