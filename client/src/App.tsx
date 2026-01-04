@@ -48,6 +48,9 @@ import {
   ResultadoPIRIntegridade,
   GestaoQuestoesPIRIntegridade,
 } from "./pages/PIRIntegridade/index";
+import TesteFluxoPIR from "./pages/TesteFluxoPIR";
+import AdminJobsCron from "./pages/AdminJobsCron";
+import DashboardMetricasPIR from "./pages/DashboardMetricasPIR";
 import AprovacoesCargos from "./pages/AprovacoesCargos";
 import FuncionariosImportados from "./pages/FuncionariosImportados";
 import FluxoAprovacaoCargos from "./pages/FluxoAprovacaoCargos";
@@ -522,6 +525,9 @@ function Router() {
       <Route path="/pir-integridade/teste/:id" component={TestePIRIntegridade} />
       <Route path="/pir-integridade/resultado/:id" component={ResultadoPIRIntegridade} />
       <Route path="/pir-integridade/questoes" component={GestaoQuestoesPIRIntegridade} />
+      <Route path="/pir-integridade/teste-fluxo" component={TesteFluxoPIR} />
+      <Route path="/admin/jobs-cron" component={AdminJobsCron} />
+      <Route path="/pir-integridade/metricas" component={DashboardMetricasPIR} />
       
       {/* Rotas de Integridade - 4 páginas */}
       <Route path="/integridade/testes" component={IntegridadeTestes} />

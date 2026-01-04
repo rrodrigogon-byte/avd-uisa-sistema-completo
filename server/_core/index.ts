@@ -11,6 +11,7 @@ import { setupWebSocket } from "../websocket";
 import { startCronJobs } from "../cron";
 import { startEmailQueueProcessor } from "./emailQueue";
 import { startEmailScheduler } from "./emailScheduler";
+import { startDailyNotificationJob } from "../jobs/pirIntegrityNotifications";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -78,6 +79,10 @@ async function startServer() {
     
     // Iniciar agendador de emails automáticos
     startEmailScheduler();
+    
+    // Iniciar job de notificações PIR Integridade (diário às 9h)
+    startDailyNotificationJob();
+    console.log('[PIR Jobs] Sistema de notificações automáticas iniciado');
   });
 }
 

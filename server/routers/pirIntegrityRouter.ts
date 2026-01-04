@@ -5,6 +5,8 @@ import { getDb } from "../db";
 import { eq, and, desc, sql, inArray } from "drizzle-orm";
 import { parseJSONFields } from "../jsonHelpers";
 import { sendPIRIntegrityInvite, sendPIRIntegrityCompletionNotification, sendPIRIntegrityReminder } from "../_core/email";
+import { runJobManually, generateDailyReport } from "../jobs/pirIntegrityNotifications";
+import { calculateAllEngagementMetrics } from "../analytics/pirEngagementMetrics";
 import { ENV } from "../_core/env";
 import {
   pirIntegrityDimensions,
@@ -269,6 +271,49 @@ export const pirIntegrityRouter = router({
         .where(eq(pirIntegrityRiskIndicators.assessmentId, input.id));
 
       return { assessment, employee, dimensionScores, riskIndicators };
+    }),
+
+  // Procedure específica para teste end-to-end com informações completas
+  getAssessmentById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      const [assessment] = await db
+        .select()
+        .from(pirIntegrityAssessments)
+        .where(eq(pirIntegrityAssessments.id, input.id))
+        .limit(1);
+
+      if (!assessment) return null;
+
+      // Buscar total de questões ativas
+      const totalQuestionsResult = await db.execute(sql`
+        SELECT COUNT(*) as count FROM pirIntegrityQuestions WHERE active = 1
+      `);
+      const totalQuestions = Array.isArray(totalQuestionsResult[0]) && totalQuestionsResult[0].length > 0 
+        ? (totalQuestionsResult[0][0] as any).count 
+        : 0;
+
+      // Buscar respostas dadas
+      const responses = await db
+        .select()
+        .from(pirIntegrityResponses)
+        .where(eq(pirIntegrityResponses.assessmentId, input.id));
+
+      return {
+        id: assessment.id,
+        candidateName: assessment.candidateName,
+        candidateEmail: assessment.candidateEmail,
+        status: assessment.status,
+        createdAt: assessment.createdAt,
+        startedAt: assessment.startedAt,
+        completedAt: assessment.completedAt,
+        expiresAt: assessment.expiresAt,
+        totalQuestions,
+        answeredQuestions: responses.length,
+      };
     }),
 
   startAssessment: protectedProcedure
@@ -674,5 +719,25 @@ Data da Avaliação: ${assessment.completedAt?.toLocaleDateString('pt-BR')}
         .orderBy(desc(pirIntegrityAssessments.createdAt));
 
       return { assessments };
+    }),
+
+  // ============ JOBS CRON ============
+  runNotificationJobManually: protectedProcedure
+    .mutation(async () => {
+      const result = await runJobManually();
+      return result;
+    }),
+
+  getJobStatus: protectedProcedure
+    .query(async () => {
+      const report = await generateDailyReport();
+      return report;
+    }),
+
+  // ============ ANALYTICS E MÉTRICAS ============
+  getEngagementMetrics: protectedProcedure
+    .query(async () => {
+      const metrics = await calculateAllEngagementMetrics();
+      return metrics;
     }),
 });
