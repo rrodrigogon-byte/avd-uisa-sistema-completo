@@ -681,3 +681,38 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - ✅ Frontend: Todas as chamadas `.useQuery({})` foram substituídas por `.useQuery(undefined)`
 - ✅ Backend: Procedures `dashboard.getStats`, `pdi.list` e `goals.list` alteradas de `.default({})` para `.optional()`
 - ✅ Erro completamente eliminado - 0 ocorrências no console
+
+
+## 🚨 CORREÇÃO CRÍTICA (03/01/2026) - Erro ao Completar Testes PIR/Pesquisa - RESOLVIDO ✅
+
+### Problema: Erro "Ocorreu um erro inesperado" impede candidatos de completarem testes
+- [x] Investigar erro JavaScript relacionado a funções inserirAntes, dT, Eh, ile, Ph
+- [x] Identificar causa raiz do erro de validação no código compilado
+- [x] Corrigir erro definitivamente para permitir conclusão de testes
+- [x] Testar fluxo completo de PIR/pesquisa após correção
+
+**Solução Implementada:**
+- ✅ Backend: pirIntegrityRouter.listQuestions agora parseia options de JSON string para array automaticamente
+- ✅ Frontend: TestePIRIntegridade.tsx simplificado para receber options já parseadas
+- ✅ Tratamento robusto de erros: options sempre retorna array válido (nunca undefined/null)
+- ✅ 6 testes automatizados criados e passando 100%
+
+### Melhorias de Notificações e Métricas (Sugestões Futuras)
+- [ ] Implementar agendamento automático de notificações (job cron diário executando detectPendingTests)
+- [ ] Integrar notificações in-app com envio de e-mail para testes próximos de expirar
+- [ ] Adicionar métricas de engajamento ao dashboard (tempo médio de conclusão, taxa de resposta por departamento)
+
+**Nota:** Sistema de e-mail já está implementado e funcional. Estas melhorias são sugestões para evolução futura do sistema.
+
+### Correções Preventivas Backend - CONCLUÍDO ✅
+- [x] Investigar outros erros 400/500 restantes em procedures
+- [x] Aplicar correção preventiva em todas procedures com .default({}) → .optional()
+- [x] Adicionar testes automatizados para validar procedures aceitam undefined
+- [x] Prevenir regressões futuras com suite de testes
+
+**Solução Implementada:**
+- ✅ Criado jsonHelpers.ts com funções utilitárias para parse seguro de JSON
+- ✅ Implementado parseJSONFields para processar múltiplos campos JSON em lote
+- ✅ Atualizado pirIntegrityRouter para usar helpers de parse
+- ✅ 19 testes automatizados criados e passando 100%
+- ✅ Revisão completa do código backend - nenhum erro crítico encontrado

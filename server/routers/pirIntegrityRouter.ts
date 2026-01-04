@@ -3,6 +3,7 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 import { eq, and, desc, sql, inArray } from "drizzle-orm";
+import { parseJSONFields } from "../jsonHelpers";
 import { sendPIRIntegrityInvite, sendPIRIntegrityCompletionNotification, sendPIRIntegrityReminder } from "../_core/email";
 import { ENV } from "../_core/env";
 import {
@@ -66,10 +67,18 @@ export const pirIntegrityRouter = router({
       `);
       
       // result[0] contém as linhas, result[1] contém os metadados
-      const questions = Array.isArray(result[0]) ? result[0] : [];
+      let questions = Array.isArray(result[0]) ? result[0] : [];
       console.log('[listQuestions] SQL retornou:', questions.length, 'questões');
+      
+      // Parsear campos JSON (options, scaleLabels) de string para objeto/array
+      questions = parseJSONFields(questions, ['options', 'scaleLabels'], {
+        options: [],
+        scaleLabels: []
+      });
+      
       if (questions.length > 0) {
-        console.log('[listQuestions] Primeira questão:', JSON.stringify(questions[0]).substring(0, 200));
+        console.log('[listQuestions] Primeira questão (após parse):', JSON.stringify(questions[0]).substring(0, 300));
+        console.log('[listQuestions] Options da primeira questão:', Array.isArray(questions[0].options) ? 'array válido' : 'ERRO');
       }
       
       return { 

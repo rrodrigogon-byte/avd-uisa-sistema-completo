@@ -233,21 +233,8 @@ export default function TestePIRIntegridade() {
     );
   }
 
-  // Garantir que options seja sempre um array válido
-  let options: any[] = [];
-  try {
-    if (currentQuestion?.options) {
-      if (typeof currentQuestion.options === 'string') {
-        const parsed = JSON.parse(currentQuestion.options);
-        options = Array.isArray(parsed) ? parsed : [];
-      } else if (Array.isArray(currentQuestion.options)) {
-        options = currentQuestion.options;
-      }
-    }
-  } catch (error) {
-    console.error('Erro ao fazer parse das opções:', error);
-    options = [];
-  }
+  // Options já vem parseado do backend como array
+  const options = Array.isArray(currentQuestion?.options) ? currentQuestion.options : [];
 
   return (
     <DashboardLayout>
