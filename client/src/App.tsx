@@ -77,6 +77,7 @@ import DashboardAlertasSeguranca from "./pages/DashboardAlertasSeguranca";
 import DashboardMovimentacoes from "./pages/DashboardMovimentacoes";
 import SuspiciousAccessDashboard from "./pages/SuspiciousAccessDashboard";
 import IntegrityReport from "./pages/IntegrityReport";
+import GerenciamentoCiclos from "./pages/admin/GerenciamentoCiclos";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -711,6 +712,7 @@ function Router() {
       <Route path="/admin/exportacao-dados" component={ExportacaoDados} />
       <Route path="/admin/notificacoes" component={GerenciamentoNotificacoes} />
       <Route path="/admin/auditoria" component={AuditoriaCompleta} />
+      <Route path="/admin/ciclos" component={GerenciamentoCiclos} />
       
       {/* Simulados do Piloto e Alertas de Segurança */}
       <Route path="/piloto/simulados" component={PilotSimulations} />

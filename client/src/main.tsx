@@ -4,21 +4,51 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
+import { toast } from "sonner";
 import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 
 const queryClient = new QueryClient();
 
+let hasShownAuthToast = false;
+let redirectTimeout: NodeJS.Timeout | null = null;
+
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
 
-  const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
+  const isUnauthorized = error.message === UNAUTHED_ERR_MSG ||
+                        error.data?.code === 'UNAUTHORIZED' ||
+                        error.shape?.data?.code === 'UNAUTHORIZED';
 
   if (!isUnauthorized) return;
 
-  window.location.href = getLoginUrl();
+  // Evitar múltiplos toasts e redirecionamentos
+  if (!hasShownAuthToast) {
+    hasShownAuthToast = true;
+    
+    toast.error('Sessão expirada', {
+      description: 'Você será redirecionado para o login em 3 segundos...',
+      duration: 3000,
+    });
+
+    // Limpar timeout anterior se existir
+    if (redirectTimeout) {
+      clearTimeout(redirectTimeout);
+    }
+
+    // Salvar URL atual para retornar após login
+    const currentPath = window.location.pathname + window.location.search;
+    if (currentPath !== '/login') {
+      sessionStorage.setItem('redirectAfterLogin', currentPath);
+    }
+
+    // Redirecionar após 3 segundos
+    redirectTimeout = setTimeout(() => {
+      window.location.href = getLoginUrl();
+    }, 3000);
+  }
 };
 
 queryClient.getQueryCache().subscribe(event => {
