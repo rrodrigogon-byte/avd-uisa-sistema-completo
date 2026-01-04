@@ -716,3 +716,29 @@ Aplicar o mesmo padrão de proteção preventiva nos 2 componentes restantes (Or
 - ✅ Atualizado pirIntegrityRouter para usar helpers de parse
 - ✅ 19 testes automatizados criados e passando 100%
 - ✅ Revisão completa do código backend - nenhum erro crítico encontrado
+
+## 🚨 BUGS REPORTADOS (03/01/2026)
+
+### Bug 1: Erro React #185 ao Criar Ciclos - RESOLVIDO ✅
+- [x] Investigar erro React minificado #185 em componentes de competências
+- [x] Identificar componente exato que causa o erro - CompetenciesSelector
+- [x] Corrigir renderização de competências ao criar ciclos - Adicionado safeMap, safeFilter, isEmpty
+- [x] Testar criação de ciclos 360-enhanced e outros tipos
+
+**Solução Implementada:**
+- ✅ Adicionada proteção contra dados undefined em CompetenciesSelector
+- ✅ Substituído .map() por safeMap() para evitar erros com arrays undefined
+- ✅ Adicionada validação de Array.isArray() antes de processar competências
+- ✅ Usado safeFilter() e isEmpty() para operações seguras
+
+### Bug 2: Erro SQL na Avaliação PIR - RESOLVIDO ✅
+- [x] Corrigir query SQL malformada: "where = ? limit ?"
+- [x] Identificar procedure com cláusula WHERE incompleta - savePirAssessment
+- [x] Adicionar campo/condição faltante na query - Campo processId adicionado ao schema
+- [x] Testar fluxo completo de avaliação PIR
+
+**Solução Implementada:**
+- ✅ Campo `processId` adicionado ao schema pirAssessments
+- ✅ Campos obrigatórios `assessmentDate` e `createdBy` adicionados ao insert
+- ✅ Query WHERE agora funciona corretamente com processId
+- ✅ Sincronização entre schema TypeScript e banco de dados

@@ -25,13 +25,13 @@ export default function CompetenciesSelector({ data, onChange, onNext, onBack }:
   const { data: competencies, isLoading } = trpc.competencies.list.useQuery(undefined);
 
   const filteredCompetencies = useMemo(() => {
-    if (!competencies) return [];
+    if (!competencies || !Array.isArray(competencies)) return [];
     if (!searchTerm.trim()) return competencies;
     
     const term = searchTerm.toLowerCase();
-    return competencies.filter(comp => 
-      comp.name.toLowerCase().includes(term) || 
-      comp.description?.toLowerCase().includes(term)
+    return safeFilter(competencies, comp => 
+      comp?.name?.toLowerCase().includes(term) || 
+      comp?.description?.toLowerCase().includes(term)
     );
   }, [competencies, searchTerm]);
 
@@ -88,7 +88,7 @@ export default function CompetenciesSelector({ data, onChange, onNext, onBack }:
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2">
-          {filteredCompetencies.map((competency) => {
+          {safeMap(filteredCompetencies, (competency) => {
             const isSelected = data.selectedCompetencies.includes(competency.id);
             
             return (
@@ -131,7 +131,7 @@ export default function CompetenciesSelector({ data, onChange, onNext, onBack }:
           })}
         </div>
 
-        {filteredCompetencies.length === 0 && (
+        {isEmpty(filteredCompetencies) && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
               {searchTerm 

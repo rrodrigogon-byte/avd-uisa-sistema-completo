@@ -844,6 +844,8 @@ export const avdUisaRouter = router({
           processId: input.processId,
           employeeId: process.employeeId,
           status: 'em_andamento',
+          assessmentDate: new Date(),
+          createdBy: ctx.user.id,
         });
         [assessment] = await db.select()
           .from(pirAssessments)

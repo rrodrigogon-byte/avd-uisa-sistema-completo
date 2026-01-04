@@ -4215,6 +4215,7 @@ export const pirAssessments = mysqlTable("pirAssessments", {
   id: int("id").autoincrement().primaryKey(),
   employeeId: int("employeeId").notNull(),
   cycleId: int("cycleId"), // Ciclo de avaliação (se aplicável)
+  processId: int("processId"), // Processo AVD associado
   
   // Dados da avaliação
   assessmentDate: datetime("assessmentDate").notNull(),
