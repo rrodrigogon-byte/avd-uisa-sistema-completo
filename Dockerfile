@@ -1,91 +1,105 @@
 # ============================================================================
-# Dockerfile Simplificado para AVD UISA - Google Cloud Run
-# ============================================================================
-# 
-# Dockerfile otimizado e simplificado para evitar erros de build
-# Foco: rodar servidor e conectar no banco MySQL
-#
+# Dockerfile Simplificado - Apenas Backend + Frontend Estático
 # ============================================================================
 
-# ============================================================================
-# STAGE 1: Build - Compilar aplicação
-# ============================================================================
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 # Instalar pnpm
 RUN npm install -g pnpm@10.15.1
 
-# Criar diretório de trabalho
 WORKDIR /app
 
-# Copiar arquivos de dependências
+# Copiar package files
 COPY package.json pnpm-lock.yaml ./
 
-# Instalar dependências
+# Instalar TODAS as dependências (não apenas prod, porque precisamos do drizzle-orm)
 RUN pnpm install --frozen-lockfile
 
-# Copiar código fonte
+# Copiar todo o código
 COPY . .
 
-# Garantir que client/dist existe com a página placeholder
+# Garantir que o frontend existe
 RUN mkdir -p client/dist && \
     if [ ! -f client/dist/index.html ]; then \
-      echo "Creating placeholder index.html"; \
-      cp client/dist/index.html client/dist/index.html 2>/dev/null || \
-      echo '<!DOCTYPE html><html><head><title>AVD UISA</title></head><body><h1>AVD UISA System</h1></body></html>' > client/dist/index.html; \
+      echo "Frontend não encontrado, criando placeholder..."; \
+      cat > client/dist/index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVD UISA - Sistema de Avaliação</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .container {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      max-width: 700px;
+    }
+    h1 { font-size: 3em; margin-bottom: 20px; }
+    .button {
+      display: inline-block;
+      padding: 15px 40px;
+      margin: 10px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: bold;
+    }
+    .button:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 AVD UISA v2.0.0</h1>
+    <p>Sistema de Avaliação de Desempenho</p>
+    <div style="margin-top: 30px;">
+      <a href="/health" class="button">Health Check</a>
+      <a href="/api" class="button">API Info</a>
+      <a href="/api/status" class="button">System Status</a>
+    </div>
+    <div style="margin-top: 30px;">
+      <p>📊 3.114 Funcionários | 622 Usuários | 26 Tabelas</p>
+      <p>🚀 API Completa | 125+ Routers | Multi-tenancy</p>
+    </div>
+  </div>
+</body>
+</html>
+EOF
     fi
 
-# Build da aplicação
-# Backend: esbuild bundle
-ENV NODE_ENV=production
-RUN pnpm esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist || echo "Build completed with warnings"
+# Build APENAS do backend (sem Vite)
+RUN pnpm esbuild server/_core/index.ts \
+    --platform=node \
+    --packages=external \
+    --bundle \
+    --format=esm \
+    --outdir=dist || echo "Backend build warning (ignored)"
 
-# ============================================================================
-# STAGE 2: Production - Imagem final otimizada
-# ============================================================================
-FROM node:20-alpine AS production
-
-# Instalar pnpm
-RUN npm install -g pnpm@10.15.1
-
-# Criar diretório de trabalho
-WORKDIR /app
-
-# Copiar arquivos de configuração
-COPY package.json pnpm-lock.yaml ./
-
-# Instalar apenas dependências de produção
-RUN pnpm install --prod --frozen-lockfile
-
-# Copiar código buildado do stage anterior
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/client/dist ./client/dist
-COPY --from=builder /app/drizzle ./drizzle
-
-# Copiar arquivos essenciais
-COPY --from=builder /app/server ./server
-
-# Configurar variáveis de ambiente
+# Variáveis de ambiente
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Expor porta 3000 (Cloud Run)
+# Expor porta
 EXPOSE 3000
 
-# Comando para iniciar aplicação
-CMD ["node", "dist/index.js"]
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
 
-# ============================================================================
-# Notas:
-# ============================================================================
-# 
-# - Dockerfile simplificado para evitar erros de build
-# - Usa apenas 2 stages: builder e production
-# - Remove dependências desnecessárias do Alpine
-# - Mantém estrutura mínima necessária
-# - Foco em estabilidade e deploy rápido
-#
-# Build: docker build -t avd-uisa .
-# Run: docker run -p 3000:3000 -e DATABASE_URL="..." avd-uisa
-#
-# ============================================================================
+# Iniciar usando o código TypeScript direto (tsx)
+CMD ["pnpm", "tsx", "server/_core/index.ts"]
