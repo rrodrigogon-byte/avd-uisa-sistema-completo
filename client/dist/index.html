@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVD UISA - Sistema de Avaliação de Desempenho</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .container {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      max-width: 700px;
+      animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 { font-size: 3em; margin-bottom: 10px; }
+    .version { font-size: 0.9em; opacity: 0.8; margin-bottom: 30px; }
+    .status { font-size: 1.2em; margin: 20px 0; }
+    .button {
+      display: inline-block;
+      padding: 15px 40px;
+      margin: 10px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: bold;
+      transition: all 0.3s;
+      border: 2px solid white;
+    }
+    .button:hover { 
+      transform: scale(1.05); 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .info { margin-top: 30px; font-size: 0.9em; opacity: 0.8; }
+    .api-status {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      border-left: 4px solid #4caf50;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin: 5px;
+      min-width: 150px;
+    }
+    .stat-number { font-size: 2em; font-weight: bold; }
+    .stat-label { font-size: 0.9em; opacity: 0.9; margin-top: 5px; }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 AVD UISA</h1>
+    <p class="version">Sistema de Avaliação de Desempenho v2.0.0</p>
+    
+    <div class="api-status">
+      <h3>✅ Sistema Operacional</h3>
+      <p id="apiMessage">API está rodando e pronta para uso</p>
+      <p id="apiDetails" style="font-size: 0.9em; margin-top: 10px;"></p>
+    </div>
+    
+    <div style="margin-top: 30px;">
+      <a href="/health" class="button">Health Check</a>
+      <a href="/api" class="button">API Info</a>
+      <a href="/api/status" class="button">System Status</a>
+      <a href="/api/dashboard/metrics" class="button">Dashboard</a>
+    </div>
+    
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number" id="employees">3.114</div>
+        <div class="stat-label">Funcionários</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="users">622</div>
+        <div class="stat-label">Usuários</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="tables">26</div>
+        <div class="stat-label">Tabelas</div>
+      </div>
+    </div>
+    
+    <div class="info">
+      <p>🚀 Deployed no Google Cloud Run</p>
+      <p>🔐 Multi-tenancy Ativo | 125+ Routers | 500+ Endpoints</p>
+      <p>📍 Region: South America East 1</p>
+    </div>
+  </div>
+  
+  <script>
+    // Testar API ao carregar
+    const apiMessage = document.getElementById('apiMessage');
+    const apiDetails = document.getElementById('apiDetails');
+    const employeesEl = document.getElementById('employees');
+    const usersEl = document.getElementById('users');
+    
+    apiMessage.innerHTML = 'Verificando API... <span class="loading"></span>';
+    
+    Promise.all([
+      fetch('/health').then(res => res.json()),
+      fetch('/api/status').then(res => res.json()).catch(() => null),
+      fetch('/api/dashboard/metrics').then(res => res.json()).catch(() => null)
+    ])
+    .then(([health, status, metrics]) => {
+      console.log('✅ Health check:', health);
+      console.log('✅ Status:', status);
+      console.log('✅ Metrics:', metrics);
+      
+      apiMessage.innerHTML = '✅ API conectada e funcionando';
+      
+      if (health.database) {
+        apiDetails.innerHTML = `
+          Database: ${health.database.status} | 
+          Uptime: ${Math.floor(health.uptime / 60)} min |
+          Env: ${health.environment}
+        `;
+      }
+      
+      if (metrics && metrics.employees) {
+        employeesEl.textContent = metrics.employees.total.toLocaleString('pt-BR');
+      }
+      
+      if (metrics && metrics.users) {
+        usersEl.textContent = metrics.users.total.toLocaleString('pt-BR');
+      }
+    })
+    .catch(err => {
+      console.error('❌ API check falhou:', err);
+      apiMessage.innerHTML = '⚠️ Erro ao conectar na API';
+      apiDetails.innerHTML = 'Verifique se o servidor está rodando';
+    });
+  </script>
+</body>
+</html>

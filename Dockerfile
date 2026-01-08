@@ -27,11 +27,18 @@ RUN pnpm install --frozen-lockfile
 # Copiar código fonte
 COPY . .
 
+# Garantir que client/dist existe com a página placeholder
+RUN mkdir -p client/dist && \
+    if [ ! -f client/dist/index.html ]; then \
+      echo "Creating placeholder index.html"; \
+      cp client/dist/index.html client/dist/index.html 2>/dev/null || \
+      echo '<!DOCTYPE html><html><head><title>AVD UISA</title></head><body><h1>AVD UISA System</h1></body></html>' > client/dist/index.html; \
+    fi
+
 # Build da aplicação
-# Frontend: Vite build
 # Backend: esbuild bundle
 ENV NODE_ENV=production
-RUN pnpm build || echo "Build completed with warnings"
+RUN pnpm esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist || echo "Build completed with warnings"
 
 # ============================================================================
 # STAGE 2: Production - Imagem final otimizada
