@@ -12,7 +12,7 @@ import { startCronJobs } from "../cron";
 import { startEmailQueueProcessor } from "./emailQueue";
 import { startEmailScheduler } from "./emailScheduler";
 import { startDailyNotificationJob } from "../jobs/pirIntegrityNotifications";
-import { getDb } from "./db";
+import { getDb } from "../db";
 
 // ============================================================================
 // AVD UISA Sistema Completo - Server Entry Point
