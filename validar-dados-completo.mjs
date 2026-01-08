@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Script de Validação Completa de Dados - Sistema AVD UISA
- * Verifica integridade, qualidade e consistência de todos os dados
+ * Valida TODOS os aspectos dos dados antes da importação
  */
 
 import fs from 'fs';
@@ -19,7 +19,6 @@ const colors = {
   green: '\x1b[32m',
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
-  magenta: '\x1b[35m',
   cyan: '\x1b[36m',
 };
 
@@ -27,463 +26,546 @@ function log(message, color = 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
-function formatBytes(bytes) {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+function section(title) {
+  log(`\n${'='.repeat(60)}`, 'cyan');
+  log(`  ${title}`, 'bright');
+  log('='.repeat(60), 'cyan');
 }
 
-// ============================================
-// VALIDAÇÕES DE ARQUIVOS
-// ============================================
+function success(message) {
+  log(`✅ ${message}`, 'green');
+}
 
-const dataFiles = [
-  { 
-    path: './import-data.json', 
-    required: true, 
-    minSize: 1 * 1024 * 1024, // 1 MB
-    description: 'Dados de funcionários',
-    validate: (data) => {
-      const errors = [];
-      if (!data.employees || !Array.isArray(data.employees)) {
-        errors.push('Campo employees não encontrado ou não é array');
-      } else {
-        if (data.employees.length < 3000) {
-          errors.push(`Apenas ${data.employees.length} funcionários (esperado: 3000+)`);
-        }
-        // Validar estrutura de alguns funcionários
-        const sample = data.employees.slice(0, 10);
-        sample.forEach((emp, idx) => {
-          if (!emp.name) errors.push(`Funcionário ${idx}: campo 'name' faltando`);
-          if (!emp.email) errors.push(`Funcionário ${idx}: campo 'email' faltando`);
-          if (!emp.employeeCode) errors.push(`Funcionário ${idx}: campo 'employeeCode' faltando`);
-        });
-      }
-      return errors;
-    }
-  },
-  { 
-    path: './users-credentials.json', 
-    required: true, 
-    minSize: 50 * 1024, // 50 KB
-    description: 'Credenciais de usuários',
-    validate: (data) => {
-      const errors = [];
-      if (!Array.isArray(data)) {
-        errors.push('Arquivo não é um array');
-      } else {
-        if (data.length < 300) {
-          errors.push(`Apenas ${data.length} usuários (esperado: 300+)`);
-        }
-        // Verificar senhas em texto plano
-        const hasPlainPassword = data.some(u => u.password && u.password.length < 50);
-        if (hasPlainPassword) {
-          errors.push('⚠️  ATENÇÃO: Senhas em texto plano detectadas (precisam hash)');
-        }
-      }
-      return errors;
-    }
-  },
-  { 
-    path: './pdi_data.json', 
-    required: true, 
-    minSize: 5 * 1024, // 5 KB
-    description: 'Dados de PDI',
-    validate: (data) => {
-      const errors = [];
-      if (!Array.isArray(data)) {
-        errors.push('Arquivo não é um array');
-      } else {
-        if (data.length < 2) {
-          errors.push(`Apenas ${data.length} PDIs (recomendado: criar mais)`);
-        }
-        // Validar estrutura 70-20-10
-        data.forEach((pdi, idx) => {
-          if (!pdi.plano_acao) {
-            errors.push(`PDI ${idx}: campo 'plano_acao' faltando`);
-          } else {
-            if (!pdi.plano_acao['70_pratica']) {
-              errors.push(`PDI ${idx}: '70_pratica' faltando`);
-            }
-            if (!pdi.plano_acao['20_social']) {
-              errors.push(`PDI ${idx}: '20_social' faltando`);
-            }
-            if (!pdi.plano_acao['10_formal']) {
-              errors.push(`PDI ${idx}: '10_formal' faltando`);
-            }
-          }
-        });
-      }
-      return errors;
-    }
-  },
-  { 
-    path: './succession-data-uisa.json', 
-    required: true, 
-    minSize: 5 * 1024, // 5 KB
-    description: 'Mapa de sucessão',
-    validate: (data) => {
-      const errors = [];
-      if (!data.positions || !Array.isArray(data.positions)) {
-        errors.push('Campo positions não encontrado ou não é array');
-      } else {
-        if (data.positions.length < 10) {
-          errors.push(`Apenas ${data.positions.length} posições mapeadas (recomendado: mais posições)`);
-        }
-        // Validar metodologia
-        if (data.methodology !== '9-Box Succession Planning') {
-          errors.push('Metodologia diferente da esperada (9-Box)');
-        }
-      }
-      return errors;
-    }
-  },
-  { 
-    path: './data/uisa-job-descriptions.json', 
-    required: true, 
-    minSize: 3 * 1024 * 1024, // 3 MB
-    description: 'Descrições de cargo',
-    validate: (data) => {
-      const errors = [];
-      if (!Array.isArray(data)) {
-        errors.push('Arquivo não é um array');
-      } else {
-        if (data.length < 400) {
-          errors.push(`Apenas ${data.length} descrições (esperado: 400+)`);
-        }
-        // Validar estrutura
-        const sample = data.slice(0, 5);
-        sample.forEach((desc, idx) => {
-          if (!desc.cargo) errors.push(`Descrição ${idx}: campo 'cargo' faltando`);
-          if (!desc.departamento) errors.push(`Descrição ${idx}: campo 'departamento' faltando`);
-          if (!desc.competencias || !Array.isArray(desc.competencias)) {
-            errors.push(`Descrição ${idx}: competências não definidas`);
-          }
-        });
-      }
-      return errors;
-    }
-  },
-  { 
-    path: './funcionarios-hierarquia.xlsx', 
-    required: false, 
-    minSize: 100 * 1024, // 100 KB
-    description: 'Planilha de hierarquia',
-    validate: null // Não validamos XLSX (binário)
-  },
-  { 
-    path: './job_descriptions.json', 
-    required: false, 
-    minSize: 10 * 1024, // 10 KB
-    description: 'Descrições complementares',
-    validate: null
-  }
-];
+function warning(message) {
+  log(`⚠️  ${message}`, 'yellow');
+}
 
-const sqlFiles = [
-  { path: './migration-employees.sql', description: 'Migração de funcionários' },
-  { path: './migration_avd_5_passos.sql', description: 'Migração AVD 360°' },
-  { path: './migration_pir.sql', description: 'Migração testes PIR' },
-  { path: './scripts/seed-competencias.sql', description: 'Seed de competências' },
-  { path: './scripts/seed-complete-data.sql', description: 'Seed completo' },
-  { path: './scripts/seed-psychometric-tests.sql', description: 'Testes psicométricos' },
-  { path: './scripts/seed-sucessao-9box.sql', description: 'Sucessão 9-Box' },
-];
+function error(message) {
+  log(`❌ ${message}`, 'red');
+}
 
-const mjsFiles = [
-  { path: './execute-import.mjs', description: 'Importação principal' },
-  { path: './create-remaining-users.mjs', description: 'Criar usuários faltantes' },
-  { path: './import-employees.mjs', description: 'Importar funcionários' },
-  { path: './verificar-integridade-dados.mjs', description: 'Verificar integridade' },
-  { path: './scripts/seed-demo-data.mjs', description: 'Dados de demonstração' },
-  { path: './scripts/seed-succession.mjs', description: 'Seed de sucessão' },
-  { path: './scripts/import-job-desc.mjs', description: 'Importar descrições' },
-];
+function info(message) {
+  log(`ℹ️  ${message}`, 'blue');
+}
 
-// ============================================
-// FUNÇÃO PRINCIPAL
-// ============================================
+// Resultados da validação
+const results = {
+  total: 0,
+  passed: 0,
+  warnings: 0,
+  errors: 0,
+  details: []
+};
 
-async function main() {
-  log('\n╔═══════════════════════════════════════════════════════════╗', 'cyan');
-  log('║  VALIDAÇÃO COMPLETA DE DADOS - Sistema AVD UISA v2.0    ║', 'cyan');
-  log('╚═══════════════════════════════════════════════════════════╝\n', 'cyan');
+function addResult(type, category, message, details = null) {
+  results.total++;
+  results[type === 'passed' ? 'passed' : type === 'warning' ? 'warnings' : 'errors']++;
+  results.details.push({ type, category, message, details });
+}
 
-  const results = {
-    files: { total: 0, found: 0, missing: 0, invalid: 0 },
-    sql: { total: 0, found: 0, missing: 0 },
-    mjs: { total: 0, found: 0, missing: 0 },
-    data: {},
-    errors: [],
-    warnings: []
-  };
-
-  // ============================================
-  // 1. VALIDAR ARQUIVOS DE DADOS
-  // ============================================
+// Validar estrutura de arquivo
+function validateFileStructure(filePath, expectedFields) {
+  const fileName = path.basename(filePath);
   
-  log('📁 VALIDANDO ARQUIVOS DE DADOS', 'bright');
-  log('═'.repeat(60), 'blue');
-
-  for (const file of dataFiles) {
-    results.files.total++;
-    const filePath = path.join(__dirname, file.path);
-    
-    try {
-      const stats = fs.statSync(filePath);
-      const fileSize = stats.size;
-      
-      log(`\n✓ ${file.path}`, 'green');
-      log(`  Descrição: ${file.description}`, 'cyan');
-      log(`  Tamanho: ${formatBytes(fileSize)}`, 'cyan');
-      
-      // Verificar tamanho mínimo
-      if (file.minSize && fileSize < file.minSize) {
-        const warning = `  ⚠️  Arquivo menor que o esperado (${formatBytes(file.minSize)})`;
-        log(warning, 'yellow');
-        results.warnings.push(`${file.path}: ${warning}`);
-      }
-      
-      // Validar conteúdo (apenas JSON)
-      if (file.path.endsWith('.json') && file.validate) {
-        try {
-          const content = fs.readFileSync(filePath, 'utf-8');
-          const data = JSON.parse(content);
-          const validationErrors = file.validate(data);
-          
-          if (validationErrors.length > 0) {
-            log('  ⚠️  Problemas encontrados:', 'yellow');
-            validationErrors.forEach(err => {
-              log(`    - ${err}`, 'yellow');
-              results.warnings.push(`${file.path}: ${err}`);
-            });
-            results.files.invalid++;
-          } else {
-            log('  ✓ Validação OK', 'green');
-          }
-          
-          // Estatísticas
-          if (file.path === './import-data.json') {
-            results.data.employees = {
-              total: data.employees.length,
-              active: data.employees.filter(e => e.active !== false).length
-            };
-          } else if (file.path === './users-credentials.json') {
-            results.data.users = {
-              total: data.length,
-              byRole: data.reduce((acc, u) => {
-                const role = u.role || u.cargo || 'unknown';
-                acc[role] = (acc[role] || 0) + 1;
-                return acc;
-              }, {})
-            };
-          } else if (file.path === './pdi_data.json') {
-            results.data.pdis = data.length;
-          } else if (file.path === './data/uisa-job-descriptions.json') {
-            results.data.jobDescriptions = data.length;
-          } else if (file.path === './succession-data-uisa.json') {
-            results.data.succession = {
-              positions: data.positions?.length || 0,
-              methodology: data.methodology
-            };
-          }
-          
-        } catch (parseError) {
-          const error = `  ✗ Erro ao validar: ${parseError.message}`;
-          log(error, 'red');
-          results.errors.push(`${file.path}: ${error}`);
-          results.files.invalid++;
-        }
-      }
-      
-      results.files.found++;
-      
-    } catch (error) {
-      if (file.required) {
-        log(`✗ ${file.path} - FALTANDO (OBRIGATÓRIO)`, 'red');
-        results.errors.push(`${file.path}: Arquivo obrigatório não encontrado`);
-        results.files.missing++;
-      } else {
-        log(`⚠️  ${file.path} - Não encontrado (opcional)`, 'yellow');
-        results.warnings.push(`${file.path}: Arquivo opcional não encontrado`);
-        results.files.missing++;
-      }
-    }
+  if (!fs.existsSync(filePath)) {
+    addResult('error', 'Arquivo', `${fileName} não encontrado`, { filePath });
+    return null;
   }
-
-  // ============================================
-  // 2. VALIDAR SCRIPTS SQL
-  // ============================================
-  
-  log('\n\n📄 VALIDANDO SCRIPTS SQL', 'bright');
-  log('═'.repeat(60), 'blue');
-
-  for (const file of sqlFiles) {
-    results.sql.total++;
-    const filePath = path.join(__dirname, file.path);
-    
-    try {
-      const stats = fs.statSync(filePath);
-      log(`✓ ${file.path} (${formatBytes(stats.size)})`, 'green');
-      results.sql.found++;
-    } catch (error) {
-      log(`⚠️  ${file.path} - Não encontrado`, 'yellow');
-      results.sql.missing++;
-    }
-  }
-
-  // ============================================
-  // 3. VALIDAR SCRIPTS MJS
-  // ============================================
-  
-  log('\n\n📜 VALIDANDO SCRIPTS MJS', 'bright');
-  log('═'.repeat(60), 'blue');
-
-  for (const file of mjsFiles) {
-    results.mjs.total++;
-    const filePath = path.join(__dirname, file.path);
-    
-    try {
-      const stats = fs.statSync(filePath);
-      log(`✓ ${file.path} (${formatBytes(stats.size)})`, 'green');
-      results.mjs.found++;
-    } catch (error) {
-      log(`⚠️  ${file.path} - Não encontrado`, 'yellow');
-      results.mjs.missing++;
-    }
-  }
-
-  // ============================================
-  // 4. VERIFICAR .ENV
-  // ============================================
-  
-  log('\n\n⚙️  VERIFICANDO CONFIGURAÇÃO', 'bright');
-  log('═'.repeat(60), 'blue');
 
   try {
-    fs.statSync(path.join(__dirname, '.env'));
-    log('✓ Arquivo .env existe', 'green');
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const data = JSON.parse(content);
     
-    // Ler e verificar variáveis críticas
-    const envContent = fs.readFileSync(path.join(__dirname, '.env'), 'utf-8');
-    const requiredVars = ['DATABASE_URL', 'JWT_SECRET'];
-    const missingVars = [];
+    const fileSize = (fs.statSync(filePath).size / 1024 / 1024).toFixed(2);
+    addResult('passed', 'Arquivo', `${fileName} válido (${fileSize} MB)`, { size: fileSize });
     
-    requiredVars.forEach(varName => {
-      if (!envContent.includes(varName) || envContent.includes(`${varName}=`)) {
-        missingVars.push(varName);
-      }
-    });
-    
-    if (missingVars.length > 0) {
-      log(`⚠️  Variáveis não configuradas: ${missingVars.join(', ')}`, 'yellow');
-      results.warnings.push('.env: Variáveis críticas não configuradas');
-    } else {
-      log('✓ Variáveis críticas configuradas', 'green');
-    }
-    
-  } catch (error) {
-    log('✗ Arquivo .env NÃO encontrado', 'red');
-    log('  Execute: cp .env.example .env', 'yellow');
-    results.errors.push('.env: Arquivo não encontrado');
-  }
-
-  // Verificar .env.example
-  try {
-    fs.statSync(path.join(__dirname, '.env.example'));
-    log('✓ Arquivo .env.example existe', 'green');
-  } catch (error) {
-    log('⚠️  Arquivo .env.example não encontrado', 'yellow');
-    results.warnings.push('.env.example: Arquivo de template não encontrado');
-  }
-
-  // ============================================
-  // 5. RESUMO FINAL
-  // ============================================
-  
-  log('\n\n╔═══════════════════════════════════════════════════════════╗', 'cyan');
-  log('║                    RESUMO DA VALIDAÇÃO                   ║', 'cyan');
-  log('╚═══════════════════════════════════════════════════════════╝\n', 'cyan');
-
-  // Arquivos de Dados
-  log('📁 ARQUIVOS DE DADOS', 'bright');
-  log(`   Total: ${results.files.total}`);
-  log(`   Encontrados: ${results.files.found}`, results.files.found === results.files.total ? 'green' : 'yellow');
-  log(`   Faltando: ${results.files.missing}`, results.files.missing > 0 ? 'red' : 'green');
-  log(`   Com problemas: ${results.files.invalid}`, results.files.invalid > 0 ? 'red' : 'green');
-
-  // Scripts SQL
-  log('\n📄 SCRIPTS SQL', 'bright');
-  log(`   Total: ${results.sql.total}`);
-  log(`   Encontrados: ${results.sql.found}`, results.sql.found === results.sql.total ? 'green' : 'yellow');
-  log(`   Faltando: ${results.sql.missing}`, results.sql.missing > 0 ? 'yellow' : 'green');
-
-  // Scripts MJS
-  log('\n📜 SCRIPTS MJS', 'bright');
-  log(`   Total: ${results.mjs.total}`);
-  log(`   Encontrados: ${results.mjs.found}`, results.mjs.found === results.mjs.total ? 'green' : 'yellow');
-  log(`   Faltando: ${results.mjs.missing}`, results.mjs.missing > 0 ? 'yellow' : 'green');
-
-  // Estatísticas de Dados
-  log('\n📊 ESTATÍSTICAS DE DADOS', 'bright');
-  if (results.data.employees) {
-    log(`   Funcionários: ${results.data.employees.total}`, 'cyan');
-    log(`   Ativos: ${results.data.employees.active}`, 'cyan');
-  }
-  if (results.data.users) {
-    log(`   Usuários: ${results.data.users.total}`, 'cyan');
-    Object.entries(results.data.users.byRole).forEach(([role, count]) => {
-      log(`     - ${role}: ${count}`, 'cyan');
-    });
-  }
-  if (results.data.jobDescriptions) {
-    log(`   Descrições de Cargo: ${results.data.jobDescriptions}`, 'cyan');
-  }
-  if (results.data.pdis) {
-    log(`   PDIs: ${results.data.pdis}`, 'cyan');
-  }
-  if (results.data.succession) {
-    log(`   Posições no Mapa de Sucessão: ${results.data.succession.positions}`, 'cyan');
-  }
-
-  // Erros
-  if (results.errors.length > 0) {
-    log('\n❌ ERROS CRÍTICOS', 'red');
-    results.errors.forEach(err => log(`   - ${err}`, 'red'));
-  }
-
-  // Warnings
-  if (results.warnings.length > 0) {
-    log('\n⚠️  AVISOS', 'yellow');
-    results.warnings.forEach(warn => log(`   - ${warn}`, 'yellow'));
-  }
-
-  // Status Final
-  log('\n╔═══════════════════════════════════════════════════════════╗', 'cyan');
-  if (results.errors.length === 0) {
-    log('║                   ✅ VALIDAÇÃO APROVADA                  ║', 'green');
-    log('╚═══════════════════════════════════════════════════════════╝\n', 'cyan');
-    log('✓ Todos os dados estão prontos para importação!', 'green');
-    log('\nPróximos passos:', 'bright');
-    log('1. Configurar DATABASE_URL no .env', 'cyan');
-    log('2. Executar: pnpm db:push', 'cyan');
-    log('3. Executar: node execute-import.mjs', 'cyan');
-    log('4. Executar: node create-remaining-users.mjs', 'cyan');
-    return 0;
-  } else {
-    log('║                   ❌ VALIDAÇÃO FALHOU                    ║', 'red');
-    log('╚═══════════════════════════════════════════════════════════╝\n', 'cyan');
-    log('✗ Corrija os erros antes de prosseguir.', 'red');
-    return 1;
+    return data;
+  } catch (err) {
+    addResult('error', 'Arquivo', `${fileName} com erro: ${err.message}`, { error: err.message });
+    return null;
   }
 }
 
-// Executar
-main()
-  .then(exitCode => process.exit(exitCode))
-  .catch(error => {
-    console.error('Erro fatal:', error);
-    process.exit(1);
+// Validar funcionários
+function validateEmployees(data) {
+  section('VALIDAÇÃO: FUNCIONÁRIOS');
+  
+  if (!data || !data.employees) {
+    error('Estrutura inválida: campo "employees" não encontrado');
+    addResult('error', 'Funcionários', 'Estrutura inválida');
+    return;
+  }
+
+  const employees = data.employees;
+  success(`Total de funcionários: ${employees.length}`);
+  addResult('passed', 'Funcionários', `Total: ${employees.length}`, { count: employees.length });
+
+  // Validar campos obrigatórios
+  const requiredFields = ['name', 'email', 'employeeCode', 'active'];
+  let missingFields = 0;
+  let invalidEmails = 0;
+  let duplicateEmails = new Set();
+  let duplicateCodes = new Set();
+  const emails = new Map();
+  const codes = new Map();
+  
+  let ativos = 0;
+  let inativos = 0;
+  const cargos = new Map();
+  const diretorias = new Map();
+
+  employees.forEach((emp, index) => {
+    // Campos obrigatórios
+    requiredFields.forEach(field => {
+      if (!emp[field]) {
+        missingFields++;
+      }
+    });
+
+    // Email válido
+    if (emp.email && (!emp.email.includes('@') || !emp.email.includes('.'))) {
+      invalidEmails++;
+    }
+
+    // Emails duplicados
+    if (emp.email) {
+      if (emails.has(emp.email)) {
+        duplicateEmails.add(emp.email);
+      } else {
+        emails.set(emp.email, index);
+      }
+    }
+
+    // Códigos duplicados
+    if (emp.employeeCode) {
+      if (codes.has(emp.employeeCode)) {
+        duplicateCodes.add(emp.employeeCode);
+      } else {
+        codes.set(emp.employeeCode, index);
+      }
+    }
+
+    // Estatísticas
+    if (emp.active) ativos++;
+    else inativos++;
+
+    if (emp.cargo) {
+      cargos.set(emp.cargo, (cargos.get(emp.cargo) || 0) + 1);
+    }
+
+    if (emp.diretoria) {
+      diretorias.set(emp.diretoria, (diretorias.get(emp.diretoria) || 0) + 1);
+    }
   });
+
+  // Relatório de validação
+  if (missingFields === 0) {
+    success('Todos os campos obrigatórios estão presentes');
+    addResult('passed', 'Funcionários', 'Campos obrigatórios OK');
+  } else {
+    warning(`${missingFields} campos obrigatórios ausentes`);
+    addResult('warning', 'Funcionários', `${missingFields} campos ausentes`);
+  }
+
+  if (invalidEmails === 0) {
+    success('Todos os emails são válidos');
+    addResult('passed', 'Funcionários', 'Emails válidos');
+  } else {
+    warning(`${invalidEmails} emails inválidos`);
+    addResult('warning', 'Funcionários', `${invalidEmails} emails inválidos`);
+  }
+
+  if (duplicateEmails.size === 0) {
+    success('Nenhum email duplicado');
+    addResult('passed', 'Funcionários', 'Emails únicos');
+  } else {
+    error(`${duplicateEmails.size} emails duplicados`);
+    addResult('error', 'Funcionários', `${duplicateEmails.size} emails duplicados`, { emails: Array.from(duplicateEmails) });
+  }
+
+  if (duplicateCodes.size === 0) {
+    success('Nenhum código duplicado');
+    addResult('passed', 'Funcionários', 'Códigos únicos');
+  } else {
+    error(`${duplicateCodes.size} códigos duplicados`);
+    addResult('error', 'Funcionários', `${duplicateCodes.size} códigos duplicados`, { codes: Array.from(duplicateCodes) });
+  }
+
+  info(`Ativos: ${ativos} (${(ativos / employees.length * 100).toFixed(1)}%)`);
+  info(`Inativos: ${inativos} (${(inativos / employees.length * 100).toFixed(1)}%)`);
+  addResult('passed', 'Funcionários', `Ativos: ${ativos}, Inativos: ${inativos}`, { ativos, inativos });
+
+  // Top 10 cargos
+  const topCargos = Array.from(cargos.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+  
+  info('\nTop 10 Cargos:');
+  topCargos.forEach(([cargo, count]) => {
+    info(`  ${cargo}: ${count} (${(count / employees.length * 100).toFixed(1)}%)`);
+  });
+
+  // Top 5 diretorias
+  const topDiretorias = Array.from(diretorias.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  info('\nTop 5 Diretorias:');
+  topDiretorias.forEach(([diretoria, count]) => {
+    info(`  ${diretoria}: ${count} (${(count / employees.length * 100).toFixed(1)}%)`);
+  });
+}
+
+// Validar usuários
+function validateUsers(data) {
+  section('VALIDAÇÃO: USUÁRIOS');
+  
+  if (!data || data.length === 0) {
+    error('Arquivo de usuários vazio ou inválido');
+    addResult('error', 'Usuários', 'Arquivo vazio');
+    return;
+  }
+
+  success(`Total de usuários: ${data.length}`);
+  addResult('passed', 'Usuários', `Total: ${data.length}`, { count: data.length });
+
+  // Estatísticas por role
+  const roles = new Map();
+  let withPassword = 0;
+  let withUsername = 0;
+
+  data.forEach(user => {
+    if (user.role || user.cargo) {
+      const role = user.role || user.cargo;
+      roles.set(role, (roles.get(role) || 0) + 1);
+    }
+    if (user.password) withPassword++;
+    if (user.username) withUsername++;
+  });
+
+  info('\nDistribuição por Role:');
+  Array.from(roles.entries())
+    .sort((a, b) => b[1] - a[1])
+    .forEach(([role, count]) => {
+      info(`  ${role}: ${count} (${(count / data.length * 100).toFixed(1)}%)`);
+    });
+
+  if (withPassword === data.length) {
+    success('Todos os usuários possuem senha');
+    addResult('passed', 'Usuários', 'Senhas presentes');
+  } else {
+    warning(`${data.length - withPassword} usuários sem senha`);
+    addResult('warning', 'Usuários', `${data.length - withPassword} sem senha`);
+  }
+
+  if (withUsername === data.length) {
+    success('Todos os usuários possuem username');
+    addResult('passed', 'Usuários', 'Usernames presentes');
+  } else {
+    warning(`${data.length - withUsername} usuários sem username`);
+    addResult('warning', 'Usuários', `${data.length - withUsername} sem username`);
+  }
+
+  // Verificar se senhas estão em texto plano
+  const samplePassword = data[0]?.password || '';
+  if (samplePassword.length < 40) {
+    warning('Senhas parecem estar em texto plano (precisam ser hasheadas)');
+    addResult('warning', 'Usuários', 'Senhas em texto plano', { action: 'Hashear com bcrypt' });
+  } else {
+    success('Senhas parecem estar hasheadas');
+    addResult('passed', 'Usuários', 'Senhas hasheadas');
+  }
+}
+
+// Validar PDIs
+function validatePDIs(data) {
+  section('VALIDAÇÃO: PDIs');
+  
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    warning('Nenhum PDI encontrado');
+    addResult('warning', 'PDIs', 'Nenhum PDI encontrado', { recommendation: 'Criar PDIs para gestores' });
+    return;
+  }
+
+  success(`Total de PDIs: ${data.length}`);
+  addResult('passed', 'PDIs', `Total: ${data.length}`, { count: data.length });
+
+  // Validar estrutura de cada PDI
+  let completos = 0;
+  let comGaps = 0;
+  let comPlano70 = 0;
+  let comPlano20 = 0;
+  let comPlano10 = 0;
+
+  data.forEach(pdi => {
+    if (pdi.nome && pdi.cargo && pdi.plano_acao) {
+      completos++;
+    }
+    if (pdi.gaps_prioritarios && pdi.gaps_prioritarios.length > 0) {
+      comGaps++;
+    }
+    if (pdi.plano_acao?.['70_pratica'] && pdi.plano_acao['70_pratica'].length > 0) {
+      comPlano70++;
+    }
+    if (pdi.plano_acao?.['20_social'] && pdi.plano_acao['20_social'].length > 0) {
+      comPlano20++;
+    }
+    if (pdi.plano_acao?.['10_formal'] && pdi.plano_acao['10_formal'].length > 0) {
+      comPlano10++;
+    }
+  });
+
+  info(`PDIs completos: ${completos} (${(completos / data.length * 100).toFixed(1)}%)`);
+  info(`Com gaps mapeados: ${comGaps} (${(comGaps / data.length * 100).toFixed(1)}%)`);
+  info(`Com plano 70% (prática): ${comPlano70} (${(comPlano70 / data.length * 100).toFixed(1)}%)`);
+  info(`Com plano 20% (social): ${comPlano20} (${(comPlano20 / data.length * 100).toFixed(1)}%)`);
+  info(`Com plano 10% (formal): ${comPlano10} (${(comPlano10 / data.length * 100).toFixed(1)}%)`);
+
+  if (completos === data.length) {
+    success('Todos os PDIs estão completos');
+    addResult('passed', 'PDIs', 'Todos completos');
+  } else {
+    warning(`${data.length - completos} PDIs incompletos`);
+    addResult('warning', 'PDIs', `${data.length - completos} incompletos`);
+  }
+
+  if (data.length < 100) {
+    warning('Poucos PDIs cadastrados (recomendado: 260+ para gestores)');
+    addResult('warning', 'PDIs', 'Poucos PDIs', { recommendation: 'Criar PDIs em massa' });
+  }
+}
+
+// Validar Descrições de Cargo
+function validateJobDescriptions(data) {
+  section('VALIDAÇÃO: DESCRIÇÕES DE CARGO');
+  
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    error('Nenhuma descrição de cargo encontrada');
+    addResult('error', 'Descrições', 'Nenhuma descrição encontrada');
+    return;
+  }
+
+  success(`Total de descrições: ${data.length}`);
+  addResult('passed', 'Descrições', `Total: ${data.length}`, { count: data.length });
+
+  // Validar estrutura
+  let completas = 0;
+  let comCompetencias = 0;
+  let comRequisitos = 0;
+  let comResponsabilidades = 0;
+  const niveis = new Map();
+
+  data.forEach(job => {
+    if (job.cargo && job.descricao && job.departamento) {
+      completas++;
+    }
+    if (job.competencias && job.competencias.length > 0) {
+      comCompetencias++;
+    }
+    if (job.requisitos) {
+      comRequisitos++;
+    }
+    if (job.responsabilidades && job.responsabilidades.length > 0) {
+      comResponsabilidades++;
+    }
+    if (job.nivel) {
+      niveis.set(job.nivel, (niveis.get(job.nivel) || 0) + 1);
+    }
+  });
+
+  info(`Descrições completas: ${completas} (${(completas / data.length * 100).toFixed(1)}%)`);
+  info(`Com competências: ${comCompetencias} (${(comCompetencias / data.length * 100).toFixed(1)}%)`);
+  info(`Com requisitos: ${comRequisitos} (${(comRequisitos / data.length * 100).toFixed(1)}%)`);
+  info(`Com responsabilidades: ${comResponsabilidades} (${(comResponsabilidades / data.length * 100).toFixed(1)}%)`);
+
+  if (niveis.size > 0) {
+    info('\nDistribuição por Nível:');
+    Array.from(niveis.entries())
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([nivel, count]) => {
+        info(`  ${nivel}: ${count} (${(count / data.length * 100).toFixed(1)}%)`);
+      });
+  }
+
+  if (completas === data.length) {
+    success('Todas as descrições estão completas');
+    addResult('passed', 'Descrições', 'Todas completas');
+  } else {
+    warning(`${data.length - completas} descrições incompletas`);
+    addResult('warning', 'Descrições', `${data.length - completas} incompletas`);
+  }
+}
+
+// Validar Mapa de Sucessão
+function validateSuccession(data) {
+  section('VALIDAÇÃO: MAPA DE SUCESSÃO');
+  
+  if (!data || !data.positions) {
+    error('Estrutura de sucessão inválida');
+    addResult('error', 'Sucessão', 'Estrutura inválida');
+    return;
+  }
+
+  const positions = data.positions;
+  success(`Total de posições mapeadas: ${positions.length}`);
+  addResult('passed', 'Sucessão', `Posições: ${positions.length}`, { count: positions.length });
+
+  let comSucessores = 0;
+  let semSucessores = 0;
+  let totalSucessores = 0;
+  const readiness = new Map();
+  const exitRisks = new Map();
+
+  positions.forEach(pos => {
+    if (pos.successors && pos.successors.length > 0) {
+      comSucessores++;
+      totalSucessores += pos.successors.length;
+      
+      pos.successors.forEach(suc => {
+        if (suc.readiness) {
+          readiness.set(suc.readiness, (readiness.get(suc.readiness) || 0) + 1);
+        }
+      });
+    } else {
+      semSucessores++;
+    }
+
+    if (pos.incumbent?.exitRisk) {
+      exitRisks.set(pos.incumbent.exitRisk, (exitRisks.get(pos.incumbent.exitRisk) || 0) + 1);
+    }
+  });
+
+  info(`Posições com sucessores: ${comSucessores} (${(comSucessores / positions.length * 100).toFixed(1)}%)`);
+  info(`Posições sem sucessores: ${semSucessores} (${(semSucessores / positions.length * 100).toFixed(1)}%)`);
+  info(`Total de sucessores mapeados: ${totalSucessores}`);
+  info(`Média de sucessores por posição: ${(totalSucessores / positions.length).toFixed(1)}`);
+
+  if (readiness.size > 0) {
+    info('\nReadiness dos Sucessores:');
+    Array.from(readiness.entries())
+      .forEach(([level, count]) => {
+        info(`  ${level}: ${count}`);
+      });
+  }
+
+  if (exitRisks.size > 0) {
+    info('\nRisco de Saída dos Titulares:');
+    Array.from(exitRisks.entries())
+      .forEach(([risk, count]) => {
+        info(`  ${risk}: ${count}`);
+      });
+  }
+
+  if (semSucessores === 0) {
+    success('Todas as posições possuem sucessores');
+    addResult('passed', 'Sucessão', 'Todas com sucessores');
+  } else {
+    warning(`${semSucessores} posições sem sucessores mapeados`);
+    addResult('warning', 'Sucessão', `${semSucessores} sem sucessores`);
+  }
+}
+
+// Validar Scripts
+function validateScripts() {
+  section('VALIDAÇÃO: SCRIPTS DE IMPORTAÇÃO');
+  
+  const requiredScripts = [
+    'execute-import.mjs',
+    'create-remaining-users.mjs',
+    'seed-data.mjs',
+    'scripts/seed-complete-data.sql',
+    'migration-employees.sql',
+    'migration_avd_5_passos.sql'
+  ];
+
+  requiredScripts.forEach(script => {
+    if (fs.existsSync(script)) {
+      success(`${script} encontrado`);
+      addResult('passed', 'Scripts', `${script} OK`);
+    } else {
+      error(`${script} NÃO encontrado`);
+      addResult('error', 'Scripts', `${script} ausente`, { path: script });
+    }
+  });
+}
+
+// Main
+async function main() {
+  log('\n╔════════════════════════════════════════════════════════════╗', 'bright');
+  log('║    VALIDAÇÃO COMPLETA DE DADOS - SISTEMA AVD UISA         ║', 'bright');
+  log('║    Versão 2.0.0 | Janeiro 2026                            ║', 'bright');
+  log('╚════════════════════════════════════════════════════════════╝', 'bright');
+
+  // 1. Validar Funcionários
+  const employeesData = validateFileStructure('./import-data.json', ['employees']);
+  if (employeesData) {
+    validateEmployees(employeesData);
+  }
+
+  // 2. Validar Usuários
+  const usersData = validateFileStructure('./users-credentials.json', ['employeeCode', 'email']);
+  if (usersData) {
+    validateUsers(usersData);
+  }
+
+  // 3. Validar PDIs
+  const pdiData = validateFileStructure('./pdi_data.json', ['nome', 'cargo']);
+  if (pdiData) {
+    validatePDIs(pdiData);
+  }
+
+  // 4. Validar Descrições de Cargo
+  const jobDescData = validateFileStructure('./data/uisa-job-descriptions.json', ['cargo']);
+  if (jobDescData) {
+    validateJobDescriptions(jobDescData);
+  }
+
+  // 5. Validar Mapa de Sucessão
+  const successionData = validateFileStructure('./succession-data-uisa.json', ['positions']);
+  if (successionData) {
+    validateSuccession(successionData);
+  }
+
+  // 6. Validar Scripts
+  validateScripts();
+
+  // Relatório Final
+  section('RELATÓRIO FINAL');
+  
+  log(`\nTotal de validações: ${results.total}`, 'bright');
+  success(`Sucesso: ${results.passed} (${(results.passed / results.total * 100).toFixed(1)}%)`);
+  if (results.warnings > 0) {
+    warning(`Avisos: ${results.warnings} (${(results.warnings / results.total * 100).toFixed(1)}%)`);
+  }
+  if (results.errors > 0) {
+    error(`Erros: ${results.errors} (${(results.errors / results.total * 100).toFixed(1)}%)`);
+  }
+
+  // Status geral
+  const successRate = (results.passed / results.total * 100);
+  log('\nSTATUS GERAL:', 'bright');
+  if (successRate >= 90) {
+    success('🟢 EXCELENTE - Dados prontos para importação!');
+  } else if (successRate >= 70) {
+    warning('🟡 BOM - Alguns ajustes recomendados antes da importação');
+  } else {
+    error('🔴 ATENÇÃO - Correções necessárias antes da importação');
+  }
+
+  // Salvar relatório JSON
+  const reportPath = './validacao-dados-report.json';
+  fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
+  info(`\nRelatório completo salvo em: ${reportPath}`);
+
+  log('\n' + '='.repeat(60), 'cyan');
+  log('Validação concluída!', 'bright');
+  log('='.repeat(60) + '\n', 'cyan');
+
+  process.exit(results.errors > 0 ? 1 : 0);
+}
+
+main().catch(err => {
+  error(`Erro fatal: ${err.message}`);
+  console.error(err);
+  process.exit(1);
+});

@@ -1,0 +1,209 @@
+{
+  "total": 26,
+  "passed": 20,
+  "warnings": 4,
+  "errors": 2,
+  "details": [
+    {
+      "type": "passed",
+      "category": "Arquivo",
+      "message": "import-data.json válido (2.03 MB)",
+      "details": {
+        "size": "2.03"
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Funcionários",
+      "message": "Total: 3114",
+      "details": {
+        "count": 3114
+      }
+    },
+    {
+      "type": "warning",
+      "category": "Funcionários",
+      "message": "244 campos ausentes",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Funcionários",
+      "message": "Emails válidos",
+      "details": null
+    },
+    {
+      "type": "error",
+      "category": "Funcionários",
+      "message": "17 emails duplicados",
+      "details": {
+        "emails": [
+          "lidineia.santos@uisa.com.br",
+          "endereçoeletrônico@uisa.com.br",
+          "endereçoeletrônico@uisanet.com.br",
+          "wandersonborge02@gmail.com",
+          "nelsondelgadomorais123456@gmail.com",
+          "csc.folha@uisa.com.br",
+          "enderecoeletronico@uisa.com.br",
+          "endereçoeletronico@uisa.com.br",
+          "aldenessilvaferreira@hotmail.com",
+          "beneficios.rh@uisa.com.br",
+          "yellowsmoker@gmail.com",
+          "delainel294@gmail.com",
+          "allef1002011@gmail.com",
+          "jm1904053@gmail.com",
+          "fabio.posso@uisa.com.br",
+          "tomaz.pereira@uisa.com.br",
+          "andressagabriely999@gmail.com"
+        ]
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Funcionários",
+      "message": "Códigos únicos",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Funcionários",
+      "message": "Ativos: 3114, Inativos: 0",
+      "details": {
+        "ativos": 3114,
+        "inativos": 0
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Arquivo",
+      "message": "users-credentials.json válido (0.07 MB)",
+      "details": {
+        "size": "0.07"
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Usuários",
+      "message": "Total: 310",
+      "details": {
+        "count": 310
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Usuários",
+      "message": "Senhas presentes",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Usuários",
+      "message": "Usernames presentes",
+      "details": null
+    },
+    {
+      "type": "warning",
+      "category": "Usuários",
+      "message": "Senhas em texto plano",
+      "details": {
+        "action": "Hashear com bcrypt"
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Arquivo",
+      "message": "pdi_data.json válido (0.01 MB)",
+      "details": {
+        "size": "0.01"
+      }
+    },
+    {
+      "type": "passed",
+      "category": "PDIs",
+      "message": "Total: 2",
+      "details": {
+        "count": 2
+      }
+    },
+    {
+      "type": "passed",
+      "category": "PDIs",
+      "message": "Todos completos",
+      "details": null
+    },
+    {
+      "type": "warning",
+      "category": "PDIs",
+      "message": "Poucos PDIs",
+      "details": {
+        "recommendation": "Criar PDIs em massa"
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Arquivo",
+      "message": "uisa-job-descriptions.json válido (3.62 MB)",
+      "details": {
+        "size": "3.62"
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Descrições",
+      "message": "Total: 481",
+      "details": {
+        "count": 481
+      }
+    },
+    {
+      "type": "warning",
+      "category": "Descrições",
+      "message": "481 incompletas",
+      "details": null
+    },
+    {
+      "type": "error",
+      "category": "Arquivo",
+      "message": "succession-data-uisa.json com erro: Expected ',' or ']' after array element in JSON at position 2820",
+      "details": {
+        "error": "Expected ',' or ']' after array element in JSON at position 2820"
+      }
+    },
+    {
+      "type": "passed",
+      "category": "Scripts",
+      "message": "execute-import.mjs OK",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Scripts",
+      "message": "create-remaining-users.mjs OK",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Scripts",
+      "message": "seed-data.mjs OK",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Scripts",
+      "message": "scripts/seed-complete-data.sql OK",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Scripts",
+      "message": "migration-employees.sql OK",
+      "details": null
+    },
+    {
+      "type": "passed",
+      "category": "Scripts",
+      "message": "migration_avd_5_passos.sql OK",
+      "details": null
+    }
+  ]
+}
