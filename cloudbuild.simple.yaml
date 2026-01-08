@@ -1,0 +1,105 @@
+# ============================================================================
+# Cloud Build Simplificado - AVD UISA
+# ============================================================================
+#
+# Build e Deploy simplificado para Google Cloud Run
+# Foco: estabilidade e deploy rápido
+#
+# ============================================================================
+
+# Opções
+options:
+  machineType: 'E2_HIGHCPU_8'
+  timeout: '1800s'
+  logging: CLOUD_LOGGING_ONLY
+
+# Substituições (AJUSTE ESTES VALORES)
+substitutions:
+  _PROJECT_ID: 'seu-project-id'  # ALTERAR PARA SEU PROJECT ID
+  _REGION: 'southamerica-east1'
+  _SERVICE_NAME: 'avd-uisa'
+  _IMAGE_NAME: 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME}'
+  _MIN_INSTANCES: '1'
+  _MAX_INSTANCES: '5'
+  _MEMORY: '2Gi'
+  _CPU: '2'
+
+# Pipeline simplificado
+steps:
+  # ============================================================================
+  # STEP 1: Build da imagem Docker
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-image'
+    args:
+      - 'build'
+      - '-t'
+      - '${_IMAGE_NAME}:$SHORT_SHA'
+      - '-t'
+      - '${_IMAGE_NAME}:latest'
+      - '.'
+    timeout: '1200s'
+
+  # ============================================================================
+  # STEP 2: Push da imagem
+  # ============================================================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-image'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_IMAGE_NAME}'
+
+  # ============================================================================
+  # STEP 3: Deploy no Cloud Run
+  # ============================================================================
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-cloud-run'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--image=${_IMAGE_NAME}:$SHORT_SHA'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--min-instances=${_MIN_INSTANCES}'
+      - '--max-instances=${_MAX_INSTANCES}'
+      - '--memory=${_MEMORY}'
+      - '--cpu=${_CPU}'
+      - '--port=3000'
+      - '--timeout=300'
+      - '--set-env-vars=NODE_ENV=production'
+      - '--quiet'
+
+# Imagens a serem armazenadas
+images:
+  - '${_IMAGE_NAME}:$SHORT_SHA'
+  - '${_IMAGE_NAME}:latest'
+
+# ============================================================================
+# Setup Inicial (execute uma vez):
+# ============================================================================
+#
+# 1. Habilitar APIs:
+#    gcloud services enable cloudbuild.googleapis.com
+#    gcloud services enable run.googleapis.com
+#    gcloud services enable containerregistry.googleapis.com
+#
+# 2. Configurar variável DATABASE_URL no Secret Manager:
+#    echo -n "mysql://root:SUA_SENHA@34.39.223.147:3306/avd_uisa" | \
+#    gcloud secrets create DATABASE_URL --data-file=-
+#
+# 3. Criar trigger:
+#    gcloud builds triggers create github \
+#      --name="avd-uisa-deploy" \
+#      --repo-name="avd-uisa-sistema-completo" \
+#      --repo-owner="rrodrigogon-byte" \
+#      --branch-pattern="^main$" \
+#      --build-config="cloudbuild.yaml"
+#
+# 4. Deploy manual (primeira vez):
+#    gcloud builds submit --config=cloudbuild.yaml
+#
+# ============================================================================
