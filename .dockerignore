@@ -1,34 +1,23 @@
-# Development
-node_modules/.cache
-.vite
-*.log
-npm-debug.log*
-
-# Git
+node_modules
 .git
-.gitignore
-
-# Documentation
-*.md
-!README.md
-
-# Tests
-*.test.ts
-*.test.js
-**/__tests__
-
-# IDE
+.env.local
+.DS_Store
+dist
 .vscode
 .idea
+*.log
+coverage
+.turbo
+*.test.ts
+*.test.tsx
+__tests__
+*.md
+!README.md
+.github
+.husky
+tmp
+temp
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Build artifacts que não precisamos copiar
-dist/
-build/
-
-# Variáveis de ambiente locais
-.env.local
-.env.*.local
+# NÃO IGNORAR client/dist (precisa para produção)
+!client/dist
+!client/dist/**
